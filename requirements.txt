@@ -1,0 +1,13 @@
+# requirements.txt
+
+# Drake
+drake
+manipulation
+
+# Visualization
+meshcat
+matplotlib
+
+# Debugging
+ipdb
+typer
