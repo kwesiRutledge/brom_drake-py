@@ -37,3 +37,4 @@ Some other work in the open-source drake community:
   tutorial's diagram.
   - [ ] Determine if we can use `DiagramTarget` objects to do everything (assuming that they are all valid). i.e., with the name and the port # can we do waht we want?
 - [ ] Add more examples
+- [ ] Add Code coverage

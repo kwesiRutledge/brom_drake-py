@@ -23,5 +23,8 @@ class UnrecognizedTargetError(ValueError):
         if system_names is not None:
             self.message += f"(Available systems are {system_names})\n"
 
+        self.message += f"If system with name {target.name} does exist, it may be one of the ineligible types:\n "
+        self.message += f"\t{INELIGIBLE_SYSTEM_TYPES}.\n"
+
         super().__init__(self.message)
 

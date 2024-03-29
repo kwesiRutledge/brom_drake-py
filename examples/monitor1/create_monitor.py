@@ -17,6 +17,8 @@ from pydrake.all import (
 
 from manipulation.scenarios import AddMultibodyTriad
 
+from brom_drake.all import DiagramWatcher
+
 def AddGround(plant):
     """
     Add a flat ground with friction
@@ -195,33 +197,26 @@ def main(show_plots: bool = True):
 
     # Connect to Meshcat
     meshcat0 = Meshcat(port=7001)  # Object provides an interface to Meshcat
-    mCpp = MeshcatVisualizer(meshcat0)
-    mCpp.AddToBuilder(builder,scene_graph,meshcat0)
+    m_visualizer = MeshcatVisualizer(meshcat0)
+    m_visualizer.AddToBuilder(builder, scene_graph, meshcat0)
+
+    # Add Watcher Before
+    print("adding watcher before")
+    watcher = DiagramWatcher(builder)
 
     diagram = builder.Build()
 
+    # Add Watcher After
+    # print("adding watcher after")
+    # watcher2 = DiagramWatcher(diagram)
 
 
-    # builder.Connect(
-    #     plant.get_state_output_port(block),
-    #     demux.get_input_port(0))
-
-    #Weld robot to table, with translation in x, y and z
-    # p_PlaceOnTable0 = [0.15,0.75,-0.20]
-    # R_PlaceOnTableO = RotationMatrix.MakeXRotation(-np.pi/2.0)
-    # X_TableRobot = RigidTransform(R_PlaceOnTableO,p_PlaceOnTable0)
-    # plant.WeldFrames(
-    #     plant.GetFrameByName("simpleDesk"),plant.GetFrameByName("base_link"),X_TableRobot)
-
-
-
-    # plant.Finalize()
-    # # Draw the frames
-    # for body_name in ["base_link", "shoulder_link", "bicep_link", "forearm_link", "spherical_wrist_1_link", "spherical_wrist_2_link", "bracelet_with_vision_link", "end_effector_link"]:
-    #     AddMultibodyTriad(plant.GetFrameByName(body_name), scene_graph)
 
     # diagram = builder.Build()
     diagram_context = diagram.CreateDefaultContext()
+
+    watcher.diagram_context = diagram_context
+    watcher.diagram = diagram
 
     # Set initial pose and vectors
     block_handler_system.SetInitialBlockState(diagram_context)
@@ -239,42 +234,6 @@ def main(show_plots: bool = True):
     # Run simulation
     simulator.Initialize()
     simulator.AdvanceTo(15.0)
-
-    # Collect Data
-    state_log = state_logger.FindLog(diagram_context)
-    log_times  = state_log.sample_times()
-    state_data = state_log.data()
-    print(state_data.shape)
-
-    command_log = command_logger.FindLog(diagram_context)
-    log_times_c = command_log.sample_times()
-    command_data = command_log.data()
-    print(command_data.shape)
-
-    if show_plots:
-
-        # Plot Data - First Half
-        fig = plt.figure()
-        ax_list1 = []
-
-        for plt_index1 in range(6):
-            ax_list1.append( fig.add_subplot(231+plt_index1) )
-            plt.plot(log_times,state_data[plt_index1,:])
-            plt.title('State #' + str(plt_index1))
-
-        # Plot Data - Second Half
-        fig = plt.figure()
-        ax_list2 = []
-
-        for plt_index2 in range(6):
-            ax_list2.append( fig.add_subplot(231+plt_index2) )
-            plt.plot(log_times_c,command_data[plt_index2,:])
-            plt.title('Command #' + str(plt_index2))
-
-        # fig = plt.figure()
-        # plt.plot(log_times,state_data[-1,:])
-
-        plt.show()
 
 if __name__ == '__main__':
     with ipdb.launch_ipdb_on_exception():
