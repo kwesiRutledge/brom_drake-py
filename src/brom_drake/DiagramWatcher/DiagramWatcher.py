@@ -9,6 +9,7 @@ import os
 from typing import List, Union
 import matplotlib.pyplot as plt
 import numpy as np
+import loguru
 
 from pydrake.multibody.plant import MultibodyPlant
 from pydrake.systems.framework import Diagram, DiagramBuilder, LeafSystem, PortDataType
@@ -39,12 +40,29 @@ class DiagramWatcher:
         self.subject = subject
         self.plot_dir = plot_dir
 
+        # Create the .brom directory, to store:
+        # - activity_summary.log
+        # - all plots
+        if os.path.exists(plot_dir):
+            os.system(f"rm -r {plot_dir}")
+
+        # Create directory to plot in
+        os.makedirs(plot_dir, exist_ok=True)
+        self.configure_brom_activity_summary()  # Create an "activity summary" log
+                                                # which details what the
+                                                # DiagramWatcher is doing.
+
         # Collect All the Connections and Systems
         self.eligible_systems = self.find_eligible_systems(subject)
         if targets is None:
             targets = [DiagramTarget(system.get_name()) for system in self.eligible_systems]
         else:
             self.check_targets(targets, self.eligible_systems)
+
+        # Log the list of eligible systems
+        loguru.logger.info(f"Found {len(self.eligible_systems)} systems in diagram are eligible for targeting:")
+        for idx, system in enumerate(self.eligible_systems):
+            loguru.logger.info(f"{idx}: {system.get_name()}")
 
         # For Each Target with None ports, we will try to
         # "smartly" create the targets that we want to monitor
@@ -82,20 +100,12 @@ class DiagramWatcher:
         # Upon deletion, we will PLOT the data from all of our loggers
         # if we have access to the diagram context
         if is_ready_to_plot:
-            # Delete the directory if it exists
-            if os.path.exists(plot_dir):
-                os.system(f"rm -r {plot_dir}")
-
-            # Create directory to plot in
-            os.makedirs(plot_dir, exist_ok=True)
-
             for system_name in self.loggers:
                 system_ii = self.diagram.GetSubsystemByName(system_name)
                 ports_on_ii = self.loggers[system_name]
                 for port_index in ports_on_ii:
                     system_ii_port = system_ii.get_output_port(port_index)
 
-                    system_ii_port_pi_logger = ports_on_ii[port_index]
                     fig_ii_pi, ax_list_ii_pi = self.plot_logger_data(
                         system_ii, port_index
                     )
@@ -111,6 +121,16 @@ class DiagramWatcher:
 
             # self.logger = LogOutput(diagram.get_context())
 
+
+    def configure_brom_activity_summary(self):
+        """
+        Description:
+            Configures the "activity summary" a log of brom's activity.
+        :return:
+        """
+        # Setup
+        loguru.logger.remove(0)  # Remove the default logger
+        loguru.logger.add(self.plot_dir + "/activity_summary.log")
 
     def safe_system_name(self, name: str) -> str:
         """
@@ -159,6 +179,7 @@ class DiagramWatcher:
         data = temp_log.data()
 
         if data.shape[0] == 0:
+            loguru.logger.warning(f"No data found for {system_ii.get_name()} - Port {port_index}")
             return None, None
 
         # Plot the data
@@ -295,11 +316,20 @@ class DiagramWatcher:
 
             # TODO: Add support for investigating output ports
             num_ports = system.num_output_ports()
+            if num_ports == 0:
+                loguru.logger.warning(f"System {target.name} has no output ports! Skipping...")
+                continue
+
             output_ports_to_watch = [port_index for port_index in range(num_ports)]
 
             # Add a target with the connected ports to the smart_targets list
             smart_targets.append(
                 DiagramTarget(target.name, output_ports_to_watch),
             )
+
+        # Log the list of inferred targets
+        loguru.logger.info(f"Found {len(smart_targets)} inferred targets:")
+        for idx, target in enumerate(smart_targets):
+            loguru.logger.info(f"{idx}: {target.name} - {target.ports}")
 
         return smart_targets

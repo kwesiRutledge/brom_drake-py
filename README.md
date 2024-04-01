@@ -39,3 +39,4 @@ Some other work in the open-source drake community:
 - [ ] Add more examples
 - [ ] Add Code coverage
 - [ ] Add support for abstract output ports?
+- [ ] Add more readme explanations of what is going on under the hood.

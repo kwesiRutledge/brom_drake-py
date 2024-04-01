@@ -11,3 +11,4 @@ matplotlib
 # Debugging
 ipdb
 typer
+loguru
