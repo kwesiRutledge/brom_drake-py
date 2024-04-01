@@ -1,0 +1,22 @@
+<robot name="slider-block">
+  <link name="block">
+    <inertial>
+      <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+      <mass value="0.77"/>
+      <inertia ixx="1" ixy="0.0" ixz="0.0" iyy="1" iyz="0.0" izz="1" />
+    </inertial>
+
+    <visual>
+      <geometry>
+        <mesh filename="SliderBlockv3.obj" scale="0.001 0.001 0.001" />
+      </geometry>
+     </visual>
+
+    <collision>
+      <geometry>
+        <mesh filename="SliderBlockv3.obj" scale="0.001 0.001 0.001" />
+      </geometry>
+    </collision>
+
+  </link>
+</robot>

@@ -20,19 +20,20 @@ from brom_drake.all import DiagramTarget
 from .constants import INELIGIBLE_SYSTEM_TYPES
 from .errors import UnrecognizedTargetError
 
-DiagramLike = Union[DiagramBuilder, Diagram]
-
 
 class DiagramWatcher:
     def __init__(
         self,
-        subject: DiagramLike,
+        subject: DiagramBuilder,
         targets: List[DiagramTarget] = None,
         plot_dir: str = "./.brom",
     ):
         # Setup
-        self.diagram_context = None
         self.diagram = None
+
+        # Check subject
+        if not isinstance(subject, DiagramBuilder):
+            raise ValueError("subject must be a DiagramBuilder!")
 
         # Save the inputs
         self.subject = subject
@@ -45,30 +46,25 @@ class DiagramWatcher:
         else:
             self.check_targets(targets, self.eligible_systems)
 
-        # TODO: Add support for giving a Diagram object as input
-        if isinstance(subject, Diagram):
-            raise NotImplementedError("Diagram object as input is not supported yet.")
+        # For Each Target with None ports, we will try to
+        # "smartly" create the targets that we want to monitor
+        inferred_targets = self.get_smart_targets(subject, targets)
+        self.inferred_targets = inferred_targets
 
-        if isinstance(subject, DiagramBuilder):
-            # For Each Target with None ports, we will try to
-            # "smartly" create the targets that we want to monitor
-            inferred_targets = self.get_smart_targets(subject, targets)
-            self.inferred_targets = inferred_targets
+        # For each target's port, we will add a logger
+        self.loggers = {target.name: {} for target in inferred_targets}
+        for target in inferred_targets:
+            system = subject.GetSubsystemByName(target.name)
+            for port_index in target.ports:
+                target_port = system.get_output_port(port_index)
 
-            # For each target's port, we will add a logger
-            self.loggers = {target.name: {} for target in inferred_targets}
-            for target in inferred_targets:
-                system = subject.GetSubsystemByName(target.name)
-                for port_index in target.ports:
-                    target_port = system.get_output_port(port_index)
+                if target_port.get_data_type() != PortDataType.kVectorValued:
+                    print(f"Port {port_index} of system {target.name} is not vector-valued! Skipping...")
+                    continue
 
-                    if target_port.get_data_type() != PortDataType.kVectorValued:
-                        print(f"Port {port_index} of system {target.name} is not vector-valued! Skipping...")
-                        continue
-
-                    logger = LogVectorOutput(system.get_output_port(port_index), subject)
-                    logger.set_name(f"{target.name}_logger_{port_index}")
-                    self.loggers[target.name][port_index] = logger
+                logger = LogVectorOutput(system.get_output_port(port_index), subject)
+                logger.set_name(f"{target.name}_logger_{port_index}")
+                self.loggers[target.name][port_index] = logger
 
     def __del__(self):
         """
@@ -81,12 +77,10 @@ class DiagramWatcher:
         # Setup
         plot_dir = self.plot_dir
 
-        is_ready_to_plot = self.diagram_context is not None
-        is_ready_to_plot = is_ready_to_plot and (self.diagram is not None)
+        is_ready_to_plot = self.diagram is not None
 
         # Upon deletion, we will PLOT the data from all of our loggers
         # if we have access to the diagram context
-
         if is_ready_to_plot:
             # Delete the directory if it exists
             if os.path.exists(plot_dir):
@@ -153,8 +147,13 @@ class DiagramWatcher:
         port_jj = system_ii.get_output_port(port_index)
         logger = self.loggers[system_ii.get_name()][port_index]
 
+        if self.diagram is None:
+            raise ValueError("Cannot plot data without access to the diagram context!")
+
+        diagram_context = self.diagram.CreateDefaultContext()
+
         # Get the log from the logger
-        temp_log = logger.FindLog(self.diagram_context)  # Extract the log from the logger
+        temp_log = logger.FindLog(diagram_context)  # Extract the log from the logger
 
         log_times = temp_log.sample_times()
         data = temp_log.data()
@@ -272,7 +271,7 @@ class DiagramWatcher:
 
     def get_smart_targets(
         self,
-        subject: DiagramLike,
+        subject: DiagramBuilder,
         targets: List[DiagramTarget],
     ) -> List[DiagramTarget]:
         """

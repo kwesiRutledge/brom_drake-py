@@ -19,7 +19,7 @@ pip install -e .
 
 [Brom the storyteller](https://inheritance.fandom.com/wiki/Brom) is a character from the
 [Inheritance](https://en.wikipedia.org/wiki/Eragon) series by Christopher Paolini.
-He is a wise mentor that helps Eragon (the protagonist) master dragons.
+He is a wise mentor that helps Eragon (the protagonist) master dragons. ;)
 
  
 
@@ -33,8 +33,9 @@ Some other work in the open-source drake community:
 ## To-Dos
 
 - [ ] Figure out how to tell if two systems are connected in Drake.
-- [ ] Demonstrate how to create a simple Vector logger for the
+- [x] Demonstrate how to create a simple Vector logger for the
   tutorial's diagram.
-  - [ ] Determine if we can use `DiagramTarget` objects to do everything (assuming that they are all valid). i.e., with the name and the port # can we do waht we want?
+  - [x] Determine if we can use `DiagramTarget` objects to do everything (assuming that they are all valid). i.e., with the name and the port # can we do waht we want?
 - [ ] Add more examples
 - [ ] Add Code coverage
+- [ ] Add support for abstract output ports?

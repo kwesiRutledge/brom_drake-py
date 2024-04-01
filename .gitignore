@@ -161,3 +161,6 @@ cython_debug/
 
 # Virtual environment
 brom-venv/
+
+# Brom's Log files/outputs
+***.brom/
