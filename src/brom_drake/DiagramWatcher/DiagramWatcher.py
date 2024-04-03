@@ -28,9 +28,11 @@ class DiagramWatcher:
         subject: DiagramBuilder,
         targets: List[DiagramTarget] = None,
         plot_dir: str = "./.brom",
+        dpi: int = 300,
     ):
         # Setup
         self.diagram = None
+        self.dpi = dpi
 
         # Check subject
         if not isinstance(subject, DiagramBuilder):
@@ -94,6 +96,7 @@ class DiagramWatcher:
         """
         # Setup
         plot_dir = self.plot_dir
+        dpi = self.dpi
 
         is_ready_to_plot = self.diagram is not None
 
@@ -114,7 +117,7 @@ class DiagramWatcher:
                         continue
 
                     fig_ii_pi.savefig(
-                        f"{plot_dir}/{self.safe_system_name(system_name)}_port_{system_ii_port.get_name()}.png"
+                        f"{plot_dir}/{self.safe_system_name(system_name)}_port_{system_ii_port.get_name()}.png",
                     )
 
                 # data and sampling times from the logger
@@ -170,7 +173,7 @@ class DiagramWatcher:
         if self.diagram is None:
             raise ValueError("Cannot plot data without access to the diagram context!")
 
-        diagram_context = self.diagram.CreateDefaultContext()
+        diagram_context = self.diagram_context
 
         # Get the log from the logger
         temp_log = logger.FindLog(diagram_context)  # Extract the log from the logger
@@ -179,14 +182,14 @@ class DiagramWatcher:
         data = temp_log.data()
 
         if data.shape[0] == 0:
-            loguru.logger.warning(f"No data found for {system_ii.get_name()} - Port {port_index}")
+            loguru.logger.warning(f"No data found for {system_ii.get_name()} - Port {port_index} ({port_jj.get_name()})! Skipping...")
             return None, None
 
         # Plot the data
+        n_rows, n_cols = self.compute_plot_shape(data.shape[0])
+
         fig = plt.figure()
         ax_list = []
-
-        n_rows, n_cols = self.compute_plot_shape(data.shape[0])
 
         for dim_index in range(port_jj.size()):
             ax_list.append(
@@ -201,8 +204,12 @@ class DiagramWatcher:
             # )
             plt.title(f"Dim #{dim_index}")
 
-        return fig, ax_list
+        plt.subplots_adjust(
+            left=0.1, bottom=0.1, right=0.95, top=0.95,
+            wspace=1.0, hspace=0.8,
+        )
 
+        return fig, ax_list
 
     def compute_plot_shape(self, n_dims: int) -> tuple:
         """
@@ -213,10 +220,14 @@ class DiagramWatcher:
         """
         if n_dims == 1:
             return 1, 1
+        if n_dims == 2:
+            return 1, 2
 
-        if n_dims > 1:
+        if n_dims < 9:
             return 2, int(np.ceil(n_dims / 2.0))
 
+        # Otherwise
+        return 3, int(np.ceil(n_dims / 3.0))
 
         raise NotImplementedError(f"n_dims should be greater than 0! (received {n_dims})")
 

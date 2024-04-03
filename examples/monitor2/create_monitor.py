@@ -156,26 +156,19 @@ def main(show_plots: bool = True):
 
     # plant = builder.AddSystem(MultibodyPlant(time_step=time_step)) #Add plant to diagram builder
     plant, scene_graph = AddMultibodyPlantSceneGraph(builder, time_step=1e-3)
-    block_handler_system = builder.AddSystem(BlockHandlerSystem(plant,scene_graph))
-
-    # Connect Handler to Logger
-    # state_logger = LogVectorOutput(plant.get_body_spatial_velocities_output_port(), builder)
-    state_logger = LogVectorOutput(
-        block_handler_system.GetOutputPort("measured_block_pose"),
-        builder)
-    state_logger.set_name("state_logger")
+    block_handler_system = builder.AddSystem(BlockHandlerSystem(plant, scene_graph))
 
     # Connect System To Handler
     # Create system that outputs the slowly updating value of the pose of the block.
-    A = np.zeros((6,6))
-    B = np.zeros((6,1))
-    f0 = np.array([0.0,0.1,0.1,0.0,0.0,0.0])
+    A = np.zeros((6, 6))
+    B = np.zeros((6, 1))
+    f0 = np.array([0.0, 0.1, 0.1, 0.0, 0.0, 0.0])
     C = np.eye(6)
-    D = np.zeros((6,1))
-    y0 = np.zeros((6,1))
-    x0 = np.array([0.0,0.0,0.0,0.0,0.2,0.5])
+    D = np.zeros((6, 1))
+    y0 = np.zeros((6, 1))
+    x0 = np.array([0.0, 0.0, 0.0, 0.0, 0.2, 0.5])
     target_source2 = builder.AddSystem(
-        AffineSystem(A,B,f0,C,D,y0)
+        AffineSystem(A, B, f0, C, D, y0)
         )
     target_source2.configure_default_state(x0)
 
@@ -206,7 +199,6 @@ def main(show_plots: bool = True):
 
     # Set initial pose and vectors
     block_handler_system.SetInitialBlockState(diagram_context)
-
 
     # Set up simulation
     simulator = Simulator(diagram, diagram_context)

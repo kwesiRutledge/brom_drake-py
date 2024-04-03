@@ -37,12 +37,12 @@ def add_watcher_and_build(builder: DiagramBuilder) -> (DiagramWatcher, Diagram):
     :return: DiagramWatcher. The watcher that we have added to the diagram builder.
     """
     watcher = add_watcher(builder)
+
     # Build the diagram and add a reference to the watcher
     diagram = builder.Build()
     diagram_context = diagram.CreateDefaultContext()
     watcher.diagram = diagram
     watcher.diagram_context = diagram_context
-
 
     return watcher, diagram, diagram_context
 
