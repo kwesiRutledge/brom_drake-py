@@ -7,7 +7,7 @@ Description
 
 import unittest
 
-from brom_drake import DiagramTarget
+from brom_drake.all import DiagramTarget
 from brom_drake.DiagramWatcher import UnrecognizedTargetError
 
 
