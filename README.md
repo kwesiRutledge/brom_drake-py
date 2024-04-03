@@ -1,3 +1,5 @@
+[![codecov](https://codecov.io/gh/kwesiRutledge/brom_drake-py/graph/badge.svg?token=0TI5PV2HUD)](https://codecov.io/gh/kwesiRutledge/brom_drake-py)
+
 # brom_drake-py
 Brom is a helper library for the [Drake](https://drake.mit.edu/) robotics simulation and verification library.
 Its goal is to simplify logging and robustness characterization
@@ -12,29 +14,38 @@ It is recommended that you use the convenience function `add_watcher_and_build` 
 ```python
 # Drake imports
 from pydrake.all import (
-    /* All your stuff */
+    DiagramBuilder, Simulator,
 )
+# All your other imports
 
 from brom_drake.all import add_watcher_and_build
 
-# Insert all of your relevant systems
+# Create a diagram builder
 builder = DiagramBuilder()
 
-# Add your systems...
+# Add and connect your systems...
 
-# Add the watcher
+# Add the watcher and build the diagram
 dw, diagram, diagram_context = add_watcher_and_build(builder)
 
-# Run simulation
+# Set up simulation
+simulator = Simulator(diagram, diagram_context)
+simulator.set_target_realtime_rate(1.0)
+simulator.set_publish_every_time_step(False)
 
+# Run simulation
+simulator.Initialize()
+simulator.AdvanceTo(15.0)
 
 ```
 
 
-What this function will do is:
-- Search through all systems that the `DiagramBuilder` has added.
-- Add a `VectorLogger` for each system's port that is a `kVectorValued` port.
-- After the simulation is run, it will save all of the data traces for each port in plots. These plots will be in a new `.brom` directory.
+What will happen whenever you use this function is that:
+- The `DiagramWatcher` will be created.
+  - It will search through all systems that the `DiagramBuilder` has added.
+  - For each system, the watcher will add a `VectorLogger` to each output port that is a `kVectorValued` port.
+  - The `DiagramWatcher` will connect all loggers to all targeted ports (in this case, we will target all available output ports).
+- After the simulation is run and the script completes, the watcher will save all of the data traces for each port in plots. These plots will be in a new `.brom` directory.
 
 ## Installation
 
@@ -69,6 +80,7 @@ Some other work in the open-source drake community:
   tutorial's diagram.
   - [x] Determine if we can use `DiagramTarget` objects to do everything (assuming that they are all valid). i.e., with the name and the port # can we do waht we want?
 - [ ] Add more examples
-- [ ] Add Code coverage
+- [x] Add Code coverage
 - [ ] Add support for abstract output ports?
 - [ ] Add more readme explanations of what is going on under the hood.
+- [ ] Add support for giving `DiagramTarget` (or simpler objects) to the convenience functions. 
