@@ -8,6 +8,10 @@ manipulation
 meshcat
 matplotlib
 
+# Testing
+pytest
+pytest-cov
+
 # Debugging
 ipdb
 typer
