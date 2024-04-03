@@ -206,7 +206,7 @@ class DiagramWatcher:
 
         plt.subplots_adjust(
             left=0.1, bottom=0.1, right=0.95, top=0.95,
-            wspace=1.0, hspace=0.8,
+            wspace=0.6, hspace=0.8,
         )
 
         return fig, ax_list
