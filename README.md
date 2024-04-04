@@ -5,9 +5,11 @@ Brom is a helper library for the [Drake](https://drake.mit.edu/) robotics simula
 Its goal is to simplify logging and robustness characterization
 of Drake simulations. 
 
-## Usage
+## Use Cases
 
-### DiagramWatcher
+Here are a few of the features available in `brom_drake` and how they work.
+
+### Easily Log Your Diagram's Signals
 
 It is recommended that you use the convenience function `add_watcher_and_build` to add a `DiagramWatcher` to your diagram.
 
@@ -44,12 +46,21 @@ What will happen whenever you use this function is that:
 - The `DiagramWatcher` will be created.
   - It will search through all systems that the `DiagramBuilder` has added.
   - For each system, the watcher will add a `VectorLogger` to each output port that is a `kVectorValued` port.
-  - The `DiagramWatcher` will connect all loggers to all targeted ports (in this case, we will target all available output ports).
-- After the simulation is run and the script completes, the watcher will save all of the data traces for each port in plots. These plots will be in a new `.brom` directory.
+  - The `DiagramWatcher` will connect all loggers to all targeted ports (in the above case, we will target all available output ports).
+- After the simulation is run and the script completes, the watcher will save all data traces for each port in `.png` files. These plots will be in a new `.brom` directory.
 
 ## Installation
 
-### Local install:
+`brom_drake` is available on PyPI and installable with pip:
+
+```shell
+pip install brom-drake
+```
+
+### Developer install
+
+You can also install the package during local development by cloning
+the repository and running the following commands from inside it:
 
 ```bash
 pip install -r requirements.txt
@@ -72,6 +83,8 @@ Some other work in the open-source drake community:
 - [kinova_drake](https://github.com/vincekurtz/kinova_drake) - A Drake-based library that builds a 
   simple version of the manipulation station for the Kinova Gen3 robot arm.
   Also works with the hardware.
+- [airo-drake](https://github.com/airo-ugent/airo-drake) - A python package meant to simplify
+  working with Drake and the `airo-mono` repository from the AI and Robotics Lab at Ghent University.
 
 ## To-Dos
 
@@ -83,4 +96,5 @@ Some other work in the open-source drake community:
 - [x] Add Code coverage
 - [ ] Add support for abstract output ports?
 - [ ] Add more readme explanations of what is going on under the hood.
-- [ ] Add support for giving `DiagramTarget` (or simpler objects) to the convenience functions. 
+- [ ] Add support for giving `DiagramTarget` (or simpler objects) to the convenience functions.
+- [x] Add to PyPI
