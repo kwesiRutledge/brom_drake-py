@@ -18,7 +18,7 @@ if __name__ == "__main__":
         description="A set of convenient logging and testing tools for the Drake robotics toolbox.",
         long_description_content_type="text/markdown",
         long_description=long_description,
-        packages=find_packages(where="src"),
+        packages=find_packages(),
         install_requires=['drake', 'meshcat', 'manipulation', 'loguru', 'matplotlib'],
         keywords=["drake", "robotics", "testing", "logging"],
         classifiers=[
