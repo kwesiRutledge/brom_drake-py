@@ -1,6 +1,81 @@
+[![codecov](https://codecov.io/gh/kwesiRutledge/brom_drake-py/graph/badge.svg?token=0TI5PV2HUD)](https://codecov.io/gh/kwesiRutledge/brom_drake-py)
+
 # brom_drake-py
 Brom is a helper library for the [Drake](https://drake.mit.edu/) robotics simulation and verification library.
+Its goal is to simplify logging and robustness characterization
+of Drake simulations. 
 
+## Use Cases
+
+Here are a few of the features available in `brom_drake` and how they work.
+
+### Easily Log Your Diagram's Signals
+
+It is recommended that you use the convenience function `add_watcher_and_build` to add a `DiagramWatcher` to your diagram.
+
+```python
+# Drake imports
+from pydrake.all import (
+    DiagramBuilder, Simulator,
+)
+# All your other imports
+
+from brom_drake.all import add_watcher_and_build
+
+# Create a diagram builder
+builder = DiagramBuilder()
+
+# Add and connect your systems...
+
+# Add the watcher and build the diagram
+dw, diagram, diagram_context = add_watcher_and_build(builder)
+
+# Set up simulation
+simulator = Simulator(diagram, diagram_context)
+simulator.set_target_realtime_rate(1.0)
+simulator.set_publish_every_time_step(False)
+
+# Run simulation
+simulator.Initialize()
+simulator.AdvanceTo(15.0)
+
+```
+
+
+What will happen whenever you use this function is that:
+- The `DiagramWatcher` will be created.
+  - It will search through all systems that the `DiagramBuilder` has added.
+  - For each system, the watcher will add a `VectorLogger` to each output port that is a `kVectorValued` port.
+  - The `DiagramWatcher` will connect all loggers to all targeted ports (in the above case, we will target all available output ports).
+- After the simulation is run and the script completes, the watcher will save all data traces for each port in `.png` files. These plots will be in a new `.brom` directory.
+
+## Installation
+
+`brom_drake` is available on PyPI and installable with pip:
+
+```shell
+pip install brom-drake
+```
+
+### Developer install
+
+You can also install the package during local development by cloning
+the repository and running the following commands from inside it:
+
+```bash
+pip install -r requirements.txt
+pip install -e .
+```
+
+## FAQs
+
+### Why the name Brom?
+
+[Brom the storyteller](https://inheritance.fandom.com/wiki/Brom) is a character from the
+[Inheritance](https://en.wikipedia.org/wiki/Eragon) series by Christopher Paolini.
+He is a wise mentor that helps Eragon (the protagonist) master dragons. ;)
+
+ 
 
 ## Related Work
 
@@ -8,3 +83,18 @@ Some other work in the open-source drake community:
 - [kinova_drake](https://github.com/vincekurtz/kinova_drake) - A Drake-based library that builds a 
   simple version of the manipulation station for the Kinova Gen3 robot arm.
   Also works with the hardware.
+- [airo-drake](https://github.com/airo-ugent/airo-drake) - A python package meant to simplify
+  working with Drake and the `airo-mono` repository from the AI and Robotics Lab at Ghent University.
+
+## To-Dos
+
+- [ ] Figure out how to tell if two systems are connected in Drake.
+- [x] Demonstrate how to create a simple Vector logger for the
+  tutorial's diagram.
+  - [x] Determine if we can use `DiagramTarget` objects to do everything (assuming that they are all valid). i.e., with the name and the port # can we do waht we want?
+- [ ] Add more examples
+- [x] Add Code coverage
+- [ ] Add support for abstract output ports?
+- [ ] Add more readme explanations of what is going on under the hood.
+- [ ] Add support for giving `DiagramTarget` (or simpler objects) to the convenience functions.
+- [x] Add to PyPI
