@@ -12,13 +12,13 @@ if __name__ == "__main__":
 
     setup(
         name="brom_drake",
-        version='{{VERSION_PLACEHOLDER}}',
+        version='0.0.2',
         author="Kwesi Rutledge",
         author_email="thesolitaryecrivain@gmail.com",
         description="A set of convenient logging and testing tools for the Drake robotics toolbox.",
         long_description_content_type="text/markdown",
         long_description=long_description,
-        packages=find_packages(),
+        # packages=find_packages(where='src/brom_drake'),
         install_requires=['drake', 'meshcat', 'manipulation', 'loguru', 'matplotlib'],
         keywords=["drake", "robotics", "testing", "logging"],
         classifiers=[
