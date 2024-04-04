@@ -12,7 +12,7 @@ if __name__ == "__main__":
 
     setup(
         name="brom_drake",
-        version='0.0.2',
+        version='{{VERSION_PLACEHOLDER}}',
         author="Kwesi Rutledge",
         author_email="thesolitaryecrivain@gmail.com",
         description="A set of convenient logging and testing tools for the Drake robotics toolbox.",
