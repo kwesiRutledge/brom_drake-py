@@ -263,15 +263,12 @@ class DiagramWatcher:
 
             # If it is, then also check that the port index is correct
             if target.ports is None:
-                continue # No need to check things if ports is None
+                continue  # No need to check things if ports is None
 
             num_ports_in_target = eligible_system_dict[target.name].num_output_ports()
             for port_index in target.ports:
                 if port_index < 0 or port_index >= num_ports_in_target:
                     raise ValueError(f"Port index {port_index} is out of bounds for system {target.name} (only {num_ports_in_target} ports exist)")
-
-
-
 
         # All checks passed!
         pass
@@ -291,10 +288,13 @@ class DiagramWatcher:
         # Find all the systems that are eligible for logging
         eligible_systems = []
 
+        loguru.logger.info("Finding all eligible systems for logging...")
         for system in builder.GetSystems():
-            for system_type in INELIGIBLE_SYSTEM_TYPES:
-                if isinstance(system, system_type):
-                    break
+            if type(system) in INELIGIBLE_SYSTEM_TYPES:
+                loguru.logger.warning(
+                    f"System {system.get_name()} (of type {type(system)}) is not eligible for logging! Skipping..."
+                )
+                continue
 
             # Otherwise add to list
             eligible_systems.append(system)

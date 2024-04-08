@@ -172,11 +172,6 @@ def main(show_plots: bool = True):
         )
     target_source2.configure_default_state(x0)
 
-    command_logger = LogVectorOutput(
-        target_source2.get_output_port(),
-        builder)
-    command_logger.set_name("command_logger")
-
     # Connect the state of the block to the output of a slowly changing system.
     builder.Connect(
         target_source2.get_output_port(),
