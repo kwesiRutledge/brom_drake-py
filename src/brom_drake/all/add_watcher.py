@@ -16,7 +16,7 @@ from brom_drake.DiagramWatcher import DiagramWatcher
 
 def add_watcher(
     builder: DiagramBuilder,
-    targets: List[Tuple[Union[str, int]]] = None,
+    targets: List[Union[str, Tuple[str, int], Tuple[int, int], Tuple[str,List[int]], Tuple[int, List[int]]]] = None,
 ) -> DiagramWatcher:
     """
     add_watcher
@@ -78,7 +78,7 @@ def add_watcher_and_build(
 
 def parse_list_of_simplified_targets(
         builder: DiagramBuilder,
-        targets: List[Union[str,Tuple[Union[str, int]]]],
+        targets: List[Union[str, Tuple[Union[str, int]]]],
 ) -> List[DiagramTarget]:
     """
     parse_list_of_simplified_targets
@@ -126,18 +126,39 @@ def parse_list_of_simplified_targets(
                         f"the index {target[0]} is not a valid index for the list of systems (has length {len(system_list)})."
                     )
                 target_name = system_list[target[0]].get_name()
+                print(system_list[target[0]].get_output_port())
+
             else:
                 raise ValueError(
                     "the first element of the tuple must be a string or an integer."
                 )
 
             # Parse the second element in the tuple
-            if not isinstance(target[1], list):
+            if isinstance(target[1], int):
+                ports_list = [target[1]]
+            elif isinstance(target[1], list):
+                ports_list = []
+                for ii, elt_ii in enumerate(target[1]):
+                    if isinstance(elt_ii, int):
+                        ports_list.append(elt_ii)
+                    elif isinstance(elt_ii, str):
+                        raise NotImplementedError(
+                            f"target_list[{ii}] of the tuple is not an integer (it is of type {type(elt_ii)})!.\n" +
+                            "If you want this feature to be implemented, send a message to the maintainer \n" +
+                            "or create a pull request on the github repository."
+                        )
+                    else:
+                        raise ValueError(
+                            f"the target_list[{ii}] of the tuple is not an integer!."
+                        )
+            else:
                 raise ValueError(
-                    "the second element of the tuple must be a list of integers."
+                    "the second element of the tuple must be either a: \n" +
+                    "- a list of integers\n" +
+                    "- an integer\n" +
+                    "- None.\n" +
+                    f"Received type {type(target[1])}"
                 )
-
-            ports_list = target[1]
 
         # Create the diagram target object
         dt = DiagramTarget(target_name, ports_list)
