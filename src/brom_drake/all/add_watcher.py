@@ -13,10 +13,20 @@ from pydrake.all import DiagramBuilder, Diagram
 from brom_drake.DiagramTarget import DiagramTarget
 from brom_drake.DiagramWatcher import DiagramWatcher
 
+PotentialTargetTypes = List[
+    Union[
+        str,
+        Tuple[str, int],
+        Tuple[int, int],
+        Tuple[str, List[int]],
+        Tuple[int, List[int]],
+    ],
+]
+
 
 def add_watcher(
     builder: DiagramBuilder,
-    targets: List[Union[str, Tuple[str, int], Tuple[int, int], Tuple[str,List[int]], Tuple[int, List[int]]]] = None,
+    targets: PotentialTargetTypes = None,
 ) -> DiagramWatcher:
     """
     add_watcher
@@ -45,7 +55,7 @@ def add_watcher(
 
 def add_watcher_and_build(
     builder: DiagramBuilder,
-    targets: List[Tuple[Union[str, int]]] = None,
+    targets: PotentialTargetTypes = None,
 ) -> (DiagramWatcher, Diagram):
     """
     add_watcher_and_build
@@ -77,8 +87,8 @@ def add_watcher_and_build(
 
 
 def parse_list_of_simplified_targets(
-        builder: DiagramBuilder,
-        targets: List[Union[str, Tuple[Union[str, int]]]],
+    builder: DiagramBuilder,
+    targets: PotentialTargetTypes,
 ) -> List[DiagramTarget]:
     """
     parse_list_of_simplified_targets

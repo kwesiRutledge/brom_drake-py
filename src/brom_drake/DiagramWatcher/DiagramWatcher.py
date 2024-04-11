@@ -18,6 +18,7 @@ from pydrake.systems.primitives import (
 )
 
 from brom_drake.all import DiagramTarget
+from ..PortWatcher import PortWatcher
 from .constants import INELIGIBLE_SYSTEM_TYPES
 from .errors import UnrecognizedTargetError
 
@@ -72,7 +73,8 @@ class DiagramWatcher:
         self.inferred_targets = inferred_targets
 
         # For each target's port, we will add a logger
-        self.loggers = {target.name: {} for target in inferred_targets}
+        self.port_watchers = {target.name: {} for target in inferred_targets}
+        loguru.logger.info("Adding loggers to the diagram... (via PortWatcher objects)")
         for target in inferred_targets:
             system = subject.GetSubsystemByName(target.name)
             for port_index in target.ports:
@@ -80,11 +82,17 @@ class DiagramWatcher:
 
                 if target_port.get_data_type() != PortDataType.kVectorValued:
                     print(f"Port {port_index} of system {target.name} is not vector-valued! Skipping...")
+                    loguru.logger.warning(
+                        f"Port {port_index} of system {target.name} is not vector-valued!" +
+                        "Will not add a logger for it.",
+                    )
                     continue
 
-                logger = LogVectorOutput(system.get_output_port(port_index), subject)
-                logger.set_name(f"{target.name}_logger_{port_index}")
-                self.loggers[target.name][port_index] = logger
+                self.port_watchers[target.name][port_index] = PortWatcher(
+                    system, target_port, subject,
+                    logger_name=f"{target.name}_logger_{port_index}",
+                    plot_dir=plot_dir,
+                )
 
     def __del__(self):
         """
@@ -103,26 +111,12 @@ class DiagramWatcher:
         # Upon deletion, we will PLOT the data from all of our loggers
         # if we have access to the diagram context
         if is_ready_to_plot:
-            for system_name in self.loggers:
+            for system_name in self.port_watchers:
                 system_ii = self.diagram.GetSubsystemByName(system_name)
-                ports_on_ii = self.loggers[system_name]
+                ports_on_ii = self.port_watchers[system_name]
                 for port_index in ports_on_ii:
-                    system_ii_port = system_ii.get_output_port(port_index)
-
-                    fig_ii_pi, ax_list_ii_pi = self.plot_logger_data(
-                        system_ii, port_index
-                    )
-                    # Save the figure, if plot was successful
-                    if fig_ii_pi is None:
-                        continue
-
-                    fig_ii_pi.savefig(
-                        f"{plot_dir}/{self.safe_system_name(system_name)}_port_{system_ii_port.get_name()}.png",
-                    )
-
-                # data and sampling times from the logger
-
-            # self.logger = LogOutput(diagram.get_context())
+                    temp_port_watcher = ports_on_ii[port_index]
+                    temp_port_watcher.savefigs(self.diagram_context)
 
 
     def configure_brom_activity_summary(self):
@@ -152,84 +146,6 @@ class DiagramWatcher:
         out = out.replace(" ", "_")
 
         return out
-
-    def plot_logger_data(
-        self,
-        system_ii: LeafSystem,
-        port_index: int,
-    ) -> (plt.Figure, List[plt.Axes]):
-        """
-        Description:
-
-            Plots the data from the logger for the specified system and port.
-        :param system_ii:
-        :param port_jj:
-        :return:
-        """
-        # Setup
-        port_jj = system_ii.get_output_port(port_index)
-        logger = self.loggers[system_ii.get_name()][port_index]
-
-        if self.diagram is None:
-            raise ValueError("Cannot plot data without access to the diagram context!")
-
-        diagram_context = self.diagram_context
-
-        # Get the log from the logger
-        temp_log = logger.FindLog(diagram_context)  # Extract the log from the logger
-
-        log_times = temp_log.sample_times()
-        data = temp_log.data()
-
-        if data.shape[0] == 0:
-            loguru.logger.warning(f"No data found for {system_ii.get_name()} - Port {port_index} ({port_jj.get_name()})! Skipping...")
-            return None, None
-
-        # Plot the data
-        n_rows, n_cols = self.compute_plot_shape(data.shape[0])
-
-        fig = plt.figure()
-        ax_list = []
-
-        for dim_index in range(port_jj.size()):
-            ax_list.append(
-                fig.add_subplot(n_rows, n_cols, 1 + dim_index)
-            )
-            plt.plot(log_times, data[dim_index, :])
-            # TODO: Create a flag for how verbose title will be
-            # plt.title(
-            #     system_ii.get_name() +
-            #     " - Port " + str(port_index) +
-            #     'Dim #' + str(dim_index)
-            # )
-            plt.title(f"Dim #{dim_index}")
-
-        plt.subplots_adjust(
-            left=0.1, bottom=0.1, right=0.95, top=0.95,
-            wspace=0.6, hspace=0.8,
-        )
-
-        return fig, ax_list
-
-    def compute_plot_shape(self, n_dims: int) -> tuple:
-        """
-        Description:
-            Computes the shape of the plot based on the data.
-        :param data: The data to be plotted.
-        :return:
-        """
-        if n_dims == 1:
-            return 1, 1
-        if n_dims == 2:
-            return 1, 2
-
-        if n_dims < 9:
-            return 2, int(np.ceil(n_dims / 2.0))
-
-        # Otherwise
-        return 3, int(np.ceil(n_dims / 3.0))
-
-        raise NotImplementedError(f"n_dims should be greater than 0! (received {n_dims})")
 
     def check_targets(
         self,
