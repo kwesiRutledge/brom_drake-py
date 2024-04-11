@@ -55,7 +55,10 @@ If you only want to watch a specific system, then you can do so by passing in in
 ```python
 watcher, _, _ = add_watcher_and_build(
   builder,
-  targets=[("system_name", "port_name")],
+  targets=[
+    ("system_name", "port_name"),
+    "system_name2",
+  ],
 )
 ```
 The above code tells the watcher to watch the port named `port_name` on the system named `system_name`.

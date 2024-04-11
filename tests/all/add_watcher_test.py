@@ -81,7 +81,9 @@ class AddWatcherTest(unittest.TestCase):
 
         builder = DiagramBuilder()
         plant = builder.AddNamedSystem("my_plant", MultibodyPlant(time_step=time_step))
+        plant.Finalize()
         controller = builder.AddNamedSystem("my_controller", MultibodyPlant(time_step=time_step))
+        controller.Finalize()
 
         # Test
         targets = parse_list_of_simplified_targets(
@@ -151,6 +153,45 @@ class AddWatcherTest(unittest.TestCase):
         self.assertEqual(
             3,
             len(watcher.port_watchers["my_plant"]) + len(watcher.port_watchers["my_controller"]),
+        )
+
+    def test_add_watcher3(self):
+        """
+        Description:
+
+            Tests the add_watcher convenience function.
+            We will make sure that new loggers are created (one for each port) and that
+            the logger is connected to the port.
+            This call will happen with targets that are a mixture of strings and tuples of two strings!
+        :return:
+        """
+        # Setup Diagram
+        time_step = 0.01
+
+        builder = DiagramBuilder()
+        plant = builder.AddNamedSystem("my_plant", MultibodyPlant(time_step=time_step))
+        plant.Finalize()
+        controller = builder.AddNamedSystem("my_controller", MultibodyPlant(time_step=time_step))
+        controller.Finalize()
+
+        # Add Watcher
+        watcher = add_watcher(
+            builder,
+            targets=[
+                "my_plant",
+                ("my_controller", "state"),
+            ],
+        )
+
+        # Verify that the watcher is connected to the correct ports
+        self.assertLessEqual(
+            4,
+            len(watcher.port_watchers["my_plant"]) + len(watcher.port_watchers["my_controller"]),
+        )
+        self.assertEqual(1, len(watcher.port_watchers["my_controller"]))
+        self.assertLess(
+            2,
+            len(watcher.port_watchers["my_plant"]),
         )
 
 

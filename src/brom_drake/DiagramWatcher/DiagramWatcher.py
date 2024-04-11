@@ -83,7 +83,7 @@ class DiagramWatcher:
                 if target_port.get_data_type() != PortDataType.kVectorValued:
                     print(f"Port {port_index} of system {target.name} is not vector-valued! Skipping...")
                     loguru.logger.warning(
-                        f"Port {port_index} of system {target.name} is not vector-valued!" +
+                        f"Port {port_index} ({target_port.get_name()}) of system {target.name} is not vector-valued! " +
                         "Will not add a logger for it.",
                     )
                     continue
