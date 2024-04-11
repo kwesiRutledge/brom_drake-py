@@ -8,6 +8,7 @@ Description:
 import unittest
 
 from pydrake.all import DiagramBuilder, MultibodyPlant
+from pydrake.multibody.parsing import Parser
 from pydrake.systems.framework import LeafSystem
 
 from brom_drake.all import DiagramTarget, parse_list_of_simplified_targets, add_watcher
@@ -84,7 +85,8 @@ class AddWatcherTest(unittest.TestCase):
 
         # Test
         targets = parse_list_of_simplified_targets(
-            builder, [("my_plant",[0,1]), ("my_controller",[0,1,2])])
+            builder, [("my_plant", [0, 1]), ("my_controller", [0, 1, 2])],
+        )
         self.assertEqual(len(targets), 2)
 
         self.assertEqual(targets[0].name, "my_plant")
@@ -92,7 +94,6 @@ class AddWatcherTest(unittest.TestCase):
 
         self.assertEqual(targets[1].name, "my_controller")
         self.assertEqual(targets[1].ports, [0, 1, 2])
-
 
     def test_add_watcher1(self):
         """
@@ -108,14 +109,49 @@ class AddWatcherTest(unittest.TestCase):
 
         builder = DiagramBuilder()
         plant = builder.AddNamedSystem("my_plant", MultibodyPlant(time_step=time_step))
+        plant.Finalize()
         controller = builder.AddNamedSystem("my_controller", MultibodyPlant(time_step=time_step))
+        controller.Finalize()
 
         # Add Watcher
-        watcher = add_watcher(builder, targets=[("my_plant", 0), ("my_controller", 0)])
+        watcher = add_watcher(builder, targets=[("my_plant", "state"), ("my_controller", "state")])
 
         # Verify that the watcher is connected to the correct ports
-        self.assertIn(plant.get_output_port(0).get_name(), "geometry_pose")
-        self.assertIn(controller.get_output_port(0).get_name(), "geometry_pose")
+        self.assertEqual(len(watcher.port_watchers), 2)
+
+    def test_add_watcher2(self):
+        """
+        Description:
+
+            Tests the add_watcher convenience function.
+            We will make sure that new loggers are created (one for each port) and that
+            the logger is connected to the port.
+            This call will happen with targets that are tuples of two strings!
+        :return:
+        """
+        # Setup Diagram
+        time_step = 0.01
+
+        builder = DiagramBuilder()
+        plant = builder.AddNamedSystem("my_plant", MultibodyPlant(time_step=time_step))
+        plant.Finalize()
+        controller = builder.AddNamedSystem("my_controller", MultibodyPlant(time_step=time_step))
+        controller.Finalize()
+
+        # Add Watcher
+        watcher = add_watcher(
+            builder,
+            targets=[
+                ("my_plant", ["state", "generalized_acceleration"]),
+                ("my_controller", "state")
+            ],
+        )
+
+        # Verify that the watcher is connected to the correct ports
+        self.assertEqual(
+            3,
+            len(watcher.port_watchers["my_plant"]) + len(watcher.port_watchers["my_controller"]),
+        )
 
 
 if __name__ == "__main__":

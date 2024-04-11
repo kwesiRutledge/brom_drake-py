@@ -8,6 +8,7 @@ Description:
 """
 from typing import List, Tuple, Union
 
+import numpy as np
 from pydrake.all import DiagramBuilder, Diagram
 
 from brom_drake.DiagramTarget import DiagramTarget
@@ -18,8 +19,10 @@ PotentialTargetTypes = List[
         str,
         Tuple[str, int],
         Tuple[int, int],
+        Tuple[str, str],
         Tuple[str, List[int]],
         Tuple[int, List[int]],
+        Tuple[str, List[str]],
     ],
 ]
 
@@ -146,17 +149,49 @@ def parse_list_of_simplified_targets(
             # Parse the second element in the tuple
             if isinstance(target[1], int):
                 ports_list = [target[1]]
+            elif isinstance(target[1], str):
+                # Find the index of port with this name
+                port_name = target[1]
+
+                # Find the system
+                system = None
+                for ii, system_ii in enumerate(system_list):
+                    if system_ii.get_name() == target_name:
+                        system = system_ii
+                        break
+
+                for jj in range(system.num_output_ports()):
+                    print(system.get_output_port(jj).get_name())
+
+                if system.HasOutputPort(port_name):
+                    ports_list = [int(system.GetOutputPort(port_name).get_index())]
+                else:
+                    raise ValueError(
+                        f"the system {target_name} does not have an output port named {port_name}."
+                    )
+
+
             elif isinstance(target[1], list):
                 ports_list = []
                 for ii, elt_ii in enumerate(target[1]):
                     if isinstance(elt_ii, int):
                         ports_list.append(elt_ii)
                     elif isinstance(elt_ii, str):
-                        raise NotImplementedError(
-                            f"target_list[{ii}] of the tuple is not an integer (it is of type {type(elt_ii)})!.\n" +
-                            "If you want this feature to be implemented, send a message to the maintainer \n" +
-                            "or create a pull request on the github repository."
-                        )
+                        port_name = elt_ii
+                        # Find the system
+                        system = None
+                        for ii, system_ii in enumerate(system_list):
+                            if system_ii.get_name() == target_name:
+                                system = system_ii
+                                break
+
+                        if system.HasOutputPort(port_name):
+                            ports_list += [int(system.GetOutputPort(port_name).get_index())]
+                        else:
+                            raise ValueError(
+                                f"the system {target_name} does not have an output port named {port_name}."
+                            )
+
                     else:
                         raise ValueError(
                             f"the target_list[{ii}] of the tuple is not an integer!."

@@ -49,6 +49,18 @@ What will happen whenever you use this function is that:
   - The `DiagramWatcher` will connect all loggers to all targeted ports (in the above case, we will target all available output ports).
 - After the simulation is run and the script completes, the watcher will save all data traces for each port in `.png` files. These plots will be in a new `.brom` directory.
 
+### Watching Specific systems
+
+If you only want to watch a specific system, then you can do so by passing in information to the "targets" argument:
+```python
+watcher, _, _ = add_watcher_and_build(
+  builder,
+  targets=[("system_name", "port_name")],
+)
+```
+The above code tells the watcher to watch the port named `port_name` on the system named `system_name`.
+(If you don't know your system's name in Drake, then you can usually find it by using the `get_name()` method.)
+
 ## Installation
 
 `brom_drake` is available on PyPI and installable with pip:

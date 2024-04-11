@@ -126,7 +126,7 @@ class DiagramWatcher:
         :return:
         """
         # Setup
-        loguru.logger.remove(0)  # Remove the default logger
+        loguru.logger.remove()  # Remove the default logger
         loguru.logger.add(self.plot_dir + "/activity_summary.log")
 
     def safe_system_name(self, name: str) -> str:
