@@ -16,13 +16,14 @@ from pydrake.systems.framework import OutputPort, PortDataType, DiagramBuilder, 
 from pydrake.systems.primitives import LogVectorOutput
 from pydrake.systems.framework import Context
 
-class DataSavedAs(Enum):
+
+class PortFigureArrangement(Enum):
     OnePlotPerDim = 0
     OnePlotPerPort = 1
 
 
 class PortWatcherOptions(NamedTuple):
-    plot_arrangement: DataSavedAs = DataSavedAs.OnePlotPerPort
+    plot_arrangement: PortFigureArrangement = PortFigureArrangement.OnePlotPerPort
     plot_dpi: int = 300
     save_to_file: bool = True
 
@@ -54,13 +55,16 @@ class PortWatcher:
             )
 
         if logger_name is None:
-            logger_name = f"PortWatcher_{output_port.get_name()}"
+            logger_name = f"PortWatcher_{system.get_name()}_{output_port.get_name()}"
 
         # Processing
         self.logger = LogVectorOutput(output_port, builder)
         self.logger.set_name(logger_name)
 
-    def plot_logger_data(self, diagram_context: Context):
+    def plot_logger_data(
+        self,
+        diagram_context: Context,
+    ) -> Tuple[List[plt.Figure], List[List[plt.Axes]]]:
         """
         plot_logger_data
         Description:
@@ -77,18 +81,17 @@ class PortWatcher:
         log_times = temp_log.sample_times()
         log_data = temp_log.data()
 
-        if log_data.shape[0] == 0:
-            if log_data.shape[0] == 0:
-                loguru.logger.warning(
-                    f"No data found for {self.system.get_name()} - Port {self.port.get_name()}! Skipping...")
-                return None, None
+        if (log_data.shape[1] == 0) or (log_data.shape[0] == 0):
+            loguru.logger.warning(
+                f"No data found for {self.system.get_name()} - Port {self.port.get_name()}! Skipping...")
+            return None, None
 
         # Plot the data
-        if self.options.plot_arrangement == DataSavedAs.OnePlotPerPort:
+        if self.options.plot_arrangement == PortFigureArrangement.OnePlotPerPort:
             fig, ax_list = self.plot_logger_data_subplots(diagram_context, log_times, log_data)
             return [fig], [ax_list]
 
-        elif self.options.plot_arrangement == DataSavedAs.OnePlotPerDim:
+        elif self.options.plot_arrangement == PortFigureArrangement.OnePlotPerDim:
             figs, ax_grid = [], []
             for port_index in range(self.port.size()):
                 fig_ii = plt.figure()
@@ -120,22 +123,27 @@ class PortWatcher:
         Description:
 
             This function plots the data in the logger.
+        :param times:
+        :param data:
         :param diagram_context:
         :return:
         """
         # Setup
 
         # Plot the data
-        n_rows, n_cols = self.compute_plot_shape(log_data.shape[0])
+        n_rows, n_cols = self.compute_plot_shape(data.shape[0])
 
         fig, ax_list = plt.subplots(n_rows, n_cols)
 
-        for dim_index in range(self.port.size()):
-            ax_list[dim_index].plot(times, data[dim_index, :])
-            ax_list[dim_index].set_title(f"Dim #{dim_index}")
+        for row_index in range(n_rows):
+            for col_index in range(n_cols):
+
+                dim_index = n_rows * row_index + col_index
+
+                ax_list[row_index, col_index].plot(times, data[dim_index, :])
+                ax_list[row_index, col_index].set_title(f"Dim #{dim_index}")
 
         return fig, ax_list
-
 
     def compute_plot_shape(self, n_dims: int) -> Tuple[int, int]:
         """
