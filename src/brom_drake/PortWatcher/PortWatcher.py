@@ -163,6 +163,24 @@ class PortWatcher:
         # Otherwise
         return 3, int(np.ceil(n_dims / 3.0))
 
+    def safe_system_name(self) -> str:
+        """
+        Description:
+            Returns a safe name for the system.
+        :param name: System's name.
+        :return:
+        """
+        out = self.system.get_name()
+        # First, let's check to see how many "/" exist in the name
+        slash_occurences = [i for i, letter in enumerate(name) if letter == "/"]
+        if len(slash_occurences) > 0:
+            out = out[slash_occurences[-1] + 1:]  # truncrate string based on the last slash
+
+        # Second, replace all spaces with underscores
+        out = out.replace(" ", "_")
+
+        return out
+
     def savefigs(self, diagram_context: Context):
         """
         savefigs
@@ -180,12 +198,12 @@ class PortWatcher:
         # Save the figures
         if len(figs) == 1:
             figs[0].savefig(
-                f"{self.plot_dir}/{self.system.get_name()}_{self.port.get_name()}.png",
+                f"{self.plot_dir}/{self.safe_system_name()}_{self.port.get_name()}.png",
                 dpi=self.options.plot_dpi,
             )
         else:
             # Create a directory for the plots
-            port_plot_dir = self.plot_dir + f"/{self.system.get_name()}_{self.port.get_name()}"
+            port_plot_dir = self.plot_dir + f"/{self.safe_system_name()}_{self.port.get_name()}"
             os.makedirs(port_plot_dir, exist_ok=True)
 
             # Plot each figure within this directory

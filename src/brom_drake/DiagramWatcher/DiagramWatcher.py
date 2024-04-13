@@ -129,24 +129,6 @@ class DiagramWatcher:
         loguru.logger.remove()  # Remove the default logger
         loguru.logger.add(self.plot_dir + "/activity_summary.log")
 
-    def safe_system_name(self, name: str) -> str:
-        """
-        Description:
-            Returns a safe name for the system.
-        :param name: System's name.
-        :return:
-        """
-        out = name
-        # First, let's check to see how many "/" exist in the name
-        slash_occurences = [i for i, letter in enumerate(name) if letter == "/"]
-        if len(slash_occurences) > 0:
-            out = out[slash_occurences[-1] + 1:]  # truncrate string based on the last slash
-
-        # Second, replace all spaces with underscores
-        out = out.replace(" ", "_")
-
-        return out
-
     def check_targets(
         self,
         targets: List[DiagramTarget],
