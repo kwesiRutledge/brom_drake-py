@@ -172,7 +172,7 @@ class PortWatcher:
         """
         out = self.system.get_name()
         # First, let's check to see how many "/" exist in the name
-        slash_occurences = [i for i, letter in enumerate(name) if letter == "/"]
+        slash_occurences = [i for i, letter in enumerate(out) if letter == "/"]
         if len(slash_occurences) > 0:
             out = out[slash_occurences[-1] + 1:]  # truncrate string based on the last slash
 
