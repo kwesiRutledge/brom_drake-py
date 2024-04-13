@@ -175,6 +175,8 @@ class PortWatcher:
         # Setup
         figs, ax_list = self.plot_logger_data(diagram_context)
 
+        os.makedirs(self.plot_dir, exist_ok=True)
+
         # Save the figures
         if len(figs) == 1:
             figs[0].savefig(

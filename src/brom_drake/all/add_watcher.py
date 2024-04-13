@@ -139,11 +139,12 @@ def parse_list_of_simplified_targets(
                         f"the index {target[0]} is not a valid index for the list of systems (has length {len(system_list)})."
                     )
                 target_name = system_list[target[0]].get_name()
-                print(system_list[target[0]].get_output_port())
 
             else:
                 raise ValueError(
-                    "the first element of the tuple must be a string or an integer."
+                    "the first element of the tuple must be a string or an integer; received {} (type {}).".format(
+                        target[0], type(target[0])
+                    )
                 )
 
             # Parse the second element in the tuple
@@ -160,8 +161,8 @@ def parse_list_of_simplified_targets(
                         system = system_ii
                         break
 
-                for jj in range(system.num_output_ports()):
-                    print(system.get_output_port(jj).get_name())
+                # for jj in range(system.num_output_ports()):
+                #     print(system.get_output_port(jj).get_name())
 
                 if system.HasOutputPort(port_name):
                     ports_list = [int(system.GetOutputPort(port_name).get_index())]
@@ -194,13 +195,16 @@ def parse_list_of_simplified_targets(
 
                     else:
                         raise ValueError(
-                            f"the target_list[{ii}] of the tuple is not an integer!."
+                            f"the target_list[{ii}] of the tuple is not an integer or a string! " +
+                            f"Received {elt_ii} of type {type(elt_ii)}."
                         )
             else:
                 raise ValueError(
                     "the second element of the tuple must be either a: \n" +
-                    "- a list of integers\n" +
                     "- an integer\n" +
+                    "- a list of integers\n" +
+                    "- a string\n" +
+                    "- a list of strings\n" +
                     "- None.\n" +
                     f"Received type {type(target[1])}"
                 )

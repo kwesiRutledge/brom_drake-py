@@ -97,6 +97,231 @@ class AddWatcherTest(unittest.TestCase):
         self.assertEqual(targets[1].name, "my_controller")
         self.assertEqual(targets[1].ports, [0, 1, 2])
 
+    def test_parse_list_of_simplified_targets5(self):
+        """
+        Tests the parse_list_of_simplified_targets function.
+        Verifies that the function produces a valid list of DiagramTargets when
+        given a list of tuples (most of the tuples contain a single ints for the ports_list).
+        :return:
+        """
+        # Setup Diagram
+        time_step = 0.01
+
+        builder = DiagramBuilder()
+        plant = builder.AddNamedSystem("my_plant", MultibodyPlant(time_step=time_step))
+        plant.Finalize()
+        controller = builder.AddNamedSystem("my_controller", MultibodyPlant(time_step=time_step))
+        controller.Finalize()
+
+        # Test
+        targets = parse_list_of_simplified_targets(
+            builder, [("my_plant", 0), ("my_controller", 1)],
+        )
+        self.assertEqual(len(targets), 2)
+
+        self.assertEqual(targets[0].name, "my_plant")
+        self.assertEqual(targets[0].ports, [0])
+
+        self.assertEqual(targets[1].name, "my_controller")
+        self.assertEqual(targets[1].ports, [1])
+
+    def test_parse_list_of_simplified_targets6(self):
+        """
+        Tests the parse_list_of_simplified_targets function.
+        Verifies that the function produces a valid list of DiagramTargets when
+        given a list of tuples (most of the tuples contain a two ints).
+        :return:
+        """
+        # Setup Diagram
+        time_step = 0.01
+
+        builder = DiagramBuilder()
+        plant = builder.AddNamedSystem("my_plant", MultibodyPlant(time_step=time_step))
+        plant.Finalize()
+        controller = builder.AddNamedSystem("my_controller", MultibodyPlant(time_step=time_step))
+        controller.Finalize()
+
+        # Test
+        targets = parse_list_of_simplified_targets(
+            builder, [(0, 0), (1, 1)],
+        )
+        self.assertEqual(len(targets), 2)
+
+        self.assertEqual(targets[0].name, "my_plant")
+        self.assertEqual(targets[0].ports, [0])
+
+        self.assertEqual(targets[1].name, "my_controller")
+        self.assertEqual(targets[1].ports, [1])
+
+    def test_parse_list_of_simplified_targets7(self):
+        """
+        Tests the parse_list_of_simplified_targets function.
+        Verifies that the function raises an error when the first element
+        of the tuple is an integer that is out of bounds given the
+        number of systems in the diagram.
+        :return:
+        """
+        # Setup Diagram
+        time_step = 0.01
+
+        builder = DiagramBuilder()
+        plant = builder.AddNamedSystem("my_plant", MultibodyPlant(time_step=time_step))
+        plant.Finalize()
+        controller = builder.AddNamedSystem("my_controller", MultibodyPlant(time_step=time_step))
+        controller.Finalize()
+
+        # Test
+        try:
+            targets = parse_list_of_simplified_targets(
+                builder, [(3, 0)],
+            )
+            self.assertTrue(False)
+        except ValueError as e:
+            expectedError = ValueError(
+                f"the index {3} is not a valid index for the list of systems (has length {2})."
+            )
+            self.assertEqual(str(e), str(expectedError))
+        else:
+            self.assertTrue(False)
+
+    def test_parse_list_of_simplified_targets8(self):
+        """
+        Tests the parse_list_of_simplified_targets function.
+        Verifies that the function raises an error when
+        the first element of the tuple is not an integer or a string.
+        In this case, it will be a float.
+        :return:
+        """
+        # Setup Diagram
+        time_step = 0.01
+
+        builder = DiagramBuilder()
+        plant = builder.AddNamedSystem("my_plant", MultibodyPlant(time_step=time_step))
+        plant.Finalize()
+        controller = builder.AddNamedSystem("my_controller", MultibodyPlant(time_step=time_step))
+        controller.Finalize()
+
+        # Test
+        try:
+            targets = parse_list_of_simplified_targets(
+                builder, [(3.14, 0)],
+            )
+            self.assertTrue(False)
+        except ValueError as e:
+            expectedError = ValueError(
+                "the first element of the tuple must be a string or an integer; received {} (type {}).".format(
+                    3.14, type(3.14),
+                )
+            )
+            self.assertEqual(str(e), str(expectedError))
+        else:
+            self.assertTrue(False)
+
+    def test_parse_list_of_simplified_targets9(self):
+        """
+        Tests the parse_list_of_simplified_targets function.
+        Verifies that the function raises an error when
+        the second element of the tuple is a string
+        that doesn't correspond to a valid port name.
+        :return:
+        """
+        # Setup Diagram
+        time_step = 0.01
+
+        builder = DiagramBuilder()
+        plant = builder.AddNamedSystem("my_plant", MultibodyPlant(time_step=time_step))
+        plant.Finalize()
+        controller = builder.AddNamedSystem("my_controller", MultibodyPlant(time_step=time_step))
+        controller.Finalize()
+
+        # Test
+        bad_port_name = "made_up_port_name"
+        try:
+            targets = parse_list_of_simplified_targets(
+                builder, [("my_plant", [bad_port_name])]
+            )
+            self.assertTrue(False)
+        except ValueError as e:
+            expectedError = ValueError(
+                f"the system {plant.get_name()} does not have an output port named {bad_port_name}."
+            )
+            self.assertEqual(str(e), str(expectedError))
+        else:
+            self.assertTrue(False)
+
+    def test_parse_list_of_simplified_targets10(self):
+        """
+        Tests the parse_list_of_simplified_targets function.
+        Verifies that the function raises an error when
+        the second element of the tuple is not a list of strings
+        or a list of ints.
+        It is a list of floats.
+        :return:
+        """
+        # Setup Diagram
+        time_step = 0.01
+
+        builder = DiagramBuilder()
+        plant = builder.AddNamedSystem("my_plant", MultibodyPlant(time_step=time_step))
+        plant.Finalize()
+        controller = builder.AddNamedSystem("my_controller", MultibodyPlant(time_step=time_step))
+        controller.Finalize()
+
+        # Test
+        bad_port_name = 3.14
+        try:
+            targets = parse_list_of_simplified_targets(
+                builder, [("my_plant", [bad_port_name])]
+            )
+            self.assertTrue(False)
+        except ValueError as e:
+            expectedError = ValueError(
+                f"the target_list[{0}] of the tuple is not an integer or a string! " +
+                f"Received {bad_port_name} of type {type(bad_port_name)}."
+            )
+            self.assertEqual(str(e), str(expectedError))
+        else:
+            self.assertTrue(False)
+
+    def test_parse_list_of_simplified_targets11(self):
+        """
+        Tests the parse_list_of_simplified_targets function.
+        Verifies that the function raises an error when
+        the second element of the tuple is not a list of strings
+        or a list of ints or an into or a string.
+        It will be a float.
+        :return:
+        """
+        # Setup Diagram
+        time_step = 0.01
+
+        builder = DiagramBuilder()
+        plant = builder.AddNamedSystem("my_plant", MultibodyPlant(time_step=time_step))
+        plant.Finalize()
+        controller = builder.AddNamedSystem("my_controller", MultibodyPlant(time_step=time_step))
+        controller.Finalize()
+
+        # Test
+        bad_port_name = 3.14
+        try:
+            targets = parse_list_of_simplified_targets(
+                builder, [("my_plant", bad_port_name)]
+            )
+            self.assertTrue(False)
+        except ValueError as e:
+            expectedError = ValueError(
+                "the second element of the tuple must be either a: \n" +
+                "- an integer\n" +
+                "- a list of integers\n" +
+                "- a string\n" +
+                "- a list of strings\n" +
+                "- None.\n" +
+                f"Received type {type(bad_port_name)}"
+            )
+            self.assertEqual(str(e), str(expectedError))
+        else:
+            self.assertTrue(False)
+
     def test_add_watcher1(self):
         """
         Description:
@@ -193,6 +418,8 @@ class AddWatcherTest(unittest.TestCase):
             2,
             len(watcher.port_watchers["my_plant"]),
         )
+
+
 
 
 if __name__ == "__main__":
