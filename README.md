@@ -5,6 +5,11 @@ Brom is a helper library for the [Drake](https://drake.mit.edu/) robotics simula
 Its goal is to simplify logging and robustness characterization
 of Drake simulations. 
 
+With Brom, you can easily:
+- Log (and Plot!) the Signals of Systems in Your Diagram
+![./promo/BromWatcher0.gif](./promo/BromWatcher0.gif)
+- (More coming soon...)
+
 ## Use Cases
 
 Here are a few of the features available in `brom_drake` and how they work.

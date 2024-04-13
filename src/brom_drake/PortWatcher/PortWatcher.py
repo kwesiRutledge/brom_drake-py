@@ -195,7 +195,10 @@ class PortWatcher:
 
         os.makedirs(self.plot_dir, exist_ok=True)
 
-        # Save the figures
+        # Save the figures (if possible)
+        if figs is None:
+            return
+
         if len(figs) == 1:
             figs[0].savefig(
                 f"{self.plot_dir}/{self.safe_system_name()}_{self.port.get_name()}.png",
