@@ -6,6 +6,7 @@ Description:
 """
 
 import unittest
+import os
 
 import numpy as np
 from pydrake.all import (
@@ -22,6 +23,18 @@ from brom_drake.PortWatcher.PortWatcher import PortFigureArrangement, PortWatche
 
 
 class PortWatcherTest(unittest.TestCase):
+    def get_brom_drake_dir(self):
+        """
+        Description:
+
+            This function returns the path to the brom_drake directory.
+        :return:
+        """
+        if "tests" in os.getcwd():
+            return os.path.abspath(os.path.join(os.getcwd(), "..", ".."))
+        else:
+            return os.getcwd()
+
     def test_init1(self):
         """
         Description:
@@ -214,7 +227,9 @@ class PortWatcherTest(unittest.TestCase):
         # + ground
         plant, scene_graph = AddMultibodyPlantSceneGraph(builder, time_step=1e-3)
 
-        block_model_idx = Parser(plant=plant).AddModels("../../examples/monitor1/slider-block.urdf")[0]
+        block_model_idx = Parser(plant=plant).AddModels(
+            self.get_brom_drake_dir() + "/examples/monitor1/slider-block.urdf",
+        )[0]
         block_body_name = "block"
 
         p_GroundOrigin = [0, 0.0, 0.0]
@@ -289,7 +304,9 @@ class PortWatcherTest(unittest.TestCase):
         # + ground
         plant, scene_graph = AddMultibodyPlantSceneGraph(builder, time_step=1e-3)
 
-        block_model_idx = Parser(plant=plant).AddModels("../../examples/monitor1/slider-block.urdf")[0]
+        block_model_idx = Parser(plant=plant).AddModels(
+            self.get_brom_drake_dir() + "/examples/monitor1/slider-block.urdf",
+        )[0]
         block_body_name = "block"
 
         p_GroundOrigin = [0, 0.0, 0.0]
@@ -366,7 +383,9 @@ class PortWatcherTest(unittest.TestCase):
         # + ground
         plant, scene_graph = AddMultibodyPlantSceneGraph(builder, time_step=1e-3)
 
-        block_model_idx = Parser(plant=plant).AddModels("../../examples/monitor1/slider-block.urdf")[0]
+        block_model_idx = Parser(plant=plant).AddModels(
+            self.get_brom_drake_dir() + "/examples/monitor1/slider-block.urdf",
+        )[0]
         block_body_name = "block"
 
         p_GroundOrigin = [0, 0.0, 0.0]
@@ -444,7 +463,9 @@ class PortWatcherTest(unittest.TestCase):
         # + ground
         plant, scene_graph = AddMultibodyPlantSceneGraph(builder, time_step=1e-3)
 
-        block_model_idx = Parser(plant=plant).AddModels("../../examples/monitor1/slider-block.urdf")[0]
+        block_model_idx = Parser(plant=plant).AddModels(
+            self.get_brom_drake_dir() + "/examples/monitor1/slider-block.urdf",
+        )[0]
         block_body_name = "block"
 
         p_GroundOrigin = [0, 0.0, 0.0]
