@@ -6,11 +6,12 @@ Its goal is to simplify logging and robustness characterization
 of Drake simulations. 
 
 With Brom, you can easily:
-- Log (and Plot!) the Signals of Systems in Your Diagram
-  <center>
-    <img src="./promo/BromWatcher0.gif" width="250" height="150"/>
-  </center>
-- More coming soon...
+
+Feature                    |  Code | Results
+:-------------------------:|:-------------------------:|:-------------------------:
+Add One Line, Log All Systems in Diagram |`add_watcher_and_build()`| ![Creation of Brom Directory](./promo/BromWatcher0.gif)
+
+(More coming soon...)
 
 ## Installation
 
