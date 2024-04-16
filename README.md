@@ -2,7 +2,7 @@
 
 # brom_drake-py
 Brom is a helper library for the [Drake](https://drake.mit.edu/) robotics simulation and verification library.
-Its goal is to simplify common activities in Drake (for example, logging the outputs
+Its goal is to simplify common debugging and testing activities in Drake (for example, logging the outputs
 of systems in your block diagrams). 
 
 Some of Brom's features:
