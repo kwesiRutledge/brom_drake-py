@@ -7,8 +7,28 @@ of Drake simulations.
 
 With Brom, you can easily:
 - Log (and Plot!) the Signals of Systems in Your Diagram
-![./promo/BromWatcher0.gif](./promo/BromWatcher0.gif)
-- (More coming soon...)
+  <center>
+    <img src="./promo/BromWatcher0.gif" width="250" height="150"/>
+  </center>
+- More coming soon...
+
+## Installation
+
+`brom_drake` is available on PyPI and installable with pip:
+
+```shell
+pip install brom-drake
+```
+
+### Developer install
+
+You can also install the package during local development by cloning
+the repository and running the following commands from inside it:
+
+```bash
+pip install -r requirements.txt
+pip install -e .
+```
 
 ## Use Cases
 
@@ -68,24 +88,6 @@ watcher, _, _ = add_watcher_and_build(
 ```
 The above code tells the watcher to watch the port named `port_name` on the system named `system_name`.
 (If you don't know your system's name in Drake, then you can usually find it by using the `get_name()` method.)
-
-## Installation
-
-`brom_drake` is available on PyPI and installable with pip:
-
-```shell
-pip install brom-drake
-```
-
-### Developer install
-
-You can also install the package during local development by cloning
-the repository and running the following commands from inside it:
-
-```bash
-pip install -r requirements.txt
-pip install -e .
-```
 
 ## FAQs
 
