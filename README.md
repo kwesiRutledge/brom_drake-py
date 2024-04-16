@@ -2,14 +2,14 @@
 
 # brom_drake-py
 Brom is a helper library for the [Drake](https://drake.mit.edu/) robotics simulation and verification library.
-Its goal is to simplify logging and robustness characterization
-of Drake simulations. 
+Its goal is to simplify common activities in Drake (for example, logging the outputs
+of systems in your block diagrams). 
 
-With Brom, you can easily:
+Some of Brom's features:
 
 Feature                    |  Code | Results
 :-------------------------:|:-------------------------:|:-------------------------:
-Add One Line, Log All Systems in Diagram |`add_watcher_and_build()`| ![Creation of Brom Directory](./promo/BromWatcher0.gif)
+The Diagram Watcher (the `DiagramWatcher` will log + plot all output ports of your `Diagram` automatically) |`add_watcher_and_build()`| ![Creation of Brom Directory](./promo/BromWatcher0.gif)
 
 (More coming soon...)
 
@@ -54,7 +54,7 @@ builder = DiagramBuilder()
 # Add and connect your systems...
 
 # Add the watcher and build the diagram
-dw, diagram, diagram_context = add_watcher_and_build(builder)
+watcher, diagram, diagram_context = add_watcher_and_build(builder)
 
 # Set up simulation
 simulator = Simulator(diagram, diagram_context)
