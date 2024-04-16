@@ -2,8 +2,34 @@
 
 # brom_drake-py
 Brom is a helper library for the [Drake](https://drake.mit.edu/) robotics simulation and verification library.
-Its goal is to simplify logging and robustness characterization
-of Drake simulations. 
+Its goal is to simplify common debugging and testing activities in Drake (for example, logging the outputs
+of systems in your block diagrams). 
+
+Some of Brom's features:
+
+Feature                    |  Code | Results
+:-------------------------:|:-------------------------:|:-------------------------:
+The Diagram Watcher (the `DiagramWatcher` will log + plot all output ports of your `Diagram` automatically) |`add_watcher_and_build()`| ![Creation of Brom Directory](./promo/BromWatcher0.gif)
+
+(More coming soon...)
+
+## Installation
+
+`brom_drake` is available on PyPI and installable with pip:
+
+```shell
+pip install brom-drake
+```
+
+### Developer install
+
+You can also install the package during local development by cloning
+the repository and running the following commands from inside it:
+
+```bash
+pip install -r requirements.txt
+pip install -e .
+```
 
 ## Use Cases
 
@@ -28,7 +54,7 @@ builder = DiagramBuilder()
 # Add and connect your systems...
 
 # Add the watcher and build the diagram
-dw, diagram, diagram_context = add_watcher_and_build(builder)
+watcher, diagram, diagram_context = add_watcher_and_build(builder)
 
 # Set up simulation
 simulator = Simulator(diagram, diagram_context)
@@ -49,23 +75,20 @@ What will happen whenever you use this function is that:
   - The `DiagramWatcher` will connect all loggers to all targeted ports (in the above case, we will target all available output ports).
 - After the simulation is run and the script completes, the watcher will save all data traces for each port in `.png` files. These plots will be in a new `.brom` directory.
 
-## Installation
+### Watching Specific systems
 
-`brom_drake` is available on PyPI and installable with pip:
-
-```shell
-pip install brom-drake
+If you only want to watch a specific system, then you can do so by passing in information to the "targets" argument:
+```python
+watcher, _, _ = add_watcher_and_build(
+  builder,
+  targets=[
+    ("system_name", "port_name"),
+    "system_name2",
+  ],
+)
 ```
-
-### Developer install
-
-You can also install the package during local development by cloning
-the repository and running the following commands from inside it:
-
-```bash
-pip install -r requirements.txt
-pip install -e .
-```
+The above code tells the watcher to watch the port named `port_name` on the system named `system_name`.
+(If you don't know your system's name in Drake, then you can usually find it by using the `get_name()` method.)
 
 ## FAQs
 
