@@ -36,7 +36,7 @@ class PortWatcher:
         builder: DiagramBuilder,
         logger_name: str = None,
         options: PortWatcherOptions = PortWatcherOptions(),
-        plot_dir: str = "./.brom",
+        plot_dir: str = "./brom",
     ):
         # Setup
         self.options = options

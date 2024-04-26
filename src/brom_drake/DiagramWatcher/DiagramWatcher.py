@@ -28,7 +28,7 @@ class DiagramWatcher:
         self,
         subject: DiagramBuilder,
         targets: List[DiagramTarget] = None,
-        plot_dir: str = "./.brom",
+        plot_dir: str = "./brom",
         dpi: int = 300,
     ):
         # Setup
