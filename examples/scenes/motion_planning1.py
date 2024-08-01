@@ -9,15 +9,18 @@ import ipdb
 import typer
 
 from brom_drake.robots import UR10eStation
-from brom_drake.control import CartesianArmController
+from brom_drake.control import CartesianArmController, GripperController, GripperType
 
 def main():
+    # Create a gripper controller for the 2f85 gripper
+    gripper_controller = GripperController(GripperType.Robotiq_2f_85)
+
     # Create UR10e object
     station = UR10eStation()
 
 
     # Create a Cartesian controller
-    controller = CartesianArmController(station.plant, None)
+    # controller = CartesianArmController(station.plant, station.arm)
 
 
 
