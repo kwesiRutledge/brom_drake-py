@@ -600,7 +600,7 @@ class PortWatcherTest(unittest.TestCase):
         simulator.AdvanceTo(10.0)
 
         # Save figs
-        pw0.savefigs(diagram_context)
+        pw0.save_figures(diagram_context)
 
         # Check that there is only one png file in the plot_dir
         files = os.listdir(plot_dir)
@@ -693,7 +693,7 @@ class PortWatcherTest(unittest.TestCase):
         simulator.AdvanceTo(10.0)
 
         # Save figs
-        pw0.savefigs(diagram_context)
+        pw0.save_figures(diagram_context)
 
         # Check that there are 0 png files in the plot_dir
         files = os.listdir(plot_dir)

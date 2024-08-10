@@ -1,10 +1,11 @@
 """
+create_monitor_wo_convenience.py
 Description:
 
-    In this script, we use the convenience function to create a DiagramWatcher.
-    The watcher will automatically monitor the multiple parts of the diagram
-    which contains a spinning block whose slowly changing pose is controlled
-    by an affine system.
+    In this example, we illustrate how you can create a DiagramWatcher WITHOUT the convenience
+    function.
+    Note, that you must set the "diagram_context" and "diagram" variables in the watcher after building
+    the diagram yourself.
 """
 
 import ipdb
@@ -14,31 +15,36 @@ import typer
 # Drake imports
 from pydrake.all import (
     AddMultibodyPlantSceneGraph, DiagramBuilder,
-    AffineSystem, ConstantVectorSource, Meshcat, MeshcatVisualizer, Simulator,
+    AffineSystem, ConstantVectorSource,
+    Meshcat, MeshcatVisualizer, Simulator,
 )
 
-from brom_drake.all import add_watcher_and_build
+from brom_drake.all import DiagramWatcher
 from brom_drake.example_helpers import BlockHandlerSystem
+
+#######################
+## Class Definitions ##
+#######################
 
 def main():
 
     # Building Diagram
     time_step = 1e-3
+
     builder = DiagramBuilder()
 
-    # Create Plant and the "Block + Ground system"
+    # Add Multibody Plant and the "Block" System
     plant, scene_graph = AddMultibodyPlantSceneGraph(builder, time_step=time_step)
     block_handler_system = builder.AddSystem(BlockHandlerSystem(plant, scene_graph))
 
-    # Connect System To Handler
     # Create system that outputs the slowly updating value of the pose of the block.
     A = np.zeros((6, 6))
     B = np.zeros((6, 1))
     f0 = np.array([0.0, 0.1, 0.1, 0.0, 0.0, 0.0])
     C = np.eye(6)
-    D = np.zeros((6, 1))
-    y0 = np.zeros((6, 1))
-    x0 = np.array([0.0, 0.0, 0.0, 0.0, 0.2, 0.5])
+    D = np.zeros((6,1))
+    y0 = np.zeros((6,1))
+    x0 = np.array([0.0,0.0,0.0,0.0,0.2,0.5])
     target_source2 = builder.AddSystem(
         AffineSystem(A, B, f0, C, D, y0)
         )
@@ -61,8 +67,17 @@ def main():
     m_visualizer = MeshcatVisualizer(meshcat0)
     m_visualizer.AddToBuilder(builder, scene_graph, meshcat0)
 
-    # Add Watcher and Build
-    watcher, diagram, diagram_context = add_watcher_and_build(builder)
+    # Add Watcher Before
+    print("adding watcher before building...")
+    watcher = DiagramWatcher(builder, plot_dir="./brom")
+
+    diagram = builder.Build()
+
+    # IMPORTANT: Set the watchers diagram_context and diagram after building the diagram
+    diagram_context = diagram.CreateDefaultContext()
+
+    watcher.diagram_context = diagram_context
+    watcher.diagram = diagram
 
     # Set initial pose and vectors
     block_handler_system.SetInitialBlockState(diagram_context)
