@@ -138,7 +138,7 @@ class PortWatcher:
         for row_index in range(n_rows):
             for col_index in range(n_cols):
 
-                dim_index = n_rows * row_index + col_index
+                dim_index = n_cols * row_index + col_index
 
                 ax_list[row_index, col_index].plot(times, data[dim_index, :])
                 ax_list[row_index, col_index].set_title(f"Dim #{dim_index}")
