@@ -26,7 +26,7 @@ from brom_drake.example_helpers import BlockHandlerSystem
 ## Class Definitions ##
 #######################
 
-def main(show_plots: bool = True):
+def main():
 
     # Building Diagram
     time_step = 1e-3

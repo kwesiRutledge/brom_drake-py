@@ -1,8 +1,14 @@
-import sys
+"""
+Description:
+
+    In this script, we use the convenience function to create a DiagramWatcher.
+    The watcher will automatically monitor the multiple parts of the diagram
+    which contains a spinning block whose slowly changing pose is controlled
+    by an affine system.
+"""
 
 import ipdb
 import numpy as np
-import matplotlib.pyplot as plt
 import typer
 
 # Drake imports
@@ -14,13 +20,13 @@ from pydrake.all import (
 from brom_drake.all import add_watcher_and_build
 from brom_drake.example_helpers import BlockHandlerSystem
 
-def main(show_plots: bool = True):
+def main():
 
     # Building Diagram
     time_step = 1e-3
     builder = DiagramBuilder()
 
-    # plant = builder.AddSystem(MultibodyPlant(time_step=time_step)) #Add plant to diagram builder
+    # Create Plant and the "Block + Ground system"
     plant, scene_graph = AddMultibodyPlantSceneGraph(builder, time_step=time_step)
     block_handler_system = builder.AddSystem(BlockHandlerSystem(plant, scene_graph))
 
