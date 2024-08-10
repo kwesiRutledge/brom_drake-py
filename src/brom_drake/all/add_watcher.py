@@ -30,9 +30,9 @@ PotentialTargetTypes = List[
 def add_watcher(
     builder: DiagramBuilder,
     targets: PotentialTargetTypes = None,
+    data_dir: str = "./brom",
 ) -> DiagramWatcher:
     """
-    add_watcher
     Description:
 
         This function adds a DiagramWatcher to a DiagramBuilder.
@@ -43,22 +43,23 @@ def add_watcher(
 
         watcher = add_watcher(builder, [("plant", 0), ("controller", 0)])
 
-
     :param builder: DiagramBuilder. The diagram builder to which we want to add the watcher.
     :param targets: List[Tuple[Union[str, int]]]. The targets that we want to watch.
+    :param data_dir: str. The directory in which we will store the data collected by the DiagramWatcher.
     :return: DiagramWatcher. The watcher that we have added to the diagram builder.
     """
     # Parse targets list if it exists
     if targets is not None:
         targets = parse_list_of_simplified_targets(builder, targets)
 
-    watcher = DiagramWatcher(builder, targets=targets)
+    watcher = DiagramWatcher(builder, targets=targets, plot_dir=data_dir)
     return watcher
 
 
 def add_watcher_and_build(
     builder: DiagramBuilder,
     targets: PotentialTargetTypes = None,
+    data_dir: str = "./brom",
 ) -> (DiagramWatcher, Diagram):
     """
     add_watcher_and_build
@@ -76,9 +77,10 @@ def add_watcher_and_build(
 
     :param builder: DiagramBuilder. The diagram builder to which we want to add the watcher.
     :param targets: List[Tuple[Union[str, int]]]. The targets that we want to watch.
+    :param data_dir: str. The directory in which we will store the data collected by the DiagramWatcher.
     :return: DiagramWatcher. The watcher that we have added to the diagram builder.
     """
-    watcher = add_watcher(builder, targets=targets)
+    watcher = add_watcher(builder, targets=targets, data_dir=data_dir)
 
     # Build the diagram and add a reference to the watcher
     diagram = builder.Build()
