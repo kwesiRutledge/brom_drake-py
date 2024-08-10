@@ -1,3 +1,9 @@
+"""
+create_monitor.py
+Description:
+
+"""
+
 import sys
 
 import ipdb
@@ -17,8 +23,7 @@ from pydrake.all import (
 
 from manipulation.scenarios import AddMultibodyTriad
 
-from brom_drake.all import add_watcher_and_build
-
+from brom_drake.all import DiagramWatcher
 
 def AddGround(plant):
     """
@@ -133,7 +138,7 @@ class BlockHandlerSystem(LeafSystem):
         # Set Pose
         p_WBlock = [0.0, 0.0, 0.2]
         R_WBlock = RotationMatrix.MakeXRotation(np.pi/2.0) # RotationMatrix.MakeXRotation(-np.pi/2.0)
-        X_WBlock = RigidTransform(R_WBlock, p_WBlock)
+        X_WBlock = RigidTransform(R_WBlock,p_WBlock)
         print(self.block_model_idx)
         print(self.plant.physical_models())
         self.plant.SetFreeBodyPose(
@@ -150,27 +155,39 @@ class BlockHandlerSystem(LeafSystem):
 def main(show_plots: bool = True):
 
     # Building Diagram
-    time_step = 0.002
+    time_step = 1e-3
 
     builder = DiagramBuilder()
 
     # plant = builder.AddSystem(MultibodyPlant(time_step=time_step)) #Add plant to diagram builder
-    plant, scene_graph = AddMultibodyPlantSceneGraph(builder, time_step=1e-3)
+    plant, scene_graph = AddMultibodyPlantSceneGraph(builder, time_step=time_step)
     block_handler_system = builder.AddSystem(BlockHandlerSystem(plant, scene_graph))
+
+    # Connect Handler to Logger
+    # state_logger = LogVectorOutput(plant.get_body_spatial_velocities_output_port(), builder)
+    state_logger = LogVectorOutput(
+        block_handler_system.GetOutputPort("measured_block_pose"),
+        builder)
+    state_logger.set_name("state_logger")
 
     # Connect System To Handler
     # Create system that outputs the slowly updating value of the pose of the block.
-    A = np.zeros((6, 6))
-    B = np.zeros((6, 1))
-    f0 = np.array([0.0, 0.1, 0.1, 0.0, 0.0, 0.0])
+    A = np.zeros((6,6))
+    B = np.zeros((6,1))
+    f0 = np.array([0.0,0.1,0.1,0.0,0.0,0.0])
     C = np.eye(6)
-    D = np.zeros((6, 1))
-    y0 = np.zeros((6, 1))
-    x0 = np.array([0.0, 0.0, 0.0, 0.0, 0.2, 0.5])
+    D = np.zeros((6,1))
+    y0 = np.zeros((6,1))
+    x0 = np.array([0.0,0.0,0.0,0.0,0.2,0.5])
     target_source2 = builder.AddSystem(
-        AffineSystem(A, B, f0, C, D, y0)
+        AffineSystem(A,B,f0,C,D,y0)
         )
     target_source2.configure_default_state(x0)
+
+    command_logger = LogVectorOutput(
+        target_source2.get_output_port(),
+        builder)
+    command_logger.set_name("command_logger")
 
     # Connect the state of the block to the output of a slowly changing system.
     builder.Connect(
@@ -189,11 +206,30 @@ def main(show_plots: bool = True):
     m_visualizer = MeshcatVisualizer(meshcat0)
     m_visualizer.AddToBuilder(builder, scene_graph, meshcat0)
 
-    # Add Watcher and Build
-    watcher, diagram, diagram_context = add_watcher_and_build(builder)
+    # Add Watcher Before
+    print("adding watcher before")
+    watcher = DiagramWatcher(builder)
+
+    diagram = builder.Build()
+
+    # Add Watcher After
+    # print("adding watcher after")
+    # watcher2 = DiagramWatcher(diagram)
+
+
+
+    # diagram = builder.Build()
+    diagram_context = diagram.CreateDefaultContext()
+
+    watcher.diagram_context = diagram_context
+    watcher.diagram = diagram
 
     # Set initial pose and vectors
     block_handler_system.SetInitialBlockState(diagram_context)
+
+    # meshcat.load()
+    # diagram.Publish(diagram_context)
+
 
     # Set up simulation
     simulator = Simulator(diagram, diagram_context)
@@ -204,7 +240,6 @@ def main(show_plots: bool = True):
     # Run simulation
     simulator.Initialize()
     simulator.AdvanceTo(15.0)
-
 
 if __name__ == '__main__':
     with ipdb.launch_ipdb_on_exception():
