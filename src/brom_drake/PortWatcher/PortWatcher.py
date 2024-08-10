@@ -129,9 +129,11 @@ class PortWatcher:
         :return:
         """
         # Setup
+        n_dims = data.shape[0]
 
         # Plot the data
-        n_rows, n_cols = self.compute_plot_shape(data.shape[0])
+        n_rows, n_cols = self.compute_plot_shape(n_dims)
+
 
         fig, ax_list = plt.subplots(n_rows, n_cols)
 
@@ -139,6 +141,10 @@ class PortWatcher:
             for col_index in range(n_cols):
 
                 dim_index = n_cols * row_index + col_index
+
+                if dim_index >= n_dims:
+                    fig.delaxes(ax_list[row_index, col_index])
+                    continue
 
                 ax_list[row_index, col_index].plot(times, data[dim_index, :])
                 ax_list[row_index, col_index].set_title(f"Dim #{dim_index}")

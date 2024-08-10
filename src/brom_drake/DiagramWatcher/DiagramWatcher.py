@@ -32,8 +32,11 @@ class DiagramWatcher:
         dpi: int = 300,
     ):
         # Setup
-        self.diagram = None
         self.dpi = dpi
+
+        # Needs to be populated by the user of this class AFTER the diagram has been built
+        self.diagram = None
+        self.diagram_context = None
 
         # Check subject
         if not isinstance(subject, DiagramBuilder):
@@ -111,7 +114,7 @@ class DiagramWatcher:
         # Upon deletion, we will PLOT the data from all of our loggers
         # if we have access to the diagram context
         if is_ready_to_plot:
-            self.savefigs()
+            self.save_figures()
 
 
     def configure_brom_activity_summary(self):
