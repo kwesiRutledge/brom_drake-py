@@ -18,7 +18,7 @@ import numpy as np
 
 # Internal Imports
 from .gripper_target import GripperTarget
-from .gripper_type import GripperType
+from brom_drake.robots.gripper_type import GripperType
 
 
 # Constants

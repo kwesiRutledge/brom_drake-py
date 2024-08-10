@@ -5,7 +5,7 @@ from pydrake.systems.framework import Diagram, DiagramBuilder
 from pydrake.systems.primitives import Demultiplexer
 
 # Local imports
-from brom_drake.control.gripper_type import GripperType
+from brom_drake.robots.gripper_type import GripperType
 
 class UR10eStation(Diagram):
     """

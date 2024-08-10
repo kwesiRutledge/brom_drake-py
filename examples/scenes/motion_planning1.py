@@ -8,8 +8,8 @@ Description:
 import ipdb
 import typer
 
-from brom_drake.robots import UR10eStation
-from brom_drake.control import CartesianArmController, GripperController, GripperType
+from brom_drake.robots import UR10eStation, GripperType
+from brom_drake.control import CartesianArmController, GripperController
 
 def main():
     # Create a gripper controller for the 2f85 gripper
@@ -21,7 +21,6 @@ def main():
 
     # Create a Cartesian controller
     # controller = CartesianArmController(station.plant, station.arm)
-
 
 
 if __name__ == "__main__":
