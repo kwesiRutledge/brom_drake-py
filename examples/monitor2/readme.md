@@ -1,5 +1,11 @@
 # Readme
 
+In this example, we illustrate how you can create a DiagramWatcher WITHOUT the convenience function (i.e., `add_watcher_and_build()`).
+This might be useful for more advanced developers in the Drake ecosystem.
+
+Note, that you must set the `diagram_context` and `diagram` member variables in the watcher after building
+the diagram yourself.
+
 ## Notes
 
 > Why are all of the ports in the connection map

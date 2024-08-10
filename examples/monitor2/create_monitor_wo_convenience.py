@@ -1,14 +1,15 @@
 """
-create_monitor.py
+create_monitor_wo_convenience.py
 Description:
 
+    In this example, we illustrate how you can create a DiagramWatcher WITHOUT the convenience
+    function.
+    Note, that you must set the "diagram_context" and "diagram" variables in the watcher after building
+    the diagram yourself.
 """
-
-import sys
 
 import ipdb
 import numpy as np
-import matplotlib.pyplot as plt
 import typer
 
 # Drake imports
@@ -170,17 +171,16 @@ def main(show_plots: bool = True):
         builder)
     state_logger.set_name("state_logger")
 
-    # Connect System To Handler
     # Create system that outputs the slowly updating value of the pose of the block.
-    A = np.zeros((6,6))
-    B = np.zeros((6,1))
-    f0 = np.array([0.0,0.1,0.1,0.0,0.0,0.0])
+    A = np.zeros((6, 6))
+    B = np.zeros((6, 1))
+    f0 = np.array([0.0, 0.1, 0.1, 0.0, 0.0, 0.0])
     C = np.eye(6)
     D = np.zeros((6,1))
     y0 = np.zeros((6,1))
     x0 = np.array([0.0,0.0,0.0,0.0,0.2,0.5])
     target_source2 = builder.AddSystem(
-        AffineSystem(A,B,f0,C,D,y0)
+        AffineSystem(A, B, f0, C, D, y0)
         )
     target_source2.configure_default_state(x0)
 
@@ -207,18 +207,12 @@ def main(show_plots: bool = True):
     m_visualizer.AddToBuilder(builder, scene_graph, meshcat0)
 
     # Add Watcher Before
-    print("adding watcher before")
-    watcher = DiagramWatcher(builder)
+    print("adding watcher before building...")
+    watcher = DiagramWatcher(builder, plot_dir="./.brom")
 
     diagram = builder.Build()
 
-    # Add Watcher After
-    # print("adding watcher after")
-    # watcher2 = DiagramWatcher(diagram)
-
-
-
-    # diagram = builder.Build()
+    # IMPORTANT: Set the watchers diagram_context and diagram after building the diagram
     diagram_context = diagram.CreateDefaultContext()
 
     watcher.diagram_context = diagram_context
