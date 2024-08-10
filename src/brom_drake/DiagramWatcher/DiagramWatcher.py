@@ -111,12 +111,7 @@ class DiagramWatcher:
         # Upon deletion, we will PLOT the data from all of our loggers
         # if we have access to the diagram context
         if is_ready_to_plot:
-            for system_name in self.port_watchers:
-                system_ii = self.diagram.GetSubsystemByName(system_name)
-                ports_on_ii = self.port_watchers[system_name]
-                for port_index in ports_on_ii:
-                    temp_port_watcher = ports_on_ii[port_index]
-                    temp_port_watcher.savefigs(self.diagram_context)
+            self.savefigs()
 
 
     def configure_brom_activity_summary(self):
@@ -242,3 +237,16 @@ class DiagramWatcher:
             loguru.logger.info(f"{idx}: {target.name} - {target.ports}")
 
         return smart_targets
+
+    def save_figures(self):
+        """
+        Description:
+            Saves all the figures from the port watchers.
+        :return:
+        """
+        for system_name in self.port_watchers:
+            system_ii = self.diagram.GetSubsystemByName(system_name)
+            ports_on_ii = self.port_watchers[system_name]
+            for port_index in ports_on_ii:
+                temp_port_watcher = ports_on_ii[port_index]
+                temp_port_watcher.save_figures(self.diagram_context)

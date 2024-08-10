@@ -181,7 +181,7 @@ class PortWatcher:
 
         return out
 
-    def savefigs(self, diagram_context: Context):
+    def save_figures(self, diagram_context: Context):
         """
         savefigs
         Description:
