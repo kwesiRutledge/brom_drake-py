@@ -5,7 +5,6 @@ Description:
     This file defines the PortWatcher class. This class is used to watch the ports of a
     diagram.
 """
-from enum import Enum
 from typing import List, Tuple, Union, NamedTuple
 import loguru
 import numpy as np
@@ -16,17 +15,8 @@ from pydrake.systems.framework import OutputPort, PortDataType, DiagramBuilder, 
 from pydrake.systems.primitives import LogVectorOutput
 from pydrake.systems.framework import Context
 
-
-class PortFigureArrangement(Enum):
-    OnePlotPerDim = 0
-    OnePlotPerPort = 1
-
-
-class PortWatcherOptions(NamedTuple):
-    plot_arrangement: PortFigureArrangement = PortFigureArrangement.OnePlotPerPort
-    plot_dpi: int = 300
-    save_to_file: bool = True
-
+# Internal Imports
+from .PortWatcherOptions import PortWatcherOptions, PortFigureArrangement
 
 class PortWatcher:
     def __init__(

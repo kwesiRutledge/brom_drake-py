@@ -18,7 +18,7 @@ from pydrake.systems.primitives import (
 )
 
 from brom_drake.all import DiagramTarget
-from ..PortWatcher import PortWatcher
+from ..PortWatcher import PortWatcher, PortFigureArrangement, PortWatcherOptions
 from .constants import INELIGIBLE_SYSTEM_TYPES
 from .errors import UnrecognizedTargetError
 
@@ -30,6 +30,7 @@ class DiagramWatcher:
         targets: List[DiagramTarget] = None,
         plot_dir: str = "./brom",
         dpi: int = 300,
+        plot_arrangement: PortFigureArrangement = PortFigureArrangement.OnePlotPerPort,
     ):
         # Setup
         self.dpi = dpi
@@ -91,10 +92,16 @@ class DiagramWatcher:
                     )
                     continue
 
+                # Configure PortWatcher
+                options_ii = PortWatcherOptions(
+                    plot_arrangement=plot_arrangement,
+                )
+
                 self.port_watchers[target.name][port_index] = PortWatcher(
                     system, target_port, subject,
                     logger_name=f"{target.name}_logger_{port_index}",
                     plot_dir=plot_dir,
+                    options=options_ii,
                 )
 
     def __del__(self):
