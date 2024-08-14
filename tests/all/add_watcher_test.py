@@ -11,7 +11,7 @@ from pydrake.all import DiagramBuilder, MultibodyPlant
 from pydrake.multibody.parsing import Parser
 from pydrake.systems.framework import LeafSystem
 
-from brom_drake.all import DiagramTarget, parse_list_of_simplified_targets, add_watcher
+from brom_drake.all import DiagramTarget, parse_list_of_simplified_targets, add_watcher, add_watcher_and_build
 
 
 class AddWatcherTest(unittest.TestCase):
@@ -418,6 +418,46 @@ class AddWatcherTest(unittest.TestCase):
             2,
             len(watcher.port_watchers["my_plant"]),
         )
+
+    def test_add_watcher_and_build1(self):
+        """
+        Description:
+
+            Tests the add_watcher_and_build() convenience function.
+            We will make sure that an exception is raised when you provide a plot_arrangement that is
+            invalid.
+        :return:
+        """
+        # Setup
+        time_step = 1e-3
+
+        builder = DiagramBuilder()
+        plant = builder.AddNamedSystem("my_plant", MultibodyPlant(time_step=time_step))
+        plant.Finalize()
+        controller = builder.AddNamedSystem("my_controller", MultibodyPlant(time_step=time_step))
+        controller.Finalize()
+
+        # Add Watcher
+        invalid_arrangement_value = "invalid"
+        try:
+            watcher = add_watcher_and_build(
+                builder,
+                targets=[
+                    "my_plant",
+                    ("my_controller", "state"),
+                ],
+                plot_arrangement=invalid_arrangement_value,
+            )
+        except ValueError as e:
+            self.assertEqual(
+                str(e),
+                f"plot_arrangement must be of type PortFigureArrangement; received invalid of type {type(invalid_arrangement_value)}.",
+            )
+        except:
+            self.assertTrue(False)
+
+
+
 
 
 

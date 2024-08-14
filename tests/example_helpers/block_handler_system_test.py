@@ -6,6 +6,7 @@ Description:
     Or any other helper class that is used in the examples.
 """
 
+from importlib import resources as impresources
 import unittest
 from pydrake.all import (
     DiagramBuilder, AddMultibodyPlantSceneGraph
@@ -13,6 +14,7 @@ from pydrake.all import (
 
 # Internal Imports
 from brom_drake.example_helpers import BlockHandlerSystem, AddGround
+import brom_drake.example_helpers as eh
 
 
 class TestBlockHandlerSystem(unittest.TestCase):
@@ -25,7 +27,7 @@ class TestBlockHandlerSystem(unittest.TestCase):
         """
         # Setup
         time_step = 1e-3
-        urdf_path = "../../examples/monitor1/slider-block.urdf"  # TODO(Kwesi): Create a directory to hold all models
+        urdf_path = impresources.files(eh) / "models/slider-block.urdf"  # TODO(Kwesi): Create a directory to hold all models
         builder = DiagramBuilder()
 
         # Create Plant and the "Block + Ground system"

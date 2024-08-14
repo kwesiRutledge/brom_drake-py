@@ -55,7 +55,7 @@ def add_watcher(
     # Input Processing
     if not isinstance(plot_arrangement, PortFigureArrangement):
         raise ValueError(
-            f"plot_arrangment must be of type PortFigureArrangement, received {plot_arrangement} of type" +
+            f"plot_arrangement must be of type PortFigureArrangement; received {plot_arrangement} of type" +
             f" {type(plot_arrangement)}."
         )
 
