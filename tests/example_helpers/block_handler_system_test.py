@@ -33,7 +33,7 @@ class TestBlockHandlerSystem(unittest.TestCase):
         # Create Plant and the "Block + Ground system"
         plant, scene_graph = AddMultibodyPlantSceneGraph(builder, time_step=time_step)
         block_handler_system = builder.AddSystem(
-            BlockHandlerSystem(plant, scene_graph, model_urdf_path=urdf_path)
+            BlockHandlerSystem(plant, scene_graph, model_urdf_path=str(urdf_path))
         )
 
         # Check that the plant is finalized after building the system.
