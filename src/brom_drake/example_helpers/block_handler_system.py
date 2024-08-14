@@ -1,3 +1,5 @@
+from importlib import resources as impresources
+
 from pydrake.geometry import HalfSpace
 from pydrake.math import RollPitchYaw, RigidTransform, RotationMatrix
 from pydrake.multibody.math import SpatialVelocity
@@ -9,15 +11,25 @@ from manipulation.scenarios import AddMultibodyTriad
 
 import numpy as np
 
+# Internal Imports
+from brom_drake import example_helpers as eh
+
+
 class BlockHandlerSystem(LeafSystem):
     def __init__(
         self,
         plant: MultibodyPlant,
         scene_graph,
         block_name: str = "block_with_slots",
-        model_urdf_path: str = "./slider-block.urdf",
+        model_urdf_path: str = None,
     ):
         LeafSystem.__init__(self)
+
+        # Input Processing
+        if model_urdf_path is None:
+            model_urdf_path = str(
+                impresources.files(eh) / "models/slider-block.urdf",
+            )
 
         # Constants
         self.block_name = block_name
@@ -94,8 +106,6 @@ class BlockHandlerSystem(LeafSystem):
         p_WBlock = [0.0, 0.0, 0.2]
         R_WBlock = RotationMatrix.MakeXRotation(np.pi/2.0) # RotationMatrix.MakeXRotation(-np.pi/2.0)
         X_WBlock = RigidTransform(R_WBlock,p_WBlock)
-        print(self.block_model_idx)
-        print(self.plant.physical_models())
         self.plant.SetFreeBodyPose(
             self.plant.GetMyContextFromRoot(diagram_context),
             self.plant.GetBodyByName(self.block_body_name),

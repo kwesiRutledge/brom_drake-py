@@ -13,6 +13,7 @@ from pydrake.all import DiagramBuilder, Diagram
 
 from brom_drake.DiagramTarget import DiagramTarget
 from brom_drake.DiagramWatcher import DiagramWatcher
+from brom_drake.PortWatcher import PortFigureArrangement
 
 PotentialTargetTypes = List[
     Union[
@@ -31,6 +32,7 @@ def add_watcher(
     builder: DiagramBuilder,
     targets: PotentialTargetTypes = None,
     data_dir: str = "./brom",
+    plot_arrangement: PortFigureArrangement = PortFigureArrangement.OnePlotPerPort,
 ) -> DiagramWatcher:
     """
     Description:
@@ -46,13 +48,22 @@ def add_watcher(
     :param builder: DiagramBuilder. The diagram builder to which we want to add the watcher.
     :param targets: List[Tuple[Union[str, int]]]. The targets that we want to watch.
     :param data_dir: str. The directory in which we will store the data collected by the DiagramWatcher.
+    :param plot_arrangement: PortFigureArrangement. The arrangement of the plots.
+        (Can be PortFigureArrangement.OnePlotPerPort OR PortFigureArrangement.OnePlotPerDim)
     :return: DiagramWatcher. The watcher that we have added to the diagram builder.
     """
+    # Input Processing
+    if not isinstance(plot_arrangement, PortFigureArrangement):
+        raise ValueError(
+            f"plot_arrangement must be of type PortFigureArrangement; received {plot_arrangement} of type" +
+            f" {type(plot_arrangement)}."
+        )
+
     # Parse targets list if it exists
     if targets is not None:
         targets = parse_list_of_simplified_targets(builder, targets)
 
-    watcher = DiagramWatcher(builder, targets=targets, plot_dir=data_dir)
+    watcher = DiagramWatcher(builder, targets=targets, plot_dir=data_dir, plot_arrangement=plot_arrangement)
     return watcher
 
 
@@ -60,6 +71,7 @@ def add_watcher_and_build(
     builder: DiagramBuilder,
     targets: PotentialTargetTypes = None,
     data_dir: str = "./brom",
+    plot_arrangement: PortFigureArrangement = PortFigureArrangement.OnePlotPerPort,
 ) -> (DiagramWatcher, Diagram):
     """
     add_watcher_and_build
@@ -78,9 +90,11 @@ def add_watcher_and_build(
     :param builder: DiagramBuilder. The diagram builder to which we want to add the watcher.
     :param targets: List[Tuple[Union[str, int]]]. The targets that we want to watch.
     :param data_dir: str. The directory in which we will store the data collected by the DiagramWatcher.
+    :param plot_arrangement: PortFigureArrangement. The arrangement of the plots.
+        (Can be PortFigureArrangement.OnePlotPerPort OR PortFigureArrangement.OnePlotPerDim)
     :return: DiagramWatcher. The watcher that we have added to the diagram builder.
     """
-    watcher = add_watcher(builder, targets=targets, data_dir=data_dir)
+    watcher = add_watcher(builder, targets=targets, data_dir=data_dir, plot_arrangement=plot_arrangement)
 
     # Build the diagram and add a reference to the watcher
     diagram = builder.Build()
