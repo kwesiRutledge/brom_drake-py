@@ -7,11 +7,20 @@ Description:
 
 import unittest
 
-from pydrake.all import DiagramBuilder, MultibodyPlant
+import numpy as np
+from pydrake.all import DiagramBuilder, MultibodyPlant, ConstantVectorSource
 from pydrake.multibody.parsing import Parser
+from pydrake.multibody.plant import AddMultibodyPlantSceneGraph
+from pydrake.systems.analysis import Simulator
 from pydrake.systems.framework import LeafSystem
+from pydrake.systems.primitives import AffineSystem
 
-from brom_drake.all import DiagramTarget, parse_list_of_simplified_targets, add_watcher, add_watcher_and_build
+from brom_drake.all import (
+    DiagramTarget, parse_list_of_simplified_targets,
+    add_watcher, add_watcher_and_build,
+)
+from brom_drake.PortWatcher import PortFigureArrangement
+from brom_drake.example_helpers import BlockHandlerSystem
 
 
 class AddWatcherTest(unittest.TestCase):
@@ -456,10 +465,77 @@ class AddWatcherTest(unittest.TestCase):
         except:
             self.assertTrue(False)
 
+    def test_add_watcher_and_build2(self):
+        """
+        Description:
 
+            Tests the add_watcher_and_build() convenience function.
+            We will make sure that the default usage of the function works on a short (1 second) sim.
+            So, the diagram should be successfully built and the simulation should run.
+        :return:
+        """
+        # Setup
 
+        time_step = 1e-3
+        builder = DiagramBuilder()
 
+        # Create Plant and the "Block + Ground system"
+        plant, scene_graph = AddMultibodyPlantSceneGraph(builder, time_step=time_step)
+        block_handler_system = builder.AddSystem(BlockHandlerSystem(plant, scene_graph))
 
+        # Connect System To Handler
+        # Create system that outputs the slowly updating value of the pose of the block.
+        A = np.zeros((6, 6))
+        B = np.zeros((6, 1))
+        f0 = np.array([0.0, 0.1, 0.1, 0.0, 0.0, 0.0])
+        C = np.eye(6)
+        D = np.zeros((6, 1))
+        y0 = np.zeros((6, 1))
+        x0 = np.array([0.0, 0.0, 0.0, 0.0, 0.2, 0.5])
+        target_source2 = builder.AddSystem(
+            AffineSystem(A, B, f0, C, D, y0)
+        )
+        target_source2.configure_default_state(x0)
+
+        # Connect the state of the block to the output of a slowly changing system.
+        builder.Connect(
+            target_source2.get_output_port(),
+            block_handler_system.GetInputPort("desired_pose"))
+
+        u0 = np.array([0.2])
+        affine_system_input = builder.AddSystem(ConstantVectorSource(u0))
+        builder.Connect(
+            affine_system_input.get_output_port(),
+            target_source2.get_input_port()
+        )
+
+        plant = builder.AddNamedSystem("my_plant", MultibodyPlant(time_step=time_step))
+        plant.Finalize()
+        controller = builder.AddNamedSystem("my_controller", MultibodyPlant(time_step=time_step))
+        controller.Finalize()
+
+        # Add Watcher
+        watcher, diagram, diagram_context = add_watcher_and_build(
+            builder,
+            targets=[
+                "my_plant",
+                ("my_controller", "state"),
+            ],
+            plot_arrangement=PortFigureArrangement.OnePlotPerDim,
+        )
+
+        # Set initial pose and vectors
+        block_handler_system.SetInitialBlockState(diagram_context)
+
+        # Set up simulation
+        simulator = Simulator(diagram, diagram_context)
+        block_handler_system.context = block_handler_system.plant.GetMyMutableContextFromRoot(diagram_context)
+
+        # Run simulation
+        simulator.Initialize()
+        simulator.AdvanceTo(1.0)
+
+        self.assertTrue(True)
 
 
 if __name__ == "__main__":
