@@ -165,3 +165,6 @@ brom-venv/
 # Brom's Log files/outputs
 ***.brom/
 ***/brom/
+
+# Mac Temporary Files
+*.DS_Store

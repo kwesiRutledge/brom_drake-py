@@ -105,7 +105,7 @@ class BlockHandlerSystem(LeafSystem):
         # Set Pose
         p_WBlock = [0.0, 0.0, 0.2]
         R_WBlock = RotationMatrix.MakeXRotation(np.pi/2.0) # RotationMatrix.MakeXRotation(-np.pi/2.0)
-        X_WBlock = RigidTransform(R_WBlock,p_WBlock)
+        X_WBlock = RigidTransform(R_WBlock, p_WBlock)
         self.plant.SetFreeBodyPose(
             self.plant.GetMyContextFromRoot(diagram_context),
             self.plant.GetBodyByName(self.block_body_name),
