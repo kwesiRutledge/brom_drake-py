@@ -17,7 +17,7 @@ from pydrake.systems.primitives import (
     VectorLogSink, ConstantVectorSource, AffineSystem, LogVectorOutput,
 )
 
-from brom_drake.all import DiagramTarget
+from ..DiagramTarget import DiagramTarget
 from ..PortWatcher import PortWatcher, PortFigureArrangement, PortWatcherOptions
 from .constants import INELIGIBLE_SYSTEM_TYPES
 from .errors import UnrecognizedTargetError
@@ -95,9 +95,10 @@ class DiagramWatcher:
                 # Configure PortWatcher
                 options_ii = PortWatcherOptions(
                     plot_arrangement=plot_arrangement,
+                    plot_dpi=self.dpi,
                 )
 
-                self.port_watchers[target.name][port_index] = PortWatcher(
+                self.port_watchers[target.name][target_port.get_name()] = PortWatcher(
                     system, target_port, subject,
                     logger_name=f"{target.name}_logger_{port_index}",
                     plot_dir=plot_dir,
@@ -257,6 +258,6 @@ class DiagramWatcher:
         for system_name in self.port_watchers:
             system_ii = self.diagram.GetSubsystemByName(system_name)
             ports_on_ii = self.port_watchers[system_name]
-            for port_index in ports_on_ii:
-                temp_port_watcher = ports_on_ii[port_index]
+            for port_name in ports_on_ii:
+                temp_port_watcher = ports_on_ii[port_name]
                 temp_port_watcher.save_figures(self.diagram_context)
