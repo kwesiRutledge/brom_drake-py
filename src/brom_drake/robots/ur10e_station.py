@@ -1,23 +1,40 @@
+from importlib import resources as impresources
 
 from pydrake.geometry import SceneGraph
+from pydrake.math import RollPitchYaw, RigidTransform, RotationMatrix
+from pydrake.multibody.parsing import Parser
 from pydrake.multibody.plant import MultibodyPlant
+from pydrake.multibody.tree import FixedOffsetFrame
 from pydrake.systems.framework import Diagram, DiagramBuilder
 from pydrake.systems.primitives import Demultiplexer
 
 # Local imports
-from brom_drake.robots.gripper_type import GripperType
+from .gripper_type import GripperType
+from ..control.cartesian_arm_controller import CartesianArmController
+
+from brom_drake import robots
+
 
 class UR10eStation(Diagram):
     """
     A template system diagram for controlling a UR10e robot in a simulated environment.
     """
 
-    def __init__(self, time_step: float = 0.002):
+    def __init__(
+        self,
+        time_step: float = 0.002,
+    ):
         """
         Description:
 
             This class defines the
         """
+        # Input Processing
+        self.arm_urdf_path = str(
+            impresources.files(robots) / "models/ur/ur10e.urdf",
+        )
+
+        # Initialize the Diagram
         Diagram.__init__(self)
         self.set_name("UR10e_Station")
 
@@ -28,7 +45,9 @@ class UR10eStation(Diagram):
         self.scene_graph = self.builder.AddSystem(SceneGraph())
         self.scene_graph.set_name("UR10e_Station_SceneGraph")
 
-        self.plant = self.builder.AddSystem(MultibodyPlant(time_step=time_step))
+        self.plant = self.builder.AddSystem(
+            MultibodyPlant(time_step=time_step)
+        )
         self.plant.RegisterAsSourceForSceneGraph(self.scene_graph)
         self.plant.set_name("UR10e_Station_Plant")
 
@@ -43,8 +62,46 @@ class UR10eStation(Diagram):
         # Which sort of gripper we're using (if any)
         self.gripper_type = GripperType.NoGripper
 
-        # Whether or not we have a camera in the simulation
+        # Whether we have a camera in the simulation
         # self.has_camera = False
+
+        self.AddArm()
+
+    def AddArm(self):
+        """
+        Add the UR10e arm to the system.
+        """
+        # Setup
+        arm_urdf = self.arm_urdf_path
+
+        # The hardware system has lots of damping so this is more realistic,
+        # but requires a simulation with small timesteps.
+
+        self.arm = Parser(plant=self.plant).AddModels(arm_urdf)
+        self.controller_arm = Parser(plant=self.controller_plant).AddModels(arm_urdf)
+
+        # Fix the base of the arm to the world
+        self.plant.WeldFrames(
+            self.plant.world_frame(),
+            self.plant.GetFrameByName("base_link", self.arm),
+        )
+
+        self.controller_plant.WeldFrames(
+            self.controller_plant.world_frame(),
+            self.controller_plant.GetFrameByName("base_link", self.controller_arm),
+        )
+
+        # Create a new frame with the actual end-effector position.
+        self.X_ee = RigidTransform()
+        self.X_ee.set_translation([0, 0, 0.13])
+        self.plant.AddFrame(FixedOffsetFrame(
+            "end_effector",
+            self.plant.GetFrameByName("end_effector_link"),
+            self.X_ee, self.arm))
+        self.controller_plant.AddFrame(FixedOffsetFrame(
+            "end_effector",
+            self.controller_plant.GetFrameByName("end_effector_link"),
+            self.X_ee, self.controller_arm))
 
     def Finalize(self):
         """
@@ -67,13 +124,13 @@ class UR10eStation(Diagram):
         )
 
         self.builder.Connect(
-            self.plant.get_geometry_query_output_port(),
+            self.plant.get_geometry_poses_output_port(),
             self.scene_graph.get_source_pose_port(self.plant.get_source_id())
         )
 
         # Create controller that uses the shadow plant to control the robot
         cartesian_controller = self.builder.AddSystem(
-            CartesianController(self.controller_plant, self.controller_arm),
+            CartesianArmController(self.controller_plant, self.controller_arm),
         )
         cartesian_controller.set_name("UR10e_Station_CartesianController")
 

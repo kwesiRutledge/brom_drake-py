@@ -1,5 +1,5 @@
 """
-manipulation1.py
+motion_planning1.py
 Description:
 
     In this script, we create a UR10e robot and place it in an empty environment that we'll use for motion_planning
@@ -17,6 +17,7 @@ def main():
 
     # Create UR10e object
     station = UR10eStation()
+    station.Finalize()
 
 
     # Create a Cartesian controller
