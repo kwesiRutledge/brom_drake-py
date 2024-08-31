@@ -4,6 +4,7 @@ Description:
     This script includes a set of tests for the conversion of URDF
     files into a new URDF.
 """
+from importlib import resources as impresources
 import loguru
 import os
 from pathlib import Path
@@ -14,6 +15,7 @@ from xml.etree.ElementTree import ElementTree
 import numpy as np
 
 # Internal Imports
+import brom_drake
 from brom_drake.urdf import DrakeReadyURDFConverter
 from brom_drake.urdf.util import URDF_CONVERSION_LOG_LEVEL_NAME, URDF_CONVERSION_LEVEL
 
@@ -26,8 +28,12 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         Set up for all of the tests.
         :return:
         """
-        self.test_urdf1_filename = "./resources/test1.urdf"
-        self.test_urdf2_filename = "./../../src/brom_drake/robots/models/ur/ur10e.urdf"
+        self.test_urdf1_filename = str(
+            impresources.files(brom_drake) / "../../tests/urdf/resources/test1.urdf"
+        )
+        self.test_urdf2_filename = str(
+            impresources.files(brom_drake) / "robots/models/ur/ur10e.urdf"
+        )
 
     def test_convert_tree1(self):
         """

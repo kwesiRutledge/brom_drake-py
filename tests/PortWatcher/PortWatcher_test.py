@@ -228,7 +228,7 @@ class PortWatcherTest(unittest.TestCase):
         plant, scene_graph = AddMultibodyPlantSceneGraph(builder, time_step=1e-3)
 
         block_model_idx = Parser(plant=plant).AddModels(
-            self.get_brom_drake_dir() + "/examples/watcher/using_convenience1/slider-block.urdf",
+            self.get_brom_drake_dir() + "/examples/watcher/suggested_use1/slider-block.urdf",
         )[0]
         block_body_name = "block"
 
@@ -305,7 +305,7 @@ class PortWatcherTest(unittest.TestCase):
         plant, scene_graph = AddMultibodyPlantSceneGraph(builder, time_step=1e-3)
 
         block_model_idx = Parser(plant=plant).AddModels(
-            self.get_brom_drake_dir() + "/examples/watcher/using_convenience1/slider-block.urdf",
+            self.get_brom_drake_dir() + "/examples/watcher/suggested_use1/slider-block.urdf",
         )[0]
         block_body_name = "block"
 
@@ -384,7 +384,7 @@ class PortWatcherTest(unittest.TestCase):
         plant, scene_graph = AddMultibodyPlantSceneGraph(builder, time_step=1e-3)
 
         block_model_idx = Parser(plant=plant).AddModels(
-            self.get_brom_drake_dir() + "/examples/watcher/using_convenience1/slider-block.urdf",
+            self.get_brom_drake_dir() + "/examples/watcher/suggested_use1/slider-block.urdf",
         )[0]
         block_body_name = "block"
 
@@ -464,7 +464,7 @@ class PortWatcherTest(unittest.TestCase):
         plant, scene_graph = AddMultibodyPlantSceneGraph(builder, time_step=1e-3)
 
         block_model_idx = Parser(plant=plant).AddModels(
-            self.get_brom_drake_dir() + "/examples/watcher/using_convenience1/slider-block.urdf",
+            self.get_brom_drake_dir() + "/examples/watcher/suggested_use1/slider-block.urdf",
         )[0]
         block_body_name = "block"
 
@@ -547,7 +547,7 @@ class PortWatcherTest(unittest.TestCase):
         plant, scene_graph = AddMultibodyPlantSceneGraph(builder, time_step=1e-3)
 
         block_model_idx = Parser(plant=plant).AddModels(
-            self.get_brom_drake_dir() + "/examples/watcher/using_convenience1/slider-block.urdf",
+            self.get_brom_drake_dir() + "/examples/watcher/suggested_use1/slider-block.urdf",
         )[0]
         block_body_name = "block"
 
@@ -636,7 +636,7 @@ class PortWatcherTest(unittest.TestCase):
         plant, scene_graph = AddMultibodyPlantSceneGraph(builder, time_step=1e-3)
 
         block_model_idx = Parser(plant=plant).AddModels(
-            self.get_brom_drake_dir() + "/examples/watcher/using_convenience1/slider-block.urdf",
+            self.get_brom_drake_dir() + "/examples/watcher/suggested_use1/slider-block.urdf",
         )[0]
         block_body_name = "block"
 
