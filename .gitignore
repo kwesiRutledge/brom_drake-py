@@ -169,5 +169,5 @@ brom-venv/
 # Mac Temporary Files
 *.DS_Store
 
-# Test outputs
+# Example and Test outputs
 tests/urdf/resources/**/**.obj

@@ -7,8 +7,11 @@ Description:
 import loguru
 import os
 from pathlib import Path
+import trimesh
 import unittest
 from xml.etree.ElementTree import ElementTree
+
+import numpy as np
 
 # Internal Imports
 from brom_drake.urdf import DrakeReadyURDFConverter
@@ -20,10 +23,11 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         """
         Description
         -----------
-
+        Set up for all of the tests.
         :return:
         """
         self.test_urdf1_filename = "./resources/test1.urdf"
+        self.test_urdf2_filename = "./../../src/brom_drake/robots/models/ur/ur10e.urdf"
 
     def test_convert_tree1(self):
         """
@@ -40,13 +44,20 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         # Algorithm
         tree_out = converter.convert_tree(test_tree)
 
-        self.assertTrue(True)
+        # Test
+        # Verify that the tree's root has the same tag as the original
+        self.assertEqual(test_tree.getroot().tag, tree_out.getroot().tag)
+
+        # Verify that the tree's root has the same attributes as the original
+        self.assertEqual(test_tree.getroot().attrib, tree_out.getroot().attrib)
 
     def test_convert_tree_element1(self):
         """
         Description
         -----------
-        Tests that we can correctly read a URDF.
+        Tests the ability to correctly convert a single element of a tree,
+        when that element is not a mesh element.
+        Nothing should be changed by the function.
         :return:
         """
         # Setup
@@ -68,6 +79,42 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
 
         self.assertEqual(test_tree.getroot().attrib, new_root.attrib)
 
+    def test_convert_tree_element2(self):
+        """
+        Description
+        -----------
+        Tests the ability to correctly convert a single element of a tree,
+        when that element is a mesh element.
+        The mesh element should be replaced with a Drake-compatible
+        obj file.
+        :return:
+        """
+        # Setup
+        test_urdf1 = self.test_urdf1_filename
+        test_tree = ElementTree(file=test_urdf1)
+
+        loguru.logger.remove()
+
+        # Create converter and call method
+        converter = DrakeReadyURDFConverter(
+            test_urdf1,
+            log_file_name="test_convert_tree_element2.log",
+            overwrite_old_logs=True,
+        )
+        target_mesh_elt = test_tree.find(".//mesh[@filename='./meshes/ur10e/visual/base.dae']")
+        new_root = converter.convert_tree_element(target_mesh_elt)
+
+        # Compare the filenames of the mesh and the new obj file
+        self.assertNotEqual(
+            target_mesh_elt.attrib["filename"],
+            new_root.attrib["filename"]
+        )
+
+        self.assertIn(
+            ".obj",
+            new_root.attrib["filename"]
+        )
+
     def test_create_obj_to_replace_mesh_file1(self):
         """
         Description
@@ -79,7 +126,6 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         # Setup
         test_urdf1 = self.test_urdf1_filename
         test_tree = ElementTree(file=test_urdf1)
-        test_output_dir = Path("resources/meshes/test_create_obj_to_replace_mesh_file1/")
 
         # Get the tree with the dae file
         dae_tree = test_tree.find(
@@ -124,9 +170,78 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         # Test
         self.assertEqual(
             output_filename,
-            converter.output_file_name(),
+            converter.output_urdf_file_name(),
         )
 
+    def test_convert_urdf1(self):
+        """
+        Description
+        -----------
+        This test verifies that we can convert a full URDF file
+        into a new URDF file.
+        We'll verify that the new URDF exists and that it contains
+        mesh elements that only refer to .obj files.
+        :return:
+        """
+        # Setup
+        test_urdf1 = self.test_urdf1_filename
+
+        converter = DrakeReadyURDFConverter(
+            test_urdf1,
+            overwrite_old_logs=True,
+            log_file_name="test_convert_urdf1.log",
+        )
+
+        # Test
+        new_urdf_path = converter.convert_urdf()
+
+        # Verify that the new file exists
+        self.assertTrue(
+            new_urdf_path.exists()
+        )
+
+        # Verify that the new file contains only obj files
+        new_tree = ElementTree(file=new_urdf_path)
+        for mesh_elt in new_tree.iter("mesh"):
+            self.assertIn(
+                ".obj",
+                mesh_elt.attrib["filename"]
+            )
+
+    def test_convert_urdf2(self):
+        """
+        Description
+        -----------
+        This test verifies that we can convert a full URDF file
+        into a new URDF file. This time, we'll use a more complicated urdf file.
+        We'll verify that the new URDF exists and that it contains
+        mesh elements that only refer to .obj files.
+        :return:
+        """
+        # Setup
+        test_urdf2 = self.test_urdf2_filename
+
+        converter = DrakeReadyURDFConverter(
+            test_urdf2,
+            overwrite_old_logs=True,
+            log_file_name="test_convert_urdf2.log",
+        )
+
+        # Test
+        new_urdf_path = converter.convert_urdf()
+
+        # Verify that the new file exists
+        self.assertTrue(
+            new_urdf_path.exists()
+        )
+
+        # Verify that the new file contains only obj files
+        new_tree = ElementTree(file=new_urdf_path)
+        for mesh_elt in new_tree.iter("mesh"):
+            self.assertIn(
+                ".obj",
+                mesh_elt.attrib["filename"]
+            )
 
 if __name__ == '__main__':
     unittest.main()

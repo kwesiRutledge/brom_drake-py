@@ -7,7 +7,7 @@ def does_drake_parser_support(filename: str):
     """
     Description
     -----------
-    This function cleanly answers whether or not the given 3d object
+    This function cleanly answers whether the given 3d object
     file is supported by Drake.
     :param filename:
     :return:

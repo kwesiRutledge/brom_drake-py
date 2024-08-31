@@ -1,4 +1,4 @@
-# Readme
+# Suggested Use of the DiagramWatcher
 
 In this script, we use the convenience function
 `add_watcher_and_build` to create a DiagramWatcher and build it into an example Drake diagram.

@@ -6,7 +6,9 @@ arbitrary URDFs into URDFs that the Drake toolbox can
 support.
 """
 import os
-from copy import copy
+from copy import copy, deepcopy
+
+import trimesh
 from collada2obj import ColladaFileConverter
 from doctest import UnexpectedException
 
@@ -99,7 +101,7 @@ class DrakeReadyURDFConverter:
                 filter=lambda record: record['level'].name == URDF_CONVERSION_LOG_LEVEL_NAME,
             )
 
-    def convert_urdf(self):
+    def convert_urdf(self) -> Path:
         """
         Description
         -----------
@@ -109,9 +111,14 @@ class DrakeReadyURDFConverter:
         original_urdf_path = Path(self.original_urdf_filename)
         original_xml = ET.ElementTree(file=original_urdf_path)
 
-        # Setup
+        # Use recursive function to convert the tree
+        new_tree = self.convert_tree(original_xml)
 
+        # Output the new tree to a file
+        output_urdf_path = self.output_file_directory() / self.output_urdf_file_name()
+        os.makedirs(output_urdf_path.parent, exist_ok=True)
 
+        new_tree.write(output_urdf_path)
         return output_urdf_path
 
     def clean_up_models_dir(self):
@@ -138,16 +145,28 @@ class DrakeReadyURDFConverter:
         :return:
         """
         # Setup
-        root = copy(current_tree.getroot())
+        root = deepcopy(current_tree.getroot())
 
         # Modify Root if it contains a mesh or file input
         new_root = self.convert_tree_element(root)
 
-        all_children = new_root.findall("*")
+        # Remove all children from the new root
+        for child in new_root.findall("*"):
+            new_root.remove(child)
+
+        # Modify Children
+        for child in root:
+            new_child = self.convert_tree(
+                ET.ElementTree(child)
+            )
+            new_root.append(new_child.getroot())
+
+        return ET.ElementTree(new_root)
+
 
     def convert_tree_element(
         self,
-        root: ET.Element,
+        elt: ET.Element,
     ) -> ET.Element:
         """
         Description
@@ -155,31 +174,44 @@ class DrakeReadyURDFConverter:
         This method is used to transform one element in the XML tree into an eleemnt
         that that Drake URDF parser can handle. If necessary, it will create a new
         3d model file and place it into the right directory.
-        :param root: An element in the ElementTree that we would like to convert
+        :param elt: An element in the ElementTree that we would like to convert
                      into a Drake-ready element.
         :return: The Drake-ready xml tree element.
         """
         # Setup
+        new_elt = deepcopy(elt)
 
         # Algorithm
-        if root.tag == "mesh":
+        if new_elt.tag == "mesh":
+            self.log(f"Found a mesh element with filename \"{elt.attrib['filename']}\".")
             # Check the value of the filename
-            if not ("filename" in root.attrib):
+            if not ("filename" in new_elt.attrib):
                 raise ValueError(
                     f"Found a mesh element that does not contain the \"filename\" attribute.\n"
                     +"Brom doesn't know how to handle this!"
                 )
 
             # Filename exists; Let's check to see if it's obj or not
-            if does_drake_parser_support(root.attrib["filename"]):
+            if does_drake_parser_support(new_elt.attrib["filename"]):
                 pass
             else:
                 # If parser does not support the given filename,
                 # then let's try to create one
-                new_filename = self.create_obj_to_replace_mesh_file(root.attrib["filename"])
-
+                old_filename = elt.attrib["filename"]
+                new_filename = self.create_obj_to_replace_mesh_file(old_filename)
+                new_elt.set(
+                    "filename", new_filename,
+                )
+                self.log(
+                    f"Replaced the mesh file \"{old_filename}\" with a Drake-compatible .obj file at \"{new_filename}\"."
+                )
+        else:
+            # If the element is not a mesh element, then we will just return a copy of it.
+            self.log(
+                f"Found an element with tag \"{elt.tag}\" that is not a mesh element. No modification needed..."
+            )
         # Otherwise, just return a copy of the previous element.
-        return copy(root)
+        return new_elt
 
     def create_obj_to_replace_mesh_file(
         self,
@@ -198,27 +230,29 @@ class DrakeReadyURDFConverter:
         original_urdf_dir = Path(self.original_urdf_filename).parent
 
         # Define the paths to each file
-        directory_for_transformed_file = self.output_file_directory() / original_file_location_relative_to_urdf
+        directory_for_transformed_file = original_file_location_relative_to_urdf
         original_file_location = original_urdf_dir / Path(mesh_file_name)
 
-
         # Make sure that the file's location exists
-        os.makedirs(directory_for_transformed_file, exist_ok=True)
 
         # Convert based on the file type
+        output_path_for_urdf = None
         if ".dae" in mesh_file_name:
-            converter = ColladaFileConverter(
-                str(original_file_location),
-                obj_filename=str(
-                    directory_for_transformed_file / Path(mesh_file_name).name.replace(".dae", ".obj"),
-                ),
-            )
-            converter.export_obj()
+            dae_mesh = trimesh.load(str(original_file_location))
+            output_path_for_urdf = directory_for_transformed_file / Path(mesh_file_name).name.replace(".dae", ".obj")
+            output_path_for_exporter = self.output_file_directory() / output_path_for_urdf
+            os.makedirs(output_path_for_exporter.parent, exist_ok=True)
+            dae_mesh.export(str(output_path_for_exporter))
         elif ".stl" in mesh_file_name:
-            pass
+            stl_mesh = trimesh.load(str(original_file_location))
+            output_path_for_urdf = directory_for_transformed_file / Path(mesh_file_name).name.replace(".stl", ".obj")
+            output_path_for_exporter = self.output_file_directory() / output_path_for_urdf
+            os.makedirs(output_path_for_exporter.parent, exist_ok=True)
+            stl_mesh.export(str(output_path_for_exporter))
         else:
             raise ValueError(f"File type {mesh_file_name} is not supported by this function!")
-        pass
+
+        return "./" + str(output_path_for_urdf)
 
     @staticmethod
     def log(message: str):
@@ -235,7 +269,7 @@ class DrakeReadyURDFConverter:
         """
         Description
         -----------
-        Returns the directory of the output file.
+        Returns the directory of the output urdf file.
         :return:
         """
         # Setup
@@ -243,12 +277,12 @@ class DrakeReadyURDFConverter:
 
         # Input Processing
         if self.output_urdf_file_path is None:
-            return self.models_dir / original_file_path.parent
+            return self.models_dir / original_file_path.name.replace(".urdf", "")
         else:
             output_file_path = Path(self.output_urdf_file_path)
             return output_file_path.parent
 
-    def output_file_name(self) -> str:
+    def output_urdf_file_name(self) -> str:
         """
         Description
         -----------
