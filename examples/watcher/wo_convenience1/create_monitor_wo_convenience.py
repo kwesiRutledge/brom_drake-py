@@ -69,7 +69,7 @@ def main():
 
     # Add Watcher Before
     print("adding watcher before building...")
-    watcher = DiagramWatcher(builder, plot_dir="./brom")
+    watcher = DiagramWatcher(builder, plot_dir="brom")
 
     diagram = builder.Build()
 

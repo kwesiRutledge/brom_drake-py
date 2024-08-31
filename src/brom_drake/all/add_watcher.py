@@ -31,7 +31,7 @@ PotentialTargetTypes = List[
 def add_watcher(
     builder: DiagramBuilder,
     targets: PotentialTargetTypes = None,
-    data_dir: str = "./brom",
+    data_dir: str = "./brom/watcher_plots",
     plot_arrangement: PortFigureArrangement = PortFigureArrangement.OnePlotPerPort,
 ) -> DiagramWatcher:
     """
@@ -70,7 +70,7 @@ def add_watcher(
 def add_watcher_and_build(
     builder: DiagramBuilder,
     targets: PotentialTargetTypes = None,
-    data_dir: str = "./brom",
+    data_dir: str = "./brom/watcher_plots",
     plot_arrangement: PortFigureArrangement = PortFigureArrangement.OnePlotPerPort,
 ) -> (DiagramWatcher, Diagram):
     """

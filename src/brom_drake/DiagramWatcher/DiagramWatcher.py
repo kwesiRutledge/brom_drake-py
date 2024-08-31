@@ -28,7 +28,7 @@ class DiagramWatcher:
         self,
         subject: DiagramBuilder,
         targets: List[DiagramTarget] = None,
-        plot_dir: str = "./brom",
+        plot_dir: str = "./brom/watcher_plots",
         dpi: int = 300,
         plot_arrangement: PortFigureArrangement = PortFigureArrangement.OnePlotPerPort,
     ):

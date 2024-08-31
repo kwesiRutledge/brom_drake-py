@@ -20,7 +20,11 @@ if __name__ == "__main__":
         long_description_content_type="text/markdown",
         long_description=long_description,
         # packages=find_packages(where='src/brom_drake'),
-        install_requires=['drake', 'meshcat', 'manipulation', 'loguru', 'matplotlib'],
+        install_requires=[
+            'drake', 'meshcat', 'manipulation',
+            'loguru', 'matplotlib', 'numpy',
+            'pycollada', 'trimesh',
+        ],
         keywords=["drake", "robotics", "testing", "logging"],
         classifiers=[
             "Programming Language :: Python :: 3",

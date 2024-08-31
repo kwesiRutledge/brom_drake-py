@@ -10,6 +10,7 @@ Some of Brom's features:
 Feature                    |  Code | Results
 :-------------------------:|:-------------------------:|:-------------------------:
 The Diagram Watcher (the `DiagramWatcher` will log + plot all output ports of your `Diagram` automatically) |`add_watcher_and_build()`| ![Creation of Brom Directory](./promo/BromWatcher0.gif)
+The Drake-ify feature (converts your URDF file into a form that Drake can consume) | `drakeify_my_urdf()` | ![Drakeify Example](./promo/BromDrakeifyURDF0.gif)
 
 (More coming soon...)
 
@@ -112,12 +113,7 @@ Some other work in the open-source drake community:
 ## To-Dos
 
 - [ ] Figure out how to tell if two systems are connected in Drake.
-- [x] Demonstrate how to create a simple Vector logger for the
-  tutorial's diagram.
-  - [x] Determine if we can use `DiagramTarget` objects to do everything (assuming that they are all valid). i.e., with the name and the port # can we do waht we want?
 - [ ] Add more examples
-- [x] Add Code coverage
 - [ ] Add support for abstract output ports?
 - [ ] Add more readme explanations of what is going on under the hood.
-- [ ] Add support for giving `DiagramTarget` (or simpler objects) to the convenience functions.
-- [x] Add to PyPI
+- [ ] Add Documentation
