@@ -9,7 +9,6 @@ import os
 from copy import copy, deepcopy
 
 import trimesh
-from collada2obj import ColladaFileConverter
 from doctest import UnexpectedException
 
 import loguru
