@@ -1,0 +1,31 @@
+<?xml version="1.0" ?>
+<!-- ============================================================================================== -->
+<!-- |                                                                                            | -->
+<!-- |    baxter.urdf is DEPRECATED. It is included here for backward compatibility.              | -->
+<!-- |    Please use baxter.urdf.xacro by running:                                                | -->
+<!-- |$ rosrun xacro xacro.py - -inorder `rospack find baxter_description`/urdf/baxter.urdf.xacro | -->
+<!-- |                                                                                            | -->
+<!-- ============================================================================================== -->
+<robot name="baxter">
+  <link name="base">
+  </link>
+  <link name="torso">
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://baxter_description/meshes/torso/base_link.DAE"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://baxter_description/meshes/torso/base_link_collision.DAE"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.000000 0.000000 0.000000"/>
+      <mass value="35.336455"/>
+      <inertia ixx="1.849155" ixy="-0.000354" ixz="-0.154188" iyy="1.662671" iyz="0.003292" izz="0.802239"/>
+    </inertial>
+  </link>
+</robot>
