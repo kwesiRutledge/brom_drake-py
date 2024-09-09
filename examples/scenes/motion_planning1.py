@@ -6,22 +6,92 @@ Description:
     work.
 """
 import ipdb
+import numpy as np
+from pydrake.all import Simulator, DiagramBuilder
+from pydrake.common.value import AbstractValue
+from pydrake.geometry import Meshcat, MeshcatVisualizer
+from pydrake.multibody.plant import AddMultibodyPlantSceneGraph
+from pydrake.systems.primitives import ConstantValueSource, ConstantVectorSource
 import typer
 
+# Internal Imports
+from brom_drake.all import add_watcher_and_build
 from brom_drake.robots import UR10eStation, GripperType
-from brom_drake.control import CartesianArmController, GripperController
+from brom_drake.control import CartesianArmController, GripperController, GripperTarget, EndEffectorTarget
+
 
 def main():
-    # Create a gripper controller for the 2f85 gripper
-    gripper_controller = GripperController(GripperType.Robotiq_2f_85)
+    # Setup
+    builder = DiagramBuilder()
+    time_step = 0.005
+    gripper_target = GripperTarget.kPosition
 
     # Create UR10e object
-    station = UR10eStation()
+    # station = UR10eStation()
+    station = UR10eStation(gripper_type=GripperType.Robotiq_2f_85)
+    station.ConnectToMeshcatVisualizer()
     station.Finalize()
 
+    builder.AddSystem(station)
 
-    # Create a Cartesian controller
-    # controller = CartesianArmController(station.plant, station.arm)
+    # Create the GripperTarget value
+    q_grip_des = np.array([0])  # open at 0, closed at 1
+    gripper_target_source = builder.AddSystem(ConstantVectorSource(q_grip_des))
+
+    # Create the GripperTargetType and connect it to the system
+    gripper_target_type_source = builder.AddSystem(
+        ConstantValueSource(
+            AbstractValue.Make(gripper_target)
+        )
+    )
+    builder.Connect(
+        gripper_target_type_source.get_output_port(),
+        station.GetInputPort("gripper_target_type"))
+
+    builder.Connect(
+        gripper_target_source.get_output_port(),
+        station.GetInputPort("gripper_target"),
+    )
+
+    # Create the EndEffectorTarget and target value (then connect to the system)
+    ee_target_type = EndEffectorTarget.kPose
+    ee_target_type_source = builder.AddSystem(
+        ConstantValueSource(
+            AbstractValue.Make(ee_target_type)
+        )
+    )
+
+    ee_target = np.array([0.5, 0.5, 0.5, 0, 0, 0, 1])
+    ee_target_source = builder.AddSystem(
+        ConstantVectorSource(ee_target)
+    )
+
+    # Connect the end effector target type and target to the system
+    builder.Connect(
+        ee_target_type_source.get_output_port(),
+        station.GetInputPort("ee_target_type")
+    )
+
+    builder.Connect(
+        ee_target_source.get_output_port(),
+        station.GetInputPort("ee_target")
+    )
+
+    # Build System
+    watcher, diagram, diagram_context = add_watcher_and_build(builder)
+    # diagram = builder.Build()
+    # diagram_context = diagram.CreateDefaultContext()
+
+    # Set up simulation
+    simulator = Simulator(diagram, diagram_context)
+    simulator.set_target_realtime_rate(1.0)
+    simulator.set_publish_every_time_step(False)
+
+    # Run simulation
+    print("Initializing simulation...")
+    simulator.Initialize()
+    print("Simulation initialized.")
+    simulator.AdvanceTo(0.5)
 
 
 if __name__ == "__main__":

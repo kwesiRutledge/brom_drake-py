@@ -5,6 +5,8 @@ Description:
         This file defines the GripperController class.
 """
 # External Imports
+import importlib.resources as impresources
+
 from pydrake.common.value import AbstractValue
 from pydrake.multibody.parsing import Parser
 from pydrake.multibody.plant import MultibodyPlant
@@ -19,6 +21,8 @@ import numpy as np
 # Internal Imports
 from .gripper_target import GripperTarget
 from brom_drake.robots.gripper_type import GripperType
+
+from .. import robots
 
 
 # Constants
@@ -51,6 +55,7 @@ class GripperController(LeafSystem):
         """
         LeafSystem.__init__(self)
         self.type = gripper_type
+        self.context = None
 
         # State input port size depends on what type of gripper we're using
         if self.type == GripperType.Robotiq_2f_85:
@@ -59,12 +64,18 @@ class GripperController(LeafSystem):
             # We'll create a simple model of the gripper which is welded to the floor.
             # This will allow us to compute the distance between fingers.
             self.plant = MultibodyPlant(time_step=1.0) # time step doesn't matter
-            gripper_urdf = package_dir + "/../robots/models/2f_85_gripper/urdf/robotiq_2f_85.urdf"
-            self.gripper = Parser(plant=self.plant).AddModels(gripper_urdf)
+            gripper_urdf = str(
+                impresources.files(robots) / "models/2f_85_gripper/urdf/robotiq_2f_85.urdf"
+            )
+            self.gripper = Parser(plant=self.plant).AddModels(gripper_urdf)[0]
             self.plant.WeldFrames(
                 self.plant.world_frame(),
                 self.plant.GetFrameByName("robotiq_arg2f_base_link"),
             )
+            # Finalize the plant used for the gripper
+            self.plant.Finalize()
+            self.context = self.plant.CreateDefaultContext()
+
         else:
             raise RuntimeError("Invalid gripper type: %s" % self.type)
 
