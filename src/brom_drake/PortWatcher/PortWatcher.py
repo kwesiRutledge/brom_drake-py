@@ -124,20 +124,26 @@ class PortWatcher:
         # Plot the data
         n_rows, n_cols = self.compute_plot_shape(n_dims)
 
+        print(f"Plotting {n_dims} dimensions in a {n_rows}x{n_cols} grid.")
 
         fig, ax_list = plt.subplots(n_rows, n_cols)
 
-        for row_index in range(n_rows):
-            for col_index in range(n_cols):
+        if n_rows == 1 and n_cols == 1:
+            ax_list.plot(times, data[0, :])
+            ax_list.set_title(f"Dim #0")
 
-                dim_index = n_cols * row_index + col_index
+        else:
+            for row_index in range(n_rows):
+                for col_index in range(n_cols):
 
-                if dim_index >= n_dims:
-                    fig.delaxes(ax_list[row_index, col_index])
-                    continue
+                    dim_index = n_cols * row_index + col_index
 
-                ax_list[row_index, col_index].plot(times, data[dim_index, :])
-                ax_list[row_index, col_index].set_title(f"Dim #{dim_index}")
+                    if dim_index >= n_dims:
+                        fig.delaxes(ax_list[row_index, col_index])
+                        continue
+
+                    ax_list[row_index, col_index].plot(times, data[dim_index, :])
+                    ax_list[row_index, col_index].set_title(f"Dim #{dim_index}")
 
         return fig, ax_list
 

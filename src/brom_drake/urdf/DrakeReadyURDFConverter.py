@@ -20,7 +20,9 @@ import xml.etree.ElementTree as ET
 # Internal Supports
 from .util import (
     does_drake_parser_support,
-    URDF_CONVERSION_LOG_LEVEL_NAME, URDF_CONVERSION_LEVEL
+    URDF_CONVERSION_LOG_LEVEL_NAME, URDF_CONVERSION_LEVEL,
+    tree_contains_transmission_for_joint,
+    create_transmission_element_for_joint,
 )
 
 
@@ -60,6 +62,9 @@ class DrakeReadyURDFConverter:
             f"Created a new DrakeReadyURDFConverter for file \"{self.original_urdf_filename}\"."
         )
 
+        # Keep Track of the Joints In The Diagram
+        self.actuated_joint_names = []
+
     def configure_logger(self):
         """
         Description
@@ -84,22 +89,18 @@ class DrakeReadyURDFConverter:
                 raise UnexpectedException(f"Unexpected exception: {e}")
 
         # Configure logger if it doesn't exist
-        if urdf_conversion_level_exists:
-            loguru.logger.add(
-                self.models_dir / log_file_name,
-                level=URDF_CONVERSION_LOG_LEVEL_NAME,
-                filter=lambda record: record['level'].name == URDF_CONVERSION_LOG_LEVEL_NAME,
-            )
-        else:
+        if not urdf_conversion_level_exists:
             loguru.logger.level(
                 URDF_CONVERSION_LOG_LEVEL_NAME,
                 no=URDF_CONVERSION_LEVEL,
             )
-            loguru.logger.add(
-                self.models_dir / log_file_name,
-                level=URDF_CONVERSION_LOG_LEVEL_NAME,
-                filter=lambda record: record['level'].name == URDF_CONVERSION_LOG_LEVEL_NAME,
-            )
+
+        # Add logger
+        loguru.logger.add(
+            self.models_dir / log_file_name,
+            level=URDF_CONVERSION_LOG_LEVEL_NAME,
+            filter=lambda record: record['level'].name == URDF_CONVERSION_LOG_LEVEL_NAME,
+        )
 
     def convert_urdf(self) -> Path:
         """
@@ -113,6 +114,15 @@ class DrakeReadyURDFConverter:
 
         # Use recursive function to convert the tree
         new_tree = self.convert_tree(original_xml)
+
+        # Add transmissions, if needed
+        for joint_name in self.actuated_joint_names:
+            if tree_contains_transmission_for_joint(new_tree, joint_name):
+                continue
+            else:
+                # If transmission doesn't exist in URDF, then add it!
+                transmission_element = create_transmission_element_for_joint(joint_name)
+                new_tree.getroot().append(transmission_element)
 
         # Output the new tree to a file
         output_urdf_path = self.output_file_directory() / self.output_urdf_file_name()
@@ -135,6 +145,39 @@ class DrakeReadyURDFConverter:
         # Make sure that the models directory exists
         os.makedirs(self.models_dir, exist_ok=True)
         os.system(f"rm -r {self.models_dir}")
+
+    def convert_mesh_element(self, mesh_elt_in: ET.Element) -> ET.Element:
+        # Setup
+        new_elt = deepcopy(mesh_elt_in)
+
+        # Algorithm
+        self.log(
+            f"Found a mesh element with filename \"{mesh_elt_in.attrib['filename']}\"."
+        )
+
+        # Check the value of the filename
+        if not ("filename" in new_elt.attrib):
+            raise ValueError(
+                f"Found a mesh element that does not contain the \"filename\" attribute.\n"
+                + "Brom doesn't know how to handle this!"
+            )
+
+        # Filename exists; Let's check to see if it's obj or not
+        if does_drake_parser_support(new_elt.attrib["filename"]):
+            pass
+        else:
+            # If parser does not support the given filename,
+            # then let's try to create one
+            old_filename = new_elt.attrib["filename"]
+            new_filename = self.create_obj_to_replace_mesh_file(old_filename)
+            new_elt.set(
+                "filename", new_filename,
+            )
+            self.log(
+                f"Replaced the mesh file \"{old_filename}\" with a Drake-compatible .obj file at \"{new_filename}\"."
+            )
+
+        return new_elt
 
     def convert_tree(
         self,
@@ -187,28 +230,12 @@ class DrakeReadyURDFConverter:
 
         # Convert file paths for mesh elements if necessary
         if new_elt.tag == "mesh":
-            self.log(f"Found a mesh element with filename \"{elt.attrib['filename']}\".")
-            # Check the value of the filename
-            if not ("filename" in new_elt.attrib):
-                raise ValueError(
-                    f"Found a mesh element that does not contain the \"filename\" attribute.\n"
-                    +"Brom doesn't know how to handle this!"
-                )
-
-            # Filename exists; Let's check to see if it's obj or not
-            if does_drake_parser_support(new_elt.attrib["filename"]):
-                pass
-            else:
-                # If parser does not support the given filename,
-                # then let's try to create one
-                old_filename = elt.attrib["filename"]
-                new_filename = self.create_obj_to_replace_mesh_file(old_filename)
-                new_elt.set(
-                    "filename", new_filename,
-                )
-                self.log(
-                    f"Replaced the mesh file \"{old_filename}\" with a Drake-compatible .obj file at \"{new_filename}\"."
-                )
+            new_elt = self.convert_mesh_element(new_elt)
+        elif new_elt.tag == "transmission":
+            # Ignore transmission elements during the conversion
+            return new_elt
+        elif new_elt.tag == "joint":
+            self.handle_joint_element(new_elt)
         else:
             # If the element is not a mesh element, then we will just return a copy of it.
             self.log(
@@ -289,6 +316,32 @@ class DrakeReadyURDFConverter:
         new_mesh.export(str(output_path_for_exporter))
 
         return "./" + str(output_path_for_urdf)
+
+
+    def handle_joint_element(self, joint_elt: ET.Element):
+        """
+        Description
+        -----------
+        This method will handle the joint element in the URDF file.
+        :param joint_elt:
+        :return:
+        """
+        # Setup
+
+        # Keep track of all FREE joint names
+
+        # If the joint does not have a "type" attribute, then we will assume it is fixed
+        # and won't add it.
+        if "type" not in joint_elt.attrib:
+            return
+
+        # If joint is "fixed", then don't add it to the list of actuated joints
+        joint_is_fixed = joint_elt.attrib["type"] == "fixed"
+        if joint_is_fixed:
+            return
+
+        joint_name = joint_elt.attrib["name"]
+        self.actuated_joint_names.append(joint_name)
 
     def find_file_path_in_package(
             self,
