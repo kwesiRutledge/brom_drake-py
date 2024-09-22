@@ -17,18 +17,26 @@ import typer
 # Internal Imports
 from brom_drake.all import add_watcher_and_build
 from brom_drake.robots import UR10eStation, GripperType
-from brom_drake.control import CartesianArmController, GripperController, GripperTarget, EndEffectorTarget
+from brom_drake.control import GripperController, GripperTarget
+from brom_drake.control.arms import (
+    CartesianArmController, EndEffectorTarget,
+    ArmControlMode, JointTarget,
+)
 
 
 def main():
     # Setup
     builder = DiagramBuilder()
-    time_step = 0.005
+    time_step = 1e-5
     gripper_target = GripperTarget.kPosition
 
     # Create UR10e object
     # station = UR10eStation()
-    station = UR10eStation(gripper_type=GripperType.Robotiq_2f_85)
+    station = UR10eStation(
+        time_step=time_step,
+        gripper_type=GripperType.Robotiq_2f_85,
+        control_mode=ArmControlMode.kJoint,
+    )
     station.ConnectToMeshcatVisualizer()
     station.Finalize()
 
@@ -53,28 +61,28 @@ def main():
         station.GetInputPort("gripper_target"),
     )
 
-    # Create the EndEffectorTarget and target value (then connect to the system)
-    ee_target_type = EndEffectorTarget.kPose
-    ee_target_type_source = builder.AddSystem(
+    # Create the JointTarget and target value (then connect to the system)
+    joint_target_type = JointTarget.kPosition
+    joint_target_type_source = builder.AddSystem(
         ConstantValueSource(
-            AbstractValue.Make(ee_target_type)
+            AbstractValue.Make(joint_target_type)
         )
     )
 
-    ee_target = np.array([0.5, 0.5, 0.5, 0, 0, 0, 1])
-    ee_target_source = builder.AddSystem(
-        ConstantVectorSource(ee_target)
+    joint_target = np.array([0.0, 0.1, 0.0, 0, 0, 0])
+    joint_target_source = builder.AddSystem(
+        ConstantVectorSource(joint_target)
     )
 
     # Connect the end effector target type and target to the system
     builder.Connect(
-        ee_target_type_source.get_output_port(),
-        station.GetInputPort("ee_target_type")
+        joint_target_type_source.get_output_port(),
+        station.GetInputPort("joint_target_type")
     )
 
     builder.Connect(
-        ee_target_source.get_output_port(),
-        station.GetInputPort("ee_target")
+        joint_target_source.get_output_port(),
+        station.GetInputPort("joint_target")
     )
 
     # Build System
@@ -84,14 +92,14 @@ def main():
 
     # Set up simulation
     simulator = Simulator(diagram, diagram_context)
-    simulator.set_target_realtime_rate(1.0)
+    simulator.set_target_realtime_rate(0.25)
     simulator.set_publish_every_time_step(False)
 
     # Run simulation
     print("Initializing simulation...")
     simulator.Initialize()
     print("Simulation initialized.")
-    simulator.AdvanceTo(0.5)
+    simulator.AdvanceTo(5.0)
 
 
 if __name__ == "__main__":
