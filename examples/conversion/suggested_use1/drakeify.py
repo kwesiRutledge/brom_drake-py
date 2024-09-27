@@ -1,8 +1,7 @@
 """
-drakeify.py
 Description
 -----------
-This script contains an example of how to convert a
+This script contains an example of how to convert a URDF file into a "Drake-ready" URDF file.
 """
 
 import ipdb
