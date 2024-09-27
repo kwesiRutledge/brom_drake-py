@@ -1,3 +1,4 @@
+from enum import IntEnum
 from importlib import resources as impresources
 import numpy as np
 from pydrake.geometry import SceneGraph, Meshcat, MeshcatVisualizer
@@ -12,21 +13,26 @@ from . import EndEffectorWrenchCalculator
 # Local imports
 from .gripper_type import GripperType
 from ..control import GripperController
-from ..control.cartesian_arm_controller import CartesianArmController
+from brom_drake.control.arms.cartesian_arm_controller import CartesianArmController
+from ..control.arms import (
+    JointArmController, CartesianArmController,
+    JointTarget, ArmControlMode,
+)
 from ..urdf import DrakeReadyURDFConverter
 
 from brom_drake import robots
 
-
 class UR10eStation(Diagram):
     """
     A template system diagram for controlling a UR10e robot in a simulated environment.
+    # TODO(kwesi): Draw the diagram for the two different control modes.
     """
 
     def __init__(
         self,
         time_step: float = 0.002,
         gripper_type: GripperType = GripperType.NoGripper,
+        control_mode: ArmControlMode = ArmControlMode.kEndEffector,
     ):
         """
         Description:
@@ -64,6 +70,7 @@ class UR10eStation(Diagram):
         # Whether we have a camera in the simulation
         # self.has_camera = False
 
+        self.arm_control_mode = control_mode
         self.AddArm()
 
         # Which sort of gripper we're using (if any)
@@ -82,6 +89,8 @@ class UR10eStation(Diagram):
         )
         arm_urdf = DrakeReadyURDFConverter(arm_urdf_path).convert_urdf()
         arm_urdf = str(arm_urdf)
+
+        self.end_effector_frame_name = "tool0"
 
         # The hardware system has lots of damping so this is more realistic,
         # but requires a simulation with small timesteps.
@@ -180,7 +189,7 @@ class UR10eStation(Diagram):
         )
 
         # Create Arm and Gripper Controllers
-        self.CreateArmControllerAndConnect()
+        self.CreateArmControllerAndConnect(self.arm_control_mode)
 
         if self.gripper_type != GripperType.NoGripper:
             self.CreateGripperControllerAndConnect()
@@ -188,28 +197,27 @@ class UR10eStation(Diagram):
         # Build the diagram
         self.builder.BuildInto(self)
 
-    def CreateArmControllerAndConnect(self):
+    def CreateArmControllerAndConnect(
+        self,
+        arm_control_mode: ArmControlMode,
+    ):
         """
         Description
         -----------
         This function creates a Cartesian arm controller and connects it to the rest of the system.
         :return:
         """
-        # Create controller that uses the shadow plant to control the robot
-        cartesian_controller = self.builder.AddSystem(
-            CartesianArmController(self.controller_plant, self.controller_arm),
-        )
-        cartesian_controller.set_name("UR10e_Station_CartesianController")
 
-        # End effector target and target type go to the controller
-        self.builder.ExportInput(
-            cartesian_controller.ee_target_port,
-            "ee_target",
-        )
-        self.builder.ExportInput(
-            cartesian_controller.ee_target_type_port,
-            "ee_target_type",
-        )
+        controller = None
+
+        if arm_control_mode == ArmControlMode.kJoint:
+            controller = self.CreateJointArmControllerAndExportInputs()
+
+        elif arm_control_mode == ArmControlMode.kEndEffector:
+            controller = self.CreateCartesianArmControllerAndExportInputs()
+
+        else:
+            raise ValueError("Invalid Arm Control Mode: {}".format(arm_control_mode))
 
         # Output measured arm position and velocity
         demux = self.builder.AddSystem(
@@ -233,16 +241,16 @@ class UR10eStation(Diagram):
         # Measured Arm Position and Velocity are sent to the controller
         self.builder.Connect(
             demux.get_output_port(0),
-            cartesian_controller.arm_joint_position_port,
+            controller.arm_joint_position_port,
         )
         self.builder.Connect(
             demux.get_output_port(1),
-            cartesian_controller.arm_joint_velocity_port,
+            controller.arm_joint_velocity_port,
         )
 
         # Torques from controller go to the "true" plant
         self.builder.Connect(
-            cartesian_controller.GetOutputPort("applied_arm_torque"),
+            controller.GetOutputPort("applied_arm_torque"),
             self.plant.get_actuation_input_port(self.arm),
         )
 
@@ -250,7 +258,7 @@ class UR10eStation(Diagram):
         controller_output_port_names = ["applied_arm_torque", "measured_ee_pose", "measured_ee_twist"]
         for output_port_name in controller_output_port_names:
             self.builder.ExportOutput(
-                cartesian_controller.GetOutputPort(output_port_name),
+                controller.GetOutputPort(output_port_name),
                 output_port_name,
             )
 
@@ -270,12 +278,73 @@ class UR10eStation(Diagram):
             demux.get_output_port(1),
             wrench_calculator.GetInputPort("joint_velocities"))
         self.builder.Connect(
-            cartesian_controller.GetOutputPort("applied_arm_torque"),
+            controller.GetOutputPort("applied_arm_torque"),
             wrench_calculator.GetInputPort("joint_torques"))
 
         self.builder.ExportOutput(
             wrench_calculator.get_output_port(),
             "measured_ee_wrench")
+
+    def CreateCartesianArmControllerAndExportInputs(self) -> CartesianArmController:
+        """
+        Description
+        -----------
+        Defines the input ports for the CartesianArmController system
+
+        :return:
+        """
+        # Create controller that uses the shadow plant to control the robot
+        cartesian_controller = self.builder.AddSystem(
+            CartesianArmController(
+                self.controller_plant,
+                self.controller_arm,
+                end_effector_frame_name=self.end_effector_frame_name,
+            ),
+        )
+        cartesian_controller.set_name("UR10e_Station_CartesianController")
+
+        # End effector target and target type go to the controller
+        self.builder.ExportInput(
+            cartesian_controller.ee_target_port,
+            "ee_target",
+        )
+        self.builder.ExportInput(
+            cartesian_controller.ee_target_type_port,
+            "ee_target_type",
+        )
+
+        return cartesian_controller
+
+
+    def CreateJointArmControllerAndExportInputs(self)-> JointArmController:
+        """
+        Description
+        -----------
+        :return:
+        """
+        # Setup
+
+        # Create Controller
+        joint_controller = self.builder.AddSystem(
+            JointArmController(
+                self.controller_plant,
+                self.controller_arm,
+                end_effector_frame_name=self.end_effector_frame_name,
+            ),
+        )
+        joint_controller.set_name("UR10e_Station_JointController")
+
+        # End effector target and target type go to the controller
+        self.builder.ExportInput(
+            joint_controller.joint_target_port,
+            "joint_target",
+        )
+        self.builder.ExportInput(
+            joint_controller.joint_target_type_port,
+            "joint_target_type",
+        )
+
+        return joint_controller
 
     def CreateGripperControllerAndConnect(self):
         """

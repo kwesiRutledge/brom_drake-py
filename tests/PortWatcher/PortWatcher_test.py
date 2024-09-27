@@ -454,14 +454,14 @@ class PortWatcherTest(unittest.TestCase):
         # Setup Diagram
         # - Create Builder
         # - Define Plant
-        time_step = 0.01
+        time_step = 1e-3
 
         builder = DiagramBuilder()
 
         # Define plant with:
         # + add block model
         # + ground
-        plant, scene_graph = AddMultibodyPlantSceneGraph(builder, time_step=1e-3)
+        plant, scene_graph = AddMultibodyPlantSceneGraph(builder, time_step=time_step)
 
         block_model_idx = Parser(plant=plant).AddModels(
             self.get_brom_drake_dir() + "/examples/watcher/suggested_use1/slider-block.urdf",

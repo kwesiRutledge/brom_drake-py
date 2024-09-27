@@ -15,16 +15,16 @@ from pydrake.multibody.inverse_kinematics import (
 from pydrake.multibody.plant import MultibodyPlant
 from pydrake.multibody.tree import MultibodyForces, JacobianWrtVariable
 from pydrake.solvers import Solve
-from pydrake.systems.framework import LeafSystem, BasicVector
+from pydrake.systems.framework import BasicVector
 
 import numpy as np
 
 # Internal Imports
-from .end_effector_target import EndEffectorTarget
-from .gripper_target import GripperTarget
+from brom_drake.control.arms.end_effector_target import EndEffectorTarget
+from .base_arm_controller import BaseArmController
 
 
-class CartesianArmController(LeafSystem):
+class CartesianArmController(BaseArmController):
     """
     A controller which imitates the cartesian control mode of the Kinova gen3 arm.
 
@@ -35,32 +35,31 @@ class CartesianArmController(LeafSystem):
     ee_target_type -----------> |                           |
                                 |                           |
                                 |                           | ----> measured_ee_pose
-    arm_joint__position ------> |                           | ----> measured_ee_twist
+    arm_joint_position -------> |                           | ----> measured_ee_twist
     arm_joint_velocity ------>  |                           |
                                 |                           |
                                 |                           |
                                 -----------------------------
 
-    The type of target is determined by ee_target_type, and can be
-        EndEffectorTarget.kPose,
-        EndEffectorTarget.kTwist,
-        EndEffectorTarget.kWrench.
-
+    Note that many ports are defined by the base class (BaseArmController).
     """
 
     def __init__(
         self,
         plant: MultibodyPlant,
         arm_model,
+        end_effector_frame_name: str = "end_effector_frame",
     ):
-        LeafSystem.__init__(self)
-
-        self.plant = plant
-        self.arm = arm_model
-        self.context = self.plant.CreateDefaultContext()
+        BaseArmController.__init__(
+            self,
+            plant,
+            arm_model,
+            end_effector_frame_name=end_effector_frame_name,
+        )
 
         # Define input and Output Ports
-        self.define_input_ports()
+        self.ee_target_port, self.ee_target_type_port = None, None
+        self.define_cartesian_target_input_ports()
 
         # Define output ports
         self.DeclareVectorOutputPort(
@@ -68,31 +67,12 @@ class CartesianArmController(LeafSystem):
             BasicVector(self.plant.num_actuators()),
             self.CalcArmTorques)
 
-        self.DeclareVectorOutputPort(
-            "measured_ee_pose",
-            BasicVector(6),
-            self.CalcEndEffectorPose,
-            {self.time_ticket()}  # indicate that this doesn't depend on any inputs,
-        )  # but should still be updated each timestep
-        self.DeclareVectorOutputPort(
-            "measured_ee_twist",
-            BasicVector(6),
-            self.CalcEndEffectorTwist,
-            {self.time_ticket()})
-
-        # Define some relevant frames
-        self.world_frame = self.plant.world_frame()
-        self.ee_frame = self.plant.GetFrameByName("end_effector")
-
-        # Set joint limits (set self.{q,qd}_{min,max})
-        self.GetJointLimits()
-
         # Store desired end-effector pose and corresponding joint
         # angles so we only run full IK when we need to
         self.last_ee_pose_target = None
         self.last_q_target = None
 
-    def define_input_ports(self):
+    def define_cartesian_target_input_ports(self):
         """
         Description
         -----------
@@ -107,95 +87,6 @@ class CartesianArmController(LeafSystem):
             "ee_target_type",
             AbstractValue.Make(EndEffectorTarget.kPose),
         )
-
-        self.arm_joint_position_port = self.DeclareVectorInputPort(
-            "arm_joint_position",
-            BasicVector(self.plant.num_positions(self.arm)),
-        )
-        self.arm_joint_velocity_port = self.DeclareVectorInputPort(
-            "arm_joint_velocity",
-            BasicVector(self.plant.num_velocities(self.arm)),
-        )
-
-    def GetJointLimits(self):
-        """
-        Iterate through self.plant to establish joint angle
-        and velocity limits.
-
-        Sets:
-
-            self.q_min
-            self.q_max
-            self.qd_min
-            self.qd_max
-
-        """
-        q_min = []
-        q_max = []
-        qd_min = []
-        qd_max = []
-
-        joint_indices = self.plant.GetJointIndices(self.arm)
-
-        for idx in joint_indices:
-            joint = self.plant.get_joint(idx)
-
-            if joint.type_name() == "revolute":  # ignore the joint welded to the world
-                q_min.append(joint.position_lower_limit())
-                q_max.append(joint.position_upper_limit())
-                qd_min.append(joint.velocity_lower_limit())  # note that higher limits
-                qd_max.append(joint.velocity_upper_limit())  # are availible in cartesian mode
-
-        self.q_min = np.array(q_min)
-        self.q_max = np.array(q_max)
-        self.qd_min = np.array(qd_min)
-        self.qd_max = np.array(qd_max)
-
-        print("Got joint limits")
-
-    def CalcEndEffectorPose(self, context, output):
-        """
-        This method is called each timestep to determine the end-effector pose
-        """
-        q = self.arm_joint_position_port.Eval(context)
-        qd = self.arm_joint_velocity_port.Eval(context)
-        self.plant.SetPositions(self.context, q)
-        self.plant.SetVelocities(self.context, qd)
-
-        # Compute the rigid transform between the world and end-effector frames
-        X_ee = self.plant.CalcRelativeTransform(self.context,
-                                                self.world_frame,
-                                                self.ee_frame)
-
-        ee_pose = np.hstack([RollPitchYaw(X_ee.rotation()).vector(), X_ee.translation()])
-
-        output.SetFromVector(ee_pose)
-
-        print("Calculated end effector pose")
-
-    def CalcEndEffectorTwist(self, context, output):
-        """
-        This method is called each timestep to determine the end-effector twist
-        """
-        q = self.arm_joint_position_port.Eval(context)
-        qd = self.arm_joint_velocity_port.Eval(context)
-        self.plant.SetPositions(self.context, q)
-        self.plant.SetVelocities(self.context, qd)
-
-        # Compute end-effector Jacobian
-        J = self.plant.CalcJacobianSpatialVelocity(
-            self.context,
-            JacobianWrtVariable.kV,
-            self.ee_frame,
-            np.zeros(3),
-            self.world_frame,
-            self.world_frame,
-        )
-
-        ee_twist = J @ qd
-        output.SetFromVector(ee_twist)
-
-        print("Calculated end effector twist")
 
     def CalcArmTorques(self, context, output):
         """
