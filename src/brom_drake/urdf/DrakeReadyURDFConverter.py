@@ -263,8 +263,8 @@ class DrakeReadyURDFConverter:
         # Convert the file
         converter = MeshFileConverter(
             mesh_file_path=mesh_file_name,
-            target_urdf_dir=original_urdf_dir,
-            output_urdf_dir=self.output_file_directory(),
+            urdf_dir=Path(original_urdf_dir),
+            new_urdf_dir=self.output_file_directory(),
         )
         new_mesh_path = converter.convert()
 
@@ -298,61 +298,6 @@ class DrakeReadyURDFConverter:
 
         joint_name = joint_elt.attrib["name"]
         self.actuated_joint_names.append(joint_name)
-
-    def find_file_path_in_package(
-            self,
-            file_path: str,
-            max_depth: int = 10,
-    ) -> Tuple[Path, Path]:
-        """
-        Description
-        -----------
-        This method will find the file path in the package.
-        :param file_path: The raw falue of the "filename" attribute in the mesh element.
-        :param max_depth: The maximum depth to search for the package path.
-        :return:
-        """
-        # Setup
-        original_urdf_path = Path(self.original_urdf_filename)
-
-        # Find the path to the package
-        package_found = False
-        candidate_path = original_urdf_path.parent
-        search_depth = 1
-        while not package_found:
-            # Check to see if "package.xml" exists in the directory
-            if (candidate_path / "package.xml").exists():
-                self.log(f"Found package path at {candidate_path}.")
-                package_found = True
-            else:
-                candidate_path = candidate_path.parent
-                search_depth += 1
-
-            if search_depth > max_depth:
-                raise ValueError(
-                    f"Could not find package path for file {file_path} after searching {max_depth} directories."
-                )
-
-        # Should now have found the package directory
-        package_dir = candidate_path
-
-        # Open the package.xml file and find the name of the package
-        package_xml = ET.ElementTree(file=package_dir / "package.xml")
-        package_root = package_xml.getroot()
-        package_name = package_root.find("name").text
-
-        self.log(f"Found package name: {package_name}")
-
-        # Create 2 Outputs:
-        # 1. path to file by replacing the package name with the package path
-        full_path_to_file = package_dir / Path(file_path.replace(f"package://{package_name}", "")).parent
-        # 2. Relative path to the file from the urdf directory
-        path_from_urdf_to_file = Path(".")
-        for ii in range(search_depth-1):
-            path_from_urdf_to_file = path_from_urdf_to_file / Path("..")
-        path_from_urdf_to_file = path_from_urdf_to_file / Path(file_path.replace(f"package://{package_name}/", "")).parent
-
-        return full_path_to_file, path_from_urdf_to_file
 
     @staticmethod
     def log(message: str):
