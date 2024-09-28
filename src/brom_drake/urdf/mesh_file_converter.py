@@ -1,3 +1,5 @@
+from distutils.command.clean import clean
+
 import loguru
 import os
 from pathlib import Path
@@ -48,7 +50,7 @@ class MeshFileConverter:
             str(self.urdf_dir / self.true_mesh_file_path())
         )
 
-        os.makedirs(self.output_mesh_directory, exist_ok=True)
+        os.makedirs(self.define_output_path(output_file_path).parent, exist_ok=True)
         mesh.export(self.define_output_path(output_file_path))
 
         # Define the relative output path
@@ -57,7 +59,7 @@ class MeshFileConverter:
     @property
     def output_mesh_directory(self) -> Path:
         new_urdf_dir = self.new_urdf_dir
-        return new_urdf_dir / "meshes"
+        return new_urdf_dir
 
     def define_output_path(self, output_mesh_file: Path = None) -> Path:
         """
@@ -76,9 +78,24 @@ class MeshFileConverter:
         # Check to see if the file type is supported
         for suffix in self.supported_suffixes:
             if suffix in str(mesh_file_name):
+                # Strip off all parts of the file that might contain:
+                # - The package name
+                # - "../"
+                # - "./"
+                clean_mesh_file_name = str(mesh_file_name)
+                if "package://" in clean_mesh_file_name:
+                    clean_mesh_file_name = clean_mesh_file_name.replace("package://", "")
+                    clean_mesh_file_name = clean_mesh_file_name[
+                        clean_mesh_file_name.find("/") + 1:
+                    ]
+
+
+                clean_mesh_file_name = clean_mesh_file_name.replace("../", "")
+                clean_mesh_file_name = clean_mesh_file_name.replace("./", "")
+
                 # If we pass this point, then we know that the file type is supported
                 # Clean all parts of the file name that are not the name
-                output_mesh_file = Path(mesh_file_name).name.replace(suffix, ".obj")
+                output_mesh_file = clean_mesh_file_name.replace(suffix, ".obj")
 
                 # Prepend a models directory to the path
                 return self.output_mesh_directory / output_mesh_file
@@ -109,8 +126,6 @@ class MeshFileConverter:
         package_dir, package_name = self.find_package_directory_including_mesh(max_depth=max_depth)
 
         # Create the output file path from what we now know
-        print(f"package_dir: {package_dir}")
-        print(Path(mesh_file_name.replace(f"package://{package_name}", "")))
         return package_dir / Path(mesh_file_name.replace(f"package://{package_name}/", ""))
 
     def find_package_directory_including_mesh(
