@@ -3,12 +3,12 @@ from typing import Union, Tuple, List
 from pydrake.systems.framework import DiagramBuilder, LeafSystem, Diagram
 
 # Internal Imports
-from .role import Role
-from .ids import SceneID
+from brom_drake.scenes.roles.role import Role
+from brom_drake.scenes.ids import SceneID
 
 Performer = Union[LeafSystem, Diagram]
 
-class Scene:
+class BaseScene:
     """
     Base class for all scenes.
     """

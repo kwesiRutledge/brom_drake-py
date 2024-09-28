@@ -4,7 +4,8 @@
 drake
 manipulation
 
-# Visualization
+# Visualization and Math
+numpy
 meshcat
 matplotlib
 
