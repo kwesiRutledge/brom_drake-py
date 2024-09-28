@@ -12,7 +12,8 @@ import xml.etree.ElementTree as ET
 from pydrake.systems.primitives import ConstantVectorSource, VectorLogSink
 
 # Internal Imports
-from brom_drake.scenes import BaseScene, SceneID
+from brom_drake.scenes.types import BaseScene
+from brom_drake.scenes import SceneID
 from brom_drake.scenes.roles.role import Role
 from .show_me_system import ShowMeSystem
 

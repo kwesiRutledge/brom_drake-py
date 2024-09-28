@@ -87,3 +87,29 @@ class BaseScene:
         """
         return SceneID.kNotDefined
 
+    @staticmethod
+    def find_all_systems_with_output_port(
+        builder: DiagramBuilder,
+        target_port_name: str,
+    ) -> List[Performer]:
+        """
+        Description
+        -----------
+        This method looks through the builder and finds all systems that have
+        an output port with the given name.
+        :param builder:
+        :param target_port_name:
+        :return:
+        """
+        # Setup
+        potential_performers = []
+
+        # Algorithm
+        for system in builder.GetSystems():
+            for port in system.GetOutputPorts():
+                if port.get_name() == target_port_name:
+                    potential_performers.append(system)
+                    break # Break from searching through THIS system's ports. But keep searching.
+
+
+        return potential_performers
