@@ -1,4 +1,8 @@
-from .role import Role
-from .offline_motion_planner import kOfflineMotionPlanner
+from brom_drake.scenes.roles.role import Role, PortPairing
+from brom_drake.scenes.roles.offline_motion_planner import kOfflineMotionPlanner
 
-__all__ = ["Role", "kOfflineMotionPlanner"]
+__all__ = [
+    "Role",
+    "kOfflineMotionPlanner",
+    "PortPairing",
+]

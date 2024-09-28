@@ -3,10 +3,9 @@ from typing import Union, Tuple, List
 from pydrake.systems.framework import DiagramBuilder, LeafSystem, Diagram
 
 # Internal Imports
-from brom_drake.scenes.roles.role import Role
+from brom_drake.scenes.roles import Role
 from brom_drake.scenes.ids import SceneID
-
-Performer = Union[LeafSystem, Diagram]
+from brom_drake.utils import Performer
 
 class BaseScene:
     """
@@ -40,6 +39,7 @@ class BaseScene:
         self,
         role: Role,
         system: Performer,
+        builder: DiagramBuilder,
     ):
         """
         Description
@@ -48,9 +48,11 @@ class BaseScene:
         system to the role.
         :param role:
         :param system:
+        :param builder:
         :return:
         """
-        pass
+        # Call the member method of the role object
+        role.connect_performer_to_system(builder, system)
 
     def cast_scene(
         self,
@@ -64,7 +66,7 @@ class BaseScene:
 
         # Fulfill each role-performer pair in the casting_call list
         for role, performer in cast:
-            self.fill_role(role, performer)
+            self.fill_role(role, performer, builder)
 
     def cast_scene_and_build(
         self,
@@ -86,30 +88,3 @@ class BaseScene:
         :return:
         """
         return SceneID.kNotDefined
-
-    @staticmethod
-    def find_all_systems_with_output_port(
-        builder: DiagramBuilder,
-        target_port_name: str,
-    ) -> List[Performer]:
-        """
-        Description
-        -----------
-        This method looks through the builder and finds all systems that have
-        an output port with the given name.
-        :param builder:
-        :param target_port_name:
-        :return:
-        """
-        # Setup
-        potential_performers = []
-
-        # Algorithm
-        for system in builder.GetSystems():
-            for port in system.GetOutputPorts():
-                if port.get_name() == target_port_name:
-                    potential_performers.append(system)
-                    break # Break from searching through THIS system's ports. But keep searching.
-
-
-        return potential_performers

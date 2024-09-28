@@ -11,6 +11,3 @@ class OfflineMotionPlanningScene(BaseScene):
 
     def suggested_roles(self):
         return [kOfflineMotionPlanner]
-
-    def fill_role(self, role, system):
-        pass

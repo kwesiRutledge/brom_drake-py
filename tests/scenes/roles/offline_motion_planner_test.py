@@ -2,7 +2,6 @@ import unittest
 
 from brom_drake.scenes.roles.offline_motion_planner import kOfflineMotionPlanner
 
-
 class OfflineMotionPlannerTest(unittest.TestCase):
     def test_required_input_ports1(self):
         """
