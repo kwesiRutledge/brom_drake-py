@@ -15,12 +15,15 @@ jobs:
       url: https://pypi.org/p/brom_drake/
     permissions:
       id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
+    strategy:
+      matrix:
+        python-version: [ '3.10','3.12' ]
     steps:
       - uses: actions/checkout@master
       - name: Set up Python 3.10
         uses: actions/setup-python@v3
         with:
-          python-version: '3.10'
+          python-version: ${{ matrix.python-version }}
       - name: Install pypa/setuptools
         run: >-
           python -m
