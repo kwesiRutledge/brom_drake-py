@@ -114,7 +114,7 @@
         </collision>
         <visual>
           <origin xyz="0.0 -0.075 -0.24" />
-          <material name="c">
+          <material name="c2">
             <color rgba="1.0 1.0 1.0 1.0" />
           </material>
           <geometry>
@@ -129,7 +129,7 @@
         </collision>
         <visual>
           <origin xyz="0.0 -0.075 -0.24" />
-          <material name="c">
+          <material name="c3">
             <color rgba="0.5 0.5 0.5 1.0" />
           </material>
           <geometry>
@@ -159,7 +159,7 @@
         </collision>
         <visual>
           <origin xyz="0.0 -0.075 0.24" />
-          <material name="c">
+          <material name="c2">
             <color rgba="1.0 1.0 1.0 1.0" />
           </material>
           <geometry>
@@ -174,7 +174,7 @@
         </collision>
         <visual>
           <origin xyz="0.0 -0.075 0.24" />
-          <material name="c">
+          <material name="c3">
             <color rgba="0.5 0.5 0.5 1.0" />
           </material>
           <geometry>
@@ -283,7 +283,7 @@
         </collision>
         <visual>
           <origin xyz="0.0 -0.075 -0.24" />
-          <material name="c">
+          <material name="c2">
             <color rgba="1.0 1.0 1.0 1.0" />
           </material>
           <geometry>
@@ -298,7 +298,7 @@
         </collision>
         <visual>
           <origin xyz="0.0 -0.075 -0.24" />
-          <material name="c">
+          <material name="c3">
             <color rgba="0.5 0.5 0.5 1.0" />
           </material>
           <geometry>
@@ -328,7 +328,7 @@
         </collision>
         <visual>
           <origin xyz="0.0 -0.075 0.24" />
-          <material name="c">
+          <material name="c2">
             <color rgba="1.0 1.0 1.0 1.0" />
           </material>
           <geometry>
@@ -343,7 +343,7 @@
         </collision>
         <visual>
           <origin xyz="0.0 -0.075 0.24" />
-          <material name="c">
+          <material name="c3">
             <color rgba="0.5 0.5 0.5 1.0" />
           </material>
           <geometry>
