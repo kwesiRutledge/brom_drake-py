@@ -13,10 +13,16 @@ from brom_drake.urdf import drakeify_my_urdf
 
 
 class ShelfPlanningScene(OfflineMotionPlanningScene):
-    def __init__(self, time_step=1e-3, **kwargs):
+    def __init__(
+        self,
+        time_step=1e-3,
+        use_meshcat: bool = True, # Usually turn off for CI
+        **kwargs,
+    ):
         super().__init__(**kwargs)
 
         self.time_step = time_step
+        self.use_meshcat = use_meshcat
         self.shelf_position = np.array([-0.4, 0.6, 0.0])
 
         # If the base link name is not provided,
@@ -35,12 +41,13 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
             time_step=self.time_step,
         )
         self.plant.set_name("ShowMeThisModel_plant")
-        self.meshcat = Meshcat(port=7001)  # Object provides an interface to Meshcat
         self.add_shelf()
 
         # Connect to Meshcat
-        m_visualizer = MeshcatVisualizer(self.meshcat)
-        m_visualizer.AddToBuilder(builder, self.scene_graph, self.meshcat)
+        if self.use_meshcat:
+            self.meshcat = Meshcat(port=7001)  # Object provides an interface to Meshcat
+            m_visualizer = MeshcatVisualizer(self.meshcat)
+            m_visualizer.AddToBuilder(builder, self.scene_graph, self.meshcat)
 
         # Finalize plant and connect it to system
         self.plant.Finalize()

@@ -15,7 +15,7 @@ class ShelfTest(unittest.TestCase):
         :return:
         """
         # Setup
-        shelf_planning_scene = ShelfPlanningScene()
+        shelf_planning_scene = ShelfPlanningScene(use_meshcat=False)
         builder = DiagramBuilder()
 
         # Check that defaults are in place
