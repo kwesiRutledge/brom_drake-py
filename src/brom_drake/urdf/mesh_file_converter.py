@@ -187,6 +187,10 @@ class MeshFileConverter:
         if self.mesh_file.startswith("./"):
             return True
 
+        # Ignore this if the mesh file contains a package prefix
+        if self.mesh_file.startswith("package:"):
+            return False
+
         # Check to see if there is only one part of the path
         # Now, check to see if the target file exists
         complete_file_path = self.urdf_dir / mesh_file_as_path
@@ -211,10 +215,10 @@ class MeshFileConverter:
             This function will return the true mesh file path.
         """
         # Algorithm
-        if self.mesh_file_path_is_relative():
-            return Path(self.mesh_file)
-        elif self.mesh_file.startswith("package:"):
+        if self.mesh_file.startswith("package:"):
             return self.find_file_path_in_package(max_depth=max_depth)
+        elif self.mesh_file_path_is_relative():
+            return Path(self.mesh_file)
         else:
             raise ValueError(
                 f"Mesh file path {self.mesh_file} is not supported by this function!\n" +
