@@ -39,6 +39,10 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
             impresources.files(brom_drake) / "../../tests/urdf/resources/test_package/urdf/baxter.urdf"
         )
 
+        self.test_urdf4_filename = str(
+            impresources.files(brom_drake) / "../../tests/urdf/resources/test3_relative.urdf"
+        )
+
     def test_convert_tree1(self):
         """
         Description
@@ -286,6 +290,46 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
             self.assertIn(
                 ".obj",
                 mesh_elt.attrib["filename"]
+            )
+
+    def test_convert_urdf4(self):
+        """
+        Description
+        -----------
+        This test verifies that we can convert a full URDF file
+        into a new URDF file. This time, we'll use a more complicated urdf file.
+        We'll verify that the new URDF exists and that it contains
+        mesh elements that only refer to .obj files.
+        :return:
+        """
+        # Setup
+        test_urdf4 = self.test_urdf4_filename
+
+        converter = DrakeReadyURDFConverter(
+            test_urdf4,
+            overwrite_old_logs=True,
+            log_file_name="test_convert_urdf4.log",
+        )
+
+        # Test
+        new_urdf_path = converter.convert_urdf()
+
+        # Verify that the new file exists
+        self.assertTrue(
+            new_urdf_path.exists()
+        )
+
+        # Verify that the new file contains only obj files
+        new_tree = ElementTree(file=new_urdf_path)
+        for mesh_elt in new_tree.iter("mesh"):
+            self.assertIn(
+                ".obj",
+                mesh_elt.attrib["filename"]
+            )
+
+            # Verify that the new mesh files exist
+            self.assertTrue(
+                (converter.output_file_directory() / Path(mesh_elt.attrib["filename"])).exists()
             )
 
 if __name__ == '__main__':

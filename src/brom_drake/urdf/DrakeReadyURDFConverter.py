@@ -17,6 +17,7 @@ from multiprocessing.managers import Value
 from pathlib import Path
 import xml.etree.ElementTree as ET
 
+from .mesh_file_converter import MeshFileConverter
 # Internal Supports
 from .util import (
     does_drake_parser_support,
@@ -185,7 +186,7 @@ class DrakeReadyURDFConverter:
     ) -> ET.ElementTree:
         """
         Description
-        -----------
+        -----------`
         This recursive method is used to parse each element of the
         xml element tree.
         :param current_tree:
@@ -259,63 +260,18 @@ class DrakeReadyURDFConverter:
         # Setup
         original_urdf_dir = Path(self.original_urdf_filename).parent
 
-        # Find the location of the mesh_file_name relative to the urdf file
-        original_file_location_relative_to_urdf = None
-        if mesh_file_name.startswith("./"):
-            self.log(f"Found a mesh file with a relative path: {mesh_file_name}")
-            original_file_location_relative_to_urdf = Path(mesh_file_name).parent
-        elif mesh_file_name.startswith("package:"):
-            self.log(f"Found a mesh file with a package path: {mesh_file_name}")
-            _, original_file_location_relative_to_urdf = self.find_file_path_in_package(mesh_file_name)
-
-            self.log(f"File path should be {original_file_location_relative_to_urdf}")
-        else:
-            raise ValueError(
-                f"Mesh file path {mesh_file_name} is not supported by this function!\n" +
-                "Make sure that the \"filename\" attribute contains a relative path (i.e., starts with \"./\")\n"
-                " or a package path (i.e., starts with \"package:\")."
-            )
-
-        # Define the paths to each file
-        directory_for_transformed_file = original_file_location_relative_to_urdf
-
-        # Make sure that the file's location exists
-
-        # Convert based on the file type
-
-        # First check to see if the file type is supported
-        output_path_for_urdf = None
-
-        print(f"Original urdf dir: {original_urdf_dir}")
-        print(f"Original file location relative to urdf: {original_file_location_relative_to_urdf}")
-        print(f"Mesh file name: {Path(mesh_file_name).name}")
-
-        print(f"original_urdf_dir / original_file_location_relative_to_urdf = {original_urdf_dir / original_file_location_relative_to_urdf}")
-        original_file_location = original_urdf_dir / original_file_location_relative_to_urdf / Path(mesh_file_name).name
-
-        print(f"Original file location: {original_file_location}")
-
-        # Check to see if the file type is supported
-        supported_suffixes = [".stl", ".dae", ".DAE", ".STL"]
-        contains_supported_suffix = False
-        for suffix in supported_suffixes:
-            if suffix in mesh_file_name:
-                output_path_for_urdf = directory_for_transformed_file / Path(mesh_file_name).name.replace(suffix, ".obj")
-                break
-
-        # If the file type is supported, then output_path_for_urdf should be defined
-        if output_path_for_urdf is None:
-            raise ValueError(f"File type {mesh_file_name} is not supported by this function!")
-
         # Convert the file
-        new_mesh = trimesh.load(str(original_file_location))
+        converter = MeshFileConverter(
+            mesh_file_path=mesh_file_name,
+            urdf_dir=Path(original_urdf_dir),
+            new_urdf_dir=self.output_file_directory(),
+        )
+        new_mesh_path = converter.convert()
 
-        # Write the new mesh to the output path
-        output_path_for_exporter = self.output_file_directory() / output_path_for_urdf
-        os.makedirs(output_path_for_exporter.parent, exist_ok=True)
-        new_mesh.export(str(output_path_for_exporter))
+        # Clip off all parts of path that include the exported output
+        new_mesh_path = str(new_mesh_path).replace(str(self.output_file_directory()), "")
 
-        return "./" + str(output_path_for_urdf)
+        return "./" + str(new_mesh_path)
 
 
     def handle_joint_element(self, joint_elt: ET.Element):
@@ -342,61 +298,6 @@ class DrakeReadyURDFConverter:
 
         joint_name = joint_elt.attrib["name"]
         self.actuated_joint_names.append(joint_name)
-
-    def find_file_path_in_package(
-            self,
-            file_path: str,
-            max_depth: int = 10,
-    ) -> Tuple[Path, Path]:
-        """
-        Description
-        -----------
-        This method will find the file path in the package.
-        :param file_path: The raw falue of the "filename" attribute in the mesh element.
-        :param max_depth: The maximum depth to search for the package path.
-        :return:
-        """
-        # Setup
-        original_urdf_path = Path(self.original_urdf_filename)
-
-        # Find the path to the package
-        package_found = False
-        candidate_path = original_urdf_path.parent
-        search_depth = 1
-        while not package_found:
-            # Check to see if "package.xml" exists in the directory
-            if (candidate_path / "package.xml").exists():
-                self.log(f"Found package path at {candidate_path}.")
-                package_found = True
-            else:
-                candidate_path = candidate_path.parent
-                search_depth += 1
-
-            if search_depth > max_depth:
-                raise ValueError(
-                    f"Could not find package path for file {file_path} after searching {max_depth} directories."
-                )
-
-        # Should now have found the package directory
-        package_dir = candidate_path
-
-        # Open the package.xml file and find the name of the package
-        package_xml = ET.ElementTree(file=package_dir / "package.xml")
-        package_root = package_xml.getroot()
-        package_name = package_root.find("name").text
-
-        self.log(f"Found package name: {package_name}")
-
-        # Create 2 Outputs:
-        # 1. path to file by replacing the package name with the package path
-        full_path_to_file = package_dir / Path(file_path.replace(f"package://{package_name}", "")).parent
-        # 2. Relative path to the file from the urdf directory
-        path_from_urdf_to_file = Path(".")
-        for ii in range(search_depth-1):
-            path_from_urdf_to_file = path_from_urdf_to_file / Path("..")
-        path_from_urdf_to_file = path_from_urdf_to_file / Path(file_path.replace(f"package://{package_name}/", "")).parent
-
-        return full_path_to_file, path_from_urdf_to_file
 
     @staticmethod
     def log(message: str):

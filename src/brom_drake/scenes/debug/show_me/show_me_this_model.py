@@ -4,19 +4,20 @@ import numpy as np
 from manipulation.scenarios import AddMultibodyTriad
 from pydrake.geometry import Meshcat, MeshcatVisualizer
 from pydrake.multibody.parsing import Parser
-from pydrake.multibody.plant import MultibodyPlant, AddMultibodyPlantSceneGraph
+from pydrake.multibody.plant import AddMultibodyPlantSceneGraph
 from pydrake.systems.framework import DiagramBuilder
 
 import xml.etree.ElementTree as ET
 
-from pydrake.systems.primitives import ConstantVectorSource, VectorLog, VectorLogSink
+from pydrake.systems.primitives import ConstantVectorSource, VectorLogSink
 
 # Internal Imports
-from brom_drake.scenes import Scene, SceneID
-from brom_drake.scenes.role import Role
+from brom_drake.scenes.types import BaseScene
+from brom_drake.scenes import SceneID
+from brom_drake.scenes.roles.role import Role
 from .show_me_system import ShowMeSystem
 
-class ShowMeThisModel(Scene):
+class ShowMeThisModel(BaseScene):
     def __init__(
         self,
         path_to_model: str,

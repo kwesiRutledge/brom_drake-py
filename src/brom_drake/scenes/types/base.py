@@ -3,12 +3,11 @@ from typing import Union, Tuple, List
 from pydrake.systems.framework import DiagramBuilder, LeafSystem, Diagram
 
 # Internal Imports
-from .role import Role
-from .ids import SceneID
+from brom_drake.scenes.roles import Role
+from brom_drake.scenes.ids import SceneID
+from brom_drake.utils import Performer
 
-Performer = Union[LeafSystem, Diagram]
-
-class Scene:
+class BaseScene:
     """
     Base class for all scenes.
     """
@@ -40,6 +39,7 @@ class Scene:
         self,
         role: Role,
         system: Performer,
+        builder: DiagramBuilder,
     ):
         """
         Description
@@ -48,9 +48,11 @@ class Scene:
         system to the role.
         :param role:
         :param system:
+        :param builder:
         :return:
         """
-        pass
+        # Call the member method of the role object
+        role.connect_performer_to_system(builder, system)
 
     def cast_scene(
         self,
@@ -64,7 +66,7 @@ class Scene:
 
         # Fulfill each role-performer pair in the casting_call list
         for role, performer in cast:
-            self.fill_role(role, performer)
+            self.fill_role(role, performer, builder)
 
     def cast_scene_and_build(
         self,
@@ -86,4 +88,3 @@ class Scene:
         :return:
         """
         return SceneID.kNotDefined
-

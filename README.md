@@ -117,3 +117,4 @@ Some other work in the open-source drake community:
 - [ ] Add support for abstract output ports?
 - [ ] Add more readme explanations of what is going on under the hood.
 - [ ] Add Documentation
+- [ ] Create a method that makes each material in a URDF file have unique names if they have specific values
