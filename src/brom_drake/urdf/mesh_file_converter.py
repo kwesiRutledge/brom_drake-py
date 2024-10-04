@@ -183,23 +183,20 @@ class MeshFileConverter:
         # Algorithm
         mesh_file_as_path = Path(self.mesh_file)
 
-        # Check to see if there is only one part of the path
-        if len(mesh_file_as_path.parts) == 1:
-            # Now, check to see if the target file exists
-            complete_file_path = self.urdf_dir / mesh_file_as_path
-            exists = complete_file_path.exists()
-            if not exists:
-                raise FileNotFoundError(
-                    f"File {complete_file_path} does not exist in directory {os.getcwd()}!"
-                )
-            # Otherwise, we can assume that the file is in the current directory
-            return True
-
-        # If we pass this point, we know that the mesh file has multiple parts
-
         # Check to see if file path starts with "./"
         if self.mesh_file.startswith("./"):
             return True
+
+        # Check to see if there is only one part of the path
+        # Now, check to see if the target file exists
+        complete_file_path = self.urdf_dir / mesh_file_as_path
+        exists = complete_file_path.exists()
+        if not exists:
+            raise FileNotFoundError(
+                f"File {complete_file_path} does not exist in directory {os.getcwd()}!"
+            )
+        # Otherwise, we can assume that the file is in the current directory
+        return True
 
         # If we pass this point, we know that the mesh file path is not relative
         return False
