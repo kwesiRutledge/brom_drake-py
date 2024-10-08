@@ -187,28 +187,35 @@ class PortWatcher:
         """
         savefigs
         Description:
-
             This function saves the figures.
+        TODO(kwesi): Make it so that this function computes names + directory structure based on plot arrangement.
         :param diagram_context:
         :return:
         """
         # Setup
         figs, ax_list = self.plot_logger_data(diagram_context)
 
-        os.makedirs(self.plot_dir, exist_ok=True)
-
-        # Save the figures (if possible)
+        # If no figures are returned, then return early!
         if figs is None:
             return
 
+        if len(figs) == 0:
+            return # Do nothing
+
+        # Save the figures (if possible)
+        os.makedirs(
+            f"{self.plot_dir}/system_{self.safe_system_name()}",
+            exist_ok=True,
+        )
+
         if len(figs) == 1:
             figs[0].savefig(
-                f"{self.plot_dir}/{self.safe_system_name()}_{self.port.get_name()}.png",
+                f"{self.plot_dir}/system_{self.safe_system_name()}/port_{self.port.get_name()}.png",
                 dpi=self.options.plot_dpi,
             )
         else:
             # Create a directory for the plots
-            port_plot_dir = self.plot_dir + f"/{self.safe_system_name()}_{self.port.get_name()}"
+            port_plot_dir = self.plot_dir + f"/system_{self.safe_system_name()}/port_{self.port.get_name()}"
             os.makedirs(port_plot_dir, exist_ok=True)
 
             # Plot each figure within this directory
