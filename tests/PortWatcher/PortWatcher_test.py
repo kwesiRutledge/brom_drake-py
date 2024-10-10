@@ -9,6 +9,7 @@ import unittest
 import os
 
 import numpy as np
+from Cython.Compiler.MemoryView import context
 from pydrake.all import (
     RotationMatrix, RigidTransform, HalfSpace,
     CoulombFriction, SpatialVelocity,
@@ -20,9 +21,20 @@ from pydrake.systems.framework import DiagramBuilder, PortDataType
 
 from brom_drake.PortWatcher import PortWatcher
 from brom_drake.PortWatcher.PortWatcher import PortFigureArrangement, PortWatcherOptions
+from brom_drake.PortWatcher.PortWatcherOptions import FigureNamingConvention
 
 
 class PortWatcherTest(unittest.TestCase):
+    def setUp(self):
+        """
+        Description:
+
+            This method is used to setup each test.
+        :return:
+        """
+        # Delete the .brom directory if it exists when the test is done.
+        self.delete_test_brom_directory_on_teardown = True
+
     def get_brom_drake_dir(self):
         """
         Description:
@@ -525,7 +537,7 @@ class PortWatcherTest(unittest.TestCase):
 
         self.assertTrue(True)
 
-    def test_savefigs(self):
+    def test_save_figures(self):
         """
         Description:
 
@@ -608,11 +620,13 @@ class PortWatcherTest(unittest.TestCase):
 
         self.assertEqual(1, len(png_files))
 
-        for file in files:
-            os.remove(os.path.join(plot_dir, file))
-        os.rmdir(plot_dir)
+        if self.delete_test_brom_directory_on_teardown:
+            for file in files:
+                os.remove(os.path.join(plot_dir, file))
 
-    def test_savefigs2(self):
+            os.rmdir(plot_dir)
+
+    def test_save_figures2(self):
         """
         Description:
 
@@ -658,6 +672,7 @@ class PortWatcherTest(unittest.TestCase):
         plot_dir = "./.brom3"
         pw_options = PortWatcherOptions(
             plot_arrangement=PortFigureArrangement.OnePlotPerDim,
+            figure_naming_convention=FigureNamingConvention.kHierarchical,
         )
         pw0 = PortWatcher(
             plant, plant.GetOutputPort("state"), builder,
@@ -701,12 +716,110 @@ class PortWatcherTest(unittest.TestCase):
         self.assertEqual(0, len(png_files))
 
         # check the number of elements in the port subdirectory
-        port_dir = os.path.join(plot_dir, "plant_state")
+        port_dir = os.path.join(plot_dir, "system_plant/port_state")
         files = os.listdir(port_dir)
         png_files = [f for f in files if f.endswith(".png")]
         self.assertEqual(13, len(png_files))
 
-        shutil.rmtree(plot_dir)
+        if self.delete_test_brom_directory_on_teardown:
+            shutil.rmtree(plot_dir)
+
+    def test_save_figures3(self):
+        """
+        Description:
+
+            Verifies that the savefigs method properly saves
+            a single figure to the desired directory when we
+            use a PortWatcher with the OnePlotPerPort arrangement.
+        :return:
+        """
+
+        # Setup Diagram
+        # - Create Builder
+        # - Define Plant
+        time_step = 0.01
+
+        builder = DiagramBuilder()
+
+        # Define plant with:
+        # + add block model
+        # + ground
+        plant, scene_graph = AddMultibodyPlantSceneGraph(builder, time_step=1e-3)
+
+        block_model_idx = Parser(plant=plant).AddModels(
+            self.get_brom_drake_dir() + "/examples/watcher/suggested_use1/slider-block.urdf",
+        )[0]
+        block_body_name = "block"
+
+        p_GroundOrigin = [0, 0.0, 0.0]
+        R_GroundOrigin = RotationMatrix.MakeXRotation(0.0)
+        X_GroundOrigin = RigidTransform(R_GroundOrigin, p_GroundOrigin)
+        surface_friction = CoulombFriction(
+            static_friction=0.7,
+            dynamic_friction=0.5)
+        plant.RegisterCollisionGeometry(
+            plant.world_body(),
+            X_GroundOrigin,
+            HalfSpace(),
+            "ground_collision",
+            surface_friction)
+
+        plant.Finalize()
+
+        plot_dir = "./.brom4"
+        pw_options = PortWatcherOptions(
+            plot_arrangement=PortFigureArrangement.OnePlotPerDim,
+            figure_naming_convention=FigureNamingConvention.kHierarchical,
+        )
+        pw0 = PortWatcher(
+            plant, plant.GetOutputPort("state"), builder,
+            plot_dir=plot_dir,
+            options=pw_options,
+        )
+
+        # Setup simulation
+        diagram = builder.Build()
+        diagram_context = diagram.CreateDefaultContext()
+
+        # Set initial conditions
+        # - Initial pose
+        p_WBlock = [0.0, 0.0, 0.2]
+        R_WBlock = RotationMatrix.MakeXRotation(np.pi / 2.0)  # RotationMatrix.MakeXRotation(-np.pi/2.0)
+        X_WBlock = RigidTransform(R_WBlock, p_WBlock)
+        plant.SetFreeBodyPose(
+            plant.GetMyContextFromRoot(diagram_context),
+            plant.GetBodyByName(block_body_name),
+            X_WBlock)
+
+        # - initial Velocities
+        plant.SetFreeBodySpatialVelocity(
+            plant.GetBodyByName(block_body_name),
+            SpatialVelocity(np.zeros(3), np.array([0.0, 0.0, 0.0])),
+            plant.GetMyContextFromRoot(diagram_context))
+
+        # Run sim
+        simulator = Simulator(diagram, diagram_context)
+        simulator.set_publish_every_time_step(False)
+
+        # simulator.Initialize()
+        simulator.AdvanceTo(10.0)
+
+        # Save figs
+        pw0.save_figures(diagram_context)
+
+        # Check that there are 0 png files in the plot_dir
+        files = os.listdir(plot_dir)
+        png_files = [f for f in files if f.endswith(".png")]
+        self.assertEqual(0, len(png_files))
+
+        # check the number of elements in the port subdirectory
+        port_dir = os.path.join(plot_dir, "system_plant/port_state")
+        files = os.listdir(port_dir)
+        png_files = [f for f in files if f.endswith(".png")]
+        self.assertEqual(13, len(png_files))
+
+        if self.delete_test_brom_directory_on_teardown:
+            shutil.rmtree(plot_dir)
 
 if __name__ == '__main__':
     unittest.main()

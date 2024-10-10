@@ -14,6 +14,7 @@ from pydrake.all import DiagramBuilder, Diagram
 from brom_drake.DiagramTarget import DiagramTarget
 from brom_drake.DiagramWatcher import DiagramWatcher
 from brom_drake.PortWatcher import PortFigureArrangement
+from brom_drake.PortWatcher.PortWatcherOptions import FigureNamingConvention, PortWatcherOptions
 
 PotentialTargetTypes = List[
     Union[
@@ -33,6 +34,7 @@ def add_watcher(
     targets: PotentialTargetTypes = None,
     data_dir: str = "./brom/watcher_plots",
     plot_arrangement: PortFigureArrangement = PortFigureArrangement.OnePlotPerPort,
+    figure_naming_convention: FigureNamingConvention = FigureNamingConvention.kFlat,
 ) -> DiagramWatcher:
     """
     Description:
@@ -50,6 +52,8 @@ def add_watcher(
     :param data_dir: str. The directory in which we will store the data collected by the DiagramWatcher.
     :param plot_arrangement: PortFigureArrangement. The arrangement of the plots.
         (Can be PortFigureArrangement.OnePlotPerPort OR PortFigureArrangement.OnePlotPerDim)
+    :param figure_naming_convention: FigureNamingConvention. The naming convention for the figures.
+        (Can be FigureNamingConvention.kFlat OR FigureNamingConvention.kHierarchical)
     :return: DiagramWatcher. The watcher that we have added to the diagram builder.
     """
     # Input Processing
@@ -63,7 +67,12 @@ def add_watcher(
     if targets is not None:
         targets = parse_list_of_simplified_targets(builder, targets)
 
-    watcher = DiagramWatcher(builder, targets=targets, plot_dir=data_dir, plot_arrangement=plot_arrangement)
+    port_watcher_options = PortWatcherOptions(
+        plot_arrangement=plot_arrangement,
+        figure_naming_convention=figure_naming_convention,
+    )
+
+    watcher = DiagramWatcher(builder, targets=targets, plot_dir=data_dir, port_watcher_options=port_watcher_options)
     return watcher
 
 
@@ -72,6 +81,7 @@ def add_watcher_and_build(
     targets: PotentialTargetTypes = None,
     data_dir: str = "./brom/watcher_plots",
     plot_arrangement: PortFigureArrangement = PortFigureArrangement.OnePlotPerPort,
+    figure_naming_convention: FigureNamingConvention = FigureNamingConvention.kFlat,
 ) -> (DiagramWatcher, Diagram):
     """
     add_watcher_and_build
@@ -92,9 +102,15 @@ def add_watcher_and_build(
     :param data_dir: str. The directory in which we will store the data collected by the DiagramWatcher.
     :param plot_arrangement: PortFigureArrangement. The arrangement of the plots.
         (Can be PortFigureArrangement.OnePlotPerPort OR PortFigureArrangement.OnePlotPerDim)
+    :param figure_naming_convention: FigureNamingConvention. The naming convention for the figures.
+        (Can be FigureNamingConvention.kFlat OR FigureNamingConvention.kHierarchical)
     :return: DiagramWatcher. The watcher that we have added to the diagram builder.
     """
-    watcher = add_watcher(builder, targets=targets, data_dir=data_dir, plot_arrangement=plot_arrangement)
+    watcher = add_watcher(
+        builder,
+        targets=targets, data_dir=data_dir,
+        plot_arrangement=plot_arrangement, figure_naming_convention=figure_naming_convention,
+    )
 
     # Build the diagram and add a reference to the watcher
     diagram = builder.Build()
