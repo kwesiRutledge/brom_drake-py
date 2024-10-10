@@ -5,6 +5,7 @@ Description:
     This file defines the PortWatcher class. This class is used to watch the ports of a
     diagram.
 """
+from pathlib import Path
 from typing import List, Tuple, Union, NamedTuple
 import loguru
 import numpy as np
@@ -16,7 +17,8 @@ from pydrake.systems.primitives import LogVectorOutput
 from pydrake.systems.framework import Context
 
 # Internal Imports
-from .PortWatcherOptions import PortWatcherOptions, PortFigureArrangement
+from .PortWatcherOptions import PortWatcherOptions, PortFigureArrangement, FigureNamingConvention
+
 
 class PortWatcher:
     def __init__(
@@ -202,25 +204,93 @@ class PortWatcher:
         if len(figs) == 0:
             return # Do nothing
 
-        # Save the figures (if possible)
-        os.makedirs(
-            f"{self.plot_dir}/system_{self.safe_system_name()}",
-            exist_ok=True,
-        )
+        # Save the figures
+        figure_names = self.figure_names()
 
         if len(figs) == 1:
-            figs[0].savefig(
-                f"{self.plot_dir}/system_{self.safe_system_name()}/port_{self.port.get_name()}.png",
-                dpi=self.options.plot_dpi,
-            )
+            # Create directory for the plots, if it doesn't already exist
+            os.makedirs(Path(figure_names[0]).parent, exist_ok=True)
+            figs[0].savefig(figure_names[0], dpi=self.options.plot_dpi)
         else:
-            # Create a directory for the plots
-            port_plot_dir = self.plot_dir + f"/system_{self.safe_system_name()}/port_{self.port.get_name()}"
-            os.makedirs(port_plot_dir, exist_ok=True)
-
             # Plot each figure within this directory
             for ii, fig_ii in enumerate(figs):
-                fig_ii.savefig(
-                    f"{port_plot_dir}/dim{ii}.png",
-                    dpi=self.options.plot_dpi,
-                )
+                os.makedirs(Path(figure_names[ii]).parent, exist_ok=True)
+                fig_ii.savefig(figure_names[ii],dpi=self.options.plot_dpi)
+
+    def figure_names(self) -> List[str]:
+        """
+        Description:
+            Returns the name of the figure.
+        :return:
+        """
+        # Setup
+        options = self.options
+
+        # If this has the flat naming convention, then the file should be contained within the plot_dir.
+        if options.figure_naming_convention == FigureNamingConvention.kFlat:
+            return self.figure_names_under_flat_convention()
+
+
+        elif options.figure_naming_convention == FigureNamingConvention.kHierarchical:
+            return self.figure_names_under_hierarchical_convention()
+
+        else:
+            raise NotImplementedError(
+                f"Invalid figure naming convention for figure_names(): {options.figure_naming_convention}."
+            )
+
+
+    def figure_names_under_flat_convention(self) -> List[str]:
+        """
+        Description:
+            Returns the names associated with each figure that this port will
+            generate assuming we are under the kFlat convention.
+        :param self:
+        :return: List of strings where each string is a file name for an associated figure.
+        """
+        # Setup
+        options = self.options
+
+        #
+        if options.plot_arrangement == PortFigureArrangement.OnePlotPerPort:
+            return [
+                f"{self.plot_dir}/system_{self.safe_system_name()}_port_{self.port.get_name()}.png"
+            ]
+
+        elif options.plot_arrangement == PortFigureArrangement.OnePlotPerDim:
+            return [
+                f"{self.plot_dir}/system_{self.safe_system_name()}_port_{self.port.get_name()}_dim{ii}.png"
+                for ii in range(self.port.size())
+            ]
+
+        else:
+            raise NotImplementedError(
+                f"Invalid plot arrangement for figure naming convention {options.figure_naming_convention}: {options.plot_arrangement}."
+            )
+
+    def figure_names_under_hierarchical_convention(self) -> List[str]:
+        """
+        Description:
+            Returns the names associated with each figure that this port will
+            generate assuming we are under the kHierarchical convention.
+        :return:
+        """
+        # Setup
+        options = self.options
+
+        # Algorithm
+        if options.plot_arrangement == PortFigureArrangement.OnePlotPerPort:
+            return [
+                f"{self.plot_dir}/system_{self.safe_system_name()}/port_{self.port.get_name()}.png"
+            ]
+
+        elif options.plot_arrangement == PortFigureArrangement.OnePlotPerDim:
+            return [
+                f"{self.plot_dir}/system_{self.safe_system_name()}/port_{self.port.get_name()}/dim{ii}.png"
+                for ii in range(self.port.size())
+            ]
+
+        else:
+            raise NotImplementedError(
+                f"Invalid plot arrangement for figure naming convention {options.figure_naming_convention}: {options.plot_arrangement}."
+            )

@@ -17,6 +17,7 @@ from pydrake.all import (
     AffineSystem, ConstantVectorSource, Meshcat, MeshcatVisualizer, Simulator,
 )
 
+from brom_drake.PortWatcher.PortWatcherOptions import FigureNamingConvention
 from brom_drake.all import add_watcher_and_build
 from brom_drake.PortWatcher import PortFigureArrangement
 from brom_drake.example_helpers import BlockHandlerSystem
@@ -66,6 +67,7 @@ def main():
     watcher, diagram, diagram_context = add_watcher_and_build(
         builder,
         plot_arrangement=PortFigureArrangement.OnePlotPerDim,
+        figure_naming_convention=FigureNamingConvention.kHierarchical,
     )
 
     # Set initial pose and vectors
