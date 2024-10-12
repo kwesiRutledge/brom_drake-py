@@ -14,7 +14,7 @@ from pydrake.all import DiagramBuilder, Diagram
 from brom_drake.DiagramTarget import DiagramTarget
 from brom_drake.DiagramWatcher import DiagramWatcher, DEFAULT_PLOT_DIR
 from brom_drake.PortWatcher import PortFigureArrangement
-from brom_drake.PortWatcher.PortWatcherOptions import FigureNamingConvention, PortWatcherOptions
+from brom_drake.PortWatcher.port_watcher_options import FigureNamingConvention, PortWatcherOptions
 
 PotentialTargetTypes = List[
     Union[
@@ -35,6 +35,7 @@ def add_watcher(
     data_dir: str = DEFAULT_PLOT_DIR,
     plot_arrangement: PortFigureArrangement = PortFigureArrangement.OnePlotPerPort,
     figure_naming_convention: FigureNamingConvention = FigureNamingConvention.kFlat,
+    file_format: str = "png",
 ) -> DiagramWatcher:
     """
     Description:
@@ -70,6 +71,7 @@ def add_watcher(
     port_watcher_options = PortWatcherOptions(
         plot_arrangement=plot_arrangement,
         figure_naming_convention=figure_naming_convention,
+        file_format=file_format,
     )
 
     watcher = DiagramWatcher(builder, targets=targets, plot_dir=data_dir, port_watcher_options=port_watcher_options)
@@ -82,6 +84,7 @@ def add_watcher_and_build(
     data_dir: str = DEFAULT_PLOT_DIR,
     plot_arrangement: PortFigureArrangement = PortFigureArrangement.OnePlotPerPort,
     figure_naming_convention: FigureNamingConvention = FigureNamingConvention.kFlat,
+    file_format: str = "png",
 ) -> (DiagramWatcher, Diagram):
     """
     add_watcher_and_build
@@ -109,7 +112,9 @@ def add_watcher_and_build(
     watcher = add_watcher(
         builder,
         targets=targets, data_dir=data_dir,
-        plot_arrangement=plot_arrangement, figure_naming_convention=figure_naming_convention,
+        plot_arrangement=plot_arrangement,
+        figure_naming_convention=figure_naming_convention,
+        file_format=file_format,
     )
 
     # Build the diagram and add a reference to the watcher

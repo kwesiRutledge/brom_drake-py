@@ -18,7 +18,8 @@ from pydrake.systems.framework import Context
 
 # Internal Imports
 from brom_drake.DiagramWatcher.constants import DEFAULT_PLOT_DIR
-from .PortWatcherOptions import PortWatcherOptions, PortFigureArrangement, FigureNamingConvention
+from .port_watcher_options import PortWatcherOptions, FigureNamingConvention
+from .port_figure_arrangement import PortFigureArrangement
 
 
 class PortWatcher:
@@ -251,16 +252,17 @@ class PortWatcher:
         """
         # Setup
         options = self.options
+        format = options.file_format
 
         #
         if options.plot_arrangement == PortFigureArrangement.OnePlotPerPort:
             return [
-                f"{self.plot_dir}/system_{self.safe_system_name()}_port_{self.port.get_name()}.png"
+                f"{self.plot_dir}/system_{self.safe_system_name()}_port_{self.port.get_name()}.{format}"
             ]
 
         elif options.plot_arrangement == PortFigureArrangement.OnePlotPerDim:
             return [
-                f"{self.plot_dir}/system_{self.safe_system_name()}_port_{self.port.get_name()}_dim{ii}.png"
+                f"{self.plot_dir}/system_{self.safe_system_name()}_port_{self.port.get_name()}_dim{ii}.{format}"
                 for ii in range(self.port.size())
             ]
 
@@ -278,16 +280,17 @@ class PortWatcher:
         """
         # Setup
         options = self.options
+        format = options.file_format
 
         # Algorithm
         if options.plot_arrangement == PortFigureArrangement.OnePlotPerPort:
             return [
-                f"{self.plot_dir}/system_{self.safe_system_name()}/port_{self.port.get_name()}.png"
+                f"{self.plot_dir}/system_{self.safe_system_name()}/port_{self.port.get_name()}.{format}"
             ]
 
         elif options.plot_arrangement == PortFigureArrangement.OnePlotPerDim:
             return [
-                f"{self.plot_dir}/system_{self.safe_system_name()}/port_{self.port.get_name()}/dim{ii}.png"
+                f"{self.plot_dir}/system_{self.safe_system_name()}/port_{self.port.get_name()}/dim{ii}.{format}"
                 for ii in range(self.port.size())
             ]
 

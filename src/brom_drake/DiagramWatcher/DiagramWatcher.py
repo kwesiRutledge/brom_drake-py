@@ -17,10 +17,11 @@ from pydrake.systems.primitives import (
     VectorLogSink, ConstantVectorSource, AffineSystem, LogVectorOutput,
 )
 
-from ..DiagramTarget import DiagramTarget
-from ..PortWatcher import PortWatcher, PortFigureArrangement, PortWatcherOptions
-from .constants import INELIGIBLE_SYSTEM_TYPES, DEFAULT_PLOT_DIR
-from .errors import UnrecognizedTargetError
+# Internal Imports
+from brom_drake.DiagramTarget import DiagramTarget
+from brom_drake.PortWatcher import PortWatcher, PortFigureArrangement, PortWatcherOptions
+from brom_drake.DiagramWatcher.constants import INELIGIBLE_SYSTEM_TYPES, DEFAULT_PLOT_DIR
+from brom_drake.DiagramWatcher.errors import UnrecognizedTargetError
 
 
 class DiagramWatcher:
