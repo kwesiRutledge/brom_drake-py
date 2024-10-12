@@ -15,15 +15,12 @@ jobs:
       url: https://pypi.org/p/brom_drake/
     permissions:
       id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
-    strategy:
-      matrix:
-        python-version: [ '3.10','3.12' ]
     steps:
       - uses: actions/checkout@master
-      - name: Set up Python For Testing
+      - name: Set up Python 3.10
         uses: actions/setup-python@v3
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: '3.10'
       - name: Install pypa/setuptools
         run: >-
           python -m
@@ -39,16 +36,3 @@ jobs:
           python setup.py sdist bdist_wheel
       - name: Publish distribution 📦 to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
-
-#    name: Upload release to PyPI
-#    runs-on: ubuntu-latest
-#    environment:
-#      name: release
-#      url: https://pypi.org/p/brom_drake/
-#    permissions:
-#      id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
-#    steps:
-#    # retrieve your distributions here
-#
-#    - name: Publish package distributions to PyPI
-#      uses: pypa/gh-action-pypi-publish@release/v1
