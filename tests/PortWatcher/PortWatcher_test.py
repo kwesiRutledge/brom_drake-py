@@ -22,8 +22,8 @@ from pydrake.systems.framework import DiagramBuilder, PortDataType, Diagram, Con
 
 from brom_drake.DiagramWatcher import DiagramWatcher
 from brom_drake.PortWatcher import PortWatcher
-from brom_drake.PortWatcher.PortWatcher import PortFigureArrangement, PortWatcherOptions
-from brom_drake.PortWatcher.PortWatcherOptions import FigureNamingConvention
+from brom_drake.PortWatcher.port_watcher import PortFigureArrangement, PortWatcherOptions
+from brom_drake.PortWatcher.port_watcher_options import FigureNamingConvention
 
 
 class PortWatcherTest(unittest.TestCase):
