@@ -17,10 +17,11 @@ from pydrake.systems.primitives import (
     VectorLogSink, ConstantVectorSource, AffineSystem, LogVectorOutput,
 )
 
-from ..DiagramTarget import DiagramTarget
-from ..PortWatcher import PortWatcher, PortFigureArrangement, PortWatcherOptions
-from .constants import INELIGIBLE_SYSTEM_TYPES
-from .errors import UnrecognizedTargetError
+# Internal Imports
+from brom_drake.DiagramTarget import DiagramTarget
+from brom_drake.PortWatcher import PortWatcher, PortFigureArrangement, PortWatcherOptions
+from brom_drake.DiagramWatcher.constants import INELIGIBLE_SYSTEM_TYPES, DEFAULT_PLOT_DIR
+from brom_drake.DiagramWatcher.errors import UnrecognizedTargetError
 
 
 class DiagramWatcher:
@@ -28,12 +29,10 @@ class DiagramWatcher:
         self,
         subject: DiagramBuilder,
         targets: List[DiagramTarget] = None,
-        plot_dir: str = "./brom/watcher_plots",
-        dpi: int = 300,
-        plot_arrangement: PortFigureArrangement = PortFigureArrangement.OnePlotPerPort,
+        plot_dir: str = DEFAULT_PLOT_DIR,
+        port_watcher_options: PortWatcherOptions = PortWatcherOptions(),
     ):
         # Setup
-        self.dpi = dpi
 
         # Needs to be populated by the user of this class AFTER the diagram has been built
         self.diagram = None
@@ -93,16 +92,11 @@ class DiagramWatcher:
                     continue
 
                 # Configure PortWatcher
-                options_ii = PortWatcherOptions(
-                    plot_arrangement=plot_arrangement,
-                    plot_dpi=self.dpi,
-                )
-
                 self.port_watchers[target.name][target_port.get_name()] = PortWatcher(
                     system, target_port, subject,
                     logger_name=f"{target.name}_logger_{port_index}",
                     plot_dir=plot_dir,
-                    options=options_ii,
+                    options=port_watcher_options,
                 )
 
     def __del__(self):
@@ -114,8 +108,6 @@ class DiagramWatcher:
         :return:
         """
         # Setup
-        plot_dir = self.plot_dir
-        dpi = self.dpi
 
         is_ready_to_plot = self.diagram is not None
 
