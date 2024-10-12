@@ -821,5 +821,14 @@ class PortWatcherTest(unittest.TestCase):
         if self.delete_test_brom_directory_on_teardown:
             shutil.rmtree(plot_dir)
 
+    def test_save_figures4(self):
+        """
+        Description:
+            This test verifies that when choosing the plot options:
+            -
+
+        :return:
+        """
+
 if __name__ == '__main__':
     unittest.main()

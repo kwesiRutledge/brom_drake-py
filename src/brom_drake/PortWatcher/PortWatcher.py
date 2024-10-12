@@ -17,6 +17,7 @@ from pydrake.systems.primitives import LogVectorOutput
 from pydrake.systems.framework import Context
 
 # Internal Imports
+from brom_drake.DiagramWatcher.constants import DEFAULT_PLOT_DIR
 from .PortWatcherOptions import PortWatcherOptions, PortFigureArrangement, FigureNamingConvention
 
 
@@ -28,7 +29,7 @@ class PortWatcher:
         builder: DiagramBuilder,
         logger_name: str = None,
         options: PortWatcherOptions = PortWatcherOptions(),
-        plot_dir: str = "./brom",
+        plot_dir: str = DEFAULT_PLOT_DIR,
     ):
         # Setup
         self.options = options
@@ -187,7 +188,7 @@ class PortWatcher:
 
     def save_figures(self, diagram_context: Context):
         """
-        savefigs
+        savefigures
         Description:
             This function saves the figures.
         TODO(kwesi): Make it so that this function computes names + directory structure based on plot arrangement.

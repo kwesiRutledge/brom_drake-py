@@ -19,7 +19,7 @@ from pydrake.systems.primitives import (
 
 from ..DiagramTarget import DiagramTarget
 from ..PortWatcher import PortWatcher, PortFigureArrangement, PortWatcherOptions
-from .constants import INELIGIBLE_SYSTEM_TYPES
+from .constants import INELIGIBLE_SYSTEM_TYPES, DEFAULT_PLOT_DIR
 from .errors import UnrecognizedTargetError
 
 
@@ -28,7 +28,7 @@ class DiagramWatcher:
         self,
         subject: DiagramBuilder,
         targets: List[DiagramTarget] = None,
-        plot_dir: str = "./brom/watcher_plots",
+        plot_dir: str = DEFAULT_PLOT_DIR,
         port_watcher_options: PortWatcherOptions = PortWatcherOptions(),
     ):
         # Setup

@@ -12,7 +12,7 @@ import numpy as np
 from pydrake.all import DiagramBuilder, Diagram
 
 from brom_drake.DiagramTarget import DiagramTarget
-from brom_drake.DiagramWatcher import DiagramWatcher
+from brom_drake.DiagramWatcher import DiagramWatcher, DEFAULT_PLOT_DIR
 from brom_drake.PortWatcher import PortFigureArrangement
 from brom_drake.PortWatcher.PortWatcherOptions import FigureNamingConvention, PortWatcherOptions
 
@@ -32,7 +32,7 @@ PotentialTargetTypes = List[
 def add_watcher(
     builder: DiagramBuilder,
     targets: PotentialTargetTypes = None,
-    data_dir: str = "./brom/watcher_plots",
+    data_dir: str = DEFAULT_PLOT_DIR,
     plot_arrangement: PortFigureArrangement = PortFigureArrangement.OnePlotPerPort,
     figure_naming_convention: FigureNamingConvention = FigureNamingConvention.kFlat,
 ) -> DiagramWatcher:
@@ -79,7 +79,7 @@ def add_watcher(
 def add_watcher_and_build(
     builder: DiagramBuilder,
     targets: PotentialTargetTypes = None,
-    data_dir: str = "./brom/watcher_plots",
+    data_dir: str = DEFAULT_PLOT_DIR,
     plot_arrangement: PortFigureArrangement = PortFigureArrangement.OnePlotPerPort,
     figure_naming_convention: FigureNamingConvention = FigureNamingConvention.kFlat,
 ) -> (DiagramWatcher, Diagram):
