@@ -41,7 +41,6 @@ def find_base_link_name_in(path_to_robot_model: str) -> str:
     )
 
 
-# TODO(kwesi): Maybe move this to a utilities file?
 def find_all_link_names(xml_tree: ET.ElementTree ) -> List[str]:
     """
     Description
