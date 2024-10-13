@@ -1,0 +1,39 @@
+name: Verify that all examples still run
+on: [pull_request]
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    name: Run tests and collect coverage
+    strategy:
+      matrix:
+        example_location: [
+          'examples/watcher/suggested_use1/create_monitor.py',
+          'examples/watcher/wo_convenience1/create_monitor_wo_convenience.py',
+          'examples/watcher/changing_plot_arrangement1/create_monitor_w_different_arrangement.py',
+          'examples/conversion/suggested_use1/drakeify.py',
+          'examples/scenes/debug/show_me_this_model/suggested_use1.py',
+        ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Fetch all history for git tag
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Get Previous Tag
+        id: previous_tag
+        uses: "WyriHaximus/github-action-get-previous-tag@v1"
+        with:
+          fallback: 0.0.1 # Optional fallback tag to use when no tag can be found
+          #workingDirectory: another/path/where/a/git/repo/is/checked/out # Optional alternative working directory
+      - name: Update version in setup.py
+        run: >-
+          sed -i "s/{{VERSION_PLACEHOLDER}}/${{ steps.previous_tag.outputs.tag }}/g" setup.py
+      - name: Install package
+        run: pip install -e .
+      - name: Run the current example
+        run: python3 ${{ matrix.example_location }}

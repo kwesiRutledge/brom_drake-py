@@ -7,11 +7,10 @@ from pydrake.multibody.parsing import Parser
 from pydrake.multibody.plant import AddMultibodyPlantSceneGraph
 from pydrake.systems.framework import DiagramBuilder
 
-import xml.etree.ElementTree as ET
-
 from pydrake.systems.primitives import ConstantVectorSource, VectorLogSink
 
 # Internal Imports
+from brom_drake.robots import find_base_link_name_in
 from brom_drake.scenes.types import BaseScene
 from brom_drake.scenes import SceneID
 from brom_drake.scenes.roles.role import Role
@@ -101,7 +100,7 @@ class ShowMeThisModel(BaseScene):
 
         # Try to collect the base link name if it is not provided
         if self.base_link_name is None:
-            self.base_link_name = self.find_a_good_base_link_name()
+            self.base_link_name = find_base_link_name_in(self.path_to_model)
 
         # Weld the base link to the world frame
         self.plant.WeldFrames(
@@ -115,57 +114,6 @@ class ShowMeThisModel(BaseScene):
 
         # Finalize plant and connect it to system
         self.plant.Finalize()
-
-    def find_a_good_base_link_name(self)->str:
-        """
-        Description
-        -----------
-        This method will try to find a good base link for the model.
-        :return:
-        """
-        # Setup
-
-        # Parse the model using xml
-        if ".urdf" in self.path_to_model:
-            original_xml = ET.ElementTree(file=self.path_to_model)
-            link_names = self.find_all_link_names(original_xml)
-
-            # Find a link that contains the word "base"
-            for link_name in link_names:
-                if "base" in link_name.lower():
-                    return link_name # Return the first one we find
-
-        else:
-            raise ValueError(
-                "We can only smartly find base links in .urdf files, for now.\n" +
-                "File an issue if you want more support in the future."
-            )
-
-        # If we can't find a base link, then we will raise an error
-        raise ValueError(
-            "We could not find a good base link in the model.\n" +
-            "Please provide the base link name manually by adding \"base\" to one of the urdf's links."
-        )
-
-
-    # TODO(kwesi): Maybe move this to a utilities file?
-    @staticmethod
-    def find_all_link_names(xml_tree: ET.ElementTree)->List[str]:
-        """
-        Description
-        -----------
-        This method will find all the link names in the xml tree.
-        :param xml_tree: The xml tree that we would like to investigate.
-        :return:
-        """
-        # Setup
-        link_names = []
-
-        # Find all the links
-        for link in xml_tree.findall(".//link"):
-            link_names.append(link.attrib["name"])
-
-        return link_names
 
     @property
     def id(self):
