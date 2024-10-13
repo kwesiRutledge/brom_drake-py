@@ -10,46 +10,30 @@ from pydrake.systems.framework import Diagram, DiagramBuilder, LeafSystem, PortD
 from manipulation.scenarios import AddMultibodyTriad
 
 import numpy as np
+from requests.packages import target
+
 
 # Internal Imports
-from brom_drake import example_helpers as eh
 
 
-class BlockHandlerSystem(LeafSystem):
+class IdealJointPositionController(LeafSystem):
     def __init__(
         self,
-        plant: MultibodyPlant,
-        scene_graph,
-        block_name: str = "block_with_slots",
-        model_urdf_path: str = None,
+        robot_model_file_name: str,
+        plant_dt: float = 1e-3,
     ):
         LeafSystem.__init__(self)
-
         # Input Processing
-        if model_urdf_path is None:
-            model_urdf_path = str(
-                impresources.files(eh) / "models/slider-block.urdf",
-            )
 
-        # Constants
-        self.block_name = block_name
+        # Set Up
+
+        # Create a new plant for use only by this controller
+        self.plant = MultibodyPlant(plant_dt)
 
         # Add the Block to the given plant
-        self.plant = plant
-        self.block_model_idx = Parser(plant=self.plant).AddModels(model_urdf_path)[0]
-        self.block_model_name = self.plant.GetModelInstanceName(self.block_model_idx)
-        self.block_body_name = "block"
+        self.robot_body_name = robot_body_name
 
-        AddGround(self.plant) #Add ground to plant
-
-        # Add the Triad
-        self.scene_graph = scene_graph
-        AddMultibodyTriad(plant.GetFrameByName(self.block_body_name), self.scene_graph)
-
-        self.plant.Finalize()
-        self.context = self.plant.CreateDefaultContext()
-
-        # Create Input Port for the Slider Block System
+        # Create Input Port for the Body's Joint Positions
         self.desired_pose_port = self.DeclareVectorInputPort(
             "desired_pose",
             BasicVector(6),
@@ -62,6 +46,12 @@ class BlockHandlerSystem(LeafSystem):
             self.SetBlockPose,
             {self.time_ticket()}    # indicate that this doesn't depend on any inputs,
         )                           # but should still be updated each timestep
+
+        # Weld The Robot's Base to the world frame
+        self.plant.WeldFrames(
+            self.plant.world_frame(),
+            self.plant.GetFrameByName("base_link", self.controller_arm),
+        )
 
     def SetBlockPose(self, context, output):
         """
