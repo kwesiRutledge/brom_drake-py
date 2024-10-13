@@ -11,6 +11,7 @@ jobs:
           'examples/watcher/wo_convenience1/create_monitor_wo_convenience.py',
           'examples/watcher/changing_plot_arrangement1/create_monitor_w_different_arrangement.py',
           'examples/conversion/suggested_use1/drakeify.py',
+          'examples/conversion/converter_advanced_usage1/demo.py',
           'examples/scenes/debug/show_me_this_model/suggested_use1.py',
         ]
     steps:
