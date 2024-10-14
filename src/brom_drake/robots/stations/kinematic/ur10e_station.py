@@ -6,19 +6,17 @@ from pydrake.math import RollPitchYaw, RigidTransform, RotationMatrix
 from pydrake.multibody.parsing import Parser
 from pydrake.multibody.plant import MultibodyPlant
 from pydrake.multibody.tree import FixedOffsetFrame
-from pydrake.systems.framework import Diagram, DiagramBuilder
+from pydrake.systems.framework import Diagram, DiagramBuilder, State, Context
 from pydrake.systems.primitives import Demultiplexer
 
-from . import EndEffectorWrenchCalculator
+from brom_drake.control import IdealJointPositionController
 # Local imports
-from .gripper_type import GripperType
-from ..control import GripperController
-from brom_drake.control.arms.cartesian_arm_controller import CartesianArmController
-from ..control.arms import (
-    JointArmController, CartesianArmController,
-    JointTarget, ArmControlMode,
+from brom_drake.robots.gripper_type import GripperType
+from brom_drake.control.grippers.gripper_controller import GripperController
+from brom_drake.control.arms import (
+    JointArmController, ArmControlMode,
 )
-from ..urdf import DrakeReadyURDFConverter
+from brom_drake.urdf.DrakeReadyURDFConverter import DrakeReadyURDFConverter
 
 from brom_drake import robots
 
@@ -210,7 +208,7 @@ class UR10eStation(Diagram):
         # Setup
 
         # Create the input ports for the joint positions
-        self.builder.ExportInput(
+        ideal_joint_controller = self.CreateJointArmControllerAndExportInputs()
 
         # Output measured arm position and velocity
         demux = self.builder.AddSystem(
@@ -235,31 +233,50 @@ class UR10eStation(Diagram):
         """
         Description
         -----------
+        Creates an ideal joint position controller and exports the necessary inputs.
         :return:
         """
         # Setup
 
-        # Create Controller
-        joint_controller = self.builder.AddSystem(
-            JointArmController(
-                self.controller_plant,
-                self.controller_arm,
-                end_effector_frame_name=self.end_effector_frame_name,
-            ),
+        # Create "Controller" (really we will just force the arm into the position that we want)
+        self.desired_joint_positions_port = self.DeclareVectorInputPort(
+            "desired_joint_positions",
+            BasicVector(self.plant.num_positions()),
         )
-        joint_controller.set_name(f"{self.get_name()}_JointController")
 
         # End effector target and target type go to the controller
         self.builder.ExportInput(
             joint_controller.joint_target_port,
             "joint_target",
         )
-        self.builder.ExportInput(
-            joint_controller.joint_target_type_port,
-            "joint_target_type",
-        )
 
         return joint_controller
+
+    def SetUR10eJointPosition(
+        self,
+        station_context: Context,
+        q: np.ndarray,
+    ):
+        """
+        Description
+        -----------
+        This function sets the joint positions of the UR10e robot.
+        :param station_context:
+        :param state:
+        :param q:
+        :return:
+        """
+        # Setup
+
+        # Get the plant context
+        plant_context = self.GetSubsystemContext(self.plant, station_context)
+        # plant_state = self.GetMutableSubsystemState(self.plant, state)
+        self.plant.SetPositions(
+            plant_context,
+            q,
+        )
+
+
 
     def CreateGripperControllerAndConnect(self):
         """

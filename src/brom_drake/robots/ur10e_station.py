@@ -12,8 +12,7 @@ from pydrake.systems.primitives import Demultiplexer
 from . import EndEffectorWrenchCalculator
 # Local imports
 from .gripper_type import GripperType
-from ..control import GripperController
-from brom_drake.control.arms.cartesian_arm_controller import CartesianArmController
+from ..control.grippers import GripperController
 from ..control.arms import (
     JointArmController, CartesianArmController,
     JointTarget, ArmControlMode,

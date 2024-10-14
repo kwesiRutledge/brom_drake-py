@@ -47,7 +47,7 @@ class CartesianArmController(BaseArmController):
     def __init__(
         self,
         plant: MultibodyPlant,
-        controller_plant,
+        arm_model,
         end_effector_frame_name: str = "end_effector_frame",
     ):
         BaseArmController.__init__(
