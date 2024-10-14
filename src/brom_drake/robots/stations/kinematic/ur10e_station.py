@@ -23,19 +23,19 @@ from brom_drake import robots
 class UR10eStation(Diagram):
     """
     A template system diagram for controlling a UR10e robot in a simulated environment.
-    # TODO(kwesi): Draw the diagram for the two different control modes.
     """
 
     def __init__(
         self,
         time_step: float = 0.002,
         gripper_type: GripperType = GripperType.NoGripper,
-        control_mode: ArmControlMode = ArmControlMode.kEndEffector,
     ):
         """
         Description:
 
-            This class defines the
+            This class defines the KINEMATIC UR10e Manipulation Station.
+            This station is based off of the Drake Manipulation Station showcased
+            in Russ Tedrake's manipulation course.
         """
         # Input Processing
 
@@ -54,12 +54,7 @@ class UR10eStation(Diagram):
             MultibodyPlant(time_step=time_step)
         )
         self.plant.RegisterAsSourceForSceneGraph(self.scene_graph)
-        self.plant.set_name("UR10e_Station_Plant")
-
-        # Add a shadow plant that only has access to the robot arm + gripper mass,
-        # and is used for the controller. (Doesn't know about anything else in the scene)
-        self.controller_plant = MultibodyPlant(time_step=time_step)
-        self.controller_plant.set_name(f"{self.get_name()}_ControllerPlant")
+        self.plant.set_name(f"{self.get_name()}_Plant")
 
         # Body ID's and Poses for Anything else in the scene
         self.object_ids = []
@@ -68,7 +63,6 @@ class UR10eStation(Diagram):
         # Whether we have a camera in the simulation
         # self.has_camera = False
 
-        self.arm_control_mode = control_mode
         self.AddArm()
 
         # Which sort of gripper we're using (if any)
@@ -94,17 +88,11 @@ class UR10eStation(Diagram):
         # but requires a simulation with small timesteps.
 
         self.arm = Parser(plant=self.plant).AddModels(arm_urdf)[0]
-        self.controller_arm = Parser(plant=self.controller_plant).AddModels(arm_urdf)[0]
 
         # Fix the base of the arm to the world
         self.plant.WeldFrames(
             self.plant.world_frame(),
             self.plant.GetFrameByName("base_link", self.arm),
-        )
-
-        self.controller_plant.WeldFrames(
-            self.controller_plant.world_frame(),
-            self.controller_plant.GetFrameByName("base_link", self.controller_arm),
         )
 
         # Create a new frame with the actual end-effector position.
@@ -114,10 +102,6 @@ class UR10eStation(Diagram):
             "end_effector",
             self.plant.GetFrameByName("tool0"),
             self.X_ee, self.arm))
-        self.controller_plant.AddFrame(FixedOffsetFrame(
-            "end_effector",
-            self.controller_plant.GetFrameByName("tool0"),
-            self.X_ee, self.controller_arm))
 
     def Add2f85Gripper(self):
         """
@@ -174,7 +158,6 @@ class UR10eStation(Diagram):
 
         # Finalize all plants
         self.plant.Finalize()
-        self.controller_plant.Finalize()
 
         # Set up the scene graph
         self.builder.Connect(
@@ -188,7 +171,7 @@ class UR10eStation(Diagram):
         )
 
         # Create Arm and Gripper Controllers
-        self.CreateArmPorts(self.arm_control_mode)
+        self.CreateArmPorts()
 
         if self.gripper_type != GripperType.NoGripper:
             self.CreateGripperControllerAndConnect()
@@ -208,7 +191,7 @@ class UR10eStation(Diagram):
         # Setup
 
         # Create the input ports for the joint positions
-        ideal_joint_controller = self.CreateJointArmControllerAndExportInputs()
+        self.arm_controller = self.CreateJointArmControllerAndExportIO()
 
         # Output measured arm position and velocity
         demux = self.builder.AddSystem(
@@ -229,52 +212,36 @@ class UR10eStation(Diagram):
             "measured_arm_velocity",
         )
 
-    def CreateJointArmControllerAndExportInputs(self)-> JointArmController:
+    def CreateJointArmControllerAndExportIO(
+        self,
+    )-> IdealJointPositionController:
         """
         Description
         -----------
-        Creates an ideal joint position controller and exports the necessary inputs.
+        Creates an ideal joint position controller and exports the necessary inputs + outputs.
         :return:
         """
         # Setup
+        arm = self.arm
+        plant = self.plant
 
-        # Create "Controller" (really we will just force the arm into the position that we want)
-        self.desired_joint_positions_port = self.DeclareVectorInputPort(
-            "desired_joint_positions",
-            BasicVector(self.plant.num_positions()),
+        # Create the joint controller
+        joint_controller = self.builder.AddSystem(
+            IdealJointPositionController(arm, plant),
         )
 
-        # End effector target and target type go to the controller
+        # Export the input and output ports
         self.builder.ExportInput(
-            joint_controller.joint_target_port,
-            "joint_target",
+            joint_controller.desired_joint_positions_port,
+            "desired_joint_positions",
+        )
+
+        self.builder.ExportOutput(
+            joint_controller.GetOutputPort("measured_joint_positions"),
+            "measured_joint_positions",
         )
 
         return joint_controller
-
-    def SetUR10eJointPosition(
-        self,
-        station_context: Context,
-        q: np.ndarray,
-    ):
-        """
-        Description
-        -----------
-        This function sets the joint positions of the UR10e robot.
-        :param station_context:
-        :param state:
-        :param q:
-        :return:
-        """
-        # Setup
-
-        # Get the plant context
-        plant_context = self.GetSubsystemContext(self.plant, station_context)
-        # plant_state = self.GetMutableSubsystemState(self.plant, state)
-        self.plant.SetPositions(
-            plant_context,
-            q,
-        )
 
 
 

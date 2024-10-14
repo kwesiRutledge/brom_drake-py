@@ -8,6 +8,8 @@ import os
 import unittest
 
 import numpy as np
+from pydrake.multibody.parsing import Parser
+from pydrake.multibody.plant import MultibodyPlant
 from pydrake.systems.analysis import Simulator
 from pydrake.systems.framework import DiagramBuilder
 from pydrake.systems.primitives import AffineSystem, ConstantVectorSource
@@ -16,6 +18,7 @@ from brom_drake.all import add_watcher_and_build
 # Internal Imports
 from brom_drake.control import IdealJointPositionController
 from brom_drake import robots
+from brom_drake.robots import find_base_link_name_in
 from brom_drake.urdf import DrakeReadyURDFConverter
 
 
@@ -39,9 +42,13 @@ class TestIdealJointPositionController(unittest.TestCase):
         # Setup
         arm_urdf = self.expected_urdf_location
 
-        # Create
-        controller = IdealJointPositionController(arm_urdf)
+        # Add arm_urdf to plant
+        plant1 = MultibodyPlant(1e-3)
+        arm_model_idx = Parser(plant1).AddModels(arm_urdf)[0]
+        plant1.Finalize()
 
+        # Create
+        controller = IdealJointPositionController(arm_model_idx, plant1)
         self.assertTrue(True)
 
     def create_simple_affine_system1(self, builder: DiagramBuilder):
@@ -94,10 +101,20 @@ class TestIdealJointPositionController(unittest.TestCase):
         # Create diagram builder
         builder = DiagramBuilder()
 
+        # Create plant with just the arm
+        plant = MultibodyPlant(1e-3)
+        arm_model_idx = Parser(plant).AddModels(arm_urdf)[0]
+        robot_base_link_name = find_base_link_name_in(arm_urdf)
+        plant.WeldFrames(
+            plant.world_frame(),
+            plant.GetFrameByName(robot_base_link_name, arm_model_idx),
+        )
+        plant.Finalize()
+        builder.AddSystem(plant)
+
         # Create controller
-        controller = IdealJointPositionController(arm_urdf)
+        controller = IdealJointPositionController(arm_model_idx, plant)
         builder.AddSystem(controller)
-        builder.AddSystem(controller.plant)
 
         # Create a simple input for it (an affine system)
         target_source2, affine_system_input = self.create_simple_affine_system1(builder)
@@ -116,7 +133,7 @@ class TestIdealJointPositionController(unittest.TestCase):
         controller_context.SetTime(0.0)
 
         controller.plant_context = diagram.GetMutableSubsystemContext(
-            controller.plant, diagram_context
+            plant, diagram_context
         )
 
         simulator = Simulator(diagram, diagram_context)
