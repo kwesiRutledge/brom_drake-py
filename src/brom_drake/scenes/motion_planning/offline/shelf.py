@@ -20,16 +20,15 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
     def __init__(
         self,
         time_step=1e-3,
-        use_meshcat: bool = True, # Usually turn off for CI
         shelf_pose: RigidTransform = None, # The pose of the shelf
+        meshcat_port_number: int = 7001, # Usually turn off for CI (i.e., make it None)
         **kwargs,
     ):
         super().__init__(time_step=time_step, **kwargs)
 
         self.time_step = time_step
-        self.use_meshcat = use_meshcat
         self.shelf_pose = shelf_pose
-        self.meshcat_port_number = 7001
+        self.meshcat_port_number = meshcat_port_number
 
         # Input Processing
         if self.shelf_pose is None:

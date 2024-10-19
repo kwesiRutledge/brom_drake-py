@@ -15,7 +15,7 @@ class ShelfTest(unittest.TestCase):
         :return:
         """
         # Setup
-        shelf_planning_scene = ShelfPlanningScene(use_meshcat=False)
+        shelf_planning_scene = ShelfPlanningScene(meshcat_port_number=None)
 
         # Check that defaults are in place
         self.assertEqual(shelf_planning_scene.id, SceneID.kShelfPlanning1)
