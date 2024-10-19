@@ -41,11 +41,11 @@ class MeshFileConverter:
             output_file_path = self.define_output_path(output_file_path)
 
         # Use trimesh to convert
-        print(f"urdf_dir: {self.urdf_dir}")
-        print(f"true_path: {self.true_mesh_file_path()}")
-        print(
-            str(self.urdf_dir / self.true_mesh_file_path())
-        )
+        # print(f"urdf_dir: {self.urdf_dir}")
+        # print(f"true_path: {self.true_mesh_file_path()}")
+        # print(
+        #     str(self.urdf_dir / self.true_mesh_file_path())
+        # )
         mesh = trimesh.load_mesh(
             str(self.urdf_dir / self.true_mesh_file_path())
         )

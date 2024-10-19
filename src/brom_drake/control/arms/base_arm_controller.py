@@ -1,7 +1,7 @@
 import numpy as np
 from pydrake.math import RollPitchYaw
 from pydrake.multibody.plant import MultibodyPlant
-from pydrake.multibody.tree import JacobianWrtVariable
+from pydrake.multibody.tree import JacobianWrtVariable, ModelInstanceIndex
 from pydrake.systems.framework import LeafSystem, BasicVector
 
 
@@ -27,7 +27,7 @@ class BaseArmController(LeafSystem):
     def __init__(
         self,
         plant: MultibodyPlant,
-        arm_model,
+        arm_model: ModelInstanceIndex,
         end_effector_frame_name: str = "end_effector_frame",
     ):
         LeafSystem.__init__(self)

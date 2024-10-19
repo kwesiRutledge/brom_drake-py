@@ -89,6 +89,9 @@ class DrakeReadyURDFConverter:
             else:
                 raise UnexpectedException(f"Unexpected exception: {e}")
 
+        # Remove the old logger
+        loguru.logger.remove()
+
         # Configure logger if it doesn't exist
         if not urdf_conversion_level_exists:
             loguru.logger.level(
@@ -98,7 +101,7 @@ class DrakeReadyURDFConverter:
 
         # Add logger
         loguru.logger.add(
-            self.models_dir / log_file_name,
+            self.output_file_directory() / log_file_name,
             level=URDF_CONVERSION_LOG_LEVEL_NAME,
             filter=lambda record: record['level'].name == URDF_CONVERSION_LOG_LEVEL_NAME,
         )
@@ -123,6 +126,7 @@ class DrakeReadyURDFConverter:
             else:
                 # If transmission doesn't exist in URDF, then add it!
                 transmission_element = create_transmission_element_for_joint(joint_name)
+                ET.indent(transmission_element, space="\t", level=0)
                 new_tree.getroot().append(transmission_element)
 
         # Output the new tree to a file

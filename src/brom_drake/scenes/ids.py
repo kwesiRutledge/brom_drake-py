@@ -1,6 +1,7 @@
-from enum import IntEnum
+from enum import Enum, unique
 
-class SceneID(IntEnum):
-    kNotDefined = -1
-    kShowMeThisModel = 0
-    kShelfPlanning1 = 1
+@unique
+class SceneID(Enum):
+    kNotDefined = "NotDefined"
+    kShowMeThisModel = "ShowMeThisModel"
+    kShelfPlanning1 = "ShelfPlanning1"
