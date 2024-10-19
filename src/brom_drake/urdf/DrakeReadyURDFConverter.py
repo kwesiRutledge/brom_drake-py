@@ -89,6 +89,9 @@ class DrakeReadyURDFConverter:
             else:
                 raise UnexpectedException(f"Unexpected exception: {e}")
 
+        # Remove the old logger
+        loguru.logger.remove()
+
         # Configure logger if it doesn't exist
         if not urdf_conversion_level_exists:
             loguru.logger.level(
@@ -98,7 +101,7 @@ class DrakeReadyURDFConverter:
 
         # Add logger
         loguru.logger.add(
-            self.models_dir / log_file_name,
+            self.output_file_directory() / log_file_name,
             level=URDF_CONVERSION_LOG_LEVEL_NAME,
             filter=lambda record: record['level'].name == URDF_CONVERSION_LOG_LEVEL_NAME,
         )
@@ -129,6 +132,7 @@ class DrakeReadyURDFConverter:
         output_urdf_path = self.output_file_directory() / self.output_urdf_file_name()
         os.makedirs(output_urdf_path.parent, exist_ok=True)
 
+        ET.indent(new_tree, space="\n", level=1)
         new_tree.write(output_urdf_path)
 
         DrakeReadyURDFConverter.log(
