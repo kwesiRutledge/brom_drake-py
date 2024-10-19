@@ -49,7 +49,7 @@ class ShowMeThisModel(BaseScene):
         """
         # Setup
         self.plant, self.scene_graph = AddMultibodyPlantSceneGraph(
-            builder,
+            self.builder,
             time_step=self.time_step,
         )
         self.plant.set_name("ShowMeThisModel_plant")
@@ -64,7 +64,7 @@ class ShowMeThisModel(BaseScene):
         self.model_name = self.plant.GetModelInstanceName(model_idcs[0])
 
         # Add ShowMeSystem
-        self.show_me_system = builder.AddSystem(
+        self.show_me_system = self.builder.AddSystem(
             ShowMeSystem(
                 plant=self.plant,
                 model_name=self.model_name,
@@ -73,23 +73,23 @@ class ShowMeThisModel(BaseScene):
         )
 
         # Add Source
-        desired_joint_positions_source = builder.AddSystem(
+        desired_joint_positions_source = self.builder.AddSystem(
             ConstantVectorSource(np.array(self.q_des)),
         )
 
         # Connect the source to the system
-        builder.Connect(
+        self.builder.Connect(
             desired_joint_positions_source.get_output_port(0),
             self.show_me_system.get_input_port(0),
         )
 
         # Add Sink
-        output_joints_sink = builder.AddSystem(
+        output_joints_sink = self.builder.AddSystem(
             VectorLogSink(len(self.q_des)),
         )
 
         # Connect the system to the sink
-        builder.Connect(
+        self.builder.Connect(
             self.show_me_system.get_output_port(0),
             output_joints_sink.get_input_port(0),
         )
@@ -109,7 +109,7 @@ class ShowMeThisModel(BaseScene):
 
         # Connect to Meshcat
         m_visualizer = MeshcatVisualizer(self.meshcat)
-        m_visualizer.AddToBuilder(builder, self.scene_graph, self.meshcat)
+        m_visualizer.AddToBuilder(self.builder, self.scene_graph, self.meshcat)
 
         # Finalize plant and connect it to system
         self.plant.Finalize()
