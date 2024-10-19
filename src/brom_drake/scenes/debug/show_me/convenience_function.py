@@ -16,7 +16,6 @@ def show_me_this_model_in_sim(
     base_link_name: str = None,
 )-> Tuple[ShowMeThisModel, Diagram, Context, Simulator]:
     # Setup
-    builder = DiagramBuilder()
 
     # Define Scene
     scene = ShowMeThisModel(
