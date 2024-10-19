@@ -12,15 +12,15 @@ class BaseScene:
     Base class for all scenes.
     """
     def __init__(self, **kwargs):
-        pass
+        # Create a builder for the scene
+        self.builder = DiagramBuilder()
 
-    def add_all_secondary_cast_members_to_builder(self, builder: DiagramBuilder):
+    def add_all_secondary_cast_members_to_builder(self):
         """
         Description
         -----------
         This method must be implemented by the subclass. It should add all
         elements to the builder.
-        :param builder:
         :return:
         """
         pass
@@ -39,7 +39,6 @@ class BaseScene:
         self,
         role: Role,
         system: Performer,
-        builder: DiagramBuilder,
     ):
         """
         Description
@@ -48,7 +47,6 @@ class BaseScene:
         system to the role.
         :param role:
         :param system:
-        :param builder:
         :return:
         """
         # Call the member method of the role object
@@ -56,25 +54,24 @@ class BaseScene:
 
     def cast_scene(
         self,
-        builder: DiagramBuilder,
         cast: Tuple[Role, Performer] = [],
     ):
         # Setup
 
         # Add all elements to the builder
-        self.add_all_secondary_cast_members_to_builder(builder)
+        self.add_all_secondary_cast_members_to_builder()
 
         # Fulfill each role-performer pair in the casting_call list
         for role, performer in cast:
-            self.fill_role(role, performer, builder)
+            self.fill_role(role, performer)
 
     def cast_scene_and_build(
         self,
-        builder: DiagramBuilder,
         cast: Tuple[Role, Performer] = [],
     ) -> Diagram:
         # Setup
-        self.cast_scene(builder, cast)
+        builder = self.builder
+        self.cast_scene(cast)
 
         # Build the diagram
         return builder.Build()

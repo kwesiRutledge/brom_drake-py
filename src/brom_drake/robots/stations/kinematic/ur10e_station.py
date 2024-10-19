@@ -1,5 +1,7 @@
 from enum import IntEnum
 from importlib import resources as impresources
+from pathlib import Path
+
 import numpy as np
 from pydrake.geometry import SceneGraph, Meshcat, MeshcatVisualizer
 from pydrake.math import RollPitchYaw, RigidTransform, RotationMatrix
@@ -29,6 +31,8 @@ class UR10eStation(Diagram):
         self,
         time_step: float = 0.002,
         gripper_type: GripperType = GripperType.NoGripper,
+        force_conversion_of_original_urdf: bool = False,
+        meshcat_port_number: int = None,
     ):
         """
         Description:
@@ -38,6 +42,8 @@ class UR10eStation(Diagram):
             in Russ Tedrake's manipulation course.
         """
         # Input Processing
+        self.force_conversion_of_original_urdf = force_conversion_of_original_urdf
+        self.meshcat_port_number = meshcat_port_number
 
         # Initialize the Diagram
         Diagram.__init__(self)
@@ -47,14 +53,9 @@ class UR10eStation(Diagram):
         self.builder = DiagramBuilder()
 
         # Create scene_graph and plant
-        self.scene_graph = self.builder.AddSystem(SceneGraph())
-        self.scene_graph.set_name(f"{self.get_name()}_SceneGraph")
-
-        self.plant = self.builder.AddSystem(
-            MultibodyPlant(time_step=time_step)
-        )
-        self.plant.RegisterAsSourceForSceneGraph(self.scene_graph)
-        self.plant.set_name(f"{self.get_name()}_Plant")
+        self.plant, self.scene_graph = None, None
+        self.time_step = time_step
+        self.create_plant_and_scene_graph()
 
         # Body ID's and Poses for Anything else in the scene
         self.object_ids = []
@@ -76,11 +77,21 @@ class UR10eStation(Diagram):
         Add the UR10e arm to the system.
         """
         # Setup
-        arm_urdf_path = str(
+        original_arm_urdf_path = str(
             impresources.files(robots) / "models/ur/ur10e.urdf",
         )
-        arm_urdf = DrakeReadyURDFConverter(arm_urdf_path).convert_urdf()
-        arm_urdf = str(arm_urdf)
+        expected_arm_urdf_path = Path("./brom/models/ur10e/ur10e.drake.urdf")
+
+        # Convert the arm urdf if necessary
+        arm_urdf = None
+        if (not expected_arm_urdf_path.exists()) or self.force_conversion_of_original_urdf:
+            # If drake-compatible URDF does not exist, then we need to convert
+            # the original URDF to a drake-compatible URDF.
+            arm_urdf = DrakeReadyURDFConverter(original_arm_urdf_path).convert_urdf()
+            arm_urdf = str(arm_urdf)
+        else:
+            # Otherwise, let's just read the drake-compatible URDF
+            arm_urdf = str(expected_arm_urdf_path)
 
         self.end_effector_frame_name = "tool0"
 
@@ -146,6 +157,27 @@ class UR10eStation(Diagram):
 
         print("Open %s in a browser to view the meshcat visualizer." % self.meshcat.web_url())
 
+    def create_plant_and_scene_graph(
+        self,
+    ):
+        """
+        Description
+        -----------
+        This function creates the plant and scene graph for the UR10e station, if needed.
+        :return:
+        """
+        # Setup
+
+        # Create scene_graph
+        self.scene_graph = self.builder.AddSystem(SceneGraph())
+        self.scene_graph.set_name(f"{self.get_name()}_SceneGraph")
+
+        self.plant = self.builder.AddSystem(
+            MultibodyPlant(time_step=self.time_step)
+        )
+        self.plant.RegisterAsSourceForSceneGraph(self.scene_graph)
+        self.plant.set_name(f"{self.get_name()}_Plant")
+
     def Finalize(self):
         """
         Description
@@ -169,6 +201,15 @@ class UR10eStation(Diagram):
             self.plant.get_geometry_pose_output_port(),
             self.scene_graph.get_source_pose_port(self.plant.get_source_id())
         )
+
+        self.builder.ExportOutput(
+            self.scene_graph.get_query_output_port(),
+            "query_object",
+        )
+
+        # Connect Meshcat, if desired
+        if self.use_meshcat():
+            self.ConnectToMeshcatVisualizer(port=self.meshcat_port_number)
 
         # Create Arm and Gripper Controllers
         self.CreateArmPorts()
@@ -283,3 +324,6 @@ class UR10eStation(Diagram):
         self.builder.ExportOutput(
             gripper_controller.GetOutputPort("measured_gripper_velocity"),
             "measured_gripper_velocity")
+
+    def use_meshcat(self):
+        return self.meshcat_port_number is not None

@@ -26,7 +26,7 @@ def show_me_this_model_in_sim(
         time_step=time_step,
     )
 
-    diagram = scene.cast_scene_and_build(builder)
+    diagram = scene.cast_scene_and_build()
     diagram_context = diagram.CreateDefaultContext()
 
     # Set up simulation

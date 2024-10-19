@@ -39,13 +39,12 @@ class ShowMeThisModel(BaseScene):
         self.model_idx, self.model_name = None, None
         self.show_me_system = None
 
-    def add_all_secondary_cast_members_to_builder(self, builder: DiagramBuilder):
+    def add_all_secondary_cast_members_to_builder(self):
         """
         Description
         -----------
         This method will add just the user's model to the builder.
 
-        :param builder: A DiagramBuilder object from Drake.
         :return:
         """
         # Setup

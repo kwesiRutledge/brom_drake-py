@@ -16,17 +16,13 @@ class ShelfTest(unittest.TestCase):
         """
         # Setup
         shelf_planning_scene = ShelfPlanningScene(use_meshcat=False)
-        builder = DiagramBuilder()
 
         # Check that defaults are in place
         self.assertEqual(shelf_planning_scene.id, SceneID.kShelfPlanning1)
         self.assertEqual(shelf_planning_scene.suggested_roles(), [kOfflineMotionPlanner])
 
         # Populate scene with builder
-        shelf_planning_scene.add_all_secondary_cast_members_to_builder(builder)
-
-        # Build the diagram
-        diagram = builder.Build()
+        diagram = shelf_planning_scene.cast_scene_and_build()
 
         # Simulate the diagram
         diagram_context = diagram.CreateDefaultContext()
