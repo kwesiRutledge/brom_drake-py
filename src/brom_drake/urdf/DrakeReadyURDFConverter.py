@@ -126,13 +126,13 @@ class DrakeReadyURDFConverter:
             else:
                 # If transmission doesn't exist in URDF, then add it!
                 transmission_element = create_transmission_element_for_joint(joint_name)
+                ET.indent(transmission_element, space="\t", level=0)
                 new_tree.getroot().append(transmission_element)
 
         # Output the new tree to a file
         output_urdf_path = self.output_file_directory() / self.output_urdf_file_name()
         os.makedirs(output_urdf_path.parent, exist_ok=True)
 
-        ET.indent(new_tree, space="\n", level=1)
         new_tree.write(output_urdf_path)
 
         DrakeReadyURDFConverter.log(
