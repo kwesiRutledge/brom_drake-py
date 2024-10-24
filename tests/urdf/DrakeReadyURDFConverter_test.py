@@ -13,6 +13,8 @@ import unittest
 from xml.etree.ElementTree import ElementTree
 
 import numpy as np
+from pydrake.multibody.parsing import Parser
+from pydrake.multibody.plant import MultibodyPlant
 
 # Internal Imports
 import brom_drake
@@ -41,6 +43,14 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
 
         self.test_urdf4_filename = str(
             impresources.files(brom_drake) / "../../tests/urdf/resources/test3_relative.urdf"
+        )
+
+        self.test_urdf5_filename = str(
+            impresources.files(brom_drake) / "../../tests/urdf/resources/test4_relative.urdf"
+        )
+
+        self.test_urdf6_filename = str(
+            impresources.files(brom_drake) / "../../tests/urdf/resources/test5_absolute.urdf"
         )
 
     def test_convert_tree1(self):
@@ -331,6 +341,103 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
             self.assertTrue(
                 (converter.output_file_directory() / Path(mesh_elt.attrib["filename"])).exists()
             )
+
+    def test_convert_urdf5(self):
+        """
+        Description
+        -----------
+        This test verifies that we can convert a full URDF file
+        into a new URDF file. This time, we'll use a more complicated urdf file
+        that contains relative paths expressed with the "path://" prefix.
+        We'll verify that the new URDF exists and that it contains
+        mesh elements that only refer to .obj files.
+        :return:
+        """
+        # Setup
+        test_urdf5 = self.test_urdf5_filename
+
+        converter = DrakeReadyURDFConverter(
+            test_urdf5,
+            overwrite_old_logs=True,
+            log_file_name="test_convert_urdf5.log",
+        )
+
+        # Test
+        new_urdf_path = converter.convert_urdf()
+
+        # Verify that the new file exists
+        self.assertTrue(
+            new_urdf_path.exists()
+        )
+
+        # Verify that the new file contains only obj files
+        new_tree = ElementTree(file=new_urdf_path)
+        for mesh_elt in new_tree.iter("mesh"):
+            self.assertIn(
+                ".obj",
+                mesh_elt.attrib["filename"]
+            )
+
+            # Verify that the new mesh files exist
+            self.assertTrue(
+                (converter.output_file_directory() / Path(mesh_elt.attrib["filename"])).exists()
+            )
+
+    def test_convert_urdf6(self):
+        """
+        Description
+        -----------
+        This test verifies that we can convert a full URDF file
+        into a new URDF file. This time, we'll use a more complicated urdf file
+        that contains ABSOLUTE paths expressed with the "path://" prefix.
+        We'll verify that the new URDF exists and that it contains
+        mesh elements that only refer to .obj files.
+        :return:
+        """
+        # Setup
+        test_urdf5 = self.test_urdf5_filename
+        test_urdf6 = self.test_urdf6_filename
+
+        # Create a copy of the xml in test_urdf5 but with absolute paths
+        urdf6_tree = ElementTree(file=test_urdf5)
+        for mesh_elt in urdf6_tree.iter("mesh"):
+            mesh_elt.attrib["filename"] = f"file://{os.getcwd()}/resources/meshes/ur10e/collision/base.stl"
+
+        urdf6_tree.write(
+            test_urdf6,
+            encoding="utf-8",
+            xml_declaration=True,
+        )
+        # Use converter on urdf6
+        converter = DrakeReadyURDFConverter(
+            test_urdf6,
+            overwrite_old_logs=True,
+            log_file_name="test_convert_urdf6.log",
+        )
+
+        # Test
+        new_urdf_path = converter.convert_urdf()
+
+        # Verify that the new file exists
+        self.assertTrue(new_urdf_path.exists())
+
+        # Verify that the new file contains only obj files
+        new_tree = ElementTree(file=new_urdf_path)
+        for mesh_elt in new_tree.iter("mesh"):
+            self.assertIn(
+                ".obj",
+                mesh_elt.attrib["filename"]
+            )
+
+            # Verify that the new mesh files exist
+            self.assertTrue(
+                (converter.output_file_directory() / Path(mesh_elt.attrib["filename"])).exists()
+            )
+
+        # Make sure that this can be added to a plant
+        temp_plant = MultibodyPlant(time_step=1e-3)
+        added_models = Parser(temp_plant).AddModels(str(new_urdf_path))
+        self.assertTrue(True)
 
 if __name__ == '__main__':
     unittest.main()
