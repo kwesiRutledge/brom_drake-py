@@ -10,6 +10,7 @@ from typing import List, Tuple, Union
 
 import numpy as np
 from pydrake.all import DiagramBuilder, Diagram
+from pydrake.systems.framework import Context
 
 from brom_drake.DiagramTarget import DiagramTarget
 from brom_drake.DiagramWatcher import DiagramWatcher, DEFAULT_PLOT_DIR
@@ -85,7 +86,7 @@ def add_watcher_and_build(
     plot_arrangement: PortFigureArrangement = PortFigureArrangement.OnePlotPerPort,
     figure_naming_convention: FigureNamingConvention = FigureNamingConvention.kFlat,
     file_format: str = "png",
-) -> (DiagramWatcher, Diagram):
+) -> Tuple[DiagramWatcher, Diagram, Context]:
     """
     add_watcher_and_build
     Description:
@@ -107,6 +108,7 @@ def add_watcher_and_build(
         (Can be PortFigureArrangement.OnePlotPerPort OR PortFigureArrangement.OnePlotPerDim)
     :param figure_naming_convention: FigureNamingConvention. The naming convention for the figures.
         (Can be FigureNamingConvention.kFlat OR FigureNamingConvention.kHierarchical)
+    :param file_format: str. The file format for the figures.
     :return: DiagramWatcher. The watcher that we have added to the diagram builder.
     """
     watcher = add_watcher(
