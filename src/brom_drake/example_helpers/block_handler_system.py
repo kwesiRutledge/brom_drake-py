@@ -57,11 +57,11 @@ class BlockHandlerSystem(LeafSystem):
 
         # Create Output Port which should share the pose of the block
         self.DeclareVectorOutputPort(
-                "measured_block_pose",
-                BasicVector(6),
-                self.SetBlockPose,
-                {self.time_ticket()}   # indicate that this doesn't depend on any inputs,
-                )                      # but should still be updated each timestep
+            "measured_block_pose",
+            BasicVector(6),
+            self.SetBlockPose,
+            {self.time_ticket()}    # indicate that this doesn't depend on any inputs,
+        )                           # but should still be updated each timestep
 
     def SetBlockPose(self, context, output):
         """

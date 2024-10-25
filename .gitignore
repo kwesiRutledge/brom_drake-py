@@ -171,3 +171,4 @@ brom-venv/
 
 # Example and Test outputs
 tests/urdf/resources/**/**.obj
+tests/urdf/resources/test5_absolute.urdf

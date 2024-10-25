@@ -22,7 +22,7 @@ import numpy as np
 from .gripper_target import GripperTarget
 from brom_drake.robots.gripper_type import GripperType
 
-from .. import robots
+from brom_drake import robots
 
 
 # Constants

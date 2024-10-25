@@ -41,11 +41,11 @@ class MeshFileConverter:
             output_file_path = self.define_output_path(output_file_path)
 
         # Use trimesh to convert
-        print(f"urdf_dir: {self.urdf_dir}")
-        print(f"true_path: {self.true_mesh_file_path()}")
-        print(
-            str(self.urdf_dir / self.true_mesh_file_path())
-        )
+        # print(f"urdf_dir: {self.urdf_dir}")
+        # print(f"true_path: {self.true_mesh_file_path()}")
+        # print(
+        #     str(self.urdf_dir / self.true_mesh_file_path())
+        # )
         mesh = trimesh.load_mesh(
             str(self.urdf_dir / self.true_mesh_file_path())
         )
@@ -88,6 +88,15 @@ class MeshFileConverter:
                     clean_mesh_file_name = clean_mesh_file_name[
                         clean_mesh_file_name.find("/") + 1:
                     ]
+                elif "file://" in clean_mesh_file_name:
+                    clean_mesh_file_name = clean_mesh_file_name.replace("file://", "")
+                    if os.path.isabs(clean_mesh_file_name):
+                        # If path is absolute, then let's save the new mesh file in a simplified way.
+                        clean_mesh_file_name = Path(clean_mesh_file_name).name
+                    else:
+                        clean_mesh_file_name = clean_mesh_file_name[
+                            clean_mesh_file_name.find("/") + 1:
+                        ]
 
 
                 clean_mesh_file_name = clean_mesh_file_name.replace("../", "")
@@ -181,29 +190,30 @@ class MeshFileConverter:
             This function will check if the mesh file path is relative.
         """
         # Algorithm
-        mesh_file_as_path = Path(self.mesh_file)
+        mesh_file = self.mesh_file
 
         # Check to see if file path starts with "./"
-        if self.mesh_file.startswith("./"):
+        if mesh_file.startswith("./"):
             return True
 
         # Ignore this if the mesh file contains a package prefix
-        if self.mesh_file.startswith("package:"):
+        if mesh_file.startswith("package:"):
             return False
 
-        # Check to see if there is only one part of the path
-        # Now, check to see if the target file exists
-        complete_file_path = self.urdf_dir / mesh_file_as_path
-        exists = complete_file_path.exists()
-        if not exists:
-            raise FileNotFoundError(
-                f"File {complete_file_path} does not exist in directory {os.getcwd()}!"
-            )
-        # Otherwise, we can assume that the file is in the current directory
-        return True
+        # Check to see if the first part of the path contains a folder or file
+        # in the current directory
+        if mesh_file.startswith("file://"):
+            mesh_file = mesh_file.replace("file://", "")
+            return not os.path.isabs(mesh_file)
 
-        # If we pass this point, we know that the mesh file path is not relative
-        return False
+        # Now, check to see if the target file exists
+        complete_file_path = self.urdf_dir / Path(mesh_file)
+        exists = complete_file_path.exists()
+        return exists
+
+        # raise FileNotFoundError(
+        #     f"File {complete_file_path} does not exist in directory {os.getcwd()}!"
+        # )
 
     @property
     def supported_suffixes(self):
@@ -218,7 +228,10 @@ class MeshFileConverter:
         if self.mesh_file.startswith("package:"):
             return self.find_file_path_in_package(max_depth=max_depth)
         elif self.mesh_file_path_is_relative():
-            return Path(self.mesh_file)
+            mesh_file = self.mesh_file.replace("file://", "")
+            return Path(mesh_file)
+        elif os.path.isabs(self.mesh_file.replace("file://", "")):
+            return Path(self.mesh_file.replace("file://", ""))
         else:
             raise ValueError(
                 f"Mesh file path {self.mesh_file} is not supported by this function!\n" +
