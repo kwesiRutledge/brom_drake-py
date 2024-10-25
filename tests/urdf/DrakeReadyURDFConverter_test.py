@@ -398,10 +398,13 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         test_urdf5 = self.test_urdf5_filename
         test_urdf6 = self.test_urdf6_filename
 
+        # Create pay to the collision base file
+        test_dir = Path(__file__).parent
+
         # Create a copy of the xml in test_urdf5 but with absolute paths
         urdf6_tree = ElementTree(file=test_urdf5)
         for mesh_elt in urdf6_tree.iter("mesh"):
-            mesh_elt.attrib["filename"] = f"file://{os.getcwd()}/resources/meshes/ur10e/collision/base.stl"
+            mesh_elt.attrib["filename"] = f"file://{str(test_dir)}/resources/meshes/ur10e/collision/base.stl"
 
         urdf6_tree.write(
             test_urdf6,
