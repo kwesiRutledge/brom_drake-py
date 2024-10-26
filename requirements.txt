@@ -21,3 +21,6 @@ pytest-cov
 ipdb
 typer
 loguru
+
+# Graphs
+networkx
