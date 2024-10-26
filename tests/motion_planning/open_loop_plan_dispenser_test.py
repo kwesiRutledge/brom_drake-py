@@ -2,15 +2,14 @@ import unittest
 from typing import Tuple
 
 import numpy as np
-from contourpy.util.data import simple
 from pydrake.common.value import AbstractValue
 from pydrake.systems.analysis import Simulator
-from pydrake.systems.framework import LeafSystem, DiagramBuilder
+from pydrake.systems.framework import DiagramBuilder
 from pydrake.systems.primitives import ConstantValueSource
 
 # Internal Imports
 from brom_drake.all import add_watcher_and_build
-from brom_drake.motion_planning.open_loop_plan_dispenser import OpenLoopPlanDispenser
+from brom_drake.motion_planning.systems.open_loop_plan_dispenser import OpenLoopPlanDispenser
 
 
 class OpenLoopPlanDispenserTest(unittest.TestCase):

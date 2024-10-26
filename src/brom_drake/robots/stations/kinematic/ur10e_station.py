@@ -63,7 +63,7 @@ class UR10eStation(Diagram):
 
         # Whether we have a camera in the simulation
         # self.has_camera = False
-
+        self.arm = None # Assign the Arm's Model Index later
         self.AddArm()
 
         # Which sort of gripper we're using (if any)

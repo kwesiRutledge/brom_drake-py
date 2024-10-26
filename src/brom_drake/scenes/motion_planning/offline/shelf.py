@@ -24,7 +24,7 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
         meshcat_port_number: int = 7001, # Usually turn off for CI (i.e., make it None)
         **kwargs,
     ):
-        super().__init__(time_step=time_step, **kwargs)
+        super().__init__(**kwargs)
 
         self.time_step = time_step
         self.shelf_pose = shelf_pose
@@ -60,9 +60,10 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
         AddGround(self.plant)
         self.add_start_and_goal_to_this_plant(self.plant)
 
-
-
         self.station.Finalize()
+
+        # Add The Motion Planning Components (i.e., the interpolator)
+        self.add_motion_planning_components(builder)
 
         # Connect to Meshcat
         # if self.use_meshcat:
@@ -117,6 +118,16 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
         builder.AddSystem(self.station)
 
     @property
+    def goal_pose(self):
+        """
+        Get the goal pose. This should be defined by the subclass.
+        :return:
+        """
+        goal_position = np.array([+0.2, 1.0, 0.65])
+        goal_orientation = Quaternion(1, 0, 0, 0)
+        return RigidTransform(goal_orientation, goal_position)
+
+    @property
     def id(self) -> SceneID:
         return SceneID.kShelfPlanning1
 
@@ -129,13 +140,3 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
         start_position = np.array([-0.2, 0.9, 0.3])
         start_orientation = Quaternion(1, 0, 0, 0)
         return RigidTransform(start_orientation, start_position)
-
-    @property
-    def goal_pose(self):
-        """
-        Get the goal pose. This should be defined by the subclass.
-        :return:
-        """
-        goal_position = np.array([+0.2, 1.0, 0.65])
-        goal_orientation = Quaternion(1, 0, 0, 0)
-        return RigidTransform(goal_orientation, goal_position)

@@ -7,6 +7,7 @@ from pydrake.math import RigidTransform
 from pydrake.multibody.parsing import Parser
 from pydrake.multibody.plant import MultibodyPlant
 from pydrake.systems.framework import DiagramBuilder
+from pydrake.systems.primitives import ConstantVectorSource
 
 from brom_drake.scenes.types import BaseScene
 from brom_drake.scenes.roles import kOfflineMotionPlanner
@@ -15,7 +16,7 @@ from brom_drake.urdf.simple_shape_urdfs.urdf_definition import SimpleShapeURDFDe
 
 
 class OfflineMotionPlanningScene(BaseScene):
-    def __init__(self, time_step: float = 2e-3, **kwargs):
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
     def add_all_secondary_cast_members_to_builder(self):
@@ -76,6 +77,16 @@ class OfflineMotionPlanningScene(BaseScene):
             plant.world_frame(),
             plant.GetFrameByName(f"{goal_sphere_defn.name}_base_link", goal_sphere_model_idx),
             self.goal_pose,
+        )
+
+    def add_start_source_system(self):
+        """
+        Add a source system for the start pose.
+        :return:
+        """
+        # Adds a source system for the start pose to the builder
+        builder.AddSystem(
+            ConstantVectorSource(self.start_pose.translation())
         )
 
     @property

@@ -9,9 +9,8 @@ kOfflineMotionPlanner = Role(
     name="OfflineMotionPlanner",
     description="This role is used to define the offline motion planning role.",
     required_input_definitions=[
-        PortPairing("goal_position", "goal_position"),
-        PortPairing("joint_positions", "joint_positions"),
-        PortPairing("joint_position_limits", "joint_position_limits"),
+        PortPairing("start_configuration", "start_configuration"),
+        PortPairing("goal_configuration", "goal_configuration"),
         PortPairing("id", "scene_id"),
     ],
     required_output_definitions=[
