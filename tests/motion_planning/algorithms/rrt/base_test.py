@@ -80,7 +80,7 @@ class TestBaseRRT(unittest.TestCase):
         new_urdf_path = drakeify_my_urdf(
             urdf_file_path,
             overwrite_old_logs=True,
-            log_file_name="drakeify-my-urdf1.log",
+            log_file_name="test_sample_random_configuration1.log",
         )
 
         model_idcs = Parser(plant).AddModels(str(new_urdf_path))
@@ -126,7 +126,7 @@ class TestBaseRRT(unittest.TestCase):
         new_urdf_path = drakeify_my_urdf(
             urdf_file_path,
             overwrite_old_logs=True,
-            log_file_name="drakeify-my-urdf1.log",
+            log_file_name="test_plan1.log",
         )
 
         model_idcs = Parser(plant).AddModels(str(new_urdf_path))
@@ -145,7 +145,7 @@ class TestBaseRRT(unittest.TestCase):
         goal_configuration = np.ones(base_rrt.dim_q)
 
         # Plan
-        rrt = base_rrt.plan(start_configuration, goal_configuration)
+        rrt, success = base_rrt.plan(start_configuration, goal_configuration)
 
         # Check if the RRT has nodes and if they are getting closer to the goal
         self.assertGreater(len(rrt.nodes), 0, "RRT should have nodes.")

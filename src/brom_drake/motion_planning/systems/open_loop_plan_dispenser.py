@@ -62,6 +62,9 @@ class OpenLoopPlanDispenser(LeafSystem):
     def GetCurrentPointInPlan(self, context: Context, output_point: BasicVector):
         # Setup
         plan_is_ready = self.plan_ready_port.Eval(context)
+        plan = self.plan_port.Eval(context)
+
+        # Get the abstract state
         abstract_state = context.get_discrete_state(self.state_of_plan_in_memory_idx)
 
         # If plan isn't ready, then skip the rest of the logic

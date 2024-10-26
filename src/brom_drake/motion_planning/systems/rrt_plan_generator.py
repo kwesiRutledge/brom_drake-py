@@ -6,10 +6,14 @@ Description:
 """
 import networkx as nx
 import numpy as np
+from pydrake.common.eigen_geometry import Quaternion
 from pydrake.common.value import AbstractValue
+from pydrake.math import RigidTransform
+from pydrake.multibody.inverse_kinematics import DoDifferentialInverseKinematics, \
+    DifferentialInverseKinematicsParameters, InverseKinematics
 from pydrake.multibody.plant import MultibodyPlant
 from pydrake.multibody.tree import ModelInstanceIndex
-from pydrake.systems.framework import LeafSystem
+from pydrake.systems.framework import LeafSystem, BasicVector
 
 from brom_drake.motion_planning.algorithms.rrt.base import BaseRRTPlanner
 
@@ -46,15 +50,38 @@ class RRTPlanGenerator(LeafSystem):
         self.create_input_ports()
         self.create_output_ports()
 
-    def ComputePlanIfNotAvailable(self, context, output):
+    def compute_plan_if_not_available(self, context, output: AbstractValue):
         """
         Description:
             This function computes the plan if it is not available.
         """
+        # Print
         if self.plan is None:
             # Compute plan
-            q_start = self.get_input_port("start_configuration").Eval(context)
-            q_goal = self.get_input_port("goal_configuration").Eval(context)
+            p_WStart_vec = self.GetInputPort("start_pose").Eval(context)
+            p_WGoal_vec = self.GetInputPort("goal_pose").Eval(context)
+
+            p_WStart = RigidTransform(
+                Quaternion(p_WStart_vec[3:]),
+                p_WStart_vec[:3]
+            )
+
+            p_WGoal = RigidTransform(
+                Quaternion(p_WGoal_vec[3:]),
+                p_WGoal_vec[:3]
+            )
+
+            # Convert to configuration space
+            ik_params = DifferentialInverseKinematicsParameters(6, 6)
+            start_ik_result = InverseKinematics(
+                self.plant, self.plant_context,
+                with_joint_limits=True,
+            )
+            print(start_ik_result)
+            print("IK Result:", start_ik_result.joint_velocities)
+            print("IK Result:", start_ik_result.joint_positions)
+            q_start = start_ik_result.vector_q
+
 
             base_rrt = BaseRRTPlanner(self.robot_model_idx, self.plant)
 
@@ -82,13 +109,13 @@ class RRTPlanGenerator(LeafSystem):
         Description:
             This function creates the input ports for the RRT planner.
         """
-        self.DeclareAbstractInputPort(
-            "start_configuration",
-            AbstractValue.Make(np.zeros((self.n_actuated_dof,))),
+        self.DeclareVectorInputPort(
+            "start_pose",
+            BasicVector(np.zeros((7,))),
         )
-        self.DeclareAbstractInputPort(
-            "goal_configuration",
-            AbstractValue.Make(np.zeros((self.n_actuated_dof,))),
+        self.DeclareVectorInputPort(
+            "goal_pose",
+            BasicVector(np.zeros((7,))),
         )
 
     def create_output_ports(self):
@@ -100,10 +127,10 @@ class RRTPlanGenerator(LeafSystem):
 
         # Create output for plan
         sample_plan = np.zeros((0, self.n_actuated_dof))
-        self.DeclareVectorOutputPort(
+        self.DeclareAbstractOutputPort(
             "plan",
-            AbstractValue.Make(sample_plan),
-            self.ComputePlanIfNotAvailable
+            lambda: AbstractValue.Make(sample_plan),
+            self.compute_plan_if_not_available
         )
 
         # Create output for plan readiness

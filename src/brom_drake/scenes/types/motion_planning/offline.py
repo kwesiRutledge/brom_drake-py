@@ -84,9 +84,33 @@ class OfflineMotionPlanningScene(BaseScene):
         Add a source system for the start pose.
         :return:
         """
+        # Setup
+        X_start = self.start_pose
+        p_start = np.hstack((
+            X_start.translation(),
+            X_start.rotation().ToQuaternion().wxyz()
+        ))
+
         # Adds a source system for the start pose to the builder
-        builder.AddSystem(
-            ConstantVectorSource(self.start_pose.translation())
+        self.builder.AddSystem(
+            ConstantVectorSource(p_start)
+        )
+
+    def add_goal_source_system(self):
+        """
+        Add a source system for the goal pose.
+        :return:
+        """
+        # Setup
+        X_goal = self.goal_pose
+        p_goal = np.hstack((
+            X_goal.translation(),
+            X_goal.rotation().ToQuaternion().wxyz()
+        ))
+
+        # Adds a source system for the goal pose to the builder
+        self.builder.AddSystem(
+            ConstantVectorSource(p_goal)
         )
 
     @property

@@ -210,7 +210,7 @@ class OpenLoopPlanDispenserTest(unittest.TestCase):
         # Build the diagram with watcher and simulate
         watcher, diagram, diagram_context = add_watcher_and_build(
             builder,
-            data_dir="brom/watcher_plots3/"
+            data_dir="../brom/watcher_plots3/"
         )
 
         # Create a context for the diagram

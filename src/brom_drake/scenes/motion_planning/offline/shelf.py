@@ -10,6 +10,7 @@ from pydrake.systems.framework import DiagramBuilder
 # Internal Imports
 import brom_drake.robots as robots
 from brom_drake.example_helpers import AddGround
+from brom_drake.motion_planning.systems.open_loop_plan_dispenser import OpenLoopPlanDispenser
 from brom_drake.robots.stations.kinematic import UR10eStation as KinematicUR10eStation
 from brom_drake.scenes import SceneID
 from brom_drake.scenes.types.motion_planning import OfflineMotionPlanningScene
@@ -22,6 +23,7 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
         time_step=1e-3,
         shelf_pose: RigidTransform = None, # The pose of the shelf
         meshcat_port_number: int = 7001, # Usually turn off for CI (i.e., make it None)
+        plan_execution_speed: float = 0.2,
         **kwargs,
     ):
         super().__init__(**kwargs)
@@ -29,6 +31,7 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
         self.time_step = time_step
         self.shelf_pose = shelf_pose
         self.meshcat_port_number = meshcat_port_number
+        self.plan_execution_speed = plan_execution_speed
 
         # Input Processing
         if self.shelf_pose is None:
@@ -42,6 +45,7 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
         # then we will try to do a smart search for it later.
         self.meshcat = None
         self.station, self.plant = None, None
+        self.plan_dispenser = None
 
     def add_all_secondary_cast_members_to_builder(self):
         """
@@ -62,8 +66,11 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
 
         self.station.Finalize()
 
-        # Add The Motion Planning Components (i.e., the interpolator)
-        self.add_motion_planning_components(builder)
+        # Add The Motion Planning Components (e.g., the interpolator)
+        self.add_start_source_system()
+        self.add_goal_source_system()
+
+        self.add_motion_planning_components()
 
         # Connect to Meshcat
         # if self.use_meshcat:
@@ -73,6 +80,23 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
 
         # Print message to user
         print("Added all secondary cast members to the builder.")
+
+    def add_motion_planning_components(self):
+        """
+        Add the motion planning components to the builder.
+        :return:
+        """
+        # Setup
+        n_actuated_dof = self.plant.num_actuated_dofs()
+
+        # Add the Plan Dispenser and connect it to the station
+        self.plan_dispenser = self.builder.AddSystem(
+            OpenLoopPlanDispenser(n_actuated_dof, self.plan_execution_speed)
+        )
+
+        # Add a system that converts the input poses to target configurations
+
+        pass
 
     def add_shelf(self, plant: MultibodyPlant):
         """
