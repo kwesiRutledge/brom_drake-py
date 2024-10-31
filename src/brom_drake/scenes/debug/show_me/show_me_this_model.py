@@ -21,7 +21,7 @@ class ShowMeThisModel(BaseScene):
     def __init__(
         self,
         path_to_model: str,
-        desired_joint_positions: List[float] = None,
+        with_these_joint_positions: List[float] = None,
         base_link_name: str = None,
         time_step: float = 1e3,
         **kwargs,
@@ -30,7 +30,7 @@ class ShowMeThisModel(BaseScene):
 
         # Add the model to the scene
         self.path_to_model = path_to_model
-        self.q_des = desired_joint_positions
+        self.q_des = with_these_joint_positions
         self.base_link_name = base_link_name
         self.time_step = time_step
 

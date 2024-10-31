@@ -34,7 +34,7 @@ def main():
     time_step = 1e-3
     scene = ShowMeThisModel(
         str(new_urdf_path),
-        desired_joint_positions=[0.0, 0.0, -np.pi/4.0, 0.0, 0.0, 0.0],
+        with_these_joint_positions=[0.0, 0.0, -np.pi/4.0, 0.0, 0.0, 0.0],
         time_step=time_step,
     )
 
