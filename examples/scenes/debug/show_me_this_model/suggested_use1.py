@@ -9,11 +9,12 @@ import ipdb
 from importlib import resources as impresources
 import numpy as np
 import typer
+from pydrake.systems.analysis import Simulator
 
 # Internal imports
 from brom_drake import robots
 from brom_drake.all import drakeify_my_urdf
-from brom_drake.scenes.debug import show_me_this_model_in_sim
+from brom_drake.scenes.debug import ShowMeThisModel
 
 
 def main():
@@ -31,13 +32,17 @@ def main():
 
     # Visualize the URDF using the "show-me-this-model" feature
     time_step = 1e-3
-    scene, diagram, diagram_context, simulator = show_me_this_model_in_sim(
-        new_urdf_path,
-        desired_joint_positions=[0.0, 0.0, -np.pi/4.0, 0.0, 0.0, 0.0],
+    scene = ShowMeThisModel(
+        str(new_urdf_path),
+        desired_joint_positions=[0.0, 0.0, -np.pi/4.0, 0.0, 0.0, 0.0, 1.0],
         time_step=time_step,
     )
 
+    # Build Diagram
+    diagram, diagram_context = scene.cast_scene_and_build()
+
     # Set up simulation
+    simulator = Simulator(diagram, diagram_context)
     simulator.set_target_realtime_rate(1.0)
     simulator.set_publish_every_time_step(False)
 
