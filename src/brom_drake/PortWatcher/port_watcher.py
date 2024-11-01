@@ -219,6 +219,9 @@ class PortWatcher:
                 os.makedirs(Path(figure_names[ii]).parent, exist_ok=True)
                 fig_ii.savefig(figure_names[ii],dpi=self.options.plot_dpi)
 
+        # Close all figures when done
+        plt.close('all')
+
     def figure_names(self) -> List[str]:
         """
         Description:
