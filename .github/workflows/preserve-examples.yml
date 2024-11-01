@@ -3,7 +3,7 @@ on: [pull_request]
 jobs:
   run:
     runs-on: ubuntu-latest
-    name: Run example - {{example_location}}
+    name: Run example
     strategy:
       matrix:
         example_location: [
