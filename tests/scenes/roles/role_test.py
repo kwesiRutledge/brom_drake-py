@@ -28,18 +28,18 @@ class RoleTest(unittest.TestCase):
         bad_role = Role(
             name="Bad Role",
             description="This role has a weird input definition that shouldraise an error.",
-            required_input_definitions=[
+            input_definitions=[
                 PortPairing(
                     external_port_name="joint_positions",
                     performer_port_name="wile out",
                 )
             ],
-            required_output_definitions=[],
+            output_definitions=[],
         )
 
         # Call the method
         try:
-            bad_role.connect_performer_to_system(builder, performer)
+            bad_role.connect_performer_to_diagram(builder, performer)
             self.assertTrue(False)
         except AssertionError as e:
             self.assertIn(
@@ -66,8 +66,8 @@ class RoleTest(unittest.TestCase):
         bad_role = Role(
             name="Bad Role",
             description="This role has a weird output definition that should raise an error.",
-            required_input_definitions=[],
-            required_output_definitions=[
+            input_definitions=[],
+            output_definitions=[
                 PortPairing(
                     external_port_name="joint_positions",
                     performer_port_name="wile out",
@@ -77,7 +77,7 @@ class RoleTest(unittest.TestCase):
 
         # Call the method
         try:
-            bad_role.connect_performer_to_system(builder, performer)
+            bad_role.connect_performer_to_diagram(builder, performer)
             self.assertTrue(False)
         except AssertionError as e:
             self.assertIn(
@@ -111,18 +111,18 @@ class RoleTest(unittest.TestCase):
         bad_role = Role(
             name="Bad Role",
             description="This role has a weird input definition that shouldraise an error.",
-            required_input_definitions=[
+            input_definitions=[
                 PortPairing(
                     external_port_name="joint_positions",
                     performer_port_name="ee_target",
                 )
             ],
-            required_output_definitions=[],
+            output_definitions=[],
         )
 
         # Call the method
         try:
-            bad_role.connect_performer_to_system(builder, performer)
+            bad_role.connect_performer_to_diagram(builder, performer)
             self.assertTrue(False)
         except AssertionError as e:
             expected_error = "Expected 1 system to have port \"joint_positions\", but found 0 systems with that output port."
