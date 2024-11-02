@@ -57,7 +57,7 @@ class BaseScene:
         builder = self.builder
 
         # Call the member method of the role object
-        role.connect_performer_to_system(builder, system)
+        role.connect_performer_to_diagram(builder, system)
 
     def cast_scene(
         self,

@@ -141,7 +141,6 @@ class RRTPlanGeneratorTest(unittest.TestCase):
 
         # Simulate for a short time
         simulator = Simulator(diagram, diagram_context)
-        simulator_context = simulator.get_mutable_context()
         plant_context = plant.GetMyContextFromRoot(diagram_context)
 
         plan_generator.plant_context = plant_context

@@ -2,10 +2,13 @@ from importlib import resources as impresources
 import numpy as np
 import unittest
 
+from pydrake.systems.analysis import Simulator
+
 # Internal imports
 from brom_drake import robots
 from brom_drake.all import drakeify_my_urdf
-from brom_drake.scenes.debug import show_me_this_model_in_sim
+from brom_drake.scenes.debug import ShowMeThisModel
+
 
 class ShowMeThisModelTest(unittest.TestCase):
     def test_runs(self):
@@ -29,13 +32,15 @@ class ShowMeThisModelTest(unittest.TestCase):
 
         # Visualize the URDF using the "show-me-this-model" feature
         time_step = 1e-3
-        scene, diagram, diagram_context, simulator = show_me_this_model_in_sim(
-            new_urdf_path,
-            desired_joint_positions=[0.0, 0.0, -np.pi / 4.0, 0.0, 0.0, 0.0],
+        scene = ShowMeThisModel(
+            str(new_urdf_path),
+            with_these_joint_positions=[0.0, 0.0, -np.pi/4.0, 0.0, 0.0, 0.0],
             time_step=time_step,
         )
+        diagram, diagram_context = scene.cast_scene_and_build()
 
         # Set up simulation
+        simulator = Simulator(diagram, diagram_context)
         simulator.set_target_realtime_rate(2.0)
         simulator.set_publish_every_time_step(False)
 

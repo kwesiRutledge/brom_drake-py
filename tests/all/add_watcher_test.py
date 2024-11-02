@@ -18,8 +18,8 @@ from pydrake.systems.primitives import AffineSystem
 from brom_drake.all import (
     DiagramTarget, parse_list_of_simplified_targets,
     add_watcher, add_watcher_and_build,
+    PortFigureArrangement,
 )
-from brom_drake.PortWatcher import PortFigureArrangement
 from brom_drake.example_helpers import BlockHandlerSystem
 
 

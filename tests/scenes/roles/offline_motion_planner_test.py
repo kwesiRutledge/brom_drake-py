@@ -13,15 +13,14 @@ class OfflineMotionPlannerTest(unittest.TestCase):
         # Setup
         omp_role = kOfflineMotionPlanner
         expected_port_names = [
-            "joint_positions",
-            "joint_position_limits",
-            "goal_position",
+            "start_pose",
+            "goal_pose",
             "scene_id",
         ]
 
         # Check the required input ports
         required_preformer_ports = [
-            port.performer_port_name for port in omp_role.required_input_definitions
+            port.performer_port_name for port in omp_role.input_definitions
         ]
         for port_name in expected_port_names:
             self.assertTrue(port_name in required_preformer_ports)
@@ -40,7 +39,7 @@ class OfflineMotionPlannerTest(unittest.TestCase):
 
         # Assertion
         required_performer_outputs = [
-            port.performer_port_name for port in omp_role.required_output_definitions
+            port.performer_port_name for port in omp_role.output_definitions
         ]
         for port_name in expected_port_names:
             self.assertTrue(port_name in required_performer_outputs)

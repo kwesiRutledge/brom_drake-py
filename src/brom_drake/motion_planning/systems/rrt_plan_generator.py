@@ -78,7 +78,7 @@ class RRTPlanGenerator(LeafSystem):
                 with_joint_limits=True,
             )
             print(start_ik_result)
-            print("IK Result:", start_ik_result.joint_velocities)
+            # print("IK Result:", start_ik_result.joint_velocities)
             print("IK Result:", start_ik_result.joint_positions)
             q_start = start_ik_result.vector_q
 
@@ -139,8 +139,6 @@ class RRTPlanGenerator(LeafSystem):
             lambda: AbstractValue.Make(False),
             self.GetPlanIsReady,
         )
-
-
 
     def set_dimension(self, dim_q):
         """

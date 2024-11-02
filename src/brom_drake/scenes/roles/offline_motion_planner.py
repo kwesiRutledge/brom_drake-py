@@ -8,12 +8,13 @@ from brom_drake.scenes.roles import Role, PortPairing
 kOfflineMotionPlanner = Role(
     name="OfflineMotionPlanner",
     description="This role is used to define the offline motion planning role.",
-    required_input_definitions=[
+    input_definitions=[
         PortPairing("start_pose", "start_pose"),
         PortPairing("goal_pose", "goal_pose"),
-        PortPairing("id", "scene_id"),
+        PortPairing("id", "scene_id", is_required=False),
     ],
-    required_output_definitions=[
+    output_definitions=[
         PortPairing("motion_plan", "plan"),
+        PortPairing("plan_is_ready", "plan_ready", is_required=False)
     ],
 )

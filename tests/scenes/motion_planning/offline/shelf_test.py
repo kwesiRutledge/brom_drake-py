@@ -22,10 +22,9 @@ class ShelfTest(unittest.TestCase):
         self.assertEqual(shelf_planning_scene.suggested_roles(), [kOfflineMotionPlanner])
 
         # Populate scene with builder
-        diagram = shelf_planning_scene.cast_scene_and_build()
+        diagram, diagram_context = shelf_planning_scene.cast_scene_and_build()
 
         # Simulate the diagram
-        diagram_context = diagram.CreateDefaultContext()
         simulator = Simulator(diagram, diagram_context)
         simulator.set_target_realtime_rate(1.0)
 

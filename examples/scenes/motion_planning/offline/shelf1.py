@@ -10,6 +10,7 @@ from pydrake.systems.analysis import Simulator
 import typer
 from pydrake.systems.framework import DiagramBuilder
 
+from brom_drake.motion_planning.systems.rrt_plan_generator import RRTPlanGenerator
 # Internal imports
 from brom_drake.scenes.motion_planning.offline import ShelfPlanningScene
 
@@ -17,11 +18,14 @@ def main(use_meshcat: bool = True):
     # Setup
     scene = ShelfPlanningScene(use_meshcat=use_meshcat)
 
-    # Add all secondary cast members to the builder
-    scene.add_all_secondary_cast_members_to_builder()
+    # Create dummy cast
+    RRTPlanGenerator(scene.)
 
     # Build and simulate
-    diagram = scene.builder.Build()
+    diagram, diagram_context = scene.cast_scene_and_build(
+
+    )
+
 
     # Simulate the diagram
     diagram_context = diagram.CreateDefaultContext()
