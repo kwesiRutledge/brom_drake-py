@@ -5,7 +5,7 @@ from pydrake.systems.framework import DiagramBuilder
 
 from brom_drake.example_helpers import BlockHandlerSystem
 from brom_drake.robots import UR10eStation
-from brom_drake.scenes.roles import Role, PortPairing
+from brom_drake.scenes.roles import Role, RolePortAssignment
 
 
 class RoleTest(unittest.TestCase):
@@ -29,8 +29,8 @@ class RoleTest(unittest.TestCase):
             name="Bad Role",
             description="This role has a weird input definition that shouldraise an error.",
             input_definitions=[
-                PortPairing(
-                    external_port_name="joint_positions",
+                RolePortAssignment(
+                    external_target_name="joint_positions",
                     performer_port_name="wile out",
                 )
             ],
@@ -68,8 +68,8 @@ class RoleTest(unittest.TestCase):
             description="This role has a weird output definition that should raise an error.",
             input_definitions=[],
             output_definitions=[
-                PortPairing(
-                    external_port_name="joint_positions",
+                RolePortAssignment(
+                    external_target_name="joint_positions",
                     performer_port_name="wile out",
                 )
             ],
@@ -112,8 +112,8 @@ class RoleTest(unittest.TestCase):
             name="Bad Role",
             description="This role has a weird input definition that shouldraise an error.",
             input_definitions=[
-                PortPairing(
-                    external_port_name="joint_positions",
+                RolePortAssignment(
+                    external_target_name="joint_positions",
                     performer_port_name="ee_target",
                 )
             ],

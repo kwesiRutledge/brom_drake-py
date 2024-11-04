@@ -1,11 +1,15 @@
 from importlib import resources as impresources
+from typing import Tuple
+
 import numpy as np
 from pydrake.common.eigen_geometry import Quaternion
+from pydrake.common.value import AbstractValue
 from pydrake.geometry import MeshcatVisualizer, Meshcat
 from pydrake.math import RigidTransform
 from pydrake.multibody.parsing import Parser
 from pydrake.multibody.plant import AddMultibodyPlantSceneGraph, MultibodyPlant
-from pydrake.systems.framework import DiagramBuilder
+from pydrake.systems.framework import DiagramBuilder, Diagram, Context
+from pydrake.systems.primitives import ConstantValueSource
 
 # Internal Imports
 import brom_drake.robots as robots
@@ -13,8 +17,10 @@ from brom_drake.example_helpers import AddGround
 from brom_drake.motion_planning.systems.open_loop_plan_dispenser import OpenLoopPlanDispenser
 from brom_drake.robots.stations.kinematic import UR10eStation as KinematicUR10eStation
 from brom_drake.scenes import SceneID
+from brom_drake.scenes.roles import Role
 from brom_drake.scenes.types.motion_planning import OfflineMotionPlanningScene
 from brom_drake.urdf import drakeify_my_urdf
+from brom_drake.utils import Performer
 
 
 class ShelfPlanningScene(OfflineMotionPlanningScene):
@@ -43,9 +49,23 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
 
         # If the base link name is not provided,
         # then we will try to do a smart search for it later.
+
+        # Create containers for meshcat and other values we will set later
         self.meshcat = None
-        self.station, self.plant = None, None
         self.plan_dispenser = None
+
+        # Set station
+        self.station = KinematicUR10eStation(
+            time_step=self.time_step,
+            meshcat_port_number=self.meshcat_port_number,
+        )
+
+        # Set Names of Plant and scene graph
+        self.plant = self.station.plant
+        self.scene_graph = self.station.scene_graph
+
+        self.plant.set_name(f"ShelfScene_Plant")
+        self.scene_graph.set_name(f"ShelfScene_SceneGraph")
 
     def add_all_secondary_cast_members_to_builder(self):
         """
@@ -53,9 +73,7 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
         :return:
         """
         # Setup
-        builder = self.builder
         self.add_ur10e_station() # Use the UR10e station's plant + scene graph for all other objects
-        self.plant = self.station.plant # The station's plant is what we will use for the rest of the scene
 
         # Add obstacles
         self.add_shelf(self.plant)
@@ -69,8 +87,12 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
         # Add The Motion Planning Components (e.g., the interpolator)
         self.add_start_source_system()
         self.add_goal_source_system()
+        self.add_robot_source_system()
 
         self.add_motion_planning_components()
+
+        # Connect motion planning components to station
+        # self.connect_motion_planning_components()
 
         # Connect to Meshcat
         # if self.use_meshcat:
@@ -94,9 +116,28 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
             OpenLoopPlanDispenser(n_actuated_dof, self.plan_execution_speed)
         )
 
-        # Add a system that converts the input poses to target configurations
+        self.builder.Connect(
+            self.plan_dispenser.GetOutputPort("point_in_plan"),
+            self.station.GetInputPort("desired_joint_positions"),
+        )
 
-        pass
+    def add_robot_source_system(self):
+        """
+        Description
+        -----------
+        This method adds a source for providing the motion planner
+        with the model index for the robot that we are trying to control.
+        :return:
+        """
+        # Setup
+
+        # Create AbstractValueSource
+        robot_source_system = ConstantValueSource(
+            AbstractValue.Make(self.station.arm)
+        )
+        robot_source_system.set_name("robot_model_index_source")
+
+        self.builder.AddSystem(robot_source_system)
 
     def add_shelf(self, plant: MultibodyPlant):
         """
@@ -132,14 +173,55 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
         :return:
         """
         # Setup
-        builder = self.builder
 
         # Add station
-        self.station = KinematicUR10eStation(
-            time_step=self.time_step,
-            meshcat_port_number=self.meshcat_port_number,
+        self.builder.AddSystem(self.station)
+
+    def cast_scene_and_build(
+        self,
+        cast: Tuple[Role, Performer] = [],
+    ) -> Tuple[Diagram, Context]:
+        """
+        Description
+        -----------
+        Modifies the normal cast_scene_and_build, so that
+        we share the context of the plant with the appropriate
+        parts of the system.
+        :param cast:
+        :return:
+        """
+        diagram, diagram_context = super().cast_scene_and_build(cast=cast)
+
+        # Connect arm controller to the appropriate plant_context
+        self.station.arm_controller.plant_context = diagram.GetSubsystemContext(
+            self.station.arm_controller.plant, diagram_context,
         )
-        builder.AddSystem(self.station)
+
+        for role_ii, performer_ii in cast:
+            if role_ii.name == "OfflineMotionPlanner":
+                performer_ii.set_internal_plant_context(
+                    diagram.GetSubsystemContext(
+                        self.station.arm_controller.plant, diagram_context,
+                    )
+                )
+
+                print("reached!")
+
+        return diagram, diagram_context
+
+    def connect_motion_planning_components(
+        self,
+    ):
+        """
+        Description
+        -----------
+        This method connects the motion planning components directly to the
+        kinematic controller.
+        :return:
+        """
+
+        # Connect the plan dispenser to the station
+        pass
 
     @property
     def goal_pose(self):

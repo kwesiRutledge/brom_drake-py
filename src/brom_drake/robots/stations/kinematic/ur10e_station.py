@@ -33,8 +33,6 @@ class UR10eStation(Diagram):
         gripper_type: GripperType = GripperType.NoGripper,
         force_conversion_of_original_urdf: bool = False,
         meshcat_port_number: int = None,
-        plant: MultibodyPlant = None,
-        scene_graph: SceneGraph = None,
     ):
         """
         Description:
@@ -55,13 +53,9 @@ class UR10eStation(Diagram):
         self.builder = DiagramBuilder()
 
         # Create scene_graph and plant
-        self.plant, self.scene_graph = plant, scene_graph
+        self.plant, self.scene_graph = None, None
         self.time_step = time_step
-        if self.scene_graph is None:
-            self.create_scene_graph()
-
-        if self.plant is None:
-            self.create_plant()
+        self.create_plant_and_scene_graph()
 
         # Body ID's and Poses for Anything else in the scene
         self.object_ids = []
@@ -163,9 +157,7 @@ class UR10eStation(Diagram):
 
         print("Open %s in a browser to view the meshcat visualizer." % self.meshcat.web_url())
 
-    def create_plant(
-        self,
-    ):
+    def create_plant_and_scene_graph(self):
         """
         Description
         -----------
@@ -174,24 +166,18 @@ class UR10eStation(Diagram):
         """
         # Setup
 
+        # Create SceneGraph
+        self.scene_graph = self.builder.AddSystem(
+            SceneGraph()
+        )
+        self.scene_graph.set_name(f"{self.get_name()}_SceneGraph")
+
         # Create plant
         self.plant = self.builder.AddSystem(
             MultibodyPlant(time_step=self.time_step)
         )
         self.plant.RegisterAsSourceForSceneGraph(self.scene_graph)
         self.plant.set_name(f"{self.get_name()}_Plant")
-
-    def create_scene_graph(self):
-        """
-        Description
-        -----------
-        This method creates a basic scene graph for the UR10e station.
-        Use this if one was not provided.
-        :return:
-        """
-        # Create scene_graph
-        self.scene_graph = self.builder.AddSystem(SceneGraph())
-        self.scene_graph.set_name(f"{self.get_name()}_SceneGraph")
 
     def Finalize(self):
         """

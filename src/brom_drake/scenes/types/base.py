@@ -2,6 +2,7 @@ from typing import Union, Tuple, List
 
 from pydrake.systems.framework import DiagramBuilder, LeafSystem, Diagram, Context
 
+from brom_drake.all import add_watcher_and_build
 # Internal Imports
 from brom_drake.scenes.roles import Role
 from brom_drake.scenes.ids import SceneID
@@ -57,7 +58,7 @@ class BaseScene:
         builder = self.builder
 
         # Call the member method of the role object
-        role.connect_performer_to_diagram(builder, system)
+        role.connect_performer_ports_to(builder, system)
 
     def cast_scene(
         self,
@@ -81,8 +82,10 @@ class BaseScene:
         self.cast_scene(cast)
 
         # Build the diagram
-        self.diagram = builder.Build()
-        self.diagram_context = self.diagram.CreateDefaultContext()
+        # self.diagram = builder.Build()
+        # self.diagram_context = self.diagram.CreateDefaultContext()
+
+        watcher, self.diagram, self.diagram_context = add_watcher_and_build(builder)
 
         return self.diagram, self.diagram_context
 

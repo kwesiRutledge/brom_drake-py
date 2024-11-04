@@ -11,6 +11,8 @@ from pydrake.all import (
     ModelInstanceIndex,
     ConstantVectorSource
 )
+from pydrake.common.value import AbstractValue
+from pydrake.systems.primitives import ConstantValueSource
 
 from brom_drake.PortWatcher.port_watcher_options import FigureNamingConvention
 from brom_drake.all import add_watcher_and_build
@@ -28,6 +30,7 @@ class RRTPlanGeneratorTest(unittest.TestCase):
         DiagramBuilder,
         MultibodyPlant,
         List[ModelInstanceIndex],
+        LeafSystem,
         LeafSystem,
         LeafSystem,
         LeafSystem
@@ -85,6 +88,13 @@ class RRTPlanGeneratorTest(unittest.TestCase):
         )
         builder.AddSystem(goal_source)
 
+        # Also create a source which tells the planner what the model index
+        # is of the of the robot is
+        robot_model_source = ConstantValueSource(
+            AbstractValue.Make(ur_model_idcs[0])
+        )
+        builder.AddSystem(robot_model_source)
+
         # Also create a plan dispenser, so that we can easily plot the outputs
         dispenser = OpenLoopPlanDispenser(
             plant.num_actuated_dofs(),
@@ -92,7 +102,7 @@ class RRTPlanGeneratorTest(unittest.TestCase):
         )
         builder.AddSystem(dispenser)
 
-        return builder, plant, ur_model_idcs, start_source, goal_source, dispenser
+        return builder, plant, ur_model_idcs, start_source, goal_source, dispenser, robot_model_source
 
     def test_plan1(self):
         """
@@ -102,7 +112,7 @@ class RRTPlanGeneratorTest(unittest.TestCase):
         :return:
         """
         # Setup
-        builder, plant, model_idcs, start_source, goal_source, dispenser = self.create_example_scene1()
+        builder, plant, model_idcs, start_source, goal_source, dispenser, robot_model_idx_source = self.create_example_scene1()
 
         # Create an RRTPlanGenerator system
         plan_generator = RRTPlanGenerator(
@@ -120,6 +130,12 @@ class RRTPlanGeneratorTest(unittest.TestCase):
         builder.Connect(
             goal_source.get_output_port(0),
             plan_generator.GetInputPort("goal_pose"),
+        )
+
+        # Connect the robot model index to the plan_generator
+        builder.Connect(
+            robot_model_idx_source.get_output_port(0),
+            plan_generator.GetInputPort("robot_model_index"),
         )
 
         # Connect the planner's outputs to the dispenser

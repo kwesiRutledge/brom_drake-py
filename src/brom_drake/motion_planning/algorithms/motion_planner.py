@@ -46,6 +46,8 @@ class MotionPlanner:
             q_model
         )
 
+        # TODO(kwesi): Add collision checking logic here!
+
     def plan_motion(self):
         """
         Description:

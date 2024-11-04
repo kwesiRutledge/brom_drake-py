@@ -3,18 +3,41 @@ Description:
     This file defines an OfflineMotionPlanner class that is used to define the
     offline motion planning role that can be used in Brom scenes.
 """
-from brom_drake.scenes.roles import Role, PortPairing
+from brom_drake.scenes.roles import Role, RolePortAssignment
+from brom_drake.scenes.roles.role_port_assignment import PairingType
 
 kOfflineMotionPlanner = Role(
     name="OfflineMotionPlanner",
     description="This role is used to define the offline motion planning role.",
-    input_definitions=[
-        PortPairing("start_pose", "start_pose"),
-        PortPairing("goal_pose", "goal_pose"),
-        PortPairing("id", "scene_id", is_required=False),
-    ],
-    output_definitions=[
-        PortPairing("motion_plan", "plan"),
-        PortPairing("plan_is_ready", "plan_ready", is_required=False)
+    port_assignments=[
+        RolePortAssignment(
+            "start_pose", "start_pose",
+            pairing_type=PairingType.kInput,
+        ),
+        RolePortAssignment(
+            "goal_pose", "goal_pose",
+            pairing_type=PairingType.kInput,
+        ),
+        RolePortAssignment(
+            external_target_name="robot_model_index_source",
+            performer_port_name="robot_model_index",
+            pairing_type=PairingType.kInput,
+        ),
+        RolePortAssignment(
+            "id", "scene_id",
+            is_required=False,
+            pairing_type=PairingType.kInput,
+        ),
+        RolePortAssignment(
+            external_target_name="plan",
+            performer_port_name="motion_plan",
+            pairing_type=PairingType.kOutput,
+        ),
+        RolePortAssignment(
+            external_target_name="plan_ready",
+            performer_port_name="plan_is_ready",
+            is_required=False,
+            pairing_type=PairingType.kOutput,
+        ),
     ],
 )
