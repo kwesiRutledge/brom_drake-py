@@ -11,6 +11,7 @@ import typer
 from pydrake.systems.framework import DiagramBuilder
 from pydrake.trajectories import PiecewisePolynomial
 
+from brom_drake.motion_planning.algorithms.rrt.base import BaseRRTPlannerConfig
 from brom_drake.motion_planning.systems.rrt_plan_generator import RRTPlanGenerator
 # Internal imports
 from brom_drake.scenes.motion_planning.offline import ShelfPlanningScene
@@ -24,6 +25,12 @@ def main(use_meshcat: bool = True):
     # Create dummy cast
     planner = RRTPlanGenerator(
         plant=scene.plant,
+        scene_graph=scene.scene_graph,
+        rrt_config=BaseRRTPlannerConfig(
+            prob_sample_goal=0.3,
+            steering_step_size=0.05,
+            max_iterations=int(1e4),
+        ),
     )
     cast = [
         (kOfflineMotionPlanner, planner)
@@ -40,7 +47,7 @@ def main(use_meshcat: bool = True):
     simulator.Initialize()
     simulator.AdvanceTo(0.1)
     planned_trajectory = scene.plan_dispenser.planned_trajectory
-    # print(planned_trajectory.end_time())
+    print(planned_trajectory.end_time())
     # return
     simulator.AdvanceTo(planned_trajectory.end_time()+1.0)
 

@@ -36,8 +36,14 @@ class ShowMeThisModel(BaseScene):
 
         # If the base link name is not provided,
         # then we will try to do a smart search for it later.
-        self.plant, self.scene_graph, self.meshcat = None, None, None
-        self.model_idx, self.model_name = None, None
+        self.plant, self.scene_graph = AddMultibodyPlantSceneGraph(
+            self.builder,
+            time_step=self.time_step,
+        )
+        self.plant.set_name("ShowMeThisModel_plant")
+
+        self.meshcat = None
+        self.model_index, self.model_name = None, None
         self.show_me_system = None
 
     def add_all_secondary_cast_members_to_builder(self):
@@ -49,11 +55,6 @@ class ShowMeThisModel(BaseScene):
         :return:
         """
         # Setup
-        self.plant, self.scene_graph = AddMultibodyPlantSceneGraph(
-            self.builder,
-            time_step=self.time_step,
-        )
-        self.plant.set_name("ShowMeThisModel_plant")
         self.meshcat = Meshcat(port=7001)  # Object provides an interface to Meshcat
 
         # Add Model
@@ -61,7 +62,7 @@ class ShowMeThisModel(BaseScene):
         assert len(model_idcs) == 1, \
             f"Only one model should be added in this scene;" + \
             f" received {len(model_idcs)} in the file {self.path_to_model}."
-        self.model_idx = model_idcs[0]
+        self.model_index = model_idcs[0]
         self.model_name = self.plant.GetModelInstanceName(model_idcs[0])
 
         # Collect the expected number of actuated joints
@@ -76,7 +77,7 @@ class ShowMeThisModel(BaseScene):
         self.show_me_system = self.builder.AddSystem(
             ShowMeSystem(
                 plant=self.plant,
-                model_name=self.model_name,
+                model_index=self.model_index,
                 desired_joint_positions=np.array(self.q_des),
             ),
         )
@@ -113,7 +114,7 @@ class ShowMeThisModel(BaseScene):
         # Weld the base link to the world frame
         self.plant.WeldFrames(
             self.plant.world_frame(),
-            self.plant.GetFrameByName(self.base_link_name, self.model_idx),
+            self.plant.GetFrameByName(self.base_link_name, self.model_index),
         )
 
         # Connect to Meshcat

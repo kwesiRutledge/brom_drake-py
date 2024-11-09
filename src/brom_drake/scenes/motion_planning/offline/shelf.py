@@ -4,12 +4,12 @@ from typing import Tuple
 import numpy as np
 from pydrake.common.eigen_geometry import Quaternion
 from pydrake.common.value import AbstractValue
-from pydrake.geometry import MeshcatVisualizer, Meshcat
-from pydrake.math import RigidTransform
+from pydrake.geometry import GeometrySet, CollisionFilterDeclaration
+from pydrake.math import RigidTransform, RollPitchYaw
 from pydrake.multibody.parsing import Parser
 from pydrake.multibody.plant import AddMultibodyPlantSceneGraph, MultibodyPlant
 from pydrake.systems.framework import DiagramBuilder, Diagram, Context
-from pydrake.systems.primitives import ConstantValueSource
+from pydrake.systems.primitives import ConstantValueSource, ConstantVectorSource, Demultiplexer
 
 # Internal Imports
 import brom_drake.robots as robots
@@ -44,11 +44,11 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
             shelf_orientation = Quaternion(1, 0, 0 , 0)
             shelf_position = np.array([-0.4, 0.8, 0.0])
             self.shelf_pose = RigidTransform(
-                shelf_orientation, shelf_position,
+                RollPitchYaw(0.0, 0.0, +np.pi/2.0).ToQuaternion(),
+                np.array([0.0, 1.0, 0.6]),
             )
 
-        # If the base link name is not provided,
-        # then we will try to do a smart search for it later.
+        self.desired_cupboard_positions = np.array([0.0, 0.0])
 
         # Create containers for meshcat and other values we will set later
         self.meshcat = None
@@ -66,6 +66,10 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
 
         self.plant.set_name(f"ShelfScene_Plant")
         self.scene_graph.set_name(f"ShelfScene_SceneGraph")
+
+        # Create variables for the models we have
+        self.shelf_model_index = None
+        self.geometry_ids_to_ignore = []
 
     def add_all_secondary_cast_members_to_builder(self):
         """
@@ -146,24 +150,17 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
         """
         # Setup
         urdf_file_path = str(
-            impresources.files(robots) / "models/bookshelf/bookshelf.urdf"
-        )
-
-        # Convert the URDF
-        new_urdf_path = drakeify_my_urdf(
-            urdf_file_path,
-            overwrite_old_logs=True,
-            log_file_name="bookshelf-conversion.log",
+            impresources.files(robots) / "models/cupboard/cupboard.sdf"
         )
 
         # Add the shelf to the plant
-        model_idcs = Parser(plant=plant).AddModels(str(new_urdf_path))
-        self.model_idx = model_idcs[0]
+        model_idcs = Parser(plant=plant).AddModels(urdf_file_path)
+        self.shelf_model_index = model_idcs[0]
 
         # Weld the bookshelf to the world frame
         plant.WeldFrames(
             plant.world_frame(),
-            plant.GetFrameByName("base_footprint", self.model_idx),
+            plant.GetFrameByName("cupboard_body", self.shelf_model_index),
             self.shelf_pose,
         )
 
@@ -192,6 +189,13 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
         """
         diagram, diagram_context = super().cast_scene_and_build(cast=cast)
 
+        # Configure the scene graph for collision detection
+        self.configure_collision_filter(
+            diagram.GetSubsystemContext(
+                self.scene_graph, diagram_context,
+            )
+        )
+
         # Connect arm controller to the appropriate plant_context
         self.station.arm_controller.plant_context = diagram.GetSubsystemContext(
             self.station.arm_controller.plant, diagram_context,
@@ -199,15 +203,47 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
 
         for role_ii, performer_ii in cast:
             if role_ii.name == "OfflineMotionPlanner":
-                performer_ii.set_internal_plant_context(
-                    diagram.GetSubsystemContext(
-                        self.station.arm_controller.plant, diagram_context,
-                    )
+                performer_ii.set_internal_root_context(
+                    diagram_context
                 )
 
                 print("reached!")
 
         return diagram, diagram_context
+
+    def configure_collision_filter(self, scene_graph_context: Context):
+        """
+        Description
+        -----------
+        This method configures the collision filter for the scene.
+        :param scene_graph_context:
+        :return:
+        """
+        # Setup
+        scene_graph = self.scene_graph
+        shelf_model_index = self.shelf_model_index
+
+        # Ignore self collisions of the shelf, by:
+        # - Getting the model instance index of the shelf
+        # - Collecting the Geometry IDs of all the geometries in the shelf
+        geometry_ids = []
+        for body_index in self.plant.GetBodyIndices(shelf_model_index):
+            # Get the geometry IDs
+            geometry_ids.extend(
+                self.plant.GetCollisionGeometriesForBody(
+                    self.plant.get_body(body_index)
+                )
+            )
+            print(self.plant.get_body(body_index))
+
+        self.geometry_ids_to_ignore = geometry_ids
+
+        # Apply the collision filter
+        scene_graph.collision_filter_manager(scene_graph_context).Apply(
+            CollisionFilterDeclaration().ExcludeWithin(
+                GeometrySet(self.geometry_ids_to_ignore)
+            )
+        )
 
     def connect_motion_planning_components(
         self,
@@ -229,8 +265,8 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
         Get the goal pose. This should be defined by the subclass.
         :return:
         """
-        goal_position = np.array([+0.2, 1.0, 0.65])
-        goal_orientation = Quaternion(1, 0, 0, 0)
+        goal_position = np.array([+0.1, 1.0, 0.55]) # np.array([+0.5, 0.7, 0.65])
+        goal_orientation = RollPitchYaw(np.pi/2.0, np.pi/2.0, 0.0).ToQuaternion()
         return RigidTransform(goal_orientation, goal_position)
 
     @property
@@ -243,6 +279,6 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
         Get the start pose. This should be defined by the subclass.
         :return:
         """
-        start_position = np.array([-0.2, 0.9, 0.3])
+        start_position = np.array([+0.3, 0.1, 1.2])
         start_orientation = Quaternion(1, 0, 0, 0)
         return RigidTransform(start_orientation, start_position)

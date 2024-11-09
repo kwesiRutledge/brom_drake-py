@@ -8,7 +8,8 @@ import networkx as nx
 import numpy as np
 from pydrake.common.eigen_geometry import Quaternion
 from pydrake.common.value import AbstractValue
-from pydrake.math import RigidTransform
+from pydrake.geometry import SceneGraph
+from pydrake.math import RigidTransform, RotationMatrix
 from pydrake.solvers import OsqpSolver, MathematicalProgram, Solve, SolutionResult
 from pydrake.multibody.inverse_kinematics import DoDifferentialInverseKinematics, \
     DifferentialInverseKinematicsParameters, InverseKinematics
@@ -16,7 +17,7 @@ from pydrake.multibody.plant import MultibodyPlant
 from pydrake.multibody.tree import ModelInstanceIndex
 from pydrake.systems.framework import LeafSystem, BasicVector, Context
 
-from brom_drake.motion_planning.algorithms.rrt.base import BaseRRTPlanner
+from brom_drake.motion_planning.algorithms.rrt.base import BaseRRTPlanner, BaseRRTPlannerConfig
 
 
 class RRTPlanGenerator(LeafSystem):
@@ -29,8 +30,9 @@ class RRTPlanGenerator(LeafSystem):
     def __init__(
         self,
         plant: MultibodyPlant,
+        scene_graph: SceneGraph,
         robot_model_idx: ModelInstanceIndex = None,
-        max_rrt_iterations: int = int(1e4),
+        rrt_config: BaseRRTPlannerConfig = None
     ):
         """
         Description:
@@ -39,15 +41,15 @@ class RRTPlanGenerator(LeafSystem):
         super().__init__()
         # Setup
         self.robot_model_idx = robot_model_idx
-        self.plant = plant
-        self.max_rrt_iterations = max_rrt_iterations
+        self.plant, self.scene_graph = plant, scene_graph
         self.plan = None
+        self.rrt_config = rrt_config
 
         # Compute dof using robot_model_idx
         self.dim_q = None
 
         # Set Up Input and Output Ports
-        self.plant_context = None # NOTE: This should be assigned by the user before calling!
+        self.root_context = None # NOTE: This should be assigned by the user before calling!
         self.create_input_ports()
         self.create_output_ports()
 
@@ -73,17 +75,20 @@ class RRTPlanGenerator(LeafSystem):
                 p_WGoal_vec,
             )
 
-            base_rrt = BaseRRTPlanner(self.robot_model_idx, self.plant)
+            base_rrt = BaseRRTPlanner(
+                self.robot_model_idx,
+                self.plant, self.scene_graph,
+                config=self.rrt_config,
+            )
 
-            if self.plant_context is None:
+            if self.root_context is None:
                 raise ValueError("Plant context is not initialized yet!")
 
-            base_rrt.plant_context = self.plant_context
+            base_rrt.root_context = self.root_context
 
             # Plan and extract path
             rrt, found_path = base_rrt.plan(
                 q_start, q_goal,
-                max_iterations=self.max_rrt_iterations,
             )
 
             if not found_path:
@@ -167,6 +172,21 @@ class RRTPlanGenerator(LeafSystem):
         )
 
         # TODO(kwesi): Add OrientationCosntraint
+        # ik_problem.AddOrientationConstraint(
+        #     self.plant.world_frame(),
+        #     RotationMatrix(Quaternion(input_pose_vec[3:]).rotation()),
+        #     self.plant.GetFrameByName("ft_frame"),
+        #     RotationMatrix.Identity(),
+        #     0.25,
+        # )
+
+        ik_problem.AddOrientationCost(
+            self.plant.world_frame(),
+            RotationMatrix(Quaternion(input_pose_vec[3:]).rotation()),
+            self.plant.GetFrameByName("ft_frame"),
+            RotationMatrix.Identity(),
+            0.25,
+        )
 
         return ik_problem
 
@@ -191,9 +211,17 @@ class RRTPlanGenerator(LeafSystem):
         assert ik_result.get_solution_result() == SolutionResult.kSolutionFound, \
             f"Solution result was {ik_result.get_solution_result()}; need SolutionResult.kSolutionFound to make RRT Plan!"
 
-        q_out = ik_result.get_x_val()
+        q_solution = ik_result.get_x_val()
 
-        return q_out
+        # Extract only the positions that correspond to our robot's joints
+        robot_joint_names = self.plant.GetPositionNames(self.robot_model_idx, add_model_instance_prefix=True)
+        all_joint_names = self.plant.GetPositionNames()
+        q_out_list = []
+        for ii, joint_name in enumerate(all_joint_names):
+            if joint_name in robot_joint_names:
+                q_out_list.append(q_solution[ii])
+
+        return np.array(q_out_list)
 
 
     def set_dimension(self, dim_q: int):
@@ -223,5 +251,5 @@ class RRTPlanGenerator(LeafSystem):
             AbstractValue.Make(self.plan is not None)
         )
 
-    def set_internal_plant_context(self, plant_context_in: Context):
-        self.plant_context = plant_context_in
+    def set_internal_root_context(self, root_context_in: Context):
+        self.root_context = root_context_in

@@ -94,8 +94,8 @@ class BaseArmController(LeafSystem):
         """
         q = self.arm_joint_position_port.Eval(context)
         qd = self.arm_joint_velocity_port.Eval(context)
-        self.plant.SetPositions(self.context, q)
-        self.plant.SetVelocities(self.context, qd)
+        self.plant.SetPositions(self.context, self.arm, q)
+        self.plant.SetVelocities(self.context, self.arm, qd)
 
         # Compute the rigid transform between the world and end-effector frames
         X_ee = self.plant.CalcRelativeTransform(
@@ -117,8 +117,8 @@ class BaseArmController(LeafSystem):
         """
         q = self.arm_joint_position_port.Eval(context)
         qd = self.arm_joint_velocity_port.Eval(context)
-        self.plant.SetPositions(self.context, q)
-        self.plant.SetVelocities(self.context, qd)
+        self.plant.SetPositions(self.context, self.arm, q)
+        self.plant.SetVelocities(self.context, self.arm, qd)
 
         # Compute end-effector Jacobian
         J = self.plant.CalcJacobianSpatialVelocity(

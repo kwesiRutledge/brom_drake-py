@@ -1,30 +1,41 @@
 """
 base.py
 """
+from dataclasses import dataclass
 from typing import Tuple
 
 import networkx as nx
 import numpy as np
+from pydrake.geometry import SceneGraph
 from pydrake.multibody.plant import MultibodyPlant
 from pydrake.multibody.tree import ModelInstanceIndex
 # Internal Imports
 from brom_drake.motion_planning.algorithms.motion_planner import MotionPlanner
+
+@dataclass
+class BaseRRTPlannerConfig:
+    steering_step_size: float = 0.1,
+    prob_sample_goal: float = 0.075,
+    max_iterations: int = int(1e4)
+    convergence_threshold: float = 1e-3
 
 class BaseRRTPlanner(MotionPlanner):
     def __init__(
         self,
         robot_model_idx: ModelInstanceIndex,
         plant: MultibodyPlant,
-        steering_step_size: float = 0.1,
-        prob_sample_goal: float = 0.075,
+        scene_graph: SceneGraph,
+        config: BaseRRTPlannerConfig = None,
     ):
-        super().__init__(robot_model_idx, plant)
+        super().__init__(robot_model_idx, plant, scene_graph)
         # Input Processing
 
         # Setup
-        self.steering_step_size = steering_step_size
-        self.prob_sample_goal = prob_sample_goal
         self.dim_q = plant.num_actuated_dofs(robot_model_idx)
+
+        self.config = config
+        if self.config is None:
+            self.config = BaseRRTPlannerConfig()
 
         # Prepare for planning
         self.joint_limits = self.get_joint_limits()  # Initialize joint limits array
@@ -86,7 +97,6 @@ class BaseRRTPlanner(MotionPlanner):
         self,
         q_start: np.ndarray,
         q_goal: np.ndarray,
-        max_iterations: int = 1000,
     ) -> Tuple[nx.DiGraph, bool]:
         """
         Description:
@@ -104,10 +114,10 @@ class BaseRRTPlanner(MotionPlanner):
         # Setup
         rrt = nx.DiGraph()
         rrt.add_node(0, q=q_start) # Make this graph contain all configurations
-        prob_sample_goal = self.prob_sample_goal
+        prob_sample_goal = self.config.prob_sample_goal
 
         # RRT Planner
-        for iteration in range(max_iterations):
+        for iteration in range(self.config.max_iterations):
             # Sample random configuration OR goal
             if np.random.rand() < prob_sample_goal:
                 q_random = q_goal.copy()
@@ -129,7 +139,7 @@ class BaseRRTPlanner(MotionPlanner):
             rrt.add_edge(nearest_node_idx, rrt.number_of_nodes()-1)
 
             # Check if we have reached the goal
-            if np.linalg.norm(q_new - q_goal) < 1e-3:
+            if np.linalg.norm(q_new - q_goal) < self.config.convergence_threshold:
                 print(f"Goal reached after {iteration} iterations!")
                 return rrt, True
 
@@ -160,7 +170,7 @@ class BaseRRTPlanner(MotionPlanner):
             This function steers from the nearest node towards the random configuration.
         """
         # Setup
-        step_size = self.steering_step_size
+        step_size = self.config.steering_step_size
         q_nearest = nearest_node
 
         # Calculate the direction vector

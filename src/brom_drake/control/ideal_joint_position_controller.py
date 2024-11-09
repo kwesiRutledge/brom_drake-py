@@ -31,13 +31,13 @@ class IdealJointPositionController(LeafSystem):
         # Create Input Port for the Body's Joint Positions
         self.desired_joint_positions_port = self.DeclareVectorInputPort(
             "desired_joint_positions",
-            BasicVector(self.plant.num_positions()),
+            BasicVector(self.plant.num_actuated_dofs()),
         )
 
         # Create Output Port which should share the pose of the block
         self.DeclareVectorOutputPort(
             "measured_joint_positions",
-            BasicVector(self.plant.num_positions()),
+            BasicVector(self.plant.num_actuated_dofs()),
             self.SetJointPositions,
             {self.time_ticket()}    # indicate that this doesn't depend on any inputs,
         )                           # but should still be updated each timestep
@@ -61,7 +61,11 @@ class IdealJointPositionController(LeafSystem):
         #     raise RuntimeError("station_context is None")
 
         self.plant.SetPositions(plant_context, robot_model, joint_positions)
-        self.plant.SetVelocities(plant_context, robot_model, np.zeros(self.plant.num_velocities()))
+        self.plant.SetVelocities(
+            plant_context,
+            robot_model,
+            np.zeros(self.plant.num_velocities(robot_model))
+        )
 
         output.SetFromVector(joint_positions)
 
@@ -81,9 +85,10 @@ class IdealJointPositionController(LeafSystem):
         plant_context = self.GetSubsystemContext(self.plant, station_context)
 
         # Set Joint Positions and velocities
-        self.plant.SetPositions(plant_context, q0)
+        self.plant.SetPositions(plant_context, self.robot_model, q0)
 
         self.plant.SetVelocities(
             plant_context,
-            np.zeros(self.plant.num_velocities())
+            self.robot_model,
+            np.zeros(self.plant.num_velocities(self.robot_model))
         )
