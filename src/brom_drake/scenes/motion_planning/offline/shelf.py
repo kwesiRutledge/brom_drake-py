@@ -7,9 +7,9 @@ from pydrake.common.value import AbstractValue
 from pydrake.geometry import GeometrySet, CollisionFilterDeclaration
 from pydrake.math import RigidTransform, RollPitchYaw
 from pydrake.multibody.parsing import Parser
-from pydrake.multibody.plant import AddMultibodyPlantSceneGraph, MultibodyPlant
-from pydrake.systems.framework import DiagramBuilder, Diagram, Context
-from pydrake.systems.primitives import ConstantValueSource, ConstantVectorSource, Demultiplexer
+from pydrake.multibody.plant import MultibodyPlant
+from pydrake.systems.framework import Diagram, Context
+from pydrake.systems.primitives import ConstantValueSource
 
 # Internal Imports
 import brom_drake.robots as robots
@@ -19,7 +19,6 @@ from brom_drake.robots.stations.kinematic import UR10eStation as KinematicUR10eS
 from brom_drake.scenes import SceneID
 from brom_drake.scenes.roles import Role
 from brom_drake.scenes.types.motion_planning import OfflineMotionPlanningScene
-from brom_drake.urdf import drakeify_my_urdf
 from brom_drake.utils import Performer
 
 

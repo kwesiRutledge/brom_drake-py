@@ -6,20 +6,16 @@ Description:
 """
 from importlib import resources as impresources
 import loguru
-import os
 from pathlib import Path
-import trimesh
 import unittest
 from xml.etree.ElementTree import ElementTree
 
-import numpy as np
 from pydrake.multibody.parsing import Parser
 from pydrake.multibody.plant import MultibodyPlant
 
 # Internal Imports
 import brom_drake
-from brom_drake.urdf import DrakeReadyURDFConverter
-from brom_drake.urdf.util import URDF_CONVERSION_LOG_LEVEL_NAME, URDF_CONVERSION_LEVEL
+from brom_drake.file_manipulation.urdf import DrakeReadyURDFConverter
 
 
 class DrakeReadyURDFConverterTest(unittest.TestCase):

@@ -1,4 +1,3 @@
-from distutils.command.build import build
 from importlib import resources as impresources
 from typing import Tuple, List
 import unittest
@@ -17,11 +16,10 @@ from pydrake.systems.primitives import ConstantValueSource
 from brom_drake.PortWatcher.port_watcher_options import FigureNamingConvention
 from brom_drake.all import add_watcher_and_build
 # Internal Imports
-from brom_drake.motion_planning.algorithms.rrt.base import BaseRRTPlanner
 from brom_drake.motion_planning.systems.open_loop_plan_dispenser import OpenLoopPlanDispenser
 from brom_drake.motion_planning.systems.rrt_plan_generator import RRTPlanGenerator
 import brom_drake.robots as robots
-from brom_drake.urdf import drakeify_my_urdf
+from brom_drake.file_manipulation.urdf import drakeify_my_urdf
 
 
 class RRTPlanGeneratorTest(unittest.TestCase):

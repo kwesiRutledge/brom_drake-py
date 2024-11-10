@@ -19,7 +19,7 @@ from brom_drake.all import add_watcher_and_build
 from brom_drake.control import IdealJointPositionController
 from brom_drake import robots
 from brom_drake.robots import find_base_link_name_in
-from brom_drake.urdf import DrakeReadyURDFConverter
+from brom_drake.file_manipulation.urdf import DrakeReadyURDFConverter
 
 
 class TestIdealJointPositionController(unittest.TestCase):

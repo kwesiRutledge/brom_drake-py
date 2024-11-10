@@ -8,7 +8,6 @@ Description:
 from importlib import resources as impresources
 
 import numpy as np
-from pydrake.math import RigidTransform
 from pydrake.multibody.parsing import Parser
 from pydrake.multibody.plant import MultibodyPlant
 import unittest
@@ -16,7 +15,7 @@ import unittest
 # Internal Imports
 from brom_drake.motion_planning.algorithms.rrt.base import BaseRRTPlanner as BaseRRTPlanner
 import brom_drake.robots as robots
-from brom_drake.urdf import drakeify_my_urdf
+from brom_drake.file_manipulation.urdf import drakeify_my_urdf
 
 
 class TestBaseRRT(unittest.TestCase):

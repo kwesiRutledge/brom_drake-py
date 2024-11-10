@@ -4,7 +4,7 @@ from xml.etree.ElementTree import ElementTree
 
 # Internal imports
 import brom_drake
-from brom_drake.urdf.util import (
+from brom_drake.file_manipulation.urdf import (
     tree_contains_transmission_for_joint,
     create_transmission_element_for_joint,
 )

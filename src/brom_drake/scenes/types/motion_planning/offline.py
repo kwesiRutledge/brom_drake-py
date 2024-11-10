@@ -1,22 +1,18 @@
 import os
 from pathlib import Path
-from turtledemo.penrose import start
 from typing import Tuple
 
 import numpy as np
 from pydrake.common.value import AbstractValue
-from pydrake.geometry import SceneGraph
 from pydrake.math import RigidTransform
 from pydrake.multibody.parsing import Parser
-from pydrake.multibody.plant import MultibodyPlant, AddMultibodyPlantSceneGraph
-from pydrake.systems.framework import DiagramBuilder, Diagram, Context
+from pydrake.multibody.plant import MultibodyPlant
 from pydrake.systems.primitives import ConstantVectorSource, ConstantValueSource
 
-from brom_drake.scenes.roles.role_port_assignment import PairingType
 from brom_drake.scenes.types import BaseScene
 from brom_drake.scenes.roles import kOfflineMotionPlanner, Role
-from brom_drake.urdf.simple_shape_urdfs.shape_definition import SphereDefinition
-from brom_drake.urdf.simple_shape_urdfs.urdf_definition import SimpleShapeURDFDefinition
+from brom_drake.file_manipulation.urdf.simple_shape_urdfs.shape_definition import SphereDefinition
+from brom_drake.file_manipulation.urdf.simple_shape_urdfs.urdf_definition import SimpleShapeURDFDefinition
 from brom_drake.utils import Performer
 
 

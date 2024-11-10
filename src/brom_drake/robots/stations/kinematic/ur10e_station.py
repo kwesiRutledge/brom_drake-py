@@ -1,4 +1,3 @@
-from enum import IntEnum
 from importlib import resources as impresources
 from pathlib import Path
 
@@ -8,17 +7,14 @@ from pydrake.math import RollPitchYaw, RigidTransform, RotationMatrix
 from pydrake.multibody.parsing import Parser
 from pydrake.multibody.plant import MultibodyPlant
 from pydrake.multibody.tree import FixedOffsetFrame
-from pydrake.systems.framework import Diagram, DiagramBuilder, State, Context
+from pydrake.systems.framework import Diagram, DiagramBuilder
 from pydrake.systems.primitives import Demultiplexer
 
 from brom_drake.control import IdealJointPositionController
 # Local imports
 from brom_drake.robots.gripper_type import GripperType
 from brom_drake.control.grippers.gripper_controller import GripperController
-from brom_drake.control.arms import (
-    JointArmController, ArmControlMode,
-)
-from brom_drake.urdf.DrakeReadyURDFConverter import DrakeReadyURDFConverter
+from brom_drake.file_manipulation.urdf import DrakeReadyURDFConverter
 
 from brom_drake import robots
 

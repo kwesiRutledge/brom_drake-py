@@ -3,24 +3,18 @@ motion_planner_test.py
 Description:
     This script tests some of the basic features of the motion_planner base object.
 """
-import os
 from importlib import resources as impresources
-from pathlib import Path
 
 import numpy as np
 import unittest
 
-from manipulation.scenarios import AddMultibodyTriad, AddTriad
-from pydrake.common.eigen_geometry import Quaternion
 from pydrake.geometry import SceneGraph, CollisionFilterDeclaration, GeometrySet
 from pydrake.math import RigidTransform, RollPitchYaw
 from pydrake.multibody.parsing import Parser
 from pydrake.multibody.plant import MultibodyPlant
-from pydrake.multibody.tree import ModelInstanceIndex, Frame, FixedOffsetFrame
-from pydrake.planning import SceneGraphCollisionChecker, RobotDiagram
+from pydrake.multibody.tree import ModelInstanceIndex
 from pydrake.systems.analysis import Simulator
 from pydrake.systems.framework import Context
-from sympy.codegen.cnodes import static
 
 # Internal Imports
 from brom_drake import robots
@@ -28,8 +22,6 @@ from brom_drake.all import (
     drakeify_my_urdf,
 )
 from brom_drake.scenes.debug import ShowMeThisModel
-from brom_drake.urdf.simple_shape_urdfs.shape_definition import SphereDefinition
-from brom_drake.urdf.simple_shape_urdfs.urdf_definition import SimpleShapeURDFDefinition
 
 
 class MotionPlannerTest(unittest.TestCase):
