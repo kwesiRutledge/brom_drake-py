@@ -16,6 +16,7 @@ from pydrake.multibody.plant import MultibodyPlant
 # Internal Imports
 import brom_drake
 from brom_drake.file_manipulation.urdf import DrakeReadyURDFConverter
+import resources as resources_dir
 
 
 class DrakeReadyURDFConverterTest(unittest.TestCase):
@@ -27,26 +28,26 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         :return:
         """
         self.test_urdf1_filename = str(
-            impresources.files(brom_drake) / "../../tests/urdf/resources/test1.urdf"
+            impresources.files(resources_dir) / "test1.urdf"
         )
         self.test_urdf2_filename = str(
             impresources.files(brom_drake) / "robots/models/ur/ur10e.urdf"
         )
 
         self.test_urdf3_filename = str(
-            impresources.files(brom_drake) / "../../tests/urdf/resources/test_package/urdf/baxter.urdf"
+            impresources.files(resources_dir) / "test_package/urdf/baxter.urdf"
         )
 
         self.test_urdf4_filename = str(
-            impresources.files(brom_drake) / "../../tests/urdf/resources/test3_relative.urdf"
+            impresources.files(resources_dir) / "test3_relative.urdf"
         )
 
         self.test_urdf5_filename = str(
-            impresources.files(brom_drake) / "../../tests/urdf/resources/test4_relative.urdf"
+            impresources.files(resources_dir) / "test4_relative.urdf"
         )
 
         self.test_urdf6_filename = str(
-            impresources.files(brom_drake) / "../../tests/urdf/resources/test5_absolute.urdf"
+            impresources.files(resources_dir) / "test5_absolute.urdf"
         )
 
     def test_convert_tree1(self):

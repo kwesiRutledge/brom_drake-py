@@ -11,10 +11,13 @@ from pydrake.all import (
     ConstantVectorSource
 )
 from pydrake.common.value import AbstractValue
+from pydrake.geometry import SceneGraph
+from pydrake.multibody.plant import AddMultibodyPlantSceneGraph
 from pydrake.systems.primitives import ConstantValueSource
 
 from brom_drake.PortWatcher.port_watcher_options import FigureNamingConvention
 from brom_drake.all import add_watcher_and_build
+from brom_drake.motion_planning.algorithms.rrt.base import BaseRRTPlannerConfig
 # Internal Imports
 from brom_drake.motion_planning.systems.open_loop_plan_dispenser import OpenLoopPlanDispenser
 from brom_drake.motion_planning.systems.rrt_plan_generator import RRTPlanGenerator
@@ -27,6 +30,7 @@ class RRTPlanGeneratorTest(unittest.TestCase):
     def create_example_scene1() -> Tuple[
         DiagramBuilder,
         MultibodyPlant,
+        SceneGraph,
         List[ModelInstanceIndex],
         LeafSystem,
         LeafSystem,
@@ -53,7 +57,10 @@ class RRTPlanGeneratorTest(unittest.TestCase):
         p_WGoal = RigidTransform(goal_orientation, goal_position)
 
         # Create a MultibodyPlant
-        plant = MultibodyPlant(time_step=1e-3)
+        plant, scene_graph = AddMultibodyPlantSceneGraph(
+            builder,
+            time_step=1e-3,
+        )
 
         # Add the UR10e
         urdf_file_path = str(
@@ -72,8 +79,6 @@ class RRTPlanGeneratorTest(unittest.TestCase):
             plant.GetFrameByName("base_link", ur_model_idcs[0]),
         )
         plant.Finalize()
-
-        builder.AddSystem(plant)
 
         # Create start and goal sources
         start_source = ConstantVectorSource(
@@ -100,7 +105,7 @@ class RRTPlanGeneratorTest(unittest.TestCase):
         )
         builder.AddSystem(dispenser)
 
-        return builder, plant, ur_model_idcs, start_source, goal_source, dispenser, robot_model_source
+        return builder, plant, scene_graph, ur_model_idcs, start_source, goal_source, dispenser, robot_model_source
 
     def test_plan1(self):
         """
@@ -110,13 +115,19 @@ class RRTPlanGeneratorTest(unittest.TestCase):
         :return:
         """
         # Setup
-        builder, plant, model_idcs, start_source, goal_source, dispenser, robot_model_idx_source = self.create_example_scene1()
+        (builder, plant, scene_graph,
+         model_idcs, start_source, goal_source,
+         dispenser, robot_model_idx_source) = self.create_example_scene1()
 
         # Create an RRTPlanGenerator system
+        rrt_config = BaseRRTPlannerConfig(
+            max_iterations=1000
+        )
         plan_generator = RRTPlanGenerator(
             plant,
+            scene_graph,
             model_idcs[0],
-            max_rrt_iterations=1000,
+            rrt_config=rrt_config,
         )
         builder.AddSystem(plan_generator)
 
@@ -143,7 +154,7 @@ class RRTPlanGeneratorTest(unittest.TestCase):
         )
 
         builder.Connect(
-            plan_generator.GetOutputPort("plan"),
+            plan_generator.GetOutputPort("motion_plan"),
             dispenser.GetInputPort("plan")
         )
 
@@ -157,7 +168,7 @@ class RRTPlanGeneratorTest(unittest.TestCase):
         simulator = Simulator(diagram, diagram_context)
         plant_context = plant.GetMyContextFromRoot(diagram_context)
 
-        plan_generator.plant_context = plant_context
+        plan_generator.set_internal_root_context(diagram_context)
 
         simulator.Initialize()
         T_sim = 10.0

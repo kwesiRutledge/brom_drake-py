@@ -14,8 +14,8 @@ from brom_drake.motion_planning.algorithms.motion_planner import MotionPlanner
 
 @dataclass
 class BaseRRTPlannerConfig:
-    steering_step_size: float = 0.1,
-    prob_sample_goal: float = 0.075,
+    steering_step_size: float = 0.1
+    prob_sample_goal: float = 0.075
     max_iterations: int = int(1e4)
     convergence_threshold: float = 1e-3
 

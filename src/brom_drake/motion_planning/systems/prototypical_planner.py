@@ -74,7 +74,7 @@ class PrototypicalPlannerSystem(LeafSystem):
             q_model
         )
 
-        # TODO(kwesi): Add collision checking logic here!
+        # Check for collisions using the query object
         query_object = self.scene_graph.get_query_output_port().Eval(scene_graph_context)
         return query_object.HasCollisions()
 
@@ -192,8 +192,8 @@ class PrototypicalPlannerSystem(LeafSystem):
             (+ np.ones((3,)) * eps0).reshape((-1, 1)),
         )
 
-        # TODO(kwesi): Add OrientationCosntraint
-        ik_problem.AddOrientationConstraint(
+        # Add Orientation Cost (not a hard constraint to help with feasibility)
+        ik_problem.AddOrientationCost(
             self.plant.world_frame(),
             RotationMatrix(Quaternion(input_pose_vec[3:]).rotation()),
             self.plant.GetFrameByName("ft_frame"),

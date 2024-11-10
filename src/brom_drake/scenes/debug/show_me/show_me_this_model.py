@@ -24,6 +24,7 @@ class ShowMeThisModel(BaseScene):
         with_these_joint_positions: List[float] = None,
         base_link_name: str = None,
         time_step: float = 1e3,
+        meshcat_port_number: int = 7001, # Usually turn off for CI (i.e., make it None)
         **kwargs,
     ):
         super().__init__(**kwargs)
@@ -33,6 +34,7 @@ class ShowMeThisModel(BaseScene):
         self.q_des = with_these_joint_positions
         self.base_link_name = base_link_name
         self.time_step = time_step
+        self.meshcat_port_number = meshcat_port_number
 
         # If the base link name is not provided,
         # then we will try to do a smart search for it later.
@@ -55,7 +57,6 @@ class ShowMeThisModel(BaseScene):
         :return:
         """
         # Setup
-        self.meshcat = Meshcat(port=7001)  # Object provides an interface to Meshcat
 
         # Add Model
         model_idcs = Parser(plant=self.plant).AddModels(self.path_to_model)
@@ -117,9 +118,11 @@ class ShowMeThisModel(BaseScene):
             self.plant.GetFrameByName(self.base_link_name, self.model_index),
         )
 
-        # Connect to Meshcat
-        m_visualizer = MeshcatVisualizer(self.meshcat)
-        m_visualizer.AddToBuilder(self.builder, self.scene_graph, self.meshcat)
+        # Connect to Meshcat, if requested
+        if self.meshcat_port_number is not None:
+            self.meshcat = Meshcat(port=self.meshcat_port_number)  # Object provides an interface to Meshcat
+            m_visualizer = MeshcatVisualizer(self.meshcat)
+            m_visualizer.AddToBuilder(self.builder, self.scene_graph, self.meshcat)
 
         # Finalize plant and connect it to system
         self.plant.Finalize()

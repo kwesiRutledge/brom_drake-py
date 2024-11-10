@@ -78,7 +78,7 @@ class MotionPlannerTest(unittest.TestCase):
             q_model
         )
 
-        # TODO(kwesi): Add collision checking logic here!
+        # Check for Collisions (and investigate scene) using query object from SceneGraph
         query = scene_graph.get_query_output_port().Eval(scene_graph_context)
         print("Play with the query object here!")
         inspector = scene_graph.model_inspector()
@@ -139,6 +139,7 @@ class MotionPlannerTest(unittest.TestCase):
             str(new_urdf_path),
             with_these_joint_positions=q0,
             time_step=time_step,
+            meshcat_port_number=None, # Turn off for CI
         )
 
         # Add Bookshelf to scene

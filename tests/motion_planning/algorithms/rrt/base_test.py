@@ -9,8 +9,10 @@ from importlib import resources as impresources
 
 import numpy as np
 from pydrake.multibody.parsing import Parser
-from pydrake.multibody.plant import MultibodyPlant
+from pydrake.multibody.plant import MultibodyPlant, AddMultibodyPlantSceneGraph
 import unittest
+
+from pydrake.systems.framework import DiagramBuilder
 
 # Internal Imports
 from brom_drake.motion_planning.algorithms.rrt.base import BaseRRTPlanner as BaseRRTPlanner
@@ -25,7 +27,11 @@ class TestBaseRRT(unittest.TestCase):
         :return:
         """
         # Setup
-        plant = MultibodyPlant(time_step=1e-3)
+        builder = DiagramBuilder()
+        plant, scene_graph = AddMultibodyPlantSceneGraph(
+            builder,
+            time_step=1e-3,
+        )
 
         # Add the UR10e
         urdf_file_path = str(
@@ -46,7 +52,7 @@ class TestBaseRRT(unittest.TestCase):
         plant.Finalize()
 
         # Create a BaseRRTPlanner instance and compute the joint limits
-        base_rrt = BaseRRTPlanner(model_idcs[0], plant)
+        base_rrt = BaseRRTPlanner(model_idcs[0], plant, scene_graph)
         joint_limits = base_rrt.get_joint_limits()
 
         print("Joint limits:", joint_limits)
@@ -69,7 +75,11 @@ class TestBaseRRT(unittest.TestCase):
         :return:
         """
         # Setup
-        plant = MultibodyPlant(time_step=1e-3)
+        builder = DiagramBuilder()
+        plant, scene_graph = AddMultibodyPlantSceneGraph(
+            builder,
+            time_step=1e-3,
+        )
 
         # Add the UR10e
         urdf_file_path = str(
@@ -90,7 +100,7 @@ class TestBaseRRT(unittest.TestCase):
         plant.Finalize()
 
         # Create a BaseRRTPlanner instance and compute the joint limits
-        base_rrt = BaseRRTPlanner(model_idcs[0], plant)
+        base_rrt = BaseRRTPlanner(model_idcs[0], plant, scene_graph)
         joint_limits = base_rrt.get_joint_limits()
 
         for _ in range(10):
@@ -115,7 +125,11 @@ class TestBaseRRT(unittest.TestCase):
         :return:
         """
         # Setup
-        plant = MultibodyPlant(time_step=1e-3)
+        builder = DiagramBuilder()
+        plant, scene_graph = AddMultibodyPlantSceneGraph(
+            builder,
+            time_step=1e-3,
+        )
 
         # Add the UR10e
         urdf_file_path = str(
@@ -136,8 +150,12 @@ class TestBaseRRT(unittest.TestCase):
         plant.Finalize()
 
         # Create a BaseRRTPlanner instance
-        base_rrt = BaseRRTPlanner(model_idcs[0], plant)
-        base_rrt.plant_context = plant.CreateDefaultContext()
+        base_rrt = BaseRRTPlanner(model_idcs[0], plant, scene_graph)
+
+        diagram = builder.Build()
+        diagram_context = diagram.CreateDefaultContext()
+
+        base_rrt.root_context = diagram_context
 
         # Define start and goal configurations
         start_configuration = np.zeros(base_rrt.dim_q)

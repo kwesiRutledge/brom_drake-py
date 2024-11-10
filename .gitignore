@@ -170,5 +170,5 @@ brom-venv/
 *.DS_Store
 
 # Example and Test outputs
-tests/urdf/resources/**/**.obj
-tests/urdf/resources/test5_absolute.urdf
+tests/file_manipulation/urdf/resources/**/**.obj
+tests/file_manipulation/urdf/resources/test5_absolute.urdf

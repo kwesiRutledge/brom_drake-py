@@ -36,6 +36,7 @@ class ShowMeThisModelTest(unittest.TestCase):
             str(new_urdf_path),
             with_these_joint_positions=[0.0, 0.0, -np.pi/4.0, 0.0, 0.0, 0.0],
             time_step=time_step,
+            meshcat_port_number=None, # Turn off for CI
         )
         diagram, diagram_context = scene.cast_scene_and_build()
 
