@@ -20,7 +20,9 @@ from brom_drake.scenes.roles import kOfflineMotionPlanner
 
 def main(use_meshcat: bool = True):
     # Setup
-    scene = ShelfPlanningScene(use_meshcat=use_meshcat)
+    scene = ShelfPlanningScene(
+        meshcat_port_number=None, # Use None for CI (so don't show)
+    )
 
     # Create dummy cast
     planner = RRTPlanGenerator(

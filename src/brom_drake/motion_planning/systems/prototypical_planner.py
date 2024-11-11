@@ -8,8 +8,9 @@ from pydrake.multibody.inverse_kinematics import InverseKinematics
 from pydrake.multibody.plant import MultibodyPlant
 from pydrake.multibody.tree import ModelInstanceIndex
 from pydrake.solvers import Solve, SolutionResult
-from pydrake.systems.framework import LeafSystem, BasicVector
-from typing import Callable
+from pydrake.systems.framework import LeafSystem, BasicVector, Context
+from typing import Callable, Tuple
+
 
 class PrototypicalPlannerSystem(LeafSystem):
     """
@@ -25,8 +26,9 @@ class PrototypicalPlannerSystem(LeafSystem):
         scene_graph: SceneGraph,
         planning_algorithm: Callable[
             [np.ndarray, np.ndarray, Callable[[np.ndarray], bool]],
-            np.ndarray,
+            Tuple[nx.DiGraph, np.ndarray],
         ],
+        robot_model_idx: ModelInstanceIndex = None,
         **kwargs,
     ):
         LeafSystem.__init__(self)
@@ -34,9 +36,7 @@ class PrototypicalPlannerSystem(LeafSystem):
         # Setup
         self.plant, self.scene_graph = plant, scene_graph
         self.planning_algorithm = planning_algorithm
-
-        # Compute dof using robot_model_idx
-        self.dim_q = None
+        self.robot_model_idx = robot_model_idx
 
         # Define Input Ports
         self.root_context = None  # NOTE: This should be assigned by the user before calling!
@@ -100,16 +100,16 @@ class PrototypicalPlannerSystem(LeafSystem):
                 p_WGoal_vec,
             )
 
-            base_rrt = self.planning_algorithm(q_start, q_goal, self.check_collision_in_config)
-
             if self.root_context is None:
                 raise ValueError("Plant context is not initialized yet!")
 
-            base_rrt.root_context = self.root_context
+            self.root_context = self.root_context
 
             # Plan and extract path
-            rrt, found_path = base_rrt.plan(
-                q_start, q_goal,
+            rrt, found_path = self.planning_algorithm(
+                q_start,
+                q_goal,
+                self.check_collision_in_config
             )
 
             if not found_path:
@@ -175,10 +175,7 @@ class PrototypicalPlannerSystem(LeafSystem):
         :return:
         """
         # Setup
-        # p_WStart = RigidTransform(
-        #     Quaternion(p_WStart_vec[3:]),
-        #     p_WStart_vec[:3]
-        # )
+        plant_context = self.plant.GetMyMutableContextFromRoot(self.root_context)
 
         # Create IK Problem
         ik_problem = InverseKinematics(self.plant)
@@ -224,17 +221,17 @@ class PrototypicalPlannerSystem(LeafSystem):
         assert ik_result.get_solution_result() == SolutionResult.kSolutionFound, \
             f"Solution result was {ik_result.get_solution_result()}; need SolutionResult.kSolutionFound to make RRT Plan!"
 
-        q_out = ik_result.get_x_val()
+        q_solution = ik_result.get_x_val()
 
-        return q_out
+        # Extract only the positions that correspond to our robot's joints
+        robot_joint_names = self.plant.GetPositionNames(self.robot_model_idx, add_model_instance_prefix=True)
+        all_joint_names = self.plant.GetPositionNames()
+        q_out_list = []
+        for ii, joint_name in enumerate(all_joint_names):
+            if joint_name in robot_joint_names:
+                q_out_list.append(q_solution[ii])
 
-
-    def set_dimension(self, dim_q: int):
-        """
-        Description:
-            This function sets the dimension of the configuration space.
-        """
-        self.dim_q = dim_q
+        return np.array(q_out_list)
 
     @property
     def n_actuated_dof(self) -> int:

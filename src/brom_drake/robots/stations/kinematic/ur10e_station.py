@@ -67,6 +67,9 @@ class UR10eStation(Diagram):
         if gripper_type == GripperType.Robotiq_2f_85:
             self.Add2f85Gripper()
 
+        # Visualization
+        self.meshcat = None
+
 
     def AddArm(self):
         """

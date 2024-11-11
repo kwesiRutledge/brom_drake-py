@@ -2,7 +2,7 @@
 base.py
 """
 from dataclasses import dataclass
-from typing import Tuple
+from typing import Tuple, Callable
 
 import networkx as nx
 import numpy as np
@@ -31,16 +31,24 @@ class BaseRRTPlanner(MotionPlanner):
         # Input Processing
 
         # Setup
-        self.dim_q = plant.num_actuated_dofs(robot_model_idx)
+        # self.dim_q = plant.num_actuated_dofs(robot_model_idx)
 
         self.config = config
         if self.config is None:
             self.config = BaseRRTPlannerConfig()
 
         # Prepare for planning
-        self.joint_limits = self.get_joint_limits()  # Initialize joint limits array
+        # self.joint_limits = self.get_joint_limits()  # Initialize joint limits array
 
-    def get_joint_limits(self):
+    @property
+    def dim_q(self) -> int:
+        if not self.plant.is_finalized():
+            raise ValueError("Plant has not been finalized yet! Can not compute num_actuated_dofs().")
+
+        return self.plant.num_actuated_dofs(self.robot_model_idx)
+
+    @property
+    def joint_limits(self) -> np.ndarray:
         """
         Description:
             This function retrieves the joint limits of the robot.
@@ -97,6 +105,7 @@ class BaseRRTPlanner(MotionPlanner):
         self,
         q_start: np.ndarray,
         q_goal: np.ndarray,
+        collision_check_fcn: Callable[[np.ndarray], bool] = None,
     ) -> Tuple[nx.DiGraph, bool]:
         """
         Description:
@@ -110,6 +119,9 @@ class BaseRRTPlanner(MotionPlanner):
                 f"Start configuration shape ({q_start.shape}) and goal configuration " +
                 f"shape ({q_goal.shape}) must match the dimension of the robot ({self.dim_q})."
             )
+
+        if collision_check_fcn is None:
+            collision_check_fcn =  self.check_collision_in_config
 
         # Setup
         rrt = nx.DiGraph()
@@ -131,7 +143,7 @@ class BaseRRTPlanner(MotionPlanner):
             q_new = self.steer(nearest_node['q'], q_random)
 
             # Check for collisions
-            if self.check_collision_in_config(q_new):
+            if collision_check_fcn(q_new):
                 continue
 
             # Add new node to the tree

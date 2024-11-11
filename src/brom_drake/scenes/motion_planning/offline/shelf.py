@@ -58,6 +58,7 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
             time_step=self.time_step,
             meshcat_port_number=self.meshcat_port_number,
         )
+        self.arm = self.station.arm
 
         # Set Names of Plant and scene graph
         self.plant = self.station.plant
@@ -205,8 +206,6 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
                 performer_ii.set_internal_root_context(
                     diagram_context
                 )
-
-                print("reached!")
 
         return diagram, diagram_context
 
