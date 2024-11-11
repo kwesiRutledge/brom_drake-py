@@ -4,10 +4,11 @@ from xml.etree.ElementTree import ElementTree
 
 # Internal imports
 import brom_drake
-from brom_drake.urdf.util import (
+from brom_drake.file_manipulation.urdf import (
     tree_contains_transmission_for_joint,
     create_transmission_element_for_joint,
 )
+import resources as resources_dir
 
 
 class UtilTest(unittest.TestCase):
@@ -19,10 +20,10 @@ class UtilTest(unittest.TestCase):
         :return:
         """
         self.test_urdf1_filename = str(
-            impresources.files(brom_drake) / "../../tests/urdf/resources/test1.urdf"
+            impresources.files(resources_dir) / "test1.urdf"
         )
         self.test_urdf2_filename = str(
-            impresources.files(brom_drake) / "../../tests/urdf/resources/test2.urdf"
+            impresources.files(resources_dir) / "test2.urdf"
         )
 
     def test_tree_contains_transmission_for_joint1(self):

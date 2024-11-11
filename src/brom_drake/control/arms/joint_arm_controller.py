@@ -83,8 +83,8 @@ class JointArmController(BaseArmController):
         qd = self.arm_joint_velocity_port.Eval(context)
 
         # Set our "internal plant's state" to the current state of the arm
-        self.plant.SetPositions(self.context, q)
-        self.plant.SetVelocities(self.context, qd)
+        self.plant.SetPositions(self.context, self.arm, q)
+        self.plant.SetVelocities(self.context, self.arm, qd)
 
         # Calculate the torque needed to compensate for gravity
         tau_g = -self.plant.CalcGravityGeneralizedForces(self.context)

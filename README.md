@@ -113,8 +113,9 @@ Some other work in the open-source drake community:
 ## To-Dos
 
 - [ ] Figure out how to tell if two systems are connected in Drake.
-- [ ] Add more examples
 - [ ] Add support for abstract output ports?
 - [ ] Add more readme explanations of what is going on under the hood.
 - [ ] Add Documentation
 - [ ] Create a method that makes each material in a URDF file have unique names if they have specific values
+- [ ] Add methods for saving the state names on state plots from diagram watcher
+- [ ] Add methods for over or under-approximating complex mehes with cylinders or circles or other shapes.

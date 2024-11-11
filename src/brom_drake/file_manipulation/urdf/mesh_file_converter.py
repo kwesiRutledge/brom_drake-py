@@ -1,15 +1,13 @@
-from distutils.command.clean import clean
-
 import loguru
 import os
 from pathlib import Path
-from typing import Union, Tuple
+from typing import Tuple
 import xml.etree.ElementTree as ET
 
 import trimesh
 
 # Internal imports
-from brom_drake.urdf.util import URDF_CONVERSION_LOG_LEVEL_NAME
+from brom_drake.file_manipulation.urdf.util import URDF_CONVERSION_LOG_LEVEL_NAME
 
 
 class MeshFileConverter:

@@ -1,6 +1,8 @@
 import unittest
 
 from brom_drake.scenes.roles.offline_motion_planner import kOfflineMotionPlanner
+from brom_drake.scenes.roles.role_port_assignment import PairingType
+
 
 class OfflineMotionPlannerTest(unittest.TestCase):
     def test_required_input_ports1(self):
@@ -13,15 +15,14 @@ class OfflineMotionPlannerTest(unittest.TestCase):
         # Setup
         omp_role = kOfflineMotionPlanner
         expected_port_names = [
-            "joint_positions",
-            "joint_position_limits",
-            "goal_position",
+            "start_pose",
+            "goal_pose",
             "scene_id",
         ]
 
         # Check the required input ports
         required_preformer_ports = [
-            port.performer_port_name for port in omp_role.required_input_definitions
+            port.performer_port_name for port in omp_role.port_assignments
         ]
         for port_name in expected_port_names:
             self.assertTrue(port_name in required_preformer_ports)
@@ -36,11 +37,13 @@ class OfflineMotionPlannerTest(unittest.TestCase):
         """
         # Check
         omp_role = kOfflineMotionPlanner
-        expected_port_names = ["plan"]
+        expected_port_names = ["motion_plan", "plan_is_ready"]
 
         # Assertion
         required_performer_outputs = [
-            port.performer_port_name for port in omp_role.required_output_definitions
+            assignment.performer_port_name
+                for assignment in omp_role.port_assignments
+                if assignment.pairing_type == PairingType.kOutput
         ]
         for port_name in expected_port_names:
             self.assertTrue(port_name in required_performer_outputs)

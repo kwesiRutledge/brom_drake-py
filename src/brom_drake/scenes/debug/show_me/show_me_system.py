@@ -1,6 +1,7 @@
 from manipulation.scenarios import AddMultibodyTriad
 import numpy as np
 from pydrake.multibody.plant import MultibodyPlant
+from pydrake.multibody.tree import ModelInstanceIndex
 from pydrake.systems.framework import LeafSystem, BasicVector
 
 
@@ -15,7 +16,7 @@ class ShowMeSystem(LeafSystem):
     def __init__(
         self,
         plant: MultibodyPlant,
-        model_name: str,
+        model_index: ModelInstanceIndex,
         desired_joint_positions: np.ndarray,
         **kwargs,
     ):
@@ -23,7 +24,7 @@ class ShowMeSystem(LeafSystem):
 
         # Constants
         self.plant = plant
-        self.model_name = model_name
+        self.model_index = model_index
 
         # TODO(kwesi): Do we need any ports?
         # Define Input Ports
@@ -61,12 +62,14 @@ class ShowMeSystem(LeafSystem):
         # Set the joint positions
         self.plant.SetPositions(
             self.mutable_plant_context,
+            self.model_index,
             pose_as_vec,
         )
 
         self.plant.SetVelocities(
             self.mutable_plant_context,
-            np.zeros(self.plant.num_velocities()),
+            self.model_index,
+            np.zeros(self.plant.num_velocities(self.model_index)),
         )
 
         output.SetFromVector(pose_as_vec)

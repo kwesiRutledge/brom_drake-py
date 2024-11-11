@@ -1,4 +1,3 @@
-from enum import IntEnum
 from importlib import resources as impresources
 from pathlib import Path
 
@@ -8,17 +7,14 @@ from pydrake.math import RollPitchYaw, RigidTransform, RotationMatrix
 from pydrake.multibody.parsing import Parser
 from pydrake.multibody.plant import MultibodyPlant
 from pydrake.multibody.tree import FixedOffsetFrame
-from pydrake.systems.framework import Diagram, DiagramBuilder, State, Context
+from pydrake.systems.framework import Diagram, DiagramBuilder
 from pydrake.systems.primitives import Demultiplexer
 
 from brom_drake.control import IdealJointPositionController
 # Local imports
 from brom_drake.robots.gripper_type import GripperType
 from brom_drake.control.grippers.gripper_controller import GripperController
-from brom_drake.control.arms import (
-    JointArmController, ArmControlMode,
-)
-from brom_drake.urdf.DrakeReadyURDFConverter import DrakeReadyURDFConverter
+from brom_drake.file_manipulation.urdf import DrakeReadyURDFConverter
 
 from brom_drake import robots
 
@@ -63,13 +59,16 @@ class UR10eStation(Diagram):
 
         # Whether we have a camera in the simulation
         # self.has_camera = False
-
+        self.arm = None # Assign the Arm's Model Index later
         self.AddArm()
 
         # Which sort of gripper we're using (if any)
         self.gripper_type = gripper_type
         if gripper_type == GripperType.Robotiq_2f_85:
             self.Add2f85Gripper()
+
+        # Visualization
+        self.meshcat = None
 
 
     def AddArm(self):
@@ -157,21 +156,22 @@ class UR10eStation(Diagram):
 
         print("Open %s in a browser to view the meshcat visualizer." % self.meshcat.web_url())
 
-    def create_plant_and_scene_graph(
-        self,
-    ):
+    def create_plant_and_scene_graph(self):
         """
         Description
         -----------
-        This function creates the plant and scene graph for the UR10e station, if needed.
+        This function creates the plant for the UR10e station, if needed.
         :return:
         """
         # Setup
 
-        # Create scene_graph
-        self.scene_graph = self.builder.AddSystem(SceneGraph())
+        # Create SceneGraph
+        self.scene_graph = self.builder.AddSystem(
+            SceneGraph()
+        )
         self.scene_graph.set_name(f"{self.get_name()}_SceneGraph")
 
+        # Create plant
         self.plant = self.builder.AddSystem(
             MultibodyPlant(time_step=self.time_step)
         )

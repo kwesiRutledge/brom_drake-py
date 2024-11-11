@@ -5,7 +5,8 @@ from pydrake.systems.framework import DiagramBuilder
 
 from brom_drake.example_helpers import BlockHandlerSystem
 from brom_drake.robots import UR10eStation
-from brom_drake.scenes.roles import Role, PortPairing
+from brom_drake.scenes.roles import Role, RolePortAssignment
+from brom_drake.scenes.roles.role_port_assignment import PairingType
 
 
 class RoleTest(unittest.TestCase):
@@ -20,31 +21,30 @@ class RoleTest(unittest.TestCase):
         """
         # Setup
         builder = DiagramBuilder()
-        performer = builder.AddSystem(
-            MultibodyPlant(time_step=0.01)
-        )
+        performer = MultibodyPlant(time_step=0.01)
 
         # Define a bad role
+        rpa1 = RolePortAssignment(
+            external_target_name="joint_positions",
+            performer_port_name="wile out",
+            pairing_type=PairingType.kInput,
+        )
         bad_role = Role(
             name="Bad Role",
             description="This role has a weird input definition that shouldraise an error.",
-            required_input_definitions=[
-                PortPairing(
-                    external_port_name="joint_positions",
-                    performer_port_name="wile out",
-                )
+            port_assignments=[
+                rpa1,
             ],
-            required_output_definitions=[],
         )
 
         # Call the method
         try:
-            bad_role.connect_performer_to_system(builder, performer)
+            bad_role.connect_performer_ports_to(builder, performer)
             self.assertTrue(False)
-        except AssertionError as e:
+        except Exception as e:
             self.assertIn(
                 str(e),
-                "Performer does not have input port \"wile out\""
+                str(rpa1.create_assignment_port_unavailable_error())
             )
 
     def test_connect_performer_to_system2(self):
@@ -58,31 +58,28 @@ class RoleTest(unittest.TestCase):
         """
         # Setup
         builder = DiagramBuilder()
-        performer = builder.AddSystem(
-            MultibodyPlant(time_step=0.01)
-        )
+        performer = MultibodyPlant(time_step=0.01)
 
         # Define a bad role
+        rpa2 = RolePortAssignment(
+            external_target_name="joint_positions",
+            performer_port_name="wile out",
+            pairing_type=PairingType.kOutput,
+        )
         bad_role = Role(
             name="Bad Role",
             description="This role has a weird output definition that should raise an error.",
-            required_input_definitions=[],
-            required_output_definitions=[
-                PortPairing(
-                    external_port_name="joint_positions",
-                    performer_port_name="wile out",
-                )
-            ],
+            port_assignments=[rpa2],
         )
 
         # Call the method
         try:
-            bad_role.connect_performer_to_system(builder, performer)
+            bad_role.connect_performer_ports_to(builder, performer)
             self.assertTrue(False)
-        except AssertionError as e:
+        except Exception as e:
             self.assertIn(
                 str(e),
-                "Performer does not have output port \"wile out\""
+                str(rpa2.create_assignment_port_unavailable_error()),
             )
 
     def test_connect_performer_to_system3(self):
@@ -98,7 +95,7 @@ class RoleTest(unittest.TestCase):
         builder = DiagramBuilder()
         ur10e_station = UR10eStation()
         ur10e_station.Finalize()
-        performer = builder.AddSystem(ur10e_station)
+        performer = ur10e_station
 
         # Add a system to the builder
         plant, scene_graph = AddMultibodyPlantSceneGraph(builder, time_step=0.0)
@@ -108,27 +105,25 @@ class RoleTest(unittest.TestCase):
         )
 
         # Define a bad role
+        rpa3 = RolePortAssignment(
+            external_target_name="joint_positions",
+            performer_port_name="ee_target",
+            pairing_type=PairingType.kInput,
+        )
         bad_role = Role(
             name="Bad Role",
-            description="This role has a weird input definition that shouldraise an error.",
-            required_input_definitions=[
-                PortPairing(
-                    external_port_name="joint_positions",
-                    performer_port_name="ee_target",
-                )
-            ],
-            required_output_definitions=[],
+            description="This role has a weird input definition that should raise an error.",
+            port_assignments=[rpa3],
         )
 
         # Call the method
         try:
-            bad_role.connect_performer_to_system(builder, performer)
+            bad_role.connect_performer_ports_to(builder, performer)
             self.assertTrue(False)
-        except AssertionError as e:
-            expected_error = "Expected 1 system to have port \"joint_positions\", but found 0 systems with that output port."
+        except Exception as e:
             self.assertIn(
                 str(e),
-                expected_error,
+                str(rpa3.create_no_target_found_error()),
             )
 
 if __name__ == "__main__":

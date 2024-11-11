@@ -1,7 +1,8 @@
 from typing import Union, Tuple, List
 
-from pydrake.systems.framework import DiagramBuilder, LeafSystem, Diagram
+from pydrake.systems.framework import DiagramBuilder, LeafSystem, Diagram, Context
 
+from brom_drake.all import add_watcher_and_build
 # Internal Imports
 from brom_drake.scenes.roles import Role
 from brom_drake.scenes.ids import SceneID
@@ -14,6 +15,13 @@ class BaseScene:
     def __init__(self, **kwargs):
         # Create a builder for the scene
         self.builder = DiagramBuilder()
+
+        # Create the diagram and diagram_context placeholders
+        self.diagram = None
+        self.diagram_context = None
+
+        # Save a list of the performers
+        self.performers = []
 
     def add_all_secondary_cast_members_to_builder(self):
         """
@@ -49,8 +57,14 @@ class BaseScene:
         :param system:
         :return:
         """
+        # Setup
+        builder = self.builder
+
         # Call the member method of the role object
-        role.connect_performer_to_system(builder, system)
+        role.connect_performer_ports_to(builder, system)
+
+        # Save the performer
+        self.performers.append(system)
 
     def cast_scene(
         self,
@@ -68,13 +82,18 @@ class BaseScene:
     def cast_scene_and_build(
         self,
         cast: Tuple[Role, Performer] = [],
-    ) -> Diagram:
+    ) -> Tuple[Diagram, Context]:
         # Setup
         builder = self.builder
         self.cast_scene(cast)
 
         # Build the diagram
-        return builder.Build()
+        # self.diagram = builder.Build()
+        # self.diagram_context = self.diagram.CreateDefaultContext()
+
+        watcher, self.diagram, self.diagram_context = add_watcher_and_build(builder)
+
+        return self.diagram, self.diagram_context
 
     @property
     def id(self) -> SceneID:

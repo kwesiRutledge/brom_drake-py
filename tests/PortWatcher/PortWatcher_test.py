@@ -10,7 +10,6 @@ import os
 from typing import Tuple
 
 import numpy as np
-from Cython.Compiler.MemoryView import context
 from pydrake.all import (
     RotationMatrix, RigidTransform, HalfSpace,
     CoulombFriction, SpatialVelocity,
@@ -20,10 +19,12 @@ from pydrake.multibody.plant import MultibodyPlant, AddMultibodyPlantSceneGraph
 from pydrake.systems.analysis import Simulator
 from pydrake.systems.framework import DiagramBuilder, PortDataType, Diagram, Context
 
-from brom_drake.DiagramWatcher import DiagramWatcher
-from brom_drake.PortWatcher import PortWatcher
-from brom_drake.PortWatcher.port_watcher import PortFigureArrangement, PortWatcherOptions
-from brom_drake.PortWatcher.port_watcher_options import FigureNamingConvention
+# Internal Imports
+from brom_drake.all import (
+    DiagramWatcher, PortWatcher,
+    PortFigureArrangement, PortWatcherOptions,
+    FigureNamingConvention
+)
 
 
 class PortWatcherTest(unittest.TestCase):

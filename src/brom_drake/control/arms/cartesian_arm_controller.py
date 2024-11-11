@@ -13,7 +13,7 @@ from pydrake.multibody.inverse_kinematics import (
     DoDifferentialInverseKinematics, InverseKinematics
 )
 from pydrake.multibody.plant import MultibodyPlant
-from pydrake.multibody.tree import MultibodyForces, JacobianWrtVariable
+from pydrake.multibody.tree import MultibodyForces, JacobianWrtVariable, ModelInstanceIndex
 from pydrake.solvers import Solve
 from pydrake.systems.framework import BasicVector
 
@@ -47,7 +47,7 @@ class CartesianArmController(BaseArmController):
     def __init__(
         self,
         plant: MultibodyPlant,
-        arm_model,
+        arm_model: ModelInstanceIndex,
         end_effector_frame_name: str = "end_effector_frame",
     ):
         BaseArmController.__init__(
@@ -94,8 +94,8 @@ class CartesianArmController(BaseArmController):
         """
         q = self.arm_joint_position_port.Eval(context)
         qd = self.arm_joint_velocity_port.Eval(context)
-        self.plant.SetPositions(self.context, q)
-        self.plant.SetVelocities(self.context, qd)
+        self.plant.SetPositions(self.context, self.arm, q)
+        self.plant.SetVelocities(self.context, self.arm, qd)
 
         # Some dynamics computations
         tau_g = -self.plant.CalcGravityGeneralizedForces(self.context)

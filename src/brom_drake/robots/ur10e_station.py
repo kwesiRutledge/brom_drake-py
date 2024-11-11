@@ -1,4 +1,3 @@
-from enum import IntEnum
 from importlib import resources as impresources
 import numpy as np
 from pydrake.geometry import SceneGraph, Meshcat, MeshcatVisualizer
@@ -15,9 +14,9 @@ from .gripper_type import GripperType
 from ..control.grippers import GripperController
 from ..control.arms import (
     JointArmController, CartesianArmController,
-    JointTarget, ArmControlMode,
+    ArmControlMode,
 )
-from ..urdf import DrakeReadyURDFConverter
+from brom_drake.file_manipulation.urdf import DrakeReadyURDFConverter
 
 from brom_drake import robots
 

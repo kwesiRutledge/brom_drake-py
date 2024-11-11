@@ -17,8 +17,11 @@ from pydrake.all import (
     AffineSystem, ConstantVectorSource, Meshcat, MeshcatVisualizer, Simulator,
 )
 
-from brom_drake.all import add_watcher_and_build
-from brom_drake.PortWatcher import PortFigureArrangement, FigureNamingConvention
+from brom_drake.all import (
+    add_watcher_and_build,
+    PortFigureArrangement,
+    FigureNamingConvention,
+)
 from brom_drake.example_helpers import BlockHandlerSystem
 
 def main():

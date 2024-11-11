@@ -13,8 +13,9 @@ from pydrake.all import DiagramBuilder, Diagram
 from pydrake.systems.framework import Context
 
 from brom_drake.DiagramTarget import DiagramTarget
-from brom_drake.DiagramWatcher import DiagramWatcher, DEFAULT_PLOT_DIR
-from brom_drake.PortWatcher import PortFigureArrangement
+from brom_drake.DiagramWatcher import DiagramWatcher
+from brom_drake.DiagramWatcher.constants import DEFAULT_PLOT_DIR
+from brom_drake.PortWatcher.port_watcher_options import PortFigureArrangement
 from brom_drake.PortWatcher.port_watcher_options import FigureNamingConvention, PortWatcherOptions
 
 PotentialTargetTypes = List[
