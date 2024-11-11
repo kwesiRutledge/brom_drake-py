@@ -53,7 +53,7 @@ class TestBaseRRT(unittest.TestCase):
 
         # Create a BaseRRTPlanner instance and compute the joint limits
         base_rrt = BaseRRTPlanner(model_idcs[0], plant, scene_graph)
-        joint_limits = base_rrt.get_joint_limits()
+        joint_limits = base_rrt.joint_limits
 
         print("Joint limits:", joint_limits)
 
@@ -101,7 +101,7 @@ class TestBaseRRT(unittest.TestCase):
 
         # Create a BaseRRTPlanner instance and compute the joint limits
         base_rrt = BaseRRTPlanner(model_idcs[0], plant, scene_graph)
-        joint_limits = base_rrt.get_joint_limits()
+        joint_limits = base_rrt.joint_limits
 
         for _ in range(10):
             random_configuration = base_rrt.sample_random_configuration()

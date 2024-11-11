@@ -20,6 +20,9 @@ class BaseScene:
         self.diagram = None
         self.diagram_context = None
 
+        # Save a list of the performers
+        self.performers = []
+
     def add_all_secondary_cast_members_to_builder(self):
         """
         Description
@@ -59,6 +62,9 @@ class BaseScene:
 
         # Call the member method of the role object
         role.connect_performer_ports_to(builder, system)
+
+        # Save the performer
+        self.performers.append(system)
 
     def cast_scene(
         self,

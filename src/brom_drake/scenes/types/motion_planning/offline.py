@@ -1,14 +1,18 @@
 import os
 from pathlib import Path
-from typing import Tuple
+from typing import Tuple, Callable
 
+import networkx as nx
 import numpy as np
 from pydrake.common.value import AbstractValue
 from pydrake.math import RigidTransform
 from pydrake.multibody.parsing import Parser
 from pydrake.multibody.plant import MultibodyPlant
+from pydrake.systems.framework import Diagram, Context
 from pydrake.systems.primitives import ConstantVectorSource, ConstantValueSource
 
+from brom_drake.all import add_watcher_and_build
+from brom_drake.motion_planning.systems.prototypical_planner import PrototypicalPlannerSystem
 from brom_drake.scenes.types import BaseScene
 from brom_drake.scenes.roles import kOfflineMotionPlanner, Role
 from brom_drake.file_manipulation.urdf.simple_shape_urdfs.shape_definition import SphereDefinition
@@ -142,6 +146,49 @@ class OfflineMotionPlanningScene(BaseScene):
             self.create_optional_outputs_if_necessary(
                 role_ii, performer_ii
             )
+
+    def easy_cast_and_build(
+        self,
+        planning_algorithm: Callable[
+            [np.ndarray, np.ndarray, Callable[[np.ndarray], bool]],
+            Tuple[nx.DiGraph, np.ndarray],
+        ],
+    ) -> Tuple[Diagram, Context]:
+        """
+        Description
+        -----------
+        This function is used to easily cast and build the scene.
+        :param planning_algorithm: The algorithm that we will use to
+        :return:
+        """
+        # Setup
+
+        # Add all elements to the builder
+        self.add_all_secondary_cast_members_to_builder()
+
+        # Create a planner from the algorithm
+        prototypical_planner = PrototypicalPlannerSystem(
+            self.plant, self.scene_graph,
+            planning_algorithm,
+        )
+
+        # Cast the scene using the prototypical planner
+        planner_role = self.suggested_roles()[0]
+
+        # Fulfill each role-performer pair in the casting_call list
+        self.fill_role(planner_role, prototypical_planner)
+
+        self.create_optional_outputs_if_necessary(
+            planner_role, prototypical_planner
+        )
+
+        # Build
+        # self.diagram = builder.Build()
+        # self.diagram_context = self.diagram.CreateDefaultContext()
+
+        watcher, self.diagram, self.diagram_context = add_watcher_and_build(self.builder)
+
+        return self.diagram, self.diagram_context
 
     def create_optional_outputs_if_necessary(
         self,

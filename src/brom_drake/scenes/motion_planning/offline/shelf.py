@@ -1,6 +1,7 @@
 from importlib import resources as impresources
-from typing import Tuple
+from typing import Tuple, Callable
 
+import networkx as nx
 import numpy as np
 from pydrake.common.eigen_geometry import Quaternion
 from pydrake.common.value import AbstractValue
@@ -256,6 +257,43 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
 
         # Connect the plan dispenser to the station
         pass
+
+    def easy_cast_and_build(
+        self,
+            planning_algorithm: Callable[
+                [np.ndarray, np.ndarray, Callable[[np.ndarray], bool]],
+                Tuple[nx.DiGraph, np.ndarray],
+            ],
+    ) -> Tuple[Diagram, Context]:
+        """
+        Description
+        -----------
+        This function is used to easily cast and build the scene.
+        :param planning_algorithm: The algorithm that we will use to
+        :return:
+        """
+        # Setup
+
+        # Use Base class implementation to start
+        diagram, diagram_context = super().easy_cast_and_build(planning_algorithm)
+
+        # Configure the scene graph for collision detection
+        self.configure_collision_filter(
+            diagram.GetSubsystemContext(
+                self.scene_graph, diagram_context,
+            )
+        )
+
+        # Connect arm controller to the appropriate plant_context
+        self.station.arm_controller.plant_context = diagram.GetSubsystemContext(
+            self.station.arm_controller.plant, diagram_context,
+        )
+
+        self.performers[0].set_internal_root_context(
+            diagram_context
+        )
+
+        return diagram, diagram_context
 
     @property
     def goal_pose(self):
