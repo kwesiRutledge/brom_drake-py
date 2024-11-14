@@ -23,10 +23,15 @@ from brom_drake.utils import Performer
 class OfflineMotionPlanningScene(BaseScene):
     def __init__(
         self,
-        time_step: float = 1e-3,
+        start_pose: RigidTransform = None,
+        goal_pose: RigidTransform = None,
         **kwargs,
     ):
         super().__init__(**kwargs)
+
+        # Save the start and goal poses
+        self.start_pose_ = start_pose
+        self.goal_pose_ = goal_pose
 
     def add_all_secondary_cast_members_to_builder(self):
         pass
