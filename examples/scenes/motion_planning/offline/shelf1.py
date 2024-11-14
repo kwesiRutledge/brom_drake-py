@@ -2,44 +2,40 @@
 shelf1.py
 Description:
 
-    In this script, we use the Shelf scene to test some basic motion planning algorithms.
+    In this script, we use the Shelf scene to test a basic motion planning algorithms.
+    This shows one how to use the `easy_cast_and_build` method to simplify how to build
+    a scene.
 """
 import ipdb
-from pydrake.all import Parser
 from pydrake.systems.analysis import Simulator
 import typer
-from pydrake.systems.framework import DiagramBuilder
-from pydrake.trajectories import PiecewisePolynomial
 
-from brom_drake.motion_planning.algorithms.rrt.base import BaseRRTPlannerConfig
-from brom_drake.motion_planning.systems.rrt_plan_generator import RRTPlanGenerator
+
 # Internal imports
+from brom_drake.motion_planning.algorithms.rrt.base import BaseRRTPlannerConfig, BaseRRTPlanner
 from brom_drake.scenes.motion_planning.offline import ShelfPlanningScene
-from brom_drake.scenes.roles import kOfflineMotionPlanner
 
-
-def main(use_meshcat: bool = True):
+def main(meshcat_port_number: int = 7001):
     # Setup
+    if meshcat_port_number < 0:
+        meshcat_port_number = None # Use None for CI
+
     scene = ShelfPlanningScene(
-        meshcat_port_number=None, # Use None for CI (so don't show)
+        meshcat_port_number=meshcat_port_number, # Use None for CI
     )
 
-    # Create dummy cast
-    planner = RRTPlanGenerator(
-        plant=scene.plant,
-        scene_graph=scene.scene_graph,
-        rrt_config=BaseRRTPlannerConfig(
-            prob_sample_goal=0.3,
-            steering_step_size=0.05,
-            max_iterations=int(1e4),
-        ),
+    # Create a planner object which will be used to plan the motion
+    planner2 = BaseRRTPlanner(
+        scene.arm,
+        scene.plant,
+        scene.scene_graph,
     )
-    cast = [
-        (kOfflineMotionPlanner, planner)
-    ]
 
-    # Build and simulate
-    diagram, diagram_context = scene.cast_scene_and_build(cast)
+    # To build the scene, we only need to provide a planning function
+    # (can come from anywhere, not just a BaseRRTPlanner object)
+    diagram, diagram_context = scene.easy_cast_and_build(
+        planner2.plan,
+    )
 
     # Simulate the diagram
     simulator = Simulator(diagram, diagram_context)

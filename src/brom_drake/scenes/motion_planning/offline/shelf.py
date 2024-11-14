@@ -301,9 +301,13 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
         Get the goal pose. This should be defined by the subclass.
         :return:
         """
-        goal_position = np.array([+0.1, 1.0, 0.55]) # np.array([+0.5, 0.7, 0.65])
-        goal_orientation = RollPitchYaw(np.pi/2.0, np.pi/2.0, 0.0).ToQuaternion()
-        return RigidTransform(goal_orientation, goal_position)
+        if self.goal_pose_ is None:
+            goal_position = np.array([+0.1, 1.0, 0.55])  # np.array([+0.5, 0.7, 0.65])
+            goal_orientation = RollPitchYaw(np.pi / 2.0, np.pi / 2.0, 0.0).ToQuaternion()
+            return RigidTransform(goal_orientation, goal_position)
+        else:
+            return self.goal_pose_
+
 
     @property
     def id(self) -> SceneID:
@@ -315,6 +319,9 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
         Get the start pose. This should be defined by the subclass.
         :return:
         """
-        start_position = np.array([+0.3, 0.1, 1.2])
-        start_orientation = Quaternion(1, 0, 0, 0)
-        return RigidTransform(start_orientation, start_position)
+        if self.start_pose_ is None:
+            start_position = np.array([+0.3, 0.1, 1.2])
+            start_orientation = Quaternion(1, 0, 0, 0)
+            return RigidTransform(start_orientation, start_position)
+        else:
+            return self.start_pose_
