@@ -12,6 +12,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 
+from pydrake.multibody.plant import MultibodyPlant
 from pydrake.systems.framework import OutputPort, PortDataType, DiagramBuilder, LeafSystem
 from pydrake.systems.primitives import LogVectorOutput
 from pydrake.systems.framework import Context
@@ -54,6 +55,41 @@ class PortWatcher:
         # Processing
         self.logger = LogVectorOutput(output_port, builder)
         self.logger.set_name(logger_name)
+
+    def name_of_data_at_index(self, dim_index: int) -> str:
+        """
+        Description:
+            Returns the name of the data which is in index dim_index
+            of this vector-valued port.
+        :param dim_index:
+        :return:
+        """
+        # Setup
+        n_dims = self.port.size()
+
+        # Input Processing
+        if dim_index >= n_dims:
+            raise ValueError(
+                f"dim_index ({dim_index}) is greater than the number of dimensions in the port ({n_dims})."
+            )
+
+        # Default name
+        name = f"Dim #{dim_index}"
+
+        if self.system_is_multibody_plant():
+            # The multi-body plant has names for specific ports
+            if self.port.get_name() == "state":
+                # We can get the names of the state
+                state_names = self.system.GetStateNames()
+                name = state_names[dim_index]
+            else:
+                # Announce that we are using the default name
+                loguru.logger.warning(
+                    f"Using default name for data at index {dim_index} of port {self.port.get_name()} of system {self.system.get_name()}."
+                )
+
+        # Return name!
+        return name
 
     def plot_logger_data(
         self,
@@ -130,11 +166,9 @@ class PortWatcher:
 
         print(f"Plotting {n_dims} dimensions in a {n_rows}x{n_cols} grid.")
 
-        fig, ax_list = plt.subplots(n_rows, n_cols)
-
         if n_rows == 1 and n_cols == 1:
             ax_list.plot(times, data[0, :])
-            ax_list.set_title(f"Dim #0")
+            ax_list.set_title(self.name_of_data_at_index(0))
 
         else:
             for row_index in range(n_rows):
@@ -147,7 +181,7 @@ class PortWatcher:
                         continue
 
                     ax_list[row_index, col_index].plot(times, data[dim_index, :])
-                    ax_list[row_index, col_index].set_title(f"Dim #{dim_index}")
+                    ax_list[row_index, col_index].set_title(self.name_of_data_at_index(dim_index))
 
         return fig, ax_list
 
@@ -301,3 +335,11 @@ class PortWatcher:
             raise NotImplementedError(
                 f"Invalid plot arrangement for figure naming convention {options.figure_naming_convention}: {options.plot_arrangement}."
             )
+
+    def system_is_multibody_plant(self) -> bool:
+        """
+        Description:
+            Returns True if the system is a MultibodyPlant.
+        :return:
+        """
+        return type(self.system) == MultibodyPlant
