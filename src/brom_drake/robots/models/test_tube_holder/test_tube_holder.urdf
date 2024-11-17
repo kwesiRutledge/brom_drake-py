@@ -1,0 +1,15 @@
+<robot name="test-tube-holder">
+    <link name="test_tube_holder_base_link">
+        <visual>
+            <geometry>
+                <mesh filename="API_test_tube_holder_v0.0.5.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <mesh filename="API_test_tube_holder_v0.0.5.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </collision>
+    </link>
+
+</robot>
