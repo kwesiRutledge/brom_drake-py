@@ -245,14 +245,14 @@ class PortWatcherTest(unittest.TestCase):
         # Define plant with:
         # + add block model
         # + ground
-        plant, scene_graph = AddMultibodyPlantSceneGraph(builder, time_step=1e-3)
+        plant, scene_graph = AddMultibodyPlantSceneGraph(builder, time_step=time_step)
 
         block_model_idx = Parser(plant=plant).AddModels(
             self.get_brom_drake_dir() + "/examples/watcher/suggested_use1/slider-block.urdf",
         )[0]
         block_body_name = "block"
 
-        p_GroundOrigin = [0, 0.0, 0.0]
+        p_GroundOrigin = [0.0, 0.0, 0.0]
         R_GroundOrigin = RotationMatrix.MakeXRotation(0.0)
         X_GroundOrigin = RigidTransform(R_GroundOrigin, p_GroundOrigin)
         surface_friction = CoulombFriction(

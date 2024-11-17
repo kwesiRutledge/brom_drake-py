@@ -129,10 +129,7 @@ class SimpleShapeURDFDefinition:
         geometry = ET.SubElement(visual_link, "geometry")
 
         # Add the shape to the geometry element
-        if self.shape.type == ShapeEnum.kSphere:
-            sphere = ET.SubElement(geometry, "sphere", {"radius": f"{self.shape.radius}"})
-        else:
-            raise ValueError(f"Shape {self.shape} not supported yet.")
+        shape = self.shape.add_geometry_to_element(geometry)
 
         # Add the material to the visual element
         material = ET.SubElement(visual_link, "material", {"name": "blue"})
@@ -141,9 +138,6 @@ class SimpleShapeURDFDefinition:
             "color",
             {"rgba": f"{color[0]} {color[1]} {color[2]} {color[3]}"},
         )
-
-        # Add visual elements to link
-        link_elt.append(visual_link)
 
     def add_collision_elements_to(self, link_elt: ET.Element):
         """
@@ -161,10 +155,7 @@ class SimpleShapeURDFDefinition:
         geometry = ET.SubElement(collision_link, "geometry")
 
         # Add the shape to the geometry element
-        if self.shape.type == ShapeEnum.kSphere:
-            sphere = ET.SubElement(geometry, "sphere", {"radius": f"{self.shape.radius}"})
-        else:
-            raise ValueError(f"Shape {self.shape} not supported yet.")
+        self.shape.add_geometry_to_element(geometry)
 
         # Add collision elements to link
         link_elt.append(collision_link)
@@ -179,6 +170,9 @@ class SimpleShapeURDFDefinition:
         root = self.as_urdf()
         tree = ET.ElementTree(root)
         ET.indent(tree, space="\t", level=0)
+
+        # Create the directory if it doesn't exist
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
         # Write to file
         tree.write(file_path, xml_declaration=True)
