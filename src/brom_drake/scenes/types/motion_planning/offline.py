@@ -158,12 +158,15 @@ class OfflineMotionPlanningScene(BaseScene):
             [np.ndarray, np.ndarray, Callable[[np.ndarray], bool]],
             Tuple[nx.DiGraph, np.ndarray],
         ],
+        with_watcher: bool = True,
     ) -> Tuple[Diagram, Context]:
         """
         Description
         -----------
         This function is used to easily cast and build the scene.
         :param planning_algorithm: The algorithm that we will use to
+        plan the motion.
+        :param with_watcher: A Boolean that determines whether to add a watcher to the diagram.
         :return:
         """
         # Setup
@@ -188,12 +191,7 @@ class OfflineMotionPlanningScene(BaseScene):
         )
 
         # Build
-        # self.diagram = builder.Build()
-        # self.diagram_context = self.diagram.CreateDefaultContext()
-
-        watcher, self.diagram, self.diagram_context = add_watcher_and_build(self.builder)
-
-        return self.diagram, self.diagram_context
+        return self.build_scene(with_watcher=with_watcher)
 
     def create_optional_outputs_if_necessary(
         self,

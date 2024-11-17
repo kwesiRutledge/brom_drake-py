@@ -178,6 +178,7 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
     def cast_scene_and_build(
         self,
         cast: Tuple[Role, Performer] = [],
+        with_watcher: bool = False,
     ) -> Tuple[Diagram, Context]:
         """
         Description
@@ -186,9 +187,13 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
         we share the context of the plant with the appropriate
         parts of the system.
         :param cast:
+        :param with_watcher: A Boolean that determines whether to add a watcher to the diagram.
         :return:
         """
-        diagram, diagram_context = super().cast_scene_and_build(cast=cast)
+        diagram, diagram_context = super().cast_scene_and_build(
+            cast=cast,
+            with_watcher=with_watcher,
+        )
 
         # Configure the scene graph for collision detection
         self.configure_collision_filter(
@@ -264,18 +269,24 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
                 [np.ndarray, np.ndarray, Callable[[np.ndarray], bool]],
                 Tuple[nx.DiGraph, np.ndarray],
             ],
+        with_watcher: bool = False,
     ) -> Tuple[Diagram, Context]:
         """
         Description
         -----------
         This function is used to easily cast and build the scene.
         :param planning_algorithm: The algorithm that we will use to
+        plan the motion.
+        :param with_watcher: A Boolean that determines whether to add a watcher to the diagram.
         :return:
         """
         # Setup
 
         # Use Base class implementation to start
-        diagram, diagram_context = super().easy_cast_and_build(planning_algorithm)
+        diagram, diagram_context = super().easy_cast_and_build(
+            planning_algorithm,
+            with_watcher=with_watcher,
+        )
 
         # Configure the scene graph for collision detection
         self.configure_collision_filter(

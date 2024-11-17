@@ -35,6 +35,7 @@ def main(meshcat_port_number: int = 7001):
     # (can come from anywhere, not just a BaseRRTPlanner object)
     diagram, diagram_context = scene.easy_cast_and_build(
         planner2.plan,
+        with_watcher=True,
     )
 
     # Simulate the diagram
