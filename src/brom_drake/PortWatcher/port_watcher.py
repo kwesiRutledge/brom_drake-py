@@ -18,7 +18,7 @@ from pydrake.systems.primitives import LogVectorOutput
 from pydrake.systems.framework import Context
 
 # Internal Imports
-from brom_drake.DiagramWatcher.constants import DEFAULT_PLOT_DIR
+from brom_drake.directories import DEFAULT_PLOT_DIR
 from .port_watcher_options import PortWatcherOptions, FigureNamingConvention
 from .port_figure_arrangement import PortFigureArrangement
 
