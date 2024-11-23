@@ -952,6 +952,8 @@ class PortWatcherTest(unittest.TestCase):
             This test verifies that the name_of_data_at_index method
             properly returns the name of the data at the given index
             when handling a plant with some models in it.
+
+            Note: The new name is only active with specific options.
         :return:
         """
         # Setup
@@ -972,6 +974,9 @@ class PortWatcherTest(unittest.TestCase):
             plant,
             plant.GetOutputPort("state"),
             builder,
+            options=PortWatcherOptions(
+                plot_arrangement=PortFigureArrangement.OnePlotPerDim,
+            )
         )
 
         # Test

@@ -7,10 +7,10 @@ from pydrake.multibody.parsing import Parser
 from pydrake.systems.framework import Diagram, Context
 from typing import Tuple
 
-from brom_drake.DiagramWatcher.constants import DEFAULT_BROM_MODELS_DIR
+from brom_drake.directories import DEFAULT_BROM_MODELS_DIR
 from brom_drake.file_manipulation.urdf import drakeify_my_urdf
-from brom_drake.file_manipulation.urdf.simple_shape_urdfs.shape_definition import BoxDefinition
-from brom_drake.file_manipulation.urdf.simple_shape_urdfs.urdf_definition import SimpleShapeURDFDefinition, \
+from brom_drake.file_manipulation.urdf.shapes.box import BoxDefinition
+from brom_drake.file_manipulation.urdf.simple_writer.urdf_definition import SimpleShapeURDFDefinition, \
     InertiaDefinition
 import brom_drake.robots as robots
 from brom_drake.robots.stations.kinematic import UR10eStation as KinematicUR10eStation
