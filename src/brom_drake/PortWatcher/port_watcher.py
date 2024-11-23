@@ -189,6 +189,13 @@ class PortWatcher:
             ax_list.plot(times, data[0, :])
             ax_list.set_title(self.name_of_data_at_index(0))
 
+        elif (n_rows == 1) or (n_cols == 1):
+            for dim_index in range(n_dims):
+                ax_list[dim_index].plot(times, data[dim_index, :])
+                ax_list[dim_index].set_title(
+                    self.name_of_data_at_index(dim_index),
+                )
+
         else:
             for row_index in range(n_rows):
                 for col_index in range(n_cols):
