@@ -11,12 +11,11 @@ from pydrake.multibody.plant import MultibodyPlant
 from pydrake.systems.framework import Diagram, Context
 from pydrake.systems.primitives import ConstantVectorSource, ConstantValueSource
 
-from brom_drake.all import add_watcher_and_build
 from brom_drake.motion_planning.systems.prototypical_planner import PrototypicalPlannerSystem
 from brom_drake.scenes.types import BaseScene
 from brom_drake.scenes.roles import kOfflineMotionPlanner, Role
-from brom_drake.file_manipulation.urdf.simple_shape_urdfs.shape_definition import SphereDefinition
-from brom_drake.file_manipulation.urdf.simple_shape_urdfs.urdf_definition import SimpleShapeURDFDefinition
+from brom_drake.file_manipulation.urdf.shapes.sphere import SphereDefinition
+from brom_drake.file_manipulation.urdf.simple_writer.urdf_definition import SimpleShapeURDFDefinition
 from brom_drake.utils import Performer
 
 

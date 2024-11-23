@@ -2,7 +2,8 @@ from typing import List, Tuple
 
 import numpy as np
 from manipulation.scenarios import AddMultibodyTriad
-from pydrake.geometry import Meshcat, MeshcatVisualizer
+from pydrake.geometry import Meshcat, MeshcatVisualizer, MeshcatVisualizerParams
+from pydrake.geometry import Role as DrakeRole
 from pydrake.multibody.parsing import Parser
 from pydrake.multibody.plant import AddMultibodyPlantSceneGraph
 from pydrake.systems.framework import DiagramBuilder, Diagram, Context
@@ -23,7 +24,7 @@ class ShowMeThisModel(BaseScene):
         path_to_model: str,
         with_these_joint_positions: List[float] = None,
         base_link_name: str = None,
-        time_step: float = 1e3,
+        time_step: float = 1e-3,
         meshcat_port_number: int = 7001, # Usually turn off for CI (i.e., make it None)
         **kwargs,
     ):
@@ -121,8 +122,15 @@ class ShowMeThisModel(BaseScene):
         # Connect to Meshcat, if requested
         if self.meshcat_port_number is not None:
             self.meshcat = Meshcat(port=self.meshcat_port_number)  # Object provides an interface to Meshcat
-            m_visualizer = MeshcatVisualizer(self.meshcat)
-            m_visualizer.AddToBuilder(self.builder, self.scene_graph, self.meshcat)
+            m_visualizer = MeshcatVisualizer(
+                self.meshcat,
+            )
+            m_visualizer.AddToBuilder(
+                self.builder, self.scene_graph, self.meshcat,
+                params=MeshcatVisualizerParams(
+                    role=DrakeRole.kProximity,
+                ),
+            )
 
         # Finalize plant and connect it to system
         self.plant.Finalize()
