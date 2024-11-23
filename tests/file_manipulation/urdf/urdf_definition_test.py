@@ -2,9 +2,8 @@ import unittest
 import xml.etree.ElementTree as ET
 
 # Internal imports
-from brom_drake.file_manipulation.urdf.simple_shape_urdfs.shape_definition import BoxDefinition
-from brom_drake.file_manipulation.urdf.simple_shape_urdfs.urdf_definition import SimpleShapeURDFDefinition
-
+from brom_drake.file_manipulation.urdf.shapes.box import BoxDefinition
+from brom_drake.file_manipulation.urdf.simple_writer.urdf_definition import SimpleShapeURDFDefinition
 
 class URDFDefinitionTest(unittest.TestCase):
     def test_add_visual_elements_to1(self):

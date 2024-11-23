@@ -10,42 +10,11 @@ import os
 import xml.etree.ElementTree as ET
 
 import numpy as np
+from pydrake.math import RigidTransform
 
 # Internal Imports
-from .shape_definition import ShapeEnum, SphereDefinition, ShapeDefinition
-
-@dataclass
-class InertiaDefinition:
-    """
-    A dataclass that defines the inertia of a simple shape.
-    """
-    ixx: float = 1.0
-    ixy: float = 0.0
-    ixz: float = 0.0
-    iyy: float = 1.0
-    iyz: float = 0.0
-    izz: float = 1.0
-
-    def as_list(self) -> list:
-        """
-        Convert the inertia to a list.
-        :return: A list of the inertia values.
-        """
-        return [self.ixx, self.ixy, self.ixz, self.iyy, self.iyz, self.izz]
-
-    def as_map(self) -> dict:
-        """
-        Convert the inertia to a map.
-        :return: A map of the inertia values.
-        """
-        return {
-            "ixx": f"{self.ixx}",
-            "ixy": f"{self.ixy}",
-            "ixz": f"{self.ixz}",
-            "iyy": f"{self.iyy}",
-            "iyz": f"{self.iyz}",
-            "izz": f"{self.izz}",
-        }
+from brom_drake.file_manipulation.urdf.shapes.shape_definition import ShapeEnum, ShapeDefinition
+from brom_drake.file_manipulation.urdf.simple_writer.inertia_definition import InertiaDefinition
 
 @dataclass
 class SimpleShapeURDFDefinition:
@@ -58,6 +27,7 @@ class SimpleShapeURDFDefinition:
     create_collision: bool = True # Whether to create the collision elements of the urdf
     mass: float = 1.0
     inertia: InertiaDefinition = None
+    pose: RigidTransform = RigidTransform()
 
     def as_urdf(self) -> ET.Element:
         """
@@ -93,11 +63,7 @@ class SimpleShapeURDFDefinition:
             inertia_def = InertiaDefinition()
 
         # Create all child links for inertial elements
-        origin_elt = ET.SubElement(
-            inertial_link,
-            "origin",
-            {"xyz": "0 0 0", "rpy": "0 0 0"},
-        )
+        self.add_origin_element_to(inertial_link)
         mass = ET.SubElement(inertial_link, "mass", {"value": f"{self.mass}"})
         inertia = ET.SubElement(
             inertial_link,
@@ -121,11 +87,7 @@ class SimpleShapeURDFDefinition:
             color = np.array([0.0, 1.0, 0.0, 0.8])
 
         # Create all child links for visual elements
-        origin_elt = ET.SubElement(
-            visual_link,
-            "origin",
-            {"xyz": "0 0 0", "rpy": "0 0 0"},
-        )
+        self.add_origin_element_to(visual_link)
         geometry = ET.SubElement(visual_link, "geometry")
 
         # Add the shape to the geometry element
@@ -147,11 +109,9 @@ class SimpleShapeURDFDefinition:
         """
         # Setup
         collision_link = ET.SubElement(link_elt, "collision")
-        origin_elt = ET.SubElement(
-            collision_link,
-            "origin",
-            {"xyz": "0 0 0", "rpy": "0 0 0"},
-        )
+
+        # Add pose to collision element
+        self.add_origin_element_to(collision_link)
         geometry = ET.SubElement(collision_link, "geometry")
 
         # Add the shape to the geometry element
@@ -159,6 +119,24 @@ class SimpleShapeURDFDefinition:
 
         # Add collision elements to link
         link_elt.append(collision_link)
+
+    def add_origin_element_to(self, target_element: ET.Element):
+        """
+        Add the origin element to the target element.
+        :param target_element: The element to which the origin element will be added.
+        :return: Nothing, but modifies the target_element in place.
+        """
+        # Setup
+        translation = self.pose.translation()
+        rot_as_rpy = self.pose.rotation().ToRollPitchYaw()
+        origin_elt = ET.SubElement(
+            target_element,
+            "origin",
+            {
+                "xyz": f"{translation[0]} {translation[1]} {translation[2]}",
+                "rpy": f"{rot_as_rpy.roll_angle()} {rot_as_rpy.pitch_angle()} {rot_as_rpy.yaw_angle()}",
+            },
+        )
 
     def write_to_file(self, file_path: str):
         """

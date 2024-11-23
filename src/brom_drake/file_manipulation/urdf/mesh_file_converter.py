@@ -147,7 +147,8 @@ class MeshFileConverter:
         candidate_path = original_urdf_dir
         search_depth = 1
         while not package_found:
-            print(f"candidate_path: {candidate_path}")
+            # print(f"candidate_path: {candidate_path}")
+            
             # Check to see if "package.xml" exists in the directory
             if (candidate_path / "package.xml").exists():
                 self.log(f"Found package path at {candidate_path}.")
