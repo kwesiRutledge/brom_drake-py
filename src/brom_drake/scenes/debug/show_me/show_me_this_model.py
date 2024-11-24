@@ -127,9 +127,9 @@ class ShowMeThisModel(BaseScene):
             )
             m_visualizer.AddToBuilder(
                 self.builder, self.scene_graph, self.meshcat,
-                params=MeshcatVisualizerParams(
-                    role=DrakeRole.kProximity,
-                ),
+                # params=MeshcatVisualizerParams(
+                #     role=DrakeRole.kProximity,
+                # ),
             )
 
         # Finalize plant and connect it to system
