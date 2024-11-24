@@ -21,7 +21,9 @@ from brom_drake import robots
 from brom_drake.all import (
     drakeify_my_urdf,
 )
+from brom_drake.example_helpers import AddGround
 from brom_drake.scenes.debug import ShowMeThisModel
+from brom_drake.file_manipulation.urdf.DrakeReadyURDFConverter import MeshReplacementStrategy
 
 
 class MotionPlannerTest(unittest.TestCase):
@@ -81,8 +83,9 @@ class MotionPlannerTest(unittest.TestCase):
         # Check for Collisions (and investigate scene) using query object from SceneGraph
         query = scene_graph.get_query_output_port().Eval(scene_graph_context)
         print("Play with the query object here!")
+        print(f"Collision exist in query? {query.HasCollisions()}")
         inspector = scene_graph.model_inspector()
-        print(query.ComputeSignedDistancePairwiseClosestPoints())
+        # print(query.ComputeSignedDistancePairwiseClosestPoints())
         for ii, pair_ii in enumerate(query.ComputeSignedDistancePairwiseClosestPoints()):
             if pair_ii.distance < 0.0:
                 print(pair_ii)
@@ -118,9 +121,9 @@ class MotionPlannerTest(unittest.TestCase):
             impresources.files(robots) / "models/ur/ur10e.urdf"
         )
         q0 = np.array([
-            0.95*(np.pi/2.0),
-            (-5/4.0)*(np.pi/4.0),
-            +np.pi / 2.0,
+            0.65*(np.pi/2.0), # 0.95*(np.pi/2.0),
+            (-6/4.0)*(np.pi/4.0),
+            -0.25 + np.pi / 2.0,
             1.5*(-np.pi/2.0),
             0.0,
             0.0,
@@ -131,6 +134,7 @@ class MotionPlannerTest(unittest.TestCase):
             urdf_file_path,
             overwrite_old_logs=True,
             log_file_name="drakeify-my-urdf1.log",
+            collision_mesh_replacement_strategy=MeshReplacementStrategy.kWithMinimalEnclosingCylinder,
         )
 
         # Visualize the URDF using the "show-me-this-model" feature
@@ -139,7 +143,7 @@ class MotionPlannerTest(unittest.TestCase):
             str(new_urdf_path),
             with_these_joint_positions=q0,
             time_step=time_step,
-            meshcat_port_number=None, # Turn off for CI
+            meshcat_port_number=7001, # Turn off for CI
         )
 
         # Add Bookshelf to scene

@@ -76,7 +76,17 @@ class PrototypicalPlannerSystem(LeafSystem):
 
         # Check for collisions using the query object
         query_object = self.scene_graph.get_query_output_port().Eval(scene_graph_context)
-        return query_object.HasCollisions()
+        # return query_object.HasCollisions()
+
+        # Alternative method to check for collisions
+        closest_points = query_object.ComputePointPairPenetration()
+        eps0 = 1e-2
+        for pair in closest_points:
+            if pair.depth > eps0:
+                return True
+            
+        # Otherwise return false
+        return False
 
     def compute_plan_if_not_available(self, context, output: AbstractValue):
         """
