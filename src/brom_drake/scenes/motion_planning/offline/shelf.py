@@ -48,7 +48,7 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
                 np.array([0.0, 1.0, 0.6]),
             )
 
-        self.desired_cupboard_positions = np.array([0.0, 0.0])
+        self.desired_cupboard_positions = np.array([0.2, 0.3])
 
         # Create containers for meshcat and other values we will set later
         self.meshcat = None
@@ -230,22 +230,41 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
         # Ignore self collisions of the shelf, by:
         # - Getting the model instance index of the shelf
         # - Collecting the Geometry IDs of all the geometries in the shelf
-        geometry_ids = []
+        shelf_geometry_ids = []
         for body_index in self.plant.GetBodyIndices(shelf_model_index):
             # Get the geometry IDs
-            geometry_ids.extend(
+            shelf_geometry_ids.extend(
                 self.plant.GetCollisionGeometriesForBody(
                     self.plant.get_body(body_index)
                 )
             )
-            print(self.plant.get_body(body_index))
+            # print(self.plant.get_body(body_index))
 
-        self.geometry_ids_to_ignore = geometry_ids
+        self.shelf_geometry_ids = shelf_geometry_ids
 
         # Apply the collision filter
         scene_graph.collision_filter_manager(scene_graph_context).Apply(
             CollisionFilterDeclaration().ExcludeWithin(
-                GeometrySet(self.geometry_ids_to_ignore)
+                GeometrySet(self.shelf_geometry_ids)
+            )
+        )
+
+        # Ignore collisions between the robot links
+        # TODO: Actually implement this for adjacent links? Or is this not necessary?
+        arm_geometry_ids = []
+        for body_index in self.plant.GetBodyIndices(self.arm):
+            arm_geometry_ids.extend(
+                self.plant.GetCollisionGeometriesForBody(
+                    self.plant.get_body(body_index)
+                )
+            )
+
+        self.arm_geometry_ids = arm_geometry_ids
+
+        # Apply the collision filter
+        scene_graph.collision_filter_manager(scene_graph_context).Apply(
+            CollisionFilterDeclaration().ExcludeWithin(
+                GeometrySet(self.arm_geometry_ids)
             )
         )
 
@@ -313,7 +332,7 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
         :return:
         """
         if self.goal_pose_ is None:
-            goal_position = np.array([+0.1, 1.0, 0.55])  # np.array([+0.5, 0.7, 0.65])
+            goal_position = np.array([+0.0, 1.0, 0.6])
             goal_orientation = RollPitchYaw(np.pi / 2.0, np.pi / 2.0, 0.0).ToQuaternion()
             return RigidTransform(goal_orientation, goal_position)
         else:
