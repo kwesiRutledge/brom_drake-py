@@ -7,12 +7,15 @@ Description:
     a scene.
 """
 import ipdb
-from pydrake.systems.analysis import Simulator
+import numpy as np
+from pydrake.all import (
+    Simulator,
+    RollPitchYaw, RigidTransform,
+)
 import typer
 
-
 # Internal imports
-from brom_drake.motion_planning.algorithms.rrt.base import BaseRRTPlannerConfig, BaseRRTPlanner
+from brom_drake.motion_planning.algorithms.rrt.connect import RRTConnectPlannerConfig, RRTConnectPlanner
 from brom_drake.scenes.motion_planning.offline import ShelfPlanningScene
 
 def main(meshcat_port_number: int = 7001):
@@ -20,15 +23,28 @@ def main(meshcat_port_number: int = 7001):
     if meshcat_port_number < 0:
         meshcat_port_number = None # Use None for CI
 
+    easy_goal_position = np.array([+0.0, 1.0, 1.0])
+    goal_orientation = RollPitchYaw(np.pi / 2.0, np.pi / 2.0, 0.0).ToQuaternion()
+    goal_pose = RigidTransform(goal_orientation, easy_goal_position)
+
+    # Create the scene
     scene = ShelfPlanningScene(
         meshcat_port_number=meshcat_port_number, # Use None for CI
+        goal_pose=goal_pose,
     )
 
     # Create a planner object which will be used to plan the motion
-    planner2 = BaseRRTPlanner(
+    config = RRTConnectPlannerConfig(
+        steering_step_size=0.01,
+        prob_sample_goal=0.025,
+        max_iterations=int(1e5),
+        convergence_threshold=1e-3,
+    )
+    planner2 = RRTConnectPlanner(
         scene.arm,
         scene.plant,
         scene.scene_graph,
+        config=config,
     )
 
     # To build the scene, we only need to provide a planning function
