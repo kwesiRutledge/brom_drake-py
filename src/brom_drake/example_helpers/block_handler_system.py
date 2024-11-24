@@ -117,7 +117,7 @@ class BlockHandlerSystem(LeafSystem):
             SpatialVelocity(np.zeros(3),np.array([0.0,0.0,0.0])),
             self.plant.GetMyContextFromRoot(diagram_context))
 
-def AddGround(plant):
+def AddGround(plant: MultibodyPlant):
     """
     Add a flat ground with friction
     """
