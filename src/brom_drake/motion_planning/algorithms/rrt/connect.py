@@ -1,5 +1,5 @@
 """
-base.py
+connect.py
 """
 from dataclasses import dataclass
 from typing import Tuple, Callable
@@ -13,19 +13,19 @@ from pydrake.multibody.tree import ModelInstanceIndex
 from brom_drake.motion_planning.algorithms.motion_planner import MotionPlanner
 
 @dataclass
-class BaseRRTPlannerConfig:
-    steering_step_size: float = 0.05
-    prob_sample_goal: float = 0.25
+class RRTConnectPlannerConfig:
+    steering_step_size: float = 0.025
+    prob_sample_goal: float = 0.05
     max_iterations: int = int(1e4)
     convergence_threshold: float = 1e-3
 
-class BaseRRTPlanner(MotionPlanner):
+class RRTConnectPlanner(MotionPlanner):
     def __init__(
         self,
         robot_model_idx: ModelInstanceIndex,
         plant: MultibodyPlant,
         scene_graph: SceneGraph,
-        config: BaseRRTPlannerConfig = None,
+        config: RRTConnectPlannerConfig = None,
     ):
         super().__init__(robot_model_idx, plant, scene_graph)
         # Input Processing
@@ -35,10 +35,53 @@ class BaseRRTPlanner(MotionPlanner):
 
         self.config = config
         if self.config is None:
-            self.config = BaseRRTPlannerConfig()
+            self.config = RRTConnectPlannerConfig()
 
         # Prepare for planning
         # self.joint_limits = self.get_joint_limits()  # Initialize joint limits array
+
+    def connect(
+        self,
+        nearest_node_idx: int,
+        q_target: np.ndarray,
+        rrt: nx.DiGraph,
+        collision_check_fcn: Callable[[np.ndarray], bool] = None,
+    ) -> np.ndarray:
+        # Input Processing
+        if collision_check_fcn is None:
+            collision_check_fcn = self.check_collision_in_config
+
+        # Setup
+        nearest_node = rrt.nodes[nearest_node_idx]
+
+        # Steer from nearest node to random configuration
+        q_current = nearest_node['q']
+        last_node_idx = nearest_node_idx
+
+        n_loops = 0
+        while not np.isclose(q_current, q_target).all():
+            # Create next node
+            q_new = self.steer(q_current, q_target)
+
+            # Check for collisions
+            if collision_check_fcn(q_new):
+                break
+
+            # If the next point is collision free, then add new node to the tree
+            rrt.add_node(rrt.number_of_nodes(), q=q_new)
+            rrt.add_edge(last_node_idx, rrt.number_of_nodes()-1)
+
+            # Prepare for next iteration
+            last_node_idx = rrt.number_of_nodes()-1
+            q_current = q_new
+
+            n_loops += 1
+
+        # print(f"Number of loops in connection: {n_loops}")
+        # print(f"RRT Size: {rrt.number_of_nodes()}")
+
+        return q_current # Return the last configuration we visited
+
 
     @property
     def dim_q(self) -> int:
@@ -139,26 +182,17 @@ class BaseRRTPlanner(MotionPlanner):
             # Find nearest node in the tree
             nearest_node, nearest_node_idx = self.find_nearest_node(rrt, q_random)
 
-            # Steer from nearest node to random configuration
-            q_new = self.steer(nearest_node['q'], q_random)
-
-            # Check for collisions
-            if collision_check_fcn(q_new):
-                continue
-
-            # Add new node to the tree
-            rrt.add_node(rrt.number_of_nodes(), q=q_new)
-            rrt.add_edge(nearest_node_idx, rrt.number_of_nodes()-1)
+            q_new = self.connect(nearest_node_idx, q_random, rrt, collision_check_fcn)
 
             # Check if we have reached the goal
             if np.linalg.norm(q_new - q_goal) < self.config.convergence_threshold:
-                print(f"Goal reached after {iteration} iterations!")
-                print(f"Check all points in path: {rrt.nodes}")
-                for node in rrt.nodes:
-                    print(f"Node {node}: {rrt.nodes[node]}")
-                    collision_check_value = collision_check_fcn(rrt.nodes[node]['q'])
-                    if collision_check_value:
-                        print(f"Collision check node: {collision_check_fcn(rrt.nodes[node]['q'])}")
+                print(f"Goal reached after {iteration} iterations of RRT-Connect!")
+                # print(f"Check all points in path: {rrt.nodes}")
+                # for node in rrt.nodes:
+                #     print(f"Node {node}: {rrt.nodes[node]}")
+                #     collision_check_value = collision_check_fcn(rrt.nodes[node]['q'])
+                #     if collision_check_value:
+                #         print(f"Collision check node: {collision_check_fcn(rrt.nodes[node]['q'])}")
                 return rrt, True
 
         # If we exit the loop without finding a path to the goal,
