@@ -16,7 +16,6 @@ from brom_drake import robots
 from brom_drake.all import drakeify_my_urdf
 from brom_drake.scenes.debug import ShowMeThisModel
 
-
 def main():
     # Setup
     urdf_file_path = str(

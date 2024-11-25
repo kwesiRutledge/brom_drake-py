@@ -26,6 +26,7 @@ class ShowMeThisModel(BaseScene):
         base_link_name: str = None,
         time_step: float = 1e-3,
         meshcat_port_number: int = 7001, # Usually turn off for CI (i.e., make it None)
+        show_collision_geometries: bool = False,
         **kwargs,
     ):
         super().__init__(**kwargs)
@@ -36,6 +37,7 @@ class ShowMeThisModel(BaseScene):
         self.base_link_name = base_link_name
         self.time_step = time_step
         self.meshcat_port_number = meshcat_port_number
+        self.show_collision_geometries = show_collision_geometries
 
         # If the base link name is not provided,
         # then we will try to do a smart search for it later.
@@ -125,11 +127,17 @@ class ShowMeThisModel(BaseScene):
             m_visualizer = MeshcatVisualizer(
                 self.meshcat,
             )
+            params = MeshcatVisualizerParams(
+                role=DrakeRole.kIllustration,
+            )
+            if self.show_collision_geometries:
+                params = MeshcatVisualizerParams(
+                    role=DrakeRole.kProximity,
+                )
+
             m_visualizer.AddToBuilder(
                 self.builder, self.scene_graph, self.meshcat,
-                # params=MeshcatVisualizerParams(
-                #     role=DrakeRole.kProximity,
-                # ),
+                params=params,
             )
 
         # Finalize plant and connect it to system
