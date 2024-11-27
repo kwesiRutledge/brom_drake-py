@@ -43,7 +43,6 @@ class PrototypicalPlannerSystem(LeafSystem):
         self.plan = None
         self.create_input_ports()
 
-
         # Define Output Ports
         self.create_output_ports()
 

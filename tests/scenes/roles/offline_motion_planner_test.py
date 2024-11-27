@@ -15,8 +15,8 @@ class OfflineMotionPlannerTest(unittest.TestCase):
         # Setup
         omp_role = kOfflineMotionPlanner
         expected_port_names = [
-            "start_pose",
-            "goal_pose",
+            "start_configuration",
+            "goal_configuration",
             "scene_id",
         ]
 

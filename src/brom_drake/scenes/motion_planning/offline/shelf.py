@@ -318,7 +318,8 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
         if self.goal_pose_ is None:
             goal_position = np.array([+0.0, 1.0, 0.6])
             goal_orientation = RollPitchYaw(np.pi / 2.0, np.pi / 2.0, 0.0).ToQuaternion()
-            return RigidTransform(goal_orientation, goal_position)
+            self.goal_pose_ = RigidTransform(goal_orientation, goal_position)
+            return self.goal_pose_
         else:
             return self.goal_pose_
 
