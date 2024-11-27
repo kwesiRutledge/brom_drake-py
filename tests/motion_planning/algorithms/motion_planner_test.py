@@ -143,7 +143,7 @@ class MotionPlannerTest(unittest.TestCase):
             str(new_urdf_path),
             with_these_joint_positions=q0,
             time_step=time_step,
-            meshcat_port_number=7001, # Turn off for CI
+            meshcat_port_number=None, # Turn off for CI
         )
 
         # Add Bookshelf to scene

@@ -60,6 +60,7 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
             meshcat_port_number=self.meshcat_port_number,
         )
         self.arm = self.station.arm
+        self.robot_model_idx_ = self.station.arm
 
         # Set Names of Plant and scene graph
         self.plant = self.station.plant
@@ -77,6 +78,9 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
         Add all secondary cast members to the builder.
         :return:
         """
+        # Call the parent class method
+        super().add_all_secondary_cast_members_to_builder()
+
         # Setup
         self.add_ur10e_station() # Use the UR10e station's plant + scene graph for all other objects
 
@@ -85,16 +89,14 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
 
         # Add the ground as well as the start and goal locations
         AddGround(self.plant)
-        self.add_start_and_goal_to_this_plant(self.plant)
-
         self.station.Finalize()
 
         # Add The Motion Planning Components (e.g., the interpolator)
-        self.add_start_source_system()
-        self.add_goal_source_system()
         self.add_robot_source_system()
 
         self.add_motion_planning_components()
+
+        self.add_start_and_goal_sources_to_builder()
 
         # Connect motion planning components to station
         # self.connect_motion_planning_components()
@@ -284,10 +286,10 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
 
     def easy_cast_and_build(
         self,
-            planning_algorithm: Callable[
-                [np.ndarray, np.ndarray, Callable[[np.ndarray], bool]],
-                Tuple[nx.DiGraph, np.ndarray],
-            ],
+        planning_algorithm: Callable[
+            [np.ndarray, np.ndarray, Callable[[np.ndarray], bool]],
+            Tuple[nx.DiGraph, np.ndarray],
+        ],
         with_watcher: bool = False,
     ) -> Tuple[Diagram, Context]:
         """
@@ -344,14 +346,17 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
         return SceneID.kShelfPlanning1
 
     @property
-    def start_pose(self):
+    def start_pose(self) -> RigidTransform:
         """
+        Description
+        -----------
         Get the start pose. This should be defined by the subclass.
         :return:
         """
         if self.start_pose_ is None:
             start_position = np.array([+0.3, 0.1, 1.2])
             start_orientation = Quaternion(1, 0, 0, 0)
-            return RigidTransform(start_orientation, start_position)
+            self.start_pose_ = RigidTransform(start_orientation, start_position)
+            return self.start_pose_
         else:
             return self.start_pose_

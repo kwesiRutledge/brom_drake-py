@@ -11,11 +11,11 @@ kOfflineMotionPlanner = Role(
     description="This role is used to define the offline motion planning role.",
     port_assignments=[
         RolePortAssignment(
-            "start_pose", "start_pose",
+            "start_configuration", "start_configuration",
             pairing_type=PairingType.kInput,
         ),
         RolePortAssignment(
-            "goal_pose", "goal_pose",
+            "goal_configuration", "goal_configuration",
             pairing_type=PairingType.kInput,
         ),
         RolePortAssignment(

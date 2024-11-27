@@ -47,12 +47,16 @@ def main(meshcat_port_number: int = 7001):
         config=config,
     )
 
+    print("Building Scene...")
+
     # To build the scene, we only need to provide a planning function
     # (can come from anywhere, not just a BaseRRTPlanner object)
     diagram, diagram_context = scene.easy_cast_and_build(
         planner2.plan,
         with_watcher=True,
     )
+
+    print("Simulating...")
 
     # Simulate the diagram
     simulator = Simulator(diagram, diagram_context)

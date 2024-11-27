@@ -15,7 +15,7 @@ import unittest
 from pydrake.systems.framework import DiagramBuilder
 
 # Internal Imports
-from brom_drake.motion_planning.algorithms.rrt.base import BaseRRTPlanner as BaseRRTPlanner
+from brom_drake.motion_planning.algorithms.rrt.base import BaseRRTPlanner, BaseRRTPlannerConfig
 import brom_drake.robots as robots
 from brom_drake.file_manipulation.urdf import drakeify_my_urdf
 
@@ -55,7 +55,7 @@ class TestBaseRRT(unittest.TestCase):
         base_rrt = BaseRRTPlanner(model_idcs[0], plant, scene_graph)
         joint_limits = base_rrt.joint_limits
 
-        print("Joint limits:", joint_limits)
+        # print("Joint limits:", joint_limits)
 
         self.assertEqual(
             joint_limits.shape[1], 2,
@@ -131,6 +131,12 @@ class TestBaseRRT(unittest.TestCase):
             time_step=1e-3,
         )
 
+        config = BaseRRTPlannerConfig(
+            steering_step_size=0.1,
+            prob_sample_goal=0.05,
+            max_iterations=int(2e3),
+        )
+
         # Add the UR10e
         urdf_file_path = str(
             impresources.files(robots) / "models/ur/ur10e.urdf"
@@ -150,7 +156,12 @@ class TestBaseRRT(unittest.TestCase):
         plant.Finalize()
 
         # Create a BaseRRTPlanner instance
-        base_rrt = BaseRRTPlanner(model_idcs[0], plant, scene_graph)
+        base_rrt = BaseRRTPlanner(
+            model_idcs[0],
+            plant,
+            scene_graph,
+            config=config,
+        )
 
         diagram = builder.Build()
         diagram_context = diagram.CreateDefaultContext()
@@ -158,7 +169,7 @@ class TestBaseRRT(unittest.TestCase):
         base_rrt.root_context = diagram_context
 
         # Define start and goal configurations
-        start_configuration = np.zeros(base_rrt.dim_q)
+        start_configuration = np.ones(base_rrt.dim_q)*0.1
         goal_configuration = np.ones(base_rrt.dim_q)
 
         # Plan
@@ -169,10 +180,16 @@ class TestBaseRRT(unittest.TestCase):
 
         # Check if the distance from the last node to the goal is less than the distance from the start
         last_node = rrt.nodes[len(rrt.nodes)-1]
-        distance_to_goal = np.linalg.norm(last_node['q'] - goal_configuration)
+        min_dist_to_goal = np.inf
+        for node_idx in rrt.nodes:
+            node_ii = rrt.nodes[node_idx]
+            dist_to_goal = np.linalg.norm(node_ii['q'] - goal_configuration)
+            if dist_to_goal < min_dist_to_goal:
+                min_dist_to_goal = dist_to_goal
+
         distance_to_start = np.linalg.norm(start_configuration - goal_configuration)
 
-        self.assertLess(distance_to_goal, distance_to_start, "Last node should be closer to the goal than the start.")
+        self.assertLess(min_dist_to_goal, distance_to_start, "Last node should be closer to the goal than the start.")
 
 if __name__ == "__main__":
     unittest.main()

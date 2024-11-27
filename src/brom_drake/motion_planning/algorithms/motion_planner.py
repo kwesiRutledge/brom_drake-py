@@ -59,7 +59,7 @@ class MotionPlanner:
         # return query_object.HasCollisions()
 
         # Alternative method to check for collisions
-        closest_points = query.ComputeSignedDistancePairwiseClosestPoints()
+        closest_points = query_object.ComputeSignedDistancePairwiseClosestPoints()
         eps0 = 1e-2
         for pair in closest_points:
             if pair.distance < eps0:

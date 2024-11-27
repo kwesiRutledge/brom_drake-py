@@ -1,9 +1,11 @@
 
 from importlib import resources as impresources
 import numpy as np
+from pydrake.all import (
+    MultibodyPlant, Parser,
+)
 from pydrake.common.eigen_geometry import Quaternion
 from pydrake.math import RollPitchYaw, RigidTransform
-from pydrake.multibody.parsing import Parser
 from pydrake.systems.framework import Diagram, Context
 from typing import Tuple
 
@@ -32,7 +34,8 @@ class ChemLab1Scene(OfflineMotionPlanningScene):
         plan_execution_speed: float = 0.2,
         table_length: float = 0.6,
         table_width: float = 2.0,
-        table_height: float = 0.1
+        table_height: float = 0.1,
+        shelf_pose: RigidTransform = None,
     ):
         """
         Description:
@@ -42,12 +45,32 @@ class ChemLab1Scene(OfflineMotionPlanningScene):
         # Superclass constructor
         super().__init__()
 
-        # Setup
+        # Input Processing
         self.time_step = time_step
         self.meshcat_port_number = meshcat_port_number
         self.plan_execution_speed = plan_execution_speed
         self.table_height, self.table_width = table_height, table_width
         self.table_length = table_length
+
+        # Set shelf pose
+        self.shelf_pose = shelf_pose
+        if self.shelf_pose is None:
+            self.pose_WorldShelf = RigidTransform(
+                RollPitchYaw(0.0, 0.0, -np.pi/2.0).ToQuaternion(),
+                np.array([0.0, 0.75, 0.66]),
+            )
+
+        # Set Beaker Pose
+        self.pose_WorldBeaker = RigidTransform(
+            RollPitchYaw(np.pi/2.0, 0.0, 0.0).ToQuaternion(),
+            np.array([-0.6, 0.45, 0.075]),
+        )
+
+        # Set Holder Pose
+        self.pose_WorldHolder = RigidTransform(
+            RollPitchYaw(np.pi/2.0, 0.0, 0.0).ToQuaternion(),
+            np.array([self.table_width*0.5*0.7, 0.6+self.table_length/4., self.table_height-0.015]),
+        )
 
         # Set station
         self.station = KinematicUR10eStation(
@@ -77,12 +100,16 @@ class ChemLab1Scene(OfflineMotionPlanningScene):
         - ...
         :return:
         """
+        # Call the superclass method
+        super().add_all_secondary_cast_members_to_builder()
 
         # Setup
 
-        # Create the table
+        # Create the table and the items on it
         self.add_table()
         self.add_test_tube_holders()
+        self.add_beaker()
+        self.add_shelf()
 
         # Add the station
         self.builder.AddSystem(
@@ -91,7 +118,53 @@ class ChemLab1Scene(OfflineMotionPlanningScene):
 
         self.station.Finalize()
 
-        pass
+    def add_beaker(self):
+        """
+        Description
+        -----------
+        This method adds the beaker to the scene.
+        """
+        # Setup
+        plant = self.plant
+        urdf_file_path = str(
+            impresources.files(robots) / "models/beaker/beaker.urdf"
+        )
+
+        # Use Drakeify my urdf to create the beaker
+        new_beaker_urdf = drakeify_my_urdf(urdf_file_path)
+
+        # Add the beaker to the plant
+        model_idcs = Parser(plant=plant).AddModels(str(new_beaker_urdf))
+        self.beaker_model_index = model_idcs[0]
+
+        # Weld the beaker to the world frame
+        plant.WeldFrames(
+            plant.world_frame(),
+            plant.GetFrameByName("beaker_base_link", self.beaker_model_index),
+            self.pose_WorldBeaker,
+        )
+
+    def add_shelf(self):
+        """
+        Add the shelf to the scene.
+        :return:
+        """
+        # Setup
+        plant = self.plant
+        urdf_file_path = str(
+            impresources.files(robots) / "models/cupboard/cupboard.sdf"
+        )
+
+        # Add the shelf to the plant
+        model_idcs = Parser(plant=plant).AddModels(urdf_file_path)
+        self.shelf_model_index = model_idcs[0]
+
+        # Weld the bookshelf to the world frame
+        plant.WeldFrames(
+            plant.world_frame(),
+            plant.GetFrameByName("cupboard_body", self.shelf_model_index),
+            self.pose_WorldShelf,
+        )
 
     def add_table(self):
         """
@@ -115,7 +188,7 @@ class ChemLab1Scene(OfflineMotionPlanningScene):
                 iyy=10.0,
                 izz=10.0,
             ),
-            color=np.array([0.1, 0.2, 0.5, 1.0]),
+            color=np.array([0.1, 0.1, 0.1, 0.5]),
         )
         table_urdf_path = DEFAULT_BROM_MODELS_DIR + "/table/table.urdf"
         table_defn.write_to_file(table_urdf_path)
@@ -154,14 +227,10 @@ class ChemLab1Scene(OfflineMotionPlanningScene):
         )[0]
 
         # Weld the test tube holders to the world frame
-        test_tube_holder_pose1 = RigidTransform(
-            RollPitchYaw(np.pi/2.0, 0.0, 0.0).ToQuaternion(),
-            np.array([self.table_width*0.5*0.7, 0.6+self.table_length/4., self.table_height-0.015]),
-        )
         self.plant.WeldFrames(
             self.plant.world_frame(),
             self.plant.GetFrameByName("test_tube_holder_base_link", self.test_tube_holder1),
-            test_tube_holder_pose1,
+            self.pose_WorldHolder,
         )
 
 
@@ -206,15 +275,27 @@ class ChemLab1Scene(OfflineMotionPlanningScene):
         return diagram, diagram_context
 
     @property
-    def goal_pose(self):
+    def goal_configuration(self):
         """
         Get the goal pose. This should be defined by the subclass.
         :return:
         """
-        if self.goal_pose_ is None:
-            goal_position = np.array([+0.1, 1.0, 0.55])  # np.array([+0.5, 0.7, 0.65])
-            goal_orientation = RollPitchYaw(np.pi / 2.0, np.pi / 2.0, 0.0).ToQuaternion()
-            return RigidTransform(goal_orientation, goal_position)
+        if self.goal_config_ is None:
+            beaker_to_goal_translation = np.array([+0.0, 0.2, 0.0]) 
+            beaker_to_goal_orientation = RollPitchYaw(0., 0., 0.0).ToQuaternion()
+            X_BeakerGoal = RigidTransform(  
+                beaker_to_goal_orientation,
+                beaker_to_goal_translation,
+            )
+
+            pose_WorldGoal = self.pose_WorldBeaker.multiply(X_BeakerGoal)
+
+            # Use Inverse Kinematics to get the goal configuration of the robot
+            self.goal_config_ = self.solve_pose_ik_problem(
+                pose_WorldGoal,
+            )
+
+            return self.goal_config_
         else:
             return self.goal_pose_
 
@@ -223,14 +304,26 @@ class ChemLab1Scene(OfflineMotionPlanningScene):
         return SceneID.kShelfPlanning1
 
     @property
-    def start_pose(self):
+    def start_configuration(self) -> np.ndarray:
         """
         Get the start pose. This should be defined by the subclass.
         :return:
         """
-        if self.start_pose_ is None:
-            start_position = np.array([+0.3, 0.1, 1.2])
-            start_orientation = Quaternion(1, 0, 0, 0)
-            return RigidTransform(start_orientation, start_position)
+        if self.start_config_ is None:
+            # Define Start Pose
+            holder_to_start_translation = np.array([+0.0, 0.2, 0.025])
+            holder_to_start_orientation = Quaternion(1, 0, 0, 0)
+            X_HolderStart = RigidTransform(
+                holder_to_start_orientation,
+                holder_to_start_translation,
+            )
+            pose_WorldStart = self.pose_WorldHolder.multiply(X_HolderStart)
+
+            # Use Inverse Kinematics to get the start configuration of the robot
+            self.start_config_ = self.solve_pose_ik_problem(
+                pose_WorldStart,
+            )
+
+            return self.start_config_
         else:
-            return self.start_pose_
+            return self.start_config_

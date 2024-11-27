@@ -41,7 +41,6 @@ class PrototypicalPlannerSystem(LeafSystem):
         # Define Input Ports
         self.root_context = None  # NOTE: This should be assigned by the user before calling!
         self.plan = None
-        self.robot_model_idx = None  # Will be provided by input port
         self.create_input_ports()
 
 
@@ -96,19 +95,10 @@ class PrototypicalPlannerSystem(LeafSystem):
         # Print
         if self.plan is None:
             # Compute plan
-            p_WStart_vec = self.GetInputPort("start_pose").Eval(context)
-            p_WGoal_vec = self.GetInputPort("goal_pose").Eval(context)
-            self.robot_model_idx = self.GetInputPort("robot_model_index").EvalAbstract(context).get_value()
-
-            print(self.robot_model_idx)
-
-            q_start = self.solve_pose_ik_problem(
-                p_WStart_vec,
-            )
-
-            q_goal = self.solve_pose_ik_problem(
-                p_WGoal_vec,
-            )
+            q_start = self.GetInputPort("start_configuration").Eval(context)
+            q_goal = self.GetInputPort("goal_configuration").Eval(context)
+            if self.robot_model_idx is None:
+                self.robot_model_idx = self.GetInputPort("robot_model_index").EvalAbstract(context).get_value()
 
             if self.root_context is None:
                 raise ValueError("Plant context is not initialized yet!")
@@ -137,13 +127,19 @@ class PrototypicalPlannerSystem(LeafSystem):
         Description:
             This function creates the input ports for the RRT planner.
         """
+        # Setup
+        N = len(
+            self.plant.GetActuatedJointIndices(self.robot_model_idx)
+        )
+
+        # Define outputs
         self.DeclareVectorInputPort(
-            "start_pose",
-            BasicVector(np.zeros((7,))),
+            "start_configuration",
+            BasicVector(np.zeros((N,))),
         )
         self.DeclareVectorInputPort(
-            "goal_pose",
-            BasicVector(np.zeros((7,))),
+            "goal_configuration",
+            BasicVector(np.zeros((N,))),
         )
         self.DeclareAbstractInputPort(
             "robot_model_index",
