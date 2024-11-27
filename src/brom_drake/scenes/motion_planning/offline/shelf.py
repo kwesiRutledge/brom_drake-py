@@ -128,24 +128,6 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
             self.station.GetInputPort("desired_joint_positions"),
         )
 
-    def add_robot_source_system(self):
-        """
-        Description
-        -----------
-        This method adds a source for providing the motion planner
-        with the model index for the robot that we are trying to control.
-        :return:
-        """
-        # Setup
-
-        # Create AbstractValueSource
-        robot_source_system = ConstantValueSource(
-            AbstractValue.Make(self.station.arm)
-        )
-        robot_source_system.set_name("robot_model_index_source")
-
-        self.builder.AddSystem(robot_source_system)
-
     def add_shelf(self, plant: MultibodyPlant):
         """
         Add the shelf to the scene.

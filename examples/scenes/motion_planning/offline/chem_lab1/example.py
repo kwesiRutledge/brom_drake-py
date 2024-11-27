@@ -16,7 +16,7 @@ import typer
 
 # Internal imports
 from brom_drake.motion_planning.algorithms.rrt.connect import RRTConnectPlannerConfig, RRTConnectPlanner
-from brom_drake.scenes.motion_planning.offline import ShelfPlanningScene
+from brom_drake.scenes.motion_planning.offline import ChemLab1Scene
 
 def main(meshcat_port_number: int = 7001):
     # Setup
@@ -28,16 +28,16 @@ def main(meshcat_port_number: int = 7001):
     goal_pose = RigidTransform(goal_orientation, easy_goal_position)
 
     # Create the scene
-    scene = ShelfPlanningScene(
+    scene = ChemLab1Scene(
         meshcat_port_number=meshcat_port_number, # Use None for CI
         goal_pose=goal_pose,
     )
 
     # Create a planner object which will be used to plan the motion
     config = RRTConnectPlannerConfig(
-        steering_step_size=0.01,
-        prob_sample_goal=0.025,
-        max_iterations=int(1e5),
+        steering_step_size=0.1,
+        prob_sample_goal=0.15,
+        max_iterations=int(1e4),
         convergence_threshold=1e-3,
     )
     planner2 = RRTConnectPlanner(
@@ -46,8 +46,6 @@ def main(meshcat_port_number: int = 7001):
         scene.scene_graph,
         config=config,
     )
-
-    print("Building Scene...")
 
     # To build the scene, we only need to provide a planning function
     # (can come from anywhere, not just a BaseRRTPlanner object)

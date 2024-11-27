@@ -1,19 +1,23 @@
 
 from importlib import resources as impresources
+import networkx as nx
 import numpy as np
 from pydrake.all import (
     MultibodyPlant, Parser,
+    CollisionFilterDeclaration, GeometrySet,
 )
 from pydrake.common.eigen_geometry import Quaternion
 from pydrake.math import RollPitchYaw, RigidTransform
 from pydrake.systems.framework import Diagram, Context
-from typing import Tuple
+from typing import Callable, Tuple
 
 from brom_drake.directories import DEFAULT_BROM_MODELS_DIR
+from brom_drake.example_helpers import AddGround
 from brom_drake.file_manipulation.urdf import drakeify_my_urdf
 from brom_drake.file_manipulation.urdf.shapes.box import BoxDefinition
 from brom_drake.file_manipulation.urdf.simple_writer.urdf_definition import SimpleShapeURDFDefinition, \
     InertiaDefinition
+from brom_drake.motion_planning.systems.open_loop_plan_dispenser import OpenLoopPlanDispenser
 import brom_drake.robots as robots
 from brom_drake.robots.stations.kinematic import UR10eStation as KinematicUR10eStation
 from brom_drake.scenes import SceneID
@@ -36,6 +40,7 @@ class ChemLab1Scene(OfflineMotionPlanningScene):
         table_width: float = 2.0,
         table_height: float = 0.1,
         shelf_pose: RigidTransform = None,
+        **kwargs,
     ):
         """
         Description:
@@ -43,7 +48,7 @@ class ChemLab1Scene(OfflineMotionPlanningScene):
         :param meshcat_port_number:
         """
         # Superclass constructor
-        super().__init__()
+        super().__init__(**kwargs)
 
         # Input Processing
         self.time_step = time_step
@@ -78,6 +83,7 @@ class ChemLab1Scene(OfflineMotionPlanningScene):
             meshcat_port_number=self.meshcat_port_number,
         )
         self.arm = self.station.arm
+        self.robot_model_idx_ = self.arm
 
         # Set Names of Plant and scene graph
         self.plant = self.station.plant
@@ -110,6 +116,7 @@ class ChemLab1Scene(OfflineMotionPlanningScene):
         self.add_test_tube_holders()
         self.add_beaker()
         self.add_shelf()
+        AddGround(self.plant)
 
         # Add the station
         self.builder.AddSystem(
@@ -117,6 +124,11 @@ class ChemLab1Scene(OfflineMotionPlanningScene):
         )
 
         self.station.Finalize()
+
+        # Add the motion planning components
+        self.add_robot_source_system()
+        self.add_motion_planning_components()
+        self.add_start_and_goal_sources_to_builder()
 
     def add_beaker(self):
         """
@@ -142,6 +154,24 @@ class ChemLab1Scene(OfflineMotionPlanningScene):
             plant.world_frame(),
             plant.GetFrameByName("beaker_base_link", self.beaker_model_index),
             self.pose_WorldBeaker,
+        )
+
+    def add_motion_planning_components(self):
+        """
+        Add the motion planning components to the builder.
+        :return:
+        """
+        # Setup
+        n_actuated_dof = self.plant.num_actuated_dofs()
+
+        # Add the Plan Dispenser and connect it to the station
+        self.plan_dispenser = self.builder.AddSystem(
+            OpenLoopPlanDispenser(n_actuated_dof, self.plan_execution_speed)
+        )
+
+        self.builder.Connect(
+            self.plan_dispenser.GetOutputPort("point_in_plan"),
+            self.station.GetInputPort("desired_joint_positions"),
         )
 
     def add_shelf(self):
@@ -273,6 +303,102 @@ class ChemLab1Scene(OfflineMotionPlanningScene):
                 )
 
         return diagram, diagram_context
+    
+    def configure_collision_filter(self, scene_graph_context: Context):
+        """
+        Description
+        -----------
+        This method configures the collision filter for the scene.
+        :param scene_graph_context:
+        :return:
+        """
+        # Setup
+        scene_graph = self.scene_graph
+        shelf_model_index = self.shelf_model_index
+
+        # Ignore self collisions of the shelf, by:
+        # - Getting the model instance index of the shelf
+        # - Collecting the Geometry IDs of all the geometries in the shelf
+        shelf_geometry_ids = []
+        for body_index in self.plant.GetBodyIndices(shelf_model_index):
+            # Get the geometry IDs
+            shelf_geometry_ids.extend(
+                self.plant.GetCollisionGeometriesForBody(
+                    self.plant.get_body(body_index)
+                )
+            )
+            # print(self.plant.get_body(body_index))
+
+        self.shelf_geometry_ids = shelf_geometry_ids
+
+        # Apply the collision filter
+        scene_graph.collision_filter_manager(scene_graph_context).Apply(
+            CollisionFilterDeclaration().ExcludeWithin(
+                GeometrySet(self.shelf_geometry_ids)
+            )
+        )
+
+        # Ignore collisions between the robot links
+        # TODO: Actually implement this for adjacent links? Or is this not necessary?
+        arm_geometry_ids = []
+        for body_index in self.plant.GetBodyIndices(self.arm):
+            arm_geometry_ids.extend(
+                self.plant.GetCollisionGeometriesForBody(
+                    self.plant.get_body(body_index)
+                )
+            )
+
+        self.arm_geometry_ids = arm_geometry_ids
+
+        # Apply the collision filter
+        scene_graph.collision_filter_manager(scene_graph_context).Apply(
+            CollisionFilterDeclaration().ExcludeWithin(
+                GeometrySet(self.arm_geometry_ids)
+            )
+        )
+    
+    def easy_cast_and_build(
+        self,
+        planning_algorithm: Callable[
+            [np.ndarray, np.ndarray, Callable[[np.ndarray], bool]],
+            Tuple[nx.DiGraph, np.ndarray],
+        ],
+        with_watcher: bool = False,
+    ) -> Tuple[Diagram, Context]:
+        """
+        Description
+        -----------
+        This function is used to easily cast and build the scene.
+        :param planning_algorithm: The algorithm that we will use to
+        plan the motion.
+        :param with_watcher: A Boolean that determines whether to add a watcher to the diagram.
+        :return:
+        """
+        # Setup
+
+        # Use Base class implementation to start
+        diagram, diagram_context = super().easy_cast_and_build(
+            planning_algorithm,
+            with_watcher=with_watcher,
+        )
+
+        # Configure the scene graph for collision detection
+        self.configure_collision_filter(
+            diagram.GetSubsystemContext(
+                self.scene_graph, diagram_context,
+            )
+        )
+
+        # Connect arm controller to the appropriate plant_context
+        self.station.arm_controller.plant_context = diagram.GetSubsystemContext(
+            self.station.arm_controller.plant, diagram_context,
+        )
+
+        self.performers[0].set_internal_root_context(
+            diagram_context
+        )
+
+        return diagram, diagram_context
 
     @property
     def goal_configuration(self):
@@ -300,15 +426,42 @@ class ChemLab1Scene(OfflineMotionPlanningScene):
             return self.goal_pose_
 
     @property
-    def id(self) -> SceneID:
-        return SceneID.kShelfPlanning1
+    def goal_pose(self) -> RigidTransform:
+        """
+        Description
+        -----------
+        Get the goal pose. This should be defined by the subclass.
+        """
+        # Setup
+
+        # Algorithm
+        if self.goal_config_ is None:
+            beaker_to_goal_translation = np.array([+0.0, 0.2, 0.0]) 
+            beaker_to_goal_orientation = RollPitchYaw(0., 0., 0.0).ToQuaternion()
+            X_BeakerGoal = RigidTransform(  
+                beaker_to_goal_orientation,
+                beaker_to_goal_translation,
+            )
+
+            pose_WorldGoal = self.pose_WorldBeaker.multiply(X_BeakerGoal)
+            self.goal_pose_ = pose_WorldGoal
+
+            return self.goal_pose_
+        else:
+            return self.goal_pose_
 
     @property
-    def start_configuration(self) -> np.ndarray:
+    def id(self) -> SceneID:
+        return SceneID.kShelfPlanning1
+        
+    @property
+    def start_pose(self) -> RigidTransform:
         """
         Get the start pose. This should be defined by the subclass.
         :return:
         """
+        # Setup
+
         if self.start_config_ is None:
             # Define Start Pose
             holder_to_start_translation = np.array([+0.0, 0.2, 0.025])
@@ -318,12 +471,7 @@ class ChemLab1Scene(OfflineMotionPlanningScene):
                 holder_to_start_translation,
             )
             pose_WorldStart = self.pose_WorldHolder.multiply(X_HolderStart)
-
-            # Use Inverse Kinematics to get the start configuration of the robot
-            self.start_config_ = self.solve_pose_ik_problem(
-                pose_WorldStart,
-            )
-
-            return self.start_config_
+            self.start_pose_ = pose_WorldStart
+            return self.start_pose_
         else:
-            return self.start_config_
+            return self.start_pose_
