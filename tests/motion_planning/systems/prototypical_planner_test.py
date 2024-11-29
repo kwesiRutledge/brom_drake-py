@@ -84,12 +84,21 @@ class TestPrototypicalPlannerSystem(unittest.TestCase):
             scene1.scene_graph,
         )
 
+        system1 = PrototypicalPlannerSystem(
+            scene1.plant,
+            scene1.scene_graph,
+            planner1.plan,
+            robot_model_idx=scene1.arm,
+        )
+
         # Build scene
+        scene1.fill_role(scene1.suggested_roles()[0], system1)
         diagram, diagram_context = scene1.build_scene()
-        planner1.root_context = diagram_context
+        
+        system1.set_internal_root_context(diagram_context)
 
         # Check collision
-        in_collision = planner1.check_collision_in_config(q_collision)
+        in_collision = system1.check_collision_in_config(q_collision)
         self.assertTrue(in_collision)
 
     def test_init1(self):
