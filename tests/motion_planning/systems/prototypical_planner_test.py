@@ -68,7 +68,7 @@ class TestPrototypicalPlannerSystem(unittest.TestCase):
 
         # Create the Scene
         scene1 = ShelfPlanningScene(
-            meshcat_port_number=7001,
+            meshcat_port_number=None,
             start_config=q_collision,
             goal_config=q_collision,
             shelf_pose=bad_shelf_pose,
