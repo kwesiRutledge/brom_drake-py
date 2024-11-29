@@ -16,7 +16,7 @@ from pydrake.systems.framework import DiagramBuilder
 # Internal imports
 from brom_drake import robots
 from brom_drake.all import drakeify_my_urdf, add_watcher_and_build
-from brom_drake.example_helpers import AddGround
+from brom_drake.utils import AddGround
 
 def main():
     # Setup
