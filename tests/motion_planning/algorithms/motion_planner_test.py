@@ -21,9 +21,9 @@ from brom_drake import robots
 from brom_drake.all import (
     drakeify_my_urdf,
 )
-from brom_drake.example_helpers import AddGround
 from brom_drake.scenes.debug import ShowMeThisModel
 from brom_drake.file_manipulation.urdf.DrakeReadyURDFConverter import MeshReplacementStrategy
+from brom_drake.utils import AddGround
 
 
 class MotionPlannerTest(unittest.TestCase):

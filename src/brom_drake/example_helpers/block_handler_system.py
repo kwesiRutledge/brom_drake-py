@@ -1,6 +1,5 @@
 from importlib import resources as impresources
 
-from pydrake.geometry import HalfSpace
 from pydrake.math import RollPitchYaw, RigidTransform, RotationMatrix
 from pydrake.multibody.math import SpatialVelocity
 from pydrake.multibody.parsing import Parser
@@ -13,7 +12,7 @@ import numpy as np
 
 # Internal Imports
 from brom_drake import example_helpers as eh
-
+from brom_drake.utils import AddGround
 
 class BlockHandlerSystem(LeafSystem):
     def __init__(
@@ -116,34 +115,3 @@ class BlockHandlerSystem(LeafSystem):
             self.plant.GetBodyByName(self.block_body_name),
             SpatialVelocity(np.zeros(3),np.array([0.0,0.0,0.0])),
             self.plant.GetMyContextFromRoot(diagram_context))
-
-def AddGround(plant: MultibodyPlant):
-    """
-    Add a flat ground with friction
-    """
-
-    # Constants
-    transparent_color = np.array([0.5, 0.5, 0.5, 0])
-    nontransparent_color = np.array([0.5, 0.5, 0.5, 0.1])
-
-    p_GroundOrigin = [0, 0.0, 0.0]
-    R_GroundOrigin = RotationMatrix.MakeXRotation(0.0)
-    X_GroundOrigin = RigidTransform(R_GroundOrigin,p_GroundOrigin)
-
-    # Set Up Ground on Plant
-
-    surface_friction = CoulombFriction(
-            static_friction = 0.7,
-            dynamic_friction = 0.5)
-    plant.RegisterCollisionGeometry(
-            plant.world_body(),
-            X_GroundOrigin,
-            HalfSpace(),
-            "ground_collision",
-            surface_friction)
-    plant.RegisterVisualGeometry(
-            plant.world_body(),
-            X_GroundOrigin,
-            HalfSpace(),
-            "ground_visual",
-            transparent_color)  # transparent

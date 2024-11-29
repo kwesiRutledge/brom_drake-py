@@ -6,10 +6,12 @@ system that I've defined in the motion_planning/systems/prototypical_planner.py 
 """
 from importlib import resources as impresources
 import numpy as np
-from pydrake.multibody.parsing import Parser
-from pydrake.multibody.plant import AddMultibodyPlantSceneGraph
-from pydrake.systems.analysis import Simulator
-from pydrake.systems.framework import DiagramBuilder
+from pydrake.all import (
+    Parser, DiagramBuilder,
+    AddMultibodyPlantSceneGraph,
+    RigidTransform, RollPitchYaw,
+    Simulator,
+)
 import unittest
 
 from brom_drake.file_manipulation.urdf import drakeify_my_urdf
@@ -47,6 +49,48 @@ class TestPrototypicalPlannerSystem(unittest.TestCase):
 
         # Add the UR10e to the plant
         self.arm = Parser(self.plant).AddModels(str(new_urdf_path))[0]
+
+    def test_check_collision_in_config1(self):
+        """
+        Description
+        -----------
+        This test checks the prototypical planner's ability to correctly identify when
+        a configuration is in collision.
+        We will place the arm in a known collision configuration with
+        the shelf placed in the way.
+        """
+        # Setup
+        q_collision = np.array([0.0, 0.0, -np.pi/4.0, 0.0, 0.0, 0.0])
+
+        bad_shelf_position = np.array([0.5, 0.0, 0.0])
+        bad_shelf_orientation = RollPitchYaw(np.pi/2.0, 0.0, 0.0)
+        bad_shelf_pose = RigidTransform(bad_shelf_orientation, bad_shelf_position)
+
+        # Create the Scene
+        scene1 = ShelfPlanningScene(
+            meshcat_port_number=7001,
+            start_config=q_collision,
+            goal_config=q_collision,
+            shelf_pose=bad_shelf_pose,
+        )
+
+        # Cast all secondary scene members
+        scene1.add_all_secondary_cast_members_to_builder()
+
+        # Create planner with the now finalized arm
+        planner1 = BaseRRTPlanner(
+            scene1.arm,
+            scene1.plant,
+            scene1.scene_graph,
+        )
+
+        # Build scene
+        diagram, diagram_context = scene1.build_scene()
+        planner1.root_context = diagram_context
+
+        # Check collision
+        in_collision = planner1.check_collision_in_config(q_collision)
+        self.assertTrue(in_collision)
 
     def test_init1(self):
         """

@@ -205,39 +205,6 @@ class PrototypicalPlannerSystem(LeafSystem):
 
         return ik_problem
 
-    def solve_pose_ik_problem(
-        self,
-        input_pose_vec: np.ndarray
-    ) -> np.ndarray:
-        """
-        Description:
-        :param input_pose_vec:
-        :return:
-        """
-        # Setup
-
-        # Define Problem
-        ik_problem = self.define_pose_ik_problem(input_pose_vec)
-
-        # Solve problem
-        ik_program = ik_problem.prog()
-        ik_result = Solve(ik_program)
-
-        assert ik_result.get_solution_result() == SolutionResult.kSolutionFound, \
-            f"Solution result was {ik_result.get_solution_result()}; need SolutionResult.kSolutionFound to make RRT Plan!"
-
-        q_solution = ik_result.get_x_val()
-
-        # Extract only the positions that correspond to our robot's joints
-        robot_joint_names = self.plant.GetPositionNames(self.robot_model_idx, add_model_instance_prefix=True)
-        all_joint_names = self.plant.GetPositionNames()
-        q_out_list = []
-        for ii, joint_name in enumerate(all_joint_names):
-            if joint_name in robot_joint_names:
-                q_out_list.append(q_solution[ii])
-
-        return np.array(q_out_list)
-
     @property
     def n_actuated_dof(self) -> int:
         """

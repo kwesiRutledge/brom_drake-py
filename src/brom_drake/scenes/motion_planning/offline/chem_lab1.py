@@ -12,7 +12,6 @@ from pydrake.systems.framework import Diagram, Context
 from typing import Callable, Tuple
 
 from brom_drake.directories import DEFAULT_BROM_MODELS_DIR
-from brom_drake.example_helpers import AddGround
 from brom_drake.file_manipulation.urdf import drakeify_my_urdf
 from brom_drake.file_manipulation.urdf.shapes.box import BoxDefinition
 from brom_drake.file_manipulation.urdf.simple_writer.urdf_definition import SimpleShapeURDFDefinition, \
@@ -23,7 +22,7 @@ from brom_drake.robots.stations.kinematic import UR10eStation as KinematicUR10eS
 from brom_drake.scenes import SceneID
 from brom_drake.scenes.roles import Role
 from brom_drake.scenes.types import OfflineMotionPlanningScene
-from brom_drake.utils import Performer
+from brom_drake.utils import Performer, AddGround
 
 
 class ChemLab1Scene(OfflineMotionPlanningScene):

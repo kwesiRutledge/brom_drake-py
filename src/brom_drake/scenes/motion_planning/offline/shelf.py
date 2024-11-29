@@ -14,13 +14,12 @@ from pydrake.systems.primitives import ConstantValueSource
 
 # Internal Imports
 import brom_drake.robots as robots
-from brom_drake.example_helpers import AddGround
 from brom_drake.motion_planning.systems.open_loop_plan_dispenser import OpenLoopPlanDispenser
 from brom_drake.robots.stations.kinematic import UR10eStation as KinematicUR10eStation
 from brom_drake.scenes import SceneID
 from brom_drake.scenes.roles import Role
 from brom_drake.scenes.types.motion_planning import OfflineMotionPlanningScene
-from brom_drake.utils import Performer
+from brom_drake.utils import Performer, GroundShape, AddGround
 
 
 class ShelfPlanningScene(OfflineMotionPlanningScene):

@@ -21,7 +21,7 @@ class ChemLab1Test(unittest.TestCase):
         simulator = Simulator(diagram, diagram_context)
         simulator.set_target_realtime_rate(1.0)
         simulator.Initialize()
-        simulator.AdvanceTo(10.0)
+        simulator.AdvanceTo(1.0)
 
         self.assertTrue(True)
 
