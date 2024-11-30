@@ -6,7 +6,7 @@ Description:
 from brom_drake.scenes.roles import Role, RolePortAssignment
 from brom_drake.scenes.roles.role_port_assignment import PairingType
 
-kOfflineMotionPlanner = Role(
+kKinematicMotionPlanner = Role(
     name="OfflineMotionPlanner",
     description="This role is used to define the offline motion planning role.",
     port_assignments=[

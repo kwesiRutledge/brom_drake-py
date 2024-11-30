@@ -18,11 +18,11 @@ from brom_drake.motion_planning.systems.open_loop_plan_dispenser import OpenLoop
 from brom_drake.robots.stations.kinematic import UR10eStation as KinematicUR10eStation
 from brom_drake.scenes import SceneID
 from brom_drake.scenes.roles import Role
-from brom_drake.scenes.types.motion_planning import OfflineMotionPlanningScene
+from brom_drake.scenes.types.motion_planning import KinematicMotionPlanningScene
 from brom_drake.utils import Performer, GroundShape, AddGround
 
 
-class ShelfPlanningScene(OfflineMotionPlanningScene):
+class ShelfPlanningScene(KinematicMotionPlanningScene):
     def __init__(
         self,
         time_step=1e-3,

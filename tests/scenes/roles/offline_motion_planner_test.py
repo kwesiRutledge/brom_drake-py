@@ -1,6 +1,6 @@
 import unittest
 
-from brom_drake.scenes.roles.offline_motion_planner import kOfflineMotionPlanner
+from brom_drake.scenes.roles.motion_planners.kinematic import kKinematicMotionPlanner
 from brom_drake.scenes.roles.role_port_assignment import PairingType
 
 
@@ -13,7 +13,7 @@ class OfflineMotionPlannerTest(unittest.TestCase):
         :return:
         """
         # Setup
-        omp_role = kOfflineMotionPlanner
+        omp_role = kKinematicMotionPlanner
         expected_port_names = [
             "start_configuration",
             "goal_configuration",
@@ -36,7 +36,7 @@ class OfflineMotionPlannerTest(unittest.TestCase):
         :return:
         """
         # Check
-        omp_role = kOfflineMotionPlanner
+        omp_role = kKinematicMotionPlanner
         expected_port_names = ["motion_plan", "plan_is_ready"]
 
         # Assertion

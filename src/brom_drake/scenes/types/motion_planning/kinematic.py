@@ -19,13 +19,13 @@ from pydrake.systems.primitives import ConstantVectorSource, ConstantValueSource
 # Internal Imports
 from brom_drake.motion_planning.systems.prototypical_planner import PrototypicalPlannerSystem
 from brom_drake.scenes.types import BaseScene
-from brom_drake.scenes.roles import kOfflineMotionPlanner, Role
+from brom_drake.scenes.roles import kKinematicMotionPlanner, Role
 from brom_drake.file_manipulation.urdf.shapes.sphere import SphereDefinition
 from brom_drake.file_manipulation.urdf.simple_writer.urdf_definition import SimpleShapeURDFDefinition
 from brom_drake.utils import Performer
 
 
-class OfflineMotionPlanningScene(BaseScene):
+class KinematicMotionPlanningScene(BaseScene):
     def __init__(
         self,
         start_configuration: np.ndarray = None,
@@ -435,7 +435,7 @@ class OfflineMotionPlanningScene(BaseScene):
             )
 
     def suggested_roles(self):
-        return [kOfflineMotionPlanner]
+        return [kKinematicMotionPlanner]
 
     def solve_pose_ik_problem(
         self,

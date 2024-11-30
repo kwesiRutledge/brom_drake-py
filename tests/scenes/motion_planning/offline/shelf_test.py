@@ -4,7 +4,7 @@ import unittest
 
 from brom_drake.scenes import SceneID
 from brom_drake.scenes.motion_planning.offline.shelf import ShelfPlanningScene
-from brom_drake.scenes.roles import kOfflineMotionPlanner
+from brom_drake.scenes.roles import kKinematicMotionPlanner
 
 
 class ShelfTest(unittest.TestCase):
@@ -19,7 +19,7 @@ class ShelfTest(unittest.TestCase):
 
         # Check that defaults are in place
         self.assertEqual(shelf_planning_scene.id, SceneID.kShelfPlanning1)
-        self.assertEqual(shelf_planning_scene.suggested_roles(), [kOfflineMotionPlanner])
+        self.assertEqual(shelf_planning_scene.suggested_roles(), [kKinematicMotionPlanner])
 
         # Populate scene with builder
         shelf_planning_scene.add_all_secondary_cast_members_to_builder()

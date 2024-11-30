@@ -21,11 +21,11 @@ import brom_drake.robots as robots
 from brom_drake.robots.stations.kinematic import UR10eStation as KinematicUR10eStation
 from brom_drake.scenes import SceneID
 from brom_drake.scenes.roles import Role
-from brom_drake.scenes.types import OfflineMotionPlanningScene
+from brom_drake.scenes.types import KinematicMotionPlanningScene
 from brom_drake.utils import Performer, AddGround
 
 
-class ChemLab1Scene(OfflineMotionPlanningScene):
+class ChemLab1Scene(KinematicMotionPlanningScene):
     """
     Description:
         This scene is the first in the chemistry lab series.

@@ -1,8 +1,8 @@
 from .base import BaseScene, Performer
-from .motion_planning import OfflineMotionPlanningScene
+from .motion_planning import KinematicMotionPlanningScene
 
 __all__ = [
     "BaseScene",
-    "OfflineMotionPlanningScene",
+    "KinematicMotionPlanningScene",
     "Performer",
 ]
