@@ -46,16 +46,10 @@ class RRTPlanGeneratorTest(unittest.TestCase):
         # Setup
         builder = DiagramBuilder()
 
-        # Create start pose
-        start_position = np.array([-0.2, 0.9, 0.3])
-        start_orientation = Quaternion(1, 0, 0, 0)
-        p_WStart = RigidTransform(start_orientation, start_position)
-
-        # Create goal pose
-        goal_position = np.array([+0.2, 1.0, 0.65])
-        goal_orientation = Quaternion(1, 0, 0, 0)
-        p_WGoal = RigidTransform(goal_orientation, goal_position)
-
+        # Create start and goal configurations
+        start_configuration = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+        goal_configuration = np.array([0.0, 0.0, -np.pi/4.0, 0.0, 0.0, 0.0])
+        
         # Create a MultibodyPlant
         plant, scene_graph = AddMultibodyPlantSceneGraph(
             builder,
@@ -81,14 +75,10 @@ class RRTPlanGeneratorTest(unittest.TestCase):
         plant.Finalize()
 
         # Create start and goal sources
-        start_source = ConstantVectorSource(
-            np.hstack((start_position, start_orientation.wxyz()))
-        )
+        start_source = ConstantVectorSource(start_configuration)
         builder.AddSystem(start_source)
 
-        goal_source = ConstantVectorSource(
-            np.hstack((goal_position, goal_orientation.wxyz()))
-        )
+        goal_source = ConstantVectorSource(goal_configuration)
         builder.AddSystem(goal_source)
 
         # Also create a source which tells the planner what the model index
@@ -128,17 +118,18 @@ class RRTPlanGeneratorTest(unittest.TestCase):
             scene_graph,
             model_idcs[0],
             rrt_config=rrt_config,
+            dim_config=6,
         )
         builder.AddSystem(plan_generator)
 
         # Connect the start and goal sources to the RRTPlanGenerator
         builder.Connect(
             start_source.get_output_port(0),
-            plan_generator.GetInputPort("start_pose"),
+            plan_generator.GetInputPort("start_configuration"),
         )
         builder.Connect(
             goal_source.get_output_port(0),
-            plan_generator.GetInputPort("goal_pose"),
+            plan_generator.GetInputPort("goal_configuration"),
         )
 
         # Connect the robot model index to the plan_generator
@@ -166,8 +157,6 @@ class RRTPlanGeneratorTest(unittest.TestCase):
 
         # Simulate for a short time
         simulator = Simulator(diagram, diagram_context)
-        plant_context = plant.GetMyContextFromRoot(diagram_context)
-
         plan_generator.set_internal_root_context(diagram_context)
 
         simulator.Initialize()
