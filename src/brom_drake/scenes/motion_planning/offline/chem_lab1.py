@@ -422,7 +422,7 @@ class ChemLab1Scene(OfflineMotionPlanningScene):
 
             return self.goal_config_
         else:
-            return self.goal_pose_
+            return self.goal_config_
 
     @property
     def goal_pose(self) -> RigidTransform:
@@ -434,7 +434,7 @@ class ChemLab1Scene(OfflineMotionPlanningScene):
         # Setup
 
         # Algorithm
-        if self.goal_config_ is None:
+        if self.goal_pose_ is None:
             beaker_to_goal_translation = np.array([+0.0, 0.2, 0.0]) 
             beaker_to_goal_orientation = RollPitchYaw(0., 0., 0.0).ToQuaternion()
             X_BeakerGoal = RigidTransform(  
@@ -453,6 +453,8 @@ class ChemLab1Scene(OfflineMotionPlanningScene):
     def id(self) -> SceneID:
         return SceneID.kShelfPlanning1
         
+    # TODO(kwesi): Implement start_configuration method.
+
     @property
     def start_pose(self) -> RigidTransform:
         """
@@ -461,7 +463,7 @@ class ChemLab1Scene(OfflineMotionPlanningScene):
         """
         # Setup
 
-        if self.start_config_ is None:
+        if self.start_pose_ is None:
             # Define Start Pose
             holder_to_start_translation = np.array([+0.0, 0.2, 0.025])
             holder_to_start_orientation = Quaternion(1, 0, 0, 0)
