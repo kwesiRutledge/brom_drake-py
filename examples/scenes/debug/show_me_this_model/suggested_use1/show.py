@@ -2,7 +2,9 @@
 Description
 -----------
 This script contains an example of how to show
-a given urdf at the specified joint positions.
+a given urdf at some (optional) specified joint positions.
+For more info, refer to the README or the Wiki:
+https://github.com/kwesiRutledge/brom_drake-py/wiki/Scenes-%E2%80%90-ShowMeThisModel
 """
 
 import ipdb
