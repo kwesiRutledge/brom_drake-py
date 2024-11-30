@@ -13,8 +13,9 @@ from pydrake.all import (
 )
 
 # Internal Imports
-from brom_drake.example_helpers import BlockHandlerSystem, AddGround
+from brom_drake.example_helpers import BlockHandlerSystem
 import brom_drake.example_helpers as eh
+from brom_drake.utils import AddGround
 
 
 class TestBlockHandlerSystem(unittest.TestCase):

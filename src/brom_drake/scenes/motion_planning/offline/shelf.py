@@ -14,16 +14,15 @@ from pydrake.systems.primitives import ConstantValueSource
 
 # Internal Imports
 import brom_drake.robots as robots
-from brom_drake.example_helpers import AddGround
 from brom_drake.motion_planning.systems.open_loop_plan_dispenser import OpenLoopPlanDispenser
 from brom_drake.robots.stations.kinematic import UR10eStation as KinematicUR10eStation
 from brom_drake.scenes import SceneID
 from brom_drake.scenes.roles import Role
-from brom_drake.scenes.types.motion_planning import OfflineMotionPlanningScene
-from brom_drake.utils import Performer
+from brom_drake.scenes.types.motion_planning import KinematicMotionPlanningScene
+from brom_drake.utils import Performer, GroundShape, AddGround
 
 
-class ShelfPlanningScene(OfflineMotionPlanningScene):
+class ShelfPlanningScene(KinematicMotionPlanningScene):
     def __init__(
         self,
         time_step=1e-3,
@@ -48,7 +47,7 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
                 np.array([0.0, 1.0, 0.6]),
             )
 
-        self.desired_cupboard_positions = np.array([0.0, 0.0])
+        self.desired_cupboard_positions = np.array([0.2, 0.3])
 
         # Create containers for meshcat and other values we will set later
         self.meshcat = None
@@ -60,6 +59,7 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
             meshcat_port_number=self.meshcat_port_number,
         )
         self.arm = self.station.arm
+        self.robot_model_idx_ = self.station.arm
 
         # Set Names of Plant and scene graph
         self.plant = self.station.plant
@@ -77,6 +77,9 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
         Add all secondary cast members to the builder.
         :return:
         """
+        # Call the parent class method
+        super().add_all_secondary_cast_members_to_builder()
+
         # Setup
         self.add_ur10e_station() # Use the UR10e station's plant + scene graph for all other objects
 
@@ -85,16 +88,14 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
 
         # Add the ground as well as the start and goal locations
         AddGround(self.plant)
-        self.add_start_and_goal_to_this_plant(self.plant)
-
         self.station.Finalize()
 
         # Add The Motion Planning Components (e.g., the interpolator)
-        self.add_start_source_system()
-        self.add_goal_source_system()
         self.add_robot_source_system()
 
         self.add_motion_planning_components()
+
+        self.add_start_and_goal_sources_to_builder()
 
         # Connect motion planning components to station
         # self.connect_motion_planning_components()
@@ -125,24 +126,6 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
             self.plan_dispenser.GetOutputPort("point_in_plan"),
             self.station.GetInputPort("desired_joint_positions"),
         )
-
-    def add_robot_source_system(self):
-        """
-        Description
-        -----------
-        This method adds a source for providing the motion planner
-        with the model index for the robot that we are trying to control.
-        :return:
-        """
-        # Setup
-
-        # Create AbstractValueSource
-        robot_source_system = ConstantValueSource(
-            AbstractValue.Make(self.station.arm)
-        )
-        robot_source_system.set_name("robot_model_index_source")
-
-        self.builder.AddSystem(robot_source_system)
 
     def add_shelf(self, plant: MultibodyPlant):
         """
@@ -178,6 +161,7 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
     def cast_scene_and_build(
         self,
         cast: Tuple[Role, Performer] = [],
+        with_watcher: bool = False,
     ) -> Tuple[Diagram, Context]:
         """
         Description
@@ -186,9 +170,13 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
         we share the context of the plant with the appropriate
         parts of the system.
         :param cast:
+        :param with_watcher: A Boolean that determines whether to add a watcher to the diagram.
         :return:
         """
-        diagram, diagram_context = super().cast_scene_and_build(cast=cast)
+        diagram, diagram_context = super().cast_scene_and_build(
+            cast=cast,
+            with_watcher=with_watcher,
+        )
 
         # Configure the scene graph for collision detection
         self.configure_collision_filter(
@@ -225,22 +213,41 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
         # Ignore self collisions of the shelf, by:
         # - Getting the model instance index of the shelf
         # - Collecting the Geometry IDs of all the geometries in the shelf
-        geometry_ids = []
+        shelf_geometry_ids = []
         for body_index in self.plant.GetBodyIndices(shelf_model_index):
             # Get the geometry IDs
-            geometry_ids.extend(
+            shelf_geometry_ids.extend(
                 self.plant.GetCollisionGeometriesForBody(
                     self.plant.get_body(body_index)
                 )
             )
-            print(self.plant.get_body(body_index))
+            # print(self.plant.get_body(body_index))
 
-        self.geometry_ids_to_ignore = geometry_ids
+        self.shelf_geometry_ids = shelf_geometry_ids
 
         # Apply the collision filter
         scene_graph.collision_filter_manager(scene_graph_context).Apply(
             CollisionFilterDeclaration().ExcludeWithin(
-                GeometrySet(self.geometry_ids_to_ignore)
+                GeometrySet(self.shelf_geometry_ids)
+            )
+        )
+
+        # Ignore collisions between the robot links
+        # TODO: Actually implement this for adjacent links? Or is this not necessary?
+        arm_geometry_ids = []
+        for body_index in self.plant.GetBodyIndices(self.arm):
+            arm_geometry_ids.extend(
+                self.plant.GetCollisionGeometriesForBody(
+                    self.plant.get_body(body_index)
+                )
+            )
+
+        self.arm_geometry_ids = arm_geometry_ids
+
+        # Apply the collision filter
+        scene_graph.collision_filter_manager(scene_graph_context).Apply(
+            CollisionFilterDeclaration().ExcludeWithin(
+                GeometrySet(self.arm_geometry_ids)
             )
         )
 
@@ -260,22 +267,28 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
 
     def easy_cast_and_build(
         self,
-            planning_algorithm: Callable[
-                [np.ndarray, np.ndarray, Callable[[np.ndarray], bool]],
-                Tuple[nx.DiGraph, np.ndarray],
-            ],
+        planning_algorithm: Callable[
+            [np.ndarray, np.ndarray, Callable[[np.ndarray], bool]],
+            Tuple[nx.DiGraph, np.ndarray],
+        ],
+        with_watcher: bool = False,
     ) -> Tuple[Diagram, Context]:
         """
         Description
         -----------
         This function is used to easily cast and build the scene.
         :param planning_algorithm: The algorithm that we will use to
+        plan the motion.
+        :param with_watcher: A Boolean that determines whether to add a watcher to the diagram.
         :return:
         """
         # Setup
 
         # Use Base class implementation to start
-        diagram, diagram_context = super().easy_cast_and_build(planning_algorithm)
+        diagram, diagram_context = super().easy_cast_and_build(
+            planning_algorithm,
+            with_watcher=with_watcher,
+        )
 
         # Configure the scene graph for collision detection
         self.configure_collision_filter(
@@ -301,20 +314,31 @@ class ShelfPlanningScene(OfflineMotionPlanningScene):
         Get the goal pose. This should be defined by the subclass.
         :return:
         """
-        goal_position = np.array([+0.1, 1.0, 0.55]) # np.array([+0.5, 0.7, 0.65])
-        goal_orientation = RollPitchYaw(np.pi/2.0, np.pi/2.0, 0.0).ToQuaternion()
-        return RigidTransform(goal_orientation, goal_position)
+        if self.goal_pose_ is None:
+            goal_position = np.array([+0.0, 1.0, 0.6])
+            goal_orientation = RollPitchYaw(np.pi / 2.0, np.pi / 2.0, 0.0).ToQuaternion()
+            self.goal_pose_ = RigidTransform(goal_orientation, goal_position)
+            return self.goal_pose_
+        else:
+            return self.goal_pose_
+
 
     @property
     def id(self) -> SceneID:
         return SceneID.kShelfPlanning1
 
     @property
-    def start_pose(self):
+    def start_pose(self) -> RigidTransform:
         """
+        Description
+        -----------
         Get the start pose. This should be defined by the subclass.
         :return:
         """
-        start_position = np.array([+0.3, 0.1, 1.2])
-        start_orientation = Quaternion(1, 0, 0, 0)
-        return RigidTransform(start_orientation, start_position)
+        if self.start_pose_ is None:
+            start_position = np.array([+0.3, 0.1, 1.2])
+            start_orientation = Quaternion(1, 0, 0, 0)
+            self.start_pose_ = RigidTransform(start_orientation, start_position)
+            return self.start_pose_
+        else:
+            return self.start_pose_

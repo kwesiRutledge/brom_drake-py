@@ -14,8 +14,8 @@ from brom_drake.motion_planning.algorithms.motion_planner import MotionPlanner
 
 @dataclass
 class BaseRRTPlannerConfig:
-    steering_step_size: float = 0.1
-    prob_sample_goal: float = 0.075
+    steering_step_size: float = 0.05
+    prob_sample_goal: float = 0.25
     max_iterations: int = int(1e4)
     convergence_threshold: float = 1e-3
 
@@ -153,6 +153,12 @@ class BaseRRTPlanner(MotionPlanner):
             # Check if we have reached the goal
             if np.linalg.norm(q_new - q_goal) < self.config.convergence_threshold:
                 print(f"Goal reached after {iteration} iterations!")
+                print(f"Check all points in path: {rrt.nodes}")
+                for node in rrt.nodes:
+                    print(f"Node {node}: {rrt.nodes[node]}")
+                    collision_check_value = collision_check_fcn(rrt.nodes[node]['q'])
+                    if collision_check_value:
+                        print(f"Collision check node: {collision_check_fcn(rrt.nodes[node]['q'])}")
                 return rrt, True
 
         # If we exit the loop without finding a path to the goal,

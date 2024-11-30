@@ -12,12 +12,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 
+from pydrake.multibody.plant import MultibodyPlant
 from pydrake.systems.framework import OutputPort, PortDataType, DiagramBuilder, LeafSystem
 from pydrake.systems.primitives import LogVectorOutput
 from pydrake.systems.framework import Context
 
 # Internal Imports
-from brom_drake.DiagramWatcher.constants import DEFAULT_PLOT_DIR
+from brom_drake.directories import DEFAULT_PLOT_DIR
 from .port_watcher_options import PortWatcherOptions, FigureNamingConvention
 from .port_figure_arrangement import PortFigureArrangement
 
@@ -54,6 +55,54 @@ class PortWatcher:
         # Processing
         self.logger = LogVectorOutput(output_port, builder)
         self.logger.set_name(logger_name)
+
+    def name_of_data_at_index(
+        self,
+        dim_index: int,
+        remove_spaces: bool = False,
+    ) -> str:
+        """
+        Description:
+            Returns the name of the data which is in index dim_index
+            of this vector-valued port.
+        :param dim_index:
+        :param remove_spaces: Whether to remove spaces from the name.
+        :return:
+        """
+        # Setup
+        n_dims = self.port.size()
+
+        # Input Processing
+        if dim_index >= n_dims:
+            raise ValueError(
+                f"dim_index ({dim_index}) is greater than the number of dimensions in the port ({n_dims})."
+            )
+
+        # Default name
+        name = f"Dim #{dim_index}"
+
+        # Only use full names, if we are NOT using the OnePlotPerPort config
+        if self.options.plot_arrangement == PortFigureArrangement.OnePlotPerPort:
+            return name
+
+        if self.system_is_multibody_plant():
+            # The multi-body plant has names for specific ports
+            if self.port.get_name() == "state":
+                # We can get the names of the state
+                state_names = self.system.GetStateNames()
+                name = state_names[dim_index]
+            else:
+                # Announce that we are using the default name
+                loguru.logger.warning(
+                    f"Using default name for data at index {dim_index} of port {self.port.get_name()} of system {self.system.get_name()}."
+                )
+
+        # Filter our spaces, if requested
+        if remove_spaces:
+            name = name.replace(" ", "_")
+
+        # Return name!
+        return name
 
     def plot_logger_data(
         self,
@@ -93,6 +142,10 @@ class PortWatcher:
                 ax_ii.plot(
                     log_times, log_data[port_index, :]
                 )
+
+                # Add axis titles and labels
+                ax_ii.set_xlabel("Time (s)")
+                ax_ii.set_title(self.name_of_data_at_index(port_index))
 
                 # Save figures and axes to lists
                 figs.append(fig_ii)
@@ -134,7 +187,14 @@ class PortWatcher:
 
         if n_rows == 1 and n_cols == 1:
             ax_list.plot(times, data[0, :])
-            ax_list.set_title(f"Dim #0")
+            ax_list.set_title(self.name_of_data_at_index(0))
+
+        elif (n_rows == 1) or (n_cols == 1):
+            for dim_index in range(n_dims):
+                ax_list[dim_index].plot(times, data[dim_index, :])
+                ax_list[dim_index].set_title(
+                    self.name_of_data_at_index(dim_index),
+                )
 
         else:
             for row_index in range(n_rows):
@@ -147,7 +207,7 @@ class PortWatcher:
                         continue
 
                     ax_list[row_index, col_index].plot(times, data[dim_index, :])
-                    ax_list[row_index, col_index].set_title(f"Dim #{dim_index}")
+                    ax_list[row_index, col_index].set_title(self.name_of_data_at_index(dim_index))
 
         return fig, ax_list
 
@@ -189,7 +249,7 @@ class PortWatcher:
 
     def save_figures(self, diagram_context: Context):
         """
-        savefigures
+        save_figures
         Description:
             This function saves the figures.
         TODO(kwesi): Make it so that this function computes names + directory structure based on plot arrangement.
@@ -293,7 +353,7 @@ class PortWatcher:
 
         elif options.plot_arrangement == PortFigureArrangement.OnePlotPerDim:
             return [
-                f"{self.plot_dir}/system_{self.safe_system_name()}/port_{self.port.get_name()}/dim{ii}.{format}"
+                f"{self.plot_dir}/system_{self.safe_system_name()}/port_{self.port.get_name()}/{self.name_of_data_at_index(ii, remove_spaces=True)}.{format}"
                 for ii in range(self.port.size())
             ]
 
@@ -301,3 +361,11 @@ class PortWatcher:
             raise NotImplementedError(
                 f"Invalid plot arrangement for figure naming convention {options.figure_naming_convention}: {options.plot_arrangement}."
             )
+
+    def system_is_multibody_plant(self) -> bool:
+        """
+        Description:
+            Returns True if the system is a MultibodyPlant.
+        :return:
+        """
+        return type(self.system) == MultibodyPlant

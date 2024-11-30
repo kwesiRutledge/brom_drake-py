@@ -4,6 +4,7 @@ Description:
 
     This
 """
+from importlib import resources as impresources
 import shutil
 import unittest
 import os
@@ -18,6 +19,7 @@ from pydrake.multibody.parsing import Parser
 from pydrake.multibody.plant import MultibodyPlant, AddMultibodyPlantSceneGraph
 from pydrake.systems.analysis import Simulator
 from pydrake.systems.framework import DiagramBuilder, PortDataType, Diagram, Context
+from pydrake.systems.primitives import ConstantVectorSource
 
 # Internal Imports
 from brom_drake.all import (
@@ -25,6 +27,8 @@ from brom_drake.all import (
     PortFigureArrangement, PortWatcherOptions,
     FigureNamingConvention
 )
+
+import brom_drake.robots as robots
 
 
 class PortWatcherTest(unittest.TestCase):
@@ -241,14 +245,14 @@ class PortWatcherTest(unittest.TestCase):
         # Define plant with:
         # + add block model
         # + ground
-        plant, scene_graph = AddMultibodyPlantSceneGraph(builder, time_step=1e-3)
+        plant, scene_graph = AddMultibodyPlantSceneGraph(builder, time_step=time_step)
 
         block_model_idx = Parser(plant=plant).AddModels(
             self.get_brom_drake_dir() + "/examples/watcher/suggested_use1/slider-block.urdf",
         )[0]
         block_body_name = "block"
 
-        p_GroundOrigin = [0, 0.0, 0.0]
+        p_GroundOrigin = [0.0, 0.0, 0.0]
         R_GroundOrigin = RotationMatrix.MakeXRotation(0.0)
         X_GroundOrigin = RigidTransform(R_GroundOrigin, p_GroundOrigin)
         surface_friction = CoulombFriction(
@@ -889,6 +893,99 @@ class PortWatcherTest(unittest.TestCase):
         if self.delete_test_brom_directory_on_teardown:
             shutil.rmtree(plot_dir)
 
+    def test_system_is_multibody_plant1(self):
+        """
+        Description:
+
+            This test provides a multibody plant to the
+            PortWatcher and verifies that the system_is_multibody_plant
+            method returns True.
+        :return:
+        """
+        # Setup
+        time_step = 0.01
+        builder = DiagramBuilder()
+
+        # Create Diagram
+        plant = builder.AddNamedSystem("my_plant", MultibodyPlant(time_step=time_step))
+        plant.Finalize()
+
+        pw0 = PortWatcher(
+            plant, plant.GetOutputPort("state"), builder,
+        )
+
+        # Test
+        self.assertTrue(pw0.system_is_multibody_plant())
+
+    def test_system_is_multibody_plant2(self):
+        """
+        Description:
+
+            This test provides a non-multibody plant to the
+            PortWatcher and verifies that the system_is_multibody_plant
+            method returns False.
+        :return:
+        """
+        # Setup
+        time_step = 0.01
+        builder = DiagramBuilder()
+
+        # Create Diagram
+        plant = builder.AddNamedSystem("my_plant", MultibodyPlant(time_step=time_step))
+        plant.Finalize()
+
+        constant_vector_source = builder.AddSystem(ConstantVectorSource([1.0, 2.0, 3.0]))
+
+        pw0 = PortWatcher(
+            constant_vector_source,
+            constant_vector_source.get_output_port(),
+            builder,
+        )
+
+        # Test
+        self.assertFalse(pw0.system_is_multibody_plant())
+
+    def test_name_of_data_at_index1(self):
+        """
+        Description:
+
+            This test verifies that the name_of_data_at_index method
+            properly returns the name of the data at the given index
+            when handling a plant with some models in it.
+
+            Note: The new name is only active with specific options.
+        :return:
+        """
+        # Setup
+        time_step = 0.01
+        builder = DiagramBuilder()
+
+        # Add in some models
+        plant =  MultibodyPlant(time_step=time_step)
+        plant = builder.AddSystem(plant)
+        cupboard_sdf_file = str(
+            impresources.files(robots) / "models/cupboard/cupboard.sdf"
+        )
+        Parser(plant).AddModels(cupboard_sdf_file)
+        plant.Finalize()
+
+
+        pw0 = PortWatcher(
+            plant,
+            plant.GetOutputPort("state"),
+            builder,
+            options=PortWatcherOptions(
+                plot_arrangement=PortFigureArrangement.OnePlotPerDim,
+            )
+        )
+
+        # Test
+        name0 = pw0.name_of_data_at_index(0)
+
+        self.assertIn(
+            "cupboard",
+            name0,
+        )
 
 if __name__ == '__main__':
     unittest.main()

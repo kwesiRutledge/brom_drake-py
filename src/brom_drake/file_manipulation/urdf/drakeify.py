@@ -10,12 +10,14 @@ from typing import Union
 from pathlib import Path
 
 # Internal Imports
-from .DrakeReadyURDFConverter import DrakeReadyURDFConverter
+from .DrakeReadyURDFConverter import DrakeReadyURDFConverter, MeshReplacementStrategy
 
 def drakeify_my_urdf(
     urdf_file_path: Union[str, Path],
     overwrite_old_logs: bool = False,
+    overwrite_old_models: bool = False,
     log_file_name: str = "conversion.log",
+    collision_mesh_replacement_strategy: MeshReplacementStrategy = MeshReplacementStrategy.kWithObj,
 ) -> Path:
     """
     Description:
@@ -41,7 +43,9 @@ def drakeify_my_urdf(
     converter = DrakeReadyURDFConverter(
         urdf_file_path,
         overwrite_old_logs=overwrite_old_logs,
+        overwrite_old_models=overwrite_old_models,
         log_file_name=log_file_name,
+        collision_mesh_replacement_strategy=collision_mesh_replacement_strategy,
     )
 
     # Convert the URDF

@@ -23,6 +23,9 @@ class BaseScene:
         # Save a list of the performers
         self.performers = []
 
+        # Create an extra place to save DiagramWatcher objects
+        self.watcher = None
+
     def add_all_secondary_cast_members_to_builder(self):
         """
         Description
@@ -79,21 +82,39 @@ class BaseScene:
         for role, performer in cast:
             self.fill_role(role, performer)
 
+    def build_scene(
+        self,
+        with_watcher: bool = True,
+    ):
+        """
+        Description
+        -----------
+        This method builds the scene.
+        It assumes that all components have been added to the builder.
+        :param with_watcher: A Boolean that determines whether to add a watcher to the diagram.
+        :return:
+        """
+        # Setup
+        builder = self.builder
+
+        # Build the diagram
+        if with_watcher:
+            self.watcher, self.diagram, self.diagram_context = add_watcher_and_build(builder)
+        else:
+            self.diagram = builder.Build()
+            self.diagram_context = self.diagram.CreateDefaultContext()
+
+        return self.diagram, self.diagram_context
+
     def cast_scene_and_build(
         self,
         cast: Tuple[Role, Performer] = [],
+        with_watcher: bool = True,
     ) -> Tuple[Diagram, Context]:
         # Setup
-        builder = self.builder
         self.cast_scene(cast)
 
-        # Build the diagram
-        # self.diagram = builder.Build()
-        # self.diagram_context = self.diagram.CreateDefaultContext()
-
-        watcher, self.diagram, self.diagram_context = add_watcher_and_build(builder)
-
-        return self.diagram, self.diagram_context
+        return self.build_scene(with_watcher=with_watcher)
 
     @property
     def id(self) -> SceneID:

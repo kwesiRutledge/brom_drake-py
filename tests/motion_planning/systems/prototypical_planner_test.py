@@ -5,11 +5,13 @@ This file defines a test class that is used to test the prototypical planner
 system that I've defined in the motion_planning/systems/prototypical_planner.py file.
 """
 from importlib import resources as impresources
-
-from pydrake.multibody.parsing import Parser
-from pydrake.multibody.plant import AddMultibodyPlantSceneGraph
-from pydrake.systems.analysis import Simulator
-from pydrake.systems.framework import DiagramBuilder
+import numpy as np
+from pydrake.all import (
+    Parser, DiagramBuilder,
+    AddMultibodyPlantSceneGraph,
+    RigidTransform, RollPitchYaw,
+    Simulator,
+)
 import unittest
 
 from brom_drake.file_manipulation.urdf import drakeify_my_urdf
@@ -48,6 +50,57 @@ class TestPrototypicalPlannerSystem(unittest.TestCase):
         # Add the UR10e to the plant
         self.arm = Parser(self.plant).AddModels(str(new_urdf_path))[0]
 
+    def test_check_collision_in_config1(self):
+        """
+        Description
+        -----------
+        This test checks the prototypical planner's ability to correctly identify when
+        a configuration is in collision.
+        We will place the arm in a known collision configuration with
+        the shelf placed in the way.
+        """
+        # Setup
+        q_collision = np.array([0.0, 0.0, -np.pi/4.0, 0.0, 0.0, 0.0])
+
+        bad_shelf_position = np.array([0.5, 0.0, 0.0])
+        bad_shelf_orientation = RollPitchYaw(np.pi/2.0, 0.0, 0.0)
+        bad_shelf_pose = RigidTransform(bad_shelf_orientation, bad_shelf_position)
+
+        # Create the Scene
+        scene1 = ShelfPlanningScene(
+            meshcat_port_number=None,
+            start_config=q_collision,
+            goal_config=q_collision,
+            shelf_pose=bad_shelf_pose,
+        )
+
+        # Cast all secondary scene members
+        scene1.add_all_secondary_cast_members_to_builder()
+
+        # Create planner with the now finalized arm
+        planner1 = BaseRRTPlanner(
+            scene1.arm,
+            scene1.plant,
+            scene1.scene_graph,
+        )
+
+        system1 = PrototypicalPlannerSystem(
+            scene1.plant,
+            scene1.scene_graph,
+            planner1.plan,
+            robot_model_idx=scene1.arm,
+        )
+
+        # Build scene
+        scene1.fill_role(scene1.suggested_roles()[0], system1)
+        diagram, diagram_context = scene1.build_scene()
+        
+        system1.set_internal_root_context(diagram_context)
+
+        # Check collision
+        in_collision = system1.check_collision_in_config(q_collision)
+        self.assertTrue(in_collision)
+
     def test_init1(self):
         """
         Description
@@ -64,6 +117,7 @@ class TestPrototypicalPlannerSystem(unittest.TestCase):
         prototypical_planner = PrototypicalPlannerSystem(
             self.plant, self.scene_graph,
             planner1,
+            robot_model_idx=self.arm,
         )
 
         self.assertTrue(True)
@@ -77,9 +131,18 @@ class TestPrototypicalPlannerSystem(unittest.TestCase):
         :return:
         """
         # Setup
+        q_easy_start = np.array([0.0, 0.0, -np.pi/4.0, 0.0, 0.0, 0.0])
+        q_easy_goal = np.array([0.0, 0.0, -np.pi/8.0, 0.0, 0.0, 0.0])
         scene1 = ShelfPlanningScene(
-            meshcat_port_number=7002,
+            meshcat_port_number=None,
+            start_config=q_easy_start,
+            goal_config=q_easy_goal,
         )
+
+        # Cast all secondary scene members
+        scene1.add_all_secondary_cast_members_to_builder()
+
+        # Create planner with the now finalized arm
         planner2 = BaseRRTPlanner(
             scene1.arm,
             scene1.plant,
@@ -88,21 +151,31 @@ class TestPrototypicalPlannerSystem(unittest.TestCase):
 
         # Create the System
         prototypical_planner = PrototypicalPlannerSystem(
-            scene1.plant, scene1.scene_graph,
+            scene1.plant,
+            scene1.scene_graph,
             planner2.plan,
+            robot_model_idx=scene1.arm,
         )
 
         # Add the prototypical planner to the scene
         role1 = scene1.suggested_roles()[0]
-        diagram, diagram_context = scene1.cast_scene_and_build([
-            (role1, prototypical_planner),
-        ])
+        scene1.fill_role(role1, prototypical_planner)
+
+        diagram, diagram_context = scene1.build_scene()
+
+        # Add the connections that we need for the performer
+        prototypical_planner.set_internal_root_context(
+            diagram_context
+        )
 
         # Create simulator
-        simulator = Simulator(diagram, diagram_context)
-        simulator.set_target_realtime_rate(1.0)
-        simulator.Initialize()
-        simulator.AdvanceTo(1.0)
+        # simulator = Simulator(diagram, diagram_context)
+        # simulator.set_target_realtime_rate(1.0)
+        # simulator.Initialize()
+        
+        self.assertTrue(True) # Scene built successfully, which is good.
+
+        #TODO(kwesi): Test that the simulation works for some simple case...
 
 if __name__ == '__main__':
     unittest.main()

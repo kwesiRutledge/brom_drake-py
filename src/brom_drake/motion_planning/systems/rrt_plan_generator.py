@@ -32,7 +32,8 @@ class RRTPlanGenerator(LeafSystem):
         plant: MultibodyPlant,
         scene_graph: SceneGraph,
         robot_model_idx: ModelInstanceIndex = None,
-        rrt_config: BaseRRTPlannerConfig = None
+        rrt_config: BaseRRTPlannerConfig = None,
+        dim_config: int = None,
     ):
         """
         Description:
@@ -47,6 +48,8 @@ class RRTPlanGenerator(LeafSystem):
 
         # Compute dof using robot_model_idx
         self.dim_q = None
+        if dim_config is not None:
+            self.set_dimension(dim_config)
 
         # Set Up Input and Output Ports
         self.root_context = None # NOTE: This should be assigned by the user before calling!
@@ -61,19 +64,12 @@ class RRTPlanGenerator(LeafSystem):
         # Print
         if self.plan is None:
             # Compute plan
-            p_WStart_vec = self.GetInputPort("start_pose").Eval(context)
-            p_WGoal_vec = self.GetInputPort("goal_pose").Eval(context)
+            q_start = self.GetInputPort("start_configuration").Eval(context)
+            q_goal = self.GetInputPort("goal_configuration").Eval(context)
             self.robot_model_idx = self.GetInputPort("robot_model_index").EvalAbstract(context).get_value()
 
-            print(self.robot_model_idx)
-
-            q_start = self.solve_pose_ik_problem(
-                p_WStart_vec,
-            )
-
-            q_goal = self.solve_pose_ik_problem(
-                p_WGoal_vec,
-            )
+            assert self.dim_q == self.n_actuated_dof, \
+                f"Dimension of configuration space ({self.dim_q}) does not match the number of actuated DOF ({self.n_actuated_dof})!"
 
             base_rrt = BaseRRTPlanner(
                 self.robot_model_idx,
@@ -107,12 +103,12 @@ class RRTPlanGenerator(LeafSystem):
             This function creates the input ports for the RRT planner.
         """
         self.DeclareVectorInputPort(
-            "start_pose",
-            BasicVector(np.zeros((7,))),
+            "start_configuration",
+            BasicVector(np.zeros((self.dim_q,))),
         )
         self.DeclareVectorInputPort(
-            "goal_pose",
-            BasicVector(np.zeros((7,))),
+            "goal_configuration",
+            BasicVector(np.zeros((self.dim_q,))),
         )
         self.DeclareAbstractInputPort(
             "robot_model_index",
@@ -127,7 +123,7 @@ class RRTPlanGenerator(LeafSystem):
         # Setup
 
         # Create output for plan
-        sample_plan = np.zeros((0, self.n_actuated_dof))
+        sample_plan = np.zeros((0, self.dim_q))
         self.DeclareAbstractOutputPort(
             "motion_plan",
             lambda: AbstractValue.Make(sample_plan),

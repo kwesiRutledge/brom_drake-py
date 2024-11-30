@@ -1,3 +1,3 @@
-from .offline import OfflineMotionPlanningScene
+from .kinematic import KinematicMotionPlanningScene
 
-__all__ = ["OfflineMotionPlanningScene"]
+__all__ = ["KinematicMotionPlanningScene"]

@@ -2,7 +2,8 @@ from importlib import resources as impresources
 from pathlib import Path
 
 import numpy as np
-from pydrake.geometry import SceneGraph, Meshcat, MeshcatVisualizer
+from pydrake.geometry import SceneGraph, Meshcat, MeshcatVisualizer, MeshcatVisualizerParams
+from pydrake.geometry import Role as DrakeRole
 from pydrake.math import RollPitchYaw, RigidTransform, RotationMatrix
 from pydrake.multibody.parsing import Parser
 from pydrake.multibody.plant import MultibodyPlant
@@ -10,11 +11,11 @@ from pydrake.multibody.tree import FixedOffsetFrame
 from pydrake.systems.framework import Diagram, DiagramBuilder
 from pydrake.systems.primitives import Demultiplexer
 
-from brom_drake.control import IdealJointPositionController
 # Local imports
 from brom_drake.robots.gripper_type import GripperType
+from brom_drake.control import IdealJointPositionController
 from brom_drake.control.grippers.gripper_controller import GripperController
-from brom_drake.file_manipulation.urdf import DrakeReadyURDFConverter
+from brom_drake.file_manipulation.urdf import DrakeReadyURDFConverter, MeshReplacementStrategy
 
 from brom_drake import robots
 
@@ -86,7 +87,11 @@ class UR10eStation(Diagram):
         if (not expected_arm_urdf_path.exists()) or self.force_conversion_of_original_urdf:
             # If drake-compatible URDF does not exist, then we need to convert
             # the original URDF to a drake-compatible URDF.
-            arm_urdf = DrakeReadyURDFConverter(original_arm_urdf_path).convert_urdf()
+            arm_urdf = DrakeReadyURDFConverter(
+                original_arm_urdf_path,
+                overwrite_old_logs=True,
+                collision_mesh_replacement_strategy=MeshReplacementStrategy.kWithMinimalEnclosingCylinder,
+            ).convert_urdf()
             arm_urdf = str(arm_urdf)
         else:
             # Otherwise, let's just read the drake-compatible URDF
@@ -152,7 +157,12 @@ class UR10eStation(Diagram):
     def ConnectToMeshcatVisualizer(self, port=None):
         self.meshcat = Meshcat(port)
         m = MeshcatVisualizer(self.meshcat)
-        m.AddToBuilder(self.builder, self.scene_graph, self.meshcat)
+        m.AddToBuilder(
+            self.builder, self.scene_graph, self.meshcat,
+            # params=MeshcatVisualizerParams(
+            #         role=DrakeRole.kProximity,
+            #     ),
+        )
 
         print("Open %s in a browser to view the meshcat visualizer." % self.meshcat.web_url())
 

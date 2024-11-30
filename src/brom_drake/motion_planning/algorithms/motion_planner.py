@@ -56,15 +56,15 @@ class MotionPlanner:
         # Note: This method will be inaccurate if using arbitrary, nonconvex meshes!
         # https://drake.mit.edu/pydrake/pydrake.geometry.html?highlight=queryobject#pydrake.geometry.QueryObject.HasCollisions
         query_object = self.scene_graph.get_query_output_port().Eval(scene_graph_context)
-        return query_object.HasCollisions()
+        # return query_object.HasCollisions()
 
+        # Alternative method to check for collisions
+        closest_points = query_object.ComputeSignedDistancePairwiseClosestPoints()
+        eps0 = 1e-2
+        for pair in closest_points:
+            if pair.distance < eps0:
+                return True
+            
+        # Otherwise return false
+        return False
 
-
-
-    def plan_motion(self):
-        """
-        Description:
-            This function plans the motion for the robot.
-        """
-        # Motion planning logic goes here
-        pass

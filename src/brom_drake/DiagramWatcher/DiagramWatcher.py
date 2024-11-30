@@ -21,8 +21,8 @@ from pydrake.systems.primitives import (
 from brom_drake.DiagramTarget import DiagramTarget
 from brom_drake.PortWatcher.port_watcher import PortWatcher
 from brom_drake.PortWatcher.port_watcher_options import PortWatcherOptions
-from brom_drake.PortWatcher.port_watcher import FigureNamingConvention
-from brom_drake.DiagramWatcher.constants import INELIGIBLE_SYSTEM_TYPES, DEFAULT_PLOT_DIR
+from brom_drake.DiagramWatcher.constants import INELIGIBLE_SYSTEM_TYPES
+from brom_drake.directories import  DEFAULT_PLOT_DIR
 from brom_drake.DiagramWatcher.errors import UnrecognizedTargetError
 
 

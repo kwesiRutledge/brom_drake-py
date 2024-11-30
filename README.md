@@ -11,6 +11,7 @@ Feature                    |  Code | Results
 :-------------------------:|:-------------------------:|:-------------------------:
 The Diagram Watcher (the `DiagramWatcher` will log + plot all output ports of your `Diagram` automatically) |`add_watcher_and_build()`| ![Creation of Brom Directory](./promo/BromWatcher0.gif)
 The Drake-ify feature (converts your URDF file into a form that Drake can consume) | `drakeify_my_urdf()` | ![Drakeify Example](./promo/BromDrakeifyURDF0.gif)
+Scenes (partially complete robot scenarios to test your algorithms) | (See Examples Directory or the Wiki) | ![ShowMeThisModel Example](./promo/show_me1.png)
 
 (More coming soon...)
 
@@ -91,6 +92,18 @@ watcher, _, _ = add_watcher_and_build(
 The above code tells the watcher to watch the port named `port_name` on the system named `system_name`.
 (If you don't know your system's name in Drake, then you can usually find it by using the `get_name()` method.)
 
+## Citation
+
+Feel free to cite this project if it helped with your work!
+
+```
+@misc{drake,
+  author = "Kwesi Rutledge and the Wrench Robotics Team",
+  title = "Brom: A Helper Library for the Drake Toolbox",
+  year = 2024,
+}
+```
+
 ## FAQs
 
 ### Why the name Brom?
@@ -99,6 +112,9 @@ The above code tells the watcher to watch the port named `port_name` on the syst
 [Inheritance](https://en.wikipedia.org/wiki/Eragon) series by Christopher Paolini.
 He is a wise mentor that helps Eragon (the protagonist) master dragons. ;)
 
+
+
+### How can I support this project?
  
 
 ## Related Work
@@ -118,4 +134,5 @@ Some other work in the open-source drake community:
 - [ ] Add Documentation
 - [ ] Create a method that makes each material in a URDF file have unique names if they have specific values
 - [ ] Add methods for saving the state names on state plots from diagram watcher
-- [ ] Add methods for over or under-approximating complex mehes with cylinders or circles or other shapes.
+- [X] Add methods for over or under-approximating complex mehes with cylinders or circles or other shapes.
+- [ ] Allow for the user to give "Drake-unfriendly" URDFs to `ShowMeThisModel` scene

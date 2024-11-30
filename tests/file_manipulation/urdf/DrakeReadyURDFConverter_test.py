@@ -6,17 +6,22 @@ Description:
 """
 from importlib import resources as impresources
 import loguru
+import numpy as np
 from pathlib import Path
 import unittest
 from xml.etree.ElementTree import ElementTree
 
+from pydrake.systems.analysis import Simulator
 from pydrake.multibody.parsing import Parser
 from pydrake.multibody.plant import MultibodyPlant
 
 # Internal Imports
 import brom_drake
-from brom_drake.file_manipulation.urdf import DrakeReadyURDFConverter
+from brom_drake import robots
+from brom_drake.all import drakeify_my_urdf
+from brom_drake.file_manipulation.urdf import DrakeReadyURDFConverter, MeshReplacementStrategy
 import resources as resources_dir
+from brom_drake.scenes.debug import ShowMeThisModel
 
 
 class DrakeReadyURDFConverterTest(unittest.TestCase):
@@ -122,18 +127,19 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
             log_file_name="test_convert_tree_element2.log",
             overwrite_old_logs=True,
         )
-        target_mesh_elt = test_tree.find(".//mesh[@filename='./meshes/ur10e/visual/base.dae']")
-        new_root = converter.convert_tree_element(target_mesh_elt)
+        # Find an element that references a .dae file
+        target_visual_elt = test_tree.getroot().find("link/visual")
+        new_visual_elt = converter.convert_tree_element(target_visual_elt)
 
         # Compare the filenames of the mesh and the new obj file
         self.assertNotEqual(
-            target_mesh_elt.attrib["filename"],
-            new_root.attrib["filename"]
+            target_visual_elt.find("geometry/mesh").attrib["filename"],
+            new_visual_elt.find("geometry/mesh").attrib["filename"]
         )
 
         self.assertIn(
             ".obj",
-            new_root.attrib["filename"]
+            new_visual_elt.find("geometry/mesh").attrib["filename"]
         )
 
     def test_create_obj_to_replace_mesh_file1(self):
@@ -438,6 +444,88 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         temp_plant = MultibodyPlant(time_step=1e-3)
         added_models = Parser(temp_plant).AddModels(str(new_urdf_path))
         self.assertTrue(True)
+
+    def test_convert_urdf7(self):
+        """
+        Description
+        -----------
+        This test verifies that we can convert a full URDF file
+        with the option to replace collision geometries with visual geometries.
+        """
+        # Setup
+        test_urdf = self.test_urdf1_filename
+
+        # Create pay to the collision base file
+        test_dir = Path(__file__).parent
+
+        # Use converter on urdf6
+        converter = DrakeReadyURDFConverter(
+            test_urdf,
+            output_urdf_file_path="./brom/resources/test_convert_urdf7.urdf",
+            overwrite_old_logs=True,
+            log_file_name="test_convert_urdf7.log",
+            collision_mesh_replacement_strategy=MeshReplacementStrategy.kWithMinimalEnclosingCylinder,
+        )
+
+        # Test
+        new_urdf_path = converter.convert_urdf()
+
+        # Verify that the new file exists
+        self.assertTrue(new_urdf_path.exists())
+
+        # Verify that the new file's collision elements DO NOT contain mesh elements
+        new_tree = ElementTree(file=new_urdf_path)
+        all_mesh_elts = list(new_tree.iter("mesh"))
+        self.assertTrue(
+            len(all_mesh_elts) == 1
+        )
+
+        # Search through all the collision elements and make sure they are cylinders
+        for collision_elt in new_tree.iter("collision"):
+            self.assertEqual(
+                collision_elt.find("geometry").find("cylinder").tag,
+                "cylinder"
+            )
+
+        # Make sure that this can be added to a plant
+        temp_plant = MultibodyPlant(time_step=1e-3)
+        added_models = Parser(temp_plant).AddModels(str(new_urdf_path))
+        self.assertTrue(True)
+
+    def test_vis1(self):
+
+        # Setup
+        urdf_file_path = str(
+            impresources.files(robots) / "models/ur/ur10e.urdf"
+        )
+
+        # Convert the URDF
+        new_urdf_path = drakeify_my_urdf(
+            urdf_file_path,
+            overwrite_old_logs=True,
+            log_file_name="drakeify-my-urdf1.log",
+            collision_mesh_replacement_strategy=MeshReplacementStrategy.kWithMinimalEnclosingCylinder,
+        )
+
+        # Visualize the URDF using the "show-me-this-model" feature
+        time_step = 1e-3
+        scene = ShowMeThisModel(
+            str(new_urdf_path),
+            with_these_joint_positions=[0.0, 0.0, -np.pi/4.0, 0.0, 0.0, 0.0],
+            time_step=time_step,
+        )
+
+        # Build Diagram
+        diagram, diagram_context = scene.cast_scene_and_build()
+
+        # Set up simulation
+        simulator = Simulator(diagram, diagram_context)
+        simulator.set_target_realtime_rate(1.0)
+        simulator.set_publish_every_time_step(False)
+
+        # Run simulation
+        simulator.Initialize()
+        simulator.AdvanceTo(15.0)
 
 if __name__ == '__main__':
     unittest.main()

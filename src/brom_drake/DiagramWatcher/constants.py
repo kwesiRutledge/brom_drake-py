@@ -4,5 +4,3 @@ from pydrake.systems.primitives import (
 )
 
 INELIGIBLE_SYSTEM_TYPES = [SceneGraph, VectorLogSink, ConstantVectorSource]
-
-DEFAULT_PLOT_DIR = "./brom/watcher_plots"
