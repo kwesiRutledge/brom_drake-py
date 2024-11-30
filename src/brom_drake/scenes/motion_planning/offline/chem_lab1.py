@@ -284,11 +284,11 @@ class ChemLab1Scene(OfflineMotionPlanningScene):
         )
 
         # Configure the scene graph for collision detection
-        # self.configure_collision_filter(
-        #     diagram.GetSubsystemContext(
-        #         self.scene_graph, diagram_context,
-        #     )
-        # )
+        self.configure_collision_filter(
+            diagram.GetSubsystemContext(
+                self.scene_graph, diagram_context,
+            )
+        )
 
         # Connect arm controller to the appropriate plant_context
         self.station.arm_controller.plant_context = diagram.GetSubsystemContext(
