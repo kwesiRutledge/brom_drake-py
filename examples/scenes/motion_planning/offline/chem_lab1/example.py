@@ -23,20 +23,15 @@ def main(meshcat_port_number: int = 7001):
     if meshcat_port_number < 0:
         meshcat_port_number = None # Use None for CI
 
-    easy_goal_position = np.array([+0.0, 1.0, 1.0])
-    goal_orientation = RollPitchYaw(np.pi / 2.0, np.pi / 2.0, 0.0).ToQuaternion()
-    goal_pose = RigidTransform(goal_orientation, easy_goal_position)
-
     # Create the scene
     scene = ChemLab1Scene(
         meshcat_port_number=meshcat_port_number, # Use None for CI
-        goal_pose=goal_pose,
     )
 
     # Create a planner object which will be used to plan the motion
     config = RRTConnectPlannerConfig(
         steering_step_size=0.1,
-        prob_sample_goal=0.15,
+        prob_sample_goal=0.30,
         max_iterations=int(1e4),
         convergence_threshold=1e-3,
     )

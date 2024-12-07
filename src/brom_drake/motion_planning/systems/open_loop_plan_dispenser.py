@@ -4,10 +4,8 @@ from pydrake.common.value import AbstractValue
 from pydrake.systems.framework import LeafSystem, Context, BasicVector
 from pydrake.trajectories import PiecewiseTrajectory, PiecewisePolynomial
 
-
-class StateOfPlanInMemory(IntEnum):
-    kNotSet = 0
-    kSet = 1
+# Internal Imports
+from brom_drake.motion_planning.systems.state_of_plan_in_memory import StateOfPlanInMemory
 
 class OpenLoopPlanDispenser(LeafSystem):
     def __init__(
