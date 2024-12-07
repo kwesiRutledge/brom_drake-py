@@ -97,7 +97,7 @@ The above code tells the watcher to watch the port named `port_name` on the syst
 Feel free to cite this project if it helped with your work!
 
 ```
-@misc{drake,
+@misc{bromDrake2024,
   author = "Kwesi Rutledge and the Wrench Robotics Team",
   title = "Brom: A Helper Library for the Drake Toolbox",
   year = 2024,
