@@ -132,9 +132,8 @@ class ProximityPosePlanDispenser(LeafSystem):
             calc=self.GetInternalState,
         )
 
-    def GetCurrentPoseInPlan(self, context: Context, output_pose: RigidTransform):
+    def GetCurrentPoseInPlan(self, context: Context, output_pose: AbstractValue):
         # Setup
-        plan_is_ready = self.request_port.Eval(context)
         plan = self.plan_port.Eval(context)
 
         last_pose = self.last_pose
@@ -149,8 +148,10 @@ class ProximityPosePlanDispenser(LeafSystem):
         # If the state of the dispenser is reset, then share
         # the LAST pose.
         dispenser_in_reset = state[0] == DispenserInternalState.kReady
-        if dispenser_in_reset or (not plan_is_ready):
-            output_pose.SetFrom(last_pose)
+        if dispenser_in_reset:
+            output_pose.SetFrom(
+                AbstractValue.Make(last_pose)
+            )
             return
         
         # If the state of the plan is kPlanSet,
@@ -160,7 +161,7 @@ class ProximityPosePlanDispenser(LeafSystem):
 
         # Output The Current Point in the Plan
         output_pose.SetFrom(
-            plan[plan_idx]
+            AbstractValue.Make(plan[plan_idx])
         )
 
     def GetInternalState(self, context: Context, output: BasicVector):
@@ -211,7 +212,7 @@ class ProximityPosePlanDispenser(LeafSystem):
             # self.dispenser_plan_index = 0
 
             # Set the internal state
-            self.dispenser_state.set_value(
+            context.SetDiscreteState(
                 np.array([DispenserInternalState.kReady])
             )
         else:
