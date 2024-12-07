@@ -19,6 +19,7 @@ from brom_drake.all import (
 from brom_drake.motion_planning.systems.proximity_pose_plan_dispenser import (
     ProximityPosePlanDispenser,
     DispenserTransitionRequest,
+    DispenserInternalState,
 )
 
 class TestProximityPosePlanDispenser(unittest.TestCase):
@@ -58,8 +59,8 @@ class TestProximityPosePlanDispenser(unittest.TestCase):
 
         # Create a source to share the plan_ready signal
         dispenser_request_source = builder.AddSystem(
-            ConstantValueSource(AbstractValue.Make(
-                DispenserTransitionRequest.kRequestSavePlan,
+            ConstantVectorSource(np.array(
+                [DispenserTransitionRequest.kNone],
             ))
         )
 
@@ -72,7 +73,7 @@ class TestProximityPosePlanDispenser(unittest.TestCase):
         builder.Connect(plan_source.get_output_port(0), dispenser.GetInputPort("plan"))
         builder.Connect(dispenser_request_source.get_output_port(0), dispenser.GetInputPort("request"))
 
-        return builder, dispenser
+        return builder, dispenser, plan
 
     def test_advance_plan_if_necessary1(self):
         """
@@ -82,7 +83,7 @@ class TestProximityPosePlanDispenser(unittest.TestCase):
             proximity limit of the plan.
         """
         # Setup
-        builder, dispenser = self.create_scenario1()
+        builder, dispenser, plan = self.create_scenario1()
 
         # Create the current pose source
         nearby_pose_to_plan_pose0 = RigidTransform()
@@ -94,16 +95,22 @@ class TestProximityPosePlanDispenser(unittest.TestCase):
         builder.Connect(current_pose_source.get_output_port(0), dispenser.GetInputPort("current_pose"))
 
         # Build the diagram
-        diagram = builder.Build()
-        diagram_context = diagram.CreateDefaultContext()
+        watcher, diagram, diagram_context = add_watcher_and_build(builder)
 
         # Check that the initial plan index is 0
         self.assertEqual(dispenser.dispenser_plan_index, 0)
 
+        # Set the plan in the dispenser and change internal state to planset
+        dispenser_context = diagram.GetMutableSubsystemContext(dispenser, diagram_context)
+        dispenser_context.SetDiscreteState(
+            np.array([DispenserInternalState.kPlanSet])
+        )
+        dispenser.plan = plan
+
         # Call advance_plan_if_necessary
         dispenser.advance_plan_if_necessary(
             diagram.GetMutableSubsystemContext(dispenser, diagram_context)
-            )
+        )
 
         # Check that the plan index is now 1
         self.assertEqual(dispenser.dispenser_plan_index, 1)
@@ -116,7 +123,7 @@ class TestProximityPosePlanDispenser(unittest.TestCase):
             proximity limit of the plan.
         """
         # Setup
-        builder, dispenser = self.create_scenario1()
+        builder, dispenser, plan = self.create_scenario1()
 
         # Create the current pose source
         nearby_pose_to_plan_pose0 = RigidTransform(
@@ -136,10 +143,17 @@ class TestProximityPosePlanDispenser(unittest.TestCase):
         # Check that the initial plan index is 0
         self.assertEqual(dispenser.dispenser_plan_index, 0)
 
+        # Set the plan in the dispenser and change internal state to planset
+        dispenser_context = diagram.GetMutableSubsystemContext(dispenser, diagram_context)
+        dispenser_context.SetDiscreteState(
+            np.array([DispenserInternalState.kPlanSet])
+        )
+        dispenser.plan = plan
+
         # Call advance_plan_if_necessary
         dispenser.advance_plan_if_necessary(
             diagram.GetMutableSubsystemContext(dispenser, diagram_context)
-            )
+        )
 
         # Check that the plan index is now 1
         self.assertEqual(dispenser.dispenser_plan_index, 0)
