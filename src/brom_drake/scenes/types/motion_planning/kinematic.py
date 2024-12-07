@@ -22,7 +22,7 @@ from brom_drake.scenes.types import BaseScene
 from brom_drake.scenes.roles import kKinematicMotionPlanner, Role
 from brom_drake.file_manipulation.urdf.shapes.sphere import SphereDefinition
 from brom_drake.file_manipulation.urdf.simple_writer.urdf_definition import SimpleShapeURDFDefinition
-from brom_drake.utils import Performer
+from brom_drake.utils import Performer, MotionPlan
 
 
 class KinematicMotionPlanningScene(BaseScene):
@@ -323,7 +323,7 @@ class KinematicMotionPlanningScene(BaseScene):
         self,
         planning_algorithm: Callable[
             [np.ndarray, np.ndarray, Callable[[np.ndarray], bool]],
-            Tuple[nx.DiGraph, np.ndarray],
+            Tuple[MotionPlan, bool],
         ],
         with_watcher: bool = True,
     ) -> Tuple[Diagram, Context]:

@@ -22,7 +22,7 @@ from brom_drake.robots.stations.kinematic import UR10eStation as KinematicUR10eS
 from brom_drake.scenes import SceneID
 from brom_drake.scenes.roles import Role
 from brom_drake.scenes.types import KinematicMotionPlanningScene
-from brom_drake.utils import Performer, AddGround
+from brom_drake.utils import Performer, AddGround, MotionPlan
 
 
 class ChemLab1Scene(KinematicMotionPlanningScene):
@@ -360,7 +360,7 @@ class ChemLab1Scene(KinematicMotionPlanningScene):
         self,
         planning_algorithm: Callable[
             [np.ndarray, np.ndarray, Callable[[np.ndarray], bool]],
-            Tuple[nx.DiGraph, np.ndarray],
+            Tuple[MotionPlan, bool],
         ],
         with_watcher: bool = False,
     ) -> Tuple[Diagram, Context]:

@@ -11,6 +11,9 @@ from pydrake.solvers import Solve, SolutionResult
 from pydrake.systems.framework import LeafSystem, BasicVector, Context
 from typing import Callable, Tuple
 
+# Internal Imports
+from brom_drake.utils.constants import MotionPlan
+
 
 class PrototypicalPlannerSystem(LeafSystem):
     """
@@ -26,7 +29,7 @@ class PrototypicalPlannerSystem(LeafSystem):
         scene_graph: SceneGraph,
         planning_algorithm: Callable[
             [np.ndarray, np.ndarray, Callable[[np.ndarray], bool]],
-            Tuple[nx.DiGraph, np.ndarray],
+            Tuple[MotionPlan, bool],
         ],
         robot_model_idx: ModelInstanceIndex = None,
         **kwargs,
