@@ -273,14 +273,16 @@ class PortWatcher:
             # Create directory for the plots, if it doesn't already exist
             os.makedirs(Path(figure_names[0]).parent, exist_ok=True)
             figs[0].savefig(figure_names[0], dpi=self.options.plot_dpi)
+            plt.close(figs[0])
         else:
             # Plot each figure within this directory
             for ii, fig_ii in enumerate(figs):
                 os.makedirs(Path(figure_names[ii]).parent, exist_ok=True)
                 fig_ii.savefig(figure_names[ii],dpi=self.options.plot_dpi)
+                plt.close(fig_ii)
 
-        # Close all figures when done
-        plt.close('all')
+        # Close all figures when done (this should be redundant?)
+        # plt.close('all')
 
     def figure_names(self) -> List[str]:
         """
