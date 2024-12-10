@@ -15,8 +15,13 @@ from pydrake.systems.framework import Context
 from brom_drake.DiagramTarget import DiagramTarget
 from brom_drake.DiagramWatcher import DiagramWatcher
 from brom_drake.directories import DEFAULT_PLOT_DIR
-from brom_drake.PortWatcher.port_watcher_options import PortFigureArrangement
-from brom_drake.PortWatcher.port_watcher_options import FigureNamingConvention, PortWatcherOptions
+from brom_drake.PortWatcher.port_watcher_options import (
+    PortFigureArrangement,
+    PortWatcherPlottingOptions,
+    PortWatcherRawDataOptions,
+    FigureNamingConvention,
+    PortWatcherOptions,
+)
 
 PotentialTargetTypes = List[
     Union[
@@ -71,9 +76,11 @@ def add_watcher(
         targets = parse_list_of_simplified_targets(builder, targets)
 
     port_watcher_options = PortWatcherOptions(
-        plot_arrangement=plot_arrangement,
-        figure_naming_convention=figure_naming_convention,
-        file_format=file_format,
+        plotting=PortWatcherPlottingOptions(
+            plot_arrangement=plot_arrangement,
+            figure_naming_convention=figure_naming_convention,
+            file_format=file_format,
+        ),
     )
 
     watcher = DiagramWatcher(builder, targets=targets, plot_dir=data_dir, port_watcher_options=port_watcher_options)

@@ -25,7 +25,7 @@ from pydrake.systems.primitives import ConstantVectorSource
 from brom_drake.all import (
     DiagramWatcher, PortWatcher,
     PortFigureArrangement, PortWatcherOptions,
-    FigureNamingConvention
+    FigureNamingConvention, PortWatcherPlottingOptions, PortWatcherRawDataOptions,
 )
 
 import brom_drake.robots as robots
@@ -426,7 +426,9 @@ class PortWatcherTest(unittest.TestCase):
         pw0 = PortWatcher(
             plant, plant.GetOutputPort("state"), builder,
             options=PortWatcherOptions(
-                plot_arrangement=PortFigureArrangement.OnePlotPerDim,
+                plotting=PortWatcherPlottingOptions(
+                    plot_arrangement=PortFigureArrangement.OnePlotPerDim,
+                )
             )
         )
 
@@ -675,8 +677,10 @@ class PortWatcherTest(unittest.TestCase):
         # Setup
         plot_dir = "./.brom3"
         pw_options = PortWatcherOptions(
-            plot_arrangement=PortFigureArrangement.OnePlotPerDim,
-            figure_naming_convention=FigureNamingConvention.kHierarchical,
+            plotting=PortWatcherPlottingOptions(
+                plot_arrangement=PortFigureArrangement.OnePlotPerDim,
+                figure_naming_convention=FigureNamingConvention.kHierarchical,
+            )
         )
 
         # Set up a simple diagram with an included watcher
@@ -723,8 +727,10 @@ class PortWatcherTest(unittest.TestCase):
         # Setup
         plot_dir = "./.brom4"
         pw_options = PortWatcherOptions(
-            plot_arrangement=PortFigureArrangement.OnePlotPerDim,
-            figure_naming_convention=FigureNamingConvention.kHierarchical,
+            plotting=PortWatcherPlottingOptions(
+                plot_arrangement=PortFigureArrangement.OnePlotPerDim,
+                figure_naming_convention=FigureNamingConvention.kHierarchical,
+            )
         )
 
         # Set up a simple diagram with an included watcher
@@ -770,8 +776,10 @@ class PortWatcherTest(unittest.TestCase):
         # Setup
         plot_dir = "./.brom5"
         pw_options = PortWatcherOptions(
-            plot_arrangement=PortFigureArrangement.OnePlotPerDim,
-            figure_naming_convention=FigureNamingConvention.kFlat,
+            plotting=PortWatcherPlottingOptions(
+                plot_arrangement=PortFigureArrangement.OnePlotPerDim,
+                figure_naming_convention=FigureNamingConvention.kFlat,
+            ),
         )
 
         # Set up a simple diagram with an included watcher
@@ -811,8 +819,10 @@ class PortWatcherTest(unittest.TestCase):
         # Setup
         plot_dir = "./.brom6"
         pw_options = PortWatcherOptions(
-            plot_arrangement=PortFigureArrangement.OnePlotPerPort,
-            figure_naming_convention=FigureNamingConvention.kHierarchical,
+            plotting=PortWatcherPlottingOptions(
+                plot_arrangement=PortFigureArrangement.OnePlotPerPort,
+                figure_naming_convention=FigureNamingConvention.kHierarchical,
+            ),
         )
 
         # Set up a simple diagram with an included watcher
@@ -857,9 +867,11 @@ class PortWatcherTest(unittest.TestCase):
         plot_dir = "./.brom7"
         test_file_format = "svg"
         pw_options = PortWatcherOptions(
-            plot_arrangement=PortFigureArrangement.OnePlotPerPort,
-            figure_naming_convention=FigureNamingConvention.kHierarchical,
-            file_format=test_file_format,
+            plotting=PortWatcherPlottingOptions(
+                plot_arrangement=PortFigureArrangement.OnePlotPerPort,
+                figure_naming_convention=FigureNamingConvention.kHierarchical,
+                file_format=test_file_format,
+            ),
         )
 
         # Set up a simple diagram with an included watcher
@@ -975,7 +987,9 @@ class PortWatcherTest(unittest.TestCase):
             plant.GetOutputPort("state"),
             builder,
             options=PortWatcherOptions(
-                plot_arrangement=PortFigureArrangement.OnePlotPerDim,
+                plotting=PortWatcherPlottingOptions(
+                    plot_arrangement=PortFigureArrangement.OnePlotPerDim,
+                ),
             )
         )
 

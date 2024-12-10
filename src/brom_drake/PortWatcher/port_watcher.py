@@ -18,8 +18,11 @@ from pydrake.systems.primitives import LogVectorOutput
 from pydrake.systems.framework import Context
 
 # Internal Imports
-from brom_drake.directories import DEFAULT_PLOT_DIR
-from .port_watcher_options import PortWatcherOptions, FigureNamingConvention
+from brom_drake.directories import DEFAULT_PLOT_DIR, DEFAULT_RAW_DATA_DIR
+from .port_watcher_options import (
+    PortWatcherOptions, FigureNamingConvention,
+    PortWatcherPlottingOptions, PortWatcherRawDataOptions,
+)
 from .port_figure_arrangement import PortFigureArrangement
 
 
@@ -32,6 +35,7 @@ class PortWatcher:
         logger_name: str = None,
         options: PortWatcherOptions = PortWatcherOptions(),
         plot_dir: str = DEFAULT_PLOT_DIR,
+        raw_data_dir: str = DEFAULT_RAW_DATA_DIR,
     ):
         # Setup
         self.options = options
@@ -40,7 +44,9 @@ class PortWatcher:
         self.data = {}
         self.plot_handles = {}
         self.plot_handles = None
-        self.plot_dir = plot_dir
+        
+        # Set up directories
+        self.options = self.create_new_port_watcher_options(options, plot_dir, raw_data_dir)
 
         # Input Processing
         if output_port.get_data_type() != PortDataType.kVectorValued:
@@ -56,6 +62,35 @@ class PortWatcher:
         self.logger = LogVectorOutput(output_port, builder)
         self.logger.set_name(logger_name)
 
+    def create_new_port_watcher_options(
+        self,
+        options: PortWatcherOptions,
+        plot_dir: str = DEFAULT_PLOT_DIR,
+        raw_data_dir: str = DEFAULT_RAW_DATA_DIR,
+    ) -> PortWatcherOptions:
+        """
+        Description:
+            Creates a new set of PortWatcherOptions.
+        :param plotting:
+        :param raw_data:
+        :return:
+        """
+        return PortWatcherOptions(
+            plotting=PortWatcherPlottingOptions(
+                plot_arrangement=options.plotting.plot_arrangement,
+                plot_dpi=options.plotting.plot_dpi,
+                save_to_file=options.plotting.save_to_file,
+                base_directory=plot_dir,
+                file_format=options.plotting.file_format,
+                figure_naming_convention=options.plotting.figure_naming_convention,
+            ),
+            raw_data=PortWatcherRawDataOptions(
+                save_to_file=options.raw_data.save_to_file,
+                base_directory=raw_data_dir,
+                file_format=options.raw_data.file_format,
+            )
+        )
+
     def name_of_data_at_index(
         self,
         dim_index: int,
@@ -70,6 +105,7 @@ class PortWatcher:
         :return:
         """
         # Setup
+        plotting_options = self.options.plotting
         n_dims = self.port.size()
 
         # Input Processing
@@ -82,7 +118,7 @@ class PortWatcher:
         name = f"Dim #{dim_index}"
 
         # Only use full names, if we are NOT using the OnePlotPerPort config
-        if self.options.plot_arrangement == PortFigureArrangement.OnePlotPerPort:
+        if plotting_options.plot_arrangement == PortFigureArrangement.OnePlotPerPort:
             return name
 
         if self.system_is_multibody_plant():
@@ -117,6 +153,7 @@ class PortWatcher:
         :return:
         """
         # Setup
+        plotting_options = self.options.plotting
 
         # Get the log from the logger
         temp_log = self.logger.FindLog(diagram_context)
@@ -130,11 +167,11 @@ class PortWatcher:
             return None, None
 
         # Plot the data
-        if self.options.plot_arrangement == PortFigureArrangement.OnePlotPerPort:
+        if plotting_options.plot_arrangement == PortFigureArrangement.OnePlotPerPort:
             fig, ax_list = self.plot_logger_data_subplots(diagram_context, log_times, log_data)
             return [fig], [ax_list]
 
-        elif self.options.plot_arrangement == PortFigureArrangement.OnePlotPerDim:
+        elif plotting_options.plot_arrangement == PortFigureArrangement.OnePlotPerDim:
             figs, ax_grid = [], []
             for port_index in range(self.port.size()):
                 fig_ii = plt.figure()
@@ -155,7 +192,7 @@ class PortWatcher:
 
         else:
             raise ValueError(
-                f"Invalid plot arrangement: {self.options.plot_arrangement}."
+                f"Invalid plot arrangement: {plotting_options.plot_arrangement}."
             )
 
     def plot_logger_data_subplots(
@@ -257,6 +294,7 @@ class PortWatcher:
         :return:
         """
         # Setup
+        plotting_options = self.options.plotting
         figs, ax_list = self.plot_logger_data(diagram_context)
 
         # If no figures are returned, then return early!
@@ -272,15 +310,57 @@ class PortWatcher:
         if len(figs) == 1:
             # Create directory for the plots, if it doesn't already exist
             os.makedirs(Path(figure_names[0]).parent, exist_ok=True)
-            figs[0].savefig(figure_names[0], dpi=self.options.plot_dpi)
+            figs[0].savefig(figure_names[0], dpi=plotting_options.plot_dpi)
+            plt.close(figs[0])
         else:
             # Plot each figure within this directory
             for ii, fig_ii in enumerate(figs):
                 os.makedirs(Path(figure_names[ii]).parent, exist_ok=True)
-                fig_ii.savefig(figure_names[ii],dpi=self.options.plot_dpi)
+                fig_ii.savefig(figure_names[ii],dpi=plotting_options.plot_dpi)
+                plt.close(fig_ii)
 
-        # Close all figures when done
-        plt.close('all')
+        # Close all figures when done (this should be redundant?)
+        # plt.close('all')
+
+    def save_raw_data(self, diagram_context: Context):
+        """
+        Description:
+            Saves the raw data to a file.
+        :param diagram_context:
+        :return:
+        """
+        # Setup
+        log = self.logger.FindLog(diagram_context)
+        time_data_file_name, raw_data_file_name = self.time_and_raw_data_names()
+
+        # Save time data
+        log_times = log.sample_times()
+        os.makedirs(Path(time_data_file_name).parent, exist_ok=True)
+        np.save(time_data_file_name, log_times)
+
+        # Save the data
+        log_data = log.data()
+        np.save(raw_data_file_name, log_data)
+
+    def time_and_raw_data_names(self) -> Tuple[str, str]:
+        """
+        Description:
+            Returns the names that will be given to the raw data for this port.
+        
+        :return: Tuple of strings where:
+        - the first string is the name of the time data and,
+        - the second string is the name of the data.
+        """
+        # Setup
+        options = self.options
+        format = options.raw_data.file_format
+        raw_data_dir = options.raw_data.base_directory
+
+        # If this has the flat naming convention, then the file should be contained within the plot_dir.
+        return [
+            f"{raw_data_dir}/system_{self.safe_system_name()}_port_{self.port.get_name()}_times.{format}",
+            f"{raw_data_dir}/system_{self.safe_system_name()}_port_{self.port.get_name()}.{format}"
+        ]
 
     def figure_names(self) -> List[str]:
         """
@@ -290,18 +370,19 @@ class PortWatcher:
         """
         # Setup
         options = self.options
+        plotting_options = options.plotting
 
         # If this has the flat naming convention, then the file should be contained within the plot_dir.
-        if options.figure_naming_convention == FigureNamingConvention.kFlat:
+        if plotting_options.figure_naming_convention == FigureNamingConvention.kFlat:
             return self.figure_names_under_flat_convention()
 
 
-        elif options.figure_naming_convention == FigureNamingConvention.kHierarchical:
+        elif plotting_options.figure_naming_convention == FigureNamingConvention.kHierarchical:
             return self.figure_names_under_hierarchical_convention()
 
         else:
             raise NotImplementedError(
-                f"Invalid figure naming convention for figure_names(): {options.figure_naming_convention}."
+                f"Invalid figure naming convention for figure_names(): {plotting_options.figure_naming_convention}."
             )
 
 
@@ -315,23 +396,24 @@ class PortWatcher:
         """
         # Setup
         options = self.options
-        format = options.file_format
+        format = options.plotting.file_format
+        plot_dir = options.plotting.base_directory
 
         #
-        if options.plot_arrangement == PortFigureArrangement.OnePlotPerPort:
+        if options.plotting.plot_arrangement == PortFigureArrangement.OnePlotPerPort:
             return [
-                f"{self.plot_dir}/system_{self.safe_system_name()}_port_{self.port.get_name()}.{format}"
+                f"{plot_dir}/system_{self.safe_system_name()}_port_{self.port.get_name()}.{format}"
             ]
 
-        elif options.plot_arrangement == PortFigureArrangement.OnePlotPerDim:
+        elif options.plotting.plot_arrangement == PortFigureArrangement.OnePlotPerDim:
             return [
-                f"{self.plot_dir}/system_{self.safe_system_name()}_port_{self.port.get_name()}_dim{ii}.{format}"
+                f"{plot_dir}/system_{self.safe_system_name()}_port_{self.port.get_name()}_dim{ii}.{format}"
                 for ii in range(self.port.size())
             ]
 
         else:
             raise NotImplementedError(
-                f"Invalid plot arrangement for figure naming convention {options.figure_naming_convention}: {options.plot_arrangement}."
+                f"Invalid plot arrangement for figure naming convention {options.plotting.figure_naming_convention}: {options.plot_arrangement}."
             )
 
     def figure_names_under_hierarchical_convention(self) -> List[str]:
@@ -343,23 +425,25 @@ class PortWatcher:
         """
         # Setup
         options = self.options
-        format = options.file_format
+        plotting_options = options.plotting
+        format = plotting_options.file_format
+        plot_dir = plotting_options.base_directory
 
         # Algorithm
-        if options.plot_arrangement == PortFigureArrangement.OnePlotPerPort:
+        if plotting_options.plot_arrangement == PortFigureArrangement.OnePlotPerPort:
             return [
-                f"{self.plot_dir}/system_{self.safe_system_name()}/port_{self.port.get_name()}.{format}"
+                f"{plot_dir}/system_{self.safe_system_name()}/port_{self.port.get_name()}.{format}"
             ]
 
-        elif options.plot_arrangement == PortFigureArrangement.OnePlotPerDim:
+        elif plotting_options.plot_arrangement == PortFigureArrangement.OnePlotPerDim:
             return [
-                f"{self.plot_dir}/system_{self.safe_system_name()}/port_{self.port.get_name()}/{self.name_of_data_at_index(ii, remove_spaces=True)}.{format}"
+                f"{plot_dir}/system_{self.safe_system_name()}/port_{self.port.get_name()}/{self.name_of_data_at_index(ii, remove_spaces=True)}.{format}"
                 for ii in range(self.port.size())
             ]
 
         else:
             raise NotImplementedError(
-                f"Invalid plot arrangement for figure naming convention {options.figure_naming_convention}: {options.plot_arrangement}."
+                f"Invalid plot arrangement for figure naming convention {plotting_options.figure_naming_convention}: {options.plot_arrangement}."
             )
 
     def system_is_multibody_plant(self) -> bool:
