@@ -20,9 +20,9 @@ from pydrake.systems.primitives import (
 # Internal Imports
 from brom_drake.DiagramTarget import DiagramTarget
 from brom_drake.PortWatcher.port_watcher import PortWatcher
-from brom_drake.PortWatcher.port_watcher_options import PortWatcherOptions
+from brom_drake.PortWatcher.port_watcher_options import PortWatcherOptions, PortWatcherPlottingOptions, PortWatcherRawDataOptions
 from brom_drake.DiagramWatcher.constants import INELIGIBLE_SYSTEM_TYPES
-from brom_drake.directories import  DEFAULT_PLOT_DIR
+from brom_drake.directories import  DEFAULT_PLOT_DIR, DEFAULT_RAW_DATA_DIR
 from brom_drake.DiagramWatcher.errors import UnrecognizedTargetError
 
 
@@ -32,6 +32,7 @@ class DiagramWatcher:
         subject: DiagramBuilder,
         targets: List[DiagramTarget] = None,
         plot_dir: str = DEFAULT_PLOT_DIR,
+        raw_data_dir: str = DEFAULT_RAW_DATA_DIR,
         port_watcher_options: PortWatcherOptions = PortWatcherOptions(),
     ):
         # Setup
@@ -39,6 +40,12 @@ class DiagramWatcher:
         # Needs to be populated by the user of this class AFTER the diagram has been built
         self.diagram = None
         self.diagram_context = None
+        
+        port_watcher_options = self.create_new_port_watcher_options(
+            port_watcher_options,
+            plot_dir=plot_dir,
+            raw_data_dir=raw_data_dir,
+        )
 
         # Check subject
         if not isinstance(subject, DiagramBuilder):
@@ -101,6 +108,38 @@ class DiagramWatcher:
                     options=port_watcher_options,
                 )
 
+    def create_new_port_watcher_options(
+        self,
+        options: PortWatcherOptions,
+        plot_dir: str = DEFAULT_PLOT_DIR,
+        raw_data_dir: str = DEFAULT_RAW_DATA_DIR,
+    ):
+        """
+        Description:
+
+            Creates a new set of PortWatcherOptions with the given options.
+        :param options:
+        :param plot_dir:
+        :param raw_data_dir:
+        :return:
+        """
+        # Setup
+        return PortWatcherOptions(
+            plotting=PortWatcherPlottingOptions(
+                plot_arrangement=options.plotting.plot_arrangement,
+                plot_dpi=options.plotting.plot_dpi,
+                save_to_file=options.plotting.save_to_file,
+                base_directory=plot_dir,
+                file_format=options.plotting.file_format,
+                figure_naming_convention=options.plotting.figure_naming_convention,
+            ),
+            raw_data=PortWatcherRawDataOptions(
+                save_to_file=options.raw_data.save_to_file,
+                base_directory=raw_data_dir,
+                file_format=options.raw_data.file_format,
+            ),
+        )
+
     def __del__(self):
         """
         Description:
@@ -113,11 +152,13 @@ class DiagramWatcher:
 
         is_ready_to_plot = self.diagram is not None
 
+        if not is_ready_to_plot:
+            return # Return early if we don't have access to the diagram context
+
         # Upon deletion, we will PLOT the data from all of our loggers
         # if we have access to the diagram context
-        if is_ready_to_plot:
-            self.save_figures()
-
+        self.save_figures()
+        self.save_raw_data()
 
     def configure_brom_activity_summary(self):
         """
@@ -254,4 +295,21 @@ class DiagramWatcher:
             ports_on_ii = self.port_watchers[system_name]
             for port_name in ports_on_ii:
                 temp_port_watcher = ports_on_ii[port_name]
-                temp_port_watcher.save_figures(self.diagram_context)
+                temp_plotting_options = temp_port_watcher.options.plotting
+                if temp_plotting_options.save_to_file: # Plot only if the PortWatcher flag is set
+                    temp_port_watcher.save_figures(self.diagram_context)
+
+    def save_raw_data(self):
+        """
+        Description:
+            Saves all the raw data from the port watchers.
+        :return:
+        """
+        for system_name in self.port_watchers:
+            system_ii = self.diagram.GetSubsystemByName(system_name)
+            ports_on_ii = self.port_watchers[system_name]
+            for port_name in ports_on_ii:
+                temp_port_watcher = ports_on_ii[port_name]
+                temp_raw_data_options = temp_port_watcher.options.raw_data
+                if temp_raw_data_options.save_to_file:
+                    temp_port_watcher.save_raw_data(self.diagram_context)

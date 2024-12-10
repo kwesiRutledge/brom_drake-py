@@ -1,4 +1,5 @@
 
 DEFAULT_BROM_DIR = "./brom"
-DEFAULT_PLOT_DIR = "./brom/watcher_plots"
-DEFAULT_BROM_MODELS_DIR = "./brom/models"
+DEFAULT_PLOT_DIR = DEFAULT_BROM_DIR + "/watcher_plots"
+DEFAULT_RAW_DATA_DIR = DEFAULT_BROM_DIR + "/watcher_raw_data"
+DEFAULT_BROM_MODELS_DIR = DEFAULT_BROM_DIR + "/models"
