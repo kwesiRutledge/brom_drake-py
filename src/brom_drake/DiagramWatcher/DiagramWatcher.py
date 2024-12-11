@@ -102,7 +102,7 @@ class DiagramWatcher:
 
                 # Configure PortWatcher
                 self.port_watchers[target.name][target_port.get_name()] = PortWatcher(
-                    system, target_port, subject,
+                    target_port, subject,
                     logger_name=f"{target.name}_logger_{port_index}",
                     plot_dir=plot_dir,
                     options=port_watcher_options,

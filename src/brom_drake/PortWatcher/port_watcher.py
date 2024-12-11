@@ -12,6 +12,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 
+from pydrake.all import (
+    RigidTransform,
+)
 from pydrake.multibody.plant import MultibodyPlant
 from pydrake.systems.framework import OutputPort, PortDataType, DiagramBuilder, LeafSystem
 from pydrake.systems.primitives import LogVectorOutput
@@ -25,7 +28,7 @@ from .port_watcher_options import (
 )
 from .port_figure_arrangement import PortFigureArrangement
 from .plotter import PortWatcherPlotter
-
+from brom_drake.utils import RigidTransformToVectorSystem
 
 class PortWatcher:
     def __init__(
@@ -48,18 +51,17 @@ class PortWatcher:
         self.options = self.create_new_port_watcher_options(options, plot_dir, raw_data_dir)
 
         # Input Processing
-        if output_port.get_data_type() != PortDataType.kVectorValued:
-            raise ValueError(
-                f"This watcher only supports vector valued ports (i.e., of type {PortDataType.kVectorValued}.\n" +
-                f"Received port of type {output_port.get_data_type()}."
-            )
+        self.check_port_type()
+        
+        # Identify port's type and connect it to a logger
         system = output_port.get_system()
 
         if logger_name is None:
             logger_name = f"PortWatcher_{system.get_name()}_{output_port.get_name()}"
 
         # Preparing LogVectorSink
-        self.logger = LogVectorOutput(output_port, builder)
+        self.logger = None
+        self.prepare_logger(builder)
         self.logger.set_name(logger_name)
 
         # Prepare optional members
@@ -70,6 +72,44 @@ class PortWatcher:
                 port=self.port,
                 plotting_options=self.options.plotting,
             )
+
+    def check_port_type(self):
+        """
+        Description
+        -----------
+        Checks to see if the port is of the correct type for plotting.
+        """
+
+        # Setup
+        output_port = self.port
+
+        # Algorithm
+        if output_port.get_data_type() == PortDataType.kVectorValued:
+            return
+        
+        # Check to see if AbstractValue port contains RigidTransform
+        output_value = output_port.Allocate()
+        print(f"Type of output_value: {type(output_value)}")
+        if isinstance(output_value.get_value(), RigidTransform):
+            return
+
+        # Raise error otherwise
+        raise self.create_port_value_type_error(output_port)
+    
+    @staticmethod
+    def create_port_value_type_error(output_port: OutputPort):
+        """
+        Description:
+            Creates an error message for the port value type.
+        :param output_port:
+        :return:
+        """
+        return ValueError(
+            f"This watcher only supports output ports that are:\n" +
+            f"- Vector valued ports (i.e., of type {PortDataType.kVectorValued}.\n" +
+            f"- Abstract valued ports containing RigidTransform objects.\n" +
+            f"Received port of type {output_port.get_data_type()}."
+        )
 
     def create_new_port_watcher_options(
         self,
@@ -99,6 +139,46 @@ class PortWatcher:
                 file_format=options.raw_data.file_format,
             )
         )
+    
+    def prepare_logger(self, builder: DiagramBuilder):
+        """
+        Description:
+            Prepares the logger for the port.
+        :param builder:
+        :return:
+        """
+        # Setup
+        system = self.port.get_system()
+
+        # Create the logger dependent on the type of data in the port
+        if self.port.get_data_type() == PortDataType.kVectorValued:
+            self.logger = LogVectorOutput(self.port, builder)
+        else:
+            # Port must be abstract valued
+
+            # Check to see if the port contains a RigidTransform
+            output_value = self.port.Allocate()
+            if isinstance(output_value.get_value(), RigidTransform):
+                # If it is, then we must create an intermediate system
+                # that will convert the RigidTransform to a vector.
+                converter_system = builder.AddSystem(
+                    RigidTransformToVectorSystem()
+                )
+
+                # Connect the system to the port
+                builder.Connect(
+                    self.port,
+                    converter_system.get_input_port(),
+                )
+                # Then connect the output of the converter to a logger
+                self.logger = LogVectorOutput(
+                    converter_system.get_output_port(),
+                    builder,
+                )
+            else:
+                raise NotImplementedError(
+                    f"PortWatcher does not support the type of data contained in the port."
+                )
     
     def safe_system_name(self) -> str:
         """

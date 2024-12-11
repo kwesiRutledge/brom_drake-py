@@ -10,8 +10,10 @@ import os
 
 import numpy as np
 from pydrake.all import (
+    AbstractValue,
     AddMultibodyPlantSceneGraph,
-    CoulombFriction, HalfSpace,
+    ConstantValueSource, CoulombFriction,
+    HalfSpace,
     MultibodyPlant,
     Parser,
     RigidTransform, RotationMatrix,
@@ -93,17 +95,15 @@ class PortWatcherTest(unittest.TestCase):
         plant = builder.AddNamedSystem("my_plant", MultibodyPlant(time_step=time_step))
         plant.Finalize()
 
-        plant_test_port = plant.get_output_port(0)
+        plant_test_port = plant.GetOutputPort("contact_results")
+        print(plant_test_port.get_name())
 
         try:
             pw0 = PortWatcher(
                 plant_test_port, builder,
             )
         except ValueError as e:
-            expected_error = ValueError(
-                f"This watcher only supports vector valued ports (i.e., of type {PortDataType.kVectorValued}.\n" +
-                f"Received port of type {plant_test_port.get_data_type()}."
-            )
+            expected_error = PortWatcher.create_port_value_type_error(plant_test_port)
 
             self.assertEqual(
                 str(e), str(expected_error),
@@ -166,6 +166,28 @@ class PortWatcherTest(unittest.TestCase):
             self.assertIn(plant.get_name(), name_ii)
             self.assertIn("state", name_ii)
         self.assertIn("times", name_tuple[0])
+
+    def test_check_port_type1(self):
+        """
+        Description
+        -----------
+        This test verifies that the check_port_type method
+        does NOT raise an error when we provide a port that contains
+        an abstract value that is a RigidTransform.
+        """
+        # Setup
+        builder = DiagramBuilder()
+
+        # Setup Diagram
+        pose_source = builder.AddSystem(
+            ConstantValueSource(AbstractValue.Make(RigidTransform()))
+        )
+
+        # Create PortWatcher object
+        pw0 = PortWatcher(pose_source.get_output_port(), builder)
+
+        # this test will only fail if an error is raised
+        self.assertTrue(True)
 
 
 if __name__ == '__main__':
