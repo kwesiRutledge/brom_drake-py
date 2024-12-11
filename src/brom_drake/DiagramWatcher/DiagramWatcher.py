@@ -297,7 +297,7 @@ class DiagramWatcher:
                 temp_port_watcher = ports_on_ii[port_name]
                 temp_plotting_options = temp_port_watcher.options.plotting
                 if temp_plotting_options.save_to_file: # Plot only if the PortWatcher flag is set
-                    temp_port_watcher.save_figures(self.diagram_context)
+                    temp_port_watcher.plotter.save_figures(self.diagram_context)
 
     def save_raw_data(self):
         """
