@@ -30,7 +30,6 @@ from .plotter import PortWatcherPlotter
 class PortWatcher:
     def __init__(
         self,
-        system: LeafSystem,
         output_port: OutputPort,
         builder: DiagramBuilder,
         logger_name: str = None,
@@ -40,7 +39,6 @@ class PortWatcher:
     ):
         # Setup
         self.options = options
-        self.system = system
         self.port = output_port
         self.data = {}
         self.plot_handles = {}
@@ -55,6 +53,7 @@ class PortWatcher:
                 f"This watcher only supports vector valued ports (i.e., of type {PortDataType.kVectorValued}.\n" +
                 f"Received port of type {output_port.get_data_type()}."
             )
+        system = output_port.get_system()
 
         if logger_name is None:
             logger_name = f"PortWatcher_{system.get_name()}_{output_port.get_name()}"
@@ -69,7 +68,6 @@ class PortWatcher:
             self.plotter = PortWatcherPlotter(
                 logger=self.logger,
                 port=self.port,
-                system=system,
                 plotting_options=self.options.plotting,
             )
 
@@ -101,6 +99,27 @@ class PortWatcher:
                 file_format=options.raw_data.file_format,
             )
         )
+    
+    def safe_system_name(self) -> str:
+        """
+        Description:
+            Returns a safe name for the system.
+        :param name: System's name.
+        :return:
+        """
+        # Setup
+        system = self.port.get_system()
+        out = system.get_name()
+
+        # First, let's check to see how many "/" exist in the name
+        slash_occurences = [i for i, letter in enumerate(out) if letter == "/"]
+        if len(slash_occurences) > 0:
+            out = out[slash_occurences[-1] + 1:]  # truncrate string based on the last slash
+
+        # Second, replace all spaces with underscores
+        out = out.replace(" ", "_")
+
+        return out
 
     def save_raw_data(self, diagram_context: Context):
         """

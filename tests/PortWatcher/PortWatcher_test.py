@@ -9,7 +9,13 @@ import unittest
 import os
 
 import numpy as np
-from pydrake.multibody.plant import MultibodyPlant, AddMultibodyPlantSceneGraph
+from pydrake.all import (
+    AddMultibodyPlantSceneGraph,
+    CoulombFriction, HalfSpace,
+    MultibodyPlant,
+    Parser,
+    RigidTransform, RotationMatrix,
+)
 from pydrake.systems.framework import DiagramBuilder, PortDataType, Diagram, Context
 
 # Internal Imports
@@ -57,9 +63,7 @@ class PortWatcherTest(unittest.TestCase):
         plant = builder.AddNamedSystem("my_plant", MultibodyPlant(time_step=time_step))
         plant.Finalize()
 
-        pw0 = PortWatcher(
-            plant, plant.GetOutputPort("state"), builder,
-        )
+        pw0 = PortWatcher(plant.GetOutputPort("state"), builder)
 
         self.assertTrue(True)
         self.assertIn(
@@ -93,7 +97,7 @@ class PortWatcherTest(unittest.TestCase):
 
         try:
             pw0 = PortWatcher(
-                plant, plant_test_port, builder,
+                plant_test_port, builder,
             )
         except ValueError as e:
             expected_error = ValueError(
@@ -106,6 +110,63 @@ class PortWatcherTest(unittest.TestCase):
             )
         else:
             self.assertTrue(False)
+
+    def test_time_and_raw_data_names1(self):
+        """
+        Description
+        -----------
+        This test verifies that the time and raw data names are
+        correctly containing the system name and port name.
+        In this case, for the state port of a MultibodyPlant system.
+        """
+        # Setup
+        # Setup Diagram
+        # - Create Builder
+        # - Define Plant
+        time_step = 0.01
+
+        builder = DiagramBuilder()
+
+        # Define plant with:
+        # + add block model
+        # + ground
+        plant, scene_graph = AddMultibodyPlantSceneGraph(builder, time_step=1e-3)
+
+        block_model_idx = Parser(plant=plant).AddModels(
+            self.get_brom_drake_dir() + "/examples/watcher/suggested_use1/slider-block.urdf",
+        )[0]
+        block_body_name = "block"
+
+        p_GroundOrigin = [0, 0.0, 0.0]
+        R_GroundOrigin = RotationMatrix.MakeXRotation(0.0)
+        X_GroundOrigin = RigidTransform(R_GroundOrigin, p_GroundOrigin)
+        surface_friction = CoulombFriction(
+            static_friction=0.7,
+            dynamic_friction=0.5)
+        plant.RegisterCollisionGeometry(
+            plant.world_body(),
+            X_GroundOrigin,
+            HalfSpace(),
+            "ground_collision",
+            surface_friction)
+
+        plant.Finalize()
+
+        # Create PortWatcherPlotter
+        pw0 = PortWatcher(
+            plant.GetOutputPort("state"),
+            builder,
+        )
+
+        # Verify
+        name_tuple = pw0.time_and_raw_data_names()
+        self.assertEqual(2, len(name_tuple))
+
+        for name_ii in name_tuple:
+            self.assertIn(plant.get_name(), name_ii)
+            self.assertIn("state", name_ii)
+        self.assertIn("times", name_tuple[0])
+
 
 if __name__ == '__main__':
     unittest.main()
