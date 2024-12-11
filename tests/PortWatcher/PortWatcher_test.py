@@ -17,9 +17,6 @@ from brom_drake.all import (
     PortWatcher,
 )
 
-
-
-
 class PortWatcherTest(unittest.TestCase):
     def setUp(self):
         """

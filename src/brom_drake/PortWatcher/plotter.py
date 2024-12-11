@@ -22,14 +22,12 @@ class PortWatcherPlotter:
         self,
         logger: SupportedLogger,
         port: OutputPort,
-        system: LeafSystem,
         plotting_options: PortWatcherPlottingOptions = PortWatcherPlottingOptions(),
     ):
         # Setup
         self.logger = logger
         self.port = port
         self.plotting_options = plotting_options
-        self.system = system
 
     def compute_plot_shape(self, n_dims: int) -> Tuple[int, int]:
         """
@@ -147,6 +145,7 @@ class PortWatcherPlotter:
         # Setup
         plotting_options = self.plotting_options
         n_dims = self.port.size()
+        system = self.port.get_system()
 
         # Input Processing
         if dim_index >= n_dims:
@@ -165,12 +164,12 @@ class PortWatcherPlotter:
             # The multi-body plant has names for specific ports
             if self.port.get_name() == "state":
                 # We can get the names of the state
-                state_names = self.system.GetStateNames()
+                state_names = system.GetStateNames()
                 name = state_names[dim_index]
             else:
                 # Announce that we are using the default name
                 loguru.logger.warning(
-                    f"Using default name for data at index {dim_index} of port {self.port.get_name()} of system {self.system.get_name()}."
+                    f"Using default name for data at index {dim_index} of port {self.port.get_name()} of system {system.get_name()}."
                 )
 
         # Filter our spaces, if requested
@@ -195,6 +194,7 @@ class PortWatcherPlotter:
         # Setup
         logger = self.logger
         plotting_options = self.plotting_options
+        system = self.port.get_system()
 
         # Get the log from the logger
         temp_log = logger.FindLog(diagram_context)
@@ -204,7 +204,7 @@ class PortWatcherPlotter:
 
         if (log_data.shape[1] == 0) or (log_data.shape[0] == 0):
             loguru.logger.warning(
-                f"No data found for {self.system.get_name()} - Port {self.port.get_name()}! Skipping...")
+                f"No data found for {system.get_name()} - Port {self.port.get_name()}! Skipping...")
             return None, None
 
         # Plot the data
@@ -296,7 +296,8 @@ class PortWatcherPlotter:
         :return:
         """
         # Setup
-        out = self.system.get_name()
+        system = self.port.get_system()
+        out = system.get_name()
 
         # First, let's check to see how many "/" exist in the name
         slash_occurences = [i for i, letter in enumerate(out) if letter == "/"]
@@ -352,4 +353,8 @@ class PortWatcherPlotter:
             Returns True if the system is a MultibodyPlant.
         :return:
         """
-        return type(self.system) == MultibodyPlant
+        # Setup
+        system = self.port.get_system()
+
+        # Return
+        return type(system) == MultibodyPlant

@@ -72,7 +72,6 @@ class PortWatcherPlotterTest(unittest.TestCase):
         plotter0 = PortWatcherPlotter(
             logger0,
             plant.GetOutputPort("state"),
-            plant,
         )
 
         # Test
@@ -106,7 +105,6 @@ class PortWatcherPlotterTest(unittest.TestCase):
         plotter0 = PortWatcherPlotter(
             logger0,
             plant.GetOutputPort("state"),
-            plant,
         )
 
         # Test
@@ -141,7 +139,6 @@ class PortWatcherPlotterTest(unittest.TestCase):
         plotter0 = PortWatcherPlotter(
             logger0,
             plant.GetOutputPort("state"),
-            plant,
         )
 
         # Test
@@ -176,7 +173,6 @@ class PortWatcherPlotterTest(unittest.TestCase):
         plotter0 = PortWatcherPlotter(
             logger0,
             plant.GetOutputPort("state"),
-            plant,
         )
 
         # Test
@@ -237,7 +233,6 @@ class PortWatcherPlotterTest(unittest.TestCase):
         plotter0 = PortWatcherPlotter(
             logger0,
             plant.GetOutputPort("state"),
-            plant,
         )
 
         # Setup simulation
@@ -322,7 +317,6 @@ class PortWatcherPlotterTest(unittest.TestCase):
         plotter0 = PortWatcherPlotter(
             logger0,
             plant.GetOutputPort("state"),
-            plant,
             plotting_options=PortWatcherPlottingOptions(
                 plot_arrangement=PortFigureArrangement.OnePlotPerDim,
             )
@@ -412,7 +406,6 @@ class PortWatcherPlotterTest(unittest.TestCase):
         plotter0 = PortWatcherPlotter(
             logger0,
             plant.GetOutputPort("state"),
-            plant,
             plotting_options=PortWatcherPlottingOptions(
                 plot_arrangement=PortFigureArrangement.OnePlotPerDim,
             )
@@ -500,7 +493,6 @@ class PortWatcherPlotterTest(unittest.TestCase):
         plotter0 = PortWatcherPlotter(
             logger0,
             plant.GetOutputPort("state"),
-            plant,
         )
 
         # pw0 = PortWatcher(
@@ -599,7 +591,6 @@ class PortWatcherPlotterTest(unittest.TestCase):
         plotter0 = PortWatcherPlotter(
             logger0,
             plant.GetOutputPort("state"),
-            plant,
             plotting_options=plotting_options,
         )
 
@@ -925,7 +916,6 @@ class PortWatcherPlotterTest(unittest.TestCase):
         plotter0 = PortWatcherPlotter(
             logger0,
             plant.GetOutputPort("state"),
-            plant,
             plotting_options=PortWatcherPlottingOptions(
                 plot_arrangement=PortFigureArrangement.OnePlotPerDim,
             )
@@ -962,7 +952,6 @@ class PortWatcherPlotterTest(unittest.TestCase):
         plotter0 = PortWatcherPlotter(
             logger0,
             constant_vector_source.get_output_port(),
-            constant_vector_source,
         )
 
         # Test
@@ -1004,7 +993,6 @@ class PortWatcherPlotterTest(unittest.TestCase):
         plotter0 = PortWatcherPlotter(
             logger0,
             plant.GetOutputPort("state"),
-            plant,
             plotting_options=options,
         )
 
