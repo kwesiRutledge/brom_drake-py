@@ -92,21 +92,18 @@ class DiagramWatcher:
             for port_index in target.ports:
                 target_port = system.get_output_port(port_index)
 
-                if target_port.get_data_type() != PortDataType.kVectorValued:
-                    print(f"Port {port_index} of system {target.name} is not vector-valued! Skipping...")
-                    loguru.logger.warning(
-                        f"Port {port_index} ({target_port.get_name()}) of system {target.name} is not vector-valued! " +
-                        "Will not add a logger for it.",
+                try:
+                    # Configure PortWatcher
+                    self.port_watchers[target.name][target_port.get_name()] = PortWatcher(
+                        target_port, subject,
+                        logger_name=f"{target.name}_logger_{port_index}",
+                        plot_dir=plot_dir,
+                        options=port_watcher_options,
                     )
-                    continue
-
-                # Configure PortWatcher
-                self.port_watchers[target.name][target_port.get_name()] = PortWatcher(
-                    target_port, subject,
-                    logger_name=f"{target.name}_logger_{port_index}",
-                    plot_dir=plot_dir,
-                    options=port_watcher_options,
-                )
+                except Exception as e:
+                    for logging_function in [print, loguru.logger.error]:
+                        logging_function(f"There was an error attempting to add a watcher to port {target_port.get_name()} of system {target.name}")
+                        logging_function(f"Error: {e}")
 
     def create_new_port_watcher_options(
         self,

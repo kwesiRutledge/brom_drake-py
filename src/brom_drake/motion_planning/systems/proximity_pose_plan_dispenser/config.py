@@ -7,7 +7,6 @@ from pydrake.all import (
 @dataclass
 class ProximityPosePlanDispenserConfig:
     proximity_limit: float = 1e-1
-    speed: float = 1.0
     translation_weight: float = 1.0
     orientation_weight: float = 0.0
 
