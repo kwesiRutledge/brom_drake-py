@@ -1,3 +1,4 @@
+import numpy as np
 from pydrake.all import (
     AbstractValue, BasicVector,
     Context,
@@ -20,5 +21,8 @@ class RigidTransformToVectorSystem(LeafSystem):
 
     def CalcVectorOutput(self, context: Context, output: BasicVector):
         rigid_transform = self.rigid_transform_input.Eval(context)
-        xyz_quat = rigid_transform.GetAsVector()
-        output.SetFromVector(xyz_quat)
+        xyz = rigid_transform.translation()
+        quat = rigid_transform.rotation().ToQuaternion().wxyz()
+        output.SetFromVector(
+            np.hstack((xyz, quat))
+        )

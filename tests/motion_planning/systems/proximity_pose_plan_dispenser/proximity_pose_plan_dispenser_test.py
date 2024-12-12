@@ -6,6 +6,7 @@ from pydrake.all import (
     AbstractValue,
     Diagram, DiagramBuilder,
     ConstantVectorSource, ConstantValueSource,
+    MultibodyPlant,
     RigidTransform,
     RollPitchYaw, RotationMatrix,
     Simulator,
@@ -14,6 +15,7 @@ from typing import Tuple
 import unittest
 
 # Internal Imports
+from brom_drake.PortWatcher.port_watcher_options import FigureNamingConvention
 from brom_drake.all import (
     add_watcher_and_build,
 )
@@ -286,105 +288,114 @@ class TestProximityPosePlanDispenser(unittest.TestCase):
 
     # TODO(kwesi): Implement this test when we have a way to work through a full plan
 
-    # def test_GetCurrentPoseInPlan3(self):
-    #     """
-    #     Description
-    #     -----------
-    #     This test verifies that when the pose plan dispenser has traversed through all points in the plan,
-    #     it will keep the pose at the LAST pose in the plan.
-    #     For a dispenser that previously had a plan, the last pose should be the last pose in the plan.
-    #     """
-    #     # TODO(kwesi): Implement this test when we have a way to work through a full plan
-    #     # (Maybe using open loop dispenser?).
+    def test_GetCurrentPoseInPlan3(self):
+        """
+        Description
+        -----------
+        This test verifies that when the pose plan dispenser has traversed through all points in the plan,
+        it will keep the pose at the LAST pose in the plan.
+        For a dispenser that previously had a plan, the last pose should be the last pose in the plan.
+        """
+        # TODO(kwesi): Implement this test when we have a way to work through a full plan
+        # (Maybe using open loop dispenser?).
         
-    #     # Setup
-    #     builder = DiagramBuilder()
+        # Setup
+        builder = DiagramBuilder()
 
-    #     # Create the plan
-    #     plan = [
-    #         RigidTransform(RollPitchYaw(0.0, 0.0, np.pi/2), [1.0, 0.0, 0.0]),
-    #         RigidTransform(RollPitchYaw(0.0, 0.0, np.pi), [1.0, 1.0, 0.0]),
-    #         RigidTransform(RollPitchYaw(0.0, 0.0, 3*np.pi/2), [0.0, 1.0, 0.0]),
-    #     ]
+        # Add a dummy plant
+        plant = builder.AddSystem(MultibodyPlant(1e-3))
+        plant.Finalize()
 
-    #     # Create a ProximityPlanDispenser object
-    #     dispenser = builder.AddSystem(ProximityPosePlanDispenser())
+        # Create the plan
+        plan = [
+            RigidTransform(RollPitchYaw(0.0, 0.0, np.pi/2), [1.0, 0.0, 0.0]),
+            RigidTransform(RollPitchYaw(0.0, 0.0, np.pi), [1.0, 1.0, 0.0]),
+            RigidTransform(RollPitchYaw(0.0, 0.0, 3*np.pi/2), [0.0, 1.0, 0.0]),
+        ]
 
-    #     # Create a source for the plan and connect it to the dispenser
-    #     plan_source = builder.AddSystem(
-    #         ConstantValueSource(AbstractValue.Make(plan))
-    #     )
-    #     builder.Connect(
-    #         plan_source.get_output_port(0),
-    #         dispenser.GetInputPort("plan"),
-    #     )
+        # Create a ProximityPlanDispenser object
+        dispenser = builder.AddSystem(ProximityPosePlanDispenser())
 
-    #     # Create a source for the request and connect it to the dispenser
-    #     request_source = builder.AddSystem(
-    #         ConstantVectorSource(np.array([DispenserTransitionRequest.kNone]))
-    #     )
-    #     builder.Connect(
-    #         request_source.get_output_port(0),
-    #         dispenser.GetInputPort("request"),
-    #     )
+        # Create a source for the plan and connect it to the dispenser
+        plan_source = builder.AddSystem(
+            ConstantValueSource(AbstractValue.Make(plan))
+        )
+        builder.Connect(
+            plan_source.get_output_port(0),
+            dispenser.GetInputPort("plan"),
+        )
 
-    #     # Create a mock trajectory source (an open loop pose plan dispenser)
-    #     plan2 = [
-    #         RigidTransform(RollPitchYaw(0.0, 0.0, np.pi/2), [-1.0, 0.0, 0.0]),
-    #     ]
-    #     plan2 += plan
+        # Create a source for the request and connect it to the dispenser
+        request_source = builder.AddSystem(
+            ConstantVectorSource(np.array([DispenserTransitionRequest.kRequestSavePlan]))
+        )
+        builder.Connect(
+            request_source.get_output_port(0),
+            dispenser.GetInputPort("request"),
+        )
 
-    #     mock_trajectory = builder.AddSystem(OpenLoopPosePlanDispenser(plan2))
+        # Create a mock trajectory source (an open loop pose plan dispenser)
+        plan2 = [
+            RigidTransform(RollPitchYaw(0.0, 0.0, np.pi/2), [-1.0, 0.0, 0.0]),
+        ]
+        plan2 += plan.copy()
 
-    #     # Create a source to share the plan
-    #     plan2_source = builder.AddSystem(
-    #         ConstantValueSource(AbstractValue.Make(plan2))
-    #     )
-    #     builder.Connect(
-    #         plan2_source.get_output_port(0),
-    #         mock_trajectory.GetInputPort("plan"),
-    #     )
+        mock_trajectory = builder.AddSystem(OpenLoopPosePlanDispenser(speed=1.0))
+        mock_trajectory.set_name("mock_trajectory")
 
-    #     # Trigger the mock trajectory to begin moving through the plan
-    #     start_mock_signal = builder.AddSystem(
-    #         ConstantValueSource(AbstractValue.Make(True))
-    #     )
-    #     builder.Connect(
-    #         start_mock_signal.get_output_port(),
-    #         mock_trajectory.GetInputPort("plan_ready"),
-    #     )
+        # Create a source to share the plan
+        plan2_source = builder.AddSystem(
+            ConstantValueSource(AbstractValue.Make(plan2))
+        )
+        plan2_source.set_name("plan2_source")
+        builder.Connect(
+            plan2_source.get_output_port(0),
+            mock_trajectory.GetInputPort("plan"),
+        )
+
+        # Trigger the mock trajectory to begin moving through the plan
+        start_mock_signal = builder.AddSystem(
+            ConstantValueSource(AbstractValue.Make(True))
+        )
+        builder.Connect(
+            start_mock_signal.get_output_port(),
+            mock_trajectory.GetInputPort("plan_ready"),
+        )
 
 
-    #     # Connect "mock_trajectory" to "dispenser" as the current pose input
-    #     print("dispenser.GetInputPort('current_pose')", dispenser.GetInputPort("current_pose").get_data_type())
-    #     print("mock_trajectory.GetOutputPort('pose_in_plan')", mock_trajectory.GetOutputPort("pose_in_plan").get_data_type())
-    #     builder.Connect(
-    #         mock_trajectory.GetOutputPort("pose_in_plan"),
-    #         dispenser.GetInputPort("current_pose"),
-    #     )
+        # Connect "mock_trajectory" to "dispenser" as the current pose input
+        builder.Connect(
+            mock_trajectory.GetOutputPort("pose_in_plan"),
+            dispenser.GetInputPort("current_pose"),
+        )
 
-    #     # Build the diagram
-    #     diagram = builder.Build()
-    #     diagram_context = diagram.CreateDefaultContext()
+        # Build the diagram
+        watcher, diagram, diagram_context = add_watcher_and_build(
+            builder,
+            figure_naming_convention=FigureNamingConvention.kHierarchical,
+            )
+        # diagram = builder.Build()
+        # diagram_context = diagram.CreateDefaultContext()
 
-    #     # Set the plan in the dispenser and change internal state to planset
-    #     dispenser_context = diagram.GetMutableSubsystemContext(dispenser, diagram_context)
-    #     dispenser_context.SetDiscreteState(
-    #         np.array([DispenserInternalState.kPlanSet])
-    #     )
-    #     dispenser.plan = plan
+        # Set the plan in the dispenser and change internal state to planset
+        dispenser_context = diagram.GetMutableSubsystemContext(dispenser, diagram_context)
+        # dispenser_context.SetDiscreteState(
+        #     np.array([DispenserInternalState.kPlanSet])
+        # )
+        # dispenser.plan = plan
 
-    #     # Simulate the diagram for 20 seconds
-    #     simulator = Simulator(diagram, diagram_context)
-    #     simulator.Initialize()
-    #     simulator.AdvanceTo(20.0)
+        # Simulate the diagram for 20 seconds
+        simulator = Simulator(diagram, diagram_context)
+        simulator.Initialize()
+        simulator.set_publish_every_time_step(True)
+        simulator.AdvanceTo(20.0)
 
-    #     # Verify that the current pose is the last pose in the plan
-    #     pose_out = AbstractValue.Make(RigidTransform())
-    #     dispenser.GetCurrentPoseInPlan(dispenser_context, pose_out)
-    #     pose_out = pose_out.get_value()
+        # Verify that the current pose is the last pose in the plan
+        pose_out = AbstractValue.Make(RigidTransform())
+        dispenser.GetCurrentPoseInPlan(dispenser_context, pose_out)
+        pose_out = pose_out.get_value()
 
-    #     self.assertTrue(pose_out.IsExactlyEqualTo(plan[-1]))
+        self.assertTrue(pose_out.IsExactlyEqualTo(plan[-1]))
 
     def test_transition_internal_state1(self):
         """
