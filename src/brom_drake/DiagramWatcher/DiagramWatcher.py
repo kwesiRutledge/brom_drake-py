@@ -22,7 +22,7 @@ from brom_drake.DiagramTarget import DiagramTarget
 from brom_drake.PortWatcher.port_watcher import PortWatcher
 from brom_drake.PortWatcher.port_watcher_options import PortWatcherOptions, PortWatcherPlottingOptions, PortWatcherRawDataOptions
 from brom_drake.DiagramWatcher.constants import INELIGIBLE_SYSTEM_TYPES
-from brom_drake.directories import  DEFAULT_PLOT_DIR, DEFAULT_RAW_DATA_DIR
+from brom_drake.directories import DEFAULT_PLOT_DIR, DEFAULT_RAW_DATA_DIR, DEFAULT_WATCHER_DIR
 from brom_drake.DiagramWatcher.errors import UnrecognizedTargetError
 
 
@@ -101,9 +101,11 @@ class DiagramWatcher:
                         options=port_watcher_options,
                     )
                 except Exception as e:
-                    for logging_function in [print, loguru.logger.error]:
-                        logging_function(f"There was an error attempting to add a watcher to port {target_port.get_name()} of system {target.name}")
-                        logging_function(f"Error: {e}")
+                    print(f"[Warning] Unable to log port named \"{target_port.get_name()}\" of system \"{target.name}\". See log file ({plot_dir}/activity_summary.log) for more details.")
+                    loguru.logger.warning(
+                        f"There was an error attempting to add a watcher to port {target_port.get_name()} of system {target.name}"
+                    )
+                    loguru.logger.warning(f"Error: {e}")
 
     def create_new_port_watcher_options(
         self,
@@ -165,7 +167,7 @@ class DiagramWatcher:
         """
         # Setup
         loguru.logger.remove()  # Remove the default logger
-        loguru.logger.add(self.plot_dir + "/activity_summary.log")
+        loguru.logger.add(DEFAULT_WATCHER_DIR + "/activity_summary.log")
 
     def check_targets(
         self,
