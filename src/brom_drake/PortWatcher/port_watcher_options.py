@@ -9,7 +9,7 @@ from enum import Enum, IntEnum
 from typing import NamedTuple
 
 # Internal Imports
-from brom_drake.directories import DEFAULT_PLOT_DIR, DEFAULT_RAW_DATA_DIR
+from brom_drake.directories import DEFAULT_PLOT_DIR, DEFAULT_RAW_DATA_DIR, DEFAULT_WATCHER_DIR
 from .port_figure_arrangement import PortFigureArrangement
 
 class FigureNamingConvention(IntEnum):
@@ -20,15 +20,20 @@ class PortWatcherPlottingOptions(NamedTuple):
     plot_arrangement: PortFigureArrangement = PortFigureArrangement.OnePlotPerPort
     plot_dpi: int = 300
     save_to_file: bool = True
-    base_directory: str = DEFAULT_PLOT_DIR
     file_format: str = "png"
     figure_naming_convention: FigureNamingConvention = FigureNamingConvention.kFlat
 
 class PortWatcherRawDataOptions(NamedTuple):
     save_to_file: bool = True
-    base_directory: str = DEFAULT_RAW_DATA_DIR
     file_format: str = "npy"
 
 class PortWatcherOptions(NamedTuple):
+    base_directory: str = DEFAULT_WATCHER_DIR
     plotting: PortWatcherPlottingOptions = PortWatcherPlottingOptions()
     raw_data: PortWatcherRawDataOptions = PortWatcherRawDataOptions()
+
+    def plot_dir(self):
+        return self.base_directory + "/plots"
+
+    def raw_data_dir(self):
+        return self.base_directory + "/raw_data"

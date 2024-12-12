@@ -11,7 +11,7 @@ from brom_drake.motion_planning.systems.state_of_plan_in_memory import StateOfPl
 class OpenLoopPosePlanDispenser(LeafSystem):
     def __init__(
         self,
-        speed: float, # Speed at which to proceed through points.
+        speed: float = 0.5, # Speed at which to proceed through points.
     ):
         LeafSystem.__init__(self)
 
@@ -48,7 +48,7 @@ class OpenLoopPosePlanDispenser(LeafSystem):
         """
         self.DeclareAbstractOutputPort(
             "pose_in_plan",
-            lambda: RigidTransform(),
+            lambda: AbstractValue.Make(RigidTransform()),
             self.GetCurrentPoseInPlan,
         )
 
@@ -154,7 +154,7 @@ class OpenLoopPosePlanDispenser(LeafSystem):
             times += [t_ii]
 
         self.t_final = t_ii
-        position_trajectory = PiecewisePolynomial.FirstOrderHold(times, plan.T)
+        position_trajectory = PiecewisePolynomial.FirstOrderHold(times, temp_position_plan.T)
         orientation_trajectory = PiecewiseQuaternionSlerp(times, temp_quaternion_plan)
         self.planned_trajectory = PiecewisePose(
             position_trajectory,

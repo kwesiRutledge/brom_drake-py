@@ -31,8 +31,6 @@ class DiagramWatcher:
         self,
         subject: DiagramBuilder,
         targets: List[DiagramTarget] = None,
-        plot_dir: str = DEFAULT_PLOT_DIR,
-        raw_data_dir: str = DEFAULT_RAW_DATA_DIR,
         port_watcher_options: PortWatcherOptions = PortWatcherOptions(),
     ):
         # Setup
@@ -40,12 +38,6 @@ class DiagramWatcher:
         # Needs to be populated by the user of this class AFTER the diagram has been built
         self.diagram = None
         self.diagram_context = None
-        
-        port_watcher_options = self.create_new_port_watcher_options(
-            port_watcher_options,
-            plot_dir=plot_dir,
-            raw_data_dir=raw_data_dir,
-        )
 
         # Check subject
         if not isinstance(subject, DiagramBuilder):
@@ -53,16 +45,16 @@ class DiagramWatcher:
 
         # Save the inputs
         self.subject = subject
-        self.plot_dir = plot_dir
+        self.options = port_watcher_options
 
         # Create the .brom directory, to store:
         # - activity_summary.log
         # - all plots
-        if os.path.exists(plot_dir):
-            os.system(f"rm -r {plot_dir}")
+        if os.path.exists(self.options.base_directory):
+            os.system(f"rm -r {self.options.base_directory}")
 
         # Create directory to plot in
-        os.makedirs(plot_dir, exist_ok=True)
+        os.makedirs(self.options.base_directory, exist_ok=True)
         self.configure_brom_activity_summary()  # Create an "activity summary" log
                                                 # which details what the
                                                 # DiagramWatcher is doing.
@@ -97,11 +89,11 @@ class DiagramWatcher:
                     self.port_watchers[target.name][target_port.get_name()] = PortWatcher(
                         target_port, subject,
                         logger_name=f"{target.name}_logger_{port_index}",
-                        plot_dir=plot_dir,
+                        plot_dir=self.options.plot_dir(),
                         options=port_watcher_options,
                     )
                 except Exception as e:
-                    print(f"[Warning] Unable to log port named \"{target_port.get_name()}\" of system \"{target.name}\". See log file ({plot_dir}/activity_summary.log) for more details.")
+                    print(f"[Warning] Unable to log port named \"{target_port.get_name()}\" of system \"{target.name}\". See log file ({self.options.plot_dir()}/activity_summary.log) for more details.")
                     loguru.logger.warning(
                         f"There was an error attempting to add a watcher to port {target_port.get_name()} of system {target.name}"
                     )
@@ -110,8 +102,8 @@ class DiagramWatcher:
     def create_new_port_watcher_options(
         self,
         options: PortWatcherOptions,
-        plot_dir: str = DEFAULT_PLOT_DIR,
-        raw_data_dir: str = DEFAULT_RAW_DATA_DIR,
+        plot_dir: str = None,
+        raw_data_dir: str = None,
     ):
         """
         Description:
@@ -123,18 +115,27 @@ class DiagramWatcher:
         :return:
         """
         # Setup
+        new_plot_dir = options.plotting.base_directory
+        if plot_dir is not None: 
+            new_plot_dir = plot_dir
+
+        new_raw_data_dir = options.raw_data.base_directory
+        if raw_data_dir is not None: 
+            new_raw_data_dir = raw_data_dir
+
+        # Return the new options
         return PortWatcherOptions(
             plotting=PortWatcherPlottingOptions(
                 plot_arrangement=options.plotting.plot_arrangement,
                 plot_dpi=options.plotting.plot_dpi,
                 save_to_file=options.plotting.save_to_file,
-                base_directory=plot_dir,
+                base_directory=new_plot_dir,
                 file_format=options.plotting.file_format,
                 figure_naming_convention=options.plotting.figure_naming_convention,
             ),
             raw_data=PortWatcherRawDataOptions(
                 save_to_file=options.raw_data.save_to_file,
-                base_directory=raw_data_dir,
+                base_directory=new_raw_data_dir,
                 file_format=options.raw_data.file_format,
             ),
         )
@@ -166,8 +167,11 @@ class DiagramWatcher:
         :return:
         """
         # Setup
+        options = self.options
+
+        # Configure the logger
         loguru.logger.remove()  # Remove the default logger
-        loguru.logger.add(DEFAULT_WATCHER_DIR + "/activity_summary.log")
+        loguru.logger.add(options.base_directory + "/activity_summary.log")
 
     def check_targets(
         self,

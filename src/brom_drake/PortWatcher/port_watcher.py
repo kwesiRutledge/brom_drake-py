@@ -46,9 +46,12 @@ class PortWatcher:
         self.data = {}
         self.plot_handles = {}
         self.plot_handles = None
-        
+        self.plot_dir = plot_dir
+        self.raw_data_dir = raw_data_dir
+
         # Set up directories
-        self.options = self.create_new_port_watcher_options(options, plot_dir, raw_data_dir)
+        os.makedirs(self.options.plot_dir(), exist_ok=True)
+        os.makedirs(self.options.raw_data_dir(), exist_ok=True)
 
         # Input Processing
         self.check_port_type()
@@ -71,6 +74,7 @@ class PortWatcher:
                 logger=self.logger,
                 port=self.port,
                 plotting_options=self.options.plotting,
+                plot_dir=self.options.plot_dir(),
             )
 
     def check_port_type(self):
@@ -85,6 +89,7 @@ class PortWatcher:
 
         # Algorithm
         if output_port.get_data_type() == PortDataType.kVectorValued:
+            
             return
         
         # Check to see if AbstractValue port contains RigidTransform
@@ -112,35 +117,6 @@ class PortWatcher:
             f"- Vector valued ports (i.e., of type {PortDataType.kVectorValued}.\n" +
             f"- Abstract valued ports containing RigidTransform objects.\n" +
             f"Received port of type {output_port.get_data_type()} with underlying type {type(example_value)}."
-        )
-
-    def create_new_port_watcher_options(
-        self,
-        options: PortWatcherOptions,
-        plot_dir: str = DEFAULT_PLOT_DIR,
-        raw_data_dir: str = DEFAULT_RAW_DATA_DIR,
-    ) -> PortWatcherOptions:
-        """
-        Description:
-            Creates a new set of PortWatcherOptions.
-        :param plotting:
-        :param raw_data:
-        :return:
-        """
-        return PortWatcherOptions(
-            plotting=PortWatcherPlottingOptions(
-                plot_arrangement=options.plotting.plot_arrangement,
-                plot_dpi=options.plotting.plot_dpi,
-                save_to_file=options.plotting.save_to_file,
-                base_directory=plot_dir,
-                file_format=options.plotting.file_format,
-                figure_naming_convention=options.plotting.figure_naming_convention,
-            ),
-            raw_data=PortWatcherRawDataOptions(
-                save_to_file=options.raw_data.save_to_file,
-                base_directory=raw_data_dir,
-                file_format=options.raw_data.file_format,
-            )
         )
     
     def prepare_logger(self, builder: DiagramBuilder):
@@ -236,7 +212,7 @@ class PortWatcher:
         # Setup
         options = self.options
         format = options.raw_data.file_format
-        raw_data_dir = options.raw_data.base_directory
+        raw_data_dir = options.raw_data_dir()
 
         # If this has the flat naming convention, then the file should be contained within the plot_dir.
         return [

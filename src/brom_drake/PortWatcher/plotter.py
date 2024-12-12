@@ -7,7 +7,9 @@ from pydrake.all import (
     Context,
     LeafSystem,
     OutputPort,
+    PortDataType,
     MultibodyPlant,
+    RigidTransform,
 )
 from typing import List, Tuple
 
@@ -16,6 +18,7 @@ from typing import List, Tuple
 from brom_drake.PortWatcher.port_figure_arrangement import PortFigureArrangement
 from brom_drake.PortWatcher.port_watcher_options import FigureNamingConvention, PortWatcherPlottingOptions
 from brom_drake.utils.constants import SupportedLogger
+from brom_drake.directories import DEFAULT_PLOT_DIR
 
 class PortWatcherPlotter:
     def __init__(
@@ -23,11 +26,13 @@ class PortWatcherPlotter:
         logger: SupportedLogger,
         port: OutputPort,
         plotting_options: PortWatcherPlottingOptions = PortWatcherPlottingOptions(),
+        plot_dir: str = DEFAULT_PLOT_DIR,
     ):
         # Setup
         self.logger = logger
         self.port = port
         self.plotting_options = plotting_options
+        self.plot_dir = plot_dir
 
     def compute_plot_shape(self, n_dims: int) -> Tuple[int, int]:
         """
@@ -81,7 +86,7 @@ class PortWatcherPlotter:
         # Setup
         plotting_options = self.plotting_options
         format = plotting_options.file_format
-        plot_dir = plotting_options.base_directory
+        plot_dir = self.plot_dir
 
         #
         if plotting_options.plot_arrangement == PortFigureArrangement.OnePlotPerPort:
@@ -110,7 +115,7 @@ class PortWatcherPlotter:
         # Setup
         plotting_options = self.plotting_options
         format = plotting_options.file_format
-        plot_dir = plotting_options.base_directory
+        plot_dir = self.plot_dir
 
         # Algorithm
         if plotting_options.plot_arrangement == PortFigureArrangement.OnePlotPerPort:
@@ -144,7 +149,7 @@ class PortWatcherPlotter:
         """
         # Setup
         plotting_options = self.plotting_options
-        n_dims = self.port.size()
+        n_dims = self.data_dimension()
         system = self.port.get_system()
 
         # Input Processing
@@ -178,6 +183,25 @@ class PortWatcherPlotter:
 
         # Return name!
         return name
+
+    def data_dimension(self) -> int:
+        """
+        Description:
+            Returns the dimension of the data in the port.
+        :return:
+        """
+        if self.port.get_data_type() == PortDataType.kVectorValued:
+            return self.port.size()
+        else:
+            # If port contains RigidTransform, then the expected data dimension is 7.
+            example_value = self.port.Allocate()
+            if isinstance(example_value.get_value(), RigidTransform):
+                return 7
+        
+        # Otherwise, raise an error
+        raise ValueError(
+            f"Port {self.port.get_name()} of system {self.port.get_system().get_name()} is not of the correct type for plotting."
+        )
 
     def plot_logger_data(
         self,
