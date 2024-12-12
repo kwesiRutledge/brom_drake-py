@@ -32,7 +32,7 @@ class ProximityPosePlanDispenserConfig:
         self,
         pose1: RigidTransform,
         pose2: RigidTransform,
-    ):
+    ) -> bool:
         """
         Description
         -----------

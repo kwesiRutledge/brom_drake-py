@@ -89,7 +89,6 @@ class PortWatcher:
         
         # Check to see if AbstractValue port contains RigidTransform
         output_value = output_port.Allocate()
-        print(f"Type of output_value: {type(output_value)}")
         if isinstance(output_value.get_value(), RigidTransform):
             return
 
@@ -104,11 +103,15 @@ class PortWatcher:
         :param output_port:
         :return:
         """
+        # Setup
+        example_value = output_port.Allocate()
+
+        # Return
         return ValueError(
             f"This watcher only supports output ports that are:\n" +
             f"- Vector valued ports (i.e., of type {PortDataType.kVectorValued}.\n" +
             f"- Abstract valued ports containing RigidTransform objects.\n" +
-            f"Received port of type {output_port.get_data_type()}."
+            f"Received port of type {output_port.get_data_type()} with underlying type {type(example_value)}."
         )
 
     def create_new_port_watcher_options(

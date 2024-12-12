@@ -76,17 +76,25 @@ class ProximityPosePlanDispenser(LeafSystem):
         if state != DispenserInternalState.kPlanSet:
             return
         
+        print("Current Pose: ", current_pose.translation())
+        print("Plan Pose: ", plan[plan_idx].translation())
+
         # If the plan is ready, then check to see if we should advance the plan
         should_advance = self.config.in_proximity(
             current_pose,
             plan[plan_idx],
         )
 
-        if should_advance and (plan_idx < len(plan) - 1):
+        print("Should Advance: ", should_advance)
+
+        print("Plan Index: ", plan_idx)
+        print("Plan Length: ", len(plan))
+        print("self.dispenser_plan_index: ", self.dispenser_plan_index)
+
+        if should_advance and (plan_idx < len(plan)):
+            print("Advancing Plan...")
             self.dispenser_plan_index += 1
-        else:
-            # Otherwise, do nothing
-            pass
+                    
 
     def declare_input_ports(self):
         """
@@ -132,10 +140,29 @@ class ProximityPosePlanDispenser(LeafSystem):
             calc=self.GetInternalState,
         )
 
+        self.DeclareVectorOutputPort(
+            "current_pose_index",
+            size=1,
+            calc=self.GetCurrentPoseIndex,
+        )
+
+    def GetCurrentPoseIndex(self, context: Context, output: BasicVector):
+        """
+        Description
+        -----------
+        This function is responsible for outputting the current index of the plan that the system is on.
+        """
+        # Setup
+        plan_idx = self.dispenser_plan_index
+
+        # Output the current index
+        output.SetFromVector(
+            np.array([plan_idx])
+        )
+
     def GetCurrentPoseInPlan(self, context: Context, output_pose: AbstractValue):
         # Setup
         plan = self.plan_port.Eval(context)
-
         last_pose = self.last_pose
 
         # Transition the internal state, if needed
@@ -143,7 +170,6 @@ class ProximityPosePlanDispenser(LeafSystem):
 
         # Get the abstract state
         state = context.get_discrete_state(self.dispenser_state)
-        plan_idx = self.dispenser_plan_index
 
         # If the state of the dispenser is reset, then share
         # the LAST pose.
@@ -154,12 +180,15 @@ class ProximityPosePlanDispenser(LeafSystem):
             )
             return
         
-        # If the state of the plan is kPlanSet,
-        # then check to see if we should ADVANCE to the next part of the plan
-        self.advance_plan_if_necessary(context)
+        # # If the state of the plan is kPlanSet,
+        # # then check to see if we should ADVANCE to the next part of the plan
+        # print("who?")
+        # self.advance_plan_if_necessary(context)
+        # print("what?")
         plan_idx = self.dispenser_plan_index
 
         # Output The Current Point in the Plan
+        print("Plan Index: ", plan_idx)
         output_pose.SetFrom(
             AbstractValue.Make(plan[plan_idx])
         )
