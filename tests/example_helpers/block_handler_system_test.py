@@ -17,7 +17,6 @@ from brom_drake.example_helpers import BlockHandlerSystem
 import brom_drake.example_helpers as eh
 from brom_drake.utils import AddGround
 
-
 class TestBlockHandlerSystem(unittest.TestCase):
     def test_init1(self):
         """

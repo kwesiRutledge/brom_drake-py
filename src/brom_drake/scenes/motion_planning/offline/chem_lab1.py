@@ -16,7 +16,7 @@ from brom_drake.file_manipulation.urdf import drakeify_my_urdf
 from brom_drake.file_manipulation.urdf.shapes.box import BoxDefinition
 from brom_drake.file_manipulation.urdf.simple_writer.urdf_definition import SimpleShapeURDFDefinition, \
     InertiaDefinition
-from brom_drake.motion_planning.systems.open_loop_plan_dispenser import OpenLoopPlanDispenser
+from brom_drake.motion_planning.systems.open_loop_dispensers.open_loop_plan_dispenser import OpenLoopPlanDispenser
 import brom_drake.robots as robots
 from brom_drake.robots.stations.kinematic import UR10eStation as KinematicUR10eStation
 from brom_drake.scenes import SceneID
