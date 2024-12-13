@@ -9,7 +9,7 @@ from pydrake.systems.primitives import ConstantValueSource
 
 # Internal Imports
 from brom_drake.all import add_watcher_and_build
-from brom_drake.motion_planning.systems.open_loop_plan_dispenser import OpenLoopPlanDispenser
+from brom_drake.motion_planning.systems.open_loop_dispensers.open_loop_plan_dispenser import OpenLoopPlanDispenser
 
 
 class OpenLoopPlanDispenserTest(unittest.TestCase):
@@ -210,7 +210,7 @@ class OpenLoopPlanDispenserTest(unittest.TestCase):
         # Build the diagram with watcher and simulate
         watcher, diagram, diagram_context = add_watcher_and_build(
             builder,
-            data_dir="../brom/watcher_plots3/"
+            watcher_dir="../brom/watcher_plots3"
         )
 
         # Create a context for the diagram

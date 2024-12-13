@@ -14,7 +14,7 @@ from pydrake.systems.framework import Context
 
 from brom_drake.DiagramTarget import DiagramTarget
 from brom_drake.DiagramWatcher import DiagramWatcher
-from brom_drake.directories import DEFAULT_PLOT_DIR
+from brom_drake.directories import DEFAULT_PLOT_DIR, DEFAULT_RAW_DATA_DIR, DEFAULT_WATCHER_DIR
 from brom_drake.PortWatcher.port_watcher_options import (
     PortFigureArrangement,
     PortWatcherPlottingOptions,
@@ -39,7 +39,7 @@ PotentialTargetTypes = List[
 def add_watcher(
     builder: DiagramBuilder,
     targets: PotentialTargetTypes = None,
-    data_dir: str = DEFAULT_PLOT_DIR,
+    watcher_dir: str = DEFAULT_WATCHER_DIR,
     plot_arrangement: PortFigureArrangement = PortFigureArrangement.OnePlotPerPort,
     figure_naming_convention: FigureNamingConvention = FigureNamingConvention.kFlat,
     file_format: str = "png",
@@ -76,21 +76,25 @@ def add_watcher(
         targets = parse_list_of_simplified_targets(builder, targets)
 
     port_watcher_options = PortWatcherOptions(
+        base_directory=watcher_dir,
         plotting=PortWatcherPlottingOptions(
             plot_arrangement=plot_arrangement,
             figure_naming_convention=figure_naming_convention,
             file_format=file_format,
         ),
+        raw_data=PortWatcherRawDataOptions(
+            save_to_file=True,
+        ),
     )
 
-    watcher = DiagramWatcher(builder, targets=targets, plot_dir=data_dir, port_watcher_options=port_watcher_options)
+    watcher = DiagramWatcher(builder, targets=targets, port_watcher_options=port_watcher_options)
     return watcher
 
 
 def add_watcher_and_build(
     builder: DiagramBuilder,
     targets: PotentialTargetTypes = None,
-    data_dir: str = DEFAULT_PLOT_DIR,
+    watcher_dir: str = DEFAULT_WATCHER_DIR,
     plot_arrangement: PortFigureArrangement = PortFigureArrangement.OnePlotPerPort,
     figure_naming_convention: FigureNamingConvention = FigureNamingConvention.kFlat,
     file_format: str = "png",
@@ -121,7 +125,8 @@ def add_watcher_and_build(
     """
     watcher = add_watcher(
         builder,
-        targets=targets, data_dir=data_dir,
+        targets=targets,
+        watcher_dir=watcher_dir,
         plot_arrangement=plot_arrangement,
         figure_naming_convention=figure_naming_convention,
         file_format=file_format,

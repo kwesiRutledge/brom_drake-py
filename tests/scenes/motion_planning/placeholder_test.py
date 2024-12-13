@@ -8,7 +8,6 @@ import ipdb
 import numpy as np
 from pydrake.all import Simulator, DiagramBuilder
 from pydrake.common.value import AbstractValue
-from pydrake.geometry import Meshcat, MeshcatVisualizer
 from pydrake.multibody.plant import AddMultibodyPlantSceneGraph
 from pydrake.systems.primitives import ConstantValueSource, ConstantVectorSource
 import unittest

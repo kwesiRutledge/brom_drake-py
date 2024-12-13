@@ -75,18 +75,16 @@ class ProximityPosePlanDispenser(LeafSystem):
         # If the plan is not ready, then do nothing
         if state != DispenserInternalState.kPlanSet:
             return
-        
+
         # If the plan is ready, then check to see if we should advance the plan
         should_advance = self.config.in_proximity(
             current_pose,
             plan[plan_idx],
         )
 
-        if should_advance and (plan_idx < len(plan) - 1):
+        if should_advance and (plan_idx < len(plan)-1):
             self.dispenser_plan_index += 1
-        else:
-            # Otherwise, do nothing
-            pass
+                    
 
     def declare_input_ports(self):
         """
@@ -132,10 +130,29 @@ class ProximityPosePlanDispenser(LeafSystem):
             calc=self.GetInternalState,
         )
 
+        self.DeclareVectorOutputPort(
+            "current_pose_index",
+            size=1,
+            calc=self.GetCurrentPoseIndex,
+        )
+
+    def GetCurrentPoseIndex(self, context: Context, output: BasicVector):
+        """
+        Description
+        -----------
+        This function is responsible for outputting the current index of the plan that the system is on.
+        """
+        # Setup
+        plan_idx = self.dispenser_plan_index
+
+        # Output the current index
+        output.SetFromVector(
+            np.array([plan_idx])
+        )
+
     def GetCurrentPoseInPlan(self, context: Context, output_pose: AbstractValue):
         # Setup
         plan = self.plan_port.Eval(context)
-
         last_pose = self.last_pose
 
         # Transition the internal state, if needed
@@ -143,7 +160,6 @@ class ProximityPosePlanDispenser(LeafSystem):
 
         # Get the abstract state
         state = context.get_discrete_state(self.dispenser_state)
-        plan_idx = self.dispenser_plan_index
 
         # If the state of the dispenser is reset, then share
         # the LAST pose.
@@ -176,7 +192,7 @@ class ProximityPosePlanDispenser(LeafSystem):
         self.transition_internal_state(context)
 
         # Output the internal state
-        output.SetFromVector(
+        output.SetFrom(
             context.get_discrete_state(self.dispenser_state)
         )
 

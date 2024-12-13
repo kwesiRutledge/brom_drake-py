@@ -4,6 +4,7 @@ from .search import (
 )
 from .constants import Performer, MotionPlan
 from .ground import AddGround, GroundShape
+from .rigid_transform_to_vector_system import RigidTransformToVectorSystem
 
 __all__ = [
     "find_all_systems_with_input_port",
@@ -12,4 +13,5 @@ __all__ = [
     "MotionPlan",
     "AddGround",
     "GroundShape",
+    "RigidTransformToVectorSystem",
 ]
