@@ -541,6 +541,7 @@ class PortWatcherPlotterTest(unittest.TestCase):
         self,
         time_step: float = 0.01,
         plotting_options: PortWatcherPlottingOptions = PortWatcherPlottingOptions(),
+        plot_dir: str = "./.brom",
     )->Tuple[Diagram, Context, PortWatcherPlotter, MultibodyPlant]:
         """
         Description:
@@ -592,6 +593,7 @@ class PortWatcherPlotterTest(unittest.TestCase):
             logger0,
             plant.GetOutputPort("state"),
             plotting_options=plotting_options,
+            plot_dir=plot_dir,
         )
 
         # Setup simulation
@@ -629,11 +631,10 @@ class PortWatcherPlotterTest(unittest.TestCase):
 
         # Set up a simple diagram with an included watcher
         plot_dir = "./.brom2"
-        options = PortWatcherPlottingOptions(
-            base_directory=plot_dir
-        )
+        options = PortWatcherPlottingOptions()
         diagram, diagram_context, pw0, _ = self.build_example_diagram(
             plotting_options=options,
+            plot_dir=plot_dir,
         )
 
         # Run sim
@@ -674,12 +675,12 @@ class PortWatcherPlotterTest(unittest.TestCase):
         pw_options = PortWatcherPlottingOptions(
             plot_arrangement=PortFigureArrangement.OnePlotPerDim,
             figure_naming_convention=FigureNamingConvention.kHierarchical,
-            base_directory=plot_dir,
         )
 
         # Set up a simple diagram with an included watcher
         diagram, diagram_context, pw0, plant = self.build_example_diagram(
             plotting_options=pw_options,
+            plot_dir=plot_dir,
         )
 
         # Run sim
@@ -722,12 +723,12 @@ class PortWatcherPlotterTest(unittest.TestCase):
         pw_options = PortWatcherPlottingOptions(
             plot_arrangement=PortFigureArrangement.OnePlotPerDim,
             figure_naming_convention=FigureNamingConvention.kHierarchical,
-            base_directory=plot_dir,
         )
 
         # Set up a simple diagram with an included watcher
         diagram, diagram_context, pw0, plant = self.build_example_diagram(
             plotting_options=pw_options,
+            plot_dir=plot_dir,
         )
 
         # Run sim
@@ -769,12 +770,12 @@ class PortWatcherPlotterTest(unittest.TestCase):
         pw_options = PortWatcherPlottingOptions(
             plot_arrangement=PortFigureArrangement.OnePlotPerDim,
             figure_naming_convention=FigureNamingConvention.kFlat,
-            base_directory=plot_dir,
         )
 
         # Set up a simple diagram with an included watcher
         diagram, diagram_context, pw0, plant = self.build_example_diagram(
             plotting_options=pw_options,
+            plot_dir=plot_dir,
         )
 
         # Run sim
@@ -810,12 +811,12 @@ class PortWatcherPlotterTest(unittest.TestCase):
         plotting_options = PortWatcherPlottingOptions(
             plot_arrangement=PortFigureArrangement.OnePlotPerPort,
             figure_naming_convention=FigureNamingConvention.kHierarchical,
-            base_directory=plot_dir,
         )
 
         # Set up a simple diagram with an included watcher
         diagram, diagram_context, pw0, plant = self.build_example_diagram(
             plotting_options=plotting_options,
+            plot_dir=plot_dir,
         )
 
         # Run sim
@@ -857,12 +858,12 @@ class PortWatcherPlotterTest(unittest.TestCase):
             plot_arrangement=PortFigureArrangement.OnePlotPerPort,
             figure_naming_convention=FigureNamingConvention.kHierarchical,
             file_format=test_file_format,
-            base_directory=plot_dir,
         )
 
         # Set up a simple diagram with an included watcher
         diagram, diagram_context, plotter0, plant = self.build_example_diagram(
             plotting_options=plotting_options,
+            plot_dir=plot_dir,
         )
 
         # Run sim
