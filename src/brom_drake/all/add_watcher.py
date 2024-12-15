@@ -113,14 +113,25 @@ def add_watcher_and_build(
 
         watcher = add_watcher(builder, [("plant", 0), ("controller", 0)])
 
-    :param builder: DiagramBuilder. The diagram builder to which we want to add the watcher.
-    :param targets: List[Tuple[Union[str, int]]]. The targets that we want to watch.
-    :param data_dir: str. The directory in which we will store the data collected by the DiagramWatcher.
-    :param plot_arrangement: PortFigureArrangement. The arrangement of the plots.
+    Arguments
+    ---------
+    builder: DiagramBuilder
+        The diagram builder to which we want to add the watcher.
+    targets: List[Tuple[Union[str, int]]]
+        The targets that we want to watch.
+    data_dir: str
+        The directory in which we will store the data collected by the DiagramWatcher.
+    plot_arrangement: PortFigureArrangement
+        The arrangement of the plots.
         (Can be PortFigureArrangement.OnePlotPerPort OR PortFigureArrangement.OnePlotPerDim)
-    :param figure_naming_convention: FigureNamingConvention. The naming convention for the figures.
+    figure_naming_convention: FigureNamingConvention
+        The naming convention for the figures.
         (Can be FigureNamingConvention.kFlat OR FigureNamingConvention.kHierarchical)
-    :param file_format: str. The file format for the figures.
+    file_format: str
+        The file format for the figures.
+    
+    Outputs
+    -------
     :return: DiagramWatcher. The watcher that we have added to the diagram builder.
     """
     watcher = add_watcher(
