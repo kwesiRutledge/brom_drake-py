@@ -2,9 +2,9 @@ from pydrake.systems.analysis import Simulator
 from pydrake.systems.framework import DiagramBuilder
 import unittest
 
-from brom_drake.scenes import SceneID
-from brom_drake.scenes.motion_planning.offline.shelf import ShelfPlanningScene
-from brom_drake.scenes.roles import kKinematicMotionPlanner
+from brom_drake.productions import SceneID
+from brom_drake.productions.motion_planning.offline.shelf import ShelfPlanning1
+from brom_drake.productions.roles import kKinematicMotionPlanner
 
 
 class ShelfTest(unittest.TestCase):
@@ -15,7 +15,7 @@ class ShelfTest(unittest.TestCase):
         :return:
         """
         # Setup
-        shelf_planning_scene = ShelfPlanningScene(meshcat_port_number=None)
+        shelf_planning_scene = ShelfPlanning1(meshcat_port_number=None)
 
         # Check that defaults are in place
         self.assertEqual(shelf_planning_scene.id, SceneID.kShelfPlanning1)

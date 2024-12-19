@@ -5,13 +5,13 @@ from pydrake.systems.analysis import Simulator
 # Internal Imports
 from brom_drake.motion_planning.systems.prototypical_planner import PrototypicalPlannerSystem
 from brom_drake.motion_planning.systems.rrt_plan_generator import RRTPlanGenerator
-from brom_drake.scenes.motion_planning.offline.chem_lab1 import ChemLab1Scene
+from brom_drake.productions.motion_planning.offline.chem_lab1 import ChemLab1
 from brom_drake.motion_planning.algorithms.rrt.base import BaseRRTPlanner
 
 class ChemLab1Test(unittest.TestCase):
     def test_add_all_secondary_cast_members_to_builder1(self):
         # Setup
-        scene = ChemLab1Scene(meshcat_port_number=None)
+        scene = ChemLab1(meshcat_port_number=None)
 
         # Call the method
         scene.add_all_secondary_cast_members_to_builder()
@@ -39,7 +39,7 @@ class ChemLab1Test(unittest.TestCase):
         # Setup
         q_easy_start = np.array([0.0, 0.0, -np.pi/4.0, 0.0, 0.0, 0.0])
         q_easy_goal = np.array([0.0, 0.0, -np.pi/8.0, 0.0, 0.0, 0.0])
-        scene1 = ChemLab1Scene(
+        scene1 = ChemLab1(
             meshcat_port_number=None,
             start_config=q_easy_start,
             goal_config=q_easy_goal,
@@ -74,7 +74,7 @@ class ChemLab1Test(unittest.TestCase):
         easy_goal_config = np.array([
             0.0, 0.0, np.pi/8., 0.0, 0.0, 0.0
         ])
-        scene = ChemLab1Scene(
+        scene = ChemLab1(
             meshcat_port_number=None,
             start_configuration=easy_start_config,
             goal_configuration=easy_goal_config,

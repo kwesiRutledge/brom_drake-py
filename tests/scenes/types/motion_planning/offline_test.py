@@ -9,7 +9,7 @@ import unittest
 from pydrake.systems.analysis import Simulator
 
 from brom_drake.motion_planning.algorithms.rrt.base import BaseRRTPlanner
-from brom_drake.scenes.motion_planning.offline import ShelfPlanningScene
+from brom_drake.productions.motion_planning.offline import ShelfPlanning1
 
 
 class OfflineMotionPlanningSceneTest(unittest.TestCase):
@@ -22,7 +22,7 @@ class OfflineMotionPlanningSceneTest(unittest.TestCase):
         :return:
         """
         # Setup
-        scene1 = ShelfPlanningScene(meshcat_port_number=None)
+        scene1 = ShelfPlanning1(meshcat_port_number=None)
         planner2 = BaseRRTPlanner(
             scene1.arm,
             scene1.plant,

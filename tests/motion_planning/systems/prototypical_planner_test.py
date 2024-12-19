@@ -19,7 +19,7 @@ from brom_drake.file_manipulation.urdf import drakeify_my_urdf
 from brom_drake.motion_planning.algorithms.rrt.base import BaseRRTPlanner
 from brom_drake.motion_planning.systems.prototypical_planner import PrototypicalPlannerSystem
 import brom_drake.robots as robots
-from brom_drake.scenes.motion_planning.offline import ShelfPlanningScene
+from brom_drake.productions.motion_planning.offline import ShelfPlanning1
 
 
 class TestPrototypicalPlannerSystem(unittest.TestCase):
@@ -67,7 +67,7 @@ class TestPrototypicalPlannerSystem(unittest.TestCase):
         bad_shelf_pose = RigidTransform(bad_shelf_orientation, bad_shelf_position)
 
         # Create the Scene
-        scene1 = ShelfPlanningScene(
+        scene1 = ShelfPlanning1(
             meshcat_port_number=None,
             start_config=q_collision,
             goal_config=q_collision,
@@ -133,7 +133,7 @@ class TestPrototypicalPlannerSystem(unittest.TestCase):
         # Setup
         q_easy_start = np.array([0.0, 0.0, -np.pi/4.0, 0.0, 0.0, 0.0])
         q_easy_goal = np.array([0.0, 0.0, -np.pi/8.0, 0.0, 0.0, 0.0])
-        scene1 = ShelfPlanningScene(
+        scene1 = ShelfPlanning1(
             meshcat_port_number=None,
             start_config=q_easy_start,
             goal_config=q_easy_goal,
