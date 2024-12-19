@@ -14,7 +14,7 @@ class ChemLab1Test(unittest.TestCase):
         scene = ChemLab1(meshcat_port_number=None)
 
         # Call the method
-        scene.add_all_secondary_cast_members_to_builder()
+        scene.add_supporting_cast()
 
         # Build the diagram
         diagram = scene.builder.Build()

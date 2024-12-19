@@ -26,12 +26,13 @@ class BaseProduction:
         # Create an extra place to save DiagramWatcher objects
         self.watcher = None
 
-    def add_all_secondary_cast_members_to_builder(self):
+    def add_supporting_cast(self):
         """
         Description
         -----------
-        This method must be implemented by the subclass. It should add all
-        elements to the builder.
+        This method must be implemented by the subclass.
+        It should add all "secondary" elements to the builder (i.e., the
+        cast members that the user doesn't need to worry about).
         :return:
         """
         pass
@@ -69,14 +70,11 @@ class BaseProduction:
         # Save the performer
         self.performers.append(system)
 
-    def cast_scene(
+    def add_main_cast(
         self,
         cast: Tuple[Role, Performer] = [],
     ):
         # Setup
-
-        # Add all elements to the builder
-        self.add_all_secondary_cast_members_to_builder()
 
         # Fulfill each role-performer pair in the casting_call list
         for role, performer in cast:
@@ -108,11 +106,14 @@ class BaseProduction:
 
     def cast_scene_and_build(
         self,
-        cast: Tuple[Role, Performer] = [],
+        main_cast_members: Tuple[Role, Performer] = [],
         with_watcher: bool = True,
     ) -> Tuple[Diagram, Context]:
         # Setup
-        self.cast_scene(cast)
+
+        # Add the cast to the production
+        self.add_supporting_cast()
+        self.add_main_cast(cast=main_cast_members)
 
         return self.build_scene(with_watcher=with_watcher)
 

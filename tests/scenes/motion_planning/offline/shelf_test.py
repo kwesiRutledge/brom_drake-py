@@ -22,7 +22,7 @@ class ShelfTest(unittest.TestCase):
         self.assertEqual(shelf_planning_scene.suggested_roles(), [kKinematicMotionPlanner])
 
         # Populate scene with builder
-        shelf_planning_scene.add_all_secondary_cast_members_to_builder()
+        shelf_planning_scene.add_supporting_cast()
         self.assertTrue(True)
 
     def test_cast_scene_and_build1(self):

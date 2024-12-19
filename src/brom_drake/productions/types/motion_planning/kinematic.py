@@ -50,7 +50,7 @@ class KinematicMotionPlanningProduction(BaseProduction):
         # Create placeholder for the robot model index
         self.robot_model_idx_ = None
 
-    def add_all_secondary_cast_members_to_builder(self):
+    def add_supporting_cast(self):
         """
         Description
         -----------
@@ -174,7 +174,7 @@ class KinematicMotionPlanningProduction(BaseProduction):
 
         self.builder.AddSystem(goal_source_system)
 
-    def cast_scene(
+    def add_main_cast(
         self,
         cast: Tuple[Role, Performer] = [],
     ):
@@ -189,7 +189,7 @@ class KinematicMotionPlanningProduction(BaseProduction):
         # Setup
 
         # Default
-        super().cast_scene(cast=cast)
+        super().add_main_cast(cast=cast)
 
         # Create optional outputs, if needed
         for role_ii, performer_ii in cast:
@@ -339,7 +339,7 @@ class KinematicMotionPlanningProduction(BaseProduction):
         # Setup
 
         # Add all elements to the builder
-        self.add_all_secondary_cast_members_to_builder()
+        self.add_supporting_cast()
 
         # Create a planner from the algorithm
         prototypical_planner = PrototypicalPlannerSystem(

@@ -51,7 +51,7 @@ class ShowMeThisModel(BaseProduction):
         self.model_index, self.model_name = None, None
         self.show_me_system = None
 
-    def add_all_secondary_cast_members_to_builder(self):
+    def add_supporting_cast(self):
         """
         Description
         -----------

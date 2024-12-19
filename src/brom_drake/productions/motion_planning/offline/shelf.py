@@ -72,13 +72,13 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
         self.shelf_model_index = None
         self.geometry_ids_to_ignore = []
 
-    def add_all_secondary_cast_members_to_builder(self):
+    def add_supporting_cast(self):
         """
         Add all secondary cast members to the builder.
         :return:
         """
         # Call the parent class method
-        super().add_all_secondary_cast_members_to_builder()
+        super().add_supporting_cast()
 
         # Setup
         self.add_ur10e_station() # Use the UR10e station's plant + scene graph for all other objects
@@ -174,7 +174,7 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
         :return:
         """
         diagram, diagram_context = super().cast_scene_and_build(
-            cast=cast,
+            main_cast_members=cast,
             with_watcher=with_watcher,
         )
 

@@ -94,7 +94,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
         # Define placeholder variables for models
         self.test_tube_holder1 = None
 
-    def add_all_secondary_cast_members_to_builder(self):
+    def add_supporting_cast(self):
         """
         Description
         -----------
@@ -106,7 +106,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
         :return:
         """
         # Call the superclass method
-        super().add_all_secondary_cast_members_to_builder()
+        super().add_supporting_cast()
 
         # Setup
 
@@ -279,7 +279,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
         :return:
         """
         diagram, diagram_context = super().cast_scene_and_build(
-            cast=cast,
+            main_cast_members=cast,
             with_watcher=with_watcher,
         )
 

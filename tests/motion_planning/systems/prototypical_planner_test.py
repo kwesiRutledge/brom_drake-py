@@ -75,7 +75,7 @@ class TestPrototypicalPlannerSystem(unittest.TestCase):
         )
 
         # Cast all secondary scene members
-        scene1.add_all_secondary_cast_members_to_builder()
+        scene1.add_supporting_cast()
 
         # Create planner with the now finalized arm
         planner1 = BaseRRTPlanner(
@@ -140,7 +140,7 @@ class TestPrototypicalPlannerSystem(unittest.TestCase):
         )
 
         # Cast all secondary scene members
-        scene1.add_all_secondary_cast_members_to_builder()
+        scene1.add_supporting_cast()
 
         # Create planner with the now finalized arm
         planner2 = BaseRRTPlanner(
