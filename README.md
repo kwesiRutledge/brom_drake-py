@@ -11,7 +11,7 @@ Feature                    |  Code | Results
 :-------------------------:|:-------------------------:|:-------------------------:
 The Diagram Watcher (the `DiagramWatcher` will log + plot all output ports of your `Diagram` automatically) |`add_watcher_and_build()`| ![Creation of Brom Directory](./promo/BromWatcher0.gif)
 The Drake-ify feature (converts your URDF file into a form that Drake can consume) | `drakeify_my_urdf()` | ![Drakeify Example](./promo/BromDrakeifyURDF0.gif)
-Productions (partially complete robot scenarios to test your algorithms) | (See [Examples Directory](https://github.com/kwesiRutledge/brom_drake-py/tree/main/examples/productions) or [the Wiki](https://github.com/kwesiRutledge/brom_drake-py/wiki/Productions)) | ![Kinematic Motion Planning Example](./promo/scenes/motion_planning/kinematic/Chem-Lab-Demo.gif)
+Productions (partially complete robot scenarios to test your algorithms) | (See [Examples Directory](https://github.com/kwesiRutledge/brom_drake-py/tree/main/examples/productions) or [the Wiki](https://github.com/kwesiRutledge/brom_drake-py/wiki/Productions)) | ![Kinematic Motion Planning Example](./promo/productions/motion_planning/kinematic/Chem-Lab-Demo.gif)
 
 (More coming soon...)
 
