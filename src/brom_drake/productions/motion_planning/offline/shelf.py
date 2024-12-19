@@ -16,7 +16,7 @@ from pydrake.systems.primitives import ConstantValueSource
 import brom_drake.robots as robots
 from brom_drake.motion_planning.systems.open_loop_dispensers.open_loop_plan_dispenser import OpenLoopPlanDispenser
 from brom_drake.robots.stations.kinematic import UR10eStation as KinematicUR10eStation
-from brom_drake.productions import SceneID
+from brom_drake.productions import ProductionID
 from brom_drake.productions.roles import Role
 from brom_drake.productions.types.motion_planning import KinematicMotionPlanningProduction
 from brom_drake.utils import Performer, GroundShape, AddGround, MotionPlan
@@ -324,8 +324,8 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
 
 
     @property
-    def id(self) -> SceneID:
-        return SceneID.kShelfPlanning1
+    def id(self) -> ProductionID:
+        return ProductionID.kShelfPlanning1
 
     @property
     def start_pose(self) -> RigidTransform:

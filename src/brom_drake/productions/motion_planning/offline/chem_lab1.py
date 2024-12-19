@@ -19,7 +19,7 @@ from brom_drake.file_manipulation.urdf.simple_writer.urdf_definition import Simp
 from brom_drake.motion_planning.systems.open_loop_dispensers.open_loop_plan_dispenser import OpenLoopPlanDispenser
 import brom_drake.robots as robots
 from brom_drake.robots.stations.kinematic import UR10eStation as KinematicUR10eStation
-from brom_drake.productions import SceneID
+from brom_drake.productions import ProductionID
 from brom_drake.productions.roles import Role
 from brom_drake.productions.types import KinematicMotionPlanningProduction
 from brom_drake.utils import Performer, AddGround, MotionPlan
@@ -450,8 +450,8 @@ class ChemLab1(KinematicMotionPlanningProduction):
             return self.goal_pose_
 
     @property
-    def id(self) -> SceneID:
-        return SceneID.kShelfPlanning1
+    def id(self) -> ProductionID:
+        return ProductionID.kShelfPlanning1
         
     # TODO(kwesi): Implement start_configuration method.
 

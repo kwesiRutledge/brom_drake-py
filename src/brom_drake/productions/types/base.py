@@ -5,7 +5,7 @@ from pydrake.systems.framework import DiagramBuilder, LeafSystem, Diagram, Conte
 from brom_drake.all import add_watcher_and_build
 # Internal Imports
 from brom_drake.productions.roles import Role
-from brom_drake.productions.ids import SceneID
+from brom_drake.productions.ids import ProductionID
 from brom_drake.utils import Performer
 
 class BaseProduction:
@@ -117,11 +117,11 @@ class BaseProduction:
         return self.build_scene(with_watcher=with_watcher)
 
     @property
-    def id(self) -> SceneID:
+    def id(self) -> ProductionID:
         """
         Description
         -----------
         The unique identifier for the scene
         :return:
         """
-        return SceneID.kNotDefined
+        return ProductionID.kNotDefined

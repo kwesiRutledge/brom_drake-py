@@ -1,7 +1,7 @@
 from enum import Enum, unique
 
 @unique
-class SceneID(Enum):
+class ProductionID(Enum):
     kNotDefined = "NotDefined"
     kShowMeThisModel = "ShowMeThisModel"
     kShelfPlanning1 = "ShelfPlanning1"
