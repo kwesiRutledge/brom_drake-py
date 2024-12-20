@@ -7,7 +7,7 @@ from pydrake.systems.analysis import Simulator
 # Internal imports
 from brom_drake import robots
 from brom_drake.all import drakeify_my_urdf
-from brom_drake.scenes.debug import ShowMeThisModel
+from brom_drake.productions.debug import ShowMeThisModel
 
 
 class ShowMeThisModelTest(unittest.TestCase):

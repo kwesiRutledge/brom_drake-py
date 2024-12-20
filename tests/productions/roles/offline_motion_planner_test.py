@@ -1,7 +1,7 @@
 import unittest
 
-from brom_drake.scenes.roles.motion_planners.kinematic import kKinematicMotionPlanner
-from brom_drake.scenes.roles.role_port_assignment import PairingType
+from brom_drake.productions.roles.motion_planners.kinematic import kKinematicMotionPlanner
+from brom_drake.productions.roles.role_port_assignment import PairingType
 
 
 class OfflineMotionPlannerTest(unittest.TestCase):
