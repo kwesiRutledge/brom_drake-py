@@ -14,7 +14,7 @@ import xml.etree.ElementTree as ET
 from brom_drake.directories import DEFAULT_BROM_MODELS_DIR
 from brom_drake.file_manipulation.urdf.simple_writer.urdf_definition import SimpleShapeURDFDefinition
 from brom_drake.file_manipulation.urdf.shapes.cylinder import CylinderDefinition
-from brom_drake.scenes.debug.show_me import ShowMeThisModel
+from brom_drake.productions.debug.show_me import ShowMeThisModel
 
 class TestCylinder(unittest.TestCase):
     """

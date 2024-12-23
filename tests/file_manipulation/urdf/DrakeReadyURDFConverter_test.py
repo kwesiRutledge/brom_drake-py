@@ -21,7 +21,7 @@ from brom_drake import robots
 from brom_drake.all import drakeify_my_urdf
 from brom_drake.file_manipulation.urdf import DrakeReadyURDFConverter, MeshReplacementStrategy
 import resources as resources_dir
-from brom_drake.scenes.debug import ShowMeThisModel
+from brom_drake.productions.debug import ShowMeThisModel
 
 
 class DrakeReadyURDFConverterTest(unittest.TestCase):
