@@ -21,6 +21,7 @@ from pydrake.all import (
 from pydrake.systems.framework import DiagramBuilder, PortDataType, Diagram, Context
 
 # Internal Imports
+from brom_drake.PortWatcher.port_watcher_options import PortWatcherOptions, PortWatcherPlottingOptions
 from brom_drake.all import (
     PortWatcher,
 )
@@ -188,6 +189,54 @@ class PortWatcherTest(unittest.TestCase):
 
         # this test will only fail if an error is raised
         self.assertTrue(True)
+
+    def test_save_raw_data1(self):
+        """
+        Description
+        -----------
+        This test verifies that the save_raw_data method
+        correctly saves the raw data to the correct file.
+        """
+        # Setup
+        builder = DiagramBuilder()
+
+        # Setup Diagram
+        pose_source = builder.AddSystem(
+            ConstantValueSource(AbstractValue.Make(RigidTransform()))
+        )
+
+        # Create PortWatcher object
+        pw_options0 = PortWatcherOptions(
+            base_directory="./brom/test_save_raw_data1/watcher"
+        )
+        pw0 = PortWatcher(
+            pose_source.get_output_port(),
+            builder,
+            options=pw_options0,
+        )
+
+        # Build Diagram
+        diagram = builder.Build()
+        diagram_context = diagram.CreateDefaultContext()
+
+        # Create simulator and simulate for a few seconds
+        simulator = Simulator(diagram, diagram_context)
+        simulator.set_publish_every_time_step(False)
+        simulator.AdvanceTo(1.0)
+        simulator.AdvanceTo(2.0)
+
+        # Save raw data
+        pw0.save_raw_data(diagram_context)
+
+        # Verify that the raw_data directory exists
+        self.assertTrue(
+            os.path.exists(pw0.options.raw_data_dir()),
+        )
+
+        # Verify that there is at least one file in the directory
+        self.assertTrue(
+            len(os.listdir(pw0.options.raw_data_dir())) > 0,
+        )
 
 
 if __name__ == '__main__':

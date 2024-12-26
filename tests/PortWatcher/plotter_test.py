@@ -2,8 +2,9 @@ from importlib import resources as impresources
 import numpy as np
 import os
 from pydrake.all import (
+    AbstractValue,
     AddMultibodyPlantSceneGraph,
-    ConstantVectorSource,
+    ConstantValueSource, ConstantVectorSource,
     Context, CoulombFriction,
     Diagram, DiagramBuilder, HalfSpace,
     LogVectorOutput,
@@ -19,8 +20,9 @@ import unittest
 from brom_drake.PortWatcher.plotter import PortWatcherPlotter
 from brom_drake.PortWatcher.port_watcher_options import (
     PortWatcherPlottingOptions, PortFigureArrangement,
-    FigureNamingConvention,
+    FigureNamingConvention, PortWatcherOptions,
 )
+from brom_drake.PortWatcher.port_watcher import PortWatcher
 import brom_drake.robots as robots
 
 class PortWatcherPlotterTest(unittest.TestCase):
@@ -890,6 +892,54 @@ class PortWatcherPlotterTest(unittest.TestCase):
 
         if self.delete_test_brom_directory_on_teardown:
             shutil.rmtree(plot_dir)
+
+    def test_save_figures8(self):
+        """
+        Description
+        -----------
+        This test verifies that the save_figures() method properly saves data
+        for the RigidTransform type of data.
+        """
+        # Setup
+        builder = DiagramBuilder()
+
+        # Setup Diagram
+        pose_source = builder.AddSystem(
+            ConstantValueSource(AbstractValue.Make(RigidTransform()))
+        )
+
+        # Create PortWatcher object
+        pw_options0 = PortWatcherOptions(
+            base_directory="./brom/test_save_figures8/watcher"
+        )
+        pw0 = PortWatcher(
+            pose_source.get_output_port(),
+            builder,
+            options=pw_options0,
+        )
+
+        # Build Diagram
+        diagram = builder.Build()
+        diagram_context = diagram.CreateDefaultContext()
+
+        # Create simulator and simulate for a few seconds
+        simulator = Simulator(diagram, diagram_context)
+        simulator.set_publish_every_time_step(False)
+        simulator.AdvanceTo(1.0)
+        simulator.AdvanceTo(2.0)
+
+        # Save raw data
+        pw0.plotter.save_figures(diagram_context)
+
+        # Verify that the raw_data directory exists
+        self.assertTrue(
+            os.path.exists(pw0.options.plot_dir()),
+        )
+
+        # Verify that there is at least one file in the directory
+        self.assertTrue(
+            len(os.listdir(pw0.options.plot_dir())) > 0,
+        )
 
     def test_system_is_multibody_plant1(self):
         """

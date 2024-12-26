@@ -448,9 +448,11 @@ class PortWatcherPlotter:
 
         # If no figures are returned, then return early!
         if figs is None:
+            print("No figures to save; plot_logger_data was empty.")
             return
 
         if len(figs) == 0:
+            print("Zero figures to save; plot_logger_data was empty.")
             return # Do nothing
 
         # Save the figures

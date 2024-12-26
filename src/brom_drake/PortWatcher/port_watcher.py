@@ -240,12 +240,12 @@ class PortWatcher:
         log = self.logger.FindLog(diagram_context)
         time_data_file_name, raw_data_file_name = self.time_and_raw_data_names()
 
-        # Save time data
+        # Save times associated with each data point
         log_times = log.sample_times()
         os.makedirs(Path(time_data_file_name).parent, exist_ok=True)
         np.save(time_data_file_name, log_times)
 
-        # Save the data
+        # Save the data values
         log_data = log.data()
         np.save(raw_data_file_name, log_data)
 
