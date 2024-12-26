@@ -18,6 +18,7 @@ from typing import List, Tuple
 from brom_drake.PortWatcher.port_figure_arrangement import PortFigureArrangement
 from brom_drake.PortWatcher.port_watcher_options import FigureNamingConvention, PortWatcherPlottingOptions
 from brom_drake.utils.constants import SupportedLogger
+from brom_drake.utils.type_checking import is_rigid_transform
 from brom_drake.directories import DEFAULT_PLOT_DIR
 
 class PortWatcherPlotter:
@@ -251,7 +252,7 @@ class PortWatcherPlotter:
         else:
             # If port contains RigidTransform, then the expected data dimension is 7.
             example_value = self.port.Allocate()
-            if isinstance(example_value.get_value(), RigidTransform):
+            if is_rigid_transform(example_value.get_value()):
                 return 7
         
         # Otherwise, raise an error

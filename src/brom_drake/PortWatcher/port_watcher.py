@@ -29,6 +29,7 @@ from .port_watcher_options import (
 from .port_figure_arrangement import PortFigureArrangement
 from .plotter import PortWatcherPlotter
 from brom_drake.utils import RigidTransformToVectorSystem
+from brom_drake.utils.type_checking import is_rigid_transform
 
 class PortWatcher:
     def __init__(
@@ -114,7 +115,7 @@ class PortWatcher:
         
         # Check to see if AbstractValue port contains RigidTransform
         output_value = output_port.Allocate()
-        if isinstance(output_value.get_value(), RigidTransform):
+        if is_rigid_transform(output_value.get_value()):
             return
 
         # Raise error otherwise
@@ -173,7 +174,7 @@ class PortWatcher:
 
             # Check to see if the port contains a RigidTransform
             output_value = self.port.Allocate()
-            if isinstance(output_value.get_value(), RigidTransform):
+            if is_rigid_transform(output_value.get_value()):
                 # If it is, then we must create an intermediate system
                 # that will convert the RigidTransform to a vector.
                 converter_system = builder.AddSystem(

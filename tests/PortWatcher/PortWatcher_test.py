@@ -17,6 +17,7 @@ from pydrake.all import (
     MultibodyPlant,
     Parser,
     RigidTransform, RotationMatrix,
+    Simulator,
 )
 from pydrake.systems.framework import DiagramBuilder, PortDataType, Diagram, Context
 
