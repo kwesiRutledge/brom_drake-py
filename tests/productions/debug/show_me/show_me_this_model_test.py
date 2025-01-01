@@ -38,7 +38,7 @@ class ShowMeThisModelTest(unittest.TestCase):
             time_step=time_step,
             meshcat_port_number=None, # Turn off for CI
         )
-        diagram, diagram_context = scene.cast_scene_and_build()
+        diagram, diagram_context = scene.add_cast_and_build()
 
         # Set up simulation
         simulator = Simulator(diagram, diagram_context)

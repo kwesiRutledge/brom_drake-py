@@ -93,7 +93,7 @@ class TestPrototypicalPlannerSystem(unittest.TestCase):
 
         # Build scene
         scene1.fill_role(scene1.suggested_roles()[0], system1)
-        diagram, diagram_context = scene1.build_scene()
+        diagram, diagram_context = scene1.build_production()
         
         system1.set_internal_root_context(diagram_context)
 
@@ -161,7 +161,7 @@ class TestPrototypicalPlannerSystem(unittest.TestCase):
         role1 = scene1.suggested_roles()[0]
         scene1.fill_role(role1, prototypical_planner)
 
-        diagram, diagram_context = scene1.build_scene()
+        diagram, diagram_context = scene1.build_production()
 
         # Add the connections that we need for the performer
         prototypical_planner.set_internal_root_context(

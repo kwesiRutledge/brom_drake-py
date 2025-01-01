@@ -143,11 +143,11 @@ class ShowMeThisModel(BaseProduction):
         # Finalize plant and connect it to system
         self.plant.Finalize()
 
-    def cast_scene_and_build(
+    def add_cast_and_build(
         self,
         cast: Tuple[Role, Performer] = [],
     ) -> Tuple[Diagram, Context]:
-        super().cast_scene_and_build(cast)
+        super().add_cast_and_build(cast)
 
         # Assign the diagram context to the internal show_me_system
         self.show_me_system.mutable_plant_context = self.plant.GetMyMutableContextFromRoot(

@@ -359,7 +359,7 @@ class KinematicMotionPlanningProduction(BaseProduction):
         )
 
         # Build
-        return self.build_scene(with_watcher=with_watcher)
+        return self.build_production(with_watcher=with_watcher)
 
     @property
     def goal_configuration(self) -> np.ndarray:

@@ -134,5 +134,4 @@ Some other work in the open-source drake community:
 - [ ] Add Documentation
 - [ ] Create a method that makes each material in a URDF file have unique names if they have specific values
 - [ ] Add methods for saving the state names on state plots from diagram watcher
-- [X] Add methods for over or under-approximating complex mehes with cylinders or circles or other shapes.
-- [ ] Allow for the user to give "Drake-unfriendly" URDFs to `ShowMeThisModel` scene
+- [ ] Allow for the user to give "Drake-unfriendly" URDFs to `ShowMeThisModel` production

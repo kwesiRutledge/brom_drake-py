@@ -55,7 +55,7 @@ class ChemLab1Test(unittest.TestCase):
 
         # Add the prototypical planner to the scene
         role1 = scene1.suggested_roles()[0]
-        diagram, diagram_context = scene1.cast_scene_and_build(
+        diagram, diagram_context = scene1.add_cast_and_build(
             cast=[(role1, planning_system)],
         )
 

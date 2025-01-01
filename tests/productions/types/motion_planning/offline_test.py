@@ -1,7 +1,7 @@
 """
 offline_test.py
 Description:
-    This script tests the offline motion planning role.
+    This script tests the offline motion planning production type.
 """
 
 import unittest

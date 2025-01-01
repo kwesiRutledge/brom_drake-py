@@ -64,7 +64,7 @@ class TestCylinder(unittest.TestCase):
 
         # Try to load this into a simple simulation
         scene = ShowMeThisModel(urdf_location, meshcat_port_number=None)
-        diagram, diagram_context = scene.cast_scene_and_build()
+        diagram, diagram_context = scene.add_cast_and_build()
 
         # Simulate the scene
         sim = Simulator(diagram, diagram_context)

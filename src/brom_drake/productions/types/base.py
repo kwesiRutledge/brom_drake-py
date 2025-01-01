@@ -80,7 +80,7 @@ class BaseProduction:
         for role, performer in cast:
             self.fill_role(role, performer)
 
-    def build_scene(
+    def build_production(
         self,
         with_watcher: bool = True,
     ):
@@ -104,7 +104,7 @@ class BaseProduction:
 
         return self.diagram, self.diagram_context
 
-    def cast_scene_and_build(
+    def add_cast_and_build(
         self,
         main_cast_members: Tuple[Role, Performer] = [],
         with_watcher: bool = True,
@@ -115,14 +115,14 @@ class BaseProduction:
         self.add_supporting_cast()
         self.add_main_cast(cast=main_cast_members)
 
-        return self.build_scene(with_watcher=with_watcher)
+        return self.build_production(with_watcher=with_watcher)
 
     @property
     def id(self) -> ProductionID:
         """
         Description
         -----------
-        The unique identifier for the scene
+        The unique identifier for the production.
         :return:
         """
         return ProductionID.kNotDefined

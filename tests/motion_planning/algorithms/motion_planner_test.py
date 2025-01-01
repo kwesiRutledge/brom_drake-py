@@ -159,7 +159,7 @@ class MotionPlannerTest(unittest.TestCase):
         ) # Weld the bookshelf to the world frame
 
         # Build Diagram and Simulate
-        diagram, diagram_context = scene.cast_scene_and_build()
+        diagram, diagram_context = scene.add_cast_and_build()
 
         # Try to check the collision
         in_collision = self.check_collision_in_config1(

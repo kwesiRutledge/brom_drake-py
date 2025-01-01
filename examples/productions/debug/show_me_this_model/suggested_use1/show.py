@@ -40,7 +40,7 @@ def main():
     )
 
     # Build Diagram
-    diagram, diagram_context = scene.cast_scene_and_build()
+    diagram, diagram_context = scene.add_cast_and_build()
 
     # Set up simulation
     simulator = Simulator(diagram, diagram_context)

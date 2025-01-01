@@ -263,7 +263,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
         )
 
 
-    def cast_scene_and_build(
+    def add_cast_and_build(
         self,
         cast: Tuple[Role, Performer] = [],
         with_watcher: bool = False,
@@ -278,7 +278,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
         :param with_watcher: A Boolean that determines whether to add a watcher to the diagram.
         :return:
         """
-        diagram, diagram_context = super().cast_scene_and_build(
+        diagram, diagram_context = super().add_cast_and_build(
             main_cast_members=cast,
             with_watcher=with_watcher,
         )
