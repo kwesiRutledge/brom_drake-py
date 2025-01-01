@@ -65,8 +65,8 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
         self.plant = self.station.plant
         self.scene_graph = self.station.scene_graph
 
-        self.plant.set_name(f"ShelfScene_Plant")
-        self.scene_graph.set_name(f"ShelfScene_SceneGraph")
+        self.plant.set_name(f"Shelf1_Production_Plant")
+        self.scene_graph.set_name(f"Shelf1_Production_SceneGraph")
 
         # Create variables for the models we have
         self.shelf_model_index = None
@@ -129,7 +129,7 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
 
     def add_shelf(self, plant: MultibodyPlant):
         """
-        Add the shelf to the scene.
+        Add the shelf to the production.
         :return:
         """
         # Setup
@@ -150,7 +150,9 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
 
     def add_ur10e_station(self):
         """
-        Add the Kinematic UR10e station to the scene for simple motion planning.
+        Description
+        -----------
+        Add the Kinematic UR10e station to the production for simple motion planning.
         :return:
         """
         # Setup
@@ -166,7 +168,7 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
         """
         Description
         -----------
-        Modifies the normal cast_scene_and_build, so that
+        Modifies the normal add_cast_and_build, so that
         we share the context of the plant with the appropriate
         parts of the system.
         :param cast:
@@ -202,7 +204,7 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
         """
         Description
         -----------
-        This method configures the collision filter for the scene.
+        This method configures the collision filter for the production.
         :param scene_graph_context:
         :return:
         """
@@ -276,7 +278,7 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
         """
         Description
         -----------
-        This function is used to easily cast and build the scene.
+        This function is used to easily cast and build the production.
         :param planning_algorithm: The algorithm that we will use to
         plan the motion.
         :param with_watcher: A Boolean that determines whether to add a watcher to the diagram.

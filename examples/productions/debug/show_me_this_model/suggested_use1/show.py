@@ -33,14 +33,14 @@ def main():
 
     # Visualize the URDF using the "show-me-this-model" feature
     time_step = 1e-3
-    scene = ShowMeThisModel(
+    production = ShowMeThisModel(
         str(new_urdf_path),
         with_these_joint_positions=[0.0, 0.0, -np.pi/4.0, 0.0, 0.0, 0.0],
         time_step=time_step,
     )
 
     # Build Diagram
-    diagram, diagram_context = scene.add_cast_and_build()
+    diagram, diagram_context = production.add_cast_and_build()
 
     # Set up simulation
     simulator = Simulator(diagram, diagram_context)

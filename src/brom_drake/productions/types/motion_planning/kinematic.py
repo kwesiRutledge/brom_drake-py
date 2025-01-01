@@ -181,7 +181,7 @@ class KinematicMotionPlanningProduction(BaseProduction):
         """
         Description
         -----------
-        This small modification to the normal cast_scene()
+        This small modification to the normal add_main_cast()
         function includes a call to create the optional inputs if needed.
         :param cast:
         :return:
@@ -212,7 +212,7 @@ class KinematicMotionPlanningProduction(BaseProduction):
 
         Requirements
         ------------
-        This method should only be called after the full scene has
+        This method should only be called after the full production has
         been built. Otherwise, this may have unexpected behavior.
 
         :return:
@@ -238,7 +238,7 @@ class KinematicMotionPlanningProduction(BaseProduction):
         # TODO(kwesi): Maybe move above, general code to somewhere else?
         if role.name != "OfflineMotionPlanner":
             raise ValueError(
-                f"Expected role for OfflineMotionPlanning scene to be \"OfflineMotionPlanner\";" +
+                f"Expected role for OfflineMotionPlanning Production to be \"OfflineMotionPlanner\";" +
                 f"received {role.name}"
             )
 
@@ -330,7 +330,7 @@ class KinematicMotionPlanningProduction(BaseProduction):
         """
         Description
         -----------
-        This function is used to easily cast and build the scene.
+        This function is used to easily cast and build the production.
         :param planning_algorithm: The algorithm that we will use to
         plan the motion.
         :param with_watcher: A Boolean that determines whether to add a watcher to the diagram.
@@ -348,7 +348,7 @@ class KinematicMotionPlanningProduction(BaseProduction):
             robot_model_idx=self.robot_model_index,
         )
 
-        # Cast the scene using the prototypical planner
+        # Cast the production using the prototypical planner
         planner_role = self.suggested_roles()[0]
 
         # Fulfill each role-performer pair in the casting_call list

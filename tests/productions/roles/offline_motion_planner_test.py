@@ -17,7 +17,7 @@ class OfflineMotionPlannerTest(unittest.TestCase):
         expected_port_names = [
             "start_configuration",
             "goal_configuration",
-            "scene_id",
+            "production_id",
         ]
 
         # Check the required input ports

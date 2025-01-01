@@ -9,10 +9,9 @@ import numpy as np
 from pydrake.common.eigen_geometry import Quaternion
 from pydrake.common.value import AbstractValue
 from pydrake.geometry import SceneGraph
-from pydrake.math import RigidTransform, RotationMatrix
-from pydrake.solvers import OsqpSolver, MathematicalProgram, Solve, SolutionResult
-from pydrake.multibody.inverse_kinematics import DoDifferentialInverseKinematics, \
-    DifferentialInverseKinematicsParameters, InverseKinematics
+from pydrake.math import RotationMatrix
+from pydrake.solvers import Solve, SolutionResult
+from pydrake.multibody.inverse_kinematics import InverseKinematics
 from pydrake.multibody.plant import MultibodyPlant
 from pydrake.multibody.tree import ModelInstanceIndex
 from pydrake.systems.framework import LeafSystem, BasicVector, Context

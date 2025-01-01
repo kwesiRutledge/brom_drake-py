@@ -11,21 +11,21 @@ class ShelfTest(unittest.TestCase):
     def test_add_all_secondary_cast_members_to_builder1(self):
         """
         Test the add_all_secondary_cast_members_to_builder() method
-        of the ShelfPlanningScene class.
+        of the ShelfPlanning Production class.
         :return:
         """
         # Setup
-        shelf_planning_scene = ShelfPlanning1(meshcat_port_number=None)
+        shelf_planning_production = ShelfPlanning1(meshcat_port_number=None)
 
         # Check that defaults are in place
-        self.assertEqual(shelf_planning_scene.id, ProductionID.kShelfPlanning1)
-        self.assertEqual(shelf_planning_scene.suggested_roles(), [kKinematicMotionPlanner])
+        self.assertEqual(shelf_planning_production.id, ProductionID.kShelfPlanning1)
+        self.assertEqual(shelf_planning_production.suggested_roles(), [kKinematicMotionPlanner])
 
-        # Populate scene with builder
-        shelf_planning_scene.add_supporting_cast()
+        # Populate production with builder
+        shelf_planning_production.add_supporting_cast()
         self.assertTrue(True)
 
-    def test_cast_scene_and_build1(self):
+    def test_add_cast_and_build1(self):
         pass # TODO(kwesi) Implement this test
 
 if __name__ == '__main__':

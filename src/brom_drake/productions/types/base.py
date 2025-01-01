@@ -10,10 +10,10 @@ from brom_drake.utils import Performer
 
 class BaseProduction:
     """
-    Base class for all scenes.
+    Base class for all productions.
     """
     def __init__(self, **kwargs):
-        # Create a builder for the scene
+        # Create a builder for the production
         self.builder = DiagramBuilder()
 
         # Create the diagram and diagram_context placeholders
@@ -42,7 +42,7 @@ class BaseProduction:
         Description
         -----------
         This method should be implemented by the subclass.
-        It should return a list of roles that are suggested for the scene.
+        It should return a list of roles that are suggested for the production.
         :return:
         """
         return []
@@ -87,7 +87,7 @@ class BaseProduction:
         """
         Description
         -----------
-        This method builds the scene.
+        This method builds the production.
         It assumes that all components have been added to the builder.
         :param with_watcher: A Boolean that determines whether to add a watcher to the diagram.
         :return:

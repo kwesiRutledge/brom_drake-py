@@ -63,10 +63,10 @@ class TestCylinder(unittest.TestCase):
         defn1.write_to_file(urdf_location)
 
         # Try to load this into a simple simulation
-        scene = ShowMeThisModel(urdf_location, meshcat_port_number=None)
-        diagram, diagram_context = scene.add_cast_and_build()
+        production = ShowMeThisModel(urdf_location, meshcat_port_number=None)
+        diagram, diagram_context = production.add_cast_and_build()
 
-        # Simulate the scene
+        # Simulate the production
         sim = Simulator(diagram, diagram_context)
         sim.AdvanceTo(1.0)
 

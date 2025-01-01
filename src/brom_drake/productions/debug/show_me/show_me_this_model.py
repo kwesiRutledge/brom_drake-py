@@ -31,7 +31,7 @@ class ShowMeThisModel(BaseProduction):
     ):
         super().__init__(**kwargs)
 
-        # Add the model to the scene
+        # Add the model to the Production
         self.path_to_model = path_to_model
         self.q_des = with_these_joint_positions
         self.base_link_name = base_link_name
@@ -64,7 +64,7 @@ class ShowMeThisModel(BaseProduction):
         # Add Model
         model_idcs = Parser(plant=self.plant).AddModels(self.path_to_model)
         assert len(model_idcs) == 1, \
-            f"Only one model should be added in this scene;" + \
+            f"Only one model should be added in this production;" + \
             f" received {len(model_idcs)} in the file {self.path_to_model}."
         self.model_index = model_idcs[0]
         self.model_name = self.plant.GetModelInstanceName(model_idcs[0])

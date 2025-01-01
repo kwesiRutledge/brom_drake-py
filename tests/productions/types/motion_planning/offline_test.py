@@ -16,21 +16,21 @@ class OfflineMotionPlanningProductionTest(unittest.TestCase):
     def test_easy_cast_and_build1(self):
         """
         Description:
-            This test checks the easy_cast_and_build method of the OfflineMotionPlanningScene class.
-            We will provide a single function as input to the function and it will
-            define the cast for us.
+            This test checks the easy_cast_and_build method of the OfflineMotionPlanning 
+            production class. We will provide a single function as input to the function 
+            and it will define the cast for us.
         :return:
         """
         # Setup
-        scene1 = ShelfPlanning1(meshcat_port_number=None)
+        production1 = ShelfPlanning1(meshcat_port_number=None)
         planner2 = BaseRRTPlanner(
-            scene1.arm,
-            scene1.plant,
-            scene1.scene_graph,
+            production1.arm,
+            production1.plant,
+            production1.scene_graph,
         )
 
         # Call the method
-        diagram, diagram_context = scene1.easy_cast_and_build(
+        diagram, diagram_context = production1.easy_cast_and_build(
             planner2.plan,
         )
 

@@ -28,7 +28,9 @@ from brom_drake.utils import Performer, AddGround, MotionPlan
 class ChemLab1(KinematicMotionPlanningProduction):
     """
     Description:
-        This scene is the first in the chemistry lab series.
+        This production is the first in the chemistry lab series.
+        It is used to test the motion planning capabilities of the robot
+        in a chemistry lab setting with minimal constraints.
     """
     def __init__(
         self,
@@ -88,8 +90,8 @@ class ChemLab1(KinematicMotionPlanningProduction):
         self.plant = self.station.plant
         self.scene_graph = self.station.scene_graph
 
-        self.plant.set_name(f"ChemLabScene1_Plant")
-        self.scene_graph.set_name(f"ChemLabScene1_SceneGraph")
+        self.plant.set_name(f"ChemLab1_Production_Plant")
+        self.scene_graph.set_name(f"ChemLab1_Production_SceneGraph")
 
         # Define placeholder variables for models
         self.test_tube_holder1 = None
@@ -99,10 +101,12 @@ class ChemLab1(KinematicMotionPlanningProduction):
         Description
         -----------
         This method adds all secondary cast members to the builder.
-        The secondary cast members in the scene are the:
+        The secondary cast members in the production are the:
         - Table, where the robot exists
         - Test Tube Holders
-        - ...
+        - Component which share's the robot model reference
+        - Motion Planning components (e.g., dispensers, etc.)
+        - Start and Goal sources
         :return:
         """
         # Call the superclass method
@@ -133,7 +137,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
         """
         Description
         -----------
-        This method adds the beaker to the scene.
+        This method adds the beaker to the production.
         """
         # Setup
         plant = self.plant
@@ -175,7 +179,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
 
     def add_shelf(self):
         """
-        Add the shelf to the scene.
+        Add the shelf to the production.
         :return:
         """
         # Setup
@@ -199,7 +203,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
         """
         Description
         -----------
-        This method adds the table to the scene.
+        This method adds the table to the production.
         The table will be a simple shape that the robot will interact with.
         :return:
         """
@@ -222,7 +226,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
         table_urdf_path = DEFAULT_BROM_MODELS_DIR + "/table/table.urdf"
         table_defn.write_to_file(table_urdf_path)
 
-        # Add the table to the scene
+        # Add the table to the production
         table_model_index = Parser(self.plant).AddModels(table_urdf_path)[0]
 
         # Weld the table to the world frame
@@ -240,7 +244,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
         """
         Description
         -----------
-        This method adds the test tube holders to the scene.
+        This method adds the test tube holders to the production.
         :return:
         """
         # Setup
@@ -271,7 +275,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
         """
         Description
         -----------
-        Modifies the normal cast_scene_and_build, so that
+        Modifies the normal add_cast_and_build, so that
         we share the context of the plant with the appropriate
         parts of the system.
         :param cast:
@@ -307,7 +311,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
         """
         Description
         -----------
-        This method configures the collision filter for the scene.
+        This method configures the collision filter for the production.
         :param scene_graph_context:
         :return:
         """
@@ -367,7 +371,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
         """
         Description
         -----------
-        This function is used to easily cast and build the scene.
+        This function is used to easily cast and build the production.
         :param planning_algorithm: The algorithm that we will use to
         plan the motion.
         :param with_watcher: A Boolean that determines whether to add a watcher to the diagram.

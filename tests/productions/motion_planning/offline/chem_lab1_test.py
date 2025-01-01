@@ -11,13 +11,13 @@ from brom_drake.motion_planning.algorithms.rrt.base import BaseRRTPlanner
 class ChemLab1Test(unittest.TestCase):
     def test_add_all_secondary_cast_members_to_builder1(self):
         # Setup
-        scene = ChemLab1(meshcat_port_number=None)
+        production = ChemLab1(meshcat_port_number=None)
 
         # Call the method
-        scene.add_supporting_cast()
+        production.add_supporting_cast()
 
         # Build the diagram
-        diagram = scene.builder.Build()
+        diagram = production.builder.Build()
         diagram_context = diagram.CreateDefaultContext()
 
         # Simulate the diagram
@@ -28,7 +28,7 @@ class ChemLab1Test(unittest.TestCase):
 
         self.assertTrue(True)
 
-    def test_cast_scene_and_build1(self):
+    def test_add_cast_and_build1(self):
         """
         Description
         -----------
@@ -39,7 +39,7 @@ class ChemLab1Test(unittest.TestCase):
         # Setup
         q_easy_start = np.array([0.0, 0.0, -np.pi/4.0, 0.0, 0.0, 0.0])
         q_easy_goal = np.array([0.0, 0.0, -np.pi/8.0, 0.0, 0.0, 0.0])
-        scene1 = ChemLab1(
+        production1 = ChemLab1(
             meshcat_port_number=None,
             start_config=q_easy_start,
             goal_config=q_easy_goal,
@@ -47,15 +47,15 @@ class ChemLab1Test(unittest.TestCase):
 
         # Create the Planning System
         planning_system = RRTPlanGenerator(
-            scene1.plant,
-            scene1.scene_graph,
-            scene1.robot_model_idx_,
+            production1.plant,
+            production1.scene_graph,
+            production1.robot_model_idx_,
             dim_config=6,
         )
 
-        # Add the prototypical planner to the scene
-        role1 = scene1.suggested_roles()[0]
-        diagram, diagram_context = scene1.add_cast_and_build(
+        # Add the prototypical planner to the production
+        role1 = production1.suggested_roles()[0]
+        diagram, diagram_context = production1.add_cast_and_build(
             cast=[(role1, planning_system)],
         )
 
@@ -64,9 +64,9 @@ class ChemLab1Test(unittest.TestCase):
         simulator.set_target_realtime_rate(1.0)
         simulator.Initialize()
         
-        self.assertTrue(True) # Scene built successfully, which is good.
+        self.assertTrue(True) # Production built successfully, which is good.
 
-    def test_easy_cast_scene_and_build1(self):
+    def test_easy_cast_and_build1(self):
         # Setup
         easy_start_config = np.array([
             0.0, 0.0, 0.0, 0.0, 0.0, 0.0
@@ -74,7 +74,7 @@ class ChemLab1Test(unittest.TestCase):
         easy_goal_config = np.array([
             0.0, 0.0, np.pi/8., 0.0, 0.0, 0.0
         ])
-        scene = ChemLab1(
+        production = ChemLab1(
             meshcat_port_number=None,
             start_configuration=easy_start_config,
             goal_configuration=easy_goal_config,
@@ -82,13 +82,13 @@ class ChemLab1Test(unittest.TestCase):
 
         # Create planner with the now finalized arm
         planner1 = BaseRRTPlanner(
-            scene.arm,
-            scene.plant,
-            scene.scene_graph,
+            production.arm,
+            production.plant,
+            production.scene_graph,
         )
 
         # Call the method
-        diagram, diagram_context = scene.easy_cast_and_build(
+        diagram, diagram_context = production.easy_cast_and_build(
             planner1.plan,
         )
 

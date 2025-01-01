@@ -1,7 +1,7 @@
 """
 Description:
     This file defines an OfflineMotionPlanner class that is used to define the
-    offline motion planning role that can be used in Brom scenes.
+    offline motion planning role that can be used in Brom Productions.
 """
 from brom_drake.productions.roles import Role, RolePortAssignment
 from brom_drake.productions.roles.role_port_assignment import PairingType
@@ -24,7 +24,7 @@ kKinematicMotionPlanner = Role(
             pairing_type=PairingType.kInput,
         ),
         RolePortAssignment(
-            "id", "scene_id",
+            "id", "production_id",
             is_required=False,
             pairing_type=PairingType.kInput,
         ),

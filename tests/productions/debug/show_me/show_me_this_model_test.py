@@ -15,7 +15,7 @@ class ShowMeThisModelTest(unittest.TestCase):
         """
         Description
         -----------
-        This test checks if the scene runs without errors.
+        This test checks if the production runs without errors.
         :return:
         """
         # Setup
@@ -32,13 +32,13 @@ class ShowMeThisModelTest(unittest.TestCase):
 
         # Visualize the URDF using the "show-me-this-model" feature
         time_step = 1e-3
-        scene = ShowMeThisModel(
+        production = ShowMeThisModel(
             str(new_urdf_path),
             with_these_joint_positions=[0.0, 0.0, -np.pi/4.0, 0.0, 0.0, 0.0],
             time_step=time_step,
             meshcat_port_number=None, # Turn off for CI
         )
-        diagram, diagram_context = scene.add_cast_and_build()
+        diagram, diagram_context = production.add_cast_and_build()
 
         # Set up simulation
         simulator = Simulator(diagram, diagram_context)
