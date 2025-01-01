@@ -4,7 +4,7 @@ Description
 This script contains an example of how to show
 a given urdf at some (optional) specified joint positions.
 For more info, refer to the README or the Wiki:
-https://github.com/kwesiRutledge/brom_drake-py/wiki/Scenes-%E2%80%90-ShowMeThisModel
+https://github.com/kwesiRutledge/brom_drake-py/wiki/Productions-%E2%80%90-ShowMeThisModel
 """
 
 import ipdb
@@ -16,7 +16,7 @@ from pydrake.systems.analysis import Simulator
 # Internal imports
 from brom_drake import robots
 from brom_drake.all import drakeify_my_urdf
-from brom_drake.productions.debug import ShowMeThisModel
+from brom_drake.productions import ShowMeThisModel
 
 def main():
     # Setup
@@ -24,7 +24,7 @@ def main():
         impresources.files(robots) / "models/ur/ur10e.urdf"
     )
 
-    # Convert the URDF
+    # Convert the URDF into a format that Drake likes
     new_urdf_path = drakeify_my_urdf(
         urdf_file_path,
         overwrite_old_logs=True,

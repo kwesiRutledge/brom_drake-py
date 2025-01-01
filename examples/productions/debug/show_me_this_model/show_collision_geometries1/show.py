@@ -14,7 +14,7 @@ from pydrake.systems.analysis import Simulator
 # Internal imports
 from brom_drake import robots
 from brom_drake.all import drakeify_my_urdf
-from brom_drake.productions.debug import ShowMeThisModel
+from brom_drake.productions import ShowMeThisModel
 from brom_drake.file_manipulation.urdf import MeshReplacementStrategy
 
 
