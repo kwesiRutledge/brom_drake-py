@@ -21,7 +21,7 @@ from brom_drake import robots
 from brom_drake.all import (
     drakeify_my_urdf,
 )
-from brom_drake.scenes.debug import ShowMeThisModel
+from brom_drake.productions.debug import ShowMeThisModel
 from brom_drake.file_manipulation.urdf.DrakeReadyURDFConverter import MeshReplacementStrategy
 from brom_drake.utils import AddGround
 
@@ -30,7 +30,7 @@ class MotionPlannerTest(unittest.TestCase):
     @staticmethod
     def add_shelf1(plant: MultibodyPlant) -> ModelInstanceIndex:
         """
-        Add the shelf to the scene.
+        Add the shelf to the production.
         :param plant:
         :return:
         """
@@ -139,40 +139,38 @@ class MotionPlannerTest(unittest.TestCase):
 
         # Visualize the URDF using the "show-me-this-model" feature
         time_step = 1e-3
-        scene = ShowMeThisModel(
+        production = ShowMeThisModel(
             str(new_urdf_path),
             with_these_joint_positions=q0,
             time_step=time_step,
             meshcat_port_number=None, # Turn off for CI
         )
 
-        # Add Bookshelf to scene
-        shelf_model_index = self.add_shelf1(scene.plant)
+        # Add Bookshelf to the Production
+        shelf_model_index = self.add_shelf1(production.plant)
         shelf_pose = RigidTransform(
             RollPitchYaw(0.0, 0.0, +np.pi/2.0).ToQuaternion(),
             np.array([0.0, 1.0, 0.4]),
         )
-        scene.plant.WeldFrames(
-            scene.plant.world_frame(),
-            scene.plant.GetFrameByName("cupboard_body", shelf_model_index),
+        production.plant.WeldFrames(
+            production.plant.world_frame(),
+            production.plant.GetFrameByName("cupboard_body", shelf_model_index),
             shelf_pose,
         ) # Weld the bookshelf to the world frame
 
         # Build Diagram and Simulate
-        diagram, diagram_context = scene.cast_scene_and_build()
+        diagram, diagram_context = production.add_cast_and_build()
 
         # Try to check the collision
         in_collision = self.check_collision_in_config1(
-            scene.plant,
+            production.plant,
             diagram_context,
-            scene.scene_graph,
-            scene.model_index,
+            production.scene_graph,
+            production.model_index,
             q0
         )
 
-        self.assertFalse(
-            in_collision
-        )
+        self.assertFalse(in_collision)
 
         # Simulate
         simulator = Simulator(diagram, diagram_context)
@@ -209,39 +207,37 @@ class MotionPlannerTest(unittest.TestCase):
     #
     #     # Visualize the URDF using the "show-me-this-model" feature
     #     time_step = 1e-3
-    #     scene = ShowMeThisModel(
+    #     production = ShowMeThisModel(
     #         str(new_urdf_path),
     #         with_these_joint_positions=q0,
     #         time_step=time_step,
     #     )
     #
-    #     # Add Bookshelf to scene
-    #     shelf_model_index = self.add_shelf2(scene.plant)
+    #     # Add Bookshelf to production
+    #     shelf_model_index = self.add_shelf2(production.plant)
     #     shelf_pose = RigidTransform(
     #         RollPitchYaw(0.0, 0.0, 0.0).ToQuaternion(),
     #         np.array([-0.4, 0.8, 0.0]),
     #     )
-    #     scene.plant.WeldFrames(
-    #         scene.plant.world_frame(),
-    #         scene.plant.GetFrameByName("base_footprint", shelf_model_index),
+    #     production.plant.WeldFrames(
+    #         production.plant.world_frame(),
+    #         production.plant.GetFrameByName("base_footprint", shelf_model_index),
     #         shelf_pose,
     #     ) # Weld the bookshelf to the world frame
     #
     #     # Build Diagram and Simulate
-    #     robot_diagram, diagram_context = scene.cast_scene_and_build()
+    #     robot_diagram, diagram_context = production.add_cast_and_build()
     #
     #     # Try to check the collision
     #     in_collision = self.check_collision_in_config1(
-    #         scene.plant,
+    #         production.plant,
     #         diagram_context,
-    #         scene.scene_graph,
-    #         scene.model_index,
+    #         production.scene_graph,
+    #         production.model_index,
     #         q0
     #     )
     #
-    #     self.assertFalse(
-    #         in_collision
-    #     )
+    #     self.assertFalse(in_collision)
     #
     #     # Simulate
     #     simulator = Simulator(robot_diagram, diagram_context)

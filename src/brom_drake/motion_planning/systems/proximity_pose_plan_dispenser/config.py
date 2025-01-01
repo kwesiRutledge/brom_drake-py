@@ -6,9 +6,9 @@ from pydrake.all import (
 
 @dataclass
 class ProximityPosePlanDispenserConfig:
-    proximity_limit: float = 1e-1
-    translation_weight: float = 1.0
-    orientation_weight: float = 0.0
+    proximity_limit: float = 1e-1   # The proximity limit for the poses.
+    translation_weight: float = 1.0 # The weight for the translation distance in the distance calculation.
+    orientation_weight: float = 0.0 # The weight for the orientation distance in the distance calculation.
 
     def distance_between_poses(
         self,
@@ -19,6 +19,13 @@ class ProximityPosePlanDispenserConfig:
         Description
         -----------
         This method computes the distance between two poses.
+
+        Arguments
+        ---------
+        pose1 : RigidTransform
+            The first pose.
+        pose2 : RigidTransform
+            The second pose.
         """
         # Setup
         Q_translation = self.translation_weight
@@ -37,6 +44,13 @@ class ProximityPosePlanDispenserConfig:
         Description
         -----------
         This method checks if two poses are within the proximity of each other.
+
+        Arguments
+        ---------
+        pose1 : RigidTransform
+            The first pose.
+        pose2 : RigidTransform
+            The second pose.
         """
         # Setup
         return self.distance_between_poses(pose1, pose2) < self.proximity_limit

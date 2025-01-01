@@ -18,6 +18,7 @@ from typing import List, Tuple
 from brom_drake.PortWatcher.port_figure_arrangement import PortFigureArrangement
 from brom_drake.PortWatcher.port_watcher_options import FigureNamingConvention, PortWatcherPlottingOptions
 from brom_drake.utils.constants import SupportedLogger
+from brom_drake.utils.type_checking import is_rigid_transform
 from brom_drake.directories import DEFAULT_PLOT_DIR
 
 class PortWatcherPlotter:
@@ -36,10 +37,19 @@ class PortWatcherPlotter:
 
     def compute_plot_shape(self, n_dims: int) -> Tuple[int, int]:
         """
-        Description:
-            Computes the shape of the plot based on the data.
-        :param n_dims: The number of dimensions in the data.
-        :return:
+        Description
+        -----------
+        Computes the shape of the plot based on the data.
+
+        Arguments
+        ---------
+        n_dims: int
+            The number of dimensions in the data.
+
+        Returns
+        -------
+        Tuple[int, int]
+            The number of rows and columns in the plot.
         """
         if n_dims == 1:
             return 1, 1
@@ -54,9 +64,15 @@ class PortWatcherPlotter:
 
     def figure_names(self) -> List[str]:
         """
-        Description:
-            Returns the name of the figure.
-        :return:
+        Description
+        -----------
+        Returns the name of the figure.
+
+        Returns
+        -------
+        List[str]
+            The name of all of the figures that will be produced by
+            this PortWatcherPlotter object.
         """
         # Setup
         plotting_options = self.plotting_options
@@ -77,11 +93,20 @@ class PortWatcherPlotter:
 
     def figure_names_under_flat_convention(self) -> List[str]:
         """
-        Description:
-            Returns the names associated with each figure that this port will
-            generate assuming we are under the kFlat convention.
-        :param self:
-        :return: List of strings where each string is a file name for an associated figure.
+        Description
+        -----------
+        Returns the names associated with each figure that this port will
+        generate assuming we are under the kFlat convention.
+
+        Arguments
+        ---------
+        self : PortWatcherPlotter
+            The PortWatcherPlotter object.
+        
+        Returns
+        -------
+        List[str]
+            List of strings where each string is a file name for an associated figure.
         """
         # Setup
         plotting_options = self.plotting_options
@@ -107,10 +132,20 @@ class PortWatcherPlotter:
 
     def figure_names_under_hierarchical_convention(self) -> List[str]:
         """
-        Description:
-            Returns the names associated with each figure that this port will
-            generate assuming we are under the kHierarchical convention.
-        :return:
+        Description
+        -----------
+        Returns the names associated with each figure that this port will
+        generate assuming we are under the kHierarchical convention.
+        
+        Arguments
+        ---------
+        self : PortWatcherPlotter
+            The PortWatcherPlotter object.
+
+        Returns
+        -------
+        List[str]
+            List of strings where each string is a file name for an associated figure.
         """
         # Setup
         plotting_options = self.plotting_options
@@ -140,12 +175,24 @@ class PortWatcherPlotter:
         remove_spaces: bool = False,
     ) -> str:
         """
-        Description:
-            Returns the name of the data which is in index dim_index
-            of this vector-valued port.
-        :param dim_index:
-        :param remove_spaces: Whether to remove spaces from the name.
-        :return:
+        Description
+        -----------
+        Returns the name of the data which is in index dim_index
+        of this vector-valued port.
+
+        Arguments
+        ---------
+        self : PortWatcherPlotter
+            The PortWatcherPlotter object.
+        dim_index : int
+            The index of the data in the port.
+        remove_spaces : bool
+            Whether to remove spaces from the name.
+        
+        Returns
+        -------
+        str
+            The name of the data at index dim_index.
         """
         # Setup
         plotting_options = self.plotting_options
@@ -186,16 +233,26 @@ class PortWatcherPlotter:
 
     def data_dimension(self) -> int:
         """
-        Description:
-            Returns the dimension of the data in the port.
-        :return:
+        Description
+        -----------
+        Returns the dimension of the data in the port.
+        
+        Arguments
+        ---------
+        self : PortWatcherPlotter
+            The PortWatcherPlotter object.
+
+        Returns
+        -------
+        int
+            The dimension of the data in the port.
         """
         if self.port.get_data_type() == PortDataType.kVectorValued:
             return self.port.size()
         else:
             # If port contains RigidTransform, then the expected data dimension is 7.
             example_value = self.port.Allocate()
-            if isinstance(example_value.get_value(), RigidTransform):
+            if is_rigid_transform(example_value.get_value()):
                 return 7
         
         # Otherwise, raise an error
@@ -209,11 +266,23 @@ class PortWatcherPlotter:
     ) -> Tuple[List[plt.Figure], List[List[plt.Axes]]]:
         """
         plot_logger_data
-        Description:
+        Description
+        -----------
+        This function plots the data in the logger.
 
-            This function plots the data in the logger.
-        :param diagram_context:
-        :return:
+        Arguments
+        ---------
+        self : PortWatcherPlotter
+            The PortWatcherPlotter object.
+        diagram_context : Context
+            The context of the diagram.
+        
+        Returns
+        -------
+        Tuple[List[plt.Figure], List[List[plt.Axes]]]
+            A tuple where:
+            - the first element is a list of figures and 
+            - the second element is a list of lists of axes.
         """
         # Setup
         logger = self.logger
@@ -267,14 +336,25 @@ class PortWatcherPlotter:
 
     ):
         """
-        plot_logger_data_subplots
-        Description:
+        Description
+        -----------
+        This function plots the data in the logger.
 
-            This function plots the data in the logger.
-        :param times:
-        :param data:
-        :param diagram_context:
-        :return:
+        Arguments
+        ---------
+        self : PortWatcherPlotter
+            The PortWatcherPlotter object.
+        times : np.array
+            The times at which the data was recorded.
+        data : np.array
+            The data that was recorded.
+        
+        Returns
+        -------
+        Tuple[plt.Figure, List[plt.Axes]]
+            A tuple where:
+            - the first element is the figure and
+            - the second element is a list of axes.
         """
         # Setup
         n_dims = data.shape[0]
@@ -314,10 +394,19 @@ class PortWatcherPlotter:
     
     def safe_system_name(self) -> str:
         """
-        Description:
-            Returns a safe name for the system.
-        :param name: System's name.
-        :return:
+        Description
+        -----------
+        Returns a safe name for the system.
+
+        Arguments
+        ---------
+        self : PortWatcherPlotter
+            The PortWatcherPlotter object.
+
+        Returns
+        -------
+        str
+            A safe name for the system.
         """
         # Setup
         system = self.port.get_system()
@@ -335,12 +424,24 @@ class PortWatcherPlotter:
 
     def save_figures(self, diagram_context: Context):
         """
-        save_figures
-        Description:
-            This function saves the figures.
+        Description
+        -----------
+        This function saves the figures.
+
+        Arguments
+        ---------
+        self : PortWatcherPlotter
+            The PortWatcherPlotter object.
+        diagram_context : Context
+            The context of the diagram.
+
+        Returns
+        -------
+        Nothing
+        
+        Notes
+        -----
         TODO(kwesi): Make it so that this function computes names + directory structure based on plot arrangement.
-        :param diagram_context:
-        :return:
         """
         # Setup
         plotting_options = self.plotting_options
@@ -348,9 +449,11 @@ class PortWatcherPlotter:
 
         # If no figures are returned, then return early!
         if figs is None:
+            print("No figures to save; plot_logger_data was empty.")
             return
 
         if len(figs) == 0:
+            print("Zero figures to save; plot_logger_data was empty.")
             return # Do nothing
 
         # Save the figures
@@ -373,9 +476,19 @@ class PortWatcherPlotter:
 
     def system_is_multibody_plant(self) -> bool:
         """
-        Description:
-            Returns True if the system is a MultibodyPlant.
-        :return:
+        Description
+        -----------
+        Returns True if the system is a MultibodyPlant.
+        
+        Arguments
+        ---------
+        self : PortWatcherPlotter
+            The PortWatcherPlotter object.
+
+        Returns
+        -------
+        bool
+            True if the system is a MultibodyPlant.
         """
         # Setup
         system = self.port.get_system()

@@ -19,7 +19,7 @@ from brom_drake.file_manipulation.urdf import drakeify_my_urdf
 from brom_drake.motion_planning.algorithms.rrt.base import BaseRRTPlanner
 from brom_drake.motion_planning.systems.prototypical_planner import PrototypicalPlannerSystem
 import brom_drake.robots as robots
-from brom_drake.scenes.motion_planning.offline import ShelfPlanningScene
+from brom_drake.productions.motion_planning.offline import ShelfPlanning1
 
 
 class TestPrototypicalPlannerSystem(unittest.TestCase):
@@ -66,34 +66,34 @@ class TestPrototypicalPlannerSystem(unittest.TestCase):
         bad_shelf_orientation = RollPitchYaw(np.pi/2.0, 0.0, 0.0)
         bad_shelf_pose = RigidTransform(bad_shelf_orientation, bad_shelf_position)
 
-        # Create the Scene
-        scene1 = ShelfPlanningScene(
+        # Create the Production
+        production1 = ShelfPlanning1(
             meshcat_port_number=None,
             start_config=q_collision,
             goal_config=q_collision,
             shelf_pose=bad_shelf_pose,
         )
 
-        # Cast all secondary scene members
-        scene1.add_all_secondary_cast_members_to_builder()
+        # Cast all secondary cast members
+        production1.add_supporting_cast()
 
         # Create planner with the now finalized arm
         planner1 = BaseRRTPlanner(
-            scene1.arm,
-            scene1.plant,
-            scene1.scene_graph,
+            production1.arm,
+            production1.plant,
+            production1.scene_graph,
         )
 
         system1 = PrototypicalPlannerSystem(
-            scene1.plant,
-            scene1.scene_graph,
+            production1.plant,
+            production1.scene_graph,
             planner1.plan,
-            robot_model_idx=scene1.arm,
+            robot_model_idx=production1.arm,
         )
 
-        # Build scene
-        scene1.fill_role(scene1.suggested_roles()[0], system1)
-        diagram, diagram_context = scene1.build_scene()
+        # Build production
+        production1.fill_role(production1.suggested_roles()[0], system1)
+        diagram, diagram_context = production1.build_production()
         
         system1.set_internal_root_context(diagram_context)
 
@@ -122,7 +122,7 @@ class TestPrototypicalPlannerSystem(unittest.TestCase):
 
         self.assertTrue(True)
 
-    def test_use_in_mp_scene1(self):
+    def test_use_in_mp_production1(self):
         """
         Description
         -----------
@@ -133,35 +133,35 @@ class TestPrototypicalPlannerSystem(unittest.TestCase):
         # Setup
         q_easy_start = np.array([0.0, 0.0, -np.pi/4.0, 0.0, 0.0, 0.0])
         q_easy_goal = np.array([0.0, 0.0, -np.pi/8.0, 0.0, 0.0, 0.0])
-        scene1 = ShelfPlanningScene(
+        production1 = ShelfPlanning1(
             meshcat_port_number=None,
             start_config=q_easy_start,
             goal_config=q_easy_goal,
         )
 
-        # Cast all secondary scene members
-        scene1.add_all_secondary_cast_members_to_builder()
+        # Cast all secondary cast members
+        production1.add_supporting_cast()
 
         # Create planner with the now finalized arm
         planner2 = BaseRRTPlanner(
-            scene1.arm,
-            scene1.plant,
-            scene1.scene_graph,
+            production1.arm,
+            production1.plant,
+            production1.scene_graph,
         )
 
         # Create the System
         prototypical_planner = PrototypicalPlannerSystem(
-            scene1.plant,
-            scene1.scene_graph,
+            production1.plant,
+            production1.scene_graph,
             planner2.plan,
-            robot_model_idx=scene1.arm,
+            robot_model_idx=production1.arm,
         )
 
-        # Add the prototypical planner to the scene
-        role1 = scene1.suggested_roles()[0]
-        scene1.fill_role(role1, prototypical_planner)
+        # Add the prototypical planner to the production
+        role1 = production1.suggested_roles()[0]
+        production1.fill_role(role1, prototypical_planner)
 
-        diagram, diagram_context = scene1.build_scene()
+        diagram, diagram_context = production1.build_production()
 
         # Add the connections that we need for the performer
         prototypical_planner.set_internal_root_context(
@@ -173,7 +173,7 @@ class TestPrototypicalPlannerSystem(unittest.TestCase):
         # simulator.set_target_realtime_rate(1.0)
         # simulator.Initialize()
         
-        self.assertTrue(True) # Scene built successfully, which is good.
+        self.assertTrue(True) # Production built successfully, which is good.
 
         #TODO(kwesi): Test that the simulation works for some simple case...
 

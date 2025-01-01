@@ -29,6 +29,7 @@ from .port_watcher_options import (
 from .port_figure_arrangement import PortFigureArrangement
 from .plotter import PortWatcherPlotter
 from brom_drake.utils import RigidTransformToVectorSystem
+from brom_drake.utils.type_checking import is_rigid_transform
 
 class PortWatcher:
     def __init__(
@@ -40,6 +41,26 @@ class PortWatcher:
         plot_dir: str = DEFAULT_PLOT_DIR,
         raw_data_dir: str = DEFAULT_RAW_DATA_DIR,
     ):
+        """
+        Description
+        -----------
+        This class is used to watch a single port of a system.
+
+        Arguments
+        ---------
+        output_port: OutputPort
+            The output port that will be watched.
+        builder: DiagramBuilder
+            The diagram builder that is used to create the logger.
+        logger_name: str
+            The name of the logger.
+        options: PortWatcherOptions
+            The options that are used to configure the watcher.
+        plot_dir: str
+            The directory where the plots will be saved.
+        raw_data_dir: str
+            The directory where the raw data will be saved.
+        """
         # Setup
         self.options = options
         self.port = output_port
@@ -82,6 +103,7 @@ class PortWatcher:
         Description
         -----------
         Checks to see if the port is of the correct type for plotting.
+
         """
 
         # Setup
@@ -89,24 +111,31 @@ class PortWatcher:
 
         # Algorithm
         if output_port.get_data_type() == PortDataType.kVectorValued:
-            
             return
         
         # Check to see if AbstractValue port contains RigidTransform
         output_value = output_port.Allocate()
-        if isinstance(output_value.get_value(), RigidTransform):
+        if is_rigid_transform(output_value.get_value()):
             return
 
         # Raise error otherwise
         raise self.create_port_value_type_error(output_port)
     
     @staticmethod
-    def create_port_value_type_error(output_port: OutputPort):
+    def create_port_value_type_error(output_port: OutputPort) -> ValueError:
         """
-        Description:
-            Creates an error message for the port value type.
-        :param output_port:
-        :return:
+        Description
+        -----------
+        Creates an error message for the port value type.
+        
+        Arguments
+        ---------
+        output_port: OutputPort
+            The output port that is causing the error.
+
+        Returns
+        -------
+        ValueError
         """
         # Setup
         example_value = output_port.Allocate()
@@ -121,10 +150,18 @@ class PortWatcher:
     
     def prepare_logger(self, builder: DiagramBuilder):
         """
-        Description:
-            Prepares the logger for the port.
-        :param builder:
-        :return:
+        Description
+        -----------
+        Prepares the logger for the port.
+        
+        Arguments
+        ---------
+        builder: DiagramBuilder
+            The diagram builder that is used to create the logger.
+        
+        Returns
+        -------
+        None
         """
         # Setup
         system = self.port.get_system()
@@ -137,7 +174,7 @@ class PortWatcher:
 
             # Check to see if the port contains a RigidTransform
             output_value = self.port.Allocate()
-            if isinstance(output_value.get_value(), RigidTransform):
+            if is_rigid_transform(output_value.get_value()):
                 # If it is, then we must create an intermediate system
                 # that will convert the RigidTransform to a vector.
                 converter_system = builder.AddSystem(
@@ -163,8 +200,14 @@ class PortWatcher:
         """
         Description:
             Returns a safe name for the system.
-        :param name: System's name.
-        :return:
+
+        Arguments
+        ---------
+        None
+
+        Returns
+        -------
+        name: System's name.
         """
         # Setup
         system = self.port.get_system()
@@ -184,19 +227,26 @@ class PortWatcher:
         """
         Description:
             Saves the raw data to a file.
-        :param diagram_context:
-        :return:
+
+        Arguments
+        ---------
+        diagram_context: Context
+            The context of the diagram.
+        
+        Returns
+        -------
+        Nothing
         """
         # Setup
         log = self.logger.FindLog(diagram_context)
         time_data_file_name, raw_data_file_name = self.time_and_raw_data_names()
 
-        # Save time data
+        # Save times associated with each data point
         log_times = log.sample_times()
         os.makedirs(Path(time_data_file_name).parent, exist_ok=True)
         np.save(time_data_file_name, log_times)
 
-        # Save the data
+        # Save the data values
         log_data = log.data()
         np.save(raw_data_file_name, log_data)
 
@@ -205,7 +255,13 @@ class PortWatcher:
         Description:
             Returns the names that will be given to the raw data for this port.
         
-        :return: Tuple of strings where:
+        Arguments
+        ---------
+        Nothing
+
+        Returns
+        -------
+        Tuple of strings where:
         - the first string is the name of the time data and,
         - the second string is the name of the data.
         """

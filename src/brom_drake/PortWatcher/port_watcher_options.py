@@ -13,6 +13,11 @@ from brom_drake.directories import DEFAULT_PLOT_DIR, DEFAULT_RAW_DATA_DIR, DEFAU
 from .port_figure_arrangement import PortFigureArrangement
 
 class FigureNamingConvention(IntEnum):
+    """
+    Description
+    -----------
+    This enum is used to define the naming convention for the figures.
+    """
     kFlat = 0 # e.g. "plant_generalized_output_dim_0.png"
     kHierarchical = 1 # e.g. "system_plant/port_generalized_output/dim_0.png"
 
@@ -32,8 +37,28 @@ class PortWatcherOptions(NamedTuple):
     plotting: PortWatcherPlottingOptions = PortWatcherPlottingOptions()
     raw_data: PortWatcherRawDataOptions = PortWatcherRawDataOptions()
 
-    def plot_dir(self):
+    def plot_dir(self) -> str:
+        """
+        Description
+        -----------
+        This function returns the directory where the plots will be saved.
+
+        Returns
+        -------
+        str
+            The directory where the plots will be saved.
+        """
         return self.base_directory + "/plots"
 
     def raw_data_dir(self):
+        """
+        Description
+        -----------
+        This function returns the directory where the raw data will be saved.
+
+        Returns
+        -------
+        str
+            The directory where the raw data will be saved.
+        """
         return self.base_directory + "/raw_data"

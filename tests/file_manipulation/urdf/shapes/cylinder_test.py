@@ -14,7 +14,7 @@ import xml.etree.ElementTree as ET
 from brom_drake.directories import DEFAULT_BROM_MODELS_DIR
 from brom_drake.file_manipulation.urdf.simple_writer.urdf_definition import SimpleShapeURDFDefinition
 from brom_drake.file_manipulation.urdf.shapes.cylinder import CylinderDefinition
-from brom_drake.scenes.debug.show_me import ShowMeThisModel
+from brom_drake.productions.debug.show_me import ShowMeThisModel
 
 class TestCylinder(unittest.TestCase):
     """
@@ -63,10 +63,10 @@ class TestCylinder(unittest.TestCase):
         defn1.write_to_file(urdf_location)
 
         # Try to load this into a simple simulation
-        scene = ShowMeThisModel(urdf_location, meshcat_port_number=None)
-        diagram, diagram_context = scene.cast_scene_and_build()
+        production = ShowMeThisModel(urdf_location, meshcat_port_number=None)
+        diagram, diagram_context = production.add_cast_and_build()
 
-        # Simulate the scene
+        # Simulate the production
         sim = Simulator(diagram, diagram_context)
         sim.AdvanceTo(1.0)
 

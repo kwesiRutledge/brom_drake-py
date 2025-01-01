@@ -11,7 +11,7 @@ Feature                    |  Code | Results
 :-------------------------:|:-------------------------:|:-------------------------:
 The Diagram Watcher (the `DiagramWatcher` will log + plot all output ports of your `Diagram` automatically) |`add_watcher_and_build()`| ![Creation of Brom Directory](./promo/BromWatcher0.gif)
 The Drake-ify feature (converts your URDF file into a form that Drake can consume) | `drakeify_my_urdf()` | ![Drakeify Example](./promo/BromDrakeifyURDF0.gif)
-Scenes (partially complete robot scenarios to test your algorithms) | (See [Examples Directory](https://github.com/kwesiRutledge/brom_drake-py/tree/main/examples/scenes) or [the Wiki](https://github.com/kwesiRutledge/brom_drake-py/wiki/Scenes)) | ![Kinematic Motion Planning Example](./promo/scenes/motion_planning/kinematic/Chem-Lab-Demo.gif)
+Productions (partially complete robot scenarios to test your algorithms) | (See [Examples Directory](https://github.com/kwesiRutledge/brom_drake-py/tree/main/examples/productions) or [the Wiki](https://github.com/kwesiRutledge/brom_drake-py/wiki/Productions)) | ![Kinematic Motion Planning Example](./promo/productions/motion_planning/kinematic/Chem-Lab-Demo.gif)
 
 (More coming soon...)
 
@@ -134,5 +134,4 @@ Some other work in the open-source drake community:
 - [ ] Add Documentation
 - [ ] Create a method that makes each material in a URDF file have unique names if they have specific values
 - [ ] Add methods for saving the state names on state plots from diagram watcher
-- [X] Add methods for over or under-approximating complex mehes with cylinders or circles or other shapes.
-- [ ] Allow for the user to give "Drake-unfriendly" URDFs to `ShowMeThisModel` scene
+- [ ] Allow for the user to give "Drake-unfriendly" URDFs to `ShowMeThisModel` production

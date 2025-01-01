@@ -18,6 +18,21 @@ from brom_drake.motion_planning.systems.proximity_pose_plan_dispenser.dispenser_
 
 class ProximityPosePlanDispenser(LeafSystem):
     """
+    Diagram
+    -------
+    A dispenser which will dispense the plan that is given to it. It will provide the
+    next point in the plan when 
+
+                                -----------------
+                                |               |
+    current_pose -------------> |  Proximity    | ----> pose_in_plan
+                                |  Pose         |
+    plan           -----------> |  Plan         | ----> dispenser_state
+                                |  Dispenser    |
+    request ------------------> |               | ----> current_pose_index
+                                |               | 
+                                -----------------
+
     Description
     -----------
     This class is responsible for dispensing the plan that is given to it in a way
@@ -36,6 +51,18 @@ class ProximityPosePlanDispenser(LeafSystem):
         self,
         config: ProximityPosePlanDispenserConfig = ProximityPosePlanDispenserConfig(),
     ):
+        """
+        Description
+        -----------
+        This function initializes the Proximity Pose Plan Dispenser.
+
+        Arguments
+        ---------
+        config: ProximityPosePlanDispenserConfig
+            The configuration for the Proximity Pose Plan Dispenser.
+            See brom_drake/motion_planning/systems/proximity_pose_plan_dispenser/proximity_pose_plan_dispenser.py
+            for more information.
+        """
         LeafSystem.__init__(self)
         # Setup
         self.config = config
@@ -64,6 +91,11 @@ class ProximityPosePlanDispenser(LeafSystem):
         -----------
         This function is responsible for advancing the plan index if the system
         is ready to do so.
+
+        Arguments
+        ---------
+        context: Context
+            The current context of the system.
         """
         # Setup
         plan = self.plan_port.Eval(context)
@@ -141,6 +173,13 @@ class ProximityPosePlanDispenser(LeafSystem):
         Description
         -----------
         This function is responsible for outputting the current index of the plan that the system is on.
+
+        Arguments
+        ---------
+        context: Context
+            The current context of the system.
+        output: BasicVector
+            The output of the system. We will assign a single value to this vector.
         """
         # Setup
         plan_idx = self.dispenser_plan_index
@@ -151,6 +190,21 @@ class ProximityPosePlanDispenser(LeafSystem):
         )
 
     def GetCurrentPoseInPlan(self, context: Context, output_pose: AbstractValue):
+        """
+        Description
+        -----------
+        This function is responsible for outputting the current pose in the plan that the system is on.
+        The plan will only advance if the system is currently "within proximity"
+        of the current target in the plan. (i.e., if the current pose satisfies the
+        in_proximity() function of the proximity config.)
+        
+        Arguments
+        ---------
+        context: Context
+            The current context of the system.
+        output_pose: AbstractValue
+            The output of the system. We will assign a single RigidTransform to this value.
+        """
         # Setup
         plan = self.plan_port.Eval(context)
         last_pose = self.last_pose
@@ -184,7 +238,16 @@ class ProximityPosePlanDispenser(LeafSystem):
         """
         Description
         -----------
-        Plan is set if and only if the internal variable is not None.
+        Retrieves the current value of the internal state of this
+        planner. The internal state is defined by the DispenserInternalState
+        enum found in brom_drake/motion_planning/systems/proximity_pose_plan_dispenser/dispsenser_internal_state.py.
+
+        Arguments
+        ---------
+        context: Context
+            The current context of the system.
+        output: BasicVector
+            The output of the system. We will assign a single value to this vector.
         """
         # Setup
 
@@ -202,6 +265,11 @@ class ProximityPosePlanDispenser(LeafSystem):
         -----------
         This function is responsible for transitioning the internal state of the system
         based on the request that is given to it.
+
+        Arguments
+        ---------
+        context: Context
+            The current context of the system.
         """
         # Setup
         current_state = context.get_discrete_state(self.dispenser_state)[0]

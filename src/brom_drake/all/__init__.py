@@ -1,6 +1,18 @@
 from brom_drake.DiagramTarget import DiagramTarget
 from brom_drake.DiagramWatcher import DiagramWatcher
-from .add_watcher import add_watcher, add_watcher_and_build, parse_list_of_simplified_targets
+from brom_drake.file_manipulation.urdf import (
+    drakeify_my_urdf,
+    DrakeReadyURDFConverter,
+    MeshReplacementStrategy,
+)
+from brom_drake.motion_planning.algorithms.rrt import (
+    BaseRRTPlannerConfig, BaseRRTPlanner,
+    RRTConnectPlannerConfig, RRTConnectPlanner,
+)
+from brom_drake.motion_planning.systems import (
+    PrototypicalPlannerSystem,
+    StateOfPlanInMemory,
+)
 from brom_drake.PortWatcher.port_watcher import PortWatcher
 from brom_drake.PortWatcher.port_watcher_options import (
     PortWatcherOptions, FigureNamingConvention,
@@ -9,12 +21,27 @@ from brom_drake.PortWatcher.port_watcher_options import (
 from brom_drake.PortWatcher.port_figure_arrangement import PortFigureArrangement
 from brom_drake.example_helpers import BlockHandlerSystem
 from brom_drake.file_manipulation.urdf import DrakeReadyURDFConverter, drakeify_my_urdf
+from brom_drake.utils.watcher import add_watcher, add_watcher_and_build, parse_list_of_simplified_targets
 
 __all__ = [
-    'DiagramTarget', 'DiagramWatcher',
-    'add_watcher', 'add_watcher_and_build', 'parse_list_of_simplified_targets',
+    'add_watcher',
+    'add_watcher_and_build',
+    'BaseRRTPlannerConfig',
+    'BaseRRTPlanner',
+    'DiagramTarget',
+    'DiagramWatcher',
+    'drakeify_my_urdf', 
+    'DrakeReadyURDFConverter',
+    'FigureNamingConvention',
+    'MeshReplacementStrategy',
+    'parse_list_of_simplified_targets',
     'PortWatcher',
-    'PortFigureArrangement', 'PortWatcherOptions', 'FigureNamingConvention',
+    'PortFigureArrangement',
+    'PortWatcherOptions',
+    'PrototypicalPlannerSystem',
+    'RRTConnectPlannerConfig',
+    'RRTConnectPlanner',
+    'StateOfPlanInMemory',
     'BlockHandlerSystem',
     'DrakeReadyURDFConverter', 'drakeify_my_urdf',
     'PortWatcherPlottingOptions', 'PortWatcherRawDataOptions',
