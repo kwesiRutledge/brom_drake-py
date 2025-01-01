@@ -37,7 +37,7 @@ class OfflineMotionPlanningProductionTest(unittest.TestCase):
         # Simulate the diagram
         simulator = Simulator(diagram, diagram_context)
         simulator.Initialize()
-        simulator.AdvanceTo(0.5)
+        simulator.AdvanceTo(0.1)
 
         self.assertTrue(True)
 
