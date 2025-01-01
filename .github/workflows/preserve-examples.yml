@@ -12,8 +12,8 @@ jobs:
           'examples/watcher/changing_plot_arrangement1/create_monitor_w_different_arrangement.py',
           'examples/conversion/suggested_use1/drakeify.py',
           'examples/conversion/converter_advanced_usage1/demo.py',
-          'examples/scenes/debug/show_me_this_model/suggested_use1/show.py',
-          'examples/scenes/debug/show_me_this_model/show_collision_geometries1/show.py',
+          'examples/productions/debug/show_me_this_model/suggested_use1/show.py',
+          'examples/productions/debug/show_me_this_model/show_collision_geometries1/show.py',
         ]
     steps:
       - name: Checkout
