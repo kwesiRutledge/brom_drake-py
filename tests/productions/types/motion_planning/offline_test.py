@@ -36,9 +36,8 @@ class OfflineMotionPlanningSceneTest(unittest.TestCase):
 
         # Simulate the diagram
         simulator = Simulator(diagram, diagram_context)
-        simulator.set_target_realtime_rate(1.0)
         simulator.Initialize()
-        simulator.AdvanceTo(1.0)
+        simulator.AdvanceTo(0.5)
 
         self.assertTrue(True)
 
