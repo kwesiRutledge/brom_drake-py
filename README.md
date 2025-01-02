@@ -13,7 +13,7 @@ The Diagram Watcher (the `DiagramWatcher` will log + plot all output ports of yo
 The Drake-ify feature (converts your URDF file into a form that Drake can consume) | `drakeify_my_urdf()` | ![Drakeify Example](./promo/BromDrakeifyURDF0.gif)
 Productions (partially complete robot scenarios to test your algorithms) | (See [Examples Directory](https://github.com/kwesiRutledge/brom_drake-py/tree/main/examples/productions) or [the Wiki](https://github.com/kwesiRutledge/brom_drake-py/wiki/Productions)) | ![Kinematic Motion Planning Example](./promo/productions/motion_planning/kinematic/Chem-Lab-Demo.gif)
 
-(More coming soon...)
+To learn more, look through our documentation/Wiki [here](https://github.com/kwesiRutledge/brom_drake-py/wiki).
 
 ## Installation
 
@@ -32,65 +32,6 @@ the repository and running the following commands from inside it:
 pip install -r requirements.txt
 pip install -e .
 ```
-
-## Use Cases
-
-Here are a few of the features available in `brom_drake` and how they work.
-
-### Easily Log Your Diagram's Signals
-
-It is recommended that you use the convenience function `add_watcher_and_build` to add a `DiagramWatcher` to your diagram.
-
-```python
-# Drake imports
-from pydrake.all import (
-    DiagramBuilder, Simulator,
-)
-# All your other imports
-
-from brom_drake.all import add_watcher_and_build
-
-# Create a diagram builder
-builder = DiagramBuilder()
-
-# Add and connect your systems...
-
-# Add the watcher and build the diagram
-watcher, diagram, diagram_context = add_watcher_and_build(builder)
-
-# Set up simulation
-simulator = Simulator(diagram, diagram_context)
-simulator.set_target_realtime_rate(1.0)
-simulator.set_publish_every_time_step(False)
-
-# Run simulation
-simulator.Initialize()
-simulator.AdvanceTo(15.0)
-
-```
-
-
-What will happen whenever you use this function is that:
-- The `DiagramWatcher` will be created.
-  - It will search through all systems that the `DiagramBuilder` has added.
-  - For each system, the watcher will add a `VectorLogger` to each output port that is a `kVectorValued` port.
-  - The `DiagramWatcher` will connect all loggers to all targeted ports (in the above case, we will target all available output ports).
-- After the simulation is run and the script completes, the watcher will save all data traces for each port in `.png` files. These plots will be in a new `.brom` directory.
-
-### Watching Specific systems
-
-If you only want to watch a specific system, then you can do so by passing in information to the "targets" argument:
-```python
-watcher, _, _ = add_watcher_and_build(
-  builder,
-  targets=[
-    ("system_name", "port_name"),
-    "system_name2",
-  ],
-)
-```
-The above code tells the watcher to watch the port named `port_name` on the system named `system_name`.
-(If you don't know your system's name in Drake, then you can usually find it by using the `get_name()` method.)
 
 ## Citation
 
@@ -115,11 +56,12 @@ He is a wise mentor that helps Eragon (the protagonist) master dragons. ;)
 
 
 ### How can I support this project?
- 
+
+Feel free to create an issue/send the Wrench Robotics team a message if you're interested in helping out!
 
 ## Related Work
 
-Some other work in the open-source drake community:
+Some other work in the open-source Drake community:
 - [kinova_drake](https://github.com/vincekurtz/kinova_drake) - A Drake-based library that builds a 
   simple version of the manipulation station for the Kinova Gen3 robot arm.
   Also works with the hardware.
@@ -131,7 +73,5 @@ Some other work in the open-source drake community:
 - [ ] Figure out how to tell if two systems are connected in Drake.
 - [ ] Add support for abstract output ports?
 - [ ] Add more readme explanations of what is going on under the hood.
-- [ ] Add Documentation
 - [ ] Create a method that makes each material in a URDF file have unique names if they have specific values
-- [ ] Add methods for saving the state names on state plots from diagram watcher
 - [ ] Allow for the user to give "Drake-unfriendly" URDFs to `ShowMeThisModel` production
