@@ -38,6 +38,18 @@ class MeshReplacementStrategy(IntEnum):
 
 
 class DrakeReadyURDFConverter:
+    """
+    Description
+    -----------
+    This class is used to convert a URDF file into a Drake-compatible URDF file.
+    It makes the following considerations when parsing a URDF file:
+    - If a mesh file is not supported by the Drake parser,
+      then it will convert it into a .obj file (which is supported).
+    - If a joint in the URDF file is not "fixed" (i.e., it is actuated)
+      and the parser finds no transmission element for it, then it will add
+      a transmission element to the URDF file.
+    """
+
     def __init__(
         self,
         original_urdf_filename: str,
@@ -123,8 +135,16 @@ class DrakeReadyURDFConverter:
         Description
         -----------
         This method will convert the collision element in the URDF file.
-        :param collision_elt:
-        :return:
+
+        Arguments
+        ---------
+        collision_elt: ET.Element
+            The collision element that we want to convert.
+        
+        Returns
+        -------
+        ET.Element
+            The new collision element.
         """
         # Setup
         new_elt = deepcopy(collision_elt)
