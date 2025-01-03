@@ -15,7 +15,7 @@ import typer
 from brom_drake.motion_planning.algorithms.rrt.connect import RRTConnectPlannerConfig, RRTConnectPlanner
 from brom_drake.productions.motion_planning.offline import ChemLab1
 
-def main(meshcat_port_number: int = 7001):
+def main(meshcat_port_number: int = -1):
     # Setup
     if meshcat_port_number < 0:
         meshcat_port_number = None # Use None for CI
