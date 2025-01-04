@@ -148,32 +148,46 @@ class DrakeReadyURDFConverter:
         """
         # Setup
         new_elt = deepcopy(collision_elt)
+        replacement_strategy = self.collision_mesh_replacement_strategy
 
-        # Algorithm
+        n_replacements_made = 0
+
+        # Announce algorithm start
         self.log(
             f"Converting element with tag \"{collision_elt.tag}\" using strategy {self.collision_mesh_replacement_strategy}."
         )
 
-        # Check to see if the collision element has a mesh element
-        mesh_elt = new_elt.find("geometry/mesh")
-        if mesh_elt is None:
-            self.log(
-                f"Collision element does not contain a mesh element. No modification needed..."
-            )
-            return new_elt
+        # Check to see if the collision element has a mesh element within it
+        
+        # Iterate through every element of the collision element
+        for ii, child_ii in enumerate(collision_elt):
+            if child_ii.tag == "geometry": 
+                # If the child is a geometry element, then we will check if replacement is needed.
+                geometry_elt = child_ii
+                
+                # Iterate through every element of the geometry element
+                for jj, child_jj in enumerate(geometry_elt):
+                    if child_jj.tag == "mesh":
+                        # If the child is a mesh element, then we will check if replacement is needed.
+                        mesh_elt = child_jj
+                        
+                        # Replace!
+                        if replacement_strategy == MeshReplacementStrategy.kWithObj:
+                            new_mesh_elt = self.convert_mesh_element(mesh_elt)
+                            new_elt[ii][jj] = new_mesh_elt
+                        elif replacement_strategy == MeshReplacementStrategy.kWithMinimalEnclosingCylinder:
+                            new_elt = self.replace_element_with_enclosing_cylinder(new_elt)
+                        else:
+                            raise ValueError(
+                                f"Invalid mesh replacement strategy: {replacement_strategy}"
+                            )    
 
-        # If the mesh element exists, then we will try to convert it depending on the strategy
-        replacement_strategy = self.collision_mesh_replacement_strategy
-        if replacement_strategy == MeshReplacementStrategy.kWithObj:
-            new_mesh_elt = self.convert_mesh_element(mesh_elt)
-            new_elt.find("geometry").remove(mesh_elt)
-            new_elt.find("geometry").append(new_mesh_elt)
-        elif replacement_strategy == MeshReplacementStrategy.kWithMinimalEnclosingCylinder:
-            new_elt = self.replace_element_with_enclosing_cylinder(new_elt)
-        else:
-            raise ValueError(
-                f"Invalid mesh replacement strategy: {replacement_strategy}"
-            )
+                        n_replacements_made += 1       
+
+        # Announce the number of replacements made in the logger.
+        self.log(
+            f"Made {n_replacements_made} replacements in the collision element."
+        )
 
         return new_elt
     

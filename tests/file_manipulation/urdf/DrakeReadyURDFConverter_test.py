@@ -55,6 +55,10 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
             impresources.files(resources_dir) / "test5_absolute.urdf"
         )
 
+        self.test_urdf7_filename = str(
+            impresources.files(resources_dir) / "test6_multiple_collision_geometries.urdf"
+        )
+
     def test_convert_tree1(self):
         """
         Description
@@ -491,6 +495,62 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         temp_plant = MultibodyPlant(time_step=1e-3)
         added_models = Parser(temp_plant).AddModels(str(new_urdf_path))
         self.assertTrue(True)
+
+    def test_convert_urdf8(self):
+        """
+        Description
+        -----------
+        This test verifies that we can convert a full URDF file
+        into a new URDF file when the urdf contains MULTIPLE collision geometries
+        in one of the links.
+
+        We'll verify that:
+        - the new URDF exists,
+        - that it contains mesh elements that only refer to .obj files, and
+        - that the multiple collision geometries exist.
+        :return:
+        """
+        # Setup
+        test_urdf1 = self.test_urdf7_filename
+
+        converter = DrakeReadyURDFConverter(
+            test_urdf1,
+            overwrite_old_logs=True,
+            log_file_name="test_convert_urdf8.log",
+        )
+
+        # Test
+        new_urdf_path = converter.convert_urdf()
+
+        # Verify that the new file exists
+        self.assertTrue(
+            new_urdf_path.exists()
+        )
+
+        # Verify that the new file contains only obj files
+        new_tree = ElementTree(file=new_urdf_path)
+        for mesh_elt in new_tree.iter("mesh"):
+            self.assertIn(
+                ".obj",
+                mesh_elt.attrib["filename"]
+            )
+
+        # Verify that the new file contains multiple collision geometries
+        collision_elt = new_tree.find(".//link/collision")
+        self.assertTrue(collision_elt is not None)
+        
+        self.assertEqual(
+            len(list(collision_elt.iter("geometry"))),
+            2,
+        )
+
+        # at least one of the geometries should be a cylinder
+        self.assertTrue(
+            any(
+                geom.find("cylinder") is not None
+                for geom in collision_elt.iter("geometry")
+            )
+        )
 
     def test_vis1(self):
 
