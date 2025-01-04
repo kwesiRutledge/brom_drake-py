@@ -293,14 +293,22 @@ class DiagramWatcher:
             Saves all the figures from the port watchers.
         :return:
         """
+        # Announce Saving Figures has started
+        loguru.logger.info("Saving figures...")
+
+        # Algorithm
         for system_name in self.port_watchers:
             system_ii = self.diagram.GetSubsystemByName(system_name)
             ports_on_ii = self.port_watchers[system_name]
+
+            loguru.logger.info(f"Saving figures for system {system_name}...")
+
             for port_name in ports_on_ii:
                 temp_port_watcher = ports_on_ii[port_name]
                 temp_plotting_options = temp_port_watcher.options.plotting
                 if temp_plotting_options.save_to_file: # Plot only if the PortWatcher flag is set
                     temp_port_watcher.plotter.save_figures(self.diagram_context)
+                    loguru.logger.info(f"Saved figures for port {port_name} on system {system_name}")
 
     def save_raw_data(self):
         """
@@ -308,11 +316,20 @@ class DiagramWatcher:
             Saves all the raw data from the port watchers.
         :return:
         """
+        # Announce Saving Raw Data has started
+        loguru.logger.info("Saving raw data...")
+
+        # Algorithm
         for system_name in self.port_watchers:
             system_ii = self.diagram.GetSubsystemByName(system_name)
             ports_on_ii = self.port_watchers[system_name]
+
+            loguru.logger.info(f"Saving raw data for system {system_name}...")
+
             for port_name in ports_on_ii:
                 temp_port_watcher = ports_on_ii[port_name]
                 temp_raw_data_options = temp_port_watcher.options.raw_data
                 if temp_raw_data_options.save_to_file:
                     temp_port_watcher.save_raw_data(self.diagram_context)
+
+                    loguru.logger.info(f"Saved raw data for port {port_name} on system {system_name}")
