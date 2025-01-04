@@ -59,6 +59,32 @@ class DrakeReadyURDFConverter:
         log_file_name: str = "conversion.log",
         collision_mesh_replacement_strategy: MeshReplacementStrategy = MeshReplacementStrategy.kWithObj,
     ):
+        """
+        Description
+        -----------
+        This method initializes the DrakeReadyURDFConverter.
+
+        Arguments
+        ---------
+        original_urdf_filename: str
+            The path to the original URDF file.
+        output_urdf_file_path: str (optional)
+            The path to the output URDF file. If None, then the output file will be placed in the 
+            brom models directory.
+        overwrite_old_models: bool (optional)
+            A flag that indicates whether or not to overwrite old models directory.
+            This is dangerous, so use with caution. Default is False.
+        overwrite_old_logs: bool (optional)
+            A flag that indicates whether or not to overwrite old logs.
+            Default is False.
+        log_file_name: str (optional)
+            The name of the log file. Default is "conversion.log".
+        collision_mesh_replacement_strategy: MeshReplacementStrategy (optional)
+            The strategy for replacing collision meshes. 
+            Each "incompatible" mesh file can be replaced by an .obj file (kWithObj)
+            or by a minimal enclosing cylinder (kWithMinimalEnclosingCylinder).
+            Default is MeshReplacementStrategy.kWithObj.
+        """
         # Setup
         self.original_urdf_filename = original_urdf_filename
         self.output_urdf_file_path = output_urdf_file_path
@@ -200,8 +226,15 @@ class DrakeReadyURDFConverter:
         For now, this is very similar to the collision element handling, but it may
         change in the future.
 
-        :param visual_elt: The visual element that we want to convert.
-        :return:
+        Arguments
+        ---------
+        visual_elt: ET.Element
+            The visual element that we want to convert.
+
+        Returns
+        -------
+        ET.Element
+            The new visual element.
         """
         # Setup
         new_elt = deepcopy(visual_elt)
@@ -231,6 +264,11 @@ class DrakeReadyURDFConverter:
         Description
         -----------
         Converts the original URDF file into a Drake-compatible URDF file.
+
+        Returns
+        -------
+        Path
+            The path to the new URDF file.
         """
         # Setup
         original_urdf_path = Path(self.original_urdf_filename)
@@ -265,7 +303,6 @@ class DrakeReadyURDFConverter:
         Description
         -----------
         This method will clean up the models directory.
-        :return:
         """
         # Make sure that the models directory exists
         os.makedirs(self.models_dir, exist_ok=True)
@@ -312,9 +349,18 @@ class DrakeReadyURDFConverter:
         Description
         -----------`
         This recursive method is used to parse each element of the
-        xml element tree.
-        :param current_tree:
-        :return:
+        xml element tree and replace the components that are not
+        supported by the Drake URDF parser.
+
+        Arguments
+        ---------
+        current_tree: ET.ElementTree
+            The current tree that we are parsing.
+        
+        Returns
+        -------
+        ET.ElementTree
+            The new tree that has been converted.
         """
         # Setup
         root = deepcopy(current_tree.getroot())
@@ -346,9 +392,17 @@ class DrakeReadyURDFConverter:
         This method is used to transform one element in the XML tree into an eleemnt
         that that Drake URDF parser can handle. If necessary, it will create a new
         3d model file and place it into the right directory.
-        :param elt: An element in the ElementTree that we would like to convert
-                     into a Drake-ready element.
-        :return: The Drake-ready xml tree element.
+
+        Arguments
+        ---------
+        elt: ET.Element
+            An element in the ElementTree that we would like to convert
+            into a Drake-ready element.
+        
+        Returns
+        -------
+        ET.Element
+            The new element that has been converted.
         """
         # Setup
         new_elt = deepcopy(elt)
@@ -380,8 +434,16 @@ class DrakeReadyURDFConverter:
         -----------
         This function will create an .obj file to replace the
         .stl or .dae file that is given in mesh file "mesh_file_name".
-        :param mesh_file_name:
-        :return:
+
+        Arguments
+        ---------
+        mesh_file_name: str
+            The name of the mesh file that we want to convert.
+        
+        Returns
+        -------
+        str
+            The name of the new .obj file that has been created.
         """
         # Setup
         original_urdf_dir = Path(self.original_urdf_filename).parent
@@ -405,8 +467,20 @@ class DrakeReadyURDFConverter:
         Description
         -----------
         This method will handle the joint element in the URDF file.
-        :param joint_elt:
-        :return:
+        Specifically, it will check to see if the joint is actuated
+        and (if it is) add it to the list of actuated joints.
+
+        This is useful when attempting to add transmissions to the URDF file
+        later on.
+        
+        Arguments
+        ---------
+        joint_elt: ET.Element
+            The joint element that we want to handle.
+        
+        Returns
+        -------
+        None
         """
         # Setup
 
@@ -431,8 +505,15 @@ class DrakeReadyURDFConverter:
         Description
         -----------
         Logs a message to the logger.
-        :param message: A string with the message we want to send to the logs.
-        :return:
+
+        Arguments
+        ---------
+        message: str
+            The message that we want to log.
+        
+        Returns
+        -------
+        None
         """
         loguru.logger.log(URDF_CONVERSION_LOG_LEVEL_NAME, message)
 
@@ -441,7 +522,11 @@ class DrakeReadyURDFConverter:
         Description
         -----------
         Returns the directory of the output urdf file.
-        :return:
+        
+        Returns
+        -------
+        Path
+            The path to the directory of the output urdf file.
         """
         # Setup
         original_file_path = Path(self.original_urdf_filename)
@@ -458,6 +543,11 @@ class DrakeReadyURDFConverter:
         Description
         -----------
         Creates the output filename based on the original filename.
+
+        Returns
+        -------
+        str
+            The name of the output URDF file
         """
         # Setup
         original_file_path = Path(self.original_urdf_filename)
@@ -476,8 +566,16 @@ class DrakeReadyURDFConverter:
         Description
         -----------
         This method will replace the geometry element with an enclosing cylinder.
-        :param collision_elt: The target element (can be collision) that we want to replace.
-        :return:
+
+        Arguments
+        ---------
+        collision_elt: ET.Element
+            The collision element that we want to replace.
+
+        Returns
+        -------
+        ET.Element
+            The new collision element with the enclosing cylinder.
         """
         # Setup
         new_elt = deepcopy(collision_elt)
