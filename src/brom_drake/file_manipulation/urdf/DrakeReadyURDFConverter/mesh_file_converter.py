@@ -7,8 +7,7 @@ import xml.etree.ElementTree as ET
 import trimesh
 
 # Internal imports
-from brom_drake.file_manipulation.urdf.util import URDF_CONVERSION_LOG_LEVEL_NAME
-
+from brom_drake.file_manipulation.urdf.DrakeReadyURDFConverter.util import URDF_CONVERSION_LOG_LEVEL_NAME
 
 class MeshFileConverter:
     def __init__(

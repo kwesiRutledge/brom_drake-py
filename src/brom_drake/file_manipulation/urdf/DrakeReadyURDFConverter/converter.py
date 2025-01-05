@@ -20,6 +20,7 @@ import xml.etree.ElementTree as ET
 
 # Internal Imports
 from brom_drake.directories import DEFAULT_BROM_MODELS_DIR
+from .config import DrakeReadyURDFConverterConfig, MeshReplacementStrategy
 from .mesh_file_converter import MeshFileConverter
 from .util import (
     does_drake_parser_support,
@@ -28,14 +29,6 @@ from .util import (
     create_transmission_element_for_joint,
 )
 from brom_drake.file_manipulation.urdf.shapes.cylinder import CylinderDefinition
-
-class MeshReplacementStrategy(IntEnum):
-    """
-    The different strategies for replacing mesh files.
-    """
-    kWithObj = 1
-    kWithMinimalEnclosingCylinder = 2
-
 
 class DrakeReadyURDFConverter:
     """
@@ -53,11 +46,7 @@ class DrakeReadyURDFConverter:
     def __init__(
         self,
         original_urdf_filename: str,
-        output_urdf_file_path: str = None,
-        overwrite_old_models: bool = False,
-        overwrite_old_logs: bool = False,
-        log_file_name: str = "conversion.log",
-        collision_mesh_replacement_strategy: MeshReplacementStrategy = MeshReplacementStrategy.kWithObj,
+        config: DrakeReadyURDFConverterConfig = DrakeReadyURDFConverterConfig(),
     ):
         """
         Description
@@ -86,16 +75,19 @@ class DrakeReadyURDFConverter:
             Default is MeshReplacementStrategy.kWithObj.
         """
         # Setup
+        self.config = config
         self.original_urdf_filename = original_urdf_filename
-        self.output_urdf_file_path = output_urdf_file_path
-        self.log_file_name = log_file_name
-        self.collision_mesh_replacement_strategy = collision_mesh_replacement_strategy
 
         # Define conversion data directory in brom
         # (If it already exists, then we will overwrite it with the proper flag set)
         self.models_dir = Path(DEFAULT_BROM_MODELS_DIR)
-        if overwrite_old_logs and os.path.exists(self.output_file_directory() / self.log_file_name):
-            os.remove(self.output_file_directory() / self.log_file_name)
+        
+        overwrite_old_logs = self.config.overwrite_old_logs
+        overwrite_old_models = self.config.overwrite_old_models
+        log_file_name = self.config.log_file_name
+
+        if overwrite_old_logs and os.path.exists(self.output_file_directory() / log_file_name):
+            os.remove(self.output_file_directory() / log_file_name)
         if overwrite_old_models:
             self.clean_up_models_dir()
         os.makedirs(self.models_dir, exist_ok=True)
@@ -125,7 +117,7 @@ class DrakeReadyURDFConverter:
         """
         # Setup
         urdf_conversion_level_exists = False
-        log_file_name = self.log_file_name
+        log_file_name = self.config.log_file_name
 
         # Check to see if the log level exists
         try:
@@ -174,13 +166,13 @@ class DrakeReadyURDFConverter:
         """
         # Setup
         new_elt = deepcopy(collision_elt)
-        replacement_strategy = self.collision_mesh_replacement_strategy
+        replacement_strategy = self.config.mesh_replacement_strategies.collision_meshes
 
         n_replacements_made = 0
 
         # Announce algorithm start
         self.log(
-            f"Converting element with tag \"{collision_elt.tag}\" using strategy {self.collision_mesh_replacement_strategy}."
+            f"Converting element with tag \"{collision_elt.tag}\" using strategy {replacement_strategy}."
         )
 
         # Check to see if the collision element has a mesh element within it
@@ -530,12 +522,13 @@ class DrakeReadyURDFConverter:
         """
         # Setup
         original_file_path = Path(self.original_urdf_filename)
+        output_urdf_file_path = self.config.output_urdf_file_path
 
         # Input Processing
-        if self.output_urdf_file_path is None:
+        if output_urdf_file_path is None:
             return self.models_dir / original_file_path.name.replace(".urdf", "")
         else:
-            output_file_path = Path(self.output_urdf_file_path)
+            output_file_path = Path(output_urdf_file_path)
             return output_file_path.parent
 
     def output_urdf_file_name(self) -> str:
@@ -551,15 +544,16 @@ class DrakeReadyURDFConverter:
         """
         # Setup
         original_file_path = Path(self.original_urdf_filename)
+        output_urdf_file_path = self.config.output_urdf_file_path
 
-        if self.output_urdf_file_path is None:
+        if output_urdf_file_path is None:
             # Use Pathlib to extract the filename, if it exists
             original_name = original_file_path.name
             original_name = original_name.replace(".urdf", "")
 
             return f"{original_name}.drake.urdf"
         else:
-            return Path(self.output_urdf_file_path).name
+            return Path(output_urdf_file_path).name
 
     def replace_element_with_enclosing_cylinder(self, collision_elt: ET.Element) -> ET.Element:
         """

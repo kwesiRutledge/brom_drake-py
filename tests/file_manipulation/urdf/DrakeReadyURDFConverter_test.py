@@ -19,7 +19,12 @@ from pydrake.multibody.plant import MultibodyPlant
 import brom_drake
 from brom_drake import robots
 from brom_drake.all import drakeify_my_urdf
-from brom_drake.file_manipulation.urdf import DrakeReadyURDFConverter, MeshReplacementStrategy
+from brom_drake.file_manipulation.urdf import (
+    DrakeReadyURDFConverter, 
+    DrakeReadyURDFConverterConfig,
+    MeshReplacementStrategies,
+    MeshReplacementStrategy, 
+)
 import resources as resources_dir
 from brom_drake.productions.debug import ShowMeThisModel
 
@@ -68,7 +73,11 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         """
         # Setup
         test_urdf1 = self.test_urdf1_filename
-        converter = DrakeReadyURDFConverter(test_urdf1, overwrite_old_logs=True)
+        config = DrakeReadyURDFConverterConfig(
+            overwrite_old_logs=True,
+            log_file_name="test_convert_tree1.log",
+        )
+        converter = DrakeReadyURDFConverter(test_urdf1, config=config)
         test_tree = ElementTree(file=test_urdf1)
 
         # Algorithm
@@ -96,11 +105,16 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
 
         loguru.logger.remove()
 
+        # Create configuration for the converter
+        config = DrakeReadyURDFConverterConfig(
+            log_file_name="test_convert_tree_element1.log",
+            overwrite_old_logs=True,
+        )
+
         # Create converter and call method
         converter = DrakeReadyURDFConverter(
             test_urdf1,
-            log_file_name="test.log",
-            overwrite_old_logs=True,
+            config=config,
         )
         new_root = converter.convert_tree_element(test_tree.getroot())
 
@@ -125,11 +139,16 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
 
         loguru.logger.remove()
 
+        # Create configuration for the converter
+        config = DrakeReadyURDFConverterConfig(
+            log_file_name="test_convert_tree_element2.log",
+            overwrite_old_logs=True,
+        )
+
         # Create converter and call method
         converter = DrakeReadyURDFConverter(
             test_urdf1,
-            log_file_name="test_convert_tree_element2.log",
-            overwrite_old_logs=True,
+            config=config,
         )
         # Find an element that references a .dae file
         target_visual_elt = test_tree.getroot().find("link/visual")
@@ -163,11 +182,16 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
             ".//mesh[@filename='./meshes/ur10e/visual/base.dae']"
         )
 
+        # Define configuration for the converter
+        config = DrakeReadyURDFConverterConfig(
+            log_file_name="test_create_obj_to_replace_mesh_file1.log",
+            overwrite_old_logs=True,
+        )
+
         # Create converter and call method
         converter = DrakeReadyURDFConverter(
             test_urdf1,
-            log_file_name="test.log",
-            overwrite_old_logs=True,
+            config=config,
         )
         new_elt = converter.create_obj_to_replace_mesh_file(dae_tree.attrib["filename"])
 
@@ -191,11 +215,17 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         test_urdf1 = self.test_urdf1_filename
         output_filename = "test.urdf"
 
-        converter = DrakeReadyURDFConverter(
-            test_urdf1,
+        # Create config
+        config = DrakeReadyURDFConverterConfig(
             output_urdf_file_path=output_filename,
             overwrite_old_logs=True,
             log_file_name="test_output_file_name1.log",
+        )
+
+        # Create converter
+        converter = DrakeReadyURDFConverter(
+            test_urdf1,
+            config=config,
         )
 
         # Test
@@ -216,11 +246,13 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         """
         # Setup
         test_urdf1 = self.test_urdf1_filename
-
-        converter = DrakeReadyURDFConverter(
-            test_urdf1,
+        config = DrakeReadyURDFConverterConfig(
             overwrite_old_logs=True,
             log_file_name="test_convert_urdf1.log",
+        )
+        converter = DrakeReadyURDFConverter(
+            test_urdf1,
+            config=config,
         )
 
         # Test
@@ -251,11 +283,13 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         """
         # Setup
         test_urdf2 = self.test_urdf2_filename
-
-        converter = DrakeReadyURDFConverter(
-            test_urdf2,
+        config = DrakeReadyURDFConverterConfig(
             overwrite_old_logs=True,
             log_file_name="test_convert_urdf2.log",
+        )
+        converter = DrakeReadyURDFConverter(
+            test_urdf2,
+            config=config,
         )
 
         # Test
@@ -286,11 +320,13 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         """
         # Setup
         test_urdf3 = self.test_urdf3_filename
-
-        converter = DrakeReadyURDFConverter(
-            test_urdf3,
+        config = DrakeReadyURDFConverterConfig(
             overwrite_old_logs=True,
             log_file_name="test_convert_urdf3.log",
+        )
+        converter = DrakeReadyURDFConverter(
+            test_urdf3,
+            config=config,
         )
 
         # Test
@@ -321,11 +357,13 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         """
         # Setup
         test_urdf4 = self.test_urdf4_filename
-
-        converter = DrakeReadyURDFConverter(
-            test_urdf4,
+        config = DrakeReadyURDFConverterConfig(
             overwrite_old_logs=True,
             log_file_name="test_convert_urdf4.log",
+        )
+        converter = DrakeReadyURDFConverter(
+            test_urdf4,
+            config=config,
         )
 
         # Test
@@ -362,11 +400,13 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         """
         # Setup
         test_urdf5 = self.test_urdf5_filename
-
-        converter = DrakeReadyURDFConverter(
-            test_urdf5,
+        config = DrakeReadyURDFConverterConfig(
             overwrite_old_logs=True,
             log_file_name="test_convert_urdf5.log",
+        )
+        converter = DrakeReadyURDFConverter(
+            test_urdf5,
+            config=config,
         )
 
         # Test
@@ -419,10 +459,13 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
             xml_declaration=True,
         )
         # Use converter on urdf6
-        converter = DrakeReadyURDFConverter(
-            test_urdf6,
+        config = DrakeReadyURDFConverterConfig(
             overwrite_old_logs=True,
             log_file_name="test_convert_urdf6.log",
+        )
+        converter = DrakeReadyURDFConverter(
+            test_urdf6,
+            config=config,
         )
 
         # Test
@@ -462,13 +505,20 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         # Create pay to the collision base file
         test_dir = Path(__file__).parent
 
-        # Use converter on urdf6
-        converter = DrakeReadyURDFConverter(
-            test_urdf,
+        # Create config for the converter
+        config = DrakeReadyURDFConverterConfig(
             output_urdf_file_path="./brom/resources/test_convert_urdf7.urdf",
             overwrite_old_logs=True,
             log_file_name="test_convert_urdf7.log",
-            collision_mesh_replacement_strategy=MeshReplacementStrategy.kWithMinimalEnclosingCylinder,
+            mesh_replacement_strategies=MeshReplacementStrategies(
+                collision_meshes=MeshReplacementStrategy.kWithMinimalEnclosingCylinder,
+            ),
+        )
+
+        # Use converter on urdf6
+        converter = DrakeReadyURDFConverter(
+            test_urdf,
+            config=config,
         )
 
         # Test
@@ -512,11 +562,13 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         """
         # Setup
         test_urdf1 = self.test_urdf7_filename
-
-        converter = DrakeReadyURDFConverter(
-            test_urdf1,
+        config = DrakeReadyURDFConverterConfig(
             overwrite_old_logs=True,
             log_file_name="test_convert_urdf8.log",
+        )
+        converter = DrakeReadyURDFConverter(
+            test_urdf1,
+            config=config,
         )
 
         # Test

@@ -10,7 +10,10 @@ from typing import Union
 from pathlib import Path
 
 # Internal Imports
-from .DrakeReadyURDFConverter import DrakeReadyURDFConverter, MeshReplacementStrategy
+from .DrakeReadyURDFConverter.converter import DrakeReadyURDFConverter
+from brom_drake.file_manipulation.urdf.DrakeReadyURDFConverter.config import (
+    MeshReplacementStrategy, MeshReplacementStrategies, DrakeReadyURDFConverterConfig
+)
 
 def drakeify_my_urdf(
     urdf_file_path: Union[str, Path],
@@ -52,13 +55,20 @@ def drakeify_my_urdf(
     if isinstance(urdf_file_path, str):
         urdf_file_path = Path(urdf_file_path)
 
-    # Use converter
-    converter = DrakeReadyURDFConverter(
-        urdf_file_path,
+    # Create config for converter
+    config = DrakeReadyURDFConverterConfig(
         overwrite_old_logs=overwrite_old_logs,
         overwrite_old_models=overwrite_old_models,
         log_file_name=log_file_name,
-        collision_mesh_replacement_strategy=collision_mesh_replacement_strategy,
+        mesh_replacement_strategies=MeshReplacementStrategies(
+            collision_meshes=collision_mesh_replacement_strategy,
+        ),
+    )
+
+    # Use converter
+    converter = DrakeReadyURDFConverter(
+        urdf_file_path,
+        config=config,
     )
 
     # Convert the URDF
