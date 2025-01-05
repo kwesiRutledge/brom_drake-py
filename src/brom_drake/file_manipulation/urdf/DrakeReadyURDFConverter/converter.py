@@ -266,18 +266,21 @@ class DrakeReadyURDFConverter:
         original_urdf_path = Path(self.original_urdf_filename)
         original_xml = ET.ElementTree(file=original_urdf_path)
 
+        add_missing_actuators = self.config.add_missing_actuators
+
         # Use recursive function to convert the tree
         new_tree = self.convert_tree(original_xml)
 
         # Add transmissions, if needed
-        for joint_name in self.actuated_joint_names:
-            if tree_contains_transmission_for_joint(new_tree, joint_name):
-                continue
-            else:
-                # If transmission doesn't exist in URDF, then add it!
-                transmission_element = create_transmission_element_for_joint(joint_name)
-                ET.indent(transmission_element, space="\t", level=0)
-                new_tree.getroot().append(transmission_element)
+        if add_missing_actuators:
+            for joint_name in self.actuated_joint_names:
+                if tree_contains_transmission_for_joint(new_tree, joint_name):
+                    continue
+                else:
+                    # If transmission doesn't exist in URDF, then add it!
+                    transmission_element = create_transmission_element_for_joint(joint_name)
+                    ET.indent(transmission_element, space="\t", level=0)
+                    new_tree.getroot().append(transmission_element)
 
         # Output the new tree to a file
         output_urdf_path = self.output_file_directory() / self.output_urdf_file_name()

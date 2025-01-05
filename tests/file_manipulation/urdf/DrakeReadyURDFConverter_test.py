@@ -308,6 +308,11 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
                 mesh_elt.attrib["filename"]
             )
 
+        # Verify that the new file contains transmission elements
+        transmissions_found = new_tree.findall(".//transmission")
+        self.assertGreater(len(transmissions_found), 0)
+
+
     def test_convert_urdf3(self):
         """
         Description
@@ -603,6 +608,51 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
                 for geom in collision_elt.iter("geometry")
             )
         )
+
+    def test_convert_urdf9(self):
+        """
+        Description
+        -----------
+        This test verifies that we can convert a full URDF file
+        into a new URDF file. This time, we'll use a more complicated urdf file
+        AND we will set the config object to NOT add missing actuators.
+        We'll verify that:
+        - the new URDF exists,
+        - that it contains mesh elements that only refer to .obj files, and
+        - that the new URDF does not contain any transmission elements.
+        :return:
+        """
+        # Setup
+        test_urdf2 = self.test_urdf2_filename
+        config = DrakeReadyURDFConverterConfig(
+            overwrite_old_logs=True,
+            log_file_name="test_convert_urdf9.log",
+            add_missing_actuators=False,
+        )
+        converter = DrakeReadyURDFConverter(
+            test_urdf2,
+            config=config,
+        )
+
+        # Test
+        new_urdf_path = converter.convert_urdf()
+
+        # Verify that the new file exists
+        self.assertTrue(
+            new_urdf_path.exists()
+        )
+
+        # Verify that the new file contains only obj files
+        new_tree = ElementTree(file=new_urdf_path)
+        for mesh_elt in new_tree.iter("mesh"):
+            self.assertIn(
+                ".obj",
+                mesh_elt.attrib["filename"]
+            )
+
+        # Verify that the new file contains transmission elements
+        transmissions_found = new_tree.findall(".//transmission")
+        self.assertEqual(len(transmissions_found), 0)
 
     def test_vis1(self):
 

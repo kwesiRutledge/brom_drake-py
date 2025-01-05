@@ -34,3 +34,4 @@ class DrakeReadyURDFConverterConfig:
     overwrite_old_models: bool = False
     log_file_name: str = "conversion.log"
     mesh_replacement_strategies: MeshReplacementStrategies = MeshReplacementStrategies()
+    add_missing_actuators: bool = True
