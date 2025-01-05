@@ -250,6 +250,9 @@ class PortWatcher:
         log_data = log.data()
         np.save(raw_data_file_name, log_data)
 
+        # Announce the saving of the raw data
+        
+
     def time_and_raw_data_names(self) -> Tuple[str, str]:
         """
         Description:

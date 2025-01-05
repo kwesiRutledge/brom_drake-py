@@ -169,6 +169,21 @@ class PortWatcherPlotter:
                 f"Invalid plot arrangement for figure naming convention {plotting_options.figure_naming_convention}: {options.plot_arrangement}."
             )
 
+    @staticmethod
+    def report_to_loguru_info(message: str):
+        """
+        Description
+        -----------
+        Logs a message to the loguru logger.
+        :param message: A string with the message we want to send to the logs.
+        :return:
+        """
+        loguru.logger.info(message)
+
+    @staticmethod
+    def report_to_loguru_warning(message: str):
+        loguru.logger.warning(message)
+
     def name_of_data_at_index(
         self,
         dim_index: int,
@@ -362,7 +377,9 @@ class PortWatcherPlotter:
         # Plot the data
         n_rows, n_cols = self.compute_plot_shape(n_dims)
 
-        print(f"Plotting {n_dims} dimensions in a {n_rows}x{n_cols} grid.")
+        self.report_to_loguru_info(
+            f"Plotting {n_dims} dimensions in a {n_rows}x{n_cols} grid."
+            )
 
         fig, ax_list = plt.subplots(n_rows, n_cols)
 
@@ -449,11 +466,15 @@ class PortWatcherPlotter:
 
         # If no figures are returned, then return early!
         if figs is None:
-            print("No figures to save; plot_logger_data was empty.")
+            self.report_to_loguru_warning(
+                "No figures to save for {}; plot_logger_data was empty."
+            )
             return
 
         if len(figs) == 0:
-            print("Zero figures to save; plot_logger_data was empty.")
+            self.report_to_loguru_warning(
+                "Zero figures to save; plot_logger_data was empty."
+            )
             return # Do nothing
 
         # Save the figures

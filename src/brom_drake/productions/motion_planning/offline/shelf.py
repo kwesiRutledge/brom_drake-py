@@ -40,8 +40,6 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
 
         # Input Processing
         if self.shelf_pose is None:
-            shelf_orientation = Quaternion(1, 0, 0 , 0)
-            shelf_position = np.array([-0.4, 0.8, 0.0])
             self.shelf_pose = RigidTransform(
                 RollPitchYaw(0.0, 0.0, +np.pi/2.0).ToQuaternion(),
                 np.array([0.0, 1.0, 0.6]),

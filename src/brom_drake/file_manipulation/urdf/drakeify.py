@@ -10,7 +10,10 @@ from typing import Union
 from pathlib import Path
 
 # Internal Imports
-from .DrakeReadyURDFConverter import DrakeReadyURDFConverter, MeshReplacementStrategy
+from .DrakeReadyURDFConverter.converter import DrakeReadyURDFConverter
+from brom_drake.file_manipulation.urdf.DrakeReadyURDFConverter.config import (
+    MeshReplacementStrategy, MeshReplacementStrategies, DrakeReadyURDFConverterConfig
+)
 
 def drakeify_my_urdf(
     urdf_file_path: Union[str, Path],
@@ -20,14 +23,27 @@ def drakeify_my_urdf(
     collision_mesh_replacement_strategy: MeshReplacementStrategy = MeshReplacementStrategy.kWithObj,
 ) -> Path:
     """
-    Description:
+    Description
+    -----------
+    This function provides a convenience function for the user to convert a URDF file
+    into a "Drake-ready" URDF file.
 
-        This function provides a convenience function for the user to convert a URDF file
-        into a "Drake-ready" URDF file.
-    :param urdf_file:
-    :param output_dir:
-    :param overwrite_old_logs:
-    :param log_file_name:
+    Arguments
+    ---------
+    urdf_file_path: str
+        A string representing the path to the URDF file that you would like to convert.
+    overwrite_old_models: bool (optional)
+        A boolean flag that indicates whether or not to overwrite old models.
+        Default is False.
+    overwrite_old_logs: bool (optional)
+        A boolean flag that indicates whether or not to overwrite old logs.
+        Default is False.
+    log_file_name: str (optional)
+        A string representing the name of the log file.
+        Default is "conversion.log".
+    collision_mesh_replacement_strategy: MeshReplacementStrategy (optional)
+        An enum representing the strategy for replacing collision meshes.
+        Default is MeshReplacementStrategy.kWithObj.
     :return:
     """
     # Input Processing
@@ -39,13 +55,20 @@ def drakeify_my_urdf(
     if isinstance(urdf_file_path, str):
         urdf_file_path = Path(urdf_file_path)
 
-    # Use converter
-    converter = DrakeReadyURDFConverter(
-        urdf_file_path,
+    # Create config for converter
+    config = DrakeReadyURDFConverterConfig(
         overwrite_old_logs=overwrite_old_logs,
         overwrite_old_models=overwrite_old_models,
         log_file_name=log_file_name,
-        collision_mesh_replacement_strategy=collision_mesh_replacement_strategy,
+        mesh_replacement_strategies=MeshReplacementStrategies(
+            collision_meshes=collision_mesh_replacement_strategy,
+        ),
+    )
+
+    # Use converter
+    converter = DrakeReadyURDFConverter(
+        urdf_file_path,
+        config=config,
     )
 
     # Convert the URDF

@@ -3,7 +3,11 @@ from brom_drake.DiagramWatcher import DiagramWatcher
 from brom_drake.file_manipulation.urdf import (
     drakeify_my_urdf,
     DrakeReadyURDFConverter,
+)
+from brom_drake.file_manipulation.urdf.DrakeReadyURDFConverter.config import (
+    DrakeReadyURDFConverterConfig,
     MeshReplacementStrategy,
+    MeshReplacementStrategies,
 )
 from brom_drake.motion_planning.algorithms.rrt import (
     BaseRRTPlannerConfig, BaseRRTPlanner,
@@ -32,8 +36,10 @@ __all__ = [
     'DiagramWatcher',
     'drakeify_my_urdf', 
     'DrakeReadyURDFConverter',
+    'DrakeReadyURDFConverterConfig',
     'FigureNamingConvention',
     'MeshReplacementStrategy',
+    'MeshReplacementStrategies',
     'parse_list_of_simplified_targets',
     'PortWatcher',
     'PortFigureArrangement',
