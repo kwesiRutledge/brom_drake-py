@@ -16,6 +16,7 @@ import loguru
 import numpy as np
 from pathlib import Path
 from pydrake.all import RigidTransform, RotationMatrix, RollPitchYaw
+import shutil
 import xml.etree.ElementTree as ET
 
 # Internal Imports
@@ -230,25 +231,57 @@ class DrakeReadyURDFConverter:
         """
         # Setup
         new_elt = deepcopy(visual_elt)
+        replacement_strategy = self.config.mesh_replacement_strategies.visual_meshes
+        original_urdf_dir = Path(self.original_urdf_filename).parent
 
         # Algorithm
         self.log(
-            f"Converting element with tag \"{visual_elt.tag}\"."
+            f"Converting element with tag \"{visual_elt.tag}\" using the \"{replacement_strategy}\" strategy."
         )
 
-        # Check to see if the collision element has a mesh element
-        mesh_elt = new_elt.find("geometry/mesh")
-        if mesh_elt is None:
-            self.log(
-                f"Collision element does not contain a mesh element. No modification needed..."
-            )
-            return new_elt
+        # Search through all children of the visual element
+        n_replacements_made = 0
+        for ii, child_ii in enumerate(visual_elt):
+            if child_ii.tag == "geometry":
+                # If the child is a geometry element, then we will check if replacement is needed.
+                geometry_elt = child_ii
 
-        # If the mesh element exists, then we will try to convert it
-        new_mesh_elt = self.convert_mesh_element(mesh_elt)
-        new_elt.find("geometry").remove(mesh_elt)
-        new_elt.find("geometry").append(new_mesh_elt)
-        
+                # Iterate through every element of the geometry element
+                for jj, child_jj in enumerate(geometry_elt):
+                    if child_jj.tag == "mesh":
+                        # If the child is a mesh element, then we will check if replacement is needed.
+                        mesh_elt = child_jj
+
+                        # Replace!
+                        if replacement_strategy == MeshReplacementStrategy.kWithObj:
+                            new_mesh_elt = self.convert_mesh_element(mesh_elt)
+                            new_elt[ii][jj] = new_mesh_elt
+                        # TODO: Implement this
+                        # elif replacement_strategy == MeshReplacementStrategy.kDoNotReplace:
+                        #     # Copy the associated file into the models directory
+                        #     old_mesh_file = mesh_elt.attrib["filename"]
+
+                        #     temp_mfc = MeshFileConverter(
+                        #         mesh_file_path=old_mesh_file,
+                        #         urdf_dir=original_urdf_dir,
+                        #         new_urdf_dir=self.output_file_directory(),
+                        #     )
+
+                        #     true_old_mesh_file = temp_mfc.true_mesh_file_path()
+                        #     new_mesh_full_path = temp_mfc.define_output_path()
+
+                        #     print(f"Copying {true_old_mesh_file} to {new_mesh_full_path}")
+
+                        #     # Copy!
+                        #     shutil.copy(true_old_mesh_file, new_mesh_full_path)
+                            
+                        else:
+                            raise ValueError(
+                                f"Invalid mesh replacement strategy: {replacement_strategy}"
+                            )
+
+                        n_replacements_made += 1
+
         return new_elt
 
     def convert_urdf(self) -> Path:

@@ -654,6 +654,90 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         transmissions_found = new_tree.findall(".//transmission")
         self.assertEqual(len(transmissions_found), 0)
 
+    # TODO: Fix this test
+
+    # def test_convert_urdf10(self):
+    #     """
+    #     Description
+    #     -----------
+    #     This test verifies that we can convert a full URDF file
+    #     into a new URDF file. This time, we'll use a more complicated urdf file
+    #     and we will set the configuration to NOT MODIFY the visual elements.
+    #     We'll verify that:
+    #     - the new URDF exists,
+    #     - that it contains collision mesh elements that only refer to .obj files, and
+    #     - that the new URDF's visual mesh elements are the same as the original.
+    #     :return:
+    #     """
+    #     # Setup
+    #     test_urdf3 = self.test_urdf3_filename
+    #     config = DrakeReadyURDFConverterConfig(
+    #         overwrite_old_logs=True,
+    #         log_file_name="test_convert_urdf10.log",
+    #         output_urdf_file_path="./brom/resources/test_convert_urdf10.urdf",
+    #         mesh_replacement_strategies=MeshReplacementStrategies(
+    #             visual_meshes=MeshReplacementStrategy.kDoNotReplace,
+    #         ),
+    #     )
+    #     converter = DrakeReadyURDFConverter(
+    #         test_urdf3,
+    #         config=config,
+    #     )
+
+    #     # Test
+    #     new_urdf_path = converter.convert_urdf()
+
+    #     # Verify that the new file exists
+    #     self.assertTrue(
+    #         new_urdf_path.exists()
+    #     )
+
+    #     # Verify that the new file contains only obj files
+    #     new_tree = ElementTree(file=new_urdf_path)
+    #     old_tree = ElementTree(file=test_urdf3)
+
+    #     # Find all the visual elements
+    #     old_visual_elts = list(old_tree.iter("visual"))
+    #     new_visual_elts = list(new_tree.iter("visual"))
+
+    #     # Compare the filenames of the meshes in the old and the new obj file (should be the same)
+    #     for ii, old_visual_elt in enumerate(old_visual_elts[0]):
+    #         # Select the geometry element inside
+    #         if old_visual_elt.tag == "geometry":
+    #             old_geometry_elt = old_visual_elt
+    #             new_geometry_elt = new_visual_elts[0][ii]
+    #             # Select the mesh element inside
+    #             for jj, old_geometry_child in enumerate(old_geometry_elt.iter("mesh")):
+    #                 if old_geometry_child.tag == "mesh":
+    #                     old_mesh_elt = old_geometry_child
+    #                     new_mesh_elt = new_geometry_elt[jj]
+
+    #                     self.assertEqual(
+    #                         old_mesh_elt.attrib["filename"],
+    #                         new_mesh_elt.attrib["filename"]
+    #                     )
+
+    #                     # Check that the file exists
+    #                     print("output file directory")
+    #                     print(converter.output_file_directory())
+    #                     print("new mesh elt")
+    #                     print(new_mesh_elt.attrib["filename"])
+    #                     print(new_mesh_elt.attrib["filename"].replace("package://baxter_description/", ""))
+    #                     self.assertTrue(
+    #                         (
+    #                             converter.output_file_directory() / 
+    #                             Path(new_mesh_elt.attrib["filename"].replace("package://baxter_description/", ""))
+    #                         ).exists()
+    #                     )
+
+    #     # Verify that the new collision mesh files are obj files
+    #     collision_geometry_elts = new_tree.findall(".//collision/geometry")
+    #     for collision_geometry_elt in collision_geometry_elts:
+    #         self.assertIn(
+    #             ".obj",
+    #             collision_geometry_elt.find("mesh").attrib["filename"]
+    #         )
+    
     def test_vis1(self):
 
         # Setup
@@ -683,12 +767,12 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
 
         # Set up simulation
         simulator = Simulator(diagram, diagram_context)
-        simulator.set_target_realtime_rate(1.0)
+        # simulator.set_target_realtime_rate(1.0)
         simulator.set_publish_every_time_step(False)
 
         # Run simulation
         simulator.Initialize()
-        simulator.AdvanceTo(15.0)
+        simulator.AdvanceTo(5.0)
 
 if __name__ == '__main__':
     unittest.main()

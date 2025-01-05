@@ -19,7 +19,7 @@ class MeshReplacementStrategies:
     - the <visual> section of the URDF
     """
     collision_meshes: MeshReplacementStrategy = MeshReplacementStrategy.kWithObj
-    visual_meshes: MeshReplacementStrategy = MeshReplacementStrategy.kDoNotReplace
+    visual_meshes: MeshReplacementStrategy = MeshReplacementStrategy.kWithObj
 
 @dataclass
 class DrakeReadyURDFConverterConfig:

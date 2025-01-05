@@ -17,10 +17,19 @@ class MeshFileConverter:
         new_urdf_dir: Path,
     ):
         """
-        Description:
-            This class will convert a mesh file to a different format.
-        :param brom_models_dir:
-        :param mesh_file:
+        Description
+        -----------
+        This class will convert a mesh file to a different format.
+        
+        Arguments
+        ---------
+        mesh_file_path: str
+            The path to the mesh file that we want to convert.
+            This path should be given RELATIVE to the URDF that we are converting.
+        urdf_dir: Path
+            The directory where the URDF file is located.
+        new_urdf_dir: Path
+            The directory where the new URDF file will be saved.
         """
         # Input Processing
 
@@ -219,8 +228,9 @@ class MeshFileConverter:
 
     def true_mesh_file_path(self, max_depth: int = 10) -> Path:
         """
-        Description:
-            This function will return the true mesh file path.
+        Description
+        -----------
+        This function will return the true mesh file path.
         """
         # Algorithm
         if self.mesh_file.startswith("package:"):
