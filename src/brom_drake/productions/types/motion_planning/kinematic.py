@@ -340,6 +340,7 @@ class KinematicMotionPlanningProduction(BaseProduction):
 
         # Add all elements to the builder
         self.add_supporting_cast()
+        print("added supporting cast")
 
         # Create a planner from the algorithm
         prototypical_planner = PrototypicalPlannerSystem(
@@ -353,6 +354,7 @@ class KinematicMotionPlanningProduction(BaseProduction):
 
         # Fulfill each role-performer pair in the casting_call list
         self.fill_role(planner_role, prototypical_planner)
+        print("filled role")
 
         self.create_optional_outputs_if_necessary(
             planner_role, prototypical_planner
@@ -441,6 +443,7 @@ class KinematicMotionPlanningProduction(BaseProduction):
         self,
         pose_WorldTarget: RigidTransform,
         frame_name: str = "ft_frame",
+        robot_joint_names: list = None,
     ) -> np.ndarray:
         """
         Description:
@@ -458,6 +461,8 @@ class KinematicMotionPlanningProduction(BaseProduction):
             frame_name,
         )
 
+        print("Formulated ik problem")
+
         # Solve problem
         ik_program = ik_problem.prog()
         ik_result = Solve(ik_program)
@@ -466,13 +471,18 @@ class KinematicMotionPlanningProduction(BaseProduction):
             f"Solution result was {ik_result.get_solution_result()}; need SolutionResult.kSolutionFound to make RRT Plan!"
 
         q_solution = ik_result.get_x_val()
+        print(f"solved ik problem: {q_solution}")
 
         # Extract only the positions that correspond to our robot's joints
-        robot_joint_names = self.plant.GetPositionNames(self.robot_model_index, add_model_instance_prefix=True)
+        if robot_joint_names is None:
+            robot_joint_names = self.plant.GetPositionNames(self.robot_model_index, add_model_instance_prefix=True)
+        
         all_joint_names = self.plant.GetPositionNames()
         q_out_list = []
         for ii, joint_name in enumerate(all_joint_names):
             if joint_name in robot_joint_names:
                 q_out_list.append(q_solution[ii])
+
+        print(f"q_out_list: {q_out_list}")
 
         return np.array(q_out_list)

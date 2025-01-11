@@ -5,9 +5,9 @@ Description:
     This file defines the GripperTarget enum and associated values.
 """
 
-from enum import Enum
+from enum import IntEnum
 
 
-class GripperTarget(Enum):
+class GripperTarget(IntEnum):
     kPosition = 1
     kVelocity = 2

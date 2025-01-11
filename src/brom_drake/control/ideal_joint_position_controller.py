@@ -28,16 +28,18 @@ class IdealJointPositionController(LeafSystem):
 
         self.q0 = q0
 
+        self.arm = robot_model
+
         # Create Input Port for the Body's Joint Positions
         self.desired_joint_positions_port = self.DeclareVectorInputPort(
             "desired_joint_positions",
-            BasicVector(self.plant.num_actuated_dofs()),
+            BasicVector(self.plant.num_actuated_dofs(self.arm)),
         )
 
         # Create Output Port which should share the pose of the block
         self.DeclareVectorOutputPort(
             "measured_joint_positions",
-            BasicVector(self.plant.num_actuated_dofs()),
+            BasicVector(self.plant.num_actuated_dofs(self.arm)),
             self.SetJointPositions,
             {self.time_ticket()}    # indicate that this doesn't depend on any inputs,
         )                           # but should still be updated each timestep

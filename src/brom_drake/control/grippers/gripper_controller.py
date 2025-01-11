@@ -65,7 +65,7 @@ class GripperController(LeafSystem):
             # This will allow us to compute the distance between fingers.
             self.plant = MultibodyPlant(time_step=1.0) # time step doesn't matter
             gripper_urdf = str(
-                impresources.files(robots) / "models/2f_85_gripper/urdf/robotiq_2f_85.urdf"
+                impresources.files(robots) / "models/robotiq/2f_85_gripper-no-mimic/urdf/robotiq_2f_85.urdf"
             )
             self.gripper = Parser(plant=self.plant).AddModels(gripper_urdf)[0]
             self.plant.WeldFrames(
@@ -80,17 +80,29 @@ class GripperController(LeafSystem):
             raise RuntimeError("Invalid gripper type: %s" % self.type)
 
         # Declare input ports
-        self.target_port = self.DeclareVectorInputPort("gripper_target", BasicVector(1))
+        self.target_port = self.DeclareVectorInputPort(
+            "gripper_target",
+            BasicVector(1)
+        )
         self.target_type_port = self.DeclareAbstractInputPort(
             "gripper_target_type",
             AbstractValue.Make(GripperTarget.kPosition),
         )
-        self.state_port = self.DeclareVectorInputPort("gripper_state", BasicVector(state_size))
+        self.state_port = self.DeclareVectorInputPort(
+            "gripper_state",
+            BasicVector(state_size),
+        )
 
         # Declare output ports
-        self.DeclareVectorOutputPort("applied_gripper_torque", BasicVector(2), self.CalcGripperTorque)
         self.DeclareVectorOutputPort(
-            "measured_gripper_position", BasicVector(1), self.CalcGripperPosition,
+            "applied_gripper_torque",
+            BasicVector(self.plant.num_actuators()),
+            self.CalcGripperTorque,
+        )
+        self.DeclareVectorOutputPort(
+            "measured_gripper_position",
+            BasicVector(1),
+            self.CalcGripperPosition,
             {self.time_ticket()}    # indicate that this doesn't depend on any inputs,
         )                           # but should still be updated each timestep
         self.DeclareVectorOutputPort(
@@ -203,6 +215,7 @@ class GripperController(LeafSystem):
         target = self.target_port.Eval(context)
         target_type = self.target_type_port.Eval(context)
 
+        # Collect State of gripper
         finger_position = self.ComputePosition(state)
         finger_velocity = self.ComputeVelocity(state)
 
@@ -233,5 +246,17 @@ class GripperController(LeafSystem):
         position_err = target_finger_position - finger_position
         velocity_err = target_finger_velocity - finger_velocity
         tau = -Kp @ (position_err) - Kd @ (velocity_err)
+
+        
+        # Apply mimic rules to the torques
+        if self.type == GripperType.Robotiq_2f_85:
+            tau_with_mimic = np.ones((self.plant.num_actuators(),))
+            # Mimic rules for the 2F-85 gripper
+            tau_with_mimic[4] = - tau[0]
+            tau_with_mimic[5] = - tau[0]
+            tau_with_mimic[6] = tau[1]
+
+            tau = tau_with_mimic
+            
 
         output.SetFromVector(tau)

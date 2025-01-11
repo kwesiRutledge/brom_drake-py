@@ -210,6 +210,7 @@ class RRTPlanGenerator(LeafSystem):
 
         # Extract only the positions that correspond to our robot's joints
         robot_joint_names = self.plant.GetPositionNames(self.robot_model_idx, add_model_instance_prefix=True)
+        print(f"Robot Joint Names: {robot_joint_names}")
         all_joint_names = self.plant.GetPositionNames()
         q_out_list = []
         for ii, joint_name in enumerate(all_joint_names):
