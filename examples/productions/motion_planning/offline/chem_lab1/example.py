@@ -15,7 +15,7 @@ import typer
 from brom_drake.motion_planning.algorithms.rrt.connect import RRTConnectPlannerConfig, RRTConnectPlanner
 from brom_drake.productions.motion_planning.offline import ChemLab1
 
-def main(meshcat_port_number: int = -1):
+def main(meshcat_port_number: int = 7001):
     # Setup
     if meshcat_port_number < 0:
         meshcat_port_number = None # Use None for CI
@@ -27,9 +27,9 @@ def main(meshcat_port_number: int = -1):
 
     # Create a planner object which will be used to plan the motion
     config = RRTConnectPlannerConfig(
-        steering_step_size=0.1,
+        steering_step_size=0.2,
         prob_sample_goal=0.30,
-        max_iterations=int(1e4),
+        max_iterations=int(1e5),
         convergence_threshold=1e-3,
     )
     planner2 = RRTConnectPlanner(
