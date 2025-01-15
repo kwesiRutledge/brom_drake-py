@@ -3,7 +3,6 @@ from pydrake.all import (
     AbstractValue, BasicVector,
     Context,
     LeafSystem,
-    RigidTransform,
 )
 
 class BoolToVectorSystem(LeafSystem):
