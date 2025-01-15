@@ -113,6 +113,10 @@ class DiagramWatcher:
                         f"There was an error attempting to add a watcher to port {target_port.get_name()} of system {target.name}"
                     )
                     loguru.logger.warning(f"Error: {e}")
+                    continue
+
+                # Announce that we successfully added logger
+                loguru.logger.info(f"Added logger to port {target_port.get_name()} of system {target.name}")
 
     def create_new_port_watcher_options(
         self,

@@ -266,9 +266,12 @@ class PortWatcherPlotter:
             return self.port.size()
         else:
             # If port contains RigidTransform, then the expected data dimension is 7.
-            example_value = self.port.Allocate()
-            if is_rigid_transform(example_value.get_value()):
+            example_allocation = self.port.Allocate()
+            example_value = example_allocation.get_value()
+            if is_rigid_transform(example_value):
                 return 7
+            elif type(example_value) == bool: # if the output_value is a boolean
+                return 1
         
         # Otherwise, raise an error
         raise ValueError(
