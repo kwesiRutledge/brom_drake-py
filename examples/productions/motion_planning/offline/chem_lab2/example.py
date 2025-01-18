@@ -8,7 +8,7 @@ Description:
 """
 import ipdb
 import numpy as np
-from pydrake.all import Simulator
+from pydrake.all import Simulator, RigidTransform, RollPitchYaw
 import typer
 
 # Internal imports
@@ -23,12 +23,16 @@ def main(meshcat_port_number: int = 7001):
     # Create the production
     production = ChemLab2(
         meshcat_port_number=meshcat_port_number, # Use None for CI
+        pose_WorldBeaker=RigidTransform(
+            RollPitchYaw(np.pi/2.0, 0.0, 0.0).ToQuaternion(),
+            np.array([2.0*0.5*0.7+0.2, 0.6+0.6/4.-0.2, 0.1-0.015+0.1]),
+        )
     )
 
     # Create a planner object which will be used to plan the motion
     config = RRTConnectPlannerConfig(
-        steering_step_size=0.1,
-        prob_sample_goal=0.30,
+        steering_step_size=0.2,
+        prob_sample_goal=0.50,
         max_iterations=int(1e5),
         convergence_threshold=1e-3,
     )
@@ -54,9 +58,10 @@ def main(meshcat_port_number: int = 7001):
 
     # Run simulation
     simulator.Initialize()
-    simulator.AdvanceTo(0.1)
+    simulator.AdvanceTo(0.05)
     planned_trajectory = production.plan_dispenser.planned_trajectory
     print(f"Expected end time of trajectory: {planned_trajectory.end_time()}")
+    simulator.AdvanceTo(0.1)
     # return
     simulator.AdvanceTo(planned_trajectory.end_time()+1.0)
 
