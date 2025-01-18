@@ -8,11 +8,11 @@ from pydrake.multibody.tree import FixedOffsetFrame
 from pydrake.systems.framework import Diagram, DiagramBuilder
 from pydrake.systems.primitives import Demultiplexer
 
-from ... import EndEffectorWrenchCalculator
+from brom_drake.utils.leaf_systems import EndEffectorWrenchCalculator
 # Local imports
-from ...gripper_type import GripperType
-from ....control.grippers import GripperController
-from ....control.arms import (
+from brom_drake.robots.gripper_type import GripperType
+from brom_drake.control.grippers import GripperController
+from brom_drake.control.arms import (
     JointArmController, CartesianArmController,
     ArmControlMode,
 )
