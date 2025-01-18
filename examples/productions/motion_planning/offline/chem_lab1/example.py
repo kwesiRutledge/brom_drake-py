@@ -1,8 +1,8 @@
 """
-shelf1.py
+example.py
 Description:
 
-    In this script, we use the Shelf Production to test a basic motion planning algorithms.
+    In this script, we use the ChemLab1 Production to test a basic motion planning algorithms.
     This shows one how to use the `easy_cast_and_build` method to simplify how to build
     a Production.
 """
