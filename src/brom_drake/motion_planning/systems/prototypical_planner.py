@@ -34,6 +34,22 @@ class PrototypicalPlannerSystem(LeafSystem):
         robot_model_idx: ModelInstanceIndex = None,
         **kwargs,
     ):
+        """
+        Description
+        -----------
+        Constructor for the PrototypicalPlannerSystem.
+
+        Arguments
+        ---------
+        plant : MultibodyPlant
+            The plant that we are working with.
+        scene_graph : SceneGraph
+            The scene graph that we are working with.
+        planning_algorithm : Callable[[np.ndarray, np.ndarray, Callable[[np.ndarray], bool]], Tuple[MotionPlan, bool]]
+            The planning algorithm that we are using.
+        robot_model_idx : ModelInstanceIndex
+            The robot model index that we are working with.
+        """
         LeafSystem.__init__(self)
 
         # Setup
@@ -54,8 +70,14 @@ class PrototypicalPlannerSystem(LeafSystem):
         q_model: np.ndarray,
     ) -> bool:
         """
-        Description:
-            This function checks for collisions in the robot's environment.
+        Description
+        -----------
+        This function checks for collisions in the robot's environment.
+
+        Arguments
+        ---------
+        q_model : np.ndarray
+            The model configuration that we are checking for collisions.
         """
         # Input Processing
         if self.root_context is None:
@@ -89,10 +111,18 @@ class PrototypicalPlannerSystem(LeafSystem):
         # Otherwise return false
         return False
 
-    def compute_plan_if_not_available(self, context, output: AbstractValue):
+    def compute_plan_if_not_available(self, context: Context, output: AbstractValue):
         """
-        Description:
-            This function computes the plan if it is not available.
+        Description
+        -----------
+        This function computes the plan if it is not available.
+
+        Arguments
+        ---------
+        context : Context
+            The context that we are working with.
+        output : AbstractValue
+            The output that will be produced by the output port
         """
         # Print
         if self.plan is None:

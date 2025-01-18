@@ -93,10 +93,12 @@ class ChemLab1(KinematicMotionPlanningProduction):
         self.station = KinematicUR10eStation(
             time_step=self.time_step,
             meshcat_port_number=self.meshcat_port_number,
-            gripper_type=GripperType.Robotiq_2f_85,
+            gripper_type=GripperType.NoGripper,
         )
         self.arm = self.station.arm
         self.robot_model_idx_ = self.arm
+
+        # self.gripper = self.station.gripper
 
         # Set Names of Plant and scene graph
         self.plant = self.station.plant
@@ -144,7 +146,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
         self.add_robot_source_system()
         self.add_motion_planning_components()
         self.add_start_and_goal_sources_to_builder()
-        self.add_dummy_gripper_components()
+        # self.add_dummy_gripper_components()
 
         print("Completed adding supporting cast members.")
 
@@ -388,24 +390,24 @@ class ChemLab1(KinematicMotionPlanningProduction):
             )
         )
 
-        # Ignore collisions between the robot links
-        # TODO: Actually implement this for adjacent links? Or is this not necessary?
-        arm_geometry_ids = []
-        for body_index in self.plant.GetBodyIndices(self.arm):
-            arm_geometry_ids.extend(
-                self.plant.GetCollisionGeometriesForBody(
-                    self.plant.get_body(body_index)
-                )
-            )
+        # # Ignore collisions between the robot links
+        # # TODO: Actually implement this for adjacent links? Or is this not necessary?
+        # arm_geometry_ids = []
+        # for body_index in self.plant.GetBodyIndices(self.arm):
+        #     arm_geometry_ids.extend(
+        #         self.plant.GetCollisionGeometriesForBody(
+        #             self.plant.get_body(body_index)
+        #         )
+        #     )
 
-        self.arm_geometry_ids = arm_geometry_ids
+        # self.arm_geometry_ids = arm_geometry_ids
 
-        # Apply the collision filter
-        scene_graph.collision_filter_manager(scene_graph_context).Apply(
-            CollisionFilterDeclaration().ExcludeWithin(
-                GeometrySet(self.arm_geometry_ids)
-            )
-        )
+        # # Apply the collision filter
+        # scene_graph.collision_filter_manager(scene_graph_context).Apply(
+        #     CollisionFilterDeclaration().ExcludeWithin(
+        #         GeometrySet(self.arm_geometry_ids)
+        #     )
+        # )
     
     def easy_cast_and_build(
         self,
@@ -432,7 +434,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
             with_watcher=with_watcher,
         )
 
-        print("completed cast and build.")
+        # print("completed cast and build.")
 
         # Configure the scene graph for collision detection
         self.configure_collision_filter(
@@ -449,6 +451,16 @@ class ChemLab1(KinematicMotionPlanningProduction):
         self.performers[0].set_internal_root_context(
             diagram_context
         )
+
+        # # Set the positions of the gripper
+        # gripper = self.station.gripper
+        # n_gripper_positions = self.station.plant.num_positions(gripper)
+        # self.station.plant.SetPositions(
+        #     self.station.plant.GetMyMutableContextFromRoot(diagram_context),
+        #     gripper,
+        #     np.zeros((n_gripper_positions,)),
+        # )
+
 
         return diagram, diagram_context
 

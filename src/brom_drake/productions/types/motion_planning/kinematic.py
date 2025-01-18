@@ -461,8 +461,6 @@ class KinematicMotionPlanningProduction(BaseProduction):
             frame_name,
         )
 
-        print("Formulated ik problem")
-
         # Solve problem
         ik_program = ik_problem.prog()
         ik_result = Solve(ik_program)
@@ -471,7 +469,7 @@ class KinematicMotionPlanningProduction(BaseProduction):
             f"Solution result was {ik_result.get_solution_result()}; need SolutionResult.kSolutionFound to make RRT Plan!"
 
         q_solution = ik_result.get_x_val()
-        print(f"solved ik problem: {q_solution}")
+        # print(f"solved ik problem: {q_solution}")
 
         # Extract only the positions that correspond to our robot's joints
         if robot_joint_names is None:
@@ -483,6 +481,6 @@ class KinematicMotionPlanningProduction(BaseProduction):
             if joint_name in robot_joint_names:
                 q_out_list.append(q_solution[ii])
 
-        print(f"q_out_list: {q_out_list}")
+        # print(f"q_out_list: {q_out_list}")
 
         return np.array(q_out_list)

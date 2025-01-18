@@ -20,7 +20,12 @@ from typing import Tuple
 from brom_drake.robots.gripper_type import GripperType
 from brom_drake.control import IdealJointPositionController
 from brom_drake.control.grippers.gripper_controller import GripperController
-from brom_drake.file_manipulation.urdf import DrakeReadyURDFConverter, MeshReplacementStrategy
+from brom_drake.file_manipulation.urdf import (
+    DrakeReadyURDFConverter, 
+    DrakeReadyURDFConverterConfig,
+    MeshReplacementStrategy,
+    MeshReplacementStrategies,
+)
 
 from brom_drake import robots
 
@@ -202,10 +207,15 @@ class UR10eStation(Diagram):
         if (not expected_arm_urdf_path.exists()) or self.force_conversion_of_original_urdf:
             # If drake-compatible URDF does not exist, then we need to convert
             # the original URDF to a drake-compatible URDF.
+            config = DrakeReadyURDFConverterConfig(
+                overwrite_old_logs=True,
+                mesh_replacement_strategies=MeshReplacementStrategies(
+                    collision_meshes=MeshReplacementStrategy.kWithObj,
+                )
+            )
             arm_urdf = DrakeReadyURDFConverter(
                 original_arm_urdf_path,
-                overwrite_old_logs=True,
-                collision_mesh_replacement_strategy=MeshReplacementStrategy.kWithMinimalEnclosingCylinder,
+                config=config,
             ).convert_urdf()
             arm_urdf = str(arm_urdf)
         else:

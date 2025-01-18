@@ -13,6 +13,7 @@ from .DrakeReadyURDFConverter.util import (
 __all__ = [
     'DrakeReadyURDFConverter',
     'DrakeReadyURDFConverterConfig',
+    'MeshReplacementStrategies',
     'MeshReplacementStrategy',
     'drakeify_my_urdf',
     'tree_contains_transmission_for_joint',
