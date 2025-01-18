@@ -83,7 +83,7 @@ class BaseProduction:
     def build_production(
         self,
         with_watcher: bool = True,
-    ):
+    ) -> Tuple[Diagram, Context]:
         """
         Description
         -----------

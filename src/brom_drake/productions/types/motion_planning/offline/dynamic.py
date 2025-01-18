@@ -6,7 +6,7 @@ import networkx as nx
 import numpy as np
 from pydrake.all import (
     RotationMatrix, Quaternion, RollPitchYaw,
-    Solve, SolutionResult,
+    Solve, SolutionResult, SpatialVelocity,
     InverseKinematics, ModelInstanceIndex,
 )
 from pydrake.common.value import AbstractValue
@@ -49,6 +49,10 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
 
         # Create placeholder for the robot model index
         self.robot_model_idx_ = None
+
+        # Create a list of all OBJECTS in the supporting cast
+        # and their desired poses. This will be a list of Tuple[ModelInstanceIndex, RigidTransform]
+        self.models_in_supporting_cast = []
 
     def add_supporting_cast(self):
         """
@@ -199,6 +203,42 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
             self.create_optional_outputs_if_necessary(
                 role_ii, performer_ii
             )
+
+    def build_production(
+        self,
+        with_watcher: bool = True,
+    ) -> Tuple[Diagram, Context]:
+        """
+        Description
+        -----------
+        This method builds the production.
+        It assumes that all components have been added to the builder.
+
+        Arguments
+        ---------
+        with_watcher: bool
+            A Boolean that determines whether to add a watcher to the diagram.
+        """
+        # Setup
+
+        # Call the parent method
+        diagram, diagram_context = super().build_production(with_watcher=with_watcher)
+
+        # Set the initial poses of the members of the cast that are objects
+        for model_ii, pose_ii in self.models_in_supporting_cast:
+            body_list_ii = self.plant.GetBodyIndices(model_ii)
+            print(f"body_list_ii contains {len(body_list_ii)} elements")
+            first_body = self.plant.get_body(body_list_ii[0])
+            # first_body.body_frame().SetPoseInParentFrame(
+            #     pose,
+            # )
+            self.plant.SetFreeBodyPose(
+                self.plant.GetMyContextFromRoot(diagram_context),
+                first_body,
+                pose_ii,
+            )
+
+        return diagram, diagram_context
 
     def create_optional_outputs_if_necessary(
         self,

@@ -48,6 +48,7 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         time_step=1e-3,
         meshcat_port_number: int = 7000,
         plan_execution_speed: float = 0.2,
+        pose_WorldBeaker: RigidTransform = None,
         table_length: float = 0.6,
         table_width: float = 2.0,
         table_height: float = 0.1,
@@ -69,25 +70,11 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         self.table_height, self.table_width = table_height, table_width
         self.table_length = table_length
 
-        # Set shelf pose
+        # Initialize pose data
         self.shelf_pose = shelf_pose
-        if self.shelf_pose is None:
-            self.pose_WorldShelf = RigidTransform(
-                RollPitchYaw(0.0, 0.0, -np.pi/2.0).ToQuaternion(),
-                np.array([0.0, 0.75, 0.66]),
-            )
-
-        # Set Beaker Pose
-        self.pose_WorldBeaker = RigidTransform(
-            RollPitchYaw(np.pi/2.0, 0.0, 0.0).ToQuaternion(),
-            np.array([-0.6, 0.45, 0.075]),
-        )
-
-        # Set Holder Pose
-        self.pose_WorldHolder = RigidTransform(
-            RollPitchYaw(np.pi/2.0, 0.0, 0.0).ToQuaternion(),
-            np.array([self.table_width*0.5*0.7, 0.6+self.table_length/4., self.table_height-0.015]),
-        )
+        self.pose_WorldBeaker = pose_WorldBeaker
+        self.pose_BeakerGoal = None
+        self.initialize_pose_data()
 
         # Set station
         self.station = KinematicUR10eStation(
@@ -169,12 +156,17 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         model_idcs = Parser(plant=plant).AddModels(str(new_beaker_urdf))
         self.beaker_model_index = model_idcs[0]
 
-        # Weld the beaker to the world frame
-        plant.WeldFrames(
-            plant.world_frame(),
-            plant.GetFrameByName("beaker_base_link", self.beaker_model_index),
-            self.pose_WorldBeaker,
+        # Add object to the list we use for initialization
+        self.models_in_supporting_cast.append(
+            (self.beaker_model_index, self.pose_WorldBeaker),
         )
+
+        # # Weld the beaker to the world frame
+        # plant.WeldFrames(
+        #     plant.world_frame(),
+        #     plant.GetFrameByName("beaker_base_link", self.beaker_model_index),
+        #     self.pose_WorldBeaker,
+        # )
 
     def add_dummy_gripper_components(self):
         """
@@ -270,7 +262,7 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
                 iyy=10.0,
                 izz=10.0,
             ),
-            color=np.array([0.1, 0.1, 0.1, 0.5]),
+            color=np.array([0.1, 0.1, 0.1, 0.8]),
         )
         table_urdf_path = DEFAULT_BROM_MODELS_DIR + "/table/table.urdf"
         table_defn.write_to_file(table_urdf_path)
@@ -308,12 +300,17 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
             str(new_test_tube_holder_urdf1)
         )[0]
 
-        # Weld the test tube holders to the world frame
-        self.plant.WeldFrames(
-            self.plant.world_frame(),
-            self.plant.GetFrameByName("test_tube_holder_base_link", self.test_tube_holder1),
-            self.pose_WorldHolder,
+        # Add object to the list we use for initialization
+        self.models_in_supporting_cast.append(
+            (self.test_tube_holder1, self.pose_WorldHolder),
         )
+
+        # # Weld the test tube holders to the world frame
+        # self.plant.WeldFrames(
+        #     self.plant.world_frame(),
+        #     self.plant.GetFrameByName("test_tube_holder_base_link", self.test_tube_holder1),
+        #     self.pose_WorldHolder,
+        # )
 
 
     def add_cast_and_build(
@@ -482,14 +479,7 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
 
         # Retrieve goal_configuraiton value
         if self.goal_config_ is None:
-            beaker_to_goal_translation = np.array([+0.0, 0.2, 0.0]) 
-            beaker_to_goal_orientation = RollPitchYaw(0., 0., 0.0).ToQuaternion()
-            X_BeakerGoal = RigidTransform(  
-                beaker_to_goal_orientation,
-                beaker_to_goal_translation,
-            )
-
-            pose_WorldGoal = self.pose_WorldBeaker.multiply(X_BeakerGoal)
+            pose_WorldGoal = self.pose_WorldBeaker.multiply(self.pose_BeakerGoal)
 
             # Use Inverse Kinematics to get the goal configuration of the robot
             self.goal_config_ = self.solve_pose_ik_problem(
@@ -512,14 +502,7 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
 
         # Algorithm
         if self.goal_pose_ is None:
-            beaker_to_goal_translation = np.array([+0.0, 0.2, 0.0]) 
-            beaker_to_goal_orientation = RollPitchYaw(0., 0., 0.0).ToQuaternion()
-            X_BeakerGoal = RigidTransform(  
-                beaker_to_goal_orientation,
-                beaker_to_goal_translation,
-            )
-
-            pose_WorldGoal = self.pose_WorldBeaker.multiply(X_BeakerGoal)
+            pose_WorldGoal = self.pose_WorldBeaker.multiply(self.pose_BeakerGoal)
             self.goal_pose_ = pose_WorldGoal
 
             return self.goal_pose_
@@ -531,6 +514,35 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         return ProductionID.kShelfPlanning1
         
     # TODO(kwesi): Implement start_configuration method.
+
+    def initialize_pose_data(self):
+        # Set shelf pose
+        if self.shelf_pose is None:
+            self.pose_WorldShelf = RigidTransform(
+                RollPitchYaw(0.0, 0.0, -np.pi/2.0).ToQuaternion(),
+                np.array([0.0, 0.75, 0.66]),
+            )
+
+        # Set Beaker Pose default
+        if self.pose_WorldBeaker is None:
+            self.pose_WorldBeaker = RigidTransform(
+                RollPitchYaw(np.pi/2.0, 0.0, 0.0).ToQuaternion(),
+                np.array([-0.6, 0.45, 0.175]),
+            )
+
+        # Set Holder Pose
+        self.pose_WorldHolder = RigidTransform(
+            RollPitchYaw(np.pi/2.0, 0.0, 0.0).ToQuaternion(),
+            np.array([self.table_width*0.5*0.7, 0.6+self.table_length/4., self.table_height-0.015]),
+        )
+
+        # Define pose of the goal
+        beaker_to_goal_translation = np.array([+0.0, 0.3, 0.0]) 
+        beaker_to_goal_orientation = RollPitchYaw(0., 0., 0.0).ToQuaternion()
+        self.pose_BeakerGoal = RigidTransform(  
+            beaker_to_goal_orientation,
+            beaker_to_goal_translation,
+        )
 
     @property
     def start_configuration(self):
