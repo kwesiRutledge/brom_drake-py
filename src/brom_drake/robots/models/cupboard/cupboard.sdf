@@ -142,7 +142,7 @@
     <link name="left_door">
       <pose> 0.158 -0.175 0 0 0 0</pose>
       <inertial>
-        <mass>1</mass>
+        <mass>10</mass>
         <inertia>
           <ixx>0.01042</ixx>
           <ixy>0</ixy>
@@ -209,7 +209,7 @@
     <link name="right_door">
       <pose> 0.158 0.175 0 0 0 0</pose>
       <inertial>
-        <mass>1</mass>
+        <mass>10</mass>
         <inertia>
           <ixx>0.01042</ixx>
           <ixy>0</ixy>
