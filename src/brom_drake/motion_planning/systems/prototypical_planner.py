@@ -138,16 +138,16 @@ class PrototypicalPlannerSystem(LeafSystem):
             self.root_context = self.root_context
 
             # Plan and extract path
-            rrt, found_path = self.planning_algorithm(
+            rrt, goal_node_index = self.planning_algorithm(
                 q_start,
                 q_goal,
                 self.check_collision_in_config
             )
 
-            if not found_path:
+            if goal_node_index == -1:
                 raise RuntimeError("No path found! Try increasing the number of iterations or checking your problem!")
 
-            path = nx.shortest_path(rrt, source=0, target=rrt.number_of_nodes()-1)
+            path = nx.shortest_path(rrt, source=0, target=goal_node_index)
             self.plan = np.array([rrt.nodes[node]['q'] for node in path])
 
         output.SetFrom(
