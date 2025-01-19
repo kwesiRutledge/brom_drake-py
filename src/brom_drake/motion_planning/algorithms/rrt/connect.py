@@ -14,10 +14,12 @@ from brom_drake.motion_planning.algorithms.motion_planner import MotionPlanner
 
 @dataclass
 class RRTConnectPlannerConfig:
-    steering_step_size: float = 0.025
-    prob_sample_goal: float = 0.05
-    max_iterations: int = int(1e4)
     convergence_threshold: float = 1e-3
+    max_iterations: int = int(1e4)
+    prob_sample_goal: float = 0.05
+    random_seed: int = 23
+    steering_step_size: float = 0.025
+    
 
 class RRTConnectPlanner(MotionPlanner):
     def __init__(
@@ -27,8 +29,6 @@ class RRTConnectPlanner(MotionPlanner):
         scene_graph: SceneGraph,
         config: RRTConnectPlannerConfig = None,
     ):
-        super().__init__(robot_model_idx, plant, scene_graph)
-        # Input Processing
 
         # Setup
         # self.dim_q = plant.num_actuated_dofs(robot_model_idx)
@@ -39,6 +39,12 @@ class RRTConnectPlanner(MotionPlanner):
 
         # Prepare for planning
         # self.joint_limits = self.get_joint_limits()  # Initialize joint limits array
+
+        # Use the parent class constructor
+        super().__init__(
+            robot_model_idx, plant, scene_graph, 
+            random_seed=self.config.random_seed,
+        )
 
     def connect(
         self,
@@ -158,18 +164,6 @@ class RRTConnectPlanner(MotionPlanner):
         # return the RRT and indicate failure
         print("Max iterations reached without finding a path to the goal.")
         return rrt, False
-
-
-
-    def sample_random_configuration(self) -> np.ndarray:
-        """
-        Description:
-            This function samples a random configuration within the joint limits.
-        """
-        return np.random.uniform(
-            self.joint_limits[:, 0],
-            self.joint_limits[:, 1]
-        )
 
     def steer(
         self,

@@ -17,6 +17,7 @@ class MotionPlanner:
         robot_model_idx: ModelInstanceIndex,
         plant: MultibodyPlant,
         scene_graph: SceneGraph,
+        random_seed: int = 23,
     ):
         """
         Description:
@@ -29,6 +30,10 @@ class MotionPlanner:
 
         # Setup
         self.root_context = None # Usually, the diagram context that we can use to extract the plant's context
+
+        # Set the random seed
+        self.random_seed = random_seed
+        np.random.seed(self.random_seed)
 
     @property
     def dim_q(self) -> int:
@@ -108,3 +113,13 @@ class MotionPlanner:
 
         return joint_limits
 
+    def sample_random_configuration(self) -> np.ndarray:
+        """
+        Description
+        -----------
+        This function samples a random configuration within the joint limits.
+        """
+        return np.random.uniform(
+            self.joint_limits[:, 0],
+            self.joint_limits[:, 1]
+        )

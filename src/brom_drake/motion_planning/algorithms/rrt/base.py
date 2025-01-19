@@ -14,6 +14,7 @@ from brom_drake.motion_planning.algorithms.motion_planner import MotionPlanner
 
 @dataclass
 class BaseRRTPlannerConfig:
+    random_seed: int = 23
     steering_step_size: float = 0.05
     prob_sample_goal: float = 0.25
     max_iterations: int = int(1e4)
@@ -27,7 +28,6 @@ class BaseRRTPlanner(MotionPlanner):
         scene_graph: SceneGraph,
         config: BaseRRTPlannerConfig = None,
     ):
-        super().__init__(robot_model_idx, plant, scene_graph)
         # Input Processing
 
         # Setup
@@ -37,8 +37,11 @@ class BaseRRTPlanner(MotionPlanner):
         if self.config is None:
             self.config = BaseRRTPlannerConfig()
 
-        # Prepare for planning
-        # self.joint_limits = self.get_joint_limits()  # Initialize joint limits array
+        # Use the parent class constructor
+        super().__init__(
+            robot_model_idx, plant, scene_graph, 
+            random_seed=self.config.random_seed,
+        )
 
     def find_nearest_node(
         self,
@@ -126,26 +129,15 @@ class BaseRRTPlanner(MotionPlanner):
         print("Max iterations reached without finding a path to the goal.")
         return rrt, False
 
-
-
-    def sample_random_configuration(self) -> np.ndarray:
-        """
-        Description:
-            This function samples a random configuration within the joint limits.
-        """
-        return np.random.uniform(
-            self.joint_limits[:, 0],
-            self.joint_limits[:, 1]
-        )
-
     def steer(
         self,
         nearest_node,
         q_random: np.ndarray
     ) -> np.ndarray:
         """
-        Description:
-            This function steers from the nearest node towards the random configuration.
+        Description
+        -----------
+        This function steers from the nearest node towards the random configuration.
         """
         # Setup
         step_size = self.config.steering_step_size

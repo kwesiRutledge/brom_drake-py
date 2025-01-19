@@ -34,10 +34,11 @@ class BidirectionalRRTPlannerConfig:
     """
     A dataclass that defines the configuration for a bidirectional RRT planner.
     """
-    steering_step_size: float = 0.1
-    probabilities: BiRRTSamplingProbabilities = BiRRTSamplingProbabilities()
-    max_tree_nodes: int = int(1e5)
     convergence_threshold: float = 1e-3
+    max_tree_nodes: int = int(1e5)
+    probabilities: BiRRTSamplingProbabilities = BiRRTSamplingProbabilities()
+    random_seed: int = 23
+    steering_step_size: float = 0.1
 
 class BidirectionalRRTPlanner(MotionPlanner):
     def __init__(
@@ -47,13 +48,18 @@ class BidirectionalRRTPlanner(MotionPlanner):
         scene_graph: SceneGraph,
         config: BidirectionalRRTPlannerConfig = None,
     ):
-        super().__init__(robot_model_idx, plant, scene_graph)
         # Input Processing
         if config is None:
             config = BidirectionalRRTPlannerConfig()
 
         # Setup
         self.config = config
+
+        # Use the parent class constructor
+        super().__init__(
+            robot_model_idx, plant, scene_graph, 
+            random_seed=self.config.random_seed,
+        )
 
     def find_nearest_node(
         self,
@@ -123,21 +129,67 @@ class BidirectionalRRTPlanner(MotionPlanner):
             else: # Sample from the start tree
                 current_tree = rrt_start
 
+            q_current, current_node_idx = self.sample_from_tree(current_tree)
+
             # Choose whether or not to sample from the opposite tree or randomly
             if np.random.rand() < prob_sample_opposite_tree:
                 # Sample from the opposite tree
-                q_random = self.sample_random_configuration()
-                nearest_node, nearest_node_idx = self.find_nearest_node(rrt_goal, q_random)
-                q_new = self.steer(nearest_node['q'], q_random)
-                if not collision_check_fcn(q_new):
-                    rrt_goal.add_node(n_nodes_goal, q=q_new)
-                    rrt_goal.add_edge(nearest_node_idx, n_nodes_goal)
-                    n_nodes_goal += 1
+                opposite_tree = rrt_start if sample_from_goal_tree else rrt_goal
+                node_idx_in_opposite_tree, min_distance = self.sample_nearest_in_tree(opposite_tree, q_current)
+                
+                node_in_opposite_tree = opposite_tree.nodes[node_idx_in_opposite_tree]
+                sampled_config = node_in_opposite_tree['q']
+
+                # Steer from the sampled configuration to the goal 
+                q_new, reached_new = self.steer(sampled_config, q_goal)
+                if reached_new:
+                    combined_rrt = nx.disjoint_union(rrt_start, rrt_goal)
+                    # add edge between the two trees
+                    if sample_from_goal_tree:
+                        combined_rrt.add_edge(
+                            node_idx_in_opposite_tree,
+                            rrt_start.number_of_nodes() + current_node_idx,
+                        )
+                    else:
+                        combined_rrt.add_edge(
+                            current_node_idx,
+                            rrt_start.number_of_nodes() + node_idx_in_opposite_tree,
+                        )
+                    return combined_rrt, rrt_start.number_of_nodes()
+                else:
+                    # If we did not reach the goal,
+                    # add the new configuration to the current tree
+                    current_tree.add_node(n_nodes_start, q=q_new)
+                    current_tree.add_edge(sampled_node_idx, n_nodes_start)
+                    n_nodes_start += 1
+
             else:
                 # Sample from a random configuration
-                pass
+                q_random = self.sample_random_configuration()
 
-    def sample_fraom_tree(
+                # Find the nearest node in the tree and steer towards it
+                nearest_node, nearest_node_idx = self.find_nearest_node(current_tree, q_random)
+                q_new, reached_new = self.steer(nearest_node['q'], q_random)
+
+                # Check if the new configuration is in collision
+                if collision_check_fcn(q_new):
+                    continue
+
+                # If the configuration is not in collision, then add it to the current tree
+                current_tree.add_node(n_nodes_start, q=q_new)
+                current_tree.add_edge(nearest_node_idx, n_nodes_start)
+
+                if sample_from_goal_tree:
+                    n_nodes_goal += 1
+                else:
+                    n_nodes_start += 1
+
+        # If we exit the loop without finding a path to the goal,
+        # return the RRT and indicate failure
+        print("Max iterations reached without finding a path to the goal.")
+        return nx.disjoint_union(rrt_start, rrt_goal), -1
+
+    def sample_from_tree(
         self,
         rrt: nx.DiGraph,
     ) -> Tuple[np.ndarray, int]:
@@ -154,3 +206,67 @@ class BidirectionalRRTPlanner(MotionPlanner):
         q_random = rrt.nodes[random_index]['q']
 
         return q_random, random_index
+    
+    def sample_nearest_in_tree(
+        self,
+        rrt: nx.DiGraph,
+        q_random: np.ndarray,
+    ) -> Tuple[int, float]:
+        """
+        Description
+        -----------
+        This function samples a configuration from the RRT.
+        """
+        # Setup
+        n_tree = rrt.number_of_nodes()
+
+        # Search through the tree to find the node that is nearest to the random configuration
+        min_distance = float('inf')
+        nearest_node_idx = -1
+        for ii, node in enumerate(rrt.nodes):
+            distance = np.linalg.norm(rrt.nodes[node]['q'] - q_random)
+            if distance < min_distance:
+                min_distance = distance
+                nearest_node_idx = ii
+
+        return nearest_node_idx, min_distance
+    
+    def steer(
+        self,
+        q_current: np.ndarray,
+        q_target: np.ndarray,
+    ) -> Tuple[np.ndarray, bool]:
+        """
+        Description
+        -----------
+        This function steers the RRT from the start configuration to the goal configuration.
+
+        Arguments
+        ---------
+        q_current: np.ndarray
+            The current configuration of the robot that we wish to steer from.
+        q_target: np.ndarray
+            The target configuration of the robot that we wish to steer to.
+
+        Returns
+        -------
+        q_new: np.ndarray
+            The new configuration of the robot after steering.
+        reached_config: bool
+            Whether or not we reached the target configuration with our step size or not.
+        """
+        # Setup
+        step_size = self.config.steering_step_size
+
+        # Calculate the direction vector
+        direction = q_target - q_current
+        distance = np.linalg.norm(direction)
+
+        # Either:
+        # 1. Move a full step towards the random configuration
+        # 2. If the distance is less than the step size, return the random configuration
+
+        if distance < step_size:
+            return q_target, True
+        
+        return q_current + step_size * (direction / distance), False
