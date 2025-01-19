@@ -159,9 +159,11 @@ class BidirectionalRRTPlanner(MotionPlanner):
                 else:
                     # If we did not reach the goal,
                     # add the new configuration to the current tree
-                    current_tree.add_node(n_nodes_start, q=q_new)
-                    current_tree.add_edge(sampled_node_idx, n_nodes_start)
-                    n_nodes_start += 1
+                    current_tree.add_node(current_tree.number_of_nodes(), q=q_new)
+                    current_tree.add_edge(
+                        current_node_idx,
+                        current_tree.number_of_nodes()-1,
+                    )
 
             else:
                 # Sample from a random configuration
@@ -179,10 +181,11 @@ class BidirectionalRRTPlanner(MotionPlanner):
                 current_tree.add_node(n_nodes_start, q=q_new)
                 current_tree.add_edge(nearest_node_idx, n_nodes_start)
 
-                if sample_from_goal_tree:
-                    n_nodes_goal += 1
-                else:
-                    n_nodes_start += 1
+            # Update the number of nodes in the appropriate tree
+            if sample_from_goal_tree:
+                n_nodes_goal += 1
+            else:
+                n_nodes_start += 1
 
         # If we exit the loop without finding a path to the goal,
         # return the RRT and indicate failure
@@ -211,25 +214,40 @@ class BidirectionalRRTPlanner(MotionPlanner):
         self,
         rrt: nx.DiGraph,
         q_random: np.ndarray,
-    ) -> Tuple[int, float]:
+    ) -> Tuple[nx.classes.reportviews.NodeView, float]:
         """
         Description
         -----------
         This function samples a configuration from the RRT.
+
+        Arguments
+        ---------
+        rrt: nx.DiGraph
+            The RRT to sample from.
+        q_random: np.ndarray
+            The random configuration to sample from the RRT.
+
+        Returns
+        -------
+        node_view: nx.classes.reportviews.NodeView
+            A reference to the nearest node in the RRT.
+            Use this to access the node as follows rrt.nodes[node_view].
+        distance: float
+            The distance from the random configuration to the nearest node in the RRT.
+            
         """
         # Setup
-        n_tree = rrt.number_of_nodes()
 
         # Search through the tree to find the node that is nearest to the random configuration
         min_distance = float('inf')
-        nearest_node_idx = -1
-        for ii, node in enumerate(rrt.nodes):
+        nearest_node_view = None
+        for node in rrt.nodes:
             distance = np.linalg.norm(rrt.nodes[node]['q'] - q_random)
             if distance < min_distance:
                 min_distance = distance
-                nearest_node_idx = ii
+                nearest_node_view = node
 
-        return nearest_node_idx, min_distance
+        return nearest_node_view, min_distance
     
     def steer(
         self,
