@@ -158,12 +158,12 @@ class RRTConnectPlanner(MotionPlanner):
                 #     collision_check_value = collision_check_fcn(rrt.nodes[node]['q'])
                 #     if collision_check_value:
                 #         print(f"Collision check node: {collision_check_fcn(rrt.nodes[node]['q'])}")
-                return rrt, True
+                return rrt, rrt.number_of_nodes()-1
 
         # If we exit the loop without finding a path to the goal,
         # return the RRT and indicate failure
         print("Max iterations reached without finding a path to the goal.")
-        return rrt, False
+        return rrt, -1
 
     def steer(
         self,

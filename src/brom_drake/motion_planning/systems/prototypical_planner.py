@@ -29,7 +29,7 @@ class PrototypicalPlannerSystem(LeafSystem):
         scene_graph: SceneGraph,
         planning_algorithm: Callable[
             [np.ndarray, np.ndarray, Callable[[np.ndarray], bool]],
-            Tuple[MotionPlan, bool],
+            Tuple[MotionPlan, int],
         ],
         robot_model_idx: ModelInstanceIndex = None,
         **kwargs,
