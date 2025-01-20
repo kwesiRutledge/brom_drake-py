@@ -12,10 +12,10 @@ from pydrake.all import Simulator, RigidTransform, RollPitchYaw
 import typer
 
 # Internal imports
-from brom_drake.motion_planning.algorithms.rrt.bidirectional import (
-    BidirectionalRRTPlanner,
-    BidirectionalRRTPlannerConfig,
-    BiRRTSamplingProbabilities,
+from brom_drake.motion_planning.algorithms.rrt.bidirectional_connect import (
+    BidirectionalRRTConnectPlanner,
+    BidirectionalRRTConnectPlannerConfig,
+    BiRRTConnectSamplingProbabilities,
 )
 from brom_drake.productions import ChemLab2
 
@@ -34,10 +34,10 @@ def main(meshcat_port_number: int = 7001):
     )
 
     # Create a planner object which will be used to plan the motion
-    config = BidirectionalRRTPlannerConfig(
-        steering_step_size=0.1,
+    config = BidirectionalRRTConnectPlannerConfig(
+        steering_step_size=0.2,
     )
-    planner2 = BidirectionalRRTPlanner(
+    planner2 = BidirectionalRRTConnectPlanner(
         production.arm,
         production.plant,
         production.scene_graph,

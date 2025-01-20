@@ -1,8 +1,8 @@
 """
-bidirectional.py
+bidirectional_connect.py
 Description
 -----------
-This file contains an algorithm for performing bidirectional RRT
+This file contains an algorithm for performing bidirectional RRT-Connect
 based search.
 """
 
@@ -22,7 +22,7 @@ from brom_drake.motion_planning.algorithms.motion_planner import MotionPlanner
 
 # Define config dataclass
 @dataclass(frozen=True)
-class BiRRTSamplingProbabilities:
+class BiRRTConnectSamplingProbabilities:
     """
     A dataclass that defines the sampling probabilities for a bidirectional RRT planner.
     """
@@ -31,27 +31,28 @@ class BiRRTSamplingProbabilities:
     
 
 @dataclass
-class BidirectionalRRTPlannerConfig:
+class BidirectionalRRTConnectPlannerConfig:
     """
     A dataclass that defines the configuration for a bidirectional RRT planner.
     """
     convergence_threshold: float = 1e-3
     max_tree_nodes: int = int(1e5)
-    probabilities: BiRRTSamplingProbabilities = BiRRTSamplingProbabilities()
+    probabilities: BiRRTConnectSamplingProbabilities = BiRRTConnectSamplingProbabilities()
     random_seed: int = 23
     steering_step_size: float = 0.1
+    debug: bool = False
 
-class BidirectionalRRTPlanner(MotionPlanner):
+class BidirectionalRRTConnectPlanner(MotionPlanner):
     def __init__(
         self,
         robot_model_idx: ModelInstanceIndex,
         plant: MultibodyPlant,
         scene_graph: SceneGraph,
-        config: BidirectionalRRTPlannerConfig = None,
+        config: BidirectionalRRTConnectPlannerConfig = None,
     ):
         # Input Processing
         if config is None:
-            config = BidirectionalRRTPlannerConfig()
+            config = BidirectionalRRTConnectPlannerConfig()
 
         # Setup
         self.config = config
@@ -96,6 +97,61 @@ class BidirectionalRRTPlanner(MotionPlanner):
                 prev_node,
                 target_tree.number_of_nodes()-1,
             )
+
+    def connect(
+        self,
+        nearest_node_view: nx.classes.reportviews.NodeView,
+        q_target: np.ndarray,
+        rrt: nx.DiGraph,
+        tree_is_goal: bool,
+        collision_check_fcn: Callable[[np.ndarray], bool] = None,
+    ) -> Tuple[np.ndarray, bool]:
+        """
+        Description
+        -----------
+        This function connects the RRT from the nearest node to the target configuration.
+        """
+        # Input Processing
+        if collision_check_fcn is None:
+            collision_check_fcn = self.check_collision_in_config
+
+        # Setup
+        nearest_node = rrt.nodes[nearest_node_view]
+        debug = self.config.debug
+
+        # Steer from nearest node to random configuration
+        q_current = nearest_node['q']
+        last_node_view = nearest_node_view
+
+        n_loops = 0
+        reached_new = False
+        while not np.isclose(q_current, q_target).all():
+            # Create next node
+            q_new, reached_new = self.steer(q_current, q_target)
+
+            # Check for collisions
+            if collision_check_fcn(q_new):
+                break
+
+            # If the next point is collision free, then add new node to the tree
+            self.add_new_node_to(
+                rrt,
+                last_node_view,
+                q_new,
+                tree_is_goal=tree_is_goal,
+            )
+
+            # Prepare for next iteration
+            last_node_view = list(rrt.nodes)[-1]
+            q_current = q_new
+
+            n_loops += 1
+
+        if debug:
+            print(f"Number of loops in connection: {n_loops}")
+            print(f"RRT Size: {rrt.number_of_nodes()}")
+
+        return q_current, reached_new # Return the last configuration we visited
 
     def plan(
         self,
@@ -159,24 +215,31 @@ class BidirectionalRRTPlanner(MotionPlanner):
                 q_random = self.sample_random_configuration()
 
                 # Find the nearest node in the tree and steer towards it
-                nearest_node, nearest_node_dist = self.sample_nearest_in_tree(current_tree, q_random)
-                q_new, reached_new = self.steer(
-                    current_tree.nodes[nearest_node]['q'],
+                nearest_node_view, nearest_node_idx = self.sample_nearest_in_tree(current_tree, q_random)
+                q_new, reached_new = self.connect(
+                    nearest_node_view,
                     q_random,
-                )
-
-                # Check if the new configuration is in collision
-                if collision_check_fcn(q_new):
-                    continue
-
-                # If the configuration is not in collision,
-                # then add it to the current tree
-                self.add_new_node_to(
                     current_tree,
-                    nearest_node,
-                    q_new,
                     tree_is_goal=sample_from_goal_tree,
+                    collision_check_fcn=collision_check_fcn,
                 )
+                # q_new, reached_new = self.steer(
+                #     current_tree.nodes[nearest_node_view]['q'],
+                #     q_random,
+                # )
+
+                # # Check if the new configuration is in collision
+                # if collision_check_fcn(q_new):
+                #     continue
+
+                # # If the configuration is not in collision,
+                # # then add it to the current tree
+                # self.add_new_node_to(
+                #     current_tree,
+                #     nearest_node_view,
+                #     q_new,
+                #     tree_is_goal=sample_from_goal_tree,
+                # )
 
             # Update the number of nodes in the appropriate tree
             n_nodes_goal = rrt_goal.number_of_nodes()
@@ -309,6 +372,7 @@ class BidirectionalRRTPlanner(MotionPlanner):
             Whether or not we reached the target configuration with our step size or not.
         """
         # Setup
+        debug = self.config.debug
         current_tree = rrt_goal if current_tree_is_goal else rrt_start
 
         if collision_check_fcn is None:
@@ -326,7 +390,14 @@ class BidirectionalRRTPlanner(MotionPlanner):
         sampled_config = node_in_opposite_tree['q']
 
         # Steer from the current configuration to the sampled one
-        q_new, reached_new = self.steer(q_current, sampled_config)
+        # q_new, reached_new = self.steer(q_current, sampled_config)
+        q_new, reached_new = self.connect(
+            current_node_view,
+            sampled_config,
+            current_tree,
+            tree_is_goal=current_tree_is_goal,
+            collision_check_fcn=collision_check_fcn,
+        )
 
         # Check if the new configuration is in collision
         if collision_check_fcn(q_new):
@@ -335,16 +406,18 @@ class BidirectionalRRTPlanner(MotionPlanner):
         if reached_new:
             combined_rrt = nx.disjoint_union(rrt_start, rrt_goal)
             # add edge between the two trees
-            # TODO(Kwesi): Check that this int conversion is okay...
             if current_tree_is_goal:
-                print(f"Adding edge between {node_idx_in_opposite_tree} and {rrt_start.number_of_nodes() + int(current_node_view)}")
+                if debug:
+                    print(f"Adding edge between {node_idx_in_opposite_tree} and {rrt_start.number_of_nodes() + int(current_node_view)}")
+
                 combined_rrt.add_edge(
                     node_idx_in_opposite_tree,
                     rrt_start.number_of_nodes() + int(current_node_view),
                 )
             else:
-                # TODO(Kwesi): Check that this int conversion is okay...
-                print(f"Adding edge between {current_node_view} and {rrt_start.number_of_nodes() + node_idx_in_opposite_tree}")
+                if debug:
+                    print(f"Adding edge between {current_node_view} and {rrt_start.number_of_nodes() + node_idx_in_opposite_tree}")
+
                 combined_rrt.add_edge(
                     int(current_node_view),
                     rrt_start.number_of_nodes() + node_idx_in_opposite_tree,
