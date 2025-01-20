@@ -227,7 +227,7 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
         # Set the initial poses of the members of the cast that are objects
         for model_ii, pose_ii in self.models_in_supporting_cast:
             body_list_ii = self.plant.GetBodyIndices(model_ii)
-            print(f"body_list_ii contains {len(body_list_ii)} elements")
+            # print(f"body_list_ii contains {len(body_list_ii)} elements")
             first_body = self.plant.get_body(body_list_ii[0])
             # first_body.body_frame().SetPoseInParentFrame(
             #     pose,
@@ -404,7 +404,12 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
         )
 
         # Build
-        return self.build_production(with_watcher=with_watcher)
+        diagram, diagram_context = self.build_production(with_watcher=with_watcher)
+
+        # Assign prototypical planner's context
+        prototypical_planner.set_internal_root_context(diagram_context)
+
+        return diagram, diagram_context
 
     @property
     def goal_configuration(self) -> np.ndarray:

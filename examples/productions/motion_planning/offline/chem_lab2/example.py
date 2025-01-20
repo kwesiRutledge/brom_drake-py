@@ -12,7 +12,11 @@ from pydrake.all import Simulator, RigidTransform, RollPitchYaw
 import typer
 
 # Internal imports
-from brom_drake.motion_planning.algorithms.rrt.connect import RRTConnectPlannerConfig, RRTConnectPlanner
+from brom_drake.motion_planning.algorithms.rrt.bidirectional import (
+    BidirectionalRRTPlanner,
+    BidirectionalRRTPlannerConfig,
+    BiRRTSamplingProbabilities,
+)
 from brom_drake.productions import ChemLab2
 
 def main(meshcat_port_number: int = 7001):
@@ -23,20 +27,17 @@ def main(meshcat_port_number: int = 7001):
     # Create the production
     production = ChemLab2(
         meshcat_port_number=meshcat_port_number, # Use None for CI
-        pose_WorldBeaker=RigidTransform(
-            RollPitchYaw(np.pi/2.0, 0.0, 0.0).ToQuaternion(),
-            np.array([2.0*0.5*0.7+0.2, 0.6+0.6/4.-0.2, 0.1-0.015+0.1]),
-        )
+        # pose_WorldBeaker=RigidTransform(
+        #     RollPitchYaw(np.pi/2.0, 0.0, 0.0).ToQuaternion(),
+        #     np.array([2.0*0.5*0.7+0.2, 0.6+0.6/4.-0.2, 0.1-0.015+0.1]),
+        # )
     )
 
     # Create a planner object which will be used to plan the motion
-    config = RRTConnectPlannerConfig(
-        steering_step_size=0.2,
-        prob_sample_goal=0.50,
-        max_iterations=int(1e5),
-        convergence_threshold=1e-3,
+    config = BidirectionalRRTPlannerConfig(
+        steering_step_size=0.1,
     )
-    planner2 = RRTConnectPlanner(
+    planner2 = BidirectionalRRTPlanner(
         production.arm,
         production.plant,
         production.scene_graph,
@@ -54,7 +55,7 @@ def main(meshcat_port_number: int = 7001):
 
     # Simulate the diagram
     simulator = Simulator(diagram, diagram_context)
-    simulator.set_target_realtime_rate(1.0)
+    simulator.set_target_realtime_rate(2.0)
 
     # Run simulation
     simulator.Initialize()
