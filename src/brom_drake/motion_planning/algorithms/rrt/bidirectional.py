@@ -18,6 +18,7 @@ from typing import Callable, Tuple
 
 # Internal Imports
 from brom_drake.motion_planning.algorithms.motion_planner import MotionPlanner
+# TODO(Kwesi): Introduce planning node object
 
 # Define config dataclass
 @dataclass(frozen=True)

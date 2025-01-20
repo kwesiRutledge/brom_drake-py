@@ -17,6 +17,7 @@ from brom_drake.motion_planning.algorithms.rrt.bidirectional import (
     BidirectionalRRTPlannerConfig,
     BiRRTSamplingProbabilities,
 )
+from brom_drake.motion_planning import PlanningNode
 
 class BidirectionalRRTPlannerTest(unittest.TestCase):
     def setUp(self):
@@ -93,6 +94,7 @@ class BidirectionalRRTPlannerTest(unittest.TestCase):
             if np.allclose(rrt0.nodes[sampled_node]['q'], rrt0.nodes[node]['q']):
                 found_node = True
                 break
+
         self.assertTrue(found_node)
 
     def test_sample_nearest_in_tree1(self):
@@ -109,11 +111,11 @@ class BidirectionalRRTPlannerTest(unittest.TestCase):
         rrt0 = nx.DiGraph()
         rrt0.add_node(
             0,
-            q=np.array([0, 0, 0, 0, 0, 0]),
+            q=np.array([0, 0, 0, 0, 0, 0])
         )
         rrt0.add_node(
             1,
-            q=np.array([0.1, 0.1, 0.1, 0.1, 0.1, 0.1]),
+            q=np.array([0.1, 0.1, 0.1, 0.1, 0.1, 0.1])
         )
 
         # Create Planner
@@ -134,7 +136,7 @@ class BidirectionalRRTPlannerTest(unittest.TestCase):
         self.assertTrue(
             np.allclose(
                 rrt0.nodes[sampled_node]['q'],
-                rrt0.nodes[node_idcs[1]]['q']
+                rrt0.nodes[list(rrt0.nodes)[1]]['q']
             )
         )
 
@@ -171,11 +173,10 @@ class BidirectionalRRTPlannerTest(unittest.TestCase):
         )
 
         # Check that the sampled node is in the tree
-        node_idcs = [ idx for idx in rrt0.nodes ]
         self.assertTrue(
             np.allclose(
                 rrt0.nodes[sampled_node]['q'],
-                rrt0.nodes[node_idcs[0]]['q']
+                rrt0.nodes[list(rrt0.nodes)[0]]['q']
             )
         )
 
@@ -237,7 +238,156 @@ class BidirectionalRRTPlannerTest(unittest.TestCase):
         self.assertEqual(len(rrt_goal.nodes), 1)
 
         # Verify that the rrts DO NOT CONNECT in this step
+        self.assertFalse(rrts_touch)
+        self.assertIsNone(combined_rrt)
+
+        # Check that the connection that is made is from the second to last node of
+        # rrt_start to the last node of rrt_start
+        node2, node3 = None, None
+        for ii, node_ii in enumerate(rrt_start.nodes):
+            if ii == 2:
+                node2 = node_ii
+            elif ii == 3:
+                node3 = node_ii
         
+        self.assertTrue(
+            node3 in [elt for elt in rrt_start.neighbors(node2)]
+        )
+
+    def test_steer_towards_tree2(self):
+        """
+        Description
+        -----------
+        This function tests the steer_towards_tree function of the BidirectionalRRTPlanner.
+        We want to verify that the steering function truly steers towards
+        the opposite tree when the opposite tree is the START tree.
+        We will make the trees far enough apart that the steering function
+        will not make it to the next tree.
+        """
+        # Setup
+
+        # Create rrt_start with three nodes
+        rrt_start = nx.DiGraph()
+        rrt_start.add_node(
+            0,
+            q=np.array([0, 0, 0, 0, 0, 0]),
+        )
+        rrt_start.add_node(
+            1,
+            q=np.array([0.1, 0.1, 0.1, 0.1, 0.1, 0.1]),
+        )
+        rrt_start.add_node(
+            2,
+            q=np.array([0.2, 0.2, 0.2, 0.2, 0.2, 0.2]),
+        )
+
+        # Create rrt_goal with one node
+        rrt_goal = nx.DiGraph()
+        rrt_goal.add_node(
+            0,
+            q=np.array([0.5, 0.5, 0.5, 0.5, 0.5, 0.5]),
+        )
+
+        # Create Planner
+        planner = BidirectionalRRTPlanner(
+            self.arm_model_idx,
+            self.plant,
+            self.scene_graph,
+        )
+
+        # Steer towards the start tree
+        planner.root_context = self.diagram.CreateDefaultContext()
+        combined_rrt, rrts_touch = planner.steer_towards_tree(
+            rrt_start,
+            rrt_goal,
+            current_tree_is_goal=True,
+        )
+
+        # Check that the rrt_start has 3 nodes and rrt_goal has 2 nodes
+        self.assertEqual(rrt_start.number_of_nodes(), 3)
+        self.assertEqual(rrt_goal.number_of_nodes(), 2)
+
+        # Verify that the rrts DO NOT CONNECT in this step
+        self.assertFalse(rrts_touch)
+        self.assertIsNone(combined_rrt)
+
+        # Check that the connection that is made is from the second to last node of
+        # rrt_start to the last node of rrt_start
+        node1, node0 = None, None
+        for ii, node_ii in enumerate(rrt_goal.nodes):
+            if ii == 1:
+                node1 = node_ii
+            elif ii == 0:
+                node0 = node_ii
+        
+        self.assertTrue(
+            node0 in [elt for elt in rrt_goal.neighbors(node1)]
+        )
+
+    def test_steer_towards_tree3(self):
+        """
+        Description
+        -----------
+        This function tests the steer_towards_tree function of the BidirectionalRRTPlanner.
+        We want to verify that the steering function truly steers towards
+        the opposite tree when the opposite tree is the GOAL tree.
+        We will make the trees far enough apart that the steering function
+        will need to connect the trees.
+        """
+        # Setup
+
+        # Create rrt_start with three nodes
+        rrt_start = nx.DiGraph()
+        rrt_start.add_node(
+            0,
+            q=np.array([0, 0, 0, 0, 0, 0]),
+        )
+        rrt_start.add_node(
+            1,
+            q=np.array([0.1, 0.1, 0.1, 0.1, 0.1, 0.1]),
+        )
+        rrt_start.add_edge(0, 1)
+        rrt_start.add_node(
+            2,
+            q=np.array([0.2, 0.2, 0.2, 0.2, 0.2, 0.2]),
+        )
+        rrt_start.add_edge(1, 2)
+
+        # Create rrt_goal with one node
+        rrt_goal = nx.DiGraph()
+        rrt_goal.add_node(
+            0,
+            q=np.array([0.21, 0.21, 0.21, 0.21, 0.21, 0.21]),
+        )
+
+        # Create Planner
+        planner = BidirectionalRRTPlanner(
+            self.arm_model_idx,
+            self.plant,
+            self.scene_graph,
+        )
+
+        # Steer towards the start tree
+        planner.root_context = self.diagram.CreateDefaultContext()
+        combined_rrt, rrts_touch = planner.steer_towards_tree(
+            rrt_start,
+            rrt_goal,
+            current_tree_is_goal=False,
+        )
+
+        # Check that the rrt_start has 3 nodes and rrt_goal has 1 nodes
+        self.assertEqual(rrt_start.number_of_nodes(), 3)
+        self.assertEqual(rrt_goal.number_of_nodes(), 1)
+
+        # Verify that the rrts DO NOT CONNECT in this step
+        self.assertTrue(rrts_touch)
+        self.assertIsNotNone(combined_rrt)
+
+        # Check that there exists a path from the last node of the combined
+        # rrt to the first node of the combined rrt
+        self.assertTrue(
+            nx.has_path(combined_rrt, 0, 3)
+        )
 
 if __name__ == "__main__":
     unittest.main()
