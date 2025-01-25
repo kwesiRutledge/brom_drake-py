@@ -10,9 +10,12 @@ from pydrake.all import (
     Context,
     Diagram,
     GeometrySet,
+    InverseKinematics,
     MultibodyPlant,
     Parser,
     Quaternion,
+    RigidTransform,
+    RotationMatrix,
 )
 from pydrake.math import RollPitchYaw, RigidTransform
 from typing import Callable, Tuple
@@ -29,7 +32,7 @@ from brom_drake.file_manipulation.urdf.simple_writer.urdf_definition import Simp
 from brom_drake.motion_planning.systems.open_loop_dispensers.open_loop_plan_dispenser import OpenLoopPlanDispenser
 import brom_drake.robots as robots
 from brom_drake.robots.gripper_type import GripperType
-from brom_drake.robots.stations.kinematic import UR10eStation as KinematicUR10eStation
+from brom_drake.robots.stations.classical import UR10eStation
 from brom_drake.productions import ProductionID
 from brom_drake.productions.roles import Role
 from brom_drake.productions.types import OfflineDynamicMotionPlanningProduction
@@ -77,7 +80,7 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         self.initialize_pose_data()
 
         # Set station
-        self.station = KinematicUR10eStation(
+        self.station = UR10eStation(
             time_step=self.time_step,
             meshcat_port_number=self.meshcat_port_number,
             gripper_type=GripperType.NoGripper,
@@ -215,7 +218,7 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
 
         self.builder.Connect(
             self.plan_dispenser.GetOutputPort("point_in_plan"),
-            self.station.GetInputPort("desired_joint_positions"),
+            self.station.GetInputPort("desired_arm_position"),
         )
 
     def add_shelf(self):
@@ -262,7 +265,7 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
                 iyy=10.0,
                 izz=10.0,
             ),
-            color=np.array([0.1, 0.1, 0.1, 0.8]),
+            color=np.array([0.1, 0.1, 0.1, 1.0]),
         )
         table_urdf_path = DEFAULT_BROM_MODELS_DIR + "/table/table.urdf"
         table_defn.write_to_file(table_urdf_path)
@@ -406,6 +409,63 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         #     )
         # )
     
+    def define_pose_ik_problem(
+        self,
+        pose_WorldTarget: RigidTransform,
+        target_frame_name: str,
+        eps0: float = 2.5e-2,
+        orientation_cost_scaling: float = 0.25,
+    ) -> InverseKinematics:
+        """
+        Description
+        -----------
+        Sets up the inverse kinematics problem for the start pose
+        input to theis function.
+        :return:
+        """
+        # Setup
+        scene_graph = self.scene_graph
+        sg_inspector = scene_graph.model_inspector()
+
+        # Create IK Problem
+        ik_problem = InverseKinematics(self.plant)
+
+        # Add Pose Target
+        ik_problem.AddPositionConstraint(
+            self.plant.world_frame(),
+            pose_WorldTarget.translation(),
+            self.plant.GetFrameByName(target_frame_name),
+            (- np.ones((3,)) * eps0).reshape((-1, 1)),
+            (+ np.ones((3,)) * eps0).reshape((-1, 1)),
+        )
+
+        # TODO(kwesi): Add OrientationCosntraint
+        # ik_problem.AddOrientationConstraint(
+        #     self.plant.world_frame(),
+        #     RotationMatrix(Quaternion(input_pose_vec[3:]).rotation()),
+        #     self.plant.GetFrameByName("ft_frame"),
+        #     RotationMatrix.Identity(),
+        #     0.25,
+        # )
+
+        ik_problem.AddOrientationConstraint(
+            self.plant.world_frame(),
+            pose_WorldTarget.rotation(),
+            self.plant.GetFrameByName(target_frame_name),
+            RotationMatrix.Identity(),
+            np.pi/8.0
+        )
+
+        # ik_problem.AddOrientationCost(
+        #     self.plant.world_frame(),
+        #     pose_WorldTarget.rotation(),
+        #     self.plant.GetFrameByName(target_frame_name),
+        #     RotationMatrix.Identity(),
+        #     orientation_cost_scaling,
+        # )
+
+        return ik_problem
+
     def easy_cast_and_build(
         self,
         planning_algorithm: Callable[
@@ -441,13 +501,21 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         )
 
         # Connect arm controller to the appropriate plant_context
-        self.station.arm_controller.plant_context = diagram.GetSubsystemContext(
-            self.station.arm_controller.plant, diagram_context,
-        )
+        # self.station.arm_controller.plant_context = diagram.GetSubsystemContext(
+        #     self.station.arm_controller.plant, diagram_context,
+        # )
 
         self.performers[0].set_internal_root_context(
             diagram_context
         )
+
+        # # Set the start configuration of the robot
+        # arm = self.station.arm
+        # self.station.plant.SetDefaultPositions(
+        #     # self.station.plant.GetMyMutableContextFromRoot(diagram_context),
+        #     arm,
+        #     self.start_configuration,
+        # )
 
         # # Set the positions of the gripper
         # gripper = self.station.gripper
@@ -458,6 +526,17 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         #     np.zeros((n_gripper_positions,)),
         # )
 
+        # Iterate through all joints of the robot and check to see if they are locked
+        for joint_idx in self.plant.GetJointIndices(self.arm):
+            joint = self.plant.get_joint(joint_idx)
+            # if joint.is_floating():
+            #     continue
+
+            # joint.set_translation(0.0)
+            # joint.set_rotation(0.0)
+            print(f"Joint {joint.name()} is locked: {joint.is_locked(diagram_context)}")
+            # print(f"Joint {joint.name()} position: {joint.GetOnePosition(diagram_context)}")
+            print(f"Joint {joint.name()} can rotate: {joint.can_rotate()}")
 
         return diagram, diagram_context
 
@@ -533,15 +612,23 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         # Set Holder Pose
         self.pose_WorldHolder = RigidTransform(
             RollPitchYaw(np.pi/2.0, 0.0, 0.0).ToQuaternion(),
-            np.array([self.table_width*0.5*0.7, 0.6+self.table_length/4., self.table_height-0.015]),
+            np.array([self.table_width*0.5*0.7, 0.6+self.table_length/4., self.table_height+0.015]),
         )
 
         # Define pose of the goal
-        beaker_to_goal_translation = np.array([+0.0, 0.3, 0.0]) 
-        beaker_to_goal_orientation = RollPitchYaw(0., 0., 0.0).ToQuaternion()
+        beaker_to_goal_translation = np.array([+0.0, 0.2, 0.0]) 
+        beaker_to_goal_orientation = RollPitchYaw(np.pi, np.pi, 0.0).ToQuaternion()
         self.pose_BeakerGoal = RigidTransform(  
             beaker_to_goal_orientation,
             beaker_to_goal_translation,
+        )
+
+        # Define pose of start wrt holder
+        holder_to_start_translation = np.array([+0.0, 0.2, 0.025])
+        holder_to_start_orientation = RollPitchYaw(0.0, 0.0, np.pi).ToQuaternion()
+        self.pose_HolderStart = RigidTransform(
+            holder_to_start_orientation,
+            holder_to_start_translation,
         )
 
     @property
@@ -585,13 +672,7 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
 
         if self.start_pose_ is None:
             # Define Start Pose
-            holder_to_start_translation = np.array([+0.0, 0.2, 0.025])
-            holder_to_start_orientation = Quaternion(1, 0, 0, 0)
-            X_HolderStart = RigidTransform(
-                holder_to_start_orientation,
-                holder_to_start_translation,
-            )
-            pose_WorldStart = self.pose_WorldHolder.multiply(X_HolderStart)
+            pose_WorldStart = self.pose_WorldHolder.multiply(self.pose_HolderStart)
             self.start_pose_ = pose_WorldStart
             return self.start_pose_
         else:

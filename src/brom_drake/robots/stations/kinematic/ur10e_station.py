@@ -10,7 +10,7 @@ from pydrake.geometry import SceneGraph, Meshcat, MeshcatVisualizer, MeshcatVisu
 from pydrake.geometry import Role as DrakeRole
 from pydrake.math import RollPitchYaw, RigidTransform, RotationMatrix
 from pydrake.multibody.parsing import Parser
-from pydrake.multibody.plant import MultibodyPlant
+from pydrake.multibody.plant import MultibodyPlant, AddMultibodyPlantSceneGraph
 from pydrake.multibody.tree import FixedOffsetFrame
 from pydrake.systems.framework import Diagram, DiagramBuilder
 from pydrake.systems.primitives import Demultiplexer
@@ -297,17 +297,24 @@ class UR10eStation(Diagram):
         # Setup
 
         # Create SceneGraph
-        self.scene_graph = self.builder.AddSystem(
-            SceneGraph()
-        )
-        self.scene_graph.set_name(f"{self.get_name()}_SceneGraph")
+        # self.scene_graph = self.builder.AddSystem(
+        #     SceneGraph()
+        # )
+        # self.scene_graph.set_name(f"{self.get_name()}_SceneGraph")
 
-        # Create plant (will contain ALL elements of scene)
-        self.plant = self.builder.AddSystem(
-            MultibodyPlant(time_step=self.time_step)
+        # # Create plant (will contain ALL elements of scene)
+        # self.plant = self.builder.AddSystem(
+        #     MultibodyPlant(time_step=self.time_step)
+        # )
+        # self.plant.RegisterAsSourceForSceneGraph(self.scene_graph)
+        # self.plant.set_name(f"{self.get_name()}_Plant")
+
+        self.plant, self.scene_graph = AddMultibodyPlantSceneGraph(
+            builder=self.builder,
+            time_step=self.time_step,
         )
-        self.plant.RegisterAsSourceForSceneGraph(self.scene_graph)
         self.plant.set_name(f"{self.get_name()}_Plant")
+        self.scene_graph.set_name(f"{self.get_name()}_SceneGraph")
 
         # Create plant for controller
         self.controller_plant = MultibodyPlant(time_step=self.time_step)
@@ -331,15 +338,15 @@ class UR10eStation(Diagram):
         self.controller_plant.Finalize()
 
         # Set up the scene graph
-        self.builder.Connect(
-            self.scene_graph.get_query_output_port(),
-            self.plant.get_geometry_query_input_port()
-        )
+        # self.builder.Connect(
+        #     self.scene_graph.get_query_output_port(),
+        #     self.plant.get_geometry_query_input_port()
+        # )
 
-        self.builder.Connect(
-            self.plant.get_geometry_pose_output_port(),
-            self.scene_graph.get_source_pose_port(self.plant.get_source_id())
-        )
+        # self.builder.Connect(
+        #     self.plant.get_geometry_pose_output_port(),
+        #     self.scene_graph.get_source_pose_port(self.plant.get_source_id())
+        # )
 
         self.builder.ExportOutput(
             self.scene_graph.get_query_output_port(),
