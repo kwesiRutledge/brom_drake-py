@@ -17,6 +17,7 @@ import unittest
 from brom_drake.all import (
     add_watcher_and_build,
 )
+from brom_drake.robots.gripper_type import GripperType
 from brom_drake.robots.stations.classical.ur10e import UR10eStation
 from brom_drake.motion_planning.systems import (
     OpenLoopPlanDispenser
@@ -47,6 +48,7 @@ class TestUR10e(unittest.TestCase):
         station = builder.AddSystem(
             UR10eStation(
                 meshcat_port_number=7004,
+                gripper_type=GripperType.NoGripper,
             )
         )
 
