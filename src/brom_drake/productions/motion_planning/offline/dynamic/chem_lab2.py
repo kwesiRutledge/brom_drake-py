@@ -220,7 +220,7 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
 
         self.builder.Connect(
             self.plan_dispenser.GetOutputPort("point_in_plan"),
-            self.station.GetInputPort("desired_arm_position"),
+            self.station.GetInputPort("desired_joint_positions"),
         )
 
         if self.gripper_type != GripperType.NoGripper:
