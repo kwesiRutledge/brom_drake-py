@@ -105,11 +105,17 @@ class BidirectionalRRTConnectPlanner(MotionPlanner):
         rrt: nx.DiGraph,
         tree_is_goal: bool,
         collision_check_fcn: Callable[[np.ndarray], bool] = None,
+        target_config_already_exists: bool = False,
     ) -> Tuple[np.ndarray, bool]:
         """
         Description
         -----------
         This function connects the RRT from the nearest node to the target configuration.
+
+        Arguments
+        ---------
+        target_config_already_exists: bool
+            Whether or not the target configuration already exists in the combined RRT.
         """
         # Input Processing
         if collision_check_fcn is None:
@@ -131,6 +137,10 @@ class BidirectionalRRTConnectPlanner(MotionPlanner):
 
             # Check for collisions
             if collision_check_fcn(q_new):
+                break
+
+            # Check if we reached the target configuration
+            if reached_new and target_config_already_exists:
                 break
 
             # If the next point is collision free, then add new node to the tree
@@ -397,6 +407,7 @@ class BidirectionalRRTConnectPlanner(MotionPlanner):
             current_tree,
             tree_is_goal=current_tree_is_goal,
             collision_check_fcn=collision_check_fcn,
+            target_config_already_exists=True,
         )
 
         # Check if the new configuration is in collision

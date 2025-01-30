@@ -8,6 +8,34 @@ from pydrake.trajectories import PiecewiseTrajectory, PiecewisePolynomial
 from brom_drake.motion_planning.systems.state_of_plan_in_memory import StateOfPlanInMemory
 
 class OpenLoopPlanDispenser(LeafSystem):
+    """
+    Description
+    -----------
+    This LeafSystem is meant to dispense a plan that the user has given to it 
+    in an open-loop fashion. (i.e., it will proceed through the plan at a
+    constant speed without checking the state of the robot at all).
+
+    Diagram
+    -------
+
+                        |---------------|
+                        |   Open        |
+    plan -------->      |   Loop        | --------> point_in_plan
+    (np.ndarray[N,n])   |   Plan        |           (np.ndarray[n,])
+    plan_ready -------->|   Dispenser   | --------> plan_is_set
+    (bool)              |---------------|           (StateOfPlanInMemory)
+
+    where:
+    - N is the number of points in the plan
+    - n is the number of degrees of freedom in the plan
+    - plan is an AbstractValuePort whose value must be an Nxn matrix expressed
+      as a numpy array.
+    - plan_ready is an AbstractValuePort whose value must be a boolean.
+    - point_in_plan is a BasicVectorPort whose value is an n-dimensional vector
+        expressed as a numpy array.
+    - plan_is_set is an AbstractOutputPort whose value is a StateOfPlanInMemory.
+
+    """
     def __init__(
         self,
         n_dof: int,

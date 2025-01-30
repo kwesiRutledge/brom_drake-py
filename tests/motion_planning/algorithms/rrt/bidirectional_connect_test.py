@@ -290,8 +290,12 @@ class BidirectionalRRTPlannerTest(unittest.TestCase):
             current_tree_is_goal=False,
         )
 
-        # Check that the rrt_start has 4 nodes and rrt_goal has 1 node
-        self.assertEqual(len(rrt_start.nodes), 4)
+        # Check that
+        # -  rrt_start has >4 = 3 + 1 nodes and 
+        # - rrt_goal has 1 node.
+        # rrt_start would normally have 4 nodes IF WE DIDN't USE CONNECT.
+        # Because of the fact that we are using connect, we will have more.
+        self.assertGreater(len(rrt_start.nodes), 4)
         self.assertEqual(len(rrt_goal.nodes), 1)
 
         # Verify that the rrts DO NOT CONNECT in this step
@@ -360,13 +364,17 @@ class BidirectionalRRTPlannerTest(unittest.TestCase):
             current_tree_is_goal=True,
         )
 
-        # Check that the rrt_start has 3 nodes and rrt_goal has 2 nodes
+        # Check that:
+        # - rrt_start has 3 nodes and
+        # - rrt_goal has 2 nodes.
+        # rrt_goal would normally have 2 nodes IF WE DIDN't USE CONNECT.
+        # Because of the fact that we are using connect, we will have more.
         self.assertEqual(rrt_start.number_of_nodes(), 3)
-        self.assertEqual(rrt_goal.number_of_nodes(), 2)
+        self.assertGreater(rrt_goal.number_of_nodes(), 2)
 
-        # Verify that the rrts DO NOT CONNECT in this step
-        self.assertFalse(rrts_touch)
-        self.assertIsNone(combined_rrt)
+        # Verify that the rrts DO CONNECT in this step
+        self.assertTrue(rrts_touch)
+        self.assertIsNotNone(combined_rrt)
 
         # Check that the connection that is made is from the second to last node of
         # rrt_start to the last node of rrt_start
@@ -418,10 +426,14 @@ class BidirectionalRRTPlannerTest(unittest.TestCase):
         )
 
         # Create Planner
+        config = BidirectionalRRTConnectPlannerConfig(
+            steering_step_size=10.0,
+        )
         planner = BidirectionalRRTConnectPlanner(
             self.arm_model_idx,
             self.plant,
             self.scene_graph,
+            config=config,
         )
 
         # Steer towards the start tree
@@ -432,7 +444,9 @@ class BidirectionalRRTPlannerTest(unittest.TestCase):
             current_tree_is_goal=False,
         )
 
-        # Check that the rrt_start has 3 nodes and rrt_goal has 1 nodes
+        # Check that:
+        # - rrt_start has 3 nodes and 
+        # - rrt_goal has 1 nodes
         self.assertEqual(rrt_start.number_of_nodes(), 3)
         self.assertEqual(rrt_goal.number_of_nodes(), 1)
 
