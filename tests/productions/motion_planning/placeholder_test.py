@@ -28,7 +28,10 @@ class PlaceholderTest(unittest.TestCase):
 
         # Create UR10e object
         # station = UR10eStation()
-        station = UR10eStation(gripper_type=GripperType.Robotiq_2f_85)
+        station = UR10eStation(
+            gripper_type=GripperType.Robotiq_2f_85,
+            meshcat_port_number=None, # Use None for CI
+        )
         station.ConnectToMeshcatVisualizer()
         station.Finalize()
 
@@ -61,20 +64,20 @@ class PlaceholderTest(unittest.TestCase):
             )
         )
 
-        ee_target = np.array([0.5, 0.5, 0.5, 0, 0, 0, 1])
+        ee_target = np.array([0.5, 0.5, 0.5, 0, 0, 0])
         ee_target_source = builder.AddSystem(
             ConstantVectorSource(ee_target)
         )
 
         # Connect the end effector target type and target to the system
-        builder.Connect(
-            ee_target_type_source.get_output_port(),
-            station.GetInputPort("ee_target_type")
-        )
+        # builder.Connect(
+        #     ee_target_type_source.get_output_port(),
+        #     station.GetInputPort("ee_target_type")
+        # )
 
         builder.Connect(
             ee_target_source.get_output_port(),
-            station.GetInputPort("ee_target")
+            station.GetInputPort("desired_joint_positions")
         )
 
         # Build System

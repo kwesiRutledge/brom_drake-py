@@ -30,7 +30,9 @@ class TestUR10e(unittest.TestCase):
         This test verifies that we can initialize the UR10e station without any errors.
         """
         # Setup
-        station = UR10eStation()
+        station = UR10eStation(
+            meshcat_port_number=None, # Use None for CI
+        )
 
         self.assertTrue(True)
 
@@ -44,7 +46,7 @@ class TestUR10e(unittest.TestCase):
         builder = DiagramBuilder()
         station = builder.AddSystem(
             UR10eStation(
-                meshcat_port_number=7001,
+                meshcat_port_number=7004,
             )
         )
 
@@ -89,7 +91,7 @@ class TestUR10e(unittest.TestCase):
         # Connect the dispenser to the robot
         builder.Connect(
             dispenser.GetOutputPort("point_in_plan"),
-            station.GetInputPort("desired_arm_position"),
+            station.GetInputPort("desired_joint_positions"),
         )
 
         # Build the diagram with watcher
