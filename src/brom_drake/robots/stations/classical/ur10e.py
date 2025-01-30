@@ -32,9 +32,18 @@ class UR10eStation(Diagram):
     
     Diagram
     -------
-    
-    ur10_position --->
-
+                                        -----------------
+                                        |               |
+    gripper_target -------------------->|               |
+    (Vector, np.array)                  |   UR10e       |
+                                        |               |
+    gripper_target_type --------------->|   Station     |
+    (Abstract, GripperTarget Enum)      |               |
+                                        |               |
+    desired_joint_positions ----------->|               |
+    (Vector, np.array)                  |               |
+                                        |               |
+                                        -----------------
     """
 
     def __init__(
@@ -46,7 +55,7 @@ class UR10eStation(Diagram):
         """
         Description:
 
-            This class defines the
+            This class defines the UR10e Station.
         """
         # Input Processing
         self.meshcat_port_number = meshcat_port_number
@@ -364,7 +373,7 @@ class UR10eStation(Diagram):
         # Export the second input port of the multiplexer
         self.builder.ExportInput(
             mux_for_controller.get_input_port(0),
-            "desired_arm_position",
+            "desired_joint_positions",
         )
 
     def ExportArmControllerPorts(self):
