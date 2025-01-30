@@ -322,6 +322,7 @@
     <axis xyz="0 0 1"/>
   </joint>
   <!-- All Joint Transmissions -->
+  <!-- Transmission #0 -->
   <transmission name="finger_joint_trans">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="finger_joint">
@@ -331,6 +332,7 @@
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
+  <!-- Transmission #1 -->
   <transmission name="right_outer_knuckle_joint_trans">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="right_outer_knuckle_joint">
@@ -340,6 +342,7 @@
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
+  <!-- Transmission #2 -->
   <transmission name="left_inner_knuckle_joint_trans">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="left_inner_knuckle_joint">
@@ -349,6 +352,7 @@
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
+  <!-- Transmission #3 -->
   <transmission name="right_inner_knuckle_joint_trans">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="right_inner_knuckle_joint">
@@ -358,6 +362,7 @@
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
+  <!-- Transmission #4 -->
   <transmission name="left_inner_finger_joint_trans">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="left_inner_finger_joint">
@@ -367,6 +372,7 @@
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
+  <!-- Transmission #5 -->
   <transmission name="right_inner_finger_joint_trans">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="right_inner_finger_joint">
@@ -376,6 +382,7 @@
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
+  <!-- Transmission #6 -->
   <transmission name="right_outer_knuckle_trans">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="right_outer_knuckle_joint">

@@ -296,14 +296,14 @@ class UR10eStation(Diagram):
         )
 
         # Send gripper position and velocity as an output
-        self.builder.ExportOutput(
-            gripper_controller.GetOutputPort("measured_gripper_position"),
-            "measured_gripper_position",
-        )
-        self.builder.ExportOutput(
-            gripper_controller.GetOutputPort("measured_gripper_velocity"),
-            "measured_gripper_velocity",
-        )
+        # self.builder.ExportOutput(
+        #     gripper_controller.GetOutputPort("measured_gripper_position"),
+        #     "measured_gripper_position",
+        # )
+        # self.builder.ExportOutput(
+        #     gripper_controller.GetOutputPort("measured_gripper_velocity"),
+        #     "measured_gripper_velocity",
+        # )
 
     def create_plants_and_scene_graph(self, time_step: float = 0.001):
         """

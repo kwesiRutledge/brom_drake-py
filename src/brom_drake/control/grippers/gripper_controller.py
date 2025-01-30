@@ -99,18 +99,18 @@ class GripperController(LeafSystem):
             BasicVector(self.plant.num_actuators()),
             self.CalcGripperTorque,
         )
-        self.DeclareVectorOutputPort(
-            "measured_gripper_position",
-            BasicVector(1),
-            self.CalcGripperPosition,
-            {self.time_ticket()}    # indicate that this doesn't depend on any inputs,
-        )                           # but should still be updated each timestep
-        self.DeclareVectorOutputPort(
-            "measured_gripper_velocity", BasicVector(1), self.CalcGripperVelocity,
-            {self.time_ticket()}    # indicate that this doesn't depend on any inputs,
-        )                           # but should still be updated each timestep
+        # self.DeclareVectorOutputPort(
+        #     "measured_gripper_position",
+        #     BasicVector(1),
+        #     self.CalcGripperPosition,
+        #     {self.time_ticket()}    # indicate that this doesn't depend on any inputs,
+        # )                           # but should still be updated each timestep
+        # self.DeclareVectorOutputPort(
+        #     "measured_gripper_velocity", BasicVector(1), self.CalcGripperVelocity,
+        #     {self.time_ticket()}    # indicate that this doesn't depend on any inputs,
+        # )                           # but should still be updated each timestep
 
-    def ComputePosition(self, state):
+    def ComputePosition(self, state: np.ndarray) -> np.ndarray:
         """
         Compute the gripper position from state data.
         This is especially useful for the 2F-85 gripper, since the
@@ -250,8 +250,13 @@ class GripperController(LeafSystem):
         
         # Apply mimic rules to the torques
         if self.type == GripperType.Robotiq_2f_85:
-            tau_with_mimic = np.ones((self.plant.num_actuators(),))
+            tau_with_mimic = np.zeros((self.plant.num_actuators(),))
+            # Copy torques to mimic channels
+            tau_with_mimic[:2] = tau
+
             # Mimic rules for the 2F-85 gripper
+            tau_with_mimic[2] = tau[0]
+            tau_with_mimic[3] = tau[0]
             tau_with_mimic[4] = - tau[0]
             tau_with_mimic[5] = - tau[0]
             tau_with_mimic[6] = tau[1]
