@@ -56,6 +56,7 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         table_width: float = 2.0,
         table_height: float = 0.1,
         shelf_pose: RigidTransform = None,
+        gripper_type: GripperType = GripperType.Robotiq_2f_85,
         **kwargs,
     ):
         """
@@ -72,6 +73,7 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         self.plan_execution_speed = plan_execution_speed
         self.table_height, self.table_width = table_height, table_width
         self.table_length = table_length
+        self.gripper_type = gripper_type
 
         # Initialize pose data
         self.shelf_pose = shelf_pose
@@ -83,7 +85,7 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         self.station = UR10eStation(
             time_step=self.time_step,
             meshcat_port_number=self.meshcat_port_number,
-            gripper_type=GripperType.NoGripper,
+            gripper_type=self.gripper_type,
         )
         self.arm = self.station.arm
         self.robot_model_idx_ = self.arm
@@ -220,6 +222,37 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
             self.plan_dispenser.GetOutputPort("point_in_plan"),
             self.station.GetInputPort("desired_arm_position"),
         )
+
+        if self.gripper_type != GripperType.NoGripper:
+            # Add components for the gripper's control, including:
+            # - Gripper Target Type
+            # - Gripper Target
+            # Both should be static.
+            
+            # Add the gripper target to the builder
+            gripper_target_type_source = self.builder.AddSystem(
+                ConstantValueSource(
+                    AbstractValue.Make(GripperTarget.kPosition),
+                ),
+            )
+
+            # Connect the gripper target type to the station
+            self.builder.Connect(
+                gripper_target_type_source.get_output_port(),
+                self.station.GetInputPort("gripper_target_type"),
+            )
+
+            # Add the gripper target to the builder
+            gripper_target_source = self.builder.AddSystem(
+                ConstantVectorSource(np.array([0.0])),
+            )
+
+            # Connect the gripper target to the station
+            self.builder.Connect(
+                gripper_target_source.get_output_port(),
+                self.station.GetInputPort("gripper_target"),
+            )
+
 
     def add_shelf(self):
         """

@@ -41,7 +41,7 @@ class UR10eStation(Diagram):
         self,
         time_step: float = 0.002,
         meshcat_port_number: int = 7001,
-        gripper_type: GripperType = GripperType.NoGripper,
+        gripper_type: GripperType = GripperType.Robotiq_2f_85,
     ):
         """
         Description:
@@ -74,8 +74,10 @@ class UR10eStation(Diagram):
 
         # Which sort of gripper we're using (if any)
         self.gripper_type = gripper_type
+        self.gripper_controller = None
         if gripper_type == GripperType.Robotiq_2f_85:
             self.Add2f85Gripper()
+            self.add_gripper_controller()
 
 
     def add_arm_to_plant_with_ee_frame(
@@ -124,6 +126,21 @@ class UR10eStation(Diagram):
         )
 
         return arm, new_frame
+    
+    def add_gripper_controller(self):
+        """
+        Description
+        -----------
+        This funciton adds a controller for the gripper to the station.
+        It is optional and may not be necessary for all stations.
+        """
+        # Setup
+
+        # Create gripper controller
+        self.gripper_controller = self.builder.AddSystem(
+            GripperController(self.gripper_type)
+        )
+        self.gripper_controller.set_name(f"{self.get_name()}_gripper_controller")
 
     def AddArm(self):
         """
@@ -162,7 +179,7 @@ class UR10eStation(Diagram):
 
         # Add a gripper with actuation to the full simulated plant
         gripper_urdf_path = str(
-            impresources.files(robots) / "models/2f_85_gripper/urdf/robotiq_2f_85.urdf"
+            impresources.files(robots) / "models/robotiq/2f_85_gripper-no-mimic/urdf/robotiq_2f_85.urdf"
         )
         self.gripper = Parser(plant=self.plant).AddModels(gripper_urdf_path)[0]
 
@@ -176,19 +193,19 @@ class UR10eStation(Diagram):
             X_grip,
         )
 
-        # Add a gripper without actuation to the controller plant
-        gripper_static_urdf = str(
-            impresources.files(robots) / "models/2f_85_gripper/urdf/robotiq_2f_85_static.urdf"
-        )
-        static_gripper = Parser(plant=self.controller_plant).AddModels(
-            gripper_static_urdf
-        )[0]
+        # # Add a gripper without actuation to the controller plant
+        # gripper_static_urdf = str(
+        #     impresources.files(robots) / "models/robotiq/2f_85_gripper-no-mimic/urdf/robotiq_2f_85_static.urdf"
+        # )
+        # static_gripper = Parser(plant=self.controller_plant).AddModels(
+        #     gripper_static_urdf
+        # )[0]
 
-        self.controller_plant.WeldFrames(
-            self.controller_plant.GetFrameByName("tool0", self.controller_arm),
-            self.controller_plant.GetFrameByName("robotiq_arg2f_base_link", static_gripper),
-            X_grip)
-
+        # self.controller_plant.WeldFrames(
+        #     self.controller_plant.GetFrameByName("tool0", self.controller_arm),
+        #     self.controller_plant.GetFrameByName("robotiq_arg2f_base_link", static_gripper),
+        #     X_grip)
+    
     def ConnectToMeshcatVisualizer(self, port=None):
         self.meshcat = Meshcat(port)
         m = MeshcatVisualizer(self.meshcat)
@@ -240,40 +257,44 @@ class UR10eStation(Diagram):
         """
         Description
         -----------
-        This function creates a gripper controller and connects it to the rest of the system.
-        Requires that the builder has been created and IS NOT FINALIZED.
-        :return: (Nothing)
+        Connects the gripper controller to:
+        - The Gripper Actuators (done via the plant of the station)
+        
+        and exports some of the gripper controller's inputs and outputs
+        (so that they become the inputs and outputs of the station).
         """
         # Setup
+        gripper_controller = self.gripper_controller
 
-        # Create gripper controller
-        gripper_controller = self.builder.AddSystem(
-            GripperController(self.gripper_type)
-        )
-        gripper_controller.set_name("gripper_controller")
-
-        # Connect gripper controller to the diagram
+        # Export the inputs of the gripper controller to the diagram
         self.builder.ExportInput(
             gripper_controller.GetInputPort("gripper_target"),
-            "gripper_target")
+            "gripper_target",
+        )
         self.builder.ExportInput(
             gripper_controller.GetInputPort("gripper_target_type"),
-            "gripper_target_type")
+            "gripper_target_type",
+        )
 
+        # Connect gripper controller to the plant
         self.builder.Connect(
             self.plant.get_state_output_port(self.gripper),
-            gripper_controller.GetInputPort("gripper_state"))
+            gripper_controller.GetInputPort("gripper_state"),
+        )
         self.builder.Connect(
             gripper_controller.GetOutputPort("applied_gripper_torque"),
-            self.plant.get_actuation_input_port(self.gripper))
+            self.plant.get_actuation_input_port(self.gripper),
+        )
 
         # Send gripper position and velocity as an output
         self.builder.ExportOutput(
             gripper_controller.GetOutputPort("measured_gripper_position"),
-            "measured_gripper_position")
+            "measured_gripper_position",
+        )
         self.builder.ExportOutput(
             gripper_controller.GetOutputPort("measured_gripper_velocity"),
-            "measured_gripper_velocity")
+            "measured_gripper_velocity",
+        )
 
     def create_plants_and_scene_graph(self, time_step: float = 0.001):
         """
@@ -388,29 +409,29 @@ class UR10eStation(Diagram):
             "ur10e_arm_velocity_measured",
         )
 
-        # # Compute and output end-effector wrenches based on measured joint torques
-        # wrench_calculator = self.builder.AddSystem(
-        #     EndEffectorWrenchCalculator(
-        #         controller_plant,
-        #         controller_plant.GetFrameByName("end_effector"),
-        #     ),
-        # )
-        # wrench_calculator.set_name("wrench_calculator")
+        # Compute and output end-effector wrenches based on measured joint torques
+        wrench_calculator = self.builder.AddSystem(
+            EndEffectorWrenchCalculator(
+                controller_plant,
+                controller_plant.GetFrameByName("end_effector"),
+            ),
+        )
+        wrench_calculator.set_name("wrench_calculator")
 
-        # self.builder.Connect(
-        #     demux.get_output_port(0),
-        #     wrench_calculator.GetInputPort("joint_positions"))
-        # self.builder.Connect(
-        #     demux.get_output_port(1),
-        #     wrench_calculator.GetInputPort("joint_velocities"))
-        # self.builder.Connect(
-        #     self.controller.get_output_port_control(),
-        #     wrench_calculator.GetInputPort("joint_torques"))
+        self.builder.Connect(
+            demux.get_output_port(0),
+            wrench_calculator.GetInputPort("joint_positions"))
+        self.builder.Connect(
+            demux.get_output_port(1),
+            wrench_calculator.GetInputPort("joint_velocities"))
+        self.builder.Connect(
+            self.controller.get_output_port_control(),
+            wrench_calculator.GetInputPort("joint_torques"))
 
-        # self.builder.ExportOutput(
-        #     wrench_calculator.get_output_port(),
-        #     "measured_ee_wrench",
-        # )
+        self.builder.ExportOutput(
+            wrench_calculator.get_output_port(),
+            "measured_ee_wrench",
+        )
 
     def Finalize(self):
         """

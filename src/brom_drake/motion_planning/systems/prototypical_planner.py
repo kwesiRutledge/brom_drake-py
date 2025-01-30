@@ -89,6 +89,7 @@ class PrototypicalPlannerSystem(LeafSystem):
         # Setup
         plant_context = self.plant.GetMyMutableContextFromRoot(self.root_context)
         scene_graph_context = self.scene_graph.GetMyMutableContextFromRoot(self.root_context)
+        q_init = self.plant.GetPositions(plant_context, self.robot_model_idx)
 
         # Set the configuration
         self.plant.SetPositions(
@@ -104,12 +105,19 @@ class PrototypicalPlannerSystem(LeafSystem):
         # Alternative method to check for collisions
         closest_points = query_object.ComputePointPairPenetration()
         eps0 = 1e-2
+        collision_detected = False
         for pair in closest_points:
             if pair.depth > eps0:
-                return True
+                collision_detected = True
+                break
             
-        # Otherwise return false
-        return False
+        # Otherwise return false (after resetting the configuration)
+        self.plant.SetPositions(
+            plant_context,
+            self.robot_model_idx,
+            q_init
+        )
+        return collision_detected
 
     def compute_plan_if_not_available(self, context: Context, output: AbstractValue):
         """

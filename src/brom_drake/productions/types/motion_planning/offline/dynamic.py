@@ -44,8 +44,18 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
         self.start_pose_ = start_pose
         self.goal_pose_ = goal_pose
 
-        # Create placeholder for the plant
+        # Create placeholder for the some of the systems that we'll use, including:
+        # - plant
+        # - scene_graph
         self.plant = None
+        self.scene_graph = None
+
+        # If the performer does not have plan_is_ready port, then
+        # let's create a dummy value and connect it to the right place.
+        plan_ready_source = ConstantValueSource(
+            AbstractValue.Make(True),
+        )
+        self.plan_ready_source = self.builder.AddSystem(plan_ready_source)
 
         # Create placeholder for the robot model index
         self.robot_model_idx_ = None
@@ -296,13 +306,6 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
         if performer.HasOutputPort(last_assignment.performer_port_name):
             return # Do nothing; performer should already be connected
 
-        # If the performer does not have plan_is_ready port, then
-        # let's create a dummy value and connect it to the right place.
-        plan_ready_source = ConstantValueSource(
-            AbstractValue.Make(True),
-        )
-        self.builder.AddSystem(plan_ready_source)
-
         # Find system we want to connect it to
         systems_list = last_assignment.find_any_matching_input_targets(self.builder)
         assert len(systems_list) == 1, \
@@ -311,7 +314,7 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
         # TODO(kwesi): Perhaps move more of these error assertions to a separate file?
 
         self.builder.Connect(
-            plan_ready_source.get_output_port(),
+            self.plan_ready_source.get_output_port(),
             systems_list[0].GetInputPort(last_assignment.external_target_name)
         )
 
@@ -383,13 +386,14 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
 
         # Add all elements to the builder
         self.add_supporting_cast()
-        print("added supporting cast")
+        # print("added supporting cast")
 
         # Create a planner from the algorithm
         prototypical_planner = PrototypicalPlannerSystem(
             self.plant, self.scene_graph,
             planning_algorithm,
             robot_model_idx=self.robot_model_index,
+            controller_plant=self.station.controller_plant,
         )
 
         # Cast the production using the prototypical planner
@@ -410,6 +414,49 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
         prototypical_planner.set_internal_root_context(diagram_context)
 
         return diagram, diagram_context
+
+    def fill_role(
+        self,
+        role: Role,
+        system: Performer,
+    ):
+        """
+        Description
+        -----------
+        This method should be implemented by the subclass. It should add the
+        system to the role.
+        :param role:
+        :param system:
+        :return:
+        """
+        # Setup
+        builder = self.builder
+
+        # Call the member method of the role object
+        role.connect_performer_ports_to(builder, system)
+
+        # # Create a system for setting the arms into the proper initial configuration
+        # initialize_robots_system = TriggerModelInitializationSystem(
+        #     plant_and_model_idcs=[
+        #         (self.plant, self.station.arm),
+        #         (self.station.controller_plant, self.station.controller_arm),
+        #     ]
+        # )
+        # initialize_robots_system = builder.AddSystem(initialize_robots_system)
+
+        # # Connect the initialize_robots_system to the plant and other systems
+        # builder.Connect(
+        #     system.GetOutputPort("motion_plan"),
+        #     initialize_robots_system.GetInputPort("plan"),
+        # )        
+
+        # self.builder.Connect(
+        #     self.plan_ready_source.get_output_port(),
+        #     initialize_robots_system.GetInputPort("trigger_initialize"),
+        # )
+
+        # Save the performer
+        self.performers.append(system)
 
     @property
     def goal_configuration(self) -> np.ndarray:
