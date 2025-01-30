@@ -96,7 +96,7 @@ def add_watcher_and_build(
     targets: PotentialTargetTypes = None,
     watcher_dir: str = DEFAULT_WATCHER_DIR,
     plot_arrangement: PortFigureArrangement = PortFigureArrangement.OnePlotPerPort,
-    figure_naming_convention: FigureNamingConvention = FigureNamingConvention.kFlat,
+    figure_naming_convention: FigureNamingConvention = FigureNamingConvention.kHierarchical,
     file_format: str = "png",
 ) -> Tuple[DiagramWatcher, Diagram, Context]:
     """
