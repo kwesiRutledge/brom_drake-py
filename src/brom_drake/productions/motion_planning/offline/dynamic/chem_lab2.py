@@ -559,18 +559,6 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         #     np.zeros((n_gripper_positions,)),
         # )
 
-        # Iterate through all joints of the robot and check to see if they are locked
-        for joint_idx in self.plant.GetJointIndices(self.arm):
-            joint = self.plant.get_joint(joint_idx)
-            # if joint.is_floating():
-            #     continue
-
-            # joint.set_translation(0.0)
-            # joint.set_rotation(0.0)
-            print(f"Joint {joint.name()} is locked: {joint.is_locked(diagram_context)}")
-            # print(f"Joint {joint.name()} position: {joint.GetOnePosition(diagram_context)}")
-            print(f"Joint {joint.name()} can rotate: {joint.can_rotate()}")
-
         return diagram, diagram_context
 
     @property

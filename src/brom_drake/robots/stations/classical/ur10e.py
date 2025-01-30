@@ -433,6 +433,21 @@ class UR10eStation(Diagram):
             "measured_ee_wrench",
         )
 
+    def ExportGripperStatePort(self):
+        """
+        Description
+        -----------
+        This function exports the gripper's state
+        as a port of the diagram.
+        """
+        # Setup
+
+        # Export the state of the gripper
+        self.builder.ExportOutput(
+            self.plant.get_state_output_port(self.gripper),
+            "gripper_state",
+        )
+    
     def Finalize(self):
         """
         Description
@@ -468,6 +483,7 @@ class UR10eStation(Diagram):
 
         if self.gripper_type != GripperType.NoGripper:
             self.CreateGripperControllerAndConnect()
+            self.ExportGripperStatePort()
 
         # Build the diagram
         self.builder.BuildInto(self)
