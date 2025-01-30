@@ -4,7 +4,7 @@ from pydrake.multibody.plant import MultibodyPlant, AddMultibodyPlantSceneGraph
 from pydrake.systems.framework import DiagramBuilder
 
 from brom_drake.example_helpers import BlockHandlerSystem
-from brom_drake.robots import UR10eStation
+from brom_drake.robots.stations.kinematic import UR10eStation
 from brom_drake.productions.roles import Role, RolePortAssignment
 from brom_drake.productions.roles.role_port_assignment import PairingType
 
@@ -93,7 +93,9 @@ class RoleTest(unittest.TestCase):
         """
         # Setup
         builder = DiagramBuilder()
-        ur10e_station = UR10eStation()
+        ur10e_station = UR10eStation(
+            meshcat_port_number=None, # Use None for CI
+        )
         ur10e_station.Finalize()
         performer = ur10e_station
 
@@ -106,8 +108,8 @@ class RoleTest(unittest.TestCase):
 
         # Define a bad role
         rpa3 = RolePortAssignment(
-            external_target_name="joint_positions",
-            performer_port_name="ee_target",
+            external_target_name="block_handler",
+            performer_port_name="desired_joint_positions",
             pairing_type=PairingType.kInput,
         )
         bad_role = Role(
