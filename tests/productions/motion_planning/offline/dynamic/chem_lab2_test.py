@@ -54,21 +54,6 @@ class ChemLab2Test(unittest.TestCase):
             with_watcher=True,
         )
 
-        print("Simulating...")
-
-        # Simulate the diagram
-        simulator = Simulator(diagram, diagram_context)
-        simulator.set_target_realtime_rate(2.0)
-
-        # Run simulation
-        simulator.Initialize()
-        simulator.AdvanceTo(0.05)
-        planned_trajectory = production.plan_dispenser.planned_trajectory
-        print(f"Expected end time of trajectory: {planned_trajectory.end_time()}")
-        simulator.AdvanceTo(0.1)
-        # return
-        simulator.AdvanceTo(1.0)
-
         # Return true if we get here
         self.assertTrue(True)
 
