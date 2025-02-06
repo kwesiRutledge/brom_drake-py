@@ -1,5 +1,10 @@
 # Readme
 
+This example can be run by entering:
+```python
+python3 create_monitor_w_different_arrangement.py
+```
+
 ## Summary of Setting
 
 (Feel free to skip this, if you've already read it for the suggested_use1 example.)
@@ -22,6 +27,6 @@ We take advantage of the advanced features of:
 - Setting the plot arrangement (i.e., how many plots are saved in an individual figure), and
 - Setting the figure naming convention (i.e., how and WHERE the figures are saved)
 to make the data easier to consume.
-- Choosing a different file format for the resulting plot (e.g., .png, .pdf, .svg, etc.).
+- Choosing a different file format for the resulting plot (e.g., `.png`, `.pdf`, `.svg`, etc.).
 
 
