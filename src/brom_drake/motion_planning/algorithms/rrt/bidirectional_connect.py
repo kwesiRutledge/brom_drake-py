@@ -168,12 +168,19 @@ class BidirectionalRRTConnectPlanner(MotionPlanner):
         q_start: np.ndarray,
         q_goal: np.ndarray,
         collision_check_fcn: Callable[[np.ndarray], bool] = None,
-    ) -> Tuple[nx.DiGraph, bool]:
+    ) -> Tuple[nx.DiGraph, int]:
         """
         Description
         -----------
         This function plans a path from q_start to q_goal using the Bidirectional
         RRT algorithm.
+
+        Returns
+        -------
+        nx.DiGraph
+            The RRT that was created during the planning process.
+        int
+            The index of the goal node in the RRT.
         """
         # Input Processing
         q_start = np.array(q_start)

@@ -102,12 +102,19 @@ class BidirectionalRRTPlanner(MotionPlanner):
         q_start: np.ndarray,
         q_goal: np.ndarray,
         collision_check_fcn: Callable[[np.ndarray], bool] = None,
-    ) -> Tuple[nx.DiGraph, bool]:
+    ) -> Tuple[nx.DiGraph, int]:
         """
         Description
         -----------
         This function plans a path from q_start to q_goal using the Bidirectional
         RRT algorithm.
+
+        Returns
+        -------
+        nx.DiGraph
+            The RRT that was created during the planning process.
+        int
+            The index of the goal node in the RRT.
         """
         # Input Processing
         q_start = np.array(q_start)
@@ -349,7 +356,7 @@ class BidirectionalRRTPlanner(MotionPlanner):
                 # TODO(Kwesi): Check that this int conversion is okay...
                 if debug_flag:
                     print(f"Adding edge between {current_node_view} and {rrt_start.number_of_nodes() + node_idx_in_opposite_tree}")
-                    
+
                 combined_rrt.add_edge(
                     int(current_node_view),
                     rrt_start.number_of_nodes() + node_idx_in_opposite_tree,
