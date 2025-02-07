@@ -294,6 +294,7 @@ class BidirectionalRRTPlanner(MotionPlanner):
         rrt_goal: nx.DiGraph,
         current_tree_is_goal: bool,
         collision_check_fcn: Callable[[np.ndarray], bool] = None,
+        debug_flag: bool = False,
     ) -> Tuple[nx.DiGraph, bool]:
         """
         Description
@@ -337,14 +338,18 @@ class BidirectionalRRTPlanner(MotionPlanner):
             # add edge between the two trees
             # TODO(Kwesi): Check that this int conversion is okay...
             if current_tree_is_goal:
-                print(f"Adding edge between {node_idx_in_opposite_tree} and {rrt_start.number_of_nodes() + int(current_node_view)}")
+                if debug_flag:
+                    print(f"Adding edge between {node_idx_in_opposite_tree} and {rrt_start.number_of_nodes() + int(current_node_view)}")
+
                 combined_rrt.add_edge(
                     node_idx_in_opposite_tree,
                     rrt_start.number_of_nodes() + int(current_node_view),
                 )
             else:
                 # TODO(Kwesi): Check that this int conversion is okay...
-                print(f"Adding edge between {current_node_view} and {rrt_start.number_of_nodes() + node_idx_in_opposite_tree}")
+                if debug_flag:
+                    print(f"Adding edge between {current_node_view} and {rrt_start.number_of_nodes() + node_idx_in_opposite_tree}")
+                    
                 combined_rrt.add_edge(
                     int(current_node_view),
                     rrt_start.number_of_nodes() + node_idx_in_opposite_tree,
