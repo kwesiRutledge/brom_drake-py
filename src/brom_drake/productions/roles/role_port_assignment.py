@@ -248,7 +248,7 @@ class RolePortAssignment:
 
         # Create error
         return ValueError(
-            f"Failed to find an external system with the name {external_target_name}" +
-            f" or an external system with {external_target_type} port name {external_target_name}." +
+            f"Failed to find an external system with the name \"{external_target_name}\"" +
+            f" or an external system with {external_target_type} port name \"{external_target_name}\"." +
             f"\nCheck your RolePortAssignment definition."
         )

@@ -29,11 +29,27 @@ class PrototypicalPlannerSystem(LeafSystem):
         scene_graph: SceneGraph,
         planning_algorithm: Callable[
             [np.ndarray, np.ndarray, Callable[[np.ndarray], bool]],
-            Tuple[MotionPlan, bool],
+            Tuple[MotionPlan, int],
         ],
         robot_model_idx: ModelInstanceIndex = None,
         **kwargs,
     ):
+        """
+        Description
+        -----------
+        Constructor for the PrototypicalPlannerSystem.
+
+        Arguments
+        ---------
+        plant : MultibodyPlant
+            The plant that we are working with.
+        scene_graph : SceneGraph
+            The scene graph that we are working with.
+        planning_algorithm : Callable[[np.ndarray, np.ndarray, Callable[[np.ndarray], bool]], Tuple[MotionPlan, bool]]
+            The planning algorithm that we are using.
+        robot_model_idx : ModelInstanceIndex
+            The robot model index that we are working with.
+        """
         LeafSystem.__init__(self)
 
         # Setup
@@ -54,8 +70,14 @@ class PrototypicalPlannerSystem(LeafSystem):
         q_model: np.ndarray,
     ) -> bool:
         """
-        Description:
-            This function checks for collisions in the robot's environment.
+        Description
+        -----------
+        This function checks for collisions in the robot's environment.
+
+        Arguments
+        ---------
+        q_model : np.ndarray
+            The model configuration that we are checking for collisions.
         """
         # Input Processing
         if self.root_context is None:
@@ -67,6 +89,7 @@ class PrototypicalPlannerSystem(LeafSystem):
         # Setup
         plant_context = self.plant.GetMyMutableContextFromRoot(self.root_context)
         scene_graph_context = self.scene_graph.GetMyMutableContextFromRoot(self.root_context)
+        q_init = self.plant.GetPositions(plant_context, self.robot_model_idx)
 
         # Set the configuration
         self.plant.SetPositions(
@@ -82,17 +105,32 @@ class PrototypicalPlannerSystem(LeafSystem):
         # Alternative method to check for collisions
         closest_points = query_object.ComputePointPairPenetration()
         eps0 = 1e-2
+        collision_detected = False
         for pair in closest_points:
             if pair.depth > eps0:
-                return True
+                collision_detected = True
+                break
             
-        # Otherwise return false
-        return False
+        # Otherwise return false (after resetting the configuration)
+        self.plant.SetPositions(
+            plant_context,
+            self.robot_model_idx,
+            q_init
+        )
+        return collision_detected
 
-    def compute_plan_if_not_available(self, context, output: AbstractValue):
+    def compute_plan_if_not_available(self, context: Context, output: AbstractValue):
         """
-        Description:
-            This function computes the plan if it is not available.
+        Description
+        -----------
+        This function computes the plan if it is not available.
+
+        Arguments
+        ---------
+        context : Context
+            The context that we are working with.
+        output : AbstractValue
+            The output that will be produced by the output port
         """
         # Print
         if self.plan is None:
@@ -108,16 +146,16 @@ class PrototypicalPlannerSystem(LeafSystem):
             self.root_context = self.root_context
 
             # Plan and extract path
-            rrt, found_path = self.planning_algorithm(
+            rrt, goal_node_index = self.planning_algorithm(
                 q_start,
                 q_goal,
                 self.check_collision_in_config
             )
 
-            if not found_path:
+            if goal_node_index == -1:
                 raise RuntimeError("No path found! Try increasing the number of iterations or checking your problem!")
 
-            path = nx.shortest_path(rrt, source=0, target=rrt.number_of_nodes()-1)
+            path = nx.shortest_path(rrt, source=0, target=goal_node_index)
             self.plan = np.array([rrt.nodes[node]['q'] for node in path])
 
         output.SetFrom(

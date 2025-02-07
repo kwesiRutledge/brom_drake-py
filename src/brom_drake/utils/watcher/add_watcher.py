@@ -96,7 +96,7 @@ def add_watcher_and_build(
     targets: PotentialTargetTypes = None,
     watcher_dir: str = DEFAULT_WATCHER_DIR,
     plot_arrangement: PortFigureArrangement = PortFigureArrangement.OnePlotPerPort,
-    figure_naming_convention: FigureNamingConvention = FigureNamingConvention.kFlat,
+    figure_naming_convention: FigureNamingConvention = FigureNamingConvention.kHierarchical,
     file_format: str = "png",
 ) -> Tuple[DiagramWatcher, Diagram, Context]:
     """
@@ -130,7 +130,7 @@ def add_watcher_and_build(
     file_format: str
         The file format for the figures.
     
-    Outputs
+    Returns
     -------
     :return: DiagramWatcher. The watcher that we have added to the diagram builder.
     """
@@ -157,19 +157,26 @@ def parse_list_of_simplified_targets(
     targets: PotentialTargetTypes,
 ) -> List[DiagramTarget]:
     """
-    parse_list_of_simplified_targets
-    Description:
+    Description
+    -----------
+    This function takes a list of simplified targets and converts them to the full form.
 
-        This function takes a list of simplified targets and converts them to the full form.
+    Example Usage
+    -------------
+    targets = [("plant", 0), ("controller", 0)]
+    parsed_targets = parse_list_of_simplified_targets(targets)
 
-    Example Usage:
+    Arguments
+    ---------
+    builder : DiagramBuilder
+        The diagram builder to which we want to add the watcher.
+    targets : List[Tuple[Union[str, int]]
+        The list of simplified targets.
 
-        targets = [("plant", 0), ("controller", 0)]
-        parsed_targets = parse_list_of_simplified_targets(targets)
-
-    :param builder: DiagramBuilder. The diagram builder to which we want to add the watcher.
-    :param targets: List[Tuple[Union[str, int]]]. The list of simplified targets.
-    :return: List[Tuple[str, int]]. The list of full targets.
+    Returns
+    -------
+    List[DiagramTarget]
+        A list of all the targets that we want to watch.
     """
     # Setup
     parsed_targets = []

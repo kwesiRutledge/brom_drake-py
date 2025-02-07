@@ -3,29 +3,43 @@ from importlib import resources as impresources
 import networkx as nx
 import numpy as np
 from pydrake.all import (
-    MultibodyPlant, Parser,
-    CollisionFilterDeclaration, GeometrySet,
+    AbstractValue,
+    CollisionFilterDeclaration,
+    ConstantValueSource,
+    ConstantVectorSource,
+    Context,
+    Diagram,
+    GeometrySet,
+    InverseKinematics,
+    MultibodyPlant,
+    Parser,
+    Quaternion,
+    RigidTransform,
+    RotationMatrix,
 )
-from pydrake.common.eigen_geometry import Quaternion
 from pydrake.math import RollPitchYaw, RigidTransform
-from pydrake.systems.framework import Diagram, Context
 from typing import Callable, Tuple
 
+# Internal Imports
 from brom_drake.directories import DEFAULT_BROM_MODELS_DIR
+from brom_drake.control import (
+    GripperTarget,
+)
 from brom_drake.file_manipulation.urdf import drakeify_my_urdf
 from brom_drake.file_manipulation.urdf.shapes.box import BoxDefinition
 from brom_drake.file_manipulation.urdf.simple_writer.urdf_definition import SimpleShapeURDFDefinition, \
     InertiaDefinition
 from brom_drake.motion_planning.systems.open_loop_dispensers.open_loop_plan_dispenser import OpenLoopPlanDispenser
 import brom_drake.robots as robots
-from brom_drake.robots.stations.kinematic import UR10eStation as KinematicUR10eStation
+from brom_drake.robots.gripper_type import GripperType
+from brom_drake.robots.stations.classical import UR10eStation
 from brom_drake.productions import ProductionID
 from brom_drake.productions.roles import Role
-from brom_drake.productions.types import KinematicMotionPlanningProduction
+from brom_drake.productions.types import OfflineDynamicMotionPlanningProduction
 from brom_drake.utils import Performer, AddGround, MotionPlan
 
 
-class ChemLab1(KinematicMotionPlanningProduction):
+class ChemLab2(OfflineDynamicMotionPlanningProduction):
     """
     Description:
         This production is the first in the chemistry lab series.
@@ -37,15 +51,17 @@ class ChemLab1(KinematicMotionPlanningProduction):
         time_step=1e-3,
         meshcat_port_number: int = 7000,
         plan_execution_speed: float = 0.2,
+        pose_WorldBeaker: RigidTransform = None,
         table_length: float = 0.6,
         table_width: float = 2.0,
         table_height: float = 0.1,
         shelf_pose: RigidTransform = None,
+        gripper_type: GripperType = GripperType.Robotiq_2f_85,
         **kwargs,
     ):
         """
         Description:
-            Constructor for the ChemLab1Scene class.
+            Constructor for the ChemLab2 Production.
         :param meshcat_port_number:
         """
         # Superclass constructor
@@ -57,41 +73,31 @@ class ChemLab1(KinematicMotionPlanningProduction):
         self.plan_execution_speed = plan_execution_speed
         self.table_height, self.table_width = table_height, table_width
         self.table_length = table_length
+        self.gripper_type = gripper_type
 
-        # Set shelf pose
+        # Initialize pose data
         self.shelf_pose = shelf_pose
-        if self.shelf_pose is None:
-            self.pose_WorldShelf = RigidTransform(
-                RollPitchYaw(0.0, 0.0, -np.pi/2.0).ToQuaternion(),
-                np.array([0.0, 0.75, 0.66]),
-            )
-
-        # Set Beaker Pose
-        self.pose_WorldBeaker = RigidTransform(
-            RollPitchYaw(np.pi/2.0, 0.0, 0.0).ToQuaternion(),
-            np.array([-0.6, 0.45, 0.075]),
-        )
-
-        # Set Holder Pose
-        self.pose_WorldHolder = RigidTransform(
-            RollPitchYaw(np.pi/2.0, 0.0, 0.0).ToQuaternion(),
-            np.array([self.table_width*0.5*0.7, 0.6+self.table_length/4., self.table_height-0.015]),
-        )
+        self.pose_WorldBeaker = pose_WorldBeaker
+        self.pose_BeakerGoal = None
+        self.initialize_pose_data()
 
         # Set station
-        self.station = KinematicUR10eStation(
+        self.station = UR10eStation(
             time_step=self.time_step,
             meshcat_port_number=self.meshcat_port_number,
+            gripper_type=self.gripper_type,
         )
         self.arm = self.station.arm
         self.robot_model_idx_ = self.arm
+
+        # self.gripper = self.station.gripper
 
         # Set Names of Plant and scene graph
         self.plant = self.station.plant
         self.scene_graph = self.station.scene_graph
 
-        self.plant.set_name(f"ChemLab1_Production_Plant")
-        self.scene_graph.set_name(f"ChemLab1_Production_SceneGraph")
+        self.plant.set_name(f"ChemLab2_Production_Plant")
+        self.scene_graph.set_name(f"ChemLab2_Production_SceneGraph")
 
         # Define placeholder variables for models
         self.test_tube_holder1 = None
@@ -132,6 +138,9 @@ class ChemLab1(KinematicMotionPlanningProduction):
         self.add_robot_source_system()
         self.add_motion_planning_components()
         self.add_start_and_goal_sources_to_builder()
+        # self.add_dummy_gripper_components()
+
+        print("Completed adding supporting cast members.")
 
     def add_beaker(self):
         """
@@ -152,12 +161,48 @@ class ChemLab1(KinematicMotionPlanningProduction):
         model_idcs = Parser(plant=plant).AddModels(str(new_beaker_urdf))
         self.beaker_model_index = model_idcs[0]
 
-        # Weld the beaker to the world frame
-        plant.WeldFrames(
-            plant.world_frame(),
-            plant.GetFrameByName("beaker_base_link", self.beaker_model_index),
-            self.pose_WorldBeaker,
+        # Add object to the list we use for initialization
+        self.models_in_supporting_cast.append(
+            (self.beaker_model_index, self.pose_WorldBeaker),
         )
+
+        # # Weld the beaker to the world frame
+        # plant.WeldFrames(
+        #     plant.world_frame(),
+        #     plant.GetFrameByName("beaker_base_link", self.beaker_model_index),
+        #     self.pose_WorldBeaker,
+        # )
+
+    def add_dummy_gripper_components(self):
+        """
+        Description
+        -----------
+        Add more components to the production that are used
+        to hold the gripper in place.
+        """
+        # Setup
+
+        # Create a dummy target type object for the gripper and connect it to the gripper controller
+        dummy_gripper_target_type_source = self.builder.AddSystem(
+            ConstantValueSource(
+                AbstractValue.Make(GripperTarget.kPosition)
+            ),
+        )
+        
+        self.builder.Connect(
+            dummy_gripper_target_type_source.get_output_port(),
+            self.station.GetInputPort("gripper_target_type"),
+        )
+
+        # Create a dummy gripper target value and connect it to the gripper controller
+        dummy_gripper_target_source = self.builder.AddSystem(
+            ConstantVectorSource(np.array([0.0])),
+        )
+        self.builder.Connect(
+            dummy_gripper_target_source.get_output_port(),
+            self.station.GetInputPort("gripper_target"),
+        )
+
 
     def add_motion_planning_components(self):
         """
@@ -165,7 +210,8 @@ class ChemLab1(KinematicMotionPlanningProduction):
         :return:
         """
         # Setup
-        n_actuated_dof = self.plant.num_actuated_dofs()
+        arm = self.arm
+        n_actuated_dof = self.plant.num_actuated_dofs(arm) # Number of actuated DOF in arm
 
         # Add the Plan Dispenser and connect it to the station
         self.plan_dispenser = self.builder.AddSystem(
@@ -176,6 +222,37 @@ class ChemLab1(KinematicMotionPlanningProduction):
             self.plan_dispenser.GetOutputPort("point_in_plan"),
             self.station.GetInputPort("desired_joint_positions"),
         )
+
+        if self.gripper_type != GripperType.NoGripper:
+            # Add components for the gripper's control, including:
+            # - Gripper Target Type
+            # - Gripper Target
+            # Both should be static.
+            
+            # Add the gripper target to the builder
+            gripper_target_type_source = self.builder.AddSystem(
+                ConstantValueSource(
+                    AbstractValue.Make(GripperTarget.kPosition),
+                ),
+            )
+
+            # Connect the gripper target type to the station
+            self.builder.Connect(
+                gripper_target_type_source.get_output_port(),
+                self.station.GetInputPort("gripper_target_type"),
+            )
+
+            # Add the gripper target to the builder
+            gripper_target_source = self.builder.AddSystem(
+                ConstantVectorSource(np.array([0.0])),
+            )
+
+            # Connect the gripper target to the station
+            self.builder.Connect(
+                gripper_target_source.get_output_port(),
+                self.station.GetInputPort("gripper_target"),
+            )
+
 
     def add_shelf(self):
         """
@@ -221,7 +298,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
                 iyy=10.0,
                 izz=10.0,
             ),
-            color=np.array([0.1, 0.1, 0.1, 0.5]),
+            color=np.array([0.1, 0.1, 0.1, 1.0]),
         )
         table_urdf_path = DEFAULT_BROM_MODELS_DIR + "/table/table.urdf"
         table_defn.write_to_file(table_urdf_path)
@@ -259,12 +336,17 @@ class ChemLab1(KinematicMotionPlanningProduction):
             str(new_test_tube_holder_urdf1)
         )[0]
 
-        # Weld the test tube holders to the world frame
-        self.plant.WeldFrames(
-            self.plant.world_frame(),
-            self.plant.GetFrameByName("test_tube_holder_base_link", self.test_tube_holder1),
-            self.pose_WorldHolder,
+        # Add object to the list we use for initialization
+        self.models_in_supporting_cast.append(
+            (self.test_tube_holder1, self.pose_WorldHolder),
         )
+
+        # # Weld the test tube holders to the world frame
+        # self.plant.WeldFrames(
+        #     self.plant.world_frame(),
+        #     self.plant.GetFrameByName("test_tube_holder_base_link", self.test_tube_holder1),
+        #     self.pose_WorldHolder,
+        # )
 
 
     def add_cast_and_build(
@@ -341,25 +423,82 @@ class ChemLab1(KinematicMotionPlanningProduction):
             )
         )
 
-        # Ignore collisions between the robot links
-        # TODO: Actually implement this for adjacent links? Or is this not necessary?
-        arm_geometry_ids = []
-        for body_index in self.plant.GetBodyIndices(self.arm):
-            arm_geometry_ids.extend(
-                self.plant.GetCollisionGeometriesForBody(
-                    self.plant.get_body(body_index)
-                )
-            )
+        # # Ignore collisions between the robot links
+        # # TODO: Actually implement this for adjacent links? Or is this not necessary?
+        # arm_geometry_ids = []
+        # for body_index in self.plant.GetBodyIndices(self.arm):
+        #     arm_geometry_ids.extend(
+        #         self.plant.GetCollisionGeometriesForBody(
+        #             self.plant.get_body(body_index)
+        #         )
+        #     )
 
-        self.arm_geometry_ids = arm_geometry_ids
+        # self.arm_geometry_ids = arm_geometry_ids
 
-        # Apply the collision filter
-        scene_graph.collision_filter_manager(scene_graph_context).Apply(
-            CollisionFilterDeclaration().ExcludeWithin(
-                GeometrySet(self.arm_geometry_ids)
-            )
-        )
+        # # Apply the collision filter
+        # scene_graph.collision_filter_manager(scene_graph_context).Apply(
+        #     CollisionFilterDeclaration().ExcludeWithin(
+        #         GeometrySet(self.arm_geometry_ids)
+        #     )
+        # )
     
+    def define_pose_ik_problem(
+        self,
+        pose_WorldTarget: RigidTransform,
+        target_frame_name: str,
+        eps0: float = 2.5e-2,
+        orientation_cost_scaling: float = 0.25,
+    ) -> InverseKinematics:
+        """
+        Description
+        -----------
+        Sets up the inverse kinematics problem for the start pose
+        input to theis function.
+        :return:
+        """
+        # Setup
+        scene_graph = self.scene_graph
+        sg_inspector = scene_graph.model_inspector()
+
+        # Create IK Problem
+        ik_problem = InverseKinematics(self.plant)
+
+        # Add Pose Target
+        ik_problem.AddPositionConstraint(
+            self.plant.world_frame(),
+            pose_WorldTarget.translation(),
+            self.plant.GetFrameByName(target_frame_name),
+            (- np.ones((3,)) * eps0).reshape((-1, 1)),
+            (+ np.ones((3,)) * eps0).reshape((-1, 1)),
+        )
+
+        # TODO(kwesi): Add OrientationCosntraint
+        # ik_problem.AddOrientationConstraint(
+        #     self.plant.world_frame(),
+        #     RotationMatrix(Quaternion(input_pose_vec[3:]).rotation()),
+        #     self.plant.GetFrameByName("ft_frame"),
+        #     RotationMatrix.Identity(),
+        #     0.25,
+        # )
+
+        ik_problem.AddOrientationConstraint(
+            self.plant.world_frame(),
+            pose_WorldTarget.rotation(),
+            self.plant.GetFrameByName(target_frame_name),
+            RotationMatrix.Identity(),
+            np.pi/8.0
+        )
+
+        # ik_problem.AddOrientationCost(
+        #     self.plant.world_frame(),
+        #     pose_WorldTarget.rotation(),
+        #     self.plant.GetFrameByName(target_frame_name),
+        #     RotationMatrix.Identity(),
+        #     orientation_cost_scaling,
+        # )
+
+        return ik_problem
+
     def easy_cast_and_build(
         self,
         planning_algorithm: Callable[
@@ -385,6 +524,8 @@ class ChemLab1(KinematicMotionPlanningProduction):
             with_watcher=with_watcher,
         )
 
+        # print("completed cast and build.")
+
         # Configure the scene graph for collision detection
         self.configure_collision_filter(
             diagram.GetSubsystemContext(
@@ -393,13 +534,30 @@ class ChemLab1(KinematicMotionPlanningProduction):
         )
 
         # Connect arm controller to the appropriate plant_context
-        self.station.arm_controller.plant_context = diagram.GetSubsystemContext(
-            self.station.arm_controller.plant, diagram_context,
-        )
+        # self.station.arm_controller.plant_context = diagram.GetSubsystemContext(
+        #     self.station.arm_controller.plant, diagram_context,
+        # )
 
         self.performers[0].set_internal_root_context(
             diagram_context
         )
+
+        # # Set the start configuration of the robot
+        # arm = self.station.arm
+        # self.station.plant.SetDefaultPositions(
+        #     # self.station.plant.GetMyMutableContextFromRoot(diagram_context),
+        #     arm,
+        #     self.start_configuration,
+        # )
+
+        # # Set the positions of the gripper
+        # gripper = self.station.gripper
+        # n_gripper_positions = self.station.plant.num_positions(gripper)
+        # self.station.plant.SetPositions(
+        #     self.station.plant.GetMyMutableContextFromRoot(diagram_context),
+        #     gripper,
+        #     np.zeros((n_gripper_positions,)),
+        # )
 
         return diagram, diagram_context
 
@@ -409,19 +567,24 @@ class ChemLab1(KinematicMotionPlanningProduction):
         Get the goal pose. This should be defined by the subclass.
         :return:
         """
-        if self.goal_config_ is None:
-            beaker_to_goal_translation = np.array([+0.0, 0.2, 0.0]) 
-            beaker_to_goal_orientation = RollPitchYaw(0., 0., 0.0).ToQuaternion()
-            X_BeakerGoal = RigidTransform(  
-                beaker_to_goal_orientation,
-                beaker_to_goal_translation,
-            )
+        # Setup
+        hardcoded_robot_joint_names = [
+            'ur10e-test_shoulder_pan_joint_q',
+            'ur10e-test_shoulder_lift_joint_q',
+            'ur10e-test_elbow_joint_q',
+            'ur10e-test_wrist_1_joint_q',
+            'ur10e-test_wrist_2_joint_q',
+            'ur10e-test_wrist_3_joint_q',
+        ]
 
-            pose_WorldGoal = self.pose_WorldBeaker.multiply(X_BeakerGoal)
+        # Retrieve goal_configuraiton value
+        if self.goal_config_ is None:
+            pose_WorldGoal = self.pose_WorldBeaker.multiply(self.pose_BeakerGoal)
 
             # Use Inverse Kinematics to get the goal configuration of the robot
             self.goal_config_ = self.solve_pose_ik_problem(
                 pose_WorldGoal,
+                robot_joint_names=hardcoded_robot_joint_names,
             )
 
             return self.goal_config_
@@ -433,20 +596,13 @@ class ChemLab1(KinematicMotionPlanningProduction):
         """
         Description
         -----------
-        Get the goal pose. This should be defined by the subclass.
+        Get the goal pose of the end effector frame.
         """
         # Setup
 
         # Algorithm
         if self.goal_pose_ is None:
-            beaker_to_goal_translation = np.array([+0.0, 0.2, 0.0]) 
-            beaker_to_goal_orientation = RollPitchYaw(0., 0., 0.0).ToQuaternion()
-            X_BeakerGoal = RigidTransform(  
-                beaker_to_goal_orientation,
-                beaker_to_goal_translation,
-            )
-
-            pose_WorldGoal = self.pose_WorldBeaker.multiply(X_BeakerGoal)
+            pose_WorldGoal = self.pose_WorldBeaker.multiply(self.pose_BeakerGoal)
             self.goal_pose_ = pose_WorldGoal
 
             return self.goal_pose_
@@ -459,6 +615,74 @@ class ChemLab1(KinematicMotionPlanningProduction):
         
     # TODO(kwesi): Implement start_configuration method.
 
+    def initialize_pose_data(self):
+        # Set shelf pose
+        if self.shelf_pose is None:
+            self.pose_WorldShelf = RigidTransform(
+                RollPitchYaw(0.0, 0.0, -np.pi/2.0).ToQuaternion(),
+                np.array([0.0, 0.75, 0.66]),
+            )
+
+        # Set Beaker Pose default
+        if self.pose_WorldBeaker is None:
+            self.pose_WorldBeaker = RigidTransform(
+                RollPitchYaw(np.pi/2.0, 0.0, 0.0).ToQuaternion(),
+                np.array([-0.6, 0.45, 0.175]),
+            )
+
+        # Set Holder Pose
+        self.pose_WorldHolder = RigidTransform(
+            RollPitchYaw(np.pi/2.0, 0.0, 0.0).ToQuaternion(),
+            np.array([self.table_width*0.5*0.7, 0.6+self.table_length/4., self.table_height+0.015]),
+        )
+
+        # Define pose of the goal
+        beaker_to_goal_translation = np.array([+0.0, 0.2, 0.0]) 
+        beaker_to_goal_orientation = RollPitchYaw(np.pi, np.pi, 0.0).ToQuaternion()
+        self.pose_BeakerGoal = RigidTransform(  
+            beaker_to_goal_orientation,
+            beaker_to_goal_translation,
+        )
+
+        # Define pose of start wrt holder
+        holder_to_start_translation = np.array([+0.0, 0.2, 0.025])
+        holder_to_start_orientation = RollPitchYaw(0.0, 0.0, np.pi).ToQuaternion()
+        self.pose_HolderStart = RigidTransform(
+            holder_to_start_orientation,
+            holder_to_start_translation,
+        )
+
+    @property
+    def start_configuration(self):
+        """
+        Get the goal pose. This should be defined by the subclass.
+        :return:
+        """
+        # Setup
+        hardcoded_robot_joint_names = [
+            'ur10e-test_shoulder_pan_joint_q',
+            'ur10e-test_shoulder_lift_joint_q',
+            'ur10e-test_elbow_joint_q',
+            'ur10e-test_wrist_1_joint_q',
+            'ur10e-test_wrist_2_joint_q',
+            'ur10e-test_wrist_3_joint_q',
+        ]
+
+        # Algorithm
+        if self.start_config_ is not None:
+            return self.start_config_
+        elif self.start_pose_ is not None:
+            # Use the start pose to get the start configuration
+            # Using the IK solver (potentially buggy because default ik problem ignores obstacles)
+            return self.solve_pose_ik_problem(
+                self.start_pose_,
+                robot_joint_names=hardcoded_robot_joint_names,
+            )
+        else:
+            raise NotImplementedError(
+                "This function should be implemented by the subclass."
+            )
+
     @property
     def start_pose(self) -> RigidTransform:
         """
@@ -469,13 +693,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
 
         if self.start_pose_ is None:
             # Define Start Pose
-            holder_to_start_translation = np.array([+0.0, 0.2, 0.025])
-            holder_to_start_orientation = Quaternion(1, 0, 0, 0)
-            X_HolderStart = RigidTransform(
-                holder_to_start_orientation,
-                holder_to_start_translation,
-            )
-            pose_WorldStart = self.pose_WorldHolder.multiply(X_HolderStart)
+            pose_WorldStart = self.pose_WorldHolder.multiply(self.pose_HolderStart)
             self.start_pose_ = pose_WorldStart
             return self.start_pose_
         else:

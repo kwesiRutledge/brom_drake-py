@@ -30,6 +30,8 @@ class MotionPlannerTest(unittest.TestCase):
     @staticmethod
     def add_shelf1(plant: MultibodyPlant) -> ModelInstanceIndex:
         """
+        Description
+        -----------
         Add the shelf to the production.
         :param plant:
         :return:
@@ -103,12 +105,6 @@ class MotionPlannerTest(unittest.TestCase):
 
                 # Add triad for each point
                 print(pair_ii.p_ACa)
-
-
-
-        print(" ")
-
-
 
         return query.HasCollisions()
 

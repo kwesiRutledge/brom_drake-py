@@ -28,7 +28,10 @@ from .port_watcher_options import (
 )
 from .port_figure_arrangement import PortFigureArrangement
 from .plotter import PortWatcherPlotter
-from brom_drake.utils import RigidTransformToVectorSystem
+from brom_drake.utils import (
+    BoolToVectorSystem,
+    RigidTransformToVectorSystem,
+)
 from brom_drake.utils.type_checking import is_rigid_transform
 
 class PortWatcher:
@@ -114,8 +117,11 @@ class PortWatcher:
             return
         
         # Check to see if AbstractValue port contains RigidTransform
-        output_value = output_port.Allocate()
-        if is_rigid_transform(output_value.get_value()):
+        example_allocation = output_port.Allocate()
+        example_value = example_allocation.get_value()
+        if is_rigid_transform(example_value):
+            return
+        elif type(example_value) == bool: # if the output_value is a boolean
             return
 
         # Raise error otherwise
@@ -144,7 +150,9 @@ class PortWatcher:
         return ValueError(
             f"This watcher only supports output ports that are:\n" +
             f"- Vector valued ports (i.e., of type {PortDataType.kVectorValued}.\n" +
-            f"- Abstract valued ports containing RigidTransform objects.\n" +
+            f"- Abstract valued ports containing:\n" +
+            f"  - RigidTransforms\n" +
+            f"  - Booleans\n" +
             f"Received port of type {output_port.get_data_type()} with underlying type {type(example_value)}."
         )
     
@@ -172,9 +180,12 @@ class PortWatcher:
         else:
             # Port must be abstract valued
 
-            # Check to see if the port contains a RigidTransform
-            output_value = self.port.Allocate()
-            if is_rigid_transform(output_value.get_value()):
+            # Check to see if the port contains a value of type
+            # - RigidTransform, or
+            # - bool
+            example_allocation = self.port.Allocate()
+            example_value = example_allocation.get_value()
+            if is_rigid_transform(example_value):
                 # If it is, then we must create an intermediate system
                 # that will convert the RigidTransform to a vector.
                 converter_system = builder.AddSystem(
@@ -191,6 +202,26 @@ class PortWatcher:
                     converter_system.get_output_port(),
                     builder,
                 )
+            elif type(example_value) == bool:
+                # If the value is a boolean,
+                # then we must create an intermediate BoolToVectorSystem
+                # that will convert the boolean to a vector.
+                converter_system = builder.AddSystem(
+                    BoolToVectorSystem()
+                )
+
+                # Connect the system to the port
+                builder.Connect(
+                    self.port,
+                    converter_system.get_input_port(),
+                )
+
+                # Then connect the output of the converter to a logger
+                self.logger = LogVectorOutput(
+                    converter_system.get_output_port(),
+                    builder,
+                )
+            
             else:
                 raise NotImplementedError(
                     f"PortWatcher does not support the type of data contained in the port."

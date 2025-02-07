@@ -33,6 +33,21 @@ class DiagramWatcher:
         targets: List[DiagramTarget] = None,
         port_watcher_options: PortWatcherOptions = PortWatcherOptions(),
     ):
+        """
+        Description
+        -----------
+        Initializes the DiagramWatcher class.
+
+        Arguments
+        ---------
+        subject : DiagramBuilder
+            We will search through the subject (a diagram builder)
+            to find all the systems that we want to monitor.
+        targets : List[DiagramTarget], optional
+            The targets that we want to monitor, by default None
+        port_watcher_options : PortWatcherOptions, optional
+            The options for the PortWatcher, by default PortWatcherOptions()
+        """
         # Setup
 
         # Needs to be populated by the user of this class AFTER the diagram has been built
@@ -98,21 +113,30 @@ class DiagramWatcher:
                         f"There was an error attempting to add a watcher to port {target_port.get_name()} of system {target.name}"
                     )
                     loguru.logger.warning(f"Error: {e}")
+                    continue
+
+                # Announce that we successfully added logger
+                loguru.logger.info(f"Added logger to port {target_port.get_name()} of system {target.name}")
 
     def create_new_port_watcher_options(
         self,
         options: PortWatcherOptions,
         plot_dir: str = None,
         raw_data_dir: str = None,
-    ):
+    ) -> PortWatcherOptions:
         """
-        Description:
+        Description
+        -----------
+        Creates a new set of PortWatcherOptions with the given options.
 
-            Creates a new set of PortWatcherOptions with the given options.
-        :param options:
-        :param plot_dir:
-        :param raw_data_dir:
-        :return:
+        Arguments
+        ---------
+        options : PortWatcherOptions
+            The options to use as a base.
+        plot_dir : str, optional
+            The directory to save the plots in, by default None
+        raw_data_dir : str, optional
+            The directory to save the raw data in, by default None
         """
         # Setup
         new_plot_dir = options.plotting.base_directory
@@ -142,11 +166,10 @@ class DiagramWatcher:
 
     def __del__(self):
         """
-        Description:
-
-            Destructor for the Diagram Watcher.
-            Will plot the data from all of our loggers if we have access to the diagram context.
-        :return:
+        Description
+        -----------
+        Destructor for the Diagram Watcher.
+        Will plot the data from all of our loggers if we have access to the diagram context.
         """
         # Setup
 
@@ -179,15 +202,21 @@ class DiagramWatcher:
         eligible_systems: List[Union[MultibodyPlant, AffineSystem, LeafSystem]],
     ) -> List[Union[MultibodyPlant, AffineSystem, LeafSystem]]:
         """
-        Description:
-            Finds the systems specified by the targets list that
-            we want to watch/monitor.
-            We will try to ignore all systems that are:
-            - Scene Graphs
-            - Loggers
-            and raise an error if the target is not found in the eligible systems.
-        :param targets:
-        :param eligible_systems:
+        Description
+        -----------
+        Finds the systems specified by the targets list that
+        we want to watch/monitor.
+        We will try to ignore all systems that are:
+        - Scene Graphs
+        - Loggers
+        and raise an error if the target is not found in the eligible systems.
+
+        Arguments
+        ---------
+        targets : List[DiagramTarget]
+            The targets that we want to monitor.
+        eligible_systems : List[Union[MultibodyPlant, AffineSystem, LeafSystem]]
+            The systems that are eligible for monitoring.
         :return:
         """
 

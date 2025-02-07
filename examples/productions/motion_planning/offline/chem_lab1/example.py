@@ -1,8 +1,8 @@
 """
-shelf1.py
+example.py
 Description:
 
-    In this script, we use the Shelf Production to test a basic motion planning algorithms.
+    In this script, we use the ChemLab1 Production to test a basic motion planning algorithms.
     This shows one how to use the `easy_cast_and_build` method to simplify how to build
     a Production.
 """
@@ -15,7 +15,7 @@ import typer
 from brom_drake.motion_planning.algorithms.rrt.connect import RRTConnectPlannerConfig, RRTConnectPlanner
 from brom_drake.productions.motion_planning.offline import ChemLab1
 
-def main(meshcat_port_number: int = -1):
+def main(meshcat_port_number: int = 7001):
     # Setup
     if meshcat_port_number < 0:
         meshcat_port_number = None # Use None for CI
@@ -29,7 +29,7 @@ def main(meshcat_port_number: int = -1):
     config = RRTConnectPlannerConfig(
         steering_step_size=0.1,
         prob_sample_goal=0.30,
-        max_iterations=int(1e4),
+        max_iterations=int(1e5),
         convergence_threshold=1e-3,
     )
     planner2 = RRTConnectPlanner(

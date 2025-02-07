@@ -17,6 +17,7 @@ jobs:
           'examples/productions/show_me_this_model/show_collision_geometries1/show.py',
           'examples/productions/motion_planning/offline/chem_lab1/example.py',
           'examples/productions/motion_planning/offline/shelf/shelf1.py',
+          'examples/productions/motion_planning/offline/chem_lab2/example.py',
         ]
     steps:
       - name: Checkout

@@ -6,7 +6,7 @@ import networkx as nx
 import numpy as np
 from pydrake.all import (
     RotationMatrix, Quaternion, RollPitchYaw,
-    Solve, SolutionResult,
+    Solve, SolutionResult, SpatialVelocity,
     InverseKinematics, ModelInstanceIndex,
 )
 from pydrake.common.value import AbstractValue
@@ -25,7 +25,7 @@ from brom_drake.file_manipulation.urdf.simple_writer.urdf_definition import Simp
 from brom_drake.utils import Performer, MotionPlan
 
 
-class KinematicMotionPlanningProduction(BaseProduction):
+class OfflineDynamicMotionPlanningProduction(BaseProduction):
     def __init__(
         self,
         start_configuration: np.ndarray = None,
@@ -44,18 +44,35 @@ class KinematicMotionPlanningProduction(BaseProduction):
         self.start_pose_ = start_pose
         self.goal_pose_ = goal_pose
 
-        # Create placeholder for the plant
+        # Create placeholder for the some of the systems that we'll use, including:
+        # - plant
+        # - scene_graph
         self.plant = None
+        self.scene_graph = None
+
+        # If the performer does not have plan_is_ready port, then
+        # let's create a dummy value and connect it to the right place.
+        plan_ready_source = ConstantValueSource(
+            AbstractValue.Make(True),
+        )
+        self.plan_ready_source = self.builder.AddSystem(plan_ready_source)
 
         # Create placeholder for the robot model index
         self.robot_model_idx_ = None
+
+        # Create a list of all OBJECTS in the supporting cast
+        # and their desired poses. This will be a list of Tuple[ModelInstanceIndex, RigidTransform]
+        self.models_in_supporting_cast = []
 
     def add_supporting_cast(self):
         """
         Description
         -----------
         This method will add the start and goal poses to the builder.
-        :return:
+        
+        Returns
+        -------
+        None
         """
         # Add visual elements for the start and goal poses
         self.add_start_and_goal_to_plant(self.plant)
@@ -197,6 +214,42 @@ class KinematicMotionPlanningProduction(BaseProduction):
                 role_ii, performer_ii
             )
 
+    def build_production(
+        self,
+        with_watcher: bool = True,
+    ) -> Tuple[Diagram, Context]:
+        """
+        Description
+        -----------
+        This method builds the production.
+        It assumes that all components have been added to the builder.
+
+        Arguments
+        ---------
+        with_watcher: bool
+            A Boolean that determines whether to add a watcher to the diagram.
+        """
+        # Setup
+
+        # Call the parent method
+        diagram, diagram_context = super().build_production(with_watcher=with_watcher)
+
+        # Set the initial poses of the members of the cast that are objects
+        for model_ii, pose_ii in self.models_in_supporting_cast:
+            body_list_ii = self.plant.GetBodyIndices(model_ii)
+            # print(f"body_list_ii contains {len(body_list_ii)} elements")
+            first_body = self.plant.get_body(body_list_ii[0])
+            # first_body.body_frame().SetPoseInParentFrame(
+            #     pose,
+            # )
+            self.plant.SetFreeBodyPose(
+                self.plant.GetMyContextFromRoot(diagram_context),
+                first_body,
+                pose_ii,
+            )
+
+        return diagram, diagram_context
+
     def create_optional_outputs_if_necessary(
         self,
         role: Role, # This role will always be the Motion Planner, won't it?
@@ -253,13 +306,6 @@ class KinematicMotionPlanningProduction(BaseProduction):
         if performer.HasOutputPort(last_assignment.performer_port_name):
             return # Do nothing; performer should already be connected
 
-        # If the performer does not have plan_is_ready port, then
-        # let's create a dummy value and connect it to the right place.
-        plan_ready_source = ConstantValueSource(
-            AbstractValue.Make(True),
-        )
-        self.builder.AddSystem(plan_ready_source)
-
         # Find system we want to connect it to
         systems_list = last_assignment.find_any_matching_input_targets(self.builder)
         assert len(systems_list) == 1, \
@@ -268,7 +314,7 @@ class KinematicMotionPlanningProduction(BaseProduction):
         # TODO(kwesi): Perhaps move more of these error assertions to a separate file?
 
         self.builder.Connect(
-            plan_ready_source.get_output_port(),
+            self.plan_ready_source.get_output_port(),
             systems_list[0].GetInputPort(last_assignment.external_target_name)
         )
 
@@ -340,12 +386,14 @@ class KinematicMotionPlanningProduction(BaseProduction):
 
         # Add all elements to the builder
         self.add_supporting_cast()
+        # print("added supporting cast")
 
         # Create a planner from the algorithm
         prototypical_planner = PrototypicalPlannerSystem(
             self.plant, self.scene_graph,
             planning_algorithm,
             robot_model_idx=self.robot_model_index,
+            controller_plant=self.station.controller_plant,
         )
 
         # Cast the production using the prototypical planner
@@ -353,13 +401,62 @@ class KinematicMotionPlanningProduction(BaseProduction):
 
         # Fulfill each role-performer pair in the casting_call list
         self.fill_role(planner_role, prototypical_planner)
+        print("filled role")
 
         self.create_optional_outputs_if_necessary(
             planner_role, prototypical_planner
         )
 
         # Build
-        return self.build_production(with_watcher=with_watcher)
+        diagram, diagram_context = self.build_production(with_watcher=with_watcher)
+
+        # Assign prototypical planner's context
+        prototypical_planner.set_internal_root_context(diagram_context)
+
+        return diagram, diagram_context
+
+    def fill_role(
+        self,
+        role: Role,
+        system: Performer,
+    ):
+        """
+        Description
+        -----------
+        This method should be implemented by the subclass. It should add the
+        system to the role.
+        :param role:
+        :param system:
+        :return:
+        """
+        # Setup
+        builder = self.builder
+
+        # Call the member method of the role object
+        role.connect_performer_ports_to(builder, system)
+
+        # # Create a system for setting the arms into the proper initial configuration
+        # initialize_robots_system = TriggerModelInitializationSystem(
+        #     plant_and_model_idcs=[
+        #         (self.plant, self.station.arm),
+        #         (self.station.controller_plant, self.station.controller_arm),
+        #     ]
+        # )
+        # initialize_robots_system = builder.AddSystem(initialize_robots_system)
+
+        # # Connect the initialize_robots_system to the plant and other systems
+        # builder.Connect(
+        #     system.GetOutputPort("motion_plan"),
+        #     initialize_robots_system.GetInputPort("plan"),
+        # )        
+
+        # self.builder.Connect(
+        #     self.plan_ready_source.get_output_port(),
+        #     initialize_robots_system.GetInputPort("trigger_initialize"),
+        # )
+
+        # Save the performer
+        self.performers.append(system)
 
     @property
     def goal_configuration(self) -> np.ndarray:
@@ -441,6 +538,7 @@ class KinematicMotionPlanningProduction(BaseProduction):
         self,
         pose_WorldTarget: RigidTransform,
         frame_name: str = "ft_frame",
+        robot_joint_names: list = None,
     ) -> np.ndarray:
         """
         Description:
@@ -466,13 +564,18 @@ class KinematicMotionPlanningProduction(BaseProduction):
             f"Solution result was {ik_result.get_solution_result()}; need SolutionResult.kSolutionFound to make RRT Plan!"
 
         q_solution = ik_result.get_x_val()
+        # print(f"solved ik problem: {q_solution}")
 
         # Extract only the positions that correspond to our robot's joints
-        robot_joint_names = self.plant.GetPositionNames(self.robot_model_index, add_model_instance_prefix=True)
+        if robot_joint_names is None:
+            robot_joint_names = self.plant.GetPositionNames(self.robot_model_index, add_model_instance_prefix=True)
+        
         all_joint_names = self.plant.GetPositionNames()
         q_out_list = []
         for ii, joint_name in enumerate(all_joint_names):
             if joint_name in robot_joint_names:
                 q_out_list.append(q_solution[ii])
+
+        # print(f"q_out_list: {q_out_list}")
 
         return np.array(q_out_list)

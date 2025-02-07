@@ -14,6 +14,7 @@ from brom_drake.motion_planning.algorithms.motion_planner import MotionPlanner
 
 @dataclass
 class BaseRRTPlannerConfig:
+    random_seed: int = 23
     steering_step_size: float = 0.05
     prob_sample_goal: float = 0.25
     max_iterations: int = int(1e4)
@@ -27,7 +28,6 @@ class BaseRRTPlanner(MotionPlanner):
         scene_graph: SceneGraph,
         config: BaseRRTPlannerConfig = None,
     ):
-        super().__init__(robot_model_idx, plant, scene_graph)
         # Input Processing
 
         # Setup
@@ -37,48 +37,11 @@ class BaseRRTPlanner(MotionPlanner):
         if self.config is None:
             self.config = BaseRRTPlannerConfig()
 
-        # Prepare for planning
-        # self.joint_limits = self.get_joint_limits()  # Initialize joint limits array
-
-    @property
-    def dim_q(self) -> int:
-        if not self.plant.is_finalized():
-            raise ValueError("Plant has not been finalized yet! Can not compute num_actuated_dofs().")
-
-        return self.plant.num_actuated_dofs(self.robot_model_idx)
-
-    @property
-    def joint_limits(self) -> np.ndarray:
-        """
-        Description:
-            This function retrieves the joint limits of the robot.
-        """
-        # Setup
-        joint_indicies = self.plant.GetJointIndices(self.robot_model_idx)
-
-        joint_limits = np.zeros((0, 2))
-        for ii, joint_index in enumerate(joint_indicies):
-            # Check to see if joint is actuated; if not, then ignore
-            joint_ii = self.plant.get_joint(joint_index)
-            joint_can_move = joint_ii.can_rotate() or joint_ii.can_translate()
-            if not joint_can_move:
-                continue
-
-            lower_limits = self.plant.get_joint(joint_index).position_lower_limits()
-            if len(lower_limits) == 0:
-                lower_limits = [-np.inf]
-
-            upper_limits = self.plant.get_joint(joint_index).position_upper_limits()
-            if len(upper_limits) == 0:
-                upper_limits = [np.inf]
-
-            # Append limits to the joint_limits array
-            joint_limits = np.vstack((
-                joint_limits,
-                [lower_limits[0], upper_limits[0]]
-            ))
-
-        return joint_limits
+        # Use the parent class constructor
+        super().__init__(
+            robot_model_idx, plant, scene_graph, 
+            random_seed=self.config.random_seed,
+        )
 
     def find_nearest_node(
         self,
@@ -159,24 +122,12 @@ class BaseRRTPlanner(MotionPlanner):
                     collision_check_value = collision_check_fcn(rrt.nodes[node]['q'])
                     if collision_check_value:
                         print(f"Collision check node: {collision_check_fcn(rrt.nodes[node]['q'])}")
-                return rrt, True
+                return rrt, rrt.number_of_nodes()-1
 
         # If we exit the loop without finding a path to the goal,
         # return the RRT and indicate failure
         print("Max iterations reached without finding a path to the goal.")
-        return rrt, False
-
-
-
-    def sample_random_configuration(self) -> np.ndarray:
-        """
-        Description:
-            This function samples a random configuration within the joint limits.
-        """
-        return np.random.uniform(
-            self.joint_limits[:, 0],
-            self.joint_limits[:, 1]
-        )
+        return rrt, -1
 
     def steer(
         self,
@@ -184,8 +135,9 @@ class BaseRRTPlanner(MotionPlanner):
         q_random: np.ndarray
     ) -> np.ndarray:
         """
-        Description:
-            This function steers from the nearest node towards the random configuration.
+        Description
+        -----------
+        This function steers from the nearest node towards the random configuration.
         """
         # Setup
         step_size = self.config.steering_step_size
