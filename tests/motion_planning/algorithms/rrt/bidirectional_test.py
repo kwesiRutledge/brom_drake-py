@@ -416,15 +416,20 @@ class BidirectionalRRTPlannerTest(unittest.TestCase):
         )
 
         # Plan
-        plan, success = planner.plan(
+        plan, goal_node_index = planner.plan(
             q0,
             q_goal,
             lambda q: False,
         )
 
         # Verify that plan was successfully created
-        self.assertTrue(success)
+        self.assertGreaterEqual(goal_node_index, 0)
         self.assertIsNotNone(plan)
+
+        # Check that a path exists between the start and goal
+        self.assertTrue(
+            nx.has_path(plan, 0, goal_node_index)
+        )
 
 if __name__ == "__main__":
     unittest.main()

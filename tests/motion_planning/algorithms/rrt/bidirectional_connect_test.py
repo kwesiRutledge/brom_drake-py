@@ -460,5 +460,47 @@ class BidirectionalRRTPlannerTest(unittest.TestCase):
             nx.has_path(combined_rrt, 0, 3)
         )
 
+    def test_plan1(self):
+        """
+        Description
+        -----------
+        In this test, we will include one of the small problems from above
+        and verify that it can be solved by the planner.
+        This should be possible in a bounded number of iterations if we force the 
+        planner to always sample the opposite tree.
+        """
+        # Setup
+        q0 = np.array([0, 0, 0, 0, 0, 0])
+        q_goal = np.array([0.21, 0.21, 0.21, 0.21, 0.21, 0.21])
+
+        # Create Planner
+        planner = BidirectionalRRTConnectPlanner(
+            self.arm_model_idx,
+            self.plant,
+            self.scene_graph,
+            config=BidirectionalRRTConnectPlannerConfig(
+                steering_step_size=0.2,
+                probabilities=BiRRTConnectSamplingProbabilities(
+                    sample_opposite_tree=1.0,
+                )
+            ),
+        )
+
+        # Plan
+        plan, goal_node_index = planner.plan(
+            q0,
+            q_goal,
+            lambda q: False,
+        )
+
+        # Verify that plan was successfully created
+        self.assertGreaterEqual(goal_node_index, 0)
+        self.assertIsNotNone(plan)
+
+        # Check that a path exists between the start and goal
+        self.assertTrue(
+            nx.has_path(plan, 0, goal_node_index)
+        )
+
 if __name__ == "__main__":
     unittest.main()
