@@ -1,3 +1,4 @@
+import numpy as np
 from pydrake.all import Simulator
 import unittest
 
@@ -8,6 +9,7 @@ from brom_drake.motion_planning.algorithms.rrt.bidirectional_connect import (
     BiRRTConnectSamplingProbabilities,
 )
 from brom_drake.productions.motion_planning.offline.dynamic.chem_lab2 import ChemLab2
+from brom_drake.productions import ProductionID
 
 class ChemLab2Test(unittest.TestCase):
     def test_init1(self):
@@ -53,6 +55,63 @@ class ChemLab2Test(unittest.TestCase):
             planner2.plan,
             with_watcher=True,
         )
+
+        # Return true if we get here
+        self.assertTrue(True)
+
+    def test_goal_pose1(self):
+        """
+        Description
+        -----------
+        This test verifies that the ChemLab2's goal_pose method.
+        The method should not raise an error when the object
+        is initialized with a goal configuration input (instead
+        of a goal pose).
+        """
+        # Setup
+        production = ChemLab2(
+            meshcat_port_number=None,
+            goal_configuration=np.zeros((6,)),
+        )
+
+        # Call goal_pose
+        goal_pose = production.goal_pose
+
+        # Return true if we get here
+        self.assertTrue(True)
+
+    def test_id1(self):
+        """
+        Description
+        -----------
+        This test verifies that the ChemLab2 is using the
+        correct ID.
+        """
+        # Setup
+        production = ChemLab2(
+            meshcat_port_number=None,
+        )
+
+        # Check
+        self.assertEqual(production.id, ProductionID.kChemLab2)
+
+    def test_start_pose1(self):
+        """
+        Description
+        -----------
+        This test verifies that the ChemLab2's start_pose method.
+        The method should not raise an error when the object
+        is initialized with a start configuration input (instead
+        of a start pose).
+        """
+        # Setup
+        production = ChemLab2(
+            meshcat_port_number=None,
+            start_configuration=np.zeros((6,)),
+        )
+
+        # Call start_pose
+        start_pose = production.start_pose
 
         # Return true if we get here
         self.assertTrue(True)

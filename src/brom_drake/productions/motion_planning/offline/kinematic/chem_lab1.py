@@ -461,6 +461,12 @@ class ChemLab1(KinematicMotionPlanningProduction):
         #     np.zeros((n_gripper_positions,)),
         # )
 
+        # Set the initial positions of the arm
+        self.station.plant.SetPositions(
+            self.station.plant.GetMyMutableContextFromRoot(diagram_context),
+            self.arm,
+            self.start_configuration,
+        )
 
         return diagram, diagram_context
 
@@ -481,7 +487,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
         ]
 
         # Retrieve goal_configuraiton value
-        if self.goal_config_ is None:
+        if self._goal_config is None:
             beaker_to_goal_translation = np.array([+0.0, 0.2, 0.0]) 
             beaker_to_goal_orientation = RollPitchYaw(0., 0., 0.0).ToQuaternion()
             X_BeakerGoal = RigidTransform(  
@@ -492,14 +498,14 @@ class ChemLab1(KinematicMotionPlanningProduction):
             pose_WorldGoal = self.pose_WorldBeaker.multiply(X_BeakerGoal)
 
             # Use Inverse Kinematics to get the goal configuration of the robot
-            self.goal_config_ = self.solve_pose_ik_problem(
+            self._goal_config = self.solve_pose_ik_problem(
                 pose_WorldGoal,
                 robot_joint_names=hardcoded_robot_joint_names,
             )
 
-            return self.goal_config_
+            return self._goal_config
         else:
-            return self.goal_config_
+            return self._goal_config
 
     @property
     def goal_pose(self) -> RigidTransform:
@@ -507,11 +513,20 @@ class ChemLab1(KinematicMotionPlanningProduction):
         Description
         -----------
         Get the goal pose of the end effector frame.
+
+        Returns
+        -------
+        RigidTransform
+            The goal pose of the robot.
         """
         # Setup
 
         # Algorithm
-        if self.goal_pose_ is None:
+        if self._goal_pose is not None:
+            # If the goal pose is already defined, return it
+            return self._goal_pose
+        elif (self._goal_pose is None) and (self._goal_config is None):
+            # If we have no guidance on where goal is, then we will use the default goal pose
             beaker_to_goal_translation = np.array([+0.0, 0.2, 0.0]) 
             beaker_to_goal_orientation = RollPitchYaw(0., 0., 0.0).ToQuaternion()
             X_BeakerGoal = RigidTransform(  
@@ -520,17 +535,67 @@ class ChemLab1(KinematicMotionPlanningProduction):
             )
 
             pose_WorldGoal = self.pose_WorldBeaker.multiply(X_BeakerGoal)
-            self.goal_pose_ = pose_WorldGoal
+            self._goal_pose = pose_WorldGoal
 
-            return self.goal_pose_
+            return self._goal_pose
+        
+        elif (self._goal_pose is None) and (self._goal_config is not None):
+            # Use the goal configuration to get the goal pose
+            # Using a "forward kinematics solver"
+            self._goal_pose = self.solve_forward_kinematics_problem_for_arm(self._goal_config)
+            return self._goal_pose
+        
         else:
-            return self.goal_pose_
+            raise ValueError(
+                f"Unexpected behavior. This should never happen."
+            )
 
     @property
     def id(self) -> ProductionID:
-        return ProductionID.kShelfPlanning1
+        return ProductionID.kChemLab1
         
-    # TODO(kwesi): Implement start_configuration method.
+    def solve_forward_kinematics_problem_for_arm(
+        self,
+        robot_joint_positions: np.ndarray,
+        target_frame_name: str = "ft_frame",
+    ) -> RigidTransform:
+        """
+        Description
+        -----------
+        This method solves the forward kinematics problem for the UR10e arm
+        by itself.
+
+        Returns
+        -------
+        RigidTransform
+            The end effector pose of the robot.
+        """
+        # Setup
+
+        # Create shadow plant and populate it with the UR10e arm
+        shadow_station = KinematicUR10eStation(
+            time_step=self.time_step,
+            meshcat_port_number=None,
+        )
+        shadow_station.Finalize()
+
+        # Use station's plant to solve the forward kinematics problem
+        shadow_plant = shadow_station.plant
+        
+        temp_context = shadow_plant.CreateDefaultContext()
+        shadow_plant.SetPositions(
+            temp_context,
+            shadow_station.arm,
+            robot_joint_positions,
+        )
+
+        # Get the pose of the end effector
+        end_effector_pose = shadow_plant.EvalBodyPoseInWorld(
+            temp_context,
+            shadow_plant.GetBodyByName(target_frame_name),
+        )
+
+        return end_effector_pose
 
     @property
     def start_configuration(self):
@@ -549,13 +614,13 @@ class ChemLab1(KinematicMotionPlanningProduction):
         ]
 
         # Algorithm
-        if self.start_config_ is not None:
-            return self.start_config_
-        elif self.start_pose_ is not None:
+        if self._start_config is not None:
+            return self._start_config
+        elif self._start_pose is not None:
             # Use the start pose to get the start configuration
             # Using the IK solver (potentially buggy because default ik problem ignores obstacles)
             return self.solve_pose_ik_problem(
-                self.start_pose_,
+                self._start_pose,
                 robot_joint_names=hardcoded_robot_joint_names,
             )
         else:
@@ -566,13 +631,24 @@ class ChemLab1(KinematicMotionPlanningProduction):
     @property
     def start_pose(self) -> RigidTransform:
         """
-        Get the start pose. This should be defined by the subclass.
-        :return:
+        Description
+        -----------
+        Get the start pose.
+        
+        Returns
+        -------
+        RigidTransform
+            The start pose of the robot.
         """
         # Setup
 
-        if self.start_pose_ is None:
-            # Define Start Pose
+        # Algorithm
+        if self._start_pose is not None:
+            # If the start pose is already defined, return it
+            return self._start_pose
+        
+        elif (self._start_pose is None) and (self._start_config is None):
+            # If we have no guidance on how to start, then we will use the default start pose
             holder_to_start_translation = np.array([+0.0, 0.2, 0.025])
             holder_to_start_orientation = Quaternion(1, 0, 0, 0)
             X_HolderStart = RigidTransform(
@@ -580,7 +656,17 @@ class ChemLab1(KinematicMotionPlanningProduction):
                 holder_to_start_translation,
             )
             pose_WorldStart = self.pose_WorldHolder.multiply(X_HolderStart)
-            self.start_pose_ = pose_WorldStart
-            return self.start_pose_
+            self._start_pose = pose_WorldStart
+            return self._start_pose
+        
+        elif (self._start_pose is None) and (self._start_config is not None):
+            # Use the start configuration to get the starting pose
+            # Using a "forward kinematics solver"
+            self._start_pose = self.solve_forward_kinematics_problem_for_arm(self._start_config)
+            return self._start_pose
+        
         else:
-            return self.start_pose_
+            raise ValueError(
+                f"Unexpected behavior. This should never happen."
+            )
+

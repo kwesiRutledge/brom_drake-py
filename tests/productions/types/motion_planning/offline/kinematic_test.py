@@ -12,7 +12,7 @@ from brom_drake.motion_planning.algorithms.rrt.base import BaseRRTPlanner
 from brom_drake.productions.motion_planning.offline import ShelfPlanning1
 
 
-class OfflineMotionPlanningProductionTest(unittest.TestCase):
+class OfflineKinematicMotionPlanningProductionTest(unittest.TestCase):
     def test_easy_cast_and_build1(self):
         """
         Description:

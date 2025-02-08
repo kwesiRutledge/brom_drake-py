@@ -6,3 +6,4 @@ class ProductionID(Enum):
     kShowMeThisModel = "ShowMeThisModel"
     kShelfPlanning1 = "ShelfPlanning1"
     kChemLab1 = "ChemLab-Planning1"
+    kChemLab2 = "ChemLab-Planning2"
