@@ -536,7 +536,7 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
                 "Please implement your own start_pose() function with a custom forward kinamtics function" +
                 " (see ChemLab2's forward kinematics function) to convert the start configuration to a start pose."
             )
-
+            #TODO(kwesi): Is there a way to do this without knowing about the user's robot?
         else:
             raise NotImplementedError(
                 "This function should be implemented by the subclass."
