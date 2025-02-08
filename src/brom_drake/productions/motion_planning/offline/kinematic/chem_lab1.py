@@ -528,7 +528,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
 
     @property
     def id(self) -> ProductionID:
-        return ProductionID.kShelfPlanning1
+        return ProductionID.kChemLab1
         
     # TODO(kwesi): Implement start_configuration method.
 
