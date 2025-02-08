@@ -98,12 +98,6 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
         # Connect motion planning components to station
         # self.connect_motion_planning_components()
 
-        # Connect to Meshcat
-        # if self.use_meshcat:
-        #     self.meshcat = Meshcat(port=7001)  # Object provides an interface to Meshcat
-        #     m_visualizer = MeshcatVisualizer(self.meshcat)
-        #     m_visualizer.AddToBuilder(builder, self.scene_graph, self.meshcat)
-
         # Print message to user
         print("Added all secondary cast members to the builder.")
 
