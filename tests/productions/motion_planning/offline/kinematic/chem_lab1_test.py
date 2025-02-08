@@ -5,6 +5,7 @@ from pydrake.systems.analysis import Simulator
 # Internal Imports
 from brom_drake.motion_planning.systems.prototypical_planner import PrototypicalPlannerSystem
 from brom_drake.motion_planning.systems.rrt_plan_generator import RRTPlanGenerator
+from brom_drake.productions import ProductionID
 from brom_drake.productions.motion_planning.offline.kinematic.chem_lab1 import ChemLab1
 from brom_drake.motion_planning.algorithms.rrt.base import BaseRRTPlanner
 
@@ -99,6 +100,13 @@ class ChemLab1Test(unittest.TestCase):
         simulator.AdvanceTo(0.010)
 
         self.assertTrue(True)
+
+    def test_id1(self):
+        # Setup
+        production = ChemLab1(meshcat_port_number=None)
+
+        # Check
+        self.assertEqual(production.id(), ProductionID.kChemLab1)
 
 
 if __name__ == '__main__':
