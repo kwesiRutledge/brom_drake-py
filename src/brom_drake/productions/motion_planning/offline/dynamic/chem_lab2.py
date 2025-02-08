@@ -601,13 +601,21 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         # Setup
 
         # Algorithm
-        if self._goal_pose is None:
+        if self._goal_pose is not None:
+            return self._goal_pose
+        elif (self._goal_pose is None) and (self._goal_config is None):
             pose_WorldGoal = self.pose_WorldBeaker.multiply(self.pose_BeakerGoal)
             self._goal_pose = pose_WorldGoal
 
             return self._goal_pose
+        elif (self._goal_pose is None) and (self._goal_config is not None):
+            # If the goal configuration is given,
+            # use the forward kinematics solver to get the goal pose
+            return self.solve_forward_kinematics_problem_for_arm(self._goal_config)
         else:
-            return self._goal_pose
+            raise ValueError(
+                f"It appears that the starting configuration is set, but the starting pose is not. This is unexpected behavior!"
+            )
 
     @property
     def id(self) -> ProductionID:
