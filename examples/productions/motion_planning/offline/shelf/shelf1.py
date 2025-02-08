@@ -24,7 +24,7 @@ def main(meshcat_port_number: int = 7001):
         meshcat_port_number = None # Use None for CI
 
     # Define the goal pose
-    easy_goal_position = np.array([+0.0, 0.0, 1.05])
+    easy_goal_position = np.array([+0.0, 1.0, 1.05])
     goal_orientation = RollPitchYaw(np.pi / 2.0, np.pi / 2.0, 0.0).ToQuaternion()
     goal_pose = RigidTransform(goal_orientation, easy_goal_position)
 
