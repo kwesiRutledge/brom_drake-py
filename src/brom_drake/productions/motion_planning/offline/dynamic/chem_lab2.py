@@ -621,8 +621,6 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
     def id(self) -> ProductionID:
         return ProductionID.kChemLab2
         
-    # TODO(kwesi): Implement start_configuration method.
-
     def initialize_pose_data(self):
         # Set shelf pose
         if self.shelf_pose is None:

@@ -530,8 +530,6 @@ class ChemLab1(KinematicMotionPlanningProduction):
     def id(self) -> ProductionID:
         return ProductionID.kChemLab1
         
-    # TODO(kwesi): Implement start_configuration method.
-
     @property
     def start_configuration(self):
         """
