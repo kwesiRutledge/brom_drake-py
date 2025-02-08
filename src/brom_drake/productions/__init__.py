@@ -1,4 +1,4 @@
-from .ids import ProductionID
+from brom_drake.productions.ids import ProductionID
 from brom_drake.productions.debug.show_me import (
     ShowMeThisModel,
 )
