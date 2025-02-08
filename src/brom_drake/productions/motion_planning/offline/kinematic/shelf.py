@@ -300,6 +300,13 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
             diagram_context
         )
 
+        # Set the initial positions of the arm
+        self.station.plant.SetPositions(
+            self.station.plant.GetMyMutableContextFromRoot(diagram_context),
+            self.arm,
+            self.start_configuration,
+        )
+
         return diagram, diagram_context
 
     @property
