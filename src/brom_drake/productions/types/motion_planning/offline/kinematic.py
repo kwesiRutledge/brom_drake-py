@@ -388,6 +388,17 @@ class KinematicMotionPlanningProduction(BaseProduction):
         """
         if self._goal_pose is not None:
             return self._goal_pose
+        elif self._goal_config is not None:
+            # The user would need to define a forward kinematics function,
+            # to convert the goal configuration to a goal pose.
+            raise NotImplementedError(
+                "It looks like you are trying to get the goal pose from the goal configuration.\n" +
+                "This is not implemented (yet!) because it would require solving the forward kinematics" +
+                "problem for your specific scene.\n" +
+                "Please implement your own goal_pose() function with a custom forward kinamtics function" +
+                " (see ChemLab2's forward kinematics function) to convert the goal configuration to a goal pose."
+            )
+            #TODO(kwesi): Is there a way to do this without knowing about the user's robot?
         else:
             raise NotImplementedError(
                 "This function should be implemented by the subclass."
@@ -431,6 +442,17 @@ class KinematicMotionPlanningProduction(BaseProduction):
         """
         if self._start_pose is not None:
             return self._start_pose
+        elif self._start_config is not None:
+            # The user would need to define a forward kinematics function,
+            # to convert the start configuration to a start pose.
+            raise NotImplementedError(
+                "It looks like you are trying to get the start pose from the start configuration.\n" +
+                "This is not implemented (yet!) because it would require solving the forward kinematics" +
+                "problem for your specific scene.\n" +
+                "Please implement your own start_pose() function with a custom forward kinamtics function" +
+                " (see ChemLab2's forward kinematics function) to convert the start configuration to a start pose."
+            )
+            #TODO(kwesi): Is there a way to do this without knowing about the user's robot?
         else:
             raise NotImplementedError(
                 "This function should be implemented by the subclass."
