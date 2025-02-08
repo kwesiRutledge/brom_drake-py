@@ -106,7 +106,7 @@ class ChemLab1Test(unittest.TestCase):
         production = ChemLab1(meshcat_port_number=None)
 
         # Check
-        self.assertEqual(production.id(), ProductionID.kChemLab1)
+        self.assertEqual(production.id, ProductionID.kChemLab1)
 
 
 if __name__ == '__main__':
