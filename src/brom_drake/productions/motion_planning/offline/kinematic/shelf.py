@@ -303,10 +303,16 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
         return diagram, diagram_context
 
     @property
-    def goal_pose(self):
+    def goal_pose(self) -> RigidTransform:
         """
-        Get the goal pose. This should be defined by the subclass.
-        :return:
+        Description
+        -----------
+        Get the goal pose. 
+        
+        Returns
+        -------
+        RigidTransform
+            The goal pose.
         """
 
         # Algorithm
@@ -378,7 +384,11 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
         Description
         -----------
         Get the start pose. This should be defined by the subclass.
-        :return:
+        
+        Returns
+        -------
+        RigidTransform
+            The start pose.
         """
         # Setup
 

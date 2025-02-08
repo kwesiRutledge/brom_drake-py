@@ -564,10 +564,18 @@ class ChemLab1(KinematicMotionPlanningProduction):
     @property
     def start_pose(self) -> RigidTransform:
         """
-        Get the start pose. This should be defined by the subclass.
-        :return:
+        Description
+        -----------
+        Get the start pose.
+        
+        Returns
+        -------
+        RigidTransform
+            The start pose of the robot.
         """
         # Setup
+
+        # Algorithm
 
         if self._start_pose is None:
             # Define Start Pose
