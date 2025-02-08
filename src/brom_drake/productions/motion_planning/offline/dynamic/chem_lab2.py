@@ -578,18 +578,18 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         ]
 
         # Retrieve goal_configuraiton value
-        if self.goal_config_ is None:
+        if self._goal_config is None:
             pose_WorldGoal = self.pose_WorldBeaker.multiply(self.pose_BeakerGoal)
 
             # Use Inverse Kinematics to get the goal configuration of the robot
-            self.goal_config_ = self.solve_pose_ik_problem(
+            self._goal_config = self.solve_pose_ik_problem(
                 pose_WorldGoal,
                 robot_joint_names=hardcoded_robot_joint_names,
             )
 
-            return self.goal_config_
+            return self._goal_config
         else:
-            return self.goal_config_
+            return self._goal_config
 
     @property
     def goal_pose(self) -> RigidTransform:
@@ -601,13 +601,13 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         # Setup
 
         # Algorithm
-        if self.goal_pose_ is None:
+        if self._goal_pose is None:
             pose_WorldGoal = self.pose_WorldBeaker.multiply(self.pose_BeakerGoal)
-            self.goal_pose_ = pose_WorldGoal
+            self._goal_pose = pose_WorldGoal
 
-            return self.goal_pose_
+            return self._goal_pose
         else:
-            return self.goal_pose_
+            return self._goal_pose
 
     @property
     def id(self) -> ProductionID:
