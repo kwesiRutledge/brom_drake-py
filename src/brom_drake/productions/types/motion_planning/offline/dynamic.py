@@ -527,9 +527,16 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
         if self._start_pose is not None:
             return self._start_pose
         elif self._start_config is not None:
-            # Use the start configuration to get the start pose
-            
-            
+            # The user would need to define a forward kinematics function,
+            # to convert the start configuration to a start pose.
+            raise NotImplementedError(
+                "It looks like you are trying to get the start pose from the start configuration.\n" +
+                "This is not implemented (yet!) because it would require solving the forward kinematics" +
+                "problem for your specific scene.\n" +
+                "Please implement your own start_pose() function with a custom forward kinamtics function" +
+                " (see ChemLab2's forward kinematics function) to convert the start configuration to a start pose."
+            )
+
         else:
             raise NotImplementedError(
                 "This function should be implemented by the subclass."

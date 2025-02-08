@@ -669,19 +669,58 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         ]
 
         # Algorithm
-        if self.start_config_ is not None:
-            return self.start_config_
-        elif self.start_pose_ is not None:
+        if self._start_config is not None:
+            return self._start_config
+        elif self._start_pose is not None:
             # Use the start pose to get the start configuration
             # Using the IK solver (potentially buggy because default ik problem ignores obstacles)
             return self.solve_pose_ik_problem(
-                self.start_pose_,
+                self._start_pose,
                 robot_joint_names=hardcoded_robot_joint_names,
             )
         else:
             raise NotImplementedError(
                 "This function should be implemented by the subclass."
             )
+
+    def solve_forward_kinematics_problem_for_arm(
+        self,
+        robot_joint_positions: np.ndarray,
+    ) -> RigidTransform:
+        """
+        Description
+        -----------
+        This method solves the forward kinematics problem for the UR10e arm
+        by itself.
+        """
+        # Setup
+        target_frame_name = "tool0"
+
+        # Create shadow plant and populate it with the UR10e arm
+        shadow_station = UR10eStation(
+            time_step=self.time_step,
+            meshcat_port_number=None,
+            gripper_type=self.gripper_type,
+        )
+        shadow_station.Finalize()
+
+        # Use station's plant to solve the forward kinematics problem
+        shadow_plant = shadow_station.plant
+        
+        temp_context = shadow_plant.CreateDefaultContext()
+        shadow_plant.SetPositions(
+            temp_context,
+            shadow_station.arm,
+            robot_joint_positions,
+        )
+
+        # Get the pose of the end effector
+        end_effector_pose = shadow_plant.EvalBodyPoseInWorld(
+            temp_context,
+            shadow_plant.GetBodyByName(target_frame_name),
+        )
+
+        return end_effector_pose
 
     @property
     def start_pose(self) -> RigidTransform:
@@ -690,11 +729,21 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         :return:
         """
         # Setup
+        end_effector_frame_name = "tool0"
 
-        if self.start_pose_ is None:
+        # Algorithm
+        if not (self._start_pose is None):
+            return self._start_pose
+        elif (self._start_pose is None) and (self._start_config is None):
             # Define Start Pose
             pose_WorldStart = self.pose_WorldHolder.multiply(self.pose_HolderStart)
-            self.start_pose_ = pose_WorldStart
-            return self.start_pose_
+            self._start_pose = pose_WorldStart
+            return self._start_pose
+        elif (self._start_pose is None) and (self._start_config is not None):
+            # Use the start configuration to get the starting pose
+            # Using a "forward kinematics solver"
+            return self.solve_forward_kinematics_problem_for_arm(self._start_config)
         else:
-            return self.start_pose_
+            raise ValueError(
+                f"It appears that the starting configuration is set, but the starting pose is not. This is unexpected behavior!"
+            )
