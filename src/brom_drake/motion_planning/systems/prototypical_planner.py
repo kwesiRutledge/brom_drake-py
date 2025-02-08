@@ -106,8 +106,9 @@ class PrototypicalPlannerSystem(LeafSystem):
         closest_points = query_object.ComputePointPairPenetration()
         eps0 = 1e-2
         collision_detected = False
-        for pair in closest_points:
-            if pair.depth > eps0:
+        # inspector = self.scene_graph.model_inspector()
+        for pair_ii in closest_points:
+            if pair_ii.depth > eps0:
                 collision_detected = True
                 break
             

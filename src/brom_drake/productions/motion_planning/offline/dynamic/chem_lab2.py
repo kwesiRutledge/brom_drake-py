@@ -611,7 +611,8 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         elif (self._goal_pose is None) and (self._goal_config is not None):
             # If the goal configuration is given,
             # use the forward kinematics solver to get the goal pose
-            return self.solve_forward_kinematics_problem_for_arm(self._goal_config)
+            self._goal_pose = self.solve_forward_kinematics_problem_for_arm(self._goal_config)
+            return self._goal_pose
         else:
             raise ValueError(
                 f"It appears that the starting configuration is set, but the starting pose is not. This is unexpected behavior!"
@@ -658,37 +659,6 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
             holder_to_start_translation,
         )
 
-    @property
-    def start_configuration(self):
-        """
-        Get the goal pose. This should be defined by the subclass.
-        :return:
-        """
-        # Setup
-        hardcoded_robot_joint_names = [
-            'ur10e-test_shoulder_pan_joint_q',
-            'ur10e-test_shoulder_lift_joint_q',
-            'ur10e-test_elbow_joint_q',
-            'ur10e-test_wrist_1_joint_q',
-            'ur10e-test_wrist_2_joint_q',
-            'ur10e-test_wrist_3_joint_q',
-        ]
-
-        # Algorithm
-        if self._start_config is not None:
-            return self._start_config
-        elif self._start_pose is not None:
-            # Use the start pose to get the start configuration
-            # Using the IK solver (potentially buggy because default ik problem ignores obstacles)
-            return self.solve_pose_ik_problem(
-                self._start_pose,
-                robot_joint_names=hardcoded_robot_joint_names,
-            )
-        else:
-            raise NotImplementedError(
-                "This function should be implemented by the subclass."
-            )
-
     def solve_forward_kinematics_problem_for_arm(
         self,
         robot_joint_positions: np.ndarray,
@@ -729,13 +699,44 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         return end_effector_pose
 
     @property
+    def start_configuration(self):
+        """
+        Get the goal pose. This should be defined by the subclass.
+        :return:
+        """
+        # Setup
+        hardcoded_robot_joint_names = [
+            'ur10e-test_shoulder_pan_joint_q',
+            'ur10e-test_shoulder_lift_joint_q',
+            'ur10e-test_elbow_joint_q',
+            'ur10e-test_wrist_1_joint_q',
+            'ur10e-test_wrist_2_joint_q',
+            'ur10e-test_wrist_3_joint_q',
+        ]
+
+        # Algorithm
+        if self._start_config is not None:
+            return self._start_config
+        elif self._start_pose is not None:
+            # Use the start pose to get the start configuration
+            # Using the IK solver (potentially buggy because default ik problem ignores obstacles)
+            return self.solve_pose_ik_problem(
+                self._start_pose,
+                robot_joint_names=hardcoded_robot_joint_names,
+            )
+        else:
+            raise NotImplementedError(
+                "This function should be implemented by the subclass."
+            )
+
+
+    @property
     def start_pose(self) -> RigidTransform:
         """
         Get the start pose. This should be defined by the subclass.
         :return:
         """
         # Setup
-        end_effector_frame_name = "tool0"
 
         # Algorithm
         if not (self._start_pose is None):
@@ -748,8 +749,9 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         elif (self._start_pose is None) and (self._start_config is not None):
             # Use the start configuration to get the starting pose
             # Using a "forward kinematics solver"
-            return self.solve_forward_kinematics_problem_for_arm(self._start_config)
+            self._start_pose = self.solve_forward_kinematics_problem_for_arm(self._start_config)
+            return self._start_pose
         else:
             raise ValueError(
-                f"It appears that the starting configuration is set, but the starting pose is not. This is unexpected behavior!"
+                f"Unexpected behavior. This should never happen."
             )

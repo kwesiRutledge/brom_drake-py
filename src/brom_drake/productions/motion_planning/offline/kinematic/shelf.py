@@ -42,7 +42,7 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
         if self.shelf_pose is None:
             self.shelf_pose = RigidTransform(
                 RollPitchYaw(0.0, 0.0, +np.pi/2.0).ToQuaternion(),
-                np.array([0.0, 1.0, 0.6]),
+                np.array([0.0, 1.0, 0.65]),
             )
 
         self.desired_cupboard_positions = np.array([0.2, 0.3])
@@ -314,18 +314,69 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
         Get the goal pose. This should be defined by the subclass.
         :return:
         """
-        if self._goal_pose is None:
+
+        # Algorithm
+        if self._goal_pose is not None:
+            # If we have already defined the goal pose, then return it
+            return self._goal_pose
+        elif (self._goal_pose is None) and (self._goal_config is None):
+            # If we have no guidance on how to start, then we will use a default
             goal_position = np.array([+0.0, 1.0, 0.6])
             goal_orientation = RollPitchYaw(np.pi / 2.0, np.pi / 2.0, 0.0).ToQuaternion()
             self._goal_pose = RigidTransform(goal_orientation, goal_position)
             return self._goal_pose
-        else:
+        elif (self._goal_pose is None) and (self._goal_config is not None):
+            # Use the goal configuration to get the goal pose
+            # Using a "forward kinematics solver"
+            self._goal_pose = self.solve_forward_kinematics_problem_for_arm(self._goal_config)
             return self._goal_pose
+        else:
+            raise ValueError(
+                f"Unexpected behavior. This should never happen."
+            )
 
 
     @property
     def id(self) -> ProductionID:
         return ProductionID.kShelfPlanning1
+
+    def solve_forward_kinematics_problem_for_arm(
+        self,
+        robot_joint_positions: np.ndarray,
+        target_frame_name: str = "ft_frame",
+    ) -> RigidTransform:
+        """
+        Description
+        -----------
+        This method solves the forward kinematics problem for the UR10e arm
+        by itself.
+        """
+        # Setup
+
+        # Create shadow plant and populate it with the UR10e arm
+        shadow_station = KinematicUR10eStation(
+            time_step=self.time_step,
+            meshcat_port_number=None,
+        )
+        shadow_station.Finalize()
+
+        # Use station's plant to solve the forward kinematics problem
+        shadow_plant = shadow_station.plant
+        
+        temp_context = shadow_plant.CreateDefaultContext()
+        shadow_plant.SetPositions(
+            temp_context,
+            shadow_station.arm,
+            robot_joint_positions,
+        )
+
+        # Get the pose of the end effector
+        end_effector_pose = shadow_plant.EvalBodyPoseInWorld(
+            temp_context,
+            shadow_plant.GetBodyByName(target_frame_name),
+        )
+
+        return end_effector_pose
 
     @property
     def start_pose(self) -> RigidTransform:
@@ -335,10 +386,23 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
         Get the start pose. This should be defined by the subclass.
         :return:
         """
-        if self._start_pose is None:
+        # Setup
+
+        if self._start_pose is not None:
+            # If we have already defined the start pose, then return it
+            return self._start_pose
+        elif (self._start_pose is None) and (self._start_config is None):
+            # If we have no guidance on how to start, then we will use a default
             start_position = np.array([+0.3, 0.1, 1.2])
             start_orientation = Quaternion(1, 0, 0, 0)
             self._start_pose = RigidTransform(start_orientation, start_position)
             return self._start_pose
-        else:
+        elif (self._start_pose is None) and (self._start_config is not None):
+            # Use the start configuration to get the starting pose
+            # Using a "forward kinematics solver"
+            self._start_pose = self.solve_forward_kinematics_problem_for_arm(self._start_config)
             return self._start_pose
+        else:
+            raise ValueError(
+                f"Unexpected behavior. This should never happen."
+            )

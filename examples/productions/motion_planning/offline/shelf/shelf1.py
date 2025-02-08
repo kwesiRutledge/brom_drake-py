@@ -15,7 +15,7 @@ from pydrake.all import (
 import typer
 
 # Internal imports
-from brom_drake.motion_planning.algorithms.rrt.connect import RRTConnectPlannerConfig, RRTConnectPlanner
+from brom_drake.motion_planning.algorithms.rrt import RRTConnectPlannerConfig, RRTConnectPlanner
 from brom_drake.productions.motion_planning.offline import ShelfPlanning1
 
 def main(meshcat_port_number: int = 7001):
@@ -23,7 +23,8 @@ def main(meshcat_port_number: int = 7001):
     if meshcat_port_number < 0:
         meshcat_port_number = None # Use None for CI
 
-    easy_goal_position = np.array([+0.0, 1.0, 1.0])
+    # Define the goal pose
+    easy_goal_position = np.array([+0.0, 0.0, 1.05])
     goal_orientation = RollPitchYaw(np.pi / 2.0, np.pi / 2.0, 0.0).ToQuaternion()
     goal_pose = RigidTransform(goal_orientation, easy_goal_position)
 
@@ -36,7 +37,7 @@ def main(meshcat_port_number: int = 7001):
     # Create a planner object which will be used to plan the motion
     config = RRTConnectPlannerConfig(
         steering_step_size=0.01,
-        prob_sample_goal=0.025,
+        prob_sample_goal=0.05,
         max_iterations=int(1e5),
         convergence_threshold=1e-3,
     )
