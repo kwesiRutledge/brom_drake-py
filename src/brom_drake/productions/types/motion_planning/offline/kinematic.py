@@ -37,12 +37,12 @@ class KinematicMotionPlanningProduction(BaseProduction):
         super().__init__(**kwargs)
 
         # Start and Goal Configurations
-        self.start_config_ = start_configuration
-        self.goal_config_ = goal_configuration
+        self._start_config = start_configuration
+        self._goal_config = goal_configuration
 
         # Start and Goal Poses
-        self.start_pose_ = start_pose
-        self.goal_pose_ = goal_pose
+        self._start_pose = start_pose
+        self._goal_pose = goal_pose
 
         # Create placeholder for the plant
         self.plant = None
@@ -369,12 +369,12 @@ class KinematicMotionPlanningProduction(BaseProduction):
         Get the goal pose. This should be defined by the subclass.
         :return:
         """
-        if self.goal_config_ is not None:
-            return self.goal_config_
-        elif self.goal_pose_ is not None:
+        if self._goal_config is not None:
+            return self._goal_config
+        elif self._goal_pose is not None:
             # Use the goal pose to get the goal configuration
             # Using the IK solver (potentially buggy because default ik problem ignores obstacles)
-            return self.solve_pose_ik_problem(self.goal_pose_)
+            return self.solve_pose_ik_problem(self._goal_pose)
         else:
             raise NotImplementedError(
                 "This function should be implemented by the subclass."
@@ -386,8 +386,8 @@ class KinematicMotionPlanningProduction(BaseProduction):
         Get the goal pose. This should be defined by the subclass.
         :return:
         """
-        if self.goal_pose_ is not None:
-            return self.goal_pose_
+        if self._goal_pose is not None:
+            return self._goal_pose
         else:
             raise NotImplementedError(
                 "This function should be implemented by the subclass."
@@ -412,12 +412,12 @@ class KinematicMotionPlanningProduction(BaseProduction):
         Description:
             This function returns the start and goal poses as a single array.
         """
-        if self.start_config_ is not None:
-            return self.start_config_
-        elif self.start_pose_ is not None:
+        if self._start_config is not None:
+            return self._start_config
+        elif self._start_pose is not None:
             # Use the start pose to get the start configuration
             # Using the IK solver (potentially buggy because default ik problem ignores obstacles)
-            return self.solve_pose_ik_problem(self.start_pose_)
+            return self.solve_pose_ik_problem(self._start_pose)
         else:
             raise NotImplementedError(
                 "This function should be implemented by the subclass."
@@ -429,8 +429,8 @@ class KinematicMotionPlanningProduction(BaseProduction):
         Get the start pose. This should be defined by the subclass.
         :return:
         """
-        if self.start_pose_ is not None:
-            return self.start_pose_
+        if self._start_pose is not None:
+            return self._start_pose
         else:
             raise NotImplementedError(
                 "This function should be implemented by the subclass."

@@ -314,13 +314,13 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
         Get the goal pose. This should be defined by the subclass.
         :return:
         """
-        if self.goal_pose_ is None:
+        if self._goal_pose is None:
             goal_position = np.array([+0.0, 1.0, 0.6])
             goal_orientation = RollPitchYaw(np.pi / 2.0, np.pi / 2.0, 0.0).ToQuaternion()
-            self.goal_pose_ = RigidTransform(goal_orientation, goal_position)
-            return self.goal_pose_
+            self._goal_pose = RigidTransform(goal_orientation, goal_position)
+            return self._goal_pose
         else:
-            return self.goal_pose_
+            return self._goal_pose
 
 
     @property
@@ -335,10 +335,10 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
         Get the start pose. This should be defined by the subclass.
         :return:
         """
-        if self.start_pose_ is None:
+        if self._start_pose is None:
             start_position = np.array([+0.3, 0.1, 1.2])
             start_orientation = Quaternion(1, 0, 0, 0)
-            self.start_pose_ = RigidTransform(start_orientation, start_position)
-            return self.start_pose_
+            self._start_pose = RigidTransform(start_orientation, start_position)
+            return self._start_pose
         else:
-            return self.start_pose_
+            return self._start_pose

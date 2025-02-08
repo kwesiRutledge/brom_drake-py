@@ -481,7 +481,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
         ]
 
         # Retrieve goal_configuraiton value
-        if self.goal_config_ is None:
+        if self._goal_config is None:
             beaker_to_goal_translation = np.array([+0.0, 0.2, 0.0]) 
             beaker_to_goal_orientation = RollPitchYaw(0., 0., 0.0).ToQuaternion()
             X_BeakerGoal = RigidTransform(  
@@ -492,14 +492,14 @@ class ChemLab1(KinematicMotionPlanningProduction):
             pose_WorldGoal = self.pose_WorldBeaker.multiply(X_BeakerGoal)
 
             # Use Inverse Kinematics to get the goal configuration of the robot
-            self.goal_config_ = self.solve_pose_ik_problem(
+            self._goal_config = self.solve_pose_ik_problem(
                 pose_WorldGoal,
                 robot_joint_names=hardcoded_robot_joint_names,
             )
 
-            return self.goal_config_
+            return self._goal_config
         else:
-            return self.goal_config_
+            return self._goal_config
 
     @property
     def goal_pose(self) -> RigidTransform:
@@ -511,7 +511,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
         # Setup
 
         # Algorithm
-        if self.goal_pose_ is None:
+        if self._goal_pose is None:
             beaker_to_goal_translation = np.array([+0.0, 0.2, 0.0]) 
             beaker_to_goal_orientation = RollPitchYaw(0., 0., 0.0).ToQuaternion()
             X_BeakerGoal = RigidTransform(  
@@ -520,11 +520,11 @@ class ChemLab1(KinematicMotionPlanningProduction):
             )
 
             pose_WorldGoal = self.pose_WorldBeaker.multiply(X_BeakerGoal)
-            self.goal_pose_ = pose_WorldGoal
+            self._goal_pose = pose_WorldGoal
 
-            return self.goal_pose_
+            return self._goal_pose
         else:
-            return self.goal_pose_
+            return self._goal_pose
 
     @property
     def id(self) -> ProductionID:
@@ -549,13 +549,13 @@ class ChemLab1(KinematicMotionPlanningProduction):
         ]
 
         # Algorithm
-        if self.start_config_ is not None:
-            return self.start_config_
-        elif self.start_pose_ is not None:
+        if self._start_config is not None:
+            return self._start_config
+        elif self._start_pose is not None:
             # Use the start pose to get the start configuration
             # Using the IK solver (potentially buggy because default ik problem ignores obstacles)
             return self.solve_pose_ik_problem(
-                self.start_pose_,
+                self._start_pose,
                 robot_joint_names=hardcoded_robot_joint_names,
             )
         else:
@@ -571,7 +571,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
         """
         # Setup
 
-        if self.start_pose_ is None:
+        if self._start_pose is None:
             # Define Start Pose
             holder_to_start_translation = np.array([+0.0, 0.2, 0.025])
             holder_to_start_orientation = Quaternion(1, 0, 0, 0)
@@ -580,7 +580,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
                 holder_to_start_translation,
             )
             pose_WorldStart = self.pose_WorldHolder.multiply(X_HolderStart)
-            self.start_pose_ = pose_WorldStart
-            return self.start_pose_
+            self._start_pose = pose_WorldStart
+            return self._start_pose
         else:
-            return self.start_pose_
+            return self._start_pose
