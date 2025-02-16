@@ -2,13 +2,18 @@ import networkx as nx
 from pydrake.all import (
     LeafSystem,
 )
-from typing import List
+from typing import List, Union
 
 # Internal Imports
 from brom_drake.utils.leaf_systems.network_fsm.fsm_transition_condition import (
     FSMTransitionCondition, FSMTransitionConditionType
 )
 from brom_drake.utils.leaf_systems.network_fsm.fsm_edge_definition import FSMEdgeDefinition
+from brom_drake.utils.leaf_systems.network_fsm.errors import (
+    EdgeContainsNoConditionsError,
+    MultipleConnectedComponentsError,
+    NumberOfStartNodesError,
+)
 
 class NetworkXFSM(LeafSystem):
     def __init__(
@@ -19,6 +24,10 @@ class NetworkXFSM(LeafSystem):
 
         # Prepare to Create FSM from Graph
         self.fsm_graph = fsm_graph
+
+        # Check if the FSM is valid
+        if not self.supports_this_digraph(self.fsm_graph):
+            raise ValueError("The given directed graph is not a valid FSM.")
 
         # Collect all edge definitions from the graph
         self.edge_definitions = self.collect_edge_definitions(self.fsm_graph)
@@ -99,7 +108,7 @@ class NetworkXFSM(LeafSystem):
 
             # Create the FSMEdgeDefinition object
             edge_definition = FSMEdgeDefinition(
-                conditions=conditions
+                conditions=conditions,
                 src=src_ii,
                 dst=dst_ii,
             )
@@ -108,3 +117,57 @@ class NetworkXFSM(LeafSystem):
             edge_definitions.append(edge_definition)
 
         return edge_definitions
+    
+    @staticmethod
+    def supports_this_digraph(
+        digraph: nx.DiGraph,
+        debug_flag: bool = False,
+    ) -> Union[None, ValueError]:
+        """
+        Description
+        -----------
+        This function checks if the given directed graph is a valid FSM.
+
+        Parameters
+        ----------
+        digraph : nx.DiGraph
+            The directed graph to check.
+
+        Returns
+        -------
+        recognized_exception: Union[None, ValueError]
+            Either an error if the graph is not a valid FSM, or None if the graph is valid.
+        """
+
+        # Check if the graph is connected
+        connected_components = list(nx.weakly_connected_components(digraph))
+        if debug_flag:
+            print(f"Found {len(connected_components)} connected components.")
+        
+        if len(connected_components) > 1:
+            return MultipleConnectedComponentsError(connected_components)
+
+
+        # Check if the graph has a single start node
+        start_nodes = [
+            node
+            for node in digraph.nodes
+            if len(list(digraph.predecessors(node))) == 0
+        ]
+        if debug_flag:
+            print(f"Found {len(start_nodes)} start nodes.")
+
+        if len(start_nodes) != 1:
+            return NumberOfStartNodesError(start_nodes)
+
+        # Check that all edges have a unique label
+        # TODO: List all edges and verify that each edge has at least one label
+        for edge in digraph.edges:
+            # print(edge)
+            # print(digraph.edges[edge])
+            if digraph.edges[edge] == {}:
+                return EdgeContainsNoConditionsError(edge)
+            
+            
+
+        return True
