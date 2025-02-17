@@ -5,7 +5,7 @@ from manipulation.scenarios import AddMultibodyTriad
 from pydrake.geometry import Meshcat, MeshcatVisualizer, MeshcatVisualizerParams
 from pydrake.geometry import Role as DrakeRole
 from pydrake.multibody.parsing import Parser
-from pydrake.multibody.plant import AddMultibodyPlantSceneGraph
+from pydrake.multibody.plant import AddMultibodyPlantSceneGraph, MultibodyPlant
 from pydrake.systems.framework import DiagramBuilder, Diagram, Context
 
 from pydrake.systems.primitives import ConstantVectorSource, VectorLogSink
@@ -70,7 +70,7 @@ class ShowMeThisModel(BaseProduction):
         self.model_name = self.plant.GetModelInstanceName(model_idcs[0])
 
         # Collect the expected number of actuated joints
-        n_dofs = self.plant.num_actuated_dofs()
+        n_dofs = self.find_number_of_positions_in_model()
         if self.q_des is None:
             self.q_des = np.zeros(n_dofs)
         else:
@@ -155,6 +155,25 @@ class ShowMeThisModel(BaseProduction):
         )
 
         return self.diagram, self.diagram_context
+
+    def find_number_of_positions_in_model(
+        self,
+    ) -> int:
+        # Create a shadow plant
+        shadow_plant = MultibodyPlant(self.time_step)
+        model_idcs = Parser(plant=shadow_plant).AddModels(self.path_to_model)
+        shadow_model_idx = model_idcs[0]
+
+        # Weld the base link to the world frame
+        shadow_plant.WeldFrames(
+            shadow_plant.world_frame(),
+            shadow_plant.GetFrameByName(self.base_link_name, shadow_model_idx),
+        )
+
+        # Finalize the shadow plant
+        shadow_plant.Finalize()
+
+        return shadow_plant.num_positions()
 
     @property
     def id(self):
