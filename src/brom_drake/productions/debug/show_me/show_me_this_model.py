@@ -159,6 +159,17 @@ class ShowMeThisModel(BaseProduction):
     def find_number_of_positions_in_model(
         self,
     ) -> int:
+        """
+        Description
+        -----------
+        This method will return the number of positions in the model
+        as defined by the user (through the path_to_model).
+
+        Returns
+        -------
+        int
+            The number of positions in the model.
+        """
         # Setup
 
         # Create a shadow plant
