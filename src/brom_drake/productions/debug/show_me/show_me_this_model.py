@@ -40,7 +40,11 @@ class ShowMeThisModel(BaseProduction):
         self.show_collision_geometries = show_collision_geometries
 
         # If the base link name is not provided,
-        # then we will try to do a smart search for it later.
+        # then we will try to do a smart search for it.
+        if self.base_link_name is None:
+            self.base_link_name = find_base_link_name_in(self.path_to_model)
+
+        # Add Plant and Scene Graph for easy simulation
         self.plant, self.scene_graph = AddMultibodyPlantSceneGraph(
             self.builder,
             time_step=self.time_step,
@@ -111,10 +115,6 @@ class ShowMeThisModel(BaseProduction):
         # Add A Triad to base?
         AddMultibodyTriad(self.plant.world_frame(), self.scene_graph)
 
-        # Try to collect the base link name if it is not provided
-        if self.base_link_name is None:
-            self.base_link_name = find_base_link_name_in(self.path_to_model)
-
         # Weld the base link to the world frame
         self.plant.WeldFrames(
             self.plant.world_frame(),
@@ -159,6 +159,8 @@ class ShowMeThisModel(BaseProduction):
     def find_number_of_positions_in_model(
         self,
     ) -> int:
+        # Setup
+
         # Create a shadow plant
         shadow_plant = MultibodyPlant(self.time_step)
         model_idcs = Parser(plant=shadow_plant).AddModels(self.path_to_model)
