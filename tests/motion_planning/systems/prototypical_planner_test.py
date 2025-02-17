@@ -5,6 +5,7 @@ This file defines a test class that is used to test the prototypical planner
 system that I've defined in the motion_planning/systems/prototypical_planner.py file.
 """
 from importlib import resources as impresources
+import networkx as nx
 import numpy as np
 from pydrake.all import (
     Parser, DiagramBuilder,
@@ -176,6 +177,110 @@ class TestPrototypicalPlannerSystem(unittest.TestCase):
         self.assertTrue(True) # Production built successfully, which is good.
 
         #TODO(kwesi): Test that the simulation works for some simple case...
+
+    def test_planning_result_to_array1(self):
+        """
+        Description
+        -----------
+        This test checks the prototypical planner's ability to create a
+        trajectory from an nx.DiGraph object using the planning_result_to_array()
+        function.
+        """
+        # Setup
+        q_easy_start = np.array([0.0, 0.0, -np.pi/4.0, 0.0, 0.0, 0.0])
+        q_easy_goal = np.array([0.0, 0.0, -np.pi/8.0, 0.0, 0.0, 0.0])
+        production1 = ShelfPlanning1(
+            meshcat_port_number=None,
+            start_config=q_easy_start,
+            goal_config=q_easy_goal,
+        )
+
+        # Cast all secondary cast members
+        production1.add_supporting_cast()
+
+        # Create planner with the now finalized arm
+        planner2 = BaseRRTPlanner(
+            production1.arm,
+            production1.plant,
+            production1.scene_graph,
+        )
+
+        # Create the System
+        prototypical_planner = PrototypicalPlannerSystem(
+            production1.plant,
+            production1.scene_graph,
+            planner2.plan,
+            robot_model_idx=production1.arm,
+        )
+
+        # Create a dummy nx.DiGraph object
+        G = nx.DiGraph()
+        G.add_node(0, q=q_easy_start)
+        G.add_node(1, q=q_easy_goal)
+        G.add_edge(0, 1)
+
+        # Call the planning_result_to_array method
+        trajectory = prototypical_planner.planning_result_to_array(G)
+
+        # Check that the trajectory is correct
+        # - The trajectory should have 2 waypoints
+        # - The first waypoint should be the start configuration
+        # - The second waypoint should be the goal configuration
+        self.assertEqual(trajectory.shape[0], 2)
+        np.testing.assert_array_equal(trajectory[0], q_easy_start)
+        np.testing.assert_array_equal(trajectory[1], q_easy_goal)
+
+    def test_planning_result_to_array2(self):
+        """
+        Description
+        -----------
+        This test checks the prototypical planner's ability to create a
+        trajectory from an np.ndarray object using the planning_result_to_array()
+        function.
+        """
+        # Setup
+        q_easy_start = np.array([0.0, 0.0, -np.pi/4.0, 0.0, 0.0, 0.0])
+        q_easy_goal = np.array([0.0, 0.0, -np.pi/8.0, 0.0, 0.0, 0.0])
+        production1 = ShelfPlanning1(
+            meshcat_port_number=None,
+            start_config=q_easy_start,
+            goal_config=q_easy_goal,
+        )
+
+        # Cast all secondary cast members
+        production1.add_supporting_cast()
+
+        # Create planner with the now finalized arm
+        planner2 = BaseRRTPlanner(
+            production1.arm,
+            production1.plant,
+            production1.scene_graph,
+        )
+
+        # Create the System
+        prototypical_planner = PrototypicalPlannerSystem(
+            production1.plant,
+            production1.scene_graph,
+            planner2.plan,
+            robot_model_idx=production1.arm,
+        )
+
+        # Create a dummy array object
+        plan_array = np.array([
+            q_easy_start,
+            q_easy_goal
+        ])
+
+        # Call the planning_result_to_array method
+        trajectory = prototypical_planner.planning_result_to_array(plan_array)
+
+        # Check that the trajectory is correct
+        # - The trajectory should have 2 waypoints
+        # - The first waypoint should be the start configuration
+        # - The second waypoint should be the goal configuration
+        self.assertEqual(trajectory.shape[0], 2)
+        np.testing.assert_array_equal(trajectory[0], q_easy_start)
+        np.testing.assert_array_equal(trajectory[1], q_easy_goal)
 
 if __name__ == '__main__':
     unittest.main()

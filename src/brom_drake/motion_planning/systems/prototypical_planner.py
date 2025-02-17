@@ -45,8 +45,15 @@ class PrototypicalPlannerSystem(LeafSystem):
             The plant that we are working with.
         scene_graph : SceneGraph
             The scene graph that we are working with.
-        planning_algorithm : Callable[[np.ndarray, np.ndarray, Callable[[np.ndarray], bool]], Tuple[MotionPlan, bool]]
+        planning_algorithm : Callable[[np.ndarray, np.ndarray, Callable[[np.ndarray], bool]], Tuple[MotionPlan, int]]
             The planning algorithm that we are using.
+            Note that the planning algorithm receives:
+            1. The start configuration
+            2. The goal configuration
+            3. A collision checking function
+            and it produces:
+            1. The plan (can be an RRT tree or a numpy array of the list of configurations to visit)
+            2. An optional index of the goal node within the plan. (Not needed if the plan is a numpy array)
         robot_model_idx : ModelInstanceIndex
             The robot model index that we are working with.
         """
@@ -147,7 +154,7 @@ class PrototypicalPlannerSystem(LeafSystem):
             self.root_context = self.root_context
 
             # Plan and extract path
-            rrt, goal_node_index = self.planning_algorithm(
+            result, goal_node_index = self.planning_algorithm(
                 q_start,
                 q_goal,
                 self.check_collision_in_config
@@ -156,8 +163,7 @@ class PrototypicalPlannerSystem(LeafSystem):
             if goal_node_index == -1:
                 raise RuntimeError("No path found! Try increasing the number of iterations or checking your problem!")
 
-            path = nx.shortest_path(rrt, source=0, target=goal_node_index)
-            self.plan = np.array([rrt.nodes[node]['q'] for node in path])
+            self.plan = self.planning_result_to_array(result)
 
         output.SetFrom(
             AbstractValue.Make(self.plan)
@@ -266,6 +272,25 @@ class PrototypicalPlannerSystem(LeafSystem):
         output.SetFrom(
             AbstractValue.Make(self.plan is not None)
         )
+
+    def planning_result_to_array(self, plan_in: MotionPlan) -> np.ndarray:
+        """
+        Description
+        -----------
+        This function converts the planning result to an array.
+
+        Arguments
+        ---------
+        plan_in : MotionPlan
+            The plan that we are converting to an array.
+        """
+        if type(plan_in) == np.ndarray:
+            return plan_in
+        elif type(plan_in) == nx.DiGraph:
+            path = nx.shortest_path(plan_in, source=0, target=plan_in.number_of_nodes()-1)
+            return np.array([plan_in.nodes[node]['q'] for node in path])
+        else:
+            raise ValueError(f"Unknown plan type: \"{type(plan_in)}\"!")
 
     def set_internal_root_context(self, root_context_in: Context):
         self.root_context = root_context_in

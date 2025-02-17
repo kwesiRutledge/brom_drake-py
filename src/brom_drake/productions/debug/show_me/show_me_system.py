@@ -60,11 +60,18 @@ class ShowMeSystem(LeafSystem):
         pose_as_vec = self.desired_joint_positions_port.Eval(context)
 
         # Set the joint positions
-        self.plant.SetPositions(
-            self.mutable_plant_context,
-            self.model_index,
-            pose_as_vec,
-        )
+        try:
+            self.plant.SetPositions(
+                self.mutable_plant_context,
+                self.model_index,
+                pose_as_vec,
+            )
+        except:
+            raise ValueError(
+                f"Could not set the joint positions; this is most likely a mismatch between:\n" + \
+                f"- Number of joint positions in command: {len(pose_as_vec)}\n" + \
+                f"- Number of joint positions in model: {self.plant.num_positions(self.model_index)}."
+            )
 
         self.plant.SetVelocities(
             self.mutable_plant_context,
