@@ -14,12 +14,20 @@ from brom_drake.productions.types.motion_planning.offline import (
     KinematicMotionPlanningProduction,
     OfflineDynamicMotionPlanningProduction,
 )
+from brom_drake.productions.types.pick_and_place import (
+    MotionPlanningAndGraspingProduction,
+)
+from brom_drake.productions.pick_and_place import (
+    ChemLab3,
+)
 
 __all__ = [
     "BaseProduction",
     "ChemLab1",
     "ChemLab2",
+    "ChemLab3",
     "KinematicMotionPlanningProduction",
+    "MotionPlanningAndGraspingProduction",
     "OfflineDynamicMotionPlanningProduction",
     "ProductionID",
     "ShowMeThisModel",
