@@ -49,7 +49,7 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
     def __init__(
         self,
         time_step=1e-3,
-        meshcat_port_number: int = 7000,
+        meshcat_port_number: int = 7001,
         plan_execution_speed: float = 0.2,
         pose_WorldBeaker: RigidTransform = None,
         table_length: float = 0.6,
