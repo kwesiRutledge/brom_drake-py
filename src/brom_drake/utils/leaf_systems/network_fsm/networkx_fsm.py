@@ -140,6 +140,7 @@ class NetworkXFSM(LeafSystem):
     def collect_edge_definitions(
         self,
         fsm_graph: nx.DiGraph,
+        debug_flag: bool = False,
     ) -> List[FSMEdgeDefinition]:
         """
         Description
@@ -156,7 +157,8 @@ class NetworkXFSM(LeafSystem):
         #   - The input ports that are required for each edge
         for ii, edge_ii in enumerate(fsm_graph.edges):
             src_ii, dst_ii = edge_ii 
-            print(f"Edge: {src_ii} -> {dst_ii}")
+            if debug_flag:
+                print(f"Edge: {src_ii} -> {dst_ii}")
 
             edge_data = fsm_graph.edges[edge_ii]
 

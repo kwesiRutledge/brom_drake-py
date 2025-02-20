@@ -194,7 +194,7 @@ class TestNetworkXFSM(unittest.TestCase):
         digraph = self.createPartiallyLabeledDigraph()
 
         # Run
-        result = NetworkXFSM.supports_this_digraph(digraph, debug_flag=True)
+        result = NetworkXFSM.supports_this_digraph(digraph, debug_flag=False)
 
         # Verify
         self.assertIsNotNone(result)
