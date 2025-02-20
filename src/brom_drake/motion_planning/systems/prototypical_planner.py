@@ -12,7 +12,7 @@ from pydrake.systems.framework import LeafSystem, BasicVector, Context
 from typing import Callable, Tuple
 
 # Internal Imports
-from brom_drake.utils.constants import MotionPlan
+from brom_drake.utils.constants import MotionPlan, MotionPlanningResult
 
 
 class PrototypicalPlannerSystem(LeafSystem):
@@ -154,16 +154,13 @@ class PrototypicalPlannerSystem(LeafSystem):
             self.root_context = self.root_context
 
             # Plan and extract path
-            result, goal_node_index = self.planning_algorithm(
+            planning_result = self.planning_algorithm(
                 q_start,
                 q_goal,
                 self.check_collision_in_config
             )
 
-            if goal_node_index == -1:
-                raise RuntimeError("No path found! Try increasing the number of iterations or checking your problem!")
-
-            self.plan = self.planning_result_to_array(result)
+            self.plan = self.planning_result_to_array(planning_result)
 
         output.SetFrom(
             AbstractValue.Make(self.plan)
@@ -273,7 +270,7 @@ class PrototypicalPlannerSystem(LeafSystem):
             AbstractValue.Make(self.plan is not None)
         )
 
-    def planning_result_to_array(self, plan_in: MotionPlan) -> np.ndarray:
+    def planning_result_to_array(self, planning_result: MotionPlanningResult) -> np.ndarray:
         """
         Description
         -----------
@@ -281,13 +278,33 @@ class PrototypicalPlannerSystem(LeafSystem):
 
         Arguments
         ---------
-        plan_in : MotionPlan
+        planning_result : MotionPlanningResult
             The plan that we are converting to an array.
         """
+        # Input Processing
+        if isinstance(planning_result, tuple):
+            plan_in, goal_node_index = planning_result
+
+            if goal_node_index == -1:
+                raise RuntimeError("No path found! Try increasing the number of iterations or checking your problem!")
+
+        elif isinstance(planning_result, np.ndarray):
+            plan_in = planning_result
+            goal_node_index = -1 # Assume that the last configuration is the one we're trying to get to!
+
+        else:
+            raise ValueError(f"Unknown planning result type: \"{type(planning_result)}\"!")
+
+        # Setup
+
         if type(plan_in) == np.ndarray:
             return plan_in
         elif type(plan_in) == nx.DiGraph:
-            path = nx.shortest_path(plan_in, source=0, target=plan_in.number_of_nodes()-1)
+            path = nx.shortest_path(
+                plan_in,
+                source=0,
+                target=goal_node_index,
+            )
             return np.array([plan_in.nodes[node]['q'] for node in path])
         else:
             raise ValueError(f"Unknown plan type: \"{type(plan_in)}\"!")
