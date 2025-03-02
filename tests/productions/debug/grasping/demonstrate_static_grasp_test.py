@@ -133,7 +133,7 @@ class DemonstrateStaticGraspTest(unittest.TestCase):
         production = DemonstrateStaticGrasp(
             path_to_object=flask_urdf,
             path_to_gripper=gripper_urdf,
-            meshcat_port_number=7001, # Use None for CI
+            meshcat_port_number=None, # Use None for CI
             X_ObjectTarget=X_ObjectTarget,
         )
 
