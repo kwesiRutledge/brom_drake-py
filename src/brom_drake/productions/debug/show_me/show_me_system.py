@@ -66,7 +66,8 @@ class ShowMeSystem(LeafSystem):
                 self.model_index,
                 pose_as_vec,
             )
-        except:
+        except Exception as e:
+            print(e)
             raise ValueError(
                 f"Could not set the joint positions; this is most likely a mismatch between:\n" + \
                 f"- Number of joint positions in command: {len(pose_as_vec)}\n" + \
