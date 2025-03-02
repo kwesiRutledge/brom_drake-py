@@ -28,6 +28,9 @@ class SimpleShapeURDFDefinition:
     mass: float = 1.0
     inertia: InertiaDefinition = None
     pose: RigidTransform = RigidTransform()
+    mu_static: float = 0.7
+    mu_dynamic: float = 0.4
+    is_hydroelastic: bool = True # Whether to use hydroelastic collision for the shape
 
     def as_urdf(self) -> ET.Element:
         """
@@ -35,8 +38,14 @@ class SimpleShapeURDFDefinition:
         :return:
         """
         # Setup
-        root = ET.Element("robot", {"name": self.name + "_robot"})
-        link = ET.SubElement(root, "link", {"name": self.name + "_base_link"})
+        root = ET.Element(
+            "robot",
+            {
+                "name": self.name + "_robot",
+                "xmlns:drake": "http://drake.mit.edu",
+            }
+        )
+        link = ET.SubElement(root, "link", {"name": self.base_link_name})
 
         # Add inertial elements to link
         self.add_inertial_elements_to(link)
@@ -117,8 +126,37 @@ class SimpleShapeURDFDefinition:
         # Add the shape to the geometry element
         self.shape.add_geometry_to_element(geometry)
 
-        # Add collision elements to link
-        link_elt.append(collision_link)
+        # Add the proximity properties to the collision element
+        self.add_proximity_properties_to(collision_link)
+
+    def add_proximity_properties_to(self, collision_elt: ET.Element):
+        """
+        Add the proximity properties to the collision element.
+        :param collision_elt: The ET.Element object for the collision.
+        :return: Nothing, but modifies the collision_elt in place.
+        """
+        # Setup
+        proximity_properties = ET.SubElement(collision_elt, "proximity_properties")
+        
+        # Create mu_static element
+        mu_static= ET.SubElement(
+            proximity_properties,
+            "drake:mu_static",
+            {"value": f"{self.mu_static}"}
+            )
+
+        # Create mu_dynamic element
+        mu_dynamic = ET.SubElement(
+            proximity_properties,
+            "drake:mu_dynamic",
+            {"value": f"{self.mu_dynamic}"}
+            )
+        
+        # Create is_hydroelastic element
+        hydroelastic = ET.SubElement(
+            proximity_properties,
+            "drake:rigid_hydroelastic",
+        )
 
     def add_origin_element_to(self, target_element: ET.Element):
         """
@@ -137,6 +175,14 @@ class SimpleShapeURDFDefinition:
                 "rpy": f"{rot_as_rpy.roll_angle()} {rot_as_rpy.pitch_angle()} {rot_as_rpy.yaw_angle()}",
             },
         )
+
+    @property
+    def base_link_name(self) -> str:
+        """
+        The name of the base link.
+        :return: The name of the base link.
+        """
+        return self.name + "_base_link"
 
     def write_to_file(self, file_path: str):
         """

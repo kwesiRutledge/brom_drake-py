@@ -12,13 +12,14 @@ jobs:
           'examples/watcher/changing_plot_arrangement1/create_monitor_w_different_arrangement.py',
           'examples/conversion/suggested_use1/drakeify.py',
           'examples/conversion/converter_advanced_usage1/demo.py',
-          'examples/productions/show_me_this_model/suggested_use1/show.py',
-          'examples/productions/show_me_this_model/suggested_use2/show.py',
-          'examples/productions/show_me_this_model/show_collision_geometries1/show.py',
+          'examples/productions/helpful_for_debugging/show_me_this_model/suggested_use1/show.py',
+          'examples/productions/helpful_for_debugging/show_me_this_model/suggested_use2/show.py',
+          'examples/productions/helpful_for_debugging/show_me_this_model/show_collision_geometries1/show.py',
           'examples/productions/motion_planning/offline/chem_lab1/example.py',
           'examples/productions/motion_planning/offline/shelf/shelf1.py',
           'examples/productions/motion_planning/offline/chem_lab2/suggested_use1/example.py',
           'examples/productions/motion_planning/offline/chem_lab2/providing_start_as_config1/provide_start_config1.py',
+          'examples/productions/helpful_for_debugging/demonstrate_static_grasp/suggested_use1/demonstrate.py',
         ]
     steps:
       - name: Checkout

@@ -12,7 +12,7 @@ from pydrake.systems.framework import LeafSystem, BasicVector, Context
 from typing import Callable, Tuple
 
 # Internal Imports
-from brom_drake.utils.constants import MotionPlan
+from brom_drake.utils.constants import MotionPlan, MotionPlanningResult
 
 
 class PrototypicalPlannerSystem(LeafSystem):
@@ -45,8 +45,15 @@ class PrototypicalPlannerSystem(LeafSystem):
             The plant that we are working with.
         scene_graph : SceneGraph
             The scene graph that we are working with.
-        planning_algorithm : Callable[[np.ndarray, np.ndarray, Callable[[np.ndarray], bool]], Tuple[MotionPlan, bool]]
+        planning_algorithm : Callable[[np.ndarray, np.ndarray, Callable[[np.ndarray], bool]], Tuple[MotionPlan, int]]
             The planning algorithm that we are using.
+            Note that the planning algorithm receives:
+            1. The start configuration
+            2. The goal configuration
+            3. A collision checking function
+            and it produces:
+            1. The plan (can be an RRT tree or a numpy array of the list of configurations to visit)
+            2. An optional index of the goal node within the plan. (Not needed if the plan is a numpy array)
         robot_model_idx : ModelInstanceIndex
             The robot model index that we are working with.
         """
@@ -147,17 +154,13 @@ class PrototypicalPlannerSystem(LeafSystem):
             self.root_context = self.root_context
 
             # Plan and extract path
-            rrt, goal_node_index = self.planning_algorithm(
+            planning_result = self.planning_algorithm(
                 q_start,
                 q_goal,
                 self.check_collision_in_config
             )
 
-            if goal_node_index == -1:
-                raise RuntimeError("No path found! Try increasing the number of iterations or checking your problem!")
-
-            path = nx.shortest_path(rrt, source=0, target=goal_node_index)
-            self.plan = np.array([rrt.nodes[node]['q'] for node in path])
+            self.plan = self.planning_result_to_array(planning_result)
 
         output.SetFrom(
             AbstractValue.Make(self.plan)
@@ -266,6 +269,50 @@ class PrototypicalPlannerSystem(LeafSystem):
         output.SetFrom(
             AbstractValue.Make(self.plan is not None)
         )
+
+    def planning_result_to_array(self, planning_result: MotionPlanningResult) -> np.ndarray:
+        """
+        Description
+        -----------
+        This function converts the planning result to an array.
+
+        Arguments
+        ---------
+        planning_result : MotionPlanningResult
+            The plan that we are converting to an array.
+        """
+        # Input Processing
+        if isinstance(planning_result, tuple):
+            plan_in, goal_node_index = planning_result
+
+            if goal_node_index == -1:
+                raise RuntimeError("No path found! Try increasing the number of iterations or checking your problem!")
+
+        elif isinstance(planning_result, np.ndarray):
+            plan_in = planning_result
+            goal_node_index = -1 # Assume that the last configuration is the one we're trying to get to!
+
+        elif isinstance(planning_result, nx.DiGraph):
+            plan_in = planning_result
+            all_node_ids = [int(node) for node in plan_in.nodes]
+            goal_node_index = all_node_ids[-1] # Assume that the last configuration is the one we're trying to get to!
+
+        else:
+            raise ValueError(f"Unknown planning result type: \"{type(planning_result)}\"!")
+
+        # Setup
+
+        if type(plan_in) == np.ndarray:
+            return plan_in
+        elif type(plan_in) == nx.DiGraph:
+            path = nx.shortest_path(
+                plan_in,
+                source=0,
+                target=goal_node_index,
+            )
+            return np.array([plan_in.nodes[node]['q'] for node in path])
+        else:
+            raise ValueError(f"Unknown plan type: \"{type(plan_in)}\"!")
 
     def set_internal_root_context(self, root_context_in: Context):
         self.root_context = root_context_in

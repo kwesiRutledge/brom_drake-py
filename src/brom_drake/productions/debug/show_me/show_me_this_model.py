@@ -5,7 +5,7 @@ from manipulation.scenarios import AddMultibodyTriad
 from pydrake.geometry import Meshcat, MeshcatVisualizer, MeshcatVisualizerParams
 from pydrake.geometry import Role as DrakeRole
 from pydrake.multibody.parsing import Parser
-from pydrake.multibody.plant import AddMultibodyPlantSceneGraph
+from pydrake.multibody.plant import AddMultibodyPlantSceneGraph, MultibodyPlant
 from pydrake.systems.framework import DiagramBuilder, Diagram, Context
 
 from pydrake.systems.primitives import ConstantVectorSource, VectorLogSink
@@ -40,7 +40,11 @@ class ShowMeThisModel(BaseProduction):
         self.show_collision_geometries = show_collision_geometries
 
         # If the base link name is not provided,
-        # then we will try to do a smart search for it later.
+        # then we will try to do a smart search for it.
+        if self.base_link_name is None:
+            self.base_link_name = find_base_link_name_in(self.path_to_model)
+
+        # Add Plant and Scene Graph for easy simulation
         self.plant, self.scene_graph = AddMultibodyPlantSceneGraph(
             self.builder,
             time_step=self.time_step,
@@ -70,7 +74,7 @@ class ShowMeThisModel(BaseProduction):
         self.model_name = self.plant.GetModelInstanceName(model_idcs[0])
 
         # Collect the expected number of actuated joints
-        n_dofs = self.plant.num_actuated_dofs()
+        n_dofs = self.find_number_of_positions_in_model()
         if self.q_des is None:
             self.q_des = np.zeros(n_dofs)
         else:
@@ -110,10 +114,6 @@ class ShowMeThisModel(BaseProduction):
 
         # Add A Triad to base?
         AddMultibodyTriad(self.plant.world_frame(), self.scene_graph)
-
-        # Try to collect the base link name if it is not provided
-        if self.base_link_name is None:
-            self.base_link_name = find_base_link_name_in(self.path_to_model)
 
         # Weld the base link to the world frame
         self.plant.WeldFrames(
@@ -155,6 +155,38 @@ class ShowMeThisModel(BaseProduction):
         )
 
         return self.diagram, self.diagram_context
+
+    def find_number_of_positions_in_model(
+        self,
+    ) -> int:
+        """
+        Description
+        -----------
+        This method will return the number of positions in the model
+        as defined by the user (through the path_to_model).
+
+        Returns
+        -------
+        int
+            The number of positions in the model.
+        """
+        # Setup
+
+        # Create a shadow plant
+        shadow_plant = MultibodyPlant(self.time_step)
+        model_idcs = Parser(plant=shadow_plant).AddModels(self.path_to_model)
+        shadow_model_idx = model_idcs[0]
+
+        # Weld the base link to the world frame
+        shadow_plant.WeldFrames(
+            shadow_plant.world_frame(),
+            shadow_plant.GetFrameByName(self.base_link_name, shadow_model_idx),
+        )
+
+        # Finalize the shadow plant
+        shadow_plant.Finalize()
+
+        return shadow_plant.num_positions()
 
     @property
     def id(self):
