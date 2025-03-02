@@ -292,6 +292,11 @@ class PrototypicalPlannerSystem(LeafSystem):
             plan_in = planning_result
             goal_node_index = -1 # Assume that the last configuration is the one we're trying to get to!
 
+        elif isinstance(planning_result, nx.DiGraph):
+            plan_in = planning_result
+            all_node_ids = [int(node) for node in plan_in.nodes]
+            goal_node_index = all_node_ids[-1] # Assume that the last configuration is the one we're trying to get to!
+
         else:
             raise ValueError(f"Unknown planning result type: \"{type(planning_result)}\"!")
 
