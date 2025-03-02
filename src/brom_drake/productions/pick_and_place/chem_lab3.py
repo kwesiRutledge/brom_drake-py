@@ -48,15 +48,14 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
     """
     def __init__(
         self,
-        time_step=1e-3,
+        time_step=5e-4,
         meshcat_port_number: int = 7001,
         plan_execution_speed: float = 0.2,
-        pose_WorldBeaker: RigidTransform = None,
-        table_length: float = 0.6,
-        table_width: float = 2.0,
-        table_height: float = 0.1,
         shelf_pose: RigidTransform = None,
         gripper_type: GripperType = GripperType.Robotiq_2f_85,
+        table_length: float = 0.9,
+        table_width: float = 2.0,
+        table_height: float = 0.1,
         **kwargs,
     ):
         """
@@ -71,14 +70,15 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
         self.time_step = time_step
         self.meshcat_port_number = meshcat_port_number
         self.plan_execution_speed = plan_execution_speed
-        self.table_height, self.table_width = table_height, table_width
         self.table_length = table_length
+        self.table_width = table_width
+        self.table_height = table_height
         self.gripper_type = gripper_type
 
         # Initialize pose data
         self.shelf_pose = shelf_pose
-        self.pose_WorldBeaker = pose_WorldBeaker
-        self.pose_BeakerGoal = None
+        self.pose_WorldFlask0 = None
+        self.pose_WorldTableHalf1, self.pose_WorldTableHalf2 = None, None
         self.initialize_pose_data()
 
         # Set station
@@ -101,6 +101,7 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
 
         # Define placeholder variables for models
         self.test_tube_holder1 = None
+        self.flask_model_index = None
 
     def add_supporting_cast(self):
         """
@@ -122,8 +123,7 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
 
         # Create the table and the items on it
         self.add_table()
-        self.add_test_tube_holders()
-        self.add_beaker()
+        self.add_erlenmeyer_flask()
         self.add_shelf()
         AddGround(self.plant)
 
@@ -141,37 +141,6 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
         # self.add_dummy_gripper_components()
 
         print("Completed adding supporting cast members.")
-
-    def add_beaker(self):
-        """
-        Description
-        -----------
-        This method adds the beaker to the production.
-        """
-        # Setup
-        plant = self.plant
-        urdf_file_path = str(
-            impresources.files(robots) / "models/beaker/beaker.urdf"
-        )
-
-        # Use Drakeify my urdf to create the beaker
-        new_beaker_urdf = drakeify_my_urdf(urdf_file_path)
-
-        # Add the beaker to the plant
-        model_idcs = Parser(plant=plant).AddModels(str(new_beaker_urdf))
-        self.beaker_model_index = model_idcs[0]
-
-        # Add object to the list we use for initialization
-        self.models_in_supporting_cast.append(
-            (self.beaker_model_index, self.pose_WorldBeaker),
-        )
-
-        # # Weld the beaker to the world frame
-        # plant.WeldFrames(
-        #     plant.world_frame(),
-        #     plant.GetFrameByName("beaker_base_link", self.beaker_model_index),
-        #     self.pose_WorldBeaker,
-        # )
 
     def add_dummy_gripper_components(self):
         """
@@ -203,6 +172,29 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
             self.station.GetInputPort("gripper_target"),
         )
 
+    def add_erlenmeyer_flask(self):
+        """
+        Description
+        -----------
+        Adds the 500ml Erlenmeyer flask to the production.
+        """
+        # Setup
+        plant = self.plant
+        urdf_file_path = str(
+            impresources.files(robots) / "models/erlenmeyer_flask/500ml.urdf"
+        )
+
+        # Use Drakeify my urdf to create the erlenmeyer flask
+        new_flask_urdf = drakeify_my_urdf(urdf_file_path)
+
+        # Add the flask to the plant
+        model_idcs = Parser(plant=plant).AddModels(str(new_flask_urdf))
+        self.flask_model_index = model_idcs[0]
+
+        # Add object to the list we use for initialization
+        self.models_in_supporting_cast.append(
+            (self.flask_model_index, self.pose_WorldFlask0),
+        )
 
     def add_motion_planning_components(self):
         """
@@ -281,16 +273,21 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
         Description
         -----------
         This method adds the table to the production.
-        The table will be a simple shape that the robot will interact with.
+        The table will be "L-shaped", and we will define it with 2 box
+        shapes.
         :return:
         """
         # Setup
+        table_width, table_length, table_height = self.table_width, self.table_length, self.table_height
+
+        # 11111111111111111
+        # Create first half
 
         # Create a new shape urdf
-        table_defn = SimpleShapeURDFDefinition(
-            name="table",
+        half1_defn = SimpleShapeURDFDefinition(
+            name="table_half1",
             shape=BoxDefinition(
-                size=(self.table_width, self.table_length, self.table_height),
+                size=(table_width, table_length, table_height),
             ),
             mass=100.0, # kg
             inertia=InertiaDefinition(
@@ -300,54 +297,48 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
             ),
             color=np.array([0.1, 0.1, 0.1, 1.0]),
         )
-        table_urdf_path = DEFAULT_BROM_MODELS_DIR + "/table/table.urdf"
-        table_defn.write_to_file(table_urdf_path)
+        table_urdf_path = DEFAULT_BROM_MODELS_DIR + "/table/table_half1.urdf"
+        half1_defn.write_to_file(table_urdf_path)
 
         # Add the table to the production
-        table_model_index = Parser(self.plant).AddModels(table_urdf_path)[0]
+        table_half1_model_index = Parser(self.plant).AddModels(table_urdf_path)[0]
 
         # Weld the table to the world frame
-        table_pose = RigidTransform(
-            RollPitchYaw(0.0, 0.0, 0.0).ToQuaternion(),
-            np.array([0.0, 0.6, 0.0]),
-        )
         self.plant.WeldFrames(
             self.plant.world_frame(),
-            self.plant.GetFrameByName("table_base_link", table_model_index),
-            table_pose,
+            self.plant.GetFrameByName(half1_defn.base_link_name, table_half1_model_index),
+            self.pose_WorldTableHalf1,
         )
 
-    def add_test_tube_holders(self):
-        """
-        Description
-        -----------
-        This method adds the test tube holders to the production.
-        :return:
-        """
-        # Setup
-        test_tube_urdf1 = str(
-            impresources.files(robots) / "models/test_tube_holder/test_tube_holder.urdf"
+        # 2222222222222222222222
+        # Create the second half
+
+        # Create a new shape urdf
+        half2_defn = SimpleShapeURDFDefinition(
+            name="table_half2",
+            shape=BoxDefinition(
+                size=(table_width/3.0, table_length, table_height),
+            ),
+            mass=50.0, # kg
+            inertia=InertiaDefinition(
+                ixx=10.0,
+                iyy=10.0,
+                izz=10.0,
+            ),
+            color=np.array([0.1, 0.1, 0.1, 1.0]),
         )
+        table_urdf_path = DEFAULT_BROM_MODELS_DIR + "/table/table_half2.urdf"
+        half2_defn.write_to_file(table_urdf_path)
 
-        # Use Drakeify my urdf to create the test tube holders
-        new_test_tube_holder_urdf1 = drakeify_my_urdf(test_tube_urdf1)
+        # Add the table to the production
+        table_half2_model_index = Parser(self.plant).AddModels(table_urdf_path)[0]
 
-        self.test_tube_holder1 = Parser(self.plant).AddModels(
-            str(new_test_tube_holder_urdf1)
-        )[0]
-
-        # Add object to the list we use for initialization
-        self.models_in_supporting_cast.append(
-            (self.test_tube_holder1, self.pose_WorldHolder),
+        # Weld the table to the world frame
+        self.plant.WeldFrames(
+            self.plant.world_frame(),
+            self.plant.GetFrameByName(half2_defn.base_link_name, table_half2_model_index),
+            self.pose_WorldTableHalf2,
         )
-
-        # # Weld the test tube holders to the world frame
-        # self.plant.WeldFrames(
-        #     self.plant.world_frame(),
-        #     self.plant.GetFrameByName("test_tube_holder_base_link", self.test_tube_holder1),
-        #     self.pose_WorldHolder,
-        # )
-
 
     def add_cast_and_build(
         self,
@@ -487,11 +478,12 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
         :return:
         """
         # Setup
+        plant: MultibodyPlant = self.plant
         scene_graph = self.scene_graph
         sg_inspector = scene_graph.model_inspector()
 
         # Create IK Problem
-        ik_problem = InverseKinematics(self.plant)
+        ik_problem = InverseKinematics(plant)
 
         # Add Pose Target
         ik_problem.AddPositionConstraint(
@@ -511,21 +503,24 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
         #     0.25,
         # )
 
-        ik_problem.AddOrientationConstraint(
-            self.plant.world_frame(),
-            pose_WorldTarget.rotation(),
-            self.plant.GetFrameByName(target_frame_name),
-            RotationMatrix.Identity(),
-            np.pi/8.0
-        )
-
-        # ik_problem.AddOrientationCost(
+        # ik_problem.AddOrientationConstraint(
         #     self.plant.world_frame(),
         #     pose_WorldTarget.rotation(),
         #     self.plant.GetFrameByName(target_frame_name),
         #     RotationMatrix.Identity(),
-        #     orientation_cost_scaling,
+        #     np.pi/8.0
         # )
+
+        ik_problem.AddOrientationCost(
+            self.plant.world_frame(),
+            pose_WorldTarget.rotation(),
+            self.plant.GetFrameByName(target_frame_name),
+            RotationMatrix.Identity(),
+            orientation_cost_scaling,
+        )
+
+        # Create a cost function for the IK problem that weights the joint positions
+        # ik_problem.AddMinimumDistanceLowerBoundConstraint(0.05)
 
         return ik_problem
 
@@ -572,23 +567,6 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
             diagram_context
         )
 
-        # # Set the start configuration of the robot
-        # arm = self.station.arm
-        # self.station.plant.SetDefaultPositions(
-        #     # self.station.plant.GetMyMutableContextFromRoot(diagram_context),
-        #     arm,
-        #     self.start_configuration,
-        # )
-
-        # # Set the positions of the gripper
-        # gripper = self.station.gripper
-        # n_gripper_positions = self.station.plant.num_positions(gripper)
-        # self.station.plant.SetPositions(
-        #     self.station.plant.GetMyMutableContextFromRoot(diagram_context),
-        #     gripper,
-        #     np.zeros((n_gripper_positions,)),
-        # )
-
         return diagram, diagram_context
 
     @property
@@ -609,11 +587,9 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
 
         # Retrieve goal_configuraiton value
         if self._goal_config is None:
-            pose_WorldGoal = self.pose_WorldBeaker.multiply(self.pose_BeakerGoal)
-
             # Use Inverse Kinematics to get the goal configuration of the robot
             self._goal_config = self.solve_pose_ik_problem(
-                pose_WorldGoal,
+                self.goal_pose,
                 robot_joint_names=hardcoded_robot_joint_names,
             )
 
@@ -634,8 +610,20 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
         if self._goal_pose is not None:
             return self._goal_pose
         elif (self._goal_pose is None) and (self._goal_config is None):
-            pose_WorldGoal = self.pose_WorldBeaker.multiply(self.pose_BeakerGoal)
-            self._goal_pose = pose_WorldGoal
+            # If we have no guidance on how to start, then we will use a default
+            # goal_position = np.array([+0.0, 0.5, 0.7])
+            # goal_orientation = RollPitchYaw(np.pi / 2.0, np.pi / 2.0, 0.0).ToQuaternion()
+
+            # goal_position = np.array([-0.5, 0.0, 0.7])
+            # goal_orientation = RollPitchYaw(0.0, np.pi *(0.0/ 2.0), 0.0).ToQuaternion()
+
+            # self._goal_pose = RigidTransform(goal_orientation, goal_position)
+
+            self._goal_pose = self.solve_forward_kinematics_problem_for_arm(
+                np.array([
+                    2.18266076, -6.26145905, -1.21521333, -3.56075315,  1.45027155,  5.12764245
+                ])
+            )
 
             return self._goal_pose
         elif (self._goal_pose is None) and (self._goal_config is not None):
@@ -653,40 +641,42 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
         return ProductionID.kChemLab3
         
     def initialize_pose_data(self):
+        # Setup
+        table_width, table_length, table_height = self.table_width, self.table_length, self.table_height
+
         # Set shelf pose
         if self.shelf_pose is None:
             self.pose_WorldShelf = RigidTransform(
                 RollPitchYaw(0.0, 0.0, -np.pi/2.0).ToQuaternion(),
-                np.array([0.0, 0.75, 0.66]),
+                np.array([0.0, 0.95, 0.66]),
             )
 
-        # Set Beaker Pose default
-        if self.pose_WorldBeaker is None:
-            self.pose_WorldBeaker = RigidTransform(
-                RollPitchYaw(np.pi/2.0, 0.0, 0.0).ToQuaternion(),
-                np.array([-0.6, 0.45, 0.175]),
+        # Define poses for the two halves of the table
+        self.pose_WorldTableHalf1 = RigidTransform(
+            RollPitchYaw(0.0, 0.0, 0.0).ToQuaternion(),
+            np.array([0.0, 0.75, 0.0]),
+        )
+        self.pose_WorldTableHalf2 = RigidTransform(
+            RollPitchYaw(0.0, 0.0, 0.0).ToQuaternion(),
+            np.array([-table_width/2.0 + (table_width/3.0)*0.5, -0.2, 0.0]),
+        )
+
+        # Define pose of the starting point of the flask
+        if self.pose_WorldFlask0 is None:
+            table2_to_flask_translation0 = np.array([+0.0, 0.0, 0.1])
+            table2_to_flask_orientation0 = RollPitchYaw(0.0, 0.0, 0.0).ToQuaternion()
+            pose_Table2Flask0 = RigidTransform(
+                table2_to_flask_orientation0,
+                table2_to_flask_translation0,
             )
+            self.pose_WorldFlask0 = self.pose_WorldTableHalf2.multiply(pose_Table2Flask0)
 
-        # Set Holder Pose
-        self.pose_WorldHolder = RigidTransform(
-            RollPitchYaw(np.pi/2.0, 0.0, 0.0).ToQuaternion(),
-            np.array([self.table_width*0.5*0.7, 0.6+self.table_length/4., self.table_height+0.015]),
-        )
-
-        # Define pose of the goal
-        beaker_to_goal_translation = np.array([+0.0, 0.2, 0.0]) 
-        beaker_to_goal_orientation = RollPitchYaw(np.pi, np.pi, 0.0).ToQuaternion()
-        self.pose_BeakerGoal = RigidTransform(  
-            beaker_to_goal_orientation,
-            beaker_to_goal_translation,
-        )
-
-        # Define pose of start wrt holder
-        holder_to_start_translation = np.array([+0.0, 0.2, 0.025])
-        holder_to_start_orientation = RollPitchYaw(0.0, 0.0, np.pi).ToQuaternion()
-        self.pose_HolderStart = RigidTransform(
-            holder_to_start_orientation,
-            holder_to_start_translation,
+        # Define starting pose for the robot w.r.t. the flask
+        flask_to_start_translation = np.array([+0.0, 0.0, 0.5])
+        flask_to_start_orientation = RollPitchYaw(0.0, 0.0, 0.0).ToQuaternion()
+        self.pose_FlaskStart = RigidTransform(
+            flask_to_start_orientation,
+            flask_to_start_translation,
         )
 
     def solve_forward_kinematics_problem_for_arm(
@@ -731,7 +721,9 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
     @property
     def start_configuration(self):
         """
-        Get the goal pose. This should be defined by the subclass.
+        Get the start configuration of the robot.
+        In other words, the positions of the robots joints.
+        This should be defined by the subclass.
         :return:
         """
         # Setup
@@ -773,7 +765,7 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
             return self._start_pose
         elif (self._start_pose is None) and (self._start_config is None):
             # Define Start Pose
-            pose_WorldStart = self.pose_WorldHolder.multiply(self.pose_HolderStart)
+            pose_WorldStart = self.pose_WorldFlask0.multiply(self.pose_FlaskStart)
             self._start_pose = pose_WorldStart
             return self._start_pose
         elif (self._start_pose is None) and (self._start_config is not None):

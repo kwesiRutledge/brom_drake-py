@@ -31,6 +31,7 @@ class MotionPlanningAndGraspingProduction(BaseProduction):
         self,
         start_configuration: np.ndarray = None,
         start_pose: RigidTransform = None,
+
         **kwargs,
     ):
         super().__init__(**kwargs)
@@ -60,7 +61,7 @@ class MotionPlanningAndGraspingProduction(BaseProduction):
         self.robot_model_idx_ = None
 
         # Create a list of all OBJECTS in the supporting cast
-        # and their desired poses. This will be a list of Tuple[ModelInstanceIndex, RigidTransform]
+        # and their desired INITIAL poses. This will be a list of Tuple[ModelInstanceIndex, RigidTransform]
         self.models_in_supporting_cast = []
 
         # Create placeholder variables for the goal pose
@@ -140,7 +141,7 @@ class MotionPlanningAndGraspingProduction(BaseProduction):
 
         # Create a sphere for the goal
         self.create_highlighted_sphere_region(
-            self.start_frame,
+            self.goal_frame,
             color=np.array([0, 0.8, 0.3, 0.3]),
         )
 
@@ -266,6 +267,7 @@ class MotionPlanningAndGraspingProduction(BaseProduction):
             A Boolean that determines whether to add a watcher to the diagram.
         """
         # Setup
+        plant : MultibodyPlant = self.plant
 
         # Call the parent method
         diagram, diagram_context = super().build_production(with_watcher=with_watcher)
@@ -283,6 +285,22 @@ class MotionPlanningAndGraspingProduction(BaseProduction):
                 first_body,
                 pose_ii,
             )
+            plant.SetFreeBodySpatialVelocity(
+                first_body,
+                SpatialVelocity(
+                    np.zeros((3,)),
+                    np.zeros((3,)),
+                ),
+                plant.GetMyContextFromRoot(diagram_context),
+            )
+
+        # Set the initial configuration of the robot
+        # TODO(kwesi): This is a temporary fix. We need to find a better way to set the initial configuration.
+        self.plant.SetPositions(
+            self.plant.GetMyContextFromRoot(diagram_context),
+            self.robot_model_idx_,
+            self.start_configuration,
+        )
 
         return diagram, diagram_context
 
@@ -616,6 +634,9 @@ class MotionPlanningAndGraspingProduction(BaseProduction):
 
         # Solve problem
         ik_program = ik_problem.prog()
+        q_var = ik_problem.q()
+        ik_program.AddQuadraticErrorCost(np.eye(len(q_var)), np.zeros(q_var.shape), q_var)
+        # ik_program.SetInitialGuess(q_var, np.zeros(q_var.shape))
         ik_result = Solve(ik_program)
 
         assert ik_result.get_solution_result() == SolutionResult.kSolutionFound, \

@@ -43,12 +43,12 @@ def main(meshcat_port_number: int = 7001):
     # Create the production
     production = ChemLab3(
         meshcat_port_number=meshcat_port_number, # Use None for CI
-        # start_configuration=np.zeros((6,)),
     )
 
     # Create a planner object which will be used to plan the motion
     config = BidirectionalRRTConnectPlannerConfig(
-        steering_step_size=0.2,
+        steering_step_size=0.1,
+        debug=False,
     )
     planner2 = BidirectionalRRTConnectPlanner(
         production.arm,
