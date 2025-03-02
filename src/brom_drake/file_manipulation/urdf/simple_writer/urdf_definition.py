@@ -38,7 +38,13 @@ class SimpleShapeURDFDefinition:
         :return:
         """
         # Setup
-        root = ET.Element("robot", {"name": self.name + "_robot"})
+        root = ET.Element(
+            "robot",
+            {
+                "name": self.name + "_robot",
+                "xmlns:drake": "http://drake.mit.edu",
+            }
+        )
         link = ET.SubElement(root, "link", {"name": self.base_link_name})
 
         # Add inertial elements to link
@@ -123,9 +129,6 @@ class SimpleShapeURDFDefinition:
         # Add the proximity properties to the collision element
         self.add_proximity_properties_to(collision_link)
 
-        # Add collision elements to link
-        link_elt.append(collision_link)
-
     def add_proximity_properties_to(self, collision_elt: ET.Element):
         """
         Add the proximity properties to the collision element.
@@ -154,9 +157,6 @@ class SimpleShapeURDFDefinition:
             proximity_properties,
             "drake:rigid_hydroelastic",
         )
-        
-        # append proximity properties to collision element
-        collision_elt.append(proximity_properties)
 
     def add_origin_element_to(self, target_element: ET.Element):
         """
