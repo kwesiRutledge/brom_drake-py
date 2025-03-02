@@ -36,6 +36,11 @@ def main(meshcat_port_number: int = 7001):
     #     with_these_joint_positions=np.array([-np.pi*(3.0/4.0), np.pi*(3.0/4.0)])
     # )
 
+    raise NotImplementedError(
+        "This example is not working yet. " +
+        "Please wait for future versions of brom_drake to fix this."
+    )
+
     # Setup
     if meshcat_port_number < 0:
         meshcat_port_number = None
