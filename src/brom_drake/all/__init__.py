@@ -27,17 +27,23 @@ from brom_drake.productions.ids import ProductionID
 from brom_drake.example_helpers import BlockHandlerSystem
 from brom_drake.file_manipulation.urdf import DrakeReadyURDFConverter, drakeify_my_urdf
 from brom_drake.utils.watcher import add_watcher, add_watcher_and_build, parse_list_of_simplified_targets
-
+from brom_drake.utils.leaf_systems import (
+    BoolToVectorSystem,
+    EndEffectorWrenchCalculator,
+    RigidTransformToVectorSystem,
+)
 __all__ = [
     'add_watcher',
     'add_watcher_and_build',
     'BaseRRTPlannerConfig',
     'BaseRRTPlanner',
+    'BoolToVectorSystem',
     'DiagramTarget',
     'DiagramWatcher',
     'drakeify_my_urdf', 
     'DrakeReadyURDFConverter',
     'DrakeReadyURDFConverterConfig',
+    'EndEffectorWrenchCalculator',
     'FigureNamingConvention',
     'MeshReplacementStrategy',
     'MeshReplacementStrategies',
@@ -47,6 +53,7 @@ __all__ = [
     'PortWatcherOptions',
     'ProductionID',
     'PrototypicalPlannerSystem',
+    'RigidTransformToVectorSystem',
     'RRTConnectPlannerConfig',
     'RRTConnectPlanner',
     'StateOfPlanInMemory',
