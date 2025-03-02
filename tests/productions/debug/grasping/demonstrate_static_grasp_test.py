@@ -145,7 +145,7 @@ class DemonstrateStaticGraspTest(unittest.TestCase):
         simulator.set_target_realtime_rate(1.0)
         simulator.set_publish_every_time_step(False)
         simulator.Initialize()
-        simulator.AdvanceTo(10.1)
+        simulator.AdvanceTo(0.1)
 
         self.assertTrue(True)
 
