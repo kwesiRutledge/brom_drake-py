@@ -98,18 +98,19 @@ class DiagramWatcher:
             system = subject.GetSubsystemByName(target.name)
             for port_index in target.ports:
                 target_port = system.get_output_port(port_index)
+                options_for_target_port = options.to_port_watcher_options()
 
                 try:
                     # Configure PortWatcher
                     self.port_watchers[target.name][target_port.get_name()] = PortWatcher(
                         target_port, subject,
                         logger_name=f"{target.name}_logger_{port_index}",
-                        plot_dir=self.options.plot_dir(),
-                        options=options.to_port_watcher_options(),
+                        plot_dir=options_for_target_port.plot_dir(),
+                        options=options_for_target_port,
                     )
                 except Exception as e:
                     if self.options.hide_messages.during_port_watcher_connection:
-                        print(f"[Warning] Unable to log port named \"{target_port.get_name()}\" of system \"{target.name}\". See log file ({self.options.plot_dir()}/activity_summary.log) for more details.")
+                        print(f"[Warning] Unable to log port named \"{target_port.get_name()}\" of system \"{target.name}\". See log file ({options_for_target_port.plot_dir()}/activity_summary.log) for more details.")
                     
                     loguru.logger.warning(
                         f"There was an error attempting to add a watcher to port {target_port.get_name()} of system {target.name}"
