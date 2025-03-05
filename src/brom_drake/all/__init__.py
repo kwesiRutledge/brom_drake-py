@@ -1,5 +1,5 @@
 from brom_drake.DiagramTarget import DiagramTarget
-from brom_drake.DiagramWatcher import DiagramWatcher
+from brom_drake.DiagramWatcher import DiagramWatcher, DiagramWatcherOptions
 from brom_drake.file_manipulation.urdf import (
     drakeify_my_urdf,
     DrakeReadyURDFConverter,
@@ -40,6 +40,7 @@ __all__ = [
     'BoolToVectorSystem',
     'DiagramTarget',
     'DiagramWatcher',
+    'DiagramWatcherOptions',
     'drakeify_my_urdf', 
     'DrakeReadyURDFConverter',
     'DrakeReadyURDFConverterConfig',

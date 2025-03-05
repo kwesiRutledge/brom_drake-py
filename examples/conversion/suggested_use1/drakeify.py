@@ -4,9 +4,7 @@ Description
 This script contains an example of how to convert a URDF file into a "Drake-ready" URDF file.
 """
 
-import ipdb
 from importlib import resources as impresources
-import typer
 from pydrake.geometry import Meshcat, MeshcatVisualizer
 from pydrake.multibody.parsing import Parser
 from pydrake.multibody.plant import AddMultibodyPlantSceneGraph
@@ -61,8 +59,5 @@ def main():
     simulator.Initialize()
     simulator.AdvanceTo(15.0)
 
-
-
 if __name__ == "__main__":
-    with ipdb.launch_ipdb_on_exception():
-        typer.run(main)
+    main()
