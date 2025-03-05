@@ -18,7 +18,7 @@ class SuppressDiagramWatcherRules:
     This class contains the rules for suppressing the DiagramWatcher.
     """
     # The list of rules to suppress the DiagramWatcher
-    during_port_watcher_connection: bool = True
+    during_port_watcher_connection: bool = False
 
 @dataclass
 class DiagramWatcherOptions:

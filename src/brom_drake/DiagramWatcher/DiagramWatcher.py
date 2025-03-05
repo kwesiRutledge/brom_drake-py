@@ -109,7 +109,7 @@ class DiagramWatcher:
                         options=options_for_target_port,
                     )
                 except Exception as e:
-                    if self.options.hide_messages.during_port_watcher_connection:
+                    if not self.options.hide_messages.during_port_watcher_connection:
                         print(f"[Warning] Unable to log port named \"{target_port.get_name()}\" of system \"{target.name}\". See log file ({options_for_target_port.plot_dir()}/activity_summary.log) for more details.")
                     
                     loguru.logger.warning(
