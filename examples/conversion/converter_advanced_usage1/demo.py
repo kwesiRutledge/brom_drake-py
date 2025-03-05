@@ -26,9 +26,10 @@ def main():
     # Use converter
     converter = DrakeReadyURDFConverter(
         urdf_file_path,
-        config=DrakeReadyURDFConverterConfig(
-            overwrite_old_logs=True,
-        )
+        overwrite_old_logs=True,
+        # config=DrakeReadyURDFConverterConfig(
+        #     overwrite_old_logs=True,
+        # )
     )
 
     # Convert the URDF
