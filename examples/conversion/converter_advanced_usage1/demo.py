@@ -5,9 +5,7 @@ Description
 This script contains an example of how to convert a URDF file into a
 "Drake-ready" URDF file using Brom's new utility.
 """
-import ipdb
 from importlib import resources as impresources
-import typer
 from pydrake.geometry import Meshcat, MeshcatVisualizer
 from pydrake.multibody.parsing import Parser
 from pydrake.multibody.plant import AddMultibodyPlantSceneGraph
@@ -16,7 +14,7 @@ from pydrake.systems.framework import DiagramBuilder
 
 # Internal imports
 from brom_drake import robots
-from brom_drake.all import DrakeReadyURDFConverter, add_watcher_and_build
+from brom_drake.all import DrakeReadyURDFConverter, add_watcher_and_build, DrakeReadyURDFConverterConfig
 from brom_drake.utils import AddGround
 
 def main():
@@ -28,7 +26,9 @@ def main():
     # Use converter
     converter = DrakeReadyURDFConverter(
         urdf_file_path,
-        overwrite_old_logs=True,
+        config=DrakeReadyURDFConverterConfig(
+            overwrite_old_logs=True,
+        )
     )
 
     # Convert the URDF
@@ -67,5 +67,4 @@ def main():
 
 
 if __name__ == "__main__":
-    with ipdb.launch_ipdb_on_exception():
-        typer.run(main)
+    main()
