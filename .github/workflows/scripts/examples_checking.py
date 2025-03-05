@@ -17,7 +17,7 @@ def get_example_tuples() -> List[Tuple[str, str]]:
         ("examples/conversion/converter_advanced_usage1/demo.py", "ConversionExample2-Advanced"),
         ("examples/watcher/suggested_use1/create_monitor.py", "WatcherExample1"),
         ("examples/watcher/wo_convenience1/create_monitor_wo_convenience.py", "WatcherExample2"),
-        ("examples/watcher/changing_plot_arrangement1/create_monitor_changing_plot_arrangement.py", "WatcherExample3"),
+        ("examples/watcher/changing_plot_arrangement1/create_monitor_w_different_arrangement.py", "WatcherExample3"),
         (debugging_production_dir + "demonstrate_static_grasp/suggested_use1/demonstrate.py", "StaticGraspExample1"),
         (show_me_production_dir + "suggested_use1/show.py", "ShowMeThisModelExample1"),
         (show_me_production_dir + "suggested_use2/show.py", "ShowMeThisModelExample2"),
