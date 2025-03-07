@@ -31,6 +31,7 @@ def main(meshcat_port_number: int = 7001):
         prob_sample_goal=0.30,
         max_iterations=int(1e5),
         convergence_threshold=1e-3,
+        debug_flag=True,
     )
     planner2 = RRTConnectPlanner(
         production.arm,
@@ -46,6 +47,11 @@ def main(meshcat_port_number: int = 7001):
         with_watcher=True,
     )
 
+    raise NotImplementedError(
+        "This example is not working yet. " +
+        "Please wait for future versions of brom_drake to fix this."
+    )
+
     print("Simulating...")
 
     # Simulate the diagram
@@ -57,6 +63,7 @@ def main(meshcat_port_number: int = 7001):
     simulator.AdvanceTo(0.1)
     planned_trajectory = production.plan_dispenser.planned_trajectory
     print(f"Expected end time of trajectory: {planned_trajectory.end_time()}")
+
     # return
     simulator.AdvanceTo(planned_trajectory.end_time()+1.0)
 
