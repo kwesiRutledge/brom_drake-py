@@ -19,6 +19,7 @@ class RRTConnectPlannerConfig:
     prob_sample_goal: float = 0.05
     random_seed: int = 23
     steering_step_size: float = 0.025
+    debug_flag: bool = False
     
 
 class RRTConnectPlanner(MotionPlanner):
@@ -59,6 +60,7 @@ class RRTConnectPlanner(MotionPlanner):
 
         # Setup
         nearest_node = rrt.nodes[nearest_node_idx]
+        debug_flag = self.config.debug_flag
 
         # Steer from nearest node to random configuration
         q_current = nearest_node['q']
@@ -71,6 +73,8 @@ class RRTConnectPlanner(MotionPlanner):
 
             # Check for collisions
             if collision_check_fcn(q_new):
+                if debug_flag:
+                    print(f"Collision detected at {q_new} (q_current = {q_current})")
                 break
 
             # If the next point is collision free, then add new node to the tree
@@ -83,8 +87,9 @@ class RRTConnectPlanner(MotionPlanner):
 
             n_loops += 1
 
-        # print(f"Number of loops in connection: {n_loops}")
-        # print(f"RRT Size: {rrt.number_of_nodes()}")
+        if debug_flag:
+            print(f"Number of loops in connection: {n_loops}")
+            print(f"RRT Size: {rrt.number_of_nodes()}")
 
         return q_current # Return the last configuration we visited
 

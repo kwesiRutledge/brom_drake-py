@@ -56,8 +56,12 @@ class DemonstrateStaticGrasp(BaseProduction):
 
         # Assign the target frame on the gripper to the variable
         if target_frame_name_on_gripper is None:
-            first_body_in_gripper = self.get_first_frame_on_gripper()
-            target_frame_name_on_gripper = first_body_in_gripper.name()
+            target_frame_name_on_gripper = self.get_name_of_first_frame_in_gripper()
+        else:
+            assert target_frame_name_on_gripper in self.get_all_body_names_in_gripper(), \
+                f"Target frame {target_frame_name_on_gripper} not found in gripper model; Valid body names are: {self.get_all_body_names_in_gripper()}."
+
+
         self.target_frame_name_on_gripper = target_frame_name_on_gripper
 
         # Add Plant and Scene Graph for easy simulation
@@ -174,11 +178,21 @@ class DemonstrateStaticGrasp(BaseProduction):
             # scale=0.1,
         )
 
+        if self.target_frame_name_on_gripper != self.get_name_of_first_frame_in_gripper():
+            AddMultibodyTriad(
+                plant.GetFrameByName(self.target_frame_name_on_gripper),
+                self.scene_graph,
+            )
+
         # Weld the gripper to the manipuland
         plant.WeldFrames(
             plant.world_frame(),
             target_frame,
-            self.X_ObjectTarget,
+            self.find_X_WorldGripper(
+                self.X_ObjectTarget,
+                self.target_frame_name_on_gripper,
+                self.gripper_joint_positions,
+            ),
         )
         
         # Create a system to control the gripper's actuators
@@ -230,35 +244,6 @@ class DemonstrateStaticGrasp(BaseProduction):
             params=params,
         )
 
-    def get_first_frame_on_gripper(self) -> RigidBodyFrame:
-        """
-        Description
-        -----------
-        This method will return the first frame found in the gripper file.
-
-        Returns
-        -------
-        RigidBodyFrame
-            The first frame on the gripper.
-        """
-        # Setup
-
-        # Create shadow plant
-        shadow_plant = MultibodyPlant(self.time_step)
-        model_idcs = Parser(plant=shadow_plant).AddModels(self.path_to_gripper)
-        shadow_model_idx = model_idcs[0]
-
-        # Finalize the shadow plant
-        shadow_plant.Finalize()
-
-        # Get the first body on the gripper
-        gripper_bodies_indicies = shadow_plant.GetBodyIndices(shadow_model_idx)
-        first_body_in_gripper = shadow_plant.get_body(gripper_bodies_indicies[0])
-
-        # Return the body frame
-        return first_body_in_gripper.body_frame()
-
-
     def find_number_of_positions_in_model(self) -> int:
         """
         Description
@@ -290,6 +275,112 @@ class DemonstrateStaticGrasp(BaseProduction):
         shadow_plant.Finalize()
 
         return shadow_plant.num_positions()
+
+    def find_X_WorldGripper(
+        self,
+        X_ObjectTarget: RigidTransform,
+        target_frame_name: str,
+        desired_joint_positions: List[float],
+    ) -> RigidTransform:
+        """
+        Description
+        -----------
+        This method will return the transform from the world frame to the gripper frame.
+        """
+        # Setup
+        desired_joint_positions = np.array(desired_joint_positions)
+
+        # Create shadow plant containing just the gripper
+        shadow_plant = MultibodyPlant(self.time_step)
+        model_idcs = Parser(plant=shadow_plant).AddModels(self.path_to_gripper)
+        shadow_model_idx = model_idcs[0]
+        
+        # Get the first body on the gripper
+        name_of_first_body_in_gripper = self.get_name_of_first_frame_in_gripper()
+
+        # Weld the base link to the world frame
+        shadow_plant.WeldFrames(
+            shadow_plant.world_frame(),
+            shadow_plant.GetFrameByName(name_of_first_body_in_gripper),
+        )
+
+        # Finalize Plant
+        shadow_plant.Finalize()
+
+        shadow_builder = DiagramBuilder()
+        shadow_builder.AddSystem(shadow_plant)
+        diagram = shadow_builder.Build()
+        shadow_diagram_context = diagram.CreateDefaultContext()
+
+        # Set the joint positions
+        shadow_plant.SetPositions(
+            shadow_plant.GetMyContextFromRoot(shadow_diagram_context),
+            shadow_model_idx,
+            desired_joint_positions,
+        )
+
+        # Get the transform of the gripper's base in the static world frame
+        X_GripperBase_Target = shadow_plant.EvalBodyPoseInWorld(
+            shadow_plant.GetMyContextFromRoot(shadow_diagram_context),
+            shadow_plant.GetBodyByName(target_frame_name),
+        )
+
+        X_ObjectGripperBase = X_ObjectTarget.multiply(
+            X_GripperBase_Target.inverse(),
+        )
+
+        return X_ObjectGripperBase
+
+    def get_all_body_names_in_gripper(self) -> List[str]:
+        """
+        Description
+        -----------
+        This method will return all of the body names in the gripper file.
+
+        Returns
+        -------
+        List[str]
+            The list of body names in the gripper.
+        """
+        # Setup
+
+        # Create shadow plant
+        shadow_plant = MultibodyPlant(self.time_step)
+        model_idcs = Parser(plant=shadow_plant).AddModels(self.path_to_gripper)
+        shadow_model_idx = model_idcs[0]
+
+        # Finalize the shadow plant
+        shadow_plant.Finalize()
+
+        return [body.name() for body in shadow_plant.GetBodies()]
+
+    def get_name_of_first_frame_in_gripper(self) -> str:
+        """
+        Description
+        -----------
+        This method will return the first frame found in the gripper file.
+
+        Returns
+        -------
+        RigidBodyFrame
+            The first frame on the gripper.
+        """
+        # Setup
+
+        # Create shadow plant
+        shadow_plant = MultibodyPlant(self.time_step)
+        model_idcs = Parser(plant=shadow_plant).AddModels(self.path_to_gripper)
+        shadow_model_idx = model_idcs[0]
+
+        # Finalize the shadow plant
+        shadow_plant.Finalize()
+
+        # Get the first body on the gripper
+        gripper_bodies_indicies = shadow_plant.GetBodyIndices(shadow_model_idx)
+        first_body_in_gripper = shadow_plant.get_body(gripper_bodies_indicies[0])
+
+        # Return the body frame
+        return first_body_in_gripper.body_frame().name()
 
     @property
     def id(self):
