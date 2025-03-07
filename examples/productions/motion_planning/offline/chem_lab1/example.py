@@ -48,8 +48,7 @@ def main(meshcat_port_number: int = 7001):
     )
 
     raise NotImplementedError(
-        "This example is not working yet. " +
-        "Please wait for future versions of brom_drake to fix this."
+        "Testing to see if an error will cause GitHub Workflow to fail."
     )
 
     print("Simulating...")
