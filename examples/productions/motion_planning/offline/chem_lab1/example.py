@@ -47,10 +47,6 @@ def main(meshcat_port_number: int = 7001):
         with_watcher=True,
     )
 
-    raise NotImplementedError(
-        "Testing to see if an error will cause GitHub Workflow to fail."
-    )
-
     print("Simulating...")
 
     # Simulate the diagram
