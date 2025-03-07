@@ -3,7 +3,24 @@ on: [pull_request]
 jobs:
   run:
     runs-on: ubuntu-latest
-    name: Run All Examples
+    name: Run example
+    strategy:
+      matrix:
+        example_location: [
+          'examples/watcher/suggested_use1/create_monitor.py',
+          'examples/watcher/wo_convenience1/create_monitor_wo_convenience.py',
+          'examples/watcher/changing_plot_arrangement1/create_monitor_w_different_arrangement.py',
+          'examples/conversion/suggested_use1/drakeify.py',
+          'examples/conversion/converter_advanced_usage1/demo.py',
+          'examples/productions/helpful_for_debugging/show_me_this_model/suggested_use1/show.py',
+          'examples/productions/helpful_for_debugging/show_me_this_model/suggested_use2/show.py',
+          'examples/productions/helpful_for_debugging/show_me_this_model/show_collision_geometries1/show.py',
+          'examples/productions/motion_planning/offline/chem_lab1/example.py',
+          'examples/productions/motion_planning/offline/shelf/shelf1.py',
+          'examples/productions/motion_planning/offline/chem_lab2/suggested_use1/example.py',
+          'examples/productions/motion_planning/offline/chem_lab2/providing_start_as_config1/provide_start_config1.py',
+          'examples/productions/helpful_for_debugging/demonstrate_static_grasp/suggested_use1/demonstrate.py',
+        ]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -26,5 +43,5 @@ jobs:
           sed -i "s/{{VERSION_PLACEHOLDER}}/${{ steps.previous_tag.outputs.tag }}/g" setup.py
       - name: Install package
         run: pip install -e .
-      - name: Run Script Which Checks All Examples
-        run: python3 .github/workflows/scripts/examples_checking.py
+      - name: Run the current example
+        run: python3 ${{ matrix.example_location }}
