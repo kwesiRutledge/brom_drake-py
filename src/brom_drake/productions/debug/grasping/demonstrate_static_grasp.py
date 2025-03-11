@@ -2,8 +2,13 @@ from typing import List, Tuple, Union
 
 import numpy as np
 from pydrake.all import (
+    GeometryProperties,
+    IllustrationProperties,
     RigidBodyFrame,
-    RigidTransform
+    RigidTransform,
+    RoleAssign,
+    SceneGraph,
+    SceneGraphInspector,
 )
 from pydrake.geometry import Meshcat, MeshcatVisualizer, MeshcatVisualizerParams
 from pydrake.geometry import Role as DrakeRole
@@ -14,6 +19,7 @@ from pydrake.systems.framework import DiagramBuilder, Diagram, Context
 from pydrake.systems.primitives import ConstantVectorSource, VectorLogSink
 
 # Internal Imports
+from brom_drake.file_manipulation.urdf.drakeify import drakeify_my_urdf
 from brom_drake.robots import find_base_link_name_in
 from brom_drake.productions.types import BaseProduction
 from brom_drake.productions import ProductionID
@@ -32,14 +38,15 @@ class DemonstrateStaticGrasp(BaseProduction):
         gripper_joint_positions: Union[List[float], np.ndarray] = None,
         time_step: float = 1e-3,
         target_frame_name_on_gripper: str = None,
-        **kwargs,
+        gripper_color: List[float] = None
     ):
-        super().__init__(**kwargs)
+        super().__init__()
 
         # Add the model to the Production
         self.path_to_object = path_to_object
         self.path_to_gripper = path_to_gripper
         self.time_step = time_step
+        self.gripper_color = gripper_color
         
         if X_ObjectTarget is None:
             X_ObjectTarget = RigidTransform()
@@ -156,7 +163,18 @@ class DemonstrateStaticGrasp(BaseProduction):
             "The gripper model index is already set. Please DO NOT add the gripper to the plant before this function."
 
         plant : MultibodyPlant = self.plant
-        
+        gripper_color = self.gripper_color
+
+        # Input Processing
+        if gripper_color is not None:
+            # Convert gripper URDF to Drake-ready URDF
+            recolored_gripper_urdf = drakeify_my_urdf(
+                self.path_to_gripper,
+                overwrite_old_logs=True,
+                log_file_name="DemonstrateStaticGripTest_AddManipulandToPlant_gripper.log",
+                replace_colors_with=gripper_color,
+            )
+            self.path_to_gripper = str(recolored_gripper_urdf)
 
         # Add the gripper to the plant
         temp_idcs = Parser(plant=self.plant).AddModels(

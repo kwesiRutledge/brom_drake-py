@@ -282,6 +282,16 @@ class DrakeReadyURDFConverter:
 
                         n_replacements_made += 1
 
+            elif child_ii.tag == "material":
+                new_material_elt = self.create_new_material_element(child_ii)
+
+                # replace the material element in new_elt with this one
+                new_elt[ii] = new_material_elt
+                if self.config.replace_colors_with is not None:
+                    self.log(
+                        f"Replaced the color of the material element with RGBA values {self.config.replace_colors_with}."
+                    )
+
         return new_elt
 
     def convert_urdf(self) -> Path:
@@ -354,7 +364,18 @@ class DrakeReadyURDFConverter:
 
         # Filename exists; Let's check to see if it's obj or not
         if does_drake_parser_support(new_elt.attrib["filename"]):
-            pass
+            self.log(
+                f"\"{new_elt.attrib['filename']}\" is already supported by the Drake parser. Let's copy it into the right place."
+            )
+            # Let's try to copy the old file into the new directory
+            old_filename = new_elt.attrib["filename"]
+            new_filename = self.create_obj_to_replace_mesh_file(old_filename)
+            new_elt.set(
+                "filename", new_filename,
+            )
+            self.log(
+                f"Replaced the mesh file \"{old_filename}\" with a Drake-compatible .obj file at \"{new_filename}\"."
+            )
         else:
             # If parser does not support the given filename,
             # then let's try to create one
@@ -526,6 +547,59 @@ class DrakeReadyURDFConverter:
 
         joint_name = joint_elt.attrib["name"]
         self.actuated_joint_names.append(joint_name)
+
+    def create_new_material_element(self, material_elt: ET.Element):
+        """
+        Description
+        -----------
+        This method will handle the material element in the URDF file.
+        Specifically, it will check to see if the user wants us to assign a color to the 
+        material element. If so, then we will assign the color to the material element.
+
+        This is useful when attempting to add transmissions to the URDF file
+        later on.
+        
+        Arguments
+        ---------
+        material_elt: ET.Element
+            The material element that we want to handle.
+        
+        Returns
+        -------
+        None, but modifies the material element.
+        """
+        # Setup
+        replace_colors_with = self.config.replace_colors_with
+        material_elt = deepcopy(material_elt)
+
+        # Input Processing (Abort, if no color replacement is needed)
+        if replace_colors_with is None:
+            return material_elt
+        
+        if len(replace_colors_with) != 4:
+            raise ValueError(
+                "The color replacement list must have exactly 4 elements (RGBA)."
+            )
+        
+        # Algorithm
+        # Check to see if the material element has a color element
+        color_elt = material_elt.find("color")
+        if color_elt is None:
+            # If no color element exists, then we will create one
+            color_elt = ET.Element("color")
+            material_elt.append(color_elt)
+        else:
+            # If a color element exists, then we will modify it
+            material_elt.remove(color_elt)
+            color_elt = ET.Element("color")
+            material_elt.append(color_elt)
+
+        # Set the color of the material element
+        color_elt.set(
+            "rgba",
+            f"{replace_colors_with[0]} {replace_colors_with[1]} {replace_colors_with[2]} {replace_colors_with[3]}"
+        )
+        return material_elt
 
     @staticmethod
     def log(message: str):
