@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from enum import IntEnum
+from typing import List
 
 class MeshReplacementStrategy(IntEnum):
     """
@@ -35,3 +36,4 @@ class DrakeReadyURDFConverterConfig:
     log_file_name: str = "conversion.log"
     mesh_replacement_strategies: MeshReplacementStrategies = MeshReplacementStrategies()
     add_missing_actuators: bool = True
+    replace_colors_with: List[float] = None
