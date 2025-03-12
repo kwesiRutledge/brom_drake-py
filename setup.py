@@ -23,7 +23,7 @@ if __name__ == "__main__":
         install_requires=[
             'drake', 'meshcat', 'manipulation<2025.3.3',
             'loguru', 'matplotlib', 'numpy',
-            'trimesh',
+            'pycollada', 'trimesh',
         ],
         keywords=["drake", "robotics", "testing", "logging"],
         classifiers=[
