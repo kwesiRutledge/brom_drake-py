@@ -37,8 +37,9 @@ class DemonstrateStaticGrasp(BaseProduction):
         show_collision_geometries: bool = False,
         gripper_joint_positions: Union[List[float], np.ndarray] = None,
         time_step: float = 1e-3,
-        target_frame_name_on_gripper: str = None,
-        gripper_color: List[float] = None
+        target_body_on_gripper: str = None,
+        gripper_color: List[float] = None,
+        always_show_gripper_base_frame: bool = False,
     ):
         super().__init__()
 
@@ -47,6 +48,7 @@ class DemonstrateStaticGrasp(BaseProduction):
         self.path_to_gripper = path_to_gripper
         self.time_step = time_step
         self.gripper_color = gripper_color
+        self.always_show_gripper_base_frame = always_show_gripper_base_frame
         
         if X_ObjectTarget is None:
             X_ObjectTarget = RigidTransform()
@@ -61,14 +63,14 @@ class DemonstrateStaticGrasp(BaseProduction):
         self.gripper_joint_positions = gripper_joint_positions
 
         # Assign the target frame on the gripper to the variable
-        if target_frame_name_on_gripper is None:
-            target_frame_name_on_gripper = self.get_name_of_first_frame_in_gripper()
+        if target_body_on_gripper is None:
+            target_body_on_gripper = self.get_name_of_first_frame_in_gripper()
         else:
-            assert target_frame_name_on_gripper in self.get_all_body_names_in_gripper(), \
-                f"Target frame {target_frame_name_on_gripper} not found in gripper model; Valid body names are: {self.get_all_body_names_in_gripper()}."
+            assert target_body_on_gripper in self.get_all_body_names_in_gripper(), \
+                f"Target body \"{target_body_on_gripper}\" not found in gripper model; Valid body names are: {self.get_all_body_names_in_gripper()}."
 
 
-        self.target_frame_name_on_gripper = target_frame_name_on_gripper
+        self.target_frame_name_on_gripper = target_body_on_gripper
 
         # Add Plant and Scene Graph for easy simulation
         self.plant, self.scene_graph = AddMultibodyPlantSceneGraph(
@@ -165,6 +167,8 @@ class DemonstrateStaticGrasp(BaseProduction):
         plant : MultibodyPlant = self.plant
         gripper_color = self.gripper_color
 
+        show_gripper_base_frame = self.always_show_gripper_base_frame
+
         # Input Processing
         if gripper_color is not None:
             # Convert gripper URDF to Drake-ready URDF
@@ -184,27 +188,34 @@ class DemonstrateStaticGrasp(BaseProduction):
         self.gripper_model_index = temp_idcs[0]
         self.gripper_model_name = self.plant.GetModelInstanceName(self.gripper_model_index)
 
-        # Weld the first frame in the model to the origin of the manipuland with the
-        # specified transform
+        # Draw the MultibodyTriad for the
+        # - Target Frame on the Gripper
+        # - Base Link of the Gripper
         target_frame = plant.GetFrameByName(self.target_frame_name_on_gripper)
+        gripper_base_frame = plant.GetFrameByName(
+            self.get_name_of_first_frame_in_gripper()
+        )
 
-        # Add the gripper triad to the builder
+        # Add the target triad to the builder
         AddMultibodyTriad(
             target_frame,
             self.scene_graph,
-            # scale=0.1,
         )
 
-        if self.target_frame_name_on_gripper != self.get_name_of_first_frame_in_gripper():
+        # Add the gripper triad to the builder
+        target_is_different_from_gripper_base = target_frame.body().name() != gripper_base_frame.body().name()
+        if show_gripper_base_frame and target_is_different_from_gripper_base:
             AddMultibodyTriad(
-                plant.GetFrameByName(self.target_frame_name_on_gripper),
+                gripper_base_frame,
                 self.scene_graph,
+                # scale=0.1,
             )
+            
 
         # Weld the gripper to the manipuland
         plant.WeldFrames(
             plant.world_frame(),
-            target_frame,
+            gripper_base_frame,
             self.find_X_WorldGripper(
                 self.X_ObjectTarget,
                 self.target_frame_name_on_gripper,
@@ -369,7 +380,10 @@ class DemonstrateStaticGrasp(BaseProduction):
         # Finalize the shadow plant
         shadow_plant.Finalize()
 
-        return [body.name() for body in shadow_plant.GetBodies()]
+        return [
+            shadow_plant.get_body(body_idx).name()
+            for body_idx in shadow_plant.GetBodyIndices(shadow_model_idx)
+        ]
 
     def get_name_of_first_frame_in_gripper(self) -> str:
         """
@@ -397,7 +411,7 @@ class DemonstrateStaticGrasp(BaseProduction):
         first_body_in_gripper = shadow_plant.get_body(gripper_bodies_indicies[0])
 
         # Return the body frame
-        return first_body_in_gripper.body_frame().name()
+        return first_body_in_gripper.name()
 
     @property
     def id(self):
