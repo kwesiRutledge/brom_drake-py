@@ -3,8 +3,10 @@ import numpy as np
 from pydrake.all import (
     RigidTransform,
     RollPitchYaw,
+    SceneGraph,
     Simulator,
 )
+from pydrake.all import Role as DrakeRole
 import unittest
 
 # Internal Imports
@@ -149,6 +151,53 @@ class DemonstrateStaticGraspTest(unittest.TestCase):
 
         self.assertTrue(True)
 
+
+    def test_add_gripper_to_plant1(self):
+        """
+        Description
+        -----------
+        This test verifies that we can add the gripper to the plant
+        and that it creates a new RigidBodyFrame for the base when we
+        call the vanilla version of add_gripper_to_plant.
+        """
+        # Setup
+        flask_urdf = self.drakeified_flask_urdf  
+        gripper_urdf = self.gripper_urdf_path      
+
+        # Create the production
+        production = DemonstrateStaticGrasp(
+            path_to_object=flask_urdf,
+            path_to_gripper=gripper_urdf,
+            meshcat_port_number=None, # Use None for CI
+        )
+
+        # Call the method
+        production.add_gripper_to_plant()
+
+        # Finalize the plant
+        production.plant.Finalize()
+
+        # Verify that the gripper frame is added to the base
+        scene_graph: SceneGraph = production.scene_graph
+        
+        # Search through the geometries in the scene for the ones created by the 
+        # AddMultibodyTriad method on the gripper base.
+        all_geometries = scene_graph.model_inspector().GetAllGeometryIds()
+        foundTriad = False
+        for geometry_id in all_geometries:
+            frame_id = scene_graph.model_inspector().GetFrameId(geometry_id)
+            try:
+                frame_geometry_x = scene_graph.model_inspector().GetGeometryIdByName(
+                    frame_id,
+                    DrakeRole.kIllustration,
+                    production.target_frame_name_on_gripper + " x-axis"
+                )
+                foundTriad = foundTriad or True
+            except:
+                pass
+                        
+
+        self.assertTrue(foundTriad)
 
 if __name__ == "__main__":
     unittest.main()
