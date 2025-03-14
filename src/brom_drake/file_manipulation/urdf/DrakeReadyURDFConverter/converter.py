@@ -241,6 +241,7 @@ class DrakeReadyURDFConverter:
 
         # Search through all children of the visual element
         n_replacements_made = 0
+        added_material = False
         for ii, child_ii in enumerate(visual_elt):
             if child_ii.tag == "geometry":
                 # If the child is a geometry element, then we will check if replacement is needed.
@@ -287,10 +288,28 @@ class DrakeReadyURDFConverter:
 
                 # replace the material element in new_elt with this one
                 new_elt[ii] = new_material_elt
+                added_material = True
                 if self.config.replace_colors_with is not None:
                     self.log(
                         f"Replaced the color of the material element with RGBA values {self.config.replace_colors_with}."
                     )
+
+        # If material did not exist in the visual element, then we will add it.
+        if not added_material:
+            # Create a new material element
+            new_material_elt = ET.Element("material")
+            new_elt.append(new_material_elt)
+
+            transformed_material_elt = self.create_new_material_element(new_material_elt)
+            new_elt[-1] = transformed_material_elt
+            self.log(
+                f"Added a new material element to the visual element with RGBA values {self.config.replace_colors_with}."
+            )
+            n_replacements_made += 1
+
+
+
+            added_material = True
 
         return new_elt
 
