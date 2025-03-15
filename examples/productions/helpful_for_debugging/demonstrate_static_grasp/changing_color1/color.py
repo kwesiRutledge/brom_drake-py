@@ -65,5 +65,4 @@ def main(meshcat_port_number: int = 7001):
     simulator.AdvanceTo(10.0)
 
 if __name__ == "__main__":
-    with ipdb.launch_ipdb_on_exception():
-        main()
+    main()
