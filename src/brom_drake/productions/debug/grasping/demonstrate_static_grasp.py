@@ -21,13 +21,17 @@ from pydrake.systems.primitives import ConstantVectorSource, VectorLogSink
 # Internal Imports
 from brom_drake.file_manipulation.urdf.drakeify import drakeify_my_urdf
 from brom_drake.robots import find_base_link_name_in
-from brom_drake.productions.types import BaseProduction
+from brom_drake.productions.types.debug import BasicGraspingDebuggingProduction
 from brom_drake.productions import ProductionID
 from brom_drake.productions.roles.role import Role
 from brom_drake.utils import Performer, AddMultibodyTriad
+from brom_drake.utils.model_instances import (
+    get_name_of_first_body_in_urdf,
+    find_number_of_positions_in_welded_model,
+)
 from brom_drake.productions.debug.show_me.show_me_system import ShowMeSystem
 
-class DemonstrateStaticGrasp(BaseProduction):
+class DemonstrateStaticGrasp(BasicGraspingDebuggingProduction):
     def __init__(
         self,
         path_to_object: str,
@@ -39,49 +43,42 @@ class DemonstrateStaticGrasp(BaseProduction):
         time_step: float = 1e-3,
         target_body_on_gripper: str = None,
         gripper_color: List[float] = None,
-        always_show_gripper_base_frame: bool = False,
+        show_gripper_base_frame: bool = False,
     ):
-        super().__init__()
+        # Call the parent constructor
+        super().__init__(
+            path_to_object=path_to_object,
+            path_to_gripper=path_to_gripper,
+            X_ObjectTarget=X_ObjectTarget,
+            meshcat_port_number=meshcat_port_number,
+            time_step=time_step,
+            target_body_on_gripper=target_body_on_gripper,
+            gripper_color=gripper_color,
+            show_gripper_base_frame=show_gripper_base_frame,
+            show_collision_geometries=show_collision_geometries,
+        )
 
-        # Add the model to the Production
-        self.path_to_object = path_to_object
-        self.path_to_gripper = path_to_gripper
-        self.time_step = time_step
-        self.gripper_color = gripper_color
-        self.always_show_gripper_base_frame = always_show_gripper_base_frame
-        
-        if X_ObjectTarget is None:
-            X_ObjectTarget = RigidTransform()
-        self.X_ObjectTarget = X_ObjectTarget
-        
-        self.meshcat_port_number = meshcat_port_number
-        self.show_collision_geometries = show_collision_geometries
+        # This will define the following fields for the production:
+        # - path_to_object
+        # - path_to_gripper
+        # - X_ObjectTarget
+        # - meshcat_port_number
+        # - time_step
+        # - target_body_on_gripper
+        # - gripper_color
+        # - show_gripper_base_frame
+        # - show_collision_geometries
+        # - plant
 
         # Create joint position array
         if gripper_joint_positions is None:
-            gripper_joint_positions = [0.0] * self.find_number_of_positions_in_model()
+            gripper_joint_positions = [0.0] * find_number_of_positions_in_welded_model(self.path_to_gripper)
         self.gripper_joint_positions = gripper_joint_positions
 
-        # Assign the target frame on the gripper to the variable
-        if target_body_on_gripper is None:
-            target_body_on_gripper = self.get_name_of_first_frame_in_gripper()
-        else:
-            assert target_body_on_gripper in self.get_all_body_names_in_gripper(), \
-                f"Target body \"{target_body_on_gripper}\" not found in gripper model; Valid body names are: {self.get_all_body_names_in_gripper()}."
-
-
-        self.target_frame_name_on_gripper = target_body_on_gripper
-
-        # Add Plant and Scene Graph for easy simulation
-        self.plant, self.scene_graph = AddMultibodyPlantSceneGraph(
-            self.builder,
-            time_step=1e-3,
-        )
+        # Add Name to plantPlant and Scene Graph for easy simulation
         self.plant.set_name("DemonstrateStaticGrasp_plant")
 
-        self.meshcat = None
-        self.manipuland_index, self.manipuland_name = None, None
-        self.gripper_model_index, self.gripper_model_name = None, None
+        # Create show me system for holding object in place
         self.show_me_system = None
 
     def add_cast_and_build(
@@ -107,12 +104,22 @@ class DemonstrateStaticGrasp(BaseProduction):
         - The gripper triad to the builder.
         """
         # Setup
+        plant: MultibodyPlant = self.plant
 
         # Add the object to the builder
-        self.add_manipuland_to_plant()
+        self.add_manipuland_to_plant(and_weld_to=plant.world_frame())
 
         # Add the gripper to the builder
-        self.add_gripper_to_plant()
+        X_WorldGripper = self.find_X_WorldGripper(
+            X_ObjectTarget=self.X_ObjectTarget,
+            target_frame_name=self.target_body_name_on_gripper,
+            desired_joint_positions=self.gripper_joint_positions,
+        )
+        self.add_gripper_to_plant(
+            and_weld_to=plant.world_frame(),
+            with_X_WorldGripper=X_WorldGripper,
+        )
+        self.add_gripper_controller_and_connect()
 
         # Connect the plant to the meshcat, if requested
         if self.meshcat_port_number is not None:
@@ -121,108 +128,10 @@ class DemonstrateStaticGrasp(BaseProduction):
         # Finalize the plant
         self.plant.Finalize()
 
-    def add_manipuland_to_plant(self):
-        """
-        Description
-        -----------
-        This method will add the manipuland to the plant
-        and then weld it to the origin.
-        """
+    def add_gripper_controller_and_connect(self):
         # Setup
-        assert self.manipuland_index is None, \
-            "The manipuland index is already set. Please DO NOT add the manipuland to the plant before this function."
+        plant: MultibodyPlant = self.plant
 
-        plant : MultibodyPlant = self.plant
-
-        # Add the manipuland to the plant
-        temp_idcs = Parser(plant=self.plant).AddModels(
-            self.path_to_object,
-        )
-        assert len(temp_idcs) == 1, f"Only one model should be added; received {len(temp_idcs)}"
-        self.manipuland_index = temp_idcs[0]
-        self.manipuland_name = self.plant.GetModelInstanceName(self.manipuland_index)
-
-        # Weld the first frame in the model to the origin
-        manipuland_body_idcs = plant.GetBodyIndices(self.manipuland_index)
-        assert len(manipuland_body_idcs) > 0, \
-            f"Expected at least one body in the manipuland; received {len(manipuland_body_idcs)}"
-        manipuland_body = plant.get_body(manipuland_body_idcs[0])
-        frame0 = manipuland_body.body_frame()
-        self.plant.WeldFrames(
-            self.plant.world_frame(),
-            frame0,
-        )
-
-    def add_gripper_to_plant(self):
-        """
-        Description
-        -----------
-        This method will add the gripper to the plant
-        and then weld it to the origin.
-        """
-        # Setup
-        assert self.gripper_model_index is None, \
-            "The gripper model index is already set. Please DO NOT add the gripper to the plant before this function."
-
-        plant : MultibodyPlant = self.plant
-        gripper_color = self.gripper_color
-
-        show_gripper_base_frame = self.always_show_gripper_base_frame
-
-        # Input Processing
-        if gripper_color is not None:
-            # Convert gripper URDF to Drake-ready URDF
-            recolored_gripper_urdf = drakeify_my_urdf(
-                self.path_to_gripper,
-                overwrite_old_logs=True,
-                log_file_name="DemonstrateStaticGripTest_AddManipulandToPlant_gripper.log",
-                replace_colors_with=gripper_color,
-            )
-            self.path_to_gripper = str(recolored_gripper_urdf)
-
-        # Add the gripper to the plant
-        temp_idcs = Parser(plant=self.plant).AddModels(
-            self.path_to_gripper,
-        )
-        assert len(temp_idcs) == 1, f"Only one model should be added; received {len(temp_idcs)}"
-        self.gripper_model_index = temp_idcs[0]
-        self.gripper_model_name = self.plant.GetModelInstanceName(self.gripper_model_index)
-
-        # Draw the MultibodyTriad for the
-        # - Target Frame on the Gripper
-        # - Base Link of the Gripper
-        target_frame = plant.GetFrameByName(self.target_frame_name_on_gripper)
-        gripper_base_frame = plant.GetFrameByName(
-            self.get_name_of_first_frame_in_gripper()
-        )
-
-        # Add the target triad to the builder
-        AddMultibodyTriad(
-            target_frame,
-            self.scene_graph,
-        )
-
-        # Add the gripper triad to the builder
-        target_is_different_from_gripper_base = target_frame.body().name() != gripper_base_frame.body().name()
-        if show_gripper_base_frame and target_is_different_from_gripper_base:
-            AddMultibodyTriad(
-                gripper_base_frame,
-                self.scene_graph,
-                # scale=0.1,
-            )
-            
-
-        # Weld the gripper to the manipuland
-        plant.WeldFrames(
-            plant.world_frame(),
-            gripper_base_frame,
-            self.find_X_WorldGripper(
-                self.X_ObjectTarget,
-                self.target_frame_name_on_gripper,
-                self.gripper_joint_positions,
-            ),
-        )
-        
         # Create a system to control the gripper's actuators
         self.show_me_system = ShowMeSystem(
             plant=plant,
@@ -241,68 +150,6 @@ class DemonstrateStaticGrasp(BaseProduction):
             desired_joint_positions_source.get_output_port(0),
             self.show_me_system.get_input_port(0),
         )
-
-    def connect_to_meshcat(self):
-        """
-        Description
-        -----------
-        This method will connect the plant to the meshcat.
-
-        Assumptions
-        -----------
-        - meshcat_port_number is a positive integer
-        """
-        # Setup
-
-        # Create meshcat object
-        self.meshcat = Meshcat(port=self.meshcat_port_number)  # Object provides an interface to Meshcat
-        m_visualizer = MeshcatVisualizer(
-            self.meshcat,
-        )
-        params = MeshcatVisualizerParams(
-            role=DrakeRole.kIllustration,
-        )
-        if self.show_collision_geometries:
-            params = MeshcatVisualizerParams(
-                role=DrakeRole.kProximity,
-            )
-
-        m_visualizer.AddToBuilder(
-            self.builder, self.scene_graph, self.meshcat,
-            params=params,
-        )
-
-    def find_number_of_positions_in_model(self) -> int:
-        """
-        Description
-        -----------
-        This method will return the number of positions in the gripper model
-        as defined by the user (through the path_to_gripper).
-
-        Returns
-        -------
-        int
-            The number of positions in the model.
-        """
-        # Setup
-
-        # Create a shadow plant
-        shadow_plant = MultibodyPlant(self.time_step)
-        model_idcs = Parser(plant=shadow_plant).AddModels(self.path_to_gripper)
-        shadow_model_idx = model_idcs[0]
-
-        # Weld the base link to the world frame
-        gripper_bodies_indicies = shadow_plant.GetBodyIndices(shadow_model_idx)
-        first_body_in_gripper = shadow_plant.get_body(gripper_bodies_indicies[0])
-        shadow_plant.WeldFrames(
-            shadow_plant.world_frame(),
-            first_body_in_gripper.body_frame(),
-        )
-
-        # Finalize the shadow plant
-        shadow_plant.Finalize()
-
-        return shadow_plant.num_positions()
 
     def find_X_WorldGripper(
         self,
@@ -324,7 +171,7 @@ class DemonstrateStaticGrasp(BaseProduction):
         shadow_model_idx = model_idcs[0]
         
         # Get the first body on the gripper
-        name_of_first_body_in_gripper = self.get_name_of_first_frame_in_gripper()
+        name_of_first_body_in_gripper = get_name_of_first_body_in_urdf(self.path_to_gripper)
 
         # Weld the base link to the world frame
         shadow_plant.WeldFrames(
@@ -358,60 +205,6 @@ class DemonstrateStaticGrasp(BaseProduction):
         )
 
         return X_ObjectGripperBase
-
-    def get_all_body_names_in_gripper(self) -> List[str]:
-        """
-        Description
-        -----------
-        This method will return all of the body names in the gripper file.
-
-        Returns
-        -------
-        List[str]
-            The list of body names in the gripper.
-        """
-        # Setup
-
-        # Create shadow plant
-        shadow_plant = MultibodyPlant(self.time_step)
-        model_idcs = Parser(plant=shadow_plant).AddModels(self.path_to_gripper)
-        shadow_model_idx = model_idcs[0]
-
-        # Finalize the shadow plant
-        shadow_plant.Finalize()
-
-        return [
-            shadow_plant.get_body(body_idx).name()
-            for body_idx in shadow_plant.GetBodyIndices(shadow_model_idx)
-        ]
-
-    def get_name_of_first_frame_in_gripper(self) -> str:
-        """
-        Description
-        -----------
-        This method will return the first frame found in the gripper file.
-
-        Returns
-        -------
-        RigidBodyFrame
-            The first frame on the gripper.
-        """
-        # Setup
-
-        # Create shadow plant
-        shadow_plant = MultibodyPlant(self.time_step)
-        model_idcs = Parser(plant=shadow_plant).AddModels(self.path_to_gripper)
-        shadow_model_idx = model_idcs[0]
-
-        # Finalize the shadow plant
-        shadow_plant.Finalize()
-
-        # Get the first body on the gripper
-        gripper_bodies_indicies = shadow_plant.GetBodyIndices(shadow_model_idx)
-        first_body_in_gripper = shadow_plant.get_body(gripper_bodies_indicies[0])
-
-        # Return the body frame
-        return first_body_in_gripper.name()
 
     @property
     def id(self):

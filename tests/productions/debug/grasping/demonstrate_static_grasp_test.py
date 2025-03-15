@@ -190,7 +190,7 @@ class DemonstrateStaticGraspTest(unittest.TestCase):
                 frame_geometry_x = scene_graph.model_inspector().GetGeometryIdByName(
                     frame_id,
                     DrakeRole.kIllustration,
-                    production.target_frame_name_on_gripper + " x-axis"
+                    production.target_body_name_on_gripper + " x-axis"
                 )
                 foundTriad = foundTriad or True
             except:
@@ -218,7 +218,7 @@ class DemonstrateStaticGraspTest(unittest.TestCase):
             path_to_gripper=gripper_urdf,
             meshcat_port_number=None, # Use None for CI
             target_body_on_gripper="left_inner_finger_pad",
-            always_show_gripper_base_frame=True,
+            show_gripper_base_frame=True,
         )
 
         # Call the method
@@ -240,7 +240,7 @@ class DemonstrateStaticGraspTest(unittest.TestCase):
                 frame_geometry_x = scene_graph.model_inspector().GetGeometryIdByName(
                     frame_id,
                     DrakeRole.kIllustration,
-                    production.target_frame_name_on_gripper + " x-axis"
+                    production.target_body_name_on_gripper + " x-axis"
                 )
                 foundTargetTriad = foundTargetTriad or True
             except:
