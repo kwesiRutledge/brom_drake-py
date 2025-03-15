@@ -88,7 +88,7 @@ class BasicGraspingDebuggingProduction(BaseProduction):
         if target_body_on_gripper is None:
             target_body_on_gripper = get_name_of_first_body_in_urdf(self.path_to_gripper)
         else:
-            assert target_body_on_gripper in get_name_of_all_bodies_in_urdf(), \
+            assert target_body_on_gripper in get_name_of_all_bodies_in_urdf(self.path_to_gripper), \
                 f"Target body \"{target_body_on_gripper}\" not found in gripper model; Valid body names are: {self.get_all_body_names_in_gripper()}."
 
 
@@ -177,7 +177,7 @@ class BasicGraspingDebuggingProduction(BaseProduction):
         
     
 
-    def add_manipuland_to_plant(self, and_weld_to: Frame = False):
+    def add_manipuland_to_plant(self, and_weld_to: Frame = None):
         """
         Description
         -----------

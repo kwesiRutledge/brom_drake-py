@@ -14,6 +14,10 @@ from brom_drake.all import drakeify_my_urdf
 from brom_drake.productions.debug.grasping.demonstrate_static_grasp import (
     DemonstrateStaticGrasp,
 )
+from brom_drake.utils.model_instances import (
+    get_name_of_first_body_in_urdf,
+    get_name_of_all_bodies_in_urdf,
+)
 from brom_drake import robots
 
 class DemonstrateStaticGraspTest(unittest.TestCase):
@@ -252,7 +256,7 @@ class DemonstrateStaticGraspTest(unittest.TestCase):
         # AddMultibodyTriad method on the gripper base.
         foundBaseTriad = False
         gripper_base_frame = production.plant.GetFrameByName(
-            production.get_name_of_first_frame_in_gripper()
+            get_name_of_first_body_in_urdf(gripper_urdf),
         )
         for geometry_id in all_geometries:
             frame_id = scene_graph.model_inspector().GetFrameId(geometry_id)
