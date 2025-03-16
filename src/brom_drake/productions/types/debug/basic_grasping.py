@@ -174,8 +174,6 @@ class BasicGraspingDebuggingProduction(BaseProduction):
                 gripper_base_frame,
                 with_X_WorldGripper,
             )
-        
-    
 
     def add_manipuland_to_plant(self, and_weld_to: Frame = None):
         """
