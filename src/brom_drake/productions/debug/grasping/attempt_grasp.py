@@ -208,7 +208,16 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
         # Setup
         plant: MultibodyPlant = self.plant
 
-        # Create a Multiplexer which connects
+        # Connect a constant vector source to the floor actuator
+        floor_actuator_source = self.builder.AddSystem(
+            ConstantVectorSource(np.array([0.0])),
+        )
+
+        # Connect the source to the floor actuator
+        self.builder.Connect(
+            floor_actuator_source.get_output_port(0),
+            plant.get_actuation_input_port(self.floor_model_index),
+        )
 
     def find_floor_z(
         self,
