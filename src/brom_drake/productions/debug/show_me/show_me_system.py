@@ -45,6 +45,9 @@ class ShowMeSystem(LeafSystem):
         # Create plant context
         self.mutable_plant_context = None
 
+        # Define the name of the system
+        self.set_name(f"ShowMeSystem_for_{plant.GetModelInstanceName(model_index)}")
+
     def SetModelJointPositions(self, context, output):
         """
         Description

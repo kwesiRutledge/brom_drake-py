@@ -654,6 +654,114 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         transmissions_found = new_tree.findall(".//transmission")
         self.assertEqual(len(transmissions_found), 0)
 
+    def test_convert_urdf10(self):
+        """
+        Description
+        -----------
+        In this test, we verify that the converter can properly convert a 
+        URDF file composed of all mesh files that are supported by Drake.
+        We do this by running a URDF through the converter twice.
+        """
+        # Setup
+        test_urdf2 = self.test_urdf2_filename
+        config = DrakeReadyURDFConverterConfig(
+            overwrite_old_logs=True,
+            log_file_name="test_convert_urdf10-1.log",
+            add_missing_actuators=False,
+        )
+        converter = DrakeReadyURDFConverter(
+            test_urdf2,
+            config=config,
+        )
+
+        # Test
+        new_urdf_path = converter.convert_urdf()
+
+        # Run conversion a second time
+        second_urdf_path = "./brom/resources/test_convert_urdf10-2.urdf"
+        converter2 = DrakeReadyURDFConverter(
+            new_urdf_path,
+            config=DrakeReadyURDFConverterConfig(
+                overwrite_old_logs=True,
+                log_file_name="test_convert_urdf10-2.log",
+                output_urdf_file_path=second_urdf_path,
+            ),
+        )
+        second_urdf_path = converter2.convert_urdf()
+
+        # Verify that the first new file exists
+        self.assertTrue(
+            new_urdf_path.exists()
+        )
+
+        # Verify that the second new file exists
+        self.assertTrue(
+            second_urdf_path.exists()
+        )
+
+    def test_convert_urdf11(self):
+        """
+        Description
+        -----------
+        In this test, we verify that the converter properly throws an error
+        when we provide a color to the converter that is not in the rgba format.
+        In other words, it is not a list of four floats.
+        Let's catch the exception and verify that it is problematic.
+        """
+        # Setup
+        test_urdf2 = self.test_urdf2_filename
+        config = DrakeReadyURDFConverterConfig(
+            overwrite_old_logs=True,
+            log_file_name="test_convert_urdf11.log",
+            replace_colors_with=[1.0, 0.5, 0.2],
+        )
+        converter = DrakeReadyURDFConverter(
+            test_urdf2,
+            config=config,
+        )
+
+        # Test
+        with self.assertRaises(ValueError) as context:
+            new_urdf_path = converter.convert_urdf()
+
+        self.assertTrue(
+            "The color replacement list must have exactly 4 elements (RGBA)." in str(context.exception)
+        )
+
+    def test_convert_urdf12(self):
+        """
+        Description
+        -----------
+        In this test, we verify that the converter properly inserts RGBA values
+        and material fields into a urdf after conversion when the `replace_colors_with`
+        field is defined.
+        """
+        # Setup
+        test_urdf2 = self.test_urdf2_filename
+        config = DrakeReadyURDFConverterConfig(
+            overwrite_old_logs=True,
+            log_file_name="test_convert_urdf12.log",
+            replace_colors_with=[1.0, 0.5, 0.2, 0.1],
+        )
+        converter = DrakeReadyURDFConverter(
+            test_urdf2,
+            config=config,
+        )
+
+        # Test
+        new_urdf_path = converter.convert_urdf()
+
+        # Verify that the material elements were added to the urdf
+        new_tree = ElementTree(file=new_urdf_path)
+        n_materials_found = len(new_tree.findall(".//material"))
+        self.assertGreater(n_materials_found, 0)
+
+        for material_elt in new_tree.iter("material"):
+            self.assertEqual(
+                material_elt.find("color").attrib["rgba"],
+                "1.0 0.5 0.2 0.1"
+            )
+
     # TODO: Fix this test
 
     # def test_convert_urdf10(self):

@@ -224,7 +224,7 @@ class MeshFileConverter:
 
     @property
     def supported_suffixes(self):
-        return [".stl", ".dae", ".DAE", ".STL"]
+        return [".stl", ".dae", ".DAE", ".STL", ".obj", ".OBJ", ".ply", ".PLY"]
 
     def true_mesh_file_path(self, max_depth: int = 10) -> Path:
         """

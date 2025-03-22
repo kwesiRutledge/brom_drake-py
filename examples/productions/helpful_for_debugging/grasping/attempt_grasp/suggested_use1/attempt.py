@@ -2,25 +2,18 @@ from importlib import resources as impresources
 import ipdb
 import numpy as np
 from pydrake.all import (
+    RigidTransform,
+    RollPitchYaw,
     Simulator,
-    RollPitchYaw, RigidTransform,
 )
 import typer
 
 # Internal Imports
 from brom_drake.all import drakeify_my_urdf
 from brom_drake import robots
-from brom_drake.productions import (
-    DemonstrateStaticGrasp,
-)
+from brom_drake.productions import AttemptGrasp
 
-def main(meshcat_port_number: int = 7001):
-    """
-    Description
-    -----------
-    This test verifies how we can use the add_cast_and_build method
-    to build a DemonstrateStaticGrasp production.
-    """
+def main():
     # Setup
 
     # Create erlenmeyer flask urdf
@@ -35,7 +28,7 @@ def main(meshcat_port_number: int = 7001):
     )
 
     # Create the gripper urdf
-    gripper_urdf = gripper_urdf_path = str(
+    gripper_urdf = str(
         impresources.files(robots) / "models/robotiq/2f_85_gripper-no-mimic/urdf/robotiq_2f_85.urdf"
     )    
     
@@ -44,16 +37,15 @@ def main(meshcat_port_number: int = 7001):
         rpy=RollPitchYaw(0.0, np.pi/2.0, 0.0),
     )
 
-
     # Create the production
-    production = DemonstrateStaticGrasp(
+    production = AttemptGrasp(
         path_to_object=str(drakeified_flask_urdf),
         path_to_gripper=gripper_urdf,
-        meshcat_port_number=meshcat_port_number, # Use None for CI
         X_ObjectTarget=X_ObjectTarget,
+        meshcat_port_number=7001, # Use None for CI
     )
 
-    # Call the method
+    # Build with watcher
     diagram, diagram_context = production.add_cast_and_build()
 
     # Set up simulation
@@ -64,4 +56,5 @@ def main(meshcat_port_number: int = 7001):
     simulator.AdvanceTo(10.0)
 
 if __name__ == "__main__":
-    main()
+    with ipdb.launch_ipdb_on_exception():
+        typer.run(main)
