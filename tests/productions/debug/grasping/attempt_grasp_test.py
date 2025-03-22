@@ -56,9 +56,10 @@ class AttemptGraspTest(unittest.TestCase):
             path_to_gripper=gripper_urdf,
             meshcat_port_number=None, # Use None for CI
         )
+        production.add_supporting_cast()
 
         # Call the method
-        z_floor = production.find_floor_z(debug_flag=True)
+        z_floor = production.find_floor_z_via_bounding_box(debug_flag=True)
 
         self.assertLess(
             z_floor,
@@ -155,6 +156,52 @@ class AttemptGraspTest(unittest.TestCase):
             production.plant.num_actuators(),
             1,
         )
+
+    def test_floor_z_creates_no_collisions1(self):
+        """
+        Description
+        -----------
+        This test verifies that when the floor value is at an incorrect height,
+        the Production can correctly identify that the floor and flask will
+        be in collision.
+
+        We will create the beaker + Robotiq gripper and set the floor
+        to 0.1 which should certainly cause collision in the scene.
+        """
+        # Setup
+        flask_urdf = self.drakeified_flask_urdf
+        gripper_urdf = self.gripper_urdf_path
+
+        # Create the production
+        production = AttemptGrasp(
+            path_to_object=flask_urdf,
+            path_to_gripper=gripper_urdf,
+            meshcat_port_number=None, # Use None for CI
+        )
+
+        # Call the method
+        tf = production.floor_z_creates_collisions(
+            floor_z_translation=0.035,
+            debug_flag=True,
+        )
+
+        self.assertTrue(
+            tf,
+            msg="The floor height of 0.1 should cause a collision between the flask and the floor.",
+        )
+
+
+    def test_in_collision1(self):
+        """
+        Description
+        -----------
+        In this test, we want to verify that the scene STARTS with no
+        collisions between:
+        - The gripper and the flask
+        - The floor and the flask
+        """
+        pass
+
 
 if __name__ == "__main__":
     unittest.main()
