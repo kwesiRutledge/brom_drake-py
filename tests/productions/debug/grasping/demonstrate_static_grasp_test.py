@@ -11,8 +11,8 @@ import unittest
 
 # Internal Imports
 from brom_drake.all import drakeify_my_urdf
-from brom_drake.productions.debug.grasping.demonstrate_static_grasp import (
-    DemonstrateStaticGrasp,
+from brom_drake.productions.debug.grasping.show_me_this_static_grasp import (
+    ShowMeThisStaticGrasp,
 )
 from brom_drake.utils.model_instances import (
     get_name_of_first_body_in_urdf,
@@ -51,7 +51,7 @@ class DemonstrateStaticGraspTest(unittest.TestCase):
         gripper_urdf = self.gripper_urdf_path      
 
         # Create the production
-        production = DemonstrateStaticGrasp(
+        production = ShowMeThisStaticGrasp(
             path_to_object=flask_urdf,
             path_to_gripper=gripper_urdf,
             meshcat_port_number=None, # Use None for CI
@@ -88,7 +88,7 @@ class DemonstrateStaticGraspTest(unittest.TestCase):
         gripper_urdf = self.gripper_urdf_path      
 
         # Create the production
-        production = DemonstrateStaticGrasp(
+        production = ShowMeThisStaticGrasp(
             path_to_object=flask_urdf,
             path_to_gripper=gripper_urdf,
             meshcat_port_number=None, # Use None for CI
@@ -136,7 +136,7 @@ class DemonstrateStaticGraspTest(unittest.TestCase):
 
 
         # Create the production
-        production = DemonstrateStaticGrasp(
+        production = ShowMeThisStaticGrasp(
             path_to_object=flask_urdf,
             path_to_gripper=gripper_urdf,
             meshcat_port_number=None, # Use None for CI
@@ -169,7 +169,7 @@ class DemonstrateStaticGraspTest(unittest.TestCase):
         gripper_urdf = self.gripper_urdf_path      
 
         # Create the production
-        production = DemonstrateStaticGrasp(
+        production = ShowMeThisStaticGrasp(
             path_to_object=flask_urdf,
             path_to_gripper=gripper_urdf,
             meshcat_port_number=None, # Use None for CI
@@ -217,7 +217,7 @@ class DemonstrateStaticGraspTest(unittest.TestCase):
         gripper_urdf = self.gripper_urdf_path      
 
         # Create the production
-        production = DemonstrateStaticGrasp(
+        production = ShowMeThisStaticGrasp(
             path_to_object=flask_urdf,
             path_to_gripper=gripper_urdf,
             meshcat_port_number=None, # Use None for CI
