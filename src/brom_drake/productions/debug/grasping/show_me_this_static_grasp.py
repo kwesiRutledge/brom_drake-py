@@ -31,7 +31,7 @@ from brom_drake.utils.model_instances import (
 )
 from brom_drake.productions.debug.show_me.show_me_system import ShowMeSystem
 
-class DemonstrateStaticGrasp(BasicGraspingDebuggingProduction):
+class ShowMeThisStaticGrasp(BasicGraspingDebuggingProduction):
     def __init__(
         self,
         path_to_object: str,
