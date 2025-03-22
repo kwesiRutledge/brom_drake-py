@@ -23,8 +23,12 @@ from brom_drake.productions.pick_and_place import (
 from brom_drake.productions.debug.grasping.demonstrate_static_grasp import (
     DemonstrateStaticGrasp,
 )
+from brom_drake.productions.debug.grasping.attempt_grasp import (
+    AttemptGrasp,
+)
 
 __all__ = [
+    "AttemptGrasp",
     "BaseProduction",
     "ChemLab1",
     "ChemLab2",
