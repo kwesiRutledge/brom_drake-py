@@ -170,7 +170,7 @@ class BasicGraspingDebuggingProduction(BaseProduction):
         # Weld the gripper to the manipuland
         if and_weld_to is not None:
             plant.WeldFrames(
-                plant.world_frame(),
+                and_weld_to,
                 gripper_base_frame,
                 with_X_WorldGripper,
             )
