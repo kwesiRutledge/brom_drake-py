@@ -1,9 +1,9 @@
-from manipulation.scenarios import AddMultibodyTriad
 import numpy as np
 from pydrake.multibody.plant import MultibodyPlant
 from pydrake.multibody.tree import ModelInstanceIndex
 from pydrake.systems.framework import LeafSystem, BasicVector
 
+from brom_drake.utils import AddMultibodyTriad
 
 class ShowMeSystem(LeafSystem):
     """

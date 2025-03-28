@@ -1,20 +1,23 @@
+import numpy as np
 from pydrake.all import (
     Cylinder,
+    Frame,
     GeometryInstance,
     MakePhongIllustrationProperties,
     RigidTransform,
     RotationMatrix,
+    SceneGraph,
 )
 
 def AddTriad(
     source_id,
     frame_id,
-    scene_graph,
-    length=0.25,
-    radius=0.01,
-    opacity=1.0,
-    X_FT=RigidTransform(),
-    name="frame",
+    scene_graph: SceneGraph,
+    length: float = 0.25,
+    radius: float = 0.01,
+    opacity: float = 1.0,
+    X_FT: RigidTransform = RigidTransform(),
+    name: str= "frame",
 ):
     """
     Adds illustration geometry representing the coordinate frame, with the
@@ -62,7 +65,7 @@ def AddTriad(
     scene_graph.RegisterGeometry(source_id, frame_id, geom)
 
 
-def AddMultibodyTriad(frame, scene_graph, length=0.25, radius=0.01, opacity=1.0):
+def AddMultibodyTriad(frame: Frame, scene_graph: SceneGraph, length: float =0.25, radius: float =0.01, opacity: float =1.0):
     plant = frame.GetParentPlant()
     AddTriad(
         plant.get_source_id(),

@@ -6,13 +6,11 @@ from pydrake.multibody.parsing import Parser
 from pydrake.multibody.plant import MultibodyPlant, CoulombFriction
 from pydrake.systems.framework import Diagram, DiagramBuilder, LeafSystem, PortDataType, BasicVector
 
-from manipulation.scenarios import AddMultibodyTriad
-
 import numpy as np
 
 # Internal Imports
 from brom_drake import example_helpers as eh
-from brom_drake.utils import AddGround
+from brom_drake.utils import AddGround, AddMultibodyTriad
 
 class BlockHandlerSystem(LeafSystem):
     def __init__(
