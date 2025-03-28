@@ -53,7 +53,7 @@ def main():
     simulator.set_target_realtime_rate(1.0)
     simulator.set_publish_every_time_step(False)
     simulator.Initialize()
-    simulator.AdvanceTo(10.0)
+    simulator.AdvanceTo(20.0)
 
 if __name__ == "__main__":
     with ipdb.launch_ipdb_on_exception():

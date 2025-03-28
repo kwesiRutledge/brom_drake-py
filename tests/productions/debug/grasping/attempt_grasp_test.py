@@ -191,17 +191,6 @@ class AttemptGraspTest(unittest.TestCase):
         )
 
 
-    def test_in_collision1(self):
-        """
-        Description
-        -----------
-        In this test, we want to verify that the scene STARTS with no
-        collisions between:
-        - The gripper and the flask
-        - The floor and the flask
-        """
-        pass
-
 
 if __name__ == "__main__":
     unittest.main()

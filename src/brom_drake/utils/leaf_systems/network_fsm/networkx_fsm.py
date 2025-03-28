@@ -302,7 +302,7 @@ class NetworkXFSM(LeafSystem):
                     output_port_size,
                     dummy_output_function_ii,
                 )
-            elif type(output_value_ii) == bool:
+            elif (type(output_value_ii) == bool) or (type(output_value_ii) == str):
                 # Create dummy function for output port
                 def dummy_output_function_ii(context: Context, output: AbstractValue):
                     self.advance_state_if_necessary(context)

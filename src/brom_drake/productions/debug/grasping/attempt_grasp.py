@@ -1,14 +1,17 @@
 from typing import List, Tuple, Union
-
+import networkx as nx
 import numpy as np
 from manipulation.scenarios import AddMultibodyTriad
 from pydrake.all import (
+    AbstractValue,
     Adder,
+    ConstantValueSource,
     GeometryProperties,
     IllustrationProperties,
     JointActuator,
     ModelInstanceIndex,
     PidController,
+    PortSwitch,
     PrismaticJoint,
     RigidBodyFrame,
     RigidTransform,
@@ -25,10 +28,14 @@ from brom_drake.file_manipulation.urdf.drakeify import drakeify_my_urdf
 from brom_drake.file_manipulation.urdf.shapes.box import BoxDefinition
 from brom_drake.file_manipulation.urdf.simple_writer import SimpleShapeURDFDefinition
 from brom_drake.robots import find_base_link_name_in
+from brom_drake.motion_planning.systems import OpenLoopPlanDispenser
 from brom_drake.productions.types.debug import BasicGraspingDebuggingProduction
 from brom_drake.productions import ProductionID
 from brom_drake.productions.roles.role import Role
-from brom_drake.utils import Performer, collision_checking
+from brom_drake.utils import (
+    Performer, collision_checking, NetworkXFSM, FSMTransitionCondition,
+    FSMOutputDefinition, FSMTransitionConditionType
+)
 from brom_drake.utils.model_instances import (
     get_name_of_first_body_in_urdf,
     find_number_of_positions_in_welded_model,
@@ -255,9 +262,7 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
         )
 
         # Connect the target height to the PID controller
-        target_height_source = self.builder.AddSystem(
-            ConstantVectorSource(np.array([[z_floor],[0.0]])),  # Target height (z position)
-        )
+        target_height_source = self.create_floor_trajectory_source(z_floor=z_floor)
 
         # Connect the source to the floor actuator
         self.builder.Connect(
@@ -276,6 +281,87 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
             plant.get_state_output_port(self.floor_model_index),
             floor_controller.get_input_port_estimated_state(),
         )
+
+    def create_floor_trajectory_source(
+        self,
+        z_floor: float
+    ) -> Tuple[PortSwitch]:
+        # Setup
+        builder: DiagramBuilder = self.builder
+
+        # Create a source for the FIRST floor position
+        initial_floor_state_source = builder.AddSystem(
+            ConstantVectorSource(np.array([z_floor, 0.0])),  # z position and velocity
+        )
+        initial_floor_state_source.set_name("initial_floor_state_source")
+
+        # Create a source for the SECOND floor position
+        second_floor_state_source = builder.AddSystem(
+            ConstantVectorSource(np.array([-10.0, 0.0])),  # z position and velocity
+        )
+        second_floor_state_source.set_name("second_floor_state_source")
+
+        # Create a switch that will toggle between the two sources
+        floor_state_selector_switch = builder.AddSystem(PortSwitch(2))
+        floor_state_selector_switch.set_name("floor_state_selector_switch")
+        floor_state_selector_switch.DeclareInputPort("first")
+        floor_state_selector_switch.DeclareInputPort("second")
+
+        # Connect the two sources to the switch
+        builder.Connect(
+            initial_floor_state_source.get_output_port(0),  # z position and velocity
+            floor_state_selector_switch.GetInputPort("first"),  # first source
+        )
+        builder.Connect(
+            second_floor_state_source.get_output_port(0),  # z position and velocity
+            floor_state_selector_switch.GetInputPort("second"),  # second source
+        )
+
+        # Create a switch to toggle between the two sources
+        toggle_fsm = self.create_floor_trajectory_trigger(floor_state_selector_switch)
+
+        # Connect timer to the plan dispenser
+        builder.Connect(
+            toggle_fsm.GetOutputPort("state_number"),
+            floor_state_selector_switch.get_input_port(0),  # Trigger input
+        )
+
+        return floor_state_selector_switch
+         
+    def create_floor_trajectory_trigger(self, state_selector: PortSwitch) -> NetworkXFSM:
+        # Setup
+        builder: DiagramBuilder = self.builder
+        graph = nx.DiGraph()
+
+        # Create NetworkX FSM to trigger the floor trajectory
+        graph.add_node(
+            0,
+            outputs=[
+                FSMOutputDefinition("state_number", state_selector.GetInputPort("first").get_index()),  # first
+            ]
+        )
+        graph.add_node(
+            1,
+            outputs=[
+                FSMOutputDefinition("state_number", state_selector.GetInputPort("second").get_index()),  # second
+            ]
+        )
+
+        # connect 0 -> 1
+        graph.add_edge(0, 1, conditions=[
+            FSMTransitionCondition(
+                condition_type=FSMTransitionConditionType.kAfterThisManySeconds,
+                condition_value=10.0,
+            )
+        ])
+
+        # Create the NetworkXFSM from the graph
+        floor_trigger = builder.AddSystem(
+            NetworkXFSM(graph)
+        )
+
+        return floor_trigger
+
 
     def find_floor_z_via_bounding_box(
         self,
