@@ -7,8 +7,11 @@ from .leaf_systems.end_effector_wrench_calculator import EndEffectorWrenchCalcul
 from .leaf_systems.rigid_transform_to_vector_system import RigidTransformToVectorSystem
 from .constants import Performer, MotionPlan
 from .ground import AddGround, GroundShape
+from .triads import AddMultibodyTriad, AddTriad
 
 __all__ = [
+    "AddMultibodyTriad",
+    "AddTriad",
     "BoolToVectorSystem",
     "EndEffectorWrenchCalculator",
     "find_all_systems_with_input_port",
