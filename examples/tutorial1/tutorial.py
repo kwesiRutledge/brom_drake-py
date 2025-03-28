@@ -15,7 +15,8 @@ from pydrake.all import (
     DrakeVisualizer, Meshcat, MeshcatVisualizer, Simulator,
 )
 
-from manipulation.scenarios import AddMultibodyTriad
+# Internal imports
+from brom_drake.utils import AddMultibodyTriad
 
 def AddGround(plant):
     """

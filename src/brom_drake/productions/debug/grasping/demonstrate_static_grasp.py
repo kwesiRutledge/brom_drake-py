@@ -1,7 +1,6 @@
 from typing import List, Tuple, Union
 
 import numpy as np
-from manipulation.scenarios import AddMultibodyTriad
 from pydrake.all import (
     RigidBodyFrame,
     RigidTransform
@@ -19,7 +18,7 @@ from brom_drake.robots import find_base_link_name_in
 from brom_drake.productions.types import BaseProduction
 from brom_drake.productions import ProductionID
 from brom_drake.productions.roles.role import Role
-from brom_drake.utils import Performer
+from brom_drake.utils import Performer, AddMultibodyTriad
 from brom_drake.productions.debug.show_me.show_me_system import ShowMeSystem
 
 class DemonstrateStaticGrasp(BaseProduction):

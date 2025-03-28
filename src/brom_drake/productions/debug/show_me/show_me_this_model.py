@@ -1,7 +1,6 @@
 from typing import List, Tuple
 
 import numpy as np
-from manipulation.scenarios import AddMultibodyTriad
 from pydrake.geometry import Meshcat, MeshcatVisualizer, MeshcatVisualizerParams
 from pydrake.geometry import Role as DrakeRole
 from pydrake.multibody.parsing import Parser
@@ -15,7 +14,7 @@ from brom_drake.robots import find_base_link_name_in
 from brom_drake.productions.types import BaseProduction
 from brom_drake.productions import ProductionID
 from brom_drake.productions.roles.role import Role
-from brom_drake.utils import Performer
+from brom_drake.utils import Performer, AddMultibodyTriad
 from .show_me_system import ShowMeSystem
 
 class ShowMeThisModel(BaseProduction):
