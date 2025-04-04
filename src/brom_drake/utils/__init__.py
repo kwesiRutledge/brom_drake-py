@@ -5,6 +5,7 @@ from .search import (
 from .leaf_systems.bool_to_vec_system import BoolToVectorSystem
 from .leaf_systems.end_effector_wrench_calculator import EndEffectorWrenchCalculator
 from .leaf_systems.rigid_transform_to_vector_system import RigidTransformToVectorSystem
+from brom_drake.utils.leaf_systems.flexible_port_switch import FlexiblePortSwitch
 from brom_drake.utils.leaf_systems.network_fsm.networkx_fsm import NetworkXFSM
 from brom_drake.utils.leaf_systems.network_fsm.fsm_edge_definition import FSMEdgeDefinition
 from brom_drake.utils.leaf_systems.network_fsm.fsm_output_definition import FSMOutputDefinition
@@ -23,6 +24,7 @@ __all__ = [
     "EndEffectorWrenchCalculator",
     "find_all_systems_with_input_port",
     "find_all_systems_with_output_port",
+    "FlexiblePortSwitch",
     "FSMEdgeDefinition",
     "FSMOutputDefinition",
     "FSMTransitionCondition",
