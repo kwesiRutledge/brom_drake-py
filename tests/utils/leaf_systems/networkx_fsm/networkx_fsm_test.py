@@ -304,15 +304,22 @@ class TestNetworkXFSM(unittest.TestCase):
 
 
         # Build Diagram and advance it for 1 second
-        _, diagram, diagram_context = add_watcher_and_build(builder)
+        watcher, diagram, diagram_context = add_watcher_and_build(builder)
         simulator = Simulator(diagram, diagram_context)
 
         # Run
         simulator.AdvanceTo(0.25)
         simulator.AdvanceTo(0.50)
 
-        # Verify
-        self.assertEqual(fsm.current_state, 1)
+        # Extract the FSM state data
+        watcher_keys = list(watcher.port_watchers.keys())
+        first_key = watcher_keys[0]
+
+        fsm_state_log = watcher.port_watchers[first_key]["fsm_state"].logger.FindLog(diagram_context)
+        fsm_state_log_data = fsm_state_log.data().flatten()
+
+        # Verify that the current state is now 1
+        self.assertEqual(fsm_state_log_data[-1], 1)
 
     def test_CalcFSMState2(self):
         """
@@ -357,18 +364,42 @@ class TestNetworkXFSM(unittest.TestCase):
         )
 
         # Build Diagram and advance it for 1 second
-        _, diagram, diagram_context = add_watcher_and_build(builder)
+        watcher, diagram, diagram_context = add_watcher_and_build(builder)
         simulator = Simulator(diagram, diagram_context)
 
-        # Run for 0.25 seconds and check that the current state is still 0
+        # Get key needed to extract watcher data for fsm state
+        watcher_keys = list(watcher.port_watchers.keys())
+        first_key = watcher_keys[0]
+        fsm_state_logger = watcher.port_watchers[first_key]["fsm_state"].logger
+        output1_logger = watcher.port_watchers[first_key]["output1"].logger
+
+        # Run for 0.25 seconds and check that:
+        # - the current state is still 0
+        # - the output1 is still 1
         simulator.AdvanceTo(0.25)
-        self.assertEqual(fsm.current_state, 0)
 
-        # Run until 1 second and check that the current state is now 1
+        fsm_state_log = fsm_state_logger.FindLog(diagram_context)
+        fsm_state_log_data = fsm_state_log.data().flatten()
+        self.assertEqual(int(fsm_state_log_data[-1]), 0)
+        
+        output1_log = output1_logger.FindLog(diagram_context)
+        output1_log_data = output1_log.data().flatten()
+        self.assertEqual(int(output1_log_data[-1]), 1)
+
+        # Run until 1 second and check that:
+        # - the current state is now 1
+        # - the output1 is now 0
         simulator.AdvanceTo(1.00)
-        self.assertEqual(fsm.current_state, 1)
 
-    def test_CalcFSMState2(self):
+        fsm_state_log = fsm_state_logger.FindLog(diagram_context)
+        fsm_state_log_data = fsm_state_log.data().flatten()
+        self.assertEqual(int(fsm_state_log_data[-1]), 1)
+
+        output1_log = output1_logger.FindLog(diagram_context)
+        output1_log_data = output1_log.data().flatten()
+        self.assertEqual(int(output1_log_data[-1]), 0)
+
+    def test_CalcFSMState3(self):
         """
         Description
         -----------
@@ -427,24 +458,64 @@ class TestNetworkXFSM(unittest.TestCase):
         )
 
         # Build Diagram and advance it for 1 second
-        _, diagram, diagram_context = add_watcher_and_build(builder)
+        watcher, diagram, diagram_context = add_watcher_and_build(builder)
         simulator = Simulator(diagram, diagram_context)
 
-        # Run for 0.25 seconds and check that the current state is still 0
+        # Collect data for the fsm state
+        watcher_keys = list(watcher.port_watchers.keys())
+        first_key = watcher_keys[0]
+        fsm_state_logger = watcher.port_watchers[first_key]["fsm_state"].logger
+        output1_logger = watcher.port_watchers[first_key]["output1"].logger
+
+        # Run for 0.25 seconds and check that:
+        # - the current state is still 0
+        # - the output1 is still 1
         simulator.AdvanceTo(0.25)
-        self.assertEqual(fsm.current_state, 0)
 
-        # Run until 1 second and check that the current state is now 1
+        fsm_state_log = fsm_state_logger.FindLog(diagram_context)
+        fsm_state_log_data = fsm_state_log.data().flatten()
+        self.assertEqual(int(fsm_state_log_data[-1]), 0)
+
+        output1_log = output1_logger.FindLog(diagram_context)
+        output1_log_data = output1_log.data().flatten()
+        self.assertEqual(int(output1_log_data[-1]), 1)
+
+        # Run until 1 second and check that:
+        # - the current state is now 1, and
+        # - the output1 is now 0
         simulator.AdvanceTo(1.00)
-        self.assertEqual(fsm.current_state, 1)
 
-        # Run until 1.25 seconds and check that the current state is still 1
+        fsm_state_log = fsm_state_logger.FindLog(diagram_context)
+        fsm_state_log_data = fsm_state_log.data().flatten()
+        self.assertEqual(int(fsm_state_log_data[-1]), 1)
+
+        output1_log = output1_logger.FindLog(diagram_context)
+        output1_log_data = output1_log.data().flatten()
+        self.assertEqual(int(output1_log_data[-1]), 0)
+
+        # Run until 1.25 seconds and check that:
+        # - the current state is still 1, and
+        # - the output1 is still 0
         simulator.AdvanceTo(1.25)
-        self.assertEqual(fsm.current_state, 1)
+
+        fsm_state_log = fsm_state_logger.FindLog(diagram_context)
+        fsm_state_log_data = fsm_state_log.data().flatten()
+        self.assertEqual(int(fsm_state_log_data[-1]), 1)
+
+        output1_log = output1_logger.FindLog(diagram_context)
+        output1_log_data = output1_log.data().flatten()
+        self.assertEqual(int(output1_log_data[-1]), 0)
 
         # Run until 1.75 seconds and check that the current state is now 2
         simulator.AdvanceTo(1.75)
-        self.assertEqual(fsm.current_state, 2)
+        
+        fsm_state_log = fsm_state_logger.FindLog(diagram_context)
+        fsm_state_log_data = fsm_state_log.data().flatten()
+        self.assertEqual(int(fsm_state_log_data[-1]), 2)
+
+        output1_log = output1_logger.FindLog(diagram_context)
+        output1_log_data = output1_log.data().flatten()
+        self.assertEqual(int(output1_log_data[-1]), 1)
 
 if __name__ == "__main__":
     unittest.main()
