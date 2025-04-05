@@ -3,8 +3,10 @@ from pydrake.all import (
     BasicVector,
     Context,
     InputPort,
+    InputPortIndex,
     LeafSystem,
 )
+from typing import Union
 
 class FlexiblePortSwitch(LeafSystem):
     """
@@ -21,7 +23,7 @@ class FlexiblePortSwitch(LeafSystem):
         
         # Setup
         self.dim = dim
-        self.type_in = selector_type_in
+        self.selector_type_in = selector_type_in
 
         # Initialize the system with no input ports
         self._input_ports = {}
@@ -46,6 +48,16 @@ class FlexiblePortSwitch(LeafSystem):
                 "port_selector",
                 AbstractValue.Make("model_name"),
             )
+        elif type_in == int:
+            self.port_selector_port = self.DeclareVectorInputPort(
+                name="port_selector",
+                dim=1,
+            )
+        elif type_in == InputPortIndex:
+            self.port_selector_port = self.DeclareAbstractInputPort(
+                "port_selector",
+                AbstractValue.Make(InputPortIndex),
+            )
         else:
             raise NotImplementedError(
                 f"Type {type_in} is not supported. Please use str."
@@ -58,13 +70,25 @@ class FlexiblePortSwitch(LeafSystem):
         This method will declare an input port for the system.
         """
         # Setup
+        selector_type_in = self.selector_type_in
+
+        # Create the input port
         input_port = self.DeclareVectorInputPort(
             name=name,
             size=self.dim,
         )
-        
+
         # Update the input ports dictionary
-        self._input_ports[name] = input_port
+        if selector_type_in == str:
+            self._input_ports[name] = input_port
+        elif selector_type_in == int:
+            self._input_ports[len(self._input_ports.keys())] = input_port
+        elif selector_type_in == InputPortIndex:
+            self._input_ports[input_port.get_index()] = input_port
+        else:
+            raise NotImplementedError(
+                f"Type {selector_type_in} is not supported. Please use str."
+            )
         
         return input_port
     
@@ -85,19 +109,19 @@ class FlexiblePortSwitch(LeafSystem):
         # Setup
 
         # Get the port selector value
-        port_selector = self.port_selector_port.Eval(context)
+        port_selection = self.port_selector_port.Eval(context)
 
         # Vet the port selector value
-        assert isinstance(port_selector, self.type_in), \
-            f"Expected {self.type_in}; received {type(port_selector)}"
+        assert isinstance(port_selection, self.selector_type_in), \
+            f"Expected {self.selector_type_in}; received {type(port_selection)}"
         assert len(self._input_ports) > 0, \
             "No input ports have been declared. Please declare at least one input port."
 
         # Get the input port
-        input_port = self._input_ports[port_selector]
+        input_port = self._input_ports[port_selection]
 
         # Get the value from the input port
         value = input_port.Eval(context)
 
         # Set the output value
-        output.SetFrom(value)
+        output.SetFromVector(value)
