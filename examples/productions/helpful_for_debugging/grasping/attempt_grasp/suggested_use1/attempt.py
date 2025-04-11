@@ -41,6 +41,7 @@ def main():
     production = AttemptGrasp(
         path_to_object=str(drakeified_flask_urdf),
         path_to_gripper=gripper_urdf,
+        grasp_joint_positions=np.zeros((7,)),
         X_ObjectTarget=X_ObjectTarget,
         meshcat_port_number=7001, # Use None for CI
     )

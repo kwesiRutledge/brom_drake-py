@@ -7,11 +7,11 @@ from pydrake.all import (
     Adder,
     ConstantValueSource,
     GeometryProperties,
+    InputPortIndex,
     IllustrationProperties,
     JointActuator,
     ModelInstanceIndex,
     PidController,
-    PortSwitch,
     PrismaticJoint,
     RigidBodyFrame,
     RigidTransform,
@@ -20,7 +20,6 @@ from pydrake.all import (
 from pydrake.multibody.parsing import Parser
 from pydrake.multibody.plant import AddMultibodyPlantSceneGraph, MultibodyPlant
 from pydrake.systems.framework import DiagramBuilder, Diagram, Context
-
 from pydrake.systems.primitives import ConstantVectorSource, VectorLogSink
 
 # Internal Imports
@@ -33,7 +32,7 @@ from brom_drake.productions.types.debug import BasicGraspingDebuggingProduction
 from brom_drake.productions import ProductionID
 from brom_drake.productions.roles.role import Role
 from brom_drake.utils import (
-    Performer, collision_checking, NetworkXFSM, FSMTransitionCondition,
+    Performer, collision_checking, NetworkXFSM, FlexiblePortSwitch, FSMTransitionCondition,
     FSMOutputDefinition, FSMTransitionConditionType
 )
 from brom_drake.utils.model_instances import (
@@ -47,10 +46,11 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
         self,
         path_to_object: str,
         path_to_gripper: str,
+        grasp_joint_positions: np.ndarray,
         X_ObjectTarget: RigidTransform = None,
         meshcat_port_number: int = 7001, # Usually turn off for CI (i.e., make it None)
         show_collision_geometries: bool = False,
-        gripper_joint_positions: Union[List[float], np.ndarray] = None,
+        initial_gripper_joint_positions: Union[List[float], np.ndarray] = None,
         time_step: float = 1e-3,
         target_body_on_gripper: str = None,
         gripper_color: List[float] = None,
@@ -81,10 +81,19 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
         # - show_collision_geometries
         # - plant
 
-        # Create joint position array
-        if gripper_joint_positions is None:
-            gripper_joint_positions = [0.0] * find_number_of_positions_in_welded_model(self.path_to_gripper)
-        self.gripper_joint_positions = gripper_joint_positions
+        # Create INITIAL joint position array
+        n_gripper_positions = find_number_of_positions_in_welded_model(self.path_to_gripper)
+        if initial_gripper_joint_positions is None:
+            initial_gripper_joint_positions = [0.0] * n_gripper_positions
+        self.initial_gripper_joint_positions = initial_gripper_joint_positions
+
+        # Save target joint position array
+        assert len(grasp_joint_positions) != n_gripper_positions, \
+            f"Expected for the \"grasp_joint_positions\" array to contain {n_gripper_positions} values (the number of positions)" + \
+            f"in the model, but received length {len(grasp_joint_positions)} array."
+        
+        self.grasp_joint_positions = grasp_joint_positions
+        
 
         # Add Name to plantPlant and Scene Graph for easy simulation
         self.plant.set_name("DemonstrateStaticGrasp_plant")
@@ -177,7 +186,7 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
         X_WorldGripper = self.find_X_WorldGripper(
             X_ObjectTarget=self.X_ObjectTarget,
             target_frame_name=self.target_body_name_on_gripper,
-            desired_joint_positions=self.gripper_joint_positions,
+            desired_joint_positions=self.initial_gripper_joint_positions,
         )
         self.add_gripper_to_plant(
             and_weld_to=plant.world_frame(),
@@ -209,13 +218,25 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
         self.show_me_system = ShowMeSystem(
             plant=plant,
             model_index=self.gripper_model_index,
-            desired_joint_positions=self.gripper_joint_positions,
+            desired_joint_positions=self.initial_gripper_joint_positions,
         )
         self.builder.AddSystem(self.show_me_system)
 
+        # Create a simple PID controller for the desired gripper positions
+        kp = np.ones((len(self.grasp_joint_positions),)) #Idk how I'm picking this number.
+        ki = np.zeros(kp.shape) # 0.1 * np.sqrt(kp)
+        kd = np.sqrt(kp)
+        gripper_controller = self.builder.AddSystem(
+            PidController(kp=kp, ki=ki, kd=kd),
+        )
+        gripper_controller.set_name("[Gripper] PID Controller")
+
+        # Create a desired trajectory for the gripper to track while attempting to grasp
+        
+
         # Add Command to tell the gripper to stay in a particular state
         desired_joint_positions_source = self.builder.AddSystem(
-            ConstantVectorSource(np.array(self.gripper_joint_positions)),
+            ConstantVectorSource(np.array(self.initial_gripper_joint_positions)),
         )
         # Connect the source to the system
 
@@ -232,12 +253,13 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
         z_floor = self.find_floor_z_via_line_search()
 
         # Connect a PID Controller to the floor actuator
-        kp = np.array([[floor_mass * 9.81]])
-        ki = 0.1 * np.sqrt(kp)
+        kp = np.array([[floor_mass * 9.81 * 1.0e-1]]) #Idk how I'm picking this number.
+        ki = np.zeros(kp.shape) # 0.1 * np.sqrt(kp)
         kd = np.sqrt(kp)
         floor_controller = self.builder.AddSystem(
             PidController(kp=kp, ki=ki, kd=kd),
         )
+        floor_controller.set_name("[Floor] PID Controller")
 
         # Create a feedforward term that we will add to the PID controller's
         # output to keep the floor at a constant height
@@ -245,6 +267,7 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
         feedforward_term = self.builder.AddSystem(
             ConstantVectorSource(np.array([[floor_mass * 9.81]])),  # Weight of the object
         )
+        feedforward_term.set_name("[Floor] Feedforward")
 
         # Summer to combine the PID output and the feedforward term
         summer = self.builder.AddSystem(
@@ -285,50 +308,41 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
     def create_floor_trajectory_source(
         self,
         z_floor: float
-    ) -> Tuple[PortSwitch]:
+    ) -> Tuple[FlexiblePortSwitch]:
         # Setup
         builder: DiagramBuilder = self.builder
 
-        # Create a source for the FIRST floor position
-        initial_floor_state_source = builder.AddSystem(
-            ConstantVectorSource(np.array([z_floor, 0.0])),  # z position and velocity
+        #TODO(kwesi): Create a proper trajectory source for the floor so that it slowly falls away
+        floor_target_height_source = builder.AddSystem(
+            OpenLoopPlanDispenser(2, speed=0.25),
         )
-        initial_floor_state_source.set_name("initial_floor_state_source")
 
-        # Create a source for the SECOND floor position
-        second_floor_state_source = builder.AddSystem(
-            ConstantVectorSource(np.array([-10.0, 0.0])),  # z position and velocity
+        # Create the trajectory that will be run
+        simple_plan = np.array([
+            [z_floor, 0.0],
+            [z_floor - 10.0, 0.0]
+        ])
+        floor_trajectory_source = builder.AddSystem(
+            ConstantValueSource(AbstractValue.Make(simple_plan))
         )
-        second_floor_state_source.set_name("second_floor_state_source")
-
-        # Create a switch that will toggle between the two sources
-        floor_state_selector_switch = builder.AddSystem(PortSwitch(2))
-        floor_state_selector_switch.set_name("floor_state_selector_switch")
-        floor_state_selector_switch.DeclareInputPort("first")
-        floor_state_selector_switch.DeclareInputPort("second")
-
-        # Connect the two sources to the switch
+        
         builder.Connect(
-            initial_floor_state_source.get_output_port(0),  # z position and velocity
-            floor_state_selector_switch.GetInputPort("first"),  # first source
-        )
-        builder.Connect(
-            second_floor_state_source.get_output_port(0),  # z position and velocity
-            floor_state_selector_switch.GetInputPort("second"),  # second source
+            floor_trajectory_source.get_output_port(),
+            floor_target_height_source.GetInputPort("plan"),
         )
 
         # Create a switch to toggle between the two sources
-        toggle_fsm = self.create_floor_trajectory_trigger(floor_state_selector_switch)
+        toggle_fsm = self.create_floor_trajectory_trigger()
 
         # Connect timer to the plan dispenser
         builder.Connect(
-            toggle_fsm.GetOutputPort("state_number"),
-            floor_state_selector_switch.get_input_port(0),  # Trigger input
+            toggle_fsm.GetOutputPort("start_floor"),
+            floor_target_height_source.GetInputPort("plan_ready"),  # Trigger input
         )
 
-        return floor_state_selector_switch
+        return floor_target_height_source
          
-    def create_floor_trajectory_trigger(self, state_selector: PortSwitch) -> NetworkXFSM:
+    def create_floor_trajectory_trigger(self) -> NetworkXFSM:
         # Setup
         builder: DiagramBuilder = self.builder
         graph = nx.DiGraph()
@@ -337,13 +351,13 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
         graph.add_node(
             0,
             outputs=[
-                FSMOutputDefinition("state_number", state_selector.GetInputPort("first").get_index()),  # first
+                FSMOutputDefinition("start_floor", False),  # first
             ]
         )
         graph.add_node(
             1,
             outputs=[
-                FSMOutputDefinition("state_number", state_selector.GetInputPort("second").get_index()),  # second
+                FSMOutputDefinition("start_floor", True),  # second
             ]
         )
 

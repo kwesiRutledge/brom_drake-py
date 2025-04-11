@@ -105,7 +105,7 @@ class BasicGraspingDebuggingProduction(BaseProduction):
         self.manipuland_index, self.manipuland_name = None, None
         self.gripper_model_index, self.gripper_model_name = None, None
 
-    def add_gripper_to_plant(self, and_weld_to: Frame = False, with_X_WorldGripper: RigidTransform = None):
+    def add_gripper_to_plant(self, and_weld_to: Frame = None, with_X_WorldGripper: RigidTransform = None):
         """
         Description
         -----------
