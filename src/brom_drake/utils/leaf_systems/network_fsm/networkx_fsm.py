@@ -8,7 +8,7 @@ from pydrake.all import (
     LeafSystem,
     PortDataType,
 )
-from typing import Dict, List, Union
+from typing import Callable, Dict, List, Union
 
 # Internal Imports
 from brom_drake.utils.leaf_systems.network_fsm.fsm_transition_condition import (
@@ -125,6 +125,8 @@ class NetworkXFSM(LeafSystem):
             # TODO(kwesi): make this error more verbose to explain to people how to create
             #              mutually exclusive conditions for transition.
         
+        print(f"Transitioning from state {s_t} to state {next_state} at time {context.get_time()}")
+
         # Update the current state
         # self.current_state = next_state
         context.SetDiscreteState(
@@ -186,6 +188,48 @@ class NetworkXFSM(LeafSystem):
             edge_definitions.append(edge_definition)
 
         return edge_definitions
+
+    def create_output_port_function(
+        self,
+        port_name_ii: str,
+        create_abstract_port: bool = False
+    ) -> Callable[[Context, AbstractValue], None]:
+        """
+        Description
+        -----------
+        This function creates the output port function for the FSM.
+        """
+        # Setup
+
+        # Create the output port function
+        update_map_ii = self.derive_output_update_map(port_name_ii) # (This describes when to update the value of port_ii)
+
+        if create_abstract_port:
+            def dummy_output_function_ii(context: Context, output: AbstractValue):
+                self.advance_state_if_necessary(context)
+                s_t = context.get_discrete_state_vector().GetAtIndex(0)
+
+                # Check to see if the state value has changed
+                if s_t in update_map_ii:
+                    # Update the output value
+                    self.last_output_value[port_name_ii] = update_map_ii[s_t]
+
+                # print(f"Output value for port {port_name_ii} is {self.last_output_value[port_name_ii]} at time {context.get_time()}")
+                output.SetFrom(AbstractValue.Make(self.last_output_value[port_name_ii]))
+        else:
+            def dummy_output_function_ii(context: Context, output: BasicVector):
+                self.advance_state_if_necessary(context)
+                s_t = context.get_discrete_state_vector().GetAtIndex(0)
+
+                # Check to see if the state value has changed
+                if s_t in update_map_ii:
+                    # Update the output value
+                    self.last_output_value[port_name_ii] = update_map_ii[s_t]
+                    
+                output.SetFrom(self.last_output_value[port_name_ii])
+
+
+        return dummy_output_function_ii
 
     def derive_input_ports_from_graph(self, debug_flag: bool = False):
         """
@@ -287,7 +331,7 @@ class NetworkXFSM(LeafSystem):
         initial_node_data = fsm_graph.nodes[initial_node]
 
         # Create output ports
-        for output_port_definition in initial_node_data["outputs"]:
+        for output_index_ii, output_port_definition in enumerate(initial_node_data["outputs"]):
             # Extract values from the output port definition
             port_name_ii = output_port_definition.output_port_name
             output_value_ii = output_port_definition.output_port_value
@@ -302,64 +346,27 @@ class NetworkXFSM(LeafSystem):
                 # Compute size of the output port
                 output_port_size = len(output_value_ii)
 
-                # Define dummy function for output port
-                def dummy_output_function_ii(context: Context, output: BasicVector):
-                    self.advance_state_if_necessary(context)
-                    s_t = context.get_discrete_state_vector().GetAtIndex(0)
-
-                    # Check to see if the state value has changed
-                    if s_t in update_map_ii:
-                        # Update the output value
-                        self.last_output_value[port_name_ii] = update_map_ii[s_t]
-                        
-                    output.SetFrom(self.last_output_value[port_name_ii])
-
                 # Create port
                 self.output_port_dict[port_name_ii] = self.DeclareVectorOutputPort(
                     port_name_ii,
                     output_port_size,
-                    dummy_output_function_ii,
+                    self.create_output_port_function(port_name_ii, create_abstract_port=False),
                 )
             elif (type(output_value_ii) == bool) or (type(output_value_ii) == str):
-                # Create dummy function for output port
-                def dummy_output_function_ii(context: Context, output: AbstractValue):
-                    self.advance_state_if_necessary(context)
-                    s_t = context.get_discrete_state_vector().GetAtIndex(0)
-
-                    # Check to see if the state value has changed
-                    if s_t in update_map_ii:
-                        # Update the output value
-                        self.last_output_value[port_name_ii] = update_map_ii[s_t]
-
-                    output.SetFrom(AbstractValue.Make(self.last_output_value[port_name_ii]))
-
-                # Create port
                 self.output_port_dict[port_name_ii] = self.DeclareAbstractOutputPort(
                     port_name_ii,
                     lambda: AbstractValue.Make(output_value_ii),
-                    dummy_output_function_ii,
+                    self.create_output_port_function(port_name_ii, create_abstract_port=True),
                 )
             elif (type(output_value_ii) == int) or (type(output_value_ii) == float):
                 # Create a np.array from the scalar value
                 output_value_ii = np.array([output_value_ii])
 
-                # Create dummy function for output port
-                def dummy_output_function_ii(context: Context, output: BasicVector):
-                    self.advance_state_if_necessary(context)
-                    s_t = context.get_discrete_state_vector().GetAtIndex(0)
-
-                    # Check to see if the state value has changed
-                    if s_t in update_map_ii:
-                        # Update the output value
-                        self.last_output_value[port_name_ii] = update_map_ii[s_t]
-                        
-                    output.SetFrom(self.last_output_value[port_name_ii])
-
                 # Create vector port for new output
                 self.output_port_dict[port_name_ii] = self.DeclareVectorOutputPort(
                     port_name_ii,
                     1,
-                    dummy_output_function_ii,
+                    self.create_output_port_function(port_name_ii, create_abstract_port=False),
                 )
             else:
                 # Raise an error
