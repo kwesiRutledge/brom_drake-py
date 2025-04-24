@@ -36,7 +36,7 @@ class AttemptGraspTest(unittest.TestCase):
 
         # Create the gripper urdf
         gripper_urdf_path = str(
-            impresources.files(robots) / "models/robotiq/2f_85_gripper-no-mimic/urdf/robotiq_2f_85.urdf"
+            impresources.files(robots) / "models/robotiq/2f_85_gripper/urdf/robotiq_2f_85.urdf"
         )
         self.gripper_urdf_path = gripper_urdf_path
 
@@ -54,6 +54,7 @@ class AttemptGraspTest(unittest.TestCase):
         production = AttemptGrasp(
             path_to_object=flask_urdf,
             path_to_gripper=gripper_urdf,
+            grasp_joint_positions=np.array([0.7]),
             meshcat_port_number=None, # Use None for CI
         )
         production.add_supporting_cast()
@@ -142,6 +143,7 @@ class AttemptGraspTest(unittest.TestCase):
         production = AttemptGrasp(
             path_to_object=flask_urdf,
             path_to_gripper=gripper_urdf,
+            grasp_joint_positions=np.array([0.7]),
             meshcat_port_number=None, # Use None for CI
         )
 
@@ -176,6 +178,7 @@ class AttemptGraspTest(unittest.TestCase):
         production = AttemptGrasp(
             path_to_object=flask_urdf,
             path_to_gripper=gripper_urdf,
+            grasp_joint_positions=np.array([0.7]),
             meshcat_port_number=None, # Use None for CI
         )
 
