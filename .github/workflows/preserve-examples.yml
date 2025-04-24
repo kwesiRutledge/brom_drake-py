@@ -19,9 +19,9 @@ jobs:
           'examples/productions/motion_planning/offline/shelf/shelf1.py',
           'examples/productions/motion_planning/offline/chem_lab2/suggested_use1/example.py',
           'examples/productions/motion_planning/offline/chem_lab2/providing_start_as_config1/provide_start_config1.py',
-          'examples/productions/helpful_for_debugging/demonstrate_static_grasp/suggested_use1/demonstrate.py',
-          'examples/productions/helpful_for_debugging/demonstrate_static_grasp/changing_color1/color.py',
-          'examples/productions/helpful_for_debugging/demonstrate_static_grasp/defining_grasp_wrt_finger1/defining.py',
+          'examples/productions/helpful_for_debugging/grasping/demonstrate_static_grasp/suggested_use1/demonstrate.py',
+          'examples/productions/helpful_for_debugging/grasping/demonstrate_static_grasp/changing_color1/color.py',
+          'examples/productions/helpful_for_debugging/grasping/demonstrate_static_grasp/defining_grasp_wrt_finger1/defining.py',
         ]
     steps:
       - name: Checkout
