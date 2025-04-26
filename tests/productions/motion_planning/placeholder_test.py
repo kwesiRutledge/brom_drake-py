@@ -91,6 +91,8 @@ class PlaceholderTest(unittest.TestCase):
         simulator.set_target_realtime_rate(1.0)
         simulator.set_publish_every_time_step(False)
 
+        station.UpdateInternalContexts(diagram_context)
+
         # Run simulation
         print("Initializing simulation...")
         simulator.Initialize()

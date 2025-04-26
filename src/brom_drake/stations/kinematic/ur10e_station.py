@@ -3,6 +3,7 @@ from pathlib import Path
 
 import numpy as np
 from pydrake.all import (
+    Context,
     Frame,
     ModelInstanceIndex,
 )
@@ -145,7 +146,7 @@ class UR10eStation(Diagram):
 
         # Add a gripper with actuation to the full simulated plant
         gripper_urdf_path = str(
-            impresources.files(robots) / "models/robotiq/2f_85_gripper-no-mimic/urdf/robotiq_2f_85.urdf"
+            impresources.files(robots) / "models/robotiq/2f_85_gripper/urdf/robotiq_2f_85.urdf"
         )
         self.gripper = Parser(plant=self.plant).AddModels(gripper_urdf_path)[0]
 
@@ -161,7 +162,7 @@ class UR10eStation(Diagram):
 
         # Add a gripper without actuation to the controller plant
         gripper_static_urdf = str(
-            impresources.files(robots) / "models/robotiq/2f_85_gripper-no-mimic/urdf/robotiq_2f_85_static.urdf"
+            impresources.files(robots) / "models/robotiq/2f_85_gripper/urdf/robotiq_2f_85_static.urdf"
         )
         static_gripper = Parser(plant=self.controller_plant).AddModels(
             gripper_static_urdf
@@ -432,3 +433,19 @@ class UR10eStation(Diagram):
 
     def use_meshcat(self):
         return self.meshcat_port_number is not None
+    
+    def UpdateInternalContexts(self, context: Context):
+        """
+        Description
+        -----------
+        This function updates the internal contexts of the plant and the controller.
+        :param context:
+        :return:
+        """
+        # Setup
+        plant_context = self.plant.GetMyMutableContextFromRoot(context)
+        controller_context = self.controller_plant.GetMyMutableContextFromRoot(context)
+
+        # Update the contexts
+        self.arm_controller.plant_context = plant_context
+        # self.controller_plant.SetDefaultState(controller_context)

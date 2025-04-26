@@ -99,20 +99,52 @@ class GripperController(LeafSystem):
             BasicVector(self.plant.num_actuators()),
             self.CalcGripperTorque,
         )
-        # self.DeclareVectorOutputPort(
-        #     "measured_gripper_position",
-        #     BasicVector(1),
-        #     self.CalcGripperPosition,
-        #     {self.time_ticket()}    # indicate that this doesn't depend on any inputs,
-        # )                           # but should still be updated each timestep
-        # self.DeclareVectorOutputPort(
-        #     "measured_gripper_velocity", BasicVector(1), self.CalcGripperVelocity,
-        #     {self.time_ticket()}    # indicate that this doesn't depend on any inputs,
-        # )                           # but should still be updated each timestep
+        self.DeclareVectorOutputPort(
+            "measured_gripper_position",
+            BasicVector(1),
+            self.CalcGripperPosition,
+            {self.time_ticket()}    # indicate that this doesn't depend on any inputs,
+        )                           # but should still be updated each timestep
+        self.DeclareVectorOutputPort(
+            "measured_gripper_velocity", BasicVector(1), self.CalcGripperVelocity,
+            {self.time_ticket()}    # indicate that this doesn't depend on any inputs,
+        )                           # but should still be updated each timestep
 
         # Create the gain values
         self.Kp, self.Kd = None, None
         self.initialize_gains(Kp, Kd)
+
+    def CalcGripperPosition(self, context, output):
+        state = self.state_port.Eval(context)
+
+        if self.type == "hande":
+            width = 0.03
+        elif self.type == GripperType.Robotiq_2f_85:  #2f_85
+            width = 0.06
+        else:
+            raise NotImplementedError("Gripper type %s does not have CalcGripperPosition() implemented" % self.type)
+
+        # Send a single number to match the hardware
+        both_finger_positions = self.ComputePosition(state)
+        net_position = 1/width* np.mean(both_finger_positions)
+
+        output.SetFromVector([net_position])
+
+    def CalcGripperVelocity(self, context, output):
+        state = self.state_port.Eval(context)
+
+        if self.type == "hande":
+            width = 0.03
+        elif self.type == GripperType.Robotiq_2f_85:  # 2f_85
+            width = 0.06
+        else:
+            raise NotImplementedError("Gripper type %s does not have CalcGripperVelocity() implemented" % self.type)
+
+        # Send a single number to match the hardware
+        both_finger_velocity = self.ComputeVelocity(state)
+        net_velocity = 1 / width * np.mean(both_finger_velocity)
+
+        output.SetFromVector([net_velocity])
 
     def ComputePosition(self, state: np.ndarray) -> np.ndarray:
         """
