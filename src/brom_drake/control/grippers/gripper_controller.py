@@ -46,7 +46,7 @@ class GripperController(LeafSystem):
                             |                       |
                             -------------------------
     """
-    def __init__(self, gripper_type: GripperType):
+    def __init__(self, gripper_type: GripperType, Kp: np.ndarray = None, Kd: np.ndarray = None):
         """
         Description
         -----------
@@ -65,7 +65,7 @@ class GripperController(LeafSystem):
             # This will allow us to compute the distance between fingers.
             self.plant = MultibodyPlant(time_step=1.0) # time step doesn't matter
             gripper_urdf = str(
-                impresources.files(robots) / "models/robotiq/2f_85_gripper-no-mimic/urdf/robotiq_2f_85.urdf"
+                impresources.files(robots) / "models/robotiq/2f_85_gripper/urdf/robotiq_2f_85.urdf"
             )
             self.gripper = Parser(plant=self.plant).AddModels(gripper_urdf)[0]
             self.plant.WeldFrames(
@@ -99,16 +99,52 @@ class GripperController(LeafSystem):
             BasicVector(self.plant.num_actuators()),
             self.CalcGripperTorque,
         )
-        # self.DeclareVectorOutputPort(
-        #     "measured_gripper_position",
-        #     BasicVector(1),
-        #     self.CalcGripperPosition,
-        #     {self.time_ticket()}    # indicate that this doesn't depend on any inputs,
-        # )                           # but should still be updated each timestep
-        # self.DeclareVectorOutputPort(
-        #     "measured_gripper_velocity", BasicVector(1), self.CalcGripperVelocity,
-        #     {self.time_ticket()}    # indicate that this doesn't depend on any inputs,
-        # )                           # but should still be updated each timestep
+        self.DeclareVectorOutputPort(
+            "measured_gripper_position",
+            BasicVector(1),
+            self.CalcGripperPosition,
+            {self.time_ticket()}    # indicate that this doesn't depend on any inputs,
+        )                           # but should still be updated each timestep
+        self.DeclareVectorOutputPort(
+            "measured_gripper_velocity", BasicVector(1), self.CalcGripperVelocity,
+            {self.time_ticket()}    # indicate that this doesn't depend on any inputs,
+        )                           # but should still be updated each timestep
+
+        # Create the gain values
+        self.Kp, self.Kd = None, None
+        self.initialize_gains(Kp, Kd)
+
+    def CalcGripperPosition(self, context, output):
+        state = self.state_port.Eval(context)
+
+        if self.type == "hande":
+            width = 0.03
+        elif self.type == GripperType.Robotiq_2f_85:  #2f_85
+            width = 0.06
+        else:
+            raise NotImplementedError("Gripper type %s does not have CalcGripperPosition() implemented" % self.type)
+
+        # Send a single number to match the hardware
+        both_finger_positions = self.ComputePosition(state)
+        net_position = 1/width* np.mean(both_finger_positions)
+
+        output.SetFromVector([net_position])
+
+    def CalcGripperVelocity(self, context, output):
+        state = self.state_port.Eval(context)
+
+        if self.type == "hande":
+            width = 0.03
+        elif self.type == GripperType.Robotiq_2f_85:  # 2f_85
+            width = 0.06
+        else:
+            raise NotImplementedError("Gripper type %s does not have CalcGripperVelocity() implemented" % self.type)
+
+        # Send a single number to match the hardware
+        both_finger_velocity = self.ComputeVelocity(state)
+        net_velocity = 1 / width * np.mean(both_finger_velocity)
+
+        output.SetFromVector([net_velocity])
 
     def ComputePosition(self, state: np.ndarray) -> np.ndarray:
         """
@@ -211,25 +247,19 @@ class GripperController(LeafSystem):
         output.SetFromVector([net_velocity])
 
     def CalcGripperTorque(self, context, output):
+        # Setup
         state = self.state_port.Eval(context)
         target = self.target_port.Eval(context)
         target_type = self.target_type_port.Eval(context)
 
+        width = self.gripper_width
+
+        # Get PD Gains
+        Kp, Kd = self.Kp, self.Kd
+
         # Collect State of gripper
         finger_position = self.ComputePosition(state)
         finger_velocity = self.ComputeVelocity(state)
-
-        # Set PD gains depending on gripper type
-        if self.type == "hande":
-            width = 0.03
-            Kp = 100 * np.eye(2)
-            Kd = 2 * np.sqrt(Kp)
-        elif self.type == GripperType.Robotiq_2f_85:
-            width = 0.06
-            Kp = 10 * np.eye(2)
-            Kd = 2 * np.sqrt(0.01 * Kp)
-        else:
-            raise NotImplementedError("Gripper type %s does not have CalcGripperTorque() implemented" % self.type)
 
         # Set target positions and velocities based on the current control mode
         if target_type == GripperTarget.kPosition:
@@ -247,21 +277,51 @@ class GripperController(LeafSystem):
         velocity_err = target_finger_velocity - finger_velocity
         tau = -Kp @ (position_err) - Kd @ (velocity_err)
 
-        
-        # Apply mimic rules to the torques
-        if self.type == GripperType.Robotiq_2f_85:
-            tau_with_mimic = np.zeros((self.plant.num_actuators(),))
-            # Copy torques to mimic channels
-            tau_with_mimic[:2] = tau
-
-            # Mimic rules for the 2F-85 gripper
-            tau_with_mimic[2] = tau[0]
-            tau_with_mimic[3] = tau[0]
-            tau_with_mimic[4] = - tau[0]
-            tau_with_mimic[5] = - tau[0]
-            tau_with_mimic[6] = tau[1]
-
-            tau = tau_with_mimic
-            
-
         output.SetFromVector(tau)
+
+    def initialize_gains(self, Kp: np.ndarray, Kd: np.ndarray):
+        """
+        Description
+        -----------
+        Initialize the gains for the gripper controller.
+        :param Kp: The proportional gain
+        :param Kd: The derivative gain
+        """
+        # Handle proportional gain
+        if Kp is not None:
+            self.Kp = Kp
+        else:
+            # Gain depends on gripper type
+            if self.type == GripperType.Robotiq_2f_85:
+                self.Kp = 10 * np.eye(2)
+            elif self.type == "hande":
+                self.Kp = 100 * np.eye(2)
+            else:
+                raise NotImplementedError("Gripper type %s does not have Kp initialized" % self.type)
+
+        # Handle derivative gain
+        if Kd is not None:
+            self.Kd = Kd
+        else:
+            # Gain depends on gripper type
+            if self.type == GripperType.Robotiq_2f_85:
+                self.Kd = 2 * np.sqrt(0.01 * self.Kp)
+            elif self.type == "hande":
+                self.Kd = 2 * np.sqrt(self.Kp)
+            else:
+                raise NotImplementedError("Gripper type %s does not have Kd initialized" % self.type)
+    
+    @property
+    def gripper_width(self):
+        """
+        Description
+        -----------
+        Return the gripper width.
+        :return: The gripper width
+        """
+        if self.type == GripperType.Robotiq_2f_85:
+            return 0.06
+        elif self.type == "hande":
+            return 0.03
+        else:
+            raise NotImplementedError("Gripper type %s does not have gripper_width implemented" % self.type)

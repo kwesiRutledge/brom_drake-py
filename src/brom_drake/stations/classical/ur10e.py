@@ -20,7 +20,7 @@ from typing import Tuple
 
 # Local imports
 from brom_drake.robots.gripper_type import GripperType
-from brom_drake.control.grippers import GripperController
+from brom_drake.control.grippers.gripper_controller import GripperController
 from brom_drake.file_manipulation.urdf import DrakeReadyURDFConverter
 from brom_drake.utils.leaf_systems import EndEffectorWrenchCalculator
 
@@ -188,7 +188,7 @@ class UR10eStation(Diagram):
 
         # Add a gripper with actuation to the full simulated plant
         gripper_urdf_path = str(
-            impresources.files(robots) / "models/robotiq/2f_85_gripper-no-mimic/urdf/robotiq_2f_85.urdf"
+            impresources.files(robots) / "models/robotiq/2f_85_gripper/urdf/robotiq_2f_85.urdf"
         )
         self.gripper = Parser(plant=self.plant).AddModels(gripper_urdf_path)[0]
 

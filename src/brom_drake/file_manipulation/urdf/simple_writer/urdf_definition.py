@@ -10,11 +10,13 @@ import os
 import xml.etree.ElementTree as ET
 
 import numpy as np
+from pathlib import Path
 from pydrake.math import RigidTransform
 
 # Internal Imports
 from brom_drake.file_manipulation.urdf.shapes.shape_definition import ShapeEnum, ShapeDefinition
 from brom_drake.file_manipulation.urdf.simple_writer.inertia_definition import InertiaDefinition
+from brom_drake.directories import DEFAULT_BROM_MODELS_DIR
 
 @dataclass
 class SimpleShapeURDFDefinition:
@@ -184,22 +186,38 @@ class SimpleShapeURDFDefinition:
         """
         return self.name + "_base_link"
 
-    def write_to_file(self, file_path: str):
+    def write_to_file(self, file_path: str = None) -> str:
         """
+        Description
+        -----------
         Write the URDF to a file.
-        :param file_path: The path to the file where the URDF will be written.
-        :return: Nothing, but writes the URDF to the file.
+
+        Arguments
+        ---------
+        file_path: str
+            The path to the file where the URDF will be written.
+        
+        Returns
+        -------
+        str
+            The path to the file where the URDF was written.
         """
         # Setup
         root = self.as_urdf()
         tree = ET.ElementTree(root)
         ET.indent(tree, space="\t", level=0)
 
+        # Input Processing
+        if file_path is None:
+            file_path = DEFAULT_BROM_MODELS_DIR + "/shapes/" + self.name + ".urdf"
+
         # Create the directory if it doesn't exist
-        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+        fp_as_path = Path(file_path)
+        fp_as_path.parent.mkdir(parents=True, exist_ok=True)
 
         # Write to file
         tree.write(file_path, xml_declaration=True)
 
+        return file_path
 
 

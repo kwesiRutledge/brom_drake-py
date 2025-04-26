@@ -1,8 +1,8 @@
 """
-cartesian_controller.py
+cartesian_arm_controller.py
 Description:
 
-    This file defines the CartesianController class. This class is used to control different manipulators and generates
+    This file defines the CartesianArmController class. This class is used to control different manipulators and generates
     torque based control commands for the targeted arm.
 """
 # External Imports
@@ -79,6 +79,15 @@ class CartesianArmController(BaseArmController):
         Define the input ports for the CartesianArmController system
         :return:
         """
+        # Input Processing
+        plant : MultibodyPlant = self.plant
+        if not plant.is_finalized():
+            raise RuntimeError("The plant must be finalized before defining input ports.")
+        
+        # Setup
+        n_dof = self.plant.num_positions()
+
+        # Define the input ports
         self.ee_target_port = self.DeclareVectorInputPort(
             "ee_target",
             BasicVector(7),

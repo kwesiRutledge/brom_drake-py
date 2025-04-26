@@ -1,5 +1,5 @@
-from .gripper_controller import GripperController
-from .gripper_target import GripperTarget
+from brom_drake.control.grippers.gripper_controller import GripperController
+from brom_drake.control.grippers.gripper_target import GripperTarget
 
 __all__ = [
     "GripperController",

@@ -6,7 +6,7 @@ Description:
     feature.
 """
 
-from typing import Union
+from typing import List, Union
 from pathlib import Path
 
 # Internal Imports
@@ -21,6 +21,7 @@ def drakeify_my_urdf(
     overwrite_old_models: bool = False,
     log_file_name: str = "conversion.log",
     collision_mesh_replacement_strategy: MeshReplacementStrategy = MeshReplacementStrategy.kWithObj,
+    replace_colors_with: Union[None, List[float]] = None,
 ) -> Path:
     """
     Description
@@ -63,6 +64,7 @@ def drakeify_my_urdf(
         mesh_replacement_strategies=MeshReplacementStrategies(
             collision_meshes=collision_mesh_replacement_strategy,
         ),
+        replace_colors_with=replace_colors_with,
     )
 
     # Use converter

@@ -15,7 +15,7 @@ from pydrake.systems.primitives import ConstantValueSource
 # Internal Imports
 import brom_drake.robots as robots
 from brom_drake.motion_planning.systems.open_loop_dispensers.open_loop_plan_dispenser import OpenLoopPlanDispenser
-from brom_drake.robots.stations.kinematic import UR10eStation as KinematicUR10eStation
+from brom_drake.stations.kinematic import UR10eStation as KinematicUR10eStation
 from brom_drake.productions import ProductionID
 from brom_drake.productions.roles import Role
 from brom_drake.productions.types.motion_planning import KinematicMotionPlanningProduction

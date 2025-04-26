@@ -11,7 +11,7 @@ import typer
 from brom_drake.all import drakeify_my_urdf
 from brom_drake import robots
 from brom_drake.productions import (
-    DemonstrateStaticGrasp,
+    ShowMeThisStaticGrasp,
 )
 
 def main(meshcat_port_number: int = 7001):
@@ -35,22 +35,24 @@ def main(meshcat_port_number: int = 7001):
     )
 
     # Create the gripper urdf
-    gripper_urdf = gripper_urdf_path = str(
+    gripper_urdf = str(
         impresources.files(robots) / "models/robotiq/2f_85_gripper-no-mimic/urdf/robotiq_2f_85.urdf"
     )    
     
     X_ObjectTarget = RigidTransform(
-        p=np.array([-0.08, 0.05, 0.15]),
+        p=np.array([+0.02, 0.10, 0.15]),
         rpy=RollPitchYaw(0.0, np.pi/2.0, 0.0),
     )
 
 
     # Create the production
-    production = DemonstrateStaticGrasp(
+    production = ShowMeThisStaticGrasp(
         path_to_object=str(drakeified_flask_urdf),
         path_to_gripper=gripper_urdf,
         meshcat_port_number=meshcat_port_number, # Use None for CI
         X_ObjectTarget=X_ObjectTarget,
+        target_body_on_gripper="left_inner_finger_pad",
+        gripper_color=[0.0, 1.0, 0.0, 0.6], # Green
     )
 
     # Call the method

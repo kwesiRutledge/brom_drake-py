@@ -19,24 +19,45 @@ class GroundShape(IntEnum):
 def AddGround(
     plant: MultibodyPlant,
     shape: GroundShape = GroundShape.kBox,
+    z_ground: float = None,
+    ground_thickness: float = 0.1,
 ):
     """
+    Description
+    -----------
     Add a flat ground with friction
-    """
 
+    Arguments
+    ---------
+    plant: MultibodyPlant
+        The plant to add the ground to.
+    shape: GroundShape
+        The shape of the ground. Defaults to a box.
+    z_ground: float
+        The height at which the "top" of the ground will be placed.
+
+    """
     # Constants
     transparent_color = np.array([0.5, 0.5, 0.5, 0])
     nontransparent_color = np.array([0.5, 0.5, 0.5, 0.1])
 
-    p_GroundOrigin = [0, 0.0, 0.0]
-    R_GroundOrigin = RotationMatrix.MakeXRotation(0.0)
-    X_GroundOrigin = RigidTransform(R_GroundOrigin,p_GroundOrigin)
+    # Setup
+
+    # Input Processing
+    if z_ground is None:
+        p_GroundOrigin = [0, 0.0, 0.0]
+        R_GroundOrigin = RotationMatrix.MakeXRotation(0.0)
+        X_GroundOrigin = RigidTransform(R_GroundOrigin,p_GroundOrigin)
+    else:
+        p_GroundOrigin = [0, 0.0, z_ground - ground_thickness/2.0]
+        R_GroundOrigin = RotationMatrix.MakeXRotation(0.0)
+        X_GroundOrigin = RigidTransform(R_GroundOrigin,p_GroundOrigin)
 
     # Input Processing
     if shape == GroundShape.kHalfSpace:
         shape = HalfSpace()
     elif shape == GroundShape.kBox:
-        shape = Box(10, 10, 0.1)
+        shape = Box(10, 10, ground_thickness)
     else:
         raise ValueError(f"Invalid shape: {shape}!")  
 
