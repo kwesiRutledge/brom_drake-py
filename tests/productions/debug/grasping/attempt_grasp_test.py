@@ -11,7 +11,7 @@ from pydrake.all import (
 import unittest
 
 # Internal Imports
-from brom_drake.all import drakeify_my_urdf, add_watcher_and_build
+from brom_drake.all import drakeify_my_urdf, add_watcher_and_build, GripperType
 from brom_drake import robots
 from brom_drake.file_manipulation.urdf.shapes.box import BoxDefinition
 from brom_drake.file_manipulation.urdf.simple_writer.urdf_definition import SimpleShapeURDFDefinition
@@ -34,12 +34,6 @@ class AttemptGraspTest(unittest.TestCase):
         )
         self.drakeified_flask_urdf = str(drakeified_flask_urdf)
 
-        # Create the gripper urdf
-        gripper_urdf_path = str(
-            impresources.files(robots) / "models/robotiq/2f_85_gripper/urdf/robotiq_2f_85.urdf"
-        )
-        self.gripper_urdf_path = gripper_urdf_path
-
     def test_find_floor_z1(self):
         """
         Description
@@ -48,12 +42,11 @@ class AttemptGraspTest(unittest.TestCase):
         """
         # Setup
         flask_urdf = self.drakeified_flask_urdf
-        gripper_urdf = self.gripper_urdf_path
 
         # Create the production
         production = AttemptGrasp(
             path_to_object=flask_urdf,
-            path_to_gripper=gripper_urdf,
+            gripper_choice=GripperType.Robotiq_2f_85,
             grasp_joint_positions=np.array([0.7]),
             meshcat_port_number=None, # Use None for CI
         )
@@ -75,7 +68,6 @@ class AttemptGraspTest(unittest.TestCase):
         """
         # Setup
         flask_urdf = self.drakeified_flask_urdf
-        gripper_urdf = self.gripper_urdf_path
 
         # Create the production
         builder = DiagramBuilder()
@@ -137,12 +129,11 @@ class AttemptGraspTest(unittest.TestCase):
         """
         # Setup
         flask_urdf = self.drakeified_flask_urdf  
-        gripper_urdf = self.gripper_urdf_path      
 
         # Create the production
         production = AttemptGrasp(
             path_to_object=flask_urdf,
-            path_to_gripper=gripper_urdf,
+            gripper_choice=GripperType.Robotiq_2f_85,
             grasp_joint_positions=np.array([0.7]),
             meshcat_port_number=None, # Use None for CI
         )
@@ -172,12 +163,11 @@ class AttemptGraspTest(unittest.TestCase):
         """
         # Setup
         flask_urdf = self.drakeified_flask_urdf
-        gripper_urdf = self.gripper_urdf_path
 
         # Create the production
         production = AttemptGrasp(
             path_to_object=flask_urdf,
-            path_to_gripper=gripper_urdf,
+            gripper_choice=GripperType.Robotiq_2f_85,
             grasp_joint_positions=np.array([0.7]),
             meshcat_port_number=None, # Use None for CI
         )
