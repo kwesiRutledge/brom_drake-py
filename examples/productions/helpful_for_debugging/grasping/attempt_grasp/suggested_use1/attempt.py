@@ -27,8 +27,8 @@ def main():
         log_file_name="DemonstrateStaticGripTest_AddManipulandToPlant_flask.log",
     )
 
-    # Create the gripper urdf
-
+    # Create the transform representing the target (i.e. gripper) frame
+    # relative to the object frame
     X_ObjectTarget = RigidTransform(
         p=np.array([-0.08, 0.05, 0.15]),
         rpy=RollPitchYaw(0.0, np.pi/2.0, 0.0),
