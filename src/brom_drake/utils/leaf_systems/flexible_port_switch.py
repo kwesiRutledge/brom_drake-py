@@ -51,7 +51,7 @@ class FlexiblePortSwitch(LeafSystem):
         elif type_in == int:
             self.port_selector_port = self.DeclareVectorInputPort(
                 name="port_selector",
-                dim=1,
+                size=1,
             )
         elif type_in == InputPortIndex:
             self.port_selector_port = self.DeclareAbstractInputPort(
