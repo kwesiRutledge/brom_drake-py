@@ -87,7 +87,7 @@ class FlexiblePortSwitch(LeafSystem):
             self._input_ports[input_port.get_index()] = input_port
         else:
             raise NotImplementedError(
-                f"Type {selector_type_in} is not supported. Please use str."
+                f"Type {selector_type_in} is not supported. Please use str, int, or InputPortIndex."
             )
         
         return input_port
@@ -107,9 +107,12 @@ class FlexiblePortSwitch(LeafSystem):
         This method will calculate the value of the output port.
         """
         # Setup
+        selector_type_in = self.selector_type_in
 
         # Get the port selector value
         port_selection = self.port_selector_port.Eval(context)
+        if selector_type_in == int:
+            port_selection = int(port_selection[0])
 
         # Vet the port selector value
         assert isinstance(port_selection, self.selector_type_in), \
