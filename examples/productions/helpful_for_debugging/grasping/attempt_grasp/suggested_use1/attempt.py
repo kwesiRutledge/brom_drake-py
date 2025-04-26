@@ -9,7 +9,7 @@ from pydrake.all import (
 import typer
 
 # Internal Imports
-from brom_drake.all import drakeify_my_urdf
+from brom_drake.all import drakeify_my_urdf, GripperType
 from brom_drake import robots
 from brom_drake.productions import AttemptGrasp
 
@@ -28,12 +28,6 @@ def main():
     )
 
     # Create the gripper urdf
-    # gripper_urdf = str(
-    #     impresources.files(robots) / "models/robotiq/2f_85_gripper-no-mimic/urdf/robotiq_2f_85.urdf"
-    # )    
-    gripper_urdf = str(
-        impresources.files(robots) / "models/robotiq/2f_85_gripper/urdf/robotiq_2f_85.urdf"
-    )
 
     X_ObjectTarget = RigidTransform(
         p=np.array([-0.08, 0.05, 0.15]),
@@ -43,7 +37,7 @@ def main():
     # Create the production
     production = AttemptGrasp(
         path_to_object=str(drakeified_flask_urdf),
-        path_to_gripper=gripper_urdf,
+        gripper_choice=GripperType.Robotiq_2f_85,
         grasp_joint_positions=np.array([0.7]),
         X_ObjectTarget=X_ObjectTarget,
         meshcat_port_number=7001, # Use None for CI

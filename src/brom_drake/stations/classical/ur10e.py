@@ -20,7 +20,7 @@ from typing import Tuple
 
 # Local imports
 from brom_drake.robots.gripper_type import GripperType
-from brom_drake.control.grippers import GripperController
+from brom_drake.control.grippers.gripper_controller import GripperController
 from brom_drake.file_manipulation.urdf import DrakeReadyURDFConverter
 from brom_drake.utils.leaf_systems import EndEffectorWrenchCalculator
 

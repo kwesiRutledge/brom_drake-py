@@ -17,7 +17,7 @@ from pydrake.systems.primitives import AffineSystem, ConstantVectorSource
 # Internal Imports
 from brom_drake import robots
 from brom_drake.all import add_watcher_and_build
-from brom_drake.robots.stations.kinematic import UR10eStation as KinematicUR10eStation
+from brom_drake.stations.kinematic import UR10eStation as KinematicUR10eStation
 
 class TestKinematicUR10eStation(unittest.TestCase):
     def test_init1(self):

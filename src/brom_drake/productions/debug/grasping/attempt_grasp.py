@@ -1,3 +1,4 @@
+from importlib import resources as impresources
 from typing import List, Tuple, Union
 import networkx as nx
 import numpy as np
@@ -28,6 +29,7 @@ from brom_drake.file_manipulation.urdf.drakeify import drakeify_my_urdf
 from brom_drake.file_manipulation.urdf.shapes.box import BoxDefinition
 from brom_drake.file_manipulation.urdf.simple_writer import SimpleShapeURDFDefinition
 from brom_drake.robots import find_base_link_name_in, GripperType
+from brom_drake import robots
 from brom_drake.motion_planning.systems import OpenLoopPlanDispenser
 from brom_drake.productions.types.debug import BasicGraspingDebuggingProduction
 from brom_drake.productions import ProductionID
@@ -46,7 +48,7 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
     def __init__(
         self,
         path_to_object: str,
-        path_to_gripper: str,
+        gripper_choice: GripperType,
         grasp_joint_positions: np.ndarray,
         X_ObjectTarget: RigidTransform = None,
         meshcat_port_number: int = 7001, # Usually turn off for CI (i.e., make it None)
@@ -57,6 +59,14 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
         gripper_color: List[float] = None,
         show_gripper_base_frame: bool = False,
     ):
+        # Use the enum to choose the gripper URDF from a set of supported grippers
+        if gripper_choice == GripperType.Robotiq_2f_85:
+            path_to_gripper = str(
+                impresources.files(robots) / "models/robotiq/2f_85_gripper/urdf/robotiq_2f_85.urdf"
+            )
+        else:
+            raise ValueError(f"Gripper type {gripper_choice} not supported for this scene! Create an issue on GitHub if you want it to be!")
+
         # Call the parent constructor
         super().__init__(
             path_to_object=path_to_object,

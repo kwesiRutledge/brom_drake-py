@@ -14,7 +14,8 @@ import unittest
 
 # Internal Imports
 from brom_drake.all import add_watcher_and_build
-from brom_drake.robots import UR10eStation, GripperType
+from brom_drake.robots import GripperType
+from brom_drake.stations.kinematic import UR10eStation
 from brom_drake.control import CartesianArmController, EndEffectorTarget
 from brom_drake.control.grippers import GripperController, GripperTarget
 
