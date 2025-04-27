@@ -35,7 +35,7 @@ def main(meshcat_port_number: int = 7001):
     )
 
     # Create the gripper urdf
-    gripper_urdf = gripper_urdf_path = str(
+    gripper_urdf = str(
         impresources.files(robots) / "models/robotiq/2f_85_gripper-no-mimic/urdf/robotiq_2f_85.urdf"
     )    
     
