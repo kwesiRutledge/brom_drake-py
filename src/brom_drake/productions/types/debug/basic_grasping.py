@@ -1,4 +1,3 @@
-from manipulation.scenarios import AddMultibodyTriad
 from pydrake.all import (
     AddMultibodyPlantSceneGraph,
     Frame,
@@ -19,6 +18,7 @@ from brom_drake.utils.model_instances import (
     get_name_of_first_body_in_urdf,
     get_name_of_all_bodies_in_urdf,
 )
+from brom_drake.utils.triads import AddMultibodyTriad
 
 class BasicGraspingDebuggingProduction(BaseProduction):
     """
