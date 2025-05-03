@@ -2,7 +2,6 @@ from importlib import resources as impresources
 from typing import List, Tuple, Union
 import networkx as nx
 import numpy as np
-from manipulation.scenarios import AddMultibodyTriad
 from pydrake.all import (
     AbstractValue,
     Adder,
