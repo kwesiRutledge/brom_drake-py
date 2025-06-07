@@ -9,6 +9,7 @@ class MeshReplacementStrategy(IntEnum):
     kDoNotReplace = 0 
     kWithObj = 1
     kWithMinimalEnclosingCylinder = 2
+    kWithConvexDecomposition = 3
 
 @dataclass(frozen=True)
 class MeshReplacementStrategies:
