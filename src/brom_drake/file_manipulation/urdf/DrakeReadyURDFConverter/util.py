@@ -1,4 +1,6 @@
-import xml.etree.ElementTree
+from pathlib import Path
+import xml.etree.ElementTree as ET
+from typing import Union
 
 URDF_CONVERSION_LOG_LEVEL_NAME = "BROM_URDF_CONVERSION"
 URDF_CONVERSION_LEVEL = 21
@@ -16,7 +18,7 @@ def does_drake_parser_support(filename: str):
 
 def create_transmission_element_for_joint(
     actuated_joint_name: str,
-) -> xml.etree.ElementTree.Element:
+) -> ET.Element:
     """
     Description
     -----------
@@ -26,18 +28,18 @@ def create_transmission_element_for_joint(
     """
 
     # Create the transmission element
-    transmission = xml.etree.ElementTree.Element("transmission")
+    transmission = ET.Element("transmission")
 
     # Create an inner type element
-    transmission_type_element = xml.etree.ElementTree.Element("type")
+    transmission_type_element = ET.Element("type")
     transmission_type_element.text = "transmission_interface/SimpleTransmission"
 
     # Create inner joint element (reference to the actuated_joint_name
-    joint_element = xml.etree.ElementTree.Element("joint")
+    joint_element = ET.Element("joint")
     joint_element.set("name", actuated_joint_name)
 
     # Create inner actuator element
-    actuator_element = xml.etree.ElementTree.Element("actuator")
+    actuator_element = ET.Element("actuator")
     actuator_element.set("name", f"{actuated_joint_name}_actuator")
 
     # Assemble transmission element
@@ -48,7 +50,7 @@ def create_transmission_element_for_joint(
     return transmission
 
 def tree_contains_transmission_for_joint(
-    tree: xml.etree.ElementTree.ElementTree,
+    tree: ET.ElementTree,
     actuated_joint_name: str,
 ) -> bool:
     """
@@ -73,7 +75,7 @@ def tree_contains_transmission_for_joint(
     # Check each of the tree's children to see if there is a transmission element
     for child in root:
         child_tree_contains_transmission_for_joint = tree_contains_transmission_for_joint(
-            xml.etree.ElementTree.ElementTree(child),
+            ET.ElementTree(child),
             actuated_joint_name,
         )
         if child_tree_contains_transmission_for_joint:
@@ -82,3 +84,33 @@ def tree_contains_transmission_for_joint(
     # If we've searched through the full sub-tree and don't see the actuated joint,
     # then we return False
     return False
+
+def find_mesh_file_path_in(collision_element: ET.Element) -> Union[Path, None]:
+    """
+    Description
+    -----------
+    This function finds the mesh filename in the given collision element.
+
+    Parameters
+    ----------
+    collision_element: ET.Element
+        The collision element to search for a mesh filename
+    
+    Returns
+    -------
+    str or None
+        The mesh filename if found, otherwise None
+    """
+    # Check if the collision element has a <geometry> child
+    geometry = collision_element.find("geometry")
+    if geometry is not None:
+        # Check if the geometry has a <mesh> child
+        mesh = geometry.find("mesh")
+        if mesh is not None:
+            # Return the filename attribute of the mesh element
+            return Path(
+                mesh.attrib.get("filename", None)
+            )
+    
+    # If no mesh filename is found, return None
+    return None
