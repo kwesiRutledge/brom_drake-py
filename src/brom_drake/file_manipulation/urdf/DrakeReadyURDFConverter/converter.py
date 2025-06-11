@@ -5,12 +5,13 @@ This file contains the URDF converter for transforming
 arbitrary URDFs into URDFs that the Drake toolbox can
 support.
 """
+import coacd
+from copy import copy, deepcopy
+from doctest import UnexpectedException
 from enum import IntEnum
 import os
-from copy import copy, deepcopy
-
 import trimesh
-from doctest import UnexpectedException
+from typing import List
 
 import loguru
 import numpy as np
@@ -25,6 +26,7 @@ from .config import DrakeReadyURDFConverterConfig, MeshReplacementStrategy
 from .mesh_file_converter import MeshFileConverter
 from .util import (
     does_drake_parser_support,
+    find_mesh_file_path_in,
     URDF_CONVERSION_LOG_LEVEL_NAME, URDF_CONVERSION_LEVEL,
     tree_contains_transmission_for_joint,
     create_transmission_element_for_joint,
@@ -149,7 +151,7 @@ class DrakeReadyURDFConverter:
             filter=lambda record: record['level'].name == URDF_CONVERSION_LOG_LEVEL_NAME,
         )
 
-    def convert_collision_element(self, collision_elt: ET.Element) -> ET.Element:
+    def convert_collision_element(self, collision_elt: ET.Element) -> List[ET.Element]:
         """
         Description
         -----------
@@ -166,47 +168,152 @@ class DrakeReadyURDFConverter:
             The new collision element.
         """
         # Setup
-        new_elt = deepcopy(collision_elt)
         replacement_strategy = self.config.mesh_replacement_strategies.collision_meshes
 
-        n_replacements_made = 0
+        supported_strategies = [
+            MeshReplacementStrategy.kWithObj,
+            MeshReplacementStrategy.kWithMinimalEnclosingCylinder,
+            MeshReplacementStrategy.kWithConvexDecomposition,
+        ]
+
+        # Input Processing
+        if replacement_strategy not in supported_strategies:
+            error_message = (
+                f"Replacement strategy {replacement_strategy} is not supported for collision elements. "
+                + "Supported strategies are: "
+                + ", ".join([str(strategy) for strategy in supported_strategies])
+            )
+            self.log(error_message)
+            raise ValueError(error_message)
 
         # Announce algorithm start
         self.log(
             f"Converting element with tag \"{collision_elt.tag}\" using strategy {replacement_strategy}."
         )
+        n_replacements_made = 0
+        new_elts = []
+
+        # If the strategy is kWithMinimalEnclosingCylinder,
+        # then we can replace the entire collision element and don't need to iterate through the children.
+        if replacement_strategy == MeshReplacementStrategy.kWithMinimalEnclosingCylinder:
+            n_replacements_made += 1
+            new_elts = [self.replace_element_with_enclosing_cylinder(
+                deepcopy(collision_elt)
+            )]
+
+        elif replacement_strategy == MeshReplacementStrategy.kWithObj:
+            # Otherwise, let's slowly build the new element
+            # by iterating through the children of the collision element.
+            new_elt = ET.Element(collision_elt.tag, collision_elt.attrib)
+            for ii, child_ii in enumerate(collision_elt):
+                # Check to see if the child is a geometry element
+                if child_ii.tag == "geometry":
+                    new_geometry_elt = self.convert_geometry_element(child_ii, replacement_strategy)
+                    new_elt.append(new_geometry_elt)
+                else:
+                    # If the child is not a geometry element, then we will just copy it over
+                    new_elt.append(deepcopy(child_ii))
+
+
+            # Add the new element to the list of new elements
+            new_elts.append(new_elt)
+
+        elif replacement_strategy == MeshReplacementStrategy.kWithConvexDecomposition:
+            # Determine if the collision element has a mesh element within it
+            path_out = find_mesh_file_path_in(collision_elt)
+            if path_out is None:
+                self.log(
+                    "The collision element does not contain a mesh file. Cannot replace with convex decomposition."
+                )
+                new_elts.append(deepcopy(collision_elt))
+            else:
+                # Load the mesh file and perform convex decomposition
+                self.log(
+                    f"Found a mesh file at {path_out}. Performing convex decomposition."
+                )
+                # Load the mesh file
+                mesh = trimesh.load_mesh(str(path_out))
+                
+            pass
 
         # Check to see if the collision element has a mesh element within it
         
-        # Iterate through every element of the collision element
-        for ii, child_ii in enumerate(collision_elt):
-            if child_ii.tag == "geometry": 
-                # If the child is a geometry element, then we will check if replacement is needed.
-                geometry_elt = child_ii
+        # # Iterate through every element of the collision element
+        # for ii, child_ii in enumerate(collision_elt):
+        #     if child_ii.tag == "geometry": 
+        #         # If the child is a geometry element, then we will check if replacement is needed.
+        #         geometry_elt = child_ii
                 
-                # Iterate through every element of the geometry element
-                for jj, child_jj in enumerate(geometry_elt):
-                    if child_jj.tag == "mesh":
-                        # If the child is a mesh element, then we will check if replacement is needed.
-                        mesh_elt = child_jj
+        #         # Iterate through every element of the geometry element
+        #         for jj, child_jj in enumerate(geometry_elt):
+        #             if child_jj.tag == "mesh":
+        #                 # If the child is a mesh element, then we will check if replacement is needed.
+        #                 mesh_elt = child_jj
                         
-                        # Replace!
-                        if replacement_strategy == MeshReplacementStrategy.kWithObj:
-                            new_mesh_elt = self.convert_mesh_element(mesh_elt)
-                            new_elt[ii][jj] = new_mesh_elt
-                        elif replacement_strategy == MeshReplacementStrategy.kWithMinimalEnclosingCylinder:
-                            new_elt = self.replace_element_with_enclosing_cylinder(new_elt)
-                        else:
-                            raise ValueError(
-                                f"Invalid mesh replacement strategy: {replacement_strategy}"
-                            )    
+        #                 # Replace!
+        #                 if replacement_strategy == MeshReplacementStrategy.kWithObj:
+        #                     new_mesh_elt = self.convert_mesh_element(mesh_elt)
+        #                     new_elt[ii][jj] = new_mesh_elt
+        #                 elif replacement_strategy == MeshReplacementStrategy.kWithMinimalEnclosingCylinder:
+        #                     new_elt = self.replace_element_with_enclosing_cylinder(new_elt)
+        #                 # elif replacement_strategy == MeshReplacementStrategy.kWithConvexDecomposition:
+                            
+        #                 else:
+        #                     raise ValueError(
+        #                         f"Invalid mesh replacement strategy: {replacement_strategy}"
+        #                     )    
 
-                        n_replacements_made += 1       
+        #                 n_replacements_made += 1       
 
         # Announce the number of replacements made in the logger.
         self.log(
             f"Made {n_replacements_made} replacements in the collision element."
         )
+
+        return new_elts
+    
+    def convert_geometry_element(
+        self,
+        geometry_elt: ET.Element,
+        replacement_strategy: MeshReplacementStrategy
+    ) -> ET.Element:
+        """
+        Description
+        -----------
+        This method will convert the geometry element in the URDF (i.e., an XML) file
+        according to the conversion strategy provided as input.
+        
+        Arguments
+        ---------
+        geometry_elt: ET.Element
+            The geometry element that we want to convert.
+        
+        Returns
+        -------
+        ET.Element
+            The new geometry element.
+        """
+        # Setup
+        new_elt = ET.Element(geometry_elt.tag, geometry_elt.attrib)
+
+        # Algorithm
+        self.log(
+            f"Converting geometry element with strtegy \"{replacement_strategy}\"."
+        )
+
+        # Iterate through every element of the geometry element
+        for ii, child_ii in enumerate(geometry_elt):
+            if child_ii.tag == "mesh":
+                # If the child is a mesh element, then we will check if replacement is needed.
+                mesh_elt = child_ii
+
+                # Replace!
+                new_mesh_elt = self.convert_mesh_element(mesh_elt)
+                new_elt.append(new_mesh_elt)
+
+            else:
+                # If the child is not a mesh element, then we will just copy it over
+                new_elt.append(deepcopy(child_ii))
 
         return new_elt
     
@@ -331,7 +438,10 @@ class DrakeReadyURDFConverter:
         add_missing_actuators = self.config.add_missing_actuators
 
         # Use recursive function to convert the tree
-        new_tree = self.convert_tree(original_xml)
+        new_trees = self.convert_tree(original_xml)
+        assert len(new_trees) == 1, \
+            f"Expected to get exactly one new tree after conversion, but got {len(new_trees)}."
+        new_tree = new_trees[0]
 
         # Add transmissions, if needed
         if add_missing_actuators:
@@ -393,7 +503,7 @@ class DrakeReadyURDFConverter:
                 "filename", new_filename,
             )
             self.log(
-                f"Replaced the mesh file \"{old_filename}\" with a Drake-compatible .obj file at \"{new_filename}\"."
+                f"Copied the Drake-compatible mesh file \"{old_filename}\" to \"{new_filename}\"."
             )
         else:
             # If parser does not support the given filename,
@@ -412,7 +522,7 @@ class DrakeReadyURDFConverter:
     def convert_tree(
         self,
         current_tree: ET.ElementTree
-    ) -> ET.ElementTree:
+    ) -> List[ET.ElementTree]:
         """
         Description
         -----------`
@@ -434,26 +544,31 @@ class DrakeReadyURDFConverter:
         root = deepcopy(current_tree.getroot())
 
         # Modify root, if necessary
-        new_root = self.convert_tree_element(root)
+        new_elements = self.convert_tree_element(root)
 
-        # Modify Children of the root
-        initial_children = list(new_root)
-        for child in initial_children:
-            new_child = self.convert_tree(
-                ET.ElementTree(child)
-            )
-            new_root.remove(child)
+        for element_ii in new_elements:
+            # Modify Children of the root
+            initial_children = list(element_ii)
+            for child in initial_children:
+                new_children = self.convert_tree(
+                    ET.ElementTree(child)
+                )
+                element_ii.remove(child)
 
-            # Add new child to new root
-            new_root.append(new_child.getroot())
+                # Add new children to new root
+                for new_child in new_children:
+                    # Convert the new child element
+                    element_ii.append(new_child.getroot())
 
-        return ET.ElementTree(new_root)
+        return [
+            ET.ElementTree(element_ii) for element_ii in new_elements
+        ]
 
 
     def convert_tree_element(
         self,
         elt: ET.Element,
-    ) -> ET.Element:
+    ) -> List[ET.Element]:
         """
         Description
         -----------
@@ -473,25 +588,28 @@ class DrakeReadyURDFConverter:
             The new element that has been converted.
         """
         # Setup
-        new_elt = deepcopy(elt)
+        new_elts = []
 
         # Convert file paths for mesh elements if necessary
-        if new_elt.tag == "collision":
-            new_elt = self.convert_collision_element(new_elt)
-        elif new_elt.tag == "visual":
-            new_elt = self.convert_visual_element(new_elt)
-        elif new_elt.tag == "transmission":
+        if elt.tag == "collision":
+            new_elts = self.convert_collision_element(elt)
+        elif elt.tag == "visual":
+            new_elts = [self.convert_visual_element(elt)]
+        elif elt.tag == "transmission":
             # Ignore transmission elements during the conversion
-            return new_elt
-        elif new_elt.tag == "joint":
-            self.handle_joint_element(new_elt)
+            new_elts = [deepcopy(elt)]
+        elif elt.tag == "joint":
+            self.handle_joint_element(elt)
+            new_elts = [deepcopy(elt)]
         else:
             # If the element is not a mesh element, then we will just return a copy of it.
             self.log(
-                f"Found an element with tag \"{new_elt.tag}\" (originally \"{elt.tag}\") that is not a mesh element. No modification needed..."
+                f"Found an element with tag \"{elt.tag}\" that does not require handling. No modification needed..."
             )
+            new_elts = [deepcopy(elt)]
+
         # Otherwise, just return a copy of the previous element.
-        return new_elt
+        return new_elts
 
     def create_obj_to_replace_mesh_file(
         self,
