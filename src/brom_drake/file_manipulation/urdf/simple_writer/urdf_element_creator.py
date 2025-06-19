@@ -16,6 +16,7 @@ class URDFElementCreator:
         name: str,
         pose_ParentMesh: Union[None, np.ndarray, RigidTransform] = None,
         mesh_file_path: Union[str, None] = None,
+        mesh_scale: np.ndarray = np.array([1.0, 1.0, 1.0]),
     ) -> ET.Element:
         """
         Create a collision element for the URDF.
@@ -67,7 +68,8 @@ class URDFElementCreator:
         if mesh_file_path is not None:
             collision.append(
                 URDFElementCreator.create_geometry_element(
-                    mesh_file_path=mesh_file_path
+                    mesh_file_path=mesh_file_path,
+                    mesh_scale=mesh_scale,
                 )
             )
 
@@ -108,6 +110,7 @@ class URDFElementCreator:
     def create_geometry_element(
         mesh_file_path: str = None,
         definition: ShapeDefinition = None,
+        mesh_scale: np.ndarray = np.array([1.0, 1.0, 1.0])
     ) -> ET.Element:
         """
         Create a geometry element for the URDF.
@@ -131,9 +134,13 @@ class URDFElementCreator:
         if mesh_file_path is not None:
             mesh = ET.SubElement(geometry, "mesh")
             mesh.set("filename", str(mesh_file_path))
-            # If the mesh file path is relative, make it absolute
-            if not str(mesh_file_path).startswith("/"):
-                mesh.set("filename", f"{mesh_file_path}")
+            # # If the mesh file path is relative, make it absolute
+            # if not str(mesh_file_path).startswith("/"):
+            #     mesh.set("filename", f"{mesh_file_path}")
+
+            # Set the scale for the mesh
+            mesh.set("scale", f"{mesh_scale[0]} {mesh_scale[1]} {mesh_scale[2]}")
+            
 
         # If a shape definition is provided, add the appropriate sub-element
         # TODO: Implement support for different shape definitions

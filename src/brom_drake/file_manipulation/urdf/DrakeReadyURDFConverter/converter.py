@@ -28,6 +28,7 @@ from .mesh_file_converter import MeshFileConverter
 from .util import (
     does_drake_parser_support,
     find_mesh_file_path_in,
+    get_mesh_element_in,
     URDF_CONVERSION_LOG_LEVEL_NAME, URDF_CONVERSION_LEVEL,
     tree_contains_transmission_for_joint,
     create_transmission_element_for_joint,
@@ -119,6 +120,9 @@ class DrakeReadyURDFConverter:
         DrakeReadyURDFConverter.log(
             f"Created a new DrakeReadyURDFConverter for file \"{self.original_urdf_filename}\"."
         )
+
+        # Configure coacd, just in case
+        coacd.set_log_level(config.coacd_log_level)
 
         # Keep Track of the Joints In The Diagram
         self.actuated_joint_names = []
@@ -241,7 +245,12 @@ class DrakeReadyURDFConverter:
                 return new_elts
             
             # If the collision element has a mesh element within it, then we will perform convex decomposition
-            
+            original_mesh_elt = get_mesh_element_in(collision_elt)
+            scale_as_str = original_mesh_elt.attrib.get("scale", "1 1 1")
+            original_mesh_scale = np.array(
+                [float(x) for x in scale_as_str.split()]
+            )
+
             # Load the mesh file and perform convex decomposition
             self.log(
                 f"Found a mesh file at {original_mesh_path}. Performing convex decomposition."
@@ -279,6 +288,7 @@ class DrakeReadyURDFConverter:
                 collision_element_ii = URDFElementCreator.create_collision_element(
                     name=f"{collision_elt.attrib.get('name', 'collision')}_part_{ii}",
                     mesh_file_path="./" + str(mesh_ii_file_relative_path),
+                    mesh_scale=original_mesh_scale,
                 )
                 new_elts.append(collision_element_ii)
 

@@ -85,6 +85,33 @@ def tree_contains_transmission_for_joint(
     # then we return False
     return False
 
+def get_mesh_element_in(collision_element: ET.Element) -> Union[ET.Element, None]:
+    """
+    Description
+    -----------
+    This function finds the mesh element in the given collision element.
+
+    Parameters
+    ----------
+    collision_element: ET.Element
+        The collision element to search for a mesh element
+    
+    Returns
+    -------
+    ET.Element or None
+        The mesh element if found, otherwise None
+    """
+    # Check if the collision element has a <geometry> child
+    geometry = collision_element.find("geometry")
+    if geometry is not None:
+        # Check if the geometry has a <mesh> child
+        mesh = geometry.find("mesh")
+        if mesh is not None:
+            return mesh
+    
+    # If no mesh element is found, return None
+    return None
+
 def find_mesh_file_path_in(collision_element: ET.Element) -> Union[Path, None]:
     """
     Description
@@ -101,16 +128,15 @@ def find_mesh_file_path_in(collision_element: ET.Element) -> Union[Path, None]:
     str or None
         The mesh filename if found, otherwise None
     """
-    # Check if the collision element has a <geometry> child
-    geometry = collision_element.find("geometry")
-    if geometry is not None:
-        # Check if the geometry has a <mesh> child
-        mesh = geometry.find("mesh")
-        if mesh is not None:
-            # Return the filename attribute of the mesh element
-            return Path(
-                mesh.attrib.get("filename", None)
-            )
+    # Setup
+
+    # Algorithm
+    mesh_elt = get_mesh_element_in(collision_element)
+    if mesh_elt is not None:
+        # Return the filename attribute of the mesh element
+        return Path(
+            mesh_elt.attrib.get("filename", None)
+        )
     
     # If no mesh filename is found, return None
     return None

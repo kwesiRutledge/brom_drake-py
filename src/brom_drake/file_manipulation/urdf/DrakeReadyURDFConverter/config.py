@@ -30,6 +30,13 @@ class DrakeReadyURDFConverterConfig:
     -----------
     A dataclass that specifies how the DrakeReadyURDFConverter
     should convert the URDF file.
+
+    Attributes
+    ----------
+    output_urdf_file_path: str
+        The path where the converted URDF file will be saved. If None, it defaults to the models directory.
+    coacd_log_level: str
+        The log level for the coacd tool. Options are "off", "info", "error".
     """
     output_urdf_file_path: str = None
     overwrite_old_logs: bool = False
@@ -38,3 +45,4 @@ class DrakeReadyURDFConverterConfig:
     mesh_replacement_strategies: MeshReplacementStrategies = MeshReplacementStrategies()
     add_missing_actuators: bool = True
     replace_colors_with: List[float] = None
+    coacd_log_level: str = "info"
