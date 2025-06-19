@@ -91,7 +91,6 @@ class DrakeReadyURDFConverter:
             models_directory=Path(DEFAULT_BROM_MODELS_DIR),
             log_file_name=config.log_file_name,
             _output_urdf_path=config.output_urdf_file_path,
-            _mesh_directory=None,
         ) 
 
         # Define conversion data directory in brom
