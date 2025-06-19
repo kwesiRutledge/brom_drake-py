@@ -221,43 +221,12 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         new_elt = converter.create_obj_to_replace_mesh_file(dae_tree.attrib["filename"])
 
         # Check that the file was created
-        directory_for_transformed_file = converter.output_file_directory() / Path(dae_tree.attrib["filename"]).parent
+        directory_for_transformed_file = converter.file_manager.output_file_directory() / Path(dae_tree.attrib["filename"]).parent
         self.assertTrue(
             (directory_for_transformed_file / Path(dae_tree.attrib["filename"]).name.replace(".dae", ".obj")).exists()
         )
 
         self.assertTrue(True)
-
-    def test_output_file_name1(self):
-        """
-        Description
-        -----------
-        This test verifies that our function properly returns the SAME
-        output file name when we give it in the construction of the converter.
-        :return:
-        """
-        # Setup
-        test_urdf1 = self.test_urdfs[0]
-        output_filename = "test.urdf"
-
-        # Create config
-        config = DrakeReadyURDFConverterConfig(
-            output_urdf_file_path=output_filename,
-            overwrite_old_logs=True,
-            log_file_name="test_output_file_name1.log",
-        )
-
-        # Create converter
-        converter = DrakeReadyURDFConverter(
-            test_urdf1,
-            config=config,
-        )
-
-        # Test
-        self.assertEqual(
-            output_filename,
-            converter.output_urdf_file_name(),
-        )
 
     def test_convert_urdf1(self):
         """
@@ -414,7 +383,7 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
 
             # Verify that the new mesh files exist
             self.assertTrue(
-                (converter.output_file_directory() / Path(mesh_elt.attrib["filename"])).exists()
+                (converter.file_manager.output_file_directory() / Path(mesh_elt.attrib["filename"])).exists()
             )
 
     def test_convert_urdf5(self):
@@ -457,7 +426,7 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
 
             # Verify that the new mesh files exist
             self.assertTrue(
-                (converter.output_file_directory() / Path(mesh_elt.attrib["filename"])).exists()
+                (converter.file_manager.output_file_directory() / Path(mesh_elt.attrib["filename"])).exists()
             )
 
     def test_convert_urdf6(self):
@@ -514,7 +483,7 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
 
             # Verify that the new mesh files exist
             self.assertTrue(
-                (converter.output_file_directory() / Path(mesh_elt.attrib["filename"])).exists()
+                (converter.file_manager.output_file_directory() / Path(mesh_elt.attrib["filename"])).exists()
             )
 
         # Make sure that this can be added to a plant
@@ -852,13 +821,13 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
 
     #                     # Check that the file exists
     #                     print("output file directory")
-    #                     print(converter.output_file_directory())
+    #                     print(converter.file_manager.output_file_directory())
     #                     print("new mesh elt")
     #                     print(new_mesh_elt.attrib["filename"])
     #                     print(new_mesh_elt.attrib["filename"].replace("package://baxter_description/", ""))
     #                     self.assertTrue(
     #                         (
-    #                             converter.output_file_directory() / 
+    #                             converter.file_manager.output_file_directory() / 
     #                             Path(new_mesh_elt.attrib["filename"].replace("package://baxter_description/", ""))
     #                         ).exists()
     #                     )

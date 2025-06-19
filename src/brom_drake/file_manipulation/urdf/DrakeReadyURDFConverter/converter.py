@@ -23,6 +23,7 @@ import xml.etree.ElementTree as ET
 # Internal Imports
 from brom_drake.directories import DEFAULT_BROM_MODELS_DIR
 from .config import DrakeReadyURDFConverterConfig, MeshReplacementStrategy
+from .file_manager import DrakeReadyURDFConverterFileManager
 from .mesh_file_converter import MeshFileConverter
 from .util import (
     does_drake_parser_support,
@@ -32,6 +33,7 @@ from .util import (
     create_transmission_element_for_joint,
 )
 from brom_drake.file_manipulation.urdf.shapes.cylinder import CylinderDefinition
+from brom_drake.file_manipulation.urdf.simple_writer.urdf_element_creator import URDFElementCreator
 
 class DrakeReadyURDFConverter:
     """
@@ -81,19 +83,29 @@ class DrakeReadyURDFConverter:
         self.config = config
         self.original_urdf_filename = original_urdf_filename
 
+        # Define the file manager which handles the tricky file paths that
+        # we encounter during the conversion process.
+        self.file_manager : DrakeReadyURDFConverterFileManager = DrakeReadyURDFConverterFileManager(
+            original_urdf_path=Path(self.original_urdf_filename),
+            models_directory=Path(DEFAULT_BROM_MODELS_DIR),
+            log_file_name=config.log_file_name,
+            _output_urdf_path=config.output_urdf_file_path,
+            _mesh_directory=None,
+        ) 
+
         # Define conversion data directory in brom
         # (If it already exists, then we will overwrite it with the proper flag set)
-        self.models_dir = Path(DEFAULT_BROM_MODELS_DIR)
+        self.file_manager.models_directory = Path(DEFAULT_BROM_MODELS_DIR)
         
         overwrite_old_logs = self.config.overwrite_old_logs
         overwrite_old_models = self.config.overwrite_old_models
         log_file_name = self.config.log_file_name
 
-        if overwrite_old_logs and os.path.exists(self.output_file_directory() / log_file_name):
-            os.remove(self.output_file_directory() / log_file_name)
+        if overwrite_old_logs and os.path.exists(self.file_manager.output_file_directory() / log_file_name):
+            os.remove(self.file_manager.output_file_directory() / log_file_name)
         if overwrite_old_models:
-            self.clean_up_models_dir()
-        os.makedirs(self.models_dir, exist_ok=True)
+            self.file_manager.clean_up_models_dir()
+        os.makedirs(self.file_manager.models_directory, exist_ok=True)
 
         # Input Processing
         original_urdf_path = Path(self.original_urdf_filename)
@@ -146,7 +158,7 @@ class DrakeReadyURDFConverter:
 
         # Add logger
         loguru.logger.add(
-            self.output_file_directory() / log_file_name,
+            self.file_manager.output_file_directory() / log_file_name,
             level=URDF_CONVERSION_LOG_LEVEL_NAME,
             filter=lambda record: record['level'].name == URDF_CONVERSION_LOG_LEVEL_NAME,
         )
@@ -220,21 +232,51 @@ class DrakeReadyURDFConverter:
 
         elif replacement_strategy == MeshReplacementStrategy.kWithConvexDecomposition:
             # Determine if the collision element has a mesh element within it
-            path_out = find_mesh_file_path_in(collision_elt)
-            if path_out is None:
+            original_mesh_path = find_mesh_file_path_in(collision_elt)
+            if original_mesh_path is None:
                 self.log(
                     "The collision element does not contain a mesh file. Cannot replace with convex decomposition."
                 )
                 new_elts.append(deepcopy(collision_elt))
-            else:
-                # Load the mesh file and perform convex decomposition
-                self.log(
-                    f"Found a mesh file at {path_out}. Performing convex decomposition."
+                return new_elts
+            
+            # If the collision element has a mesh element within it, then we will perform convex decomposition
+            
+            # Load the mesh file and perform convex decomposition
+            self.log(
+                f"Found a mesh file at {original_mesh_path}. Performing convex decomposition."
+            )
+            # Load the mesh file
+            mesh: trimesh.Trimesh = trimesh.load(
+                self.file_manager.file_path_in_context_of_urdf_dir(original_mesh_path),
+                force="mesh",
+            )
+            mesh = coacd.Mesh(mesh.vertices, mesh.faces)
+            parts = coacd.run_coacd(mesh) # a list of convex hulls
+
+            print(f"Found {len(parts)} convex parts in the mesh file.")
+
+            for ii, part_ii in enumerate(parts):
+                print(part_ii)
+                print(type(part_ii))
+                print(len(part_ii))
+
+                # Export new part to an .obj file
+                mesh_ii = trimesh.Trimesh(
+                    vertices=part_ii[0], faces=part_ii[1]
                 )
-                # Load the mesh file
-                mesh = trimesh.load_mesh(str(path_out))
-                
-            pass
+                mesh_file_name_ii = original_mesh_path.name[:original_mesh_path.name.index(".")]
+                mesh_ii_file_relative_path = f"meshes/{mesh_file_name_ii}_part_{ii}.obj"
+                mesh_ii_file_path = self.file_manager.output_file_directory() / mesh_ii_file_relative_path
+                mesh_ii.export(mesh_ii_file_path)
+
+
+                # Create a new collision element for each part
+                collision_element_ii = URDFElementCreator.CreateCollisionElement(
+                    name=f"{collision_elt.attrib.get('name', 'collision')}_part_{ii}",
+                    mesh_file_path="./" + str(mesh_ii_file_relative_path),
+                )
+                new_elts.append(collision_element_ii)
 
         # Check to see if the collision element has a mesh element within it
         
@@ -339,7 +381,6 @@ class DrakeReadyURDFConverter:
         # Setup
         new_elt = deepcopy(visual_elt)
         replacement_strategy = self.config.mesh_replacement_strategies.visual_meshes
-        original_urdf_dir = Path(self.original_urdf_filename).parent
 
         # Algorithm
         self.log(
@@ -372,7 +413,7 @@ class DrakeReadyURDFConverter:
                         #     temp_mfc = MeshFileConverter(
                         #         mesh_file_path=old_mesh_file,
                         #         urdf_dir=original_urdf_dir,
-                        #         new_urdf_dir=self.output_file_directory(),
+                        #         new_urdf_dir=self.file_manager.output_file_directory(),
                         #     )
 
                         #     true_old_mesh_file = temp_mfc.true_mesh_file_path()
@@ -455,7 +496,7 @@ class DrakeReadyURDFConverter:
                     new_tree.getroot().append(transmission_element)
 
         # Output the new tree to a file
-        output_urdf_path = self.output_file_directory() / self.output_urdf_file_name()
+        output_urdf_path = self.file_manager.output_urdf_path
         os.makedirs(output_urdf_path.parent, exist_ok=True)
 
         new_tree.write(output_urdf_path)
@@ -464,16 +505,6 @@ class DrakeReadyURDFConverter:
             f"Converted URDF file to Drake-compatible URDF file at {output_urdf_path}.\n\n"
         )
         return output_urdf_path
-
-    def clean_up_models_dir(self):
-        """
-        Description
-        -----------
-        This method will clean up the models directory.
-        """
-        # Make sure that the models directory exists
-        os.makedirs(self.models_dir, exist_ok=True)
-        os.system(f"rm -r {self.models_dir}")
 
     def convert_mesh_element(self, mesh_elt_in: ET.Element) -> ET.Element:
         # Setup
@@ -638,12 +669,12 @@ class DrakeReadyURDFConverter:
         converter = MeshFileConverter(
             mesh_file_path=mesh_file_name,
             urdf_dir=Path(original_urdf_dir),
-            new_urdf_dir=self.output_file_directory(),
+            new_urdf_dir=self.file_manager.output_file_directory(),
         )
         new_mesh_path = converter.convert()
 
         # Clip off all parts of path that include the exported output
-        new_mesh_path = str(new_mesh_path).replace(str(self.output_file_directory()), "")
+        new_mesh_path = str(new_mesh_path).replace(str(self.file_manager.output_file_directory()), "")
 
         return "." + str(new_mesh_path)
 
@@ -756,52 +787,6 @@ class DrakeReadyURDFConverter:
         """
         loguru.logger.log(URDF_CONVERSION_LOG_LEVEL_NAME, message)
 
-    def output_file_directory(self) -> Path:
-        """
-        Description
-        -----------
-        Returns the directory of the output urdf file.
-        
-        Returns
-        -------
-        Path
-            The path to the directory of the output urdf file.
-        """
-        # Setup
-        original_file_path = Path(self.original_urdf_filename)
-        output_urdf_file_path = self.config.output_urdf_file_path
-
-        # Input Processing
-        if output_urdf_file_path is None:
-            return self.models_dir / original_file_path.name.replace(".urdf", "")
-        else:
-            output_file_path = Path(output_urdf_file_path)
-            return output_file_path.parent
-
-    def output_urdf_file_name(self) -> str:
-        """
-        Description
-        -----------
-        Creates the output filename based on the original filename.
-
-        Returns
-        -------
-        str
-            The name of the output URDF file
-        """
-        # Setup
-        original_file_path = Path(self.original_urdf_filename)
-        output_urdf_file_path = self.config.output_urdf_file_path
-
-        if output_urdf_file_path is None:
-            # Use Pathlib to extract the filename, if it exists
-            original_name = original_file_path.name
-            original_name = original_name.replace(".urdf", "")
-
-            return f"{original_name}.drake.urdf"
-        else:
-            return Path(output_urdf_file_path).name
-
     def replace_element_with_enclosing_cylinder(self, collision_elt: ET.Element) -> ET.Element:
         """
         Description
@@ -841,7 +826,7 @@ class DrakeReadyURDFConverter:
         converter = MeshFileConverter(
             mesh_file_path=mesh_file_name,
             urdf_dir=Path(original_urdf_dir),
-            new_urdf_dir=self.output_file_directory(),
+            new_urdf_dir=self.file_manager.output_file_directory(),
         )
         mesh = trimesh.load_mesh(
             str(converter.urdf_dir / converter.true_mesh_file_path())
@@ -887,8 +872,3 @@ class DrakeReadyURDFConverter:
         cylinder_shape.add_geometry_to_element(new_elt.find("geometry"))
 
         return new_elt
-
-
-
-
-
