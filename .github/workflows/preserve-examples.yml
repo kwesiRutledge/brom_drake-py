@@ -23,6 +23,7 @@ jobs:
           'examples/productions/helpful_for_debugging/grasping/demonstrate_static_grasp/changing_color1/color.py',
           'examples/productions/helpful_for_debugging/grasping/demonstrate_static_grasp/defining_grasp_wrt_finger1/defining.py',
           'examples/productions/helpful_for_debugging/grasping/attempt_grasp/suggested_use1/attempt.py',
+          'examples/conversion/nonconvex_mesh1/nonconvex_mesh.py',
         ]
     steps:
       - name: Checkout
