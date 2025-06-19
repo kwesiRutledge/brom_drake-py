@@ -7,16 +7,11 @@ mesh into a "Drake-ready" URDF file with only convex collision elements
 """
 
 from importlib import resources as impresources
-from pydrake.geometry import Meshcat, MeshcatVisualizer
-from pydrake.multibody.parsing import Parser
-from pydrake.multibody.plant import AddMultibodyPlantSceneGraph
 from pydrake.systems.analysis import Simulator
-from pydrake.systems.framework import DiagramBuilder
 
 # Internal imports
 from brom_drake import robots
-from brom_drake.all import drakeify_my_urdf, add_watcher_and_build, MeshReplacementStrategy
-from brom_drake.utils import AddGround
+from brom_drake.all import drakeify_my_urdf, MeshReplacementStrategy
 from brom_drake.productions import ShowMeThisModel
 
 def main():
