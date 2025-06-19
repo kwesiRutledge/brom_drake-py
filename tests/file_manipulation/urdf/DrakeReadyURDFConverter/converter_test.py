@@ -756,6 +756,68 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
                 "1.0 0.5 0.2 0.1"
             )
 
+    def test_convert_urdf13(self):
+        """
+        Description
+        -----------
+        In this test, we verify that the converter properly handles a URDF file
+        that contains a non-convex collision element.
+        We will use the `kWithConvexDecomposition` strategy to replace the
+        non-convex collision element with multiple convex collision elements.
+        We'll verify that:
+        - the new URDF exists,
+        - that it contains mesh elements that only refer to .obj files, and
+        - that the new URDF can be added to a MultibodyPlant.
+        """
+        # Setup
+        test_urdf8 = self.test_urdfs[7]
+
+        # Create config for the converter
+        config = DrakeReadyURDFConverterConfig(
+            output_urdf_file_path="./brom/resources/test_convert_urdf13.urdf",
+            overwrite_old_logs=True,
+            log_file_name="test_convert_urdf13.log",
+            mesh_replacement_strategies=MeshReplacementStrategies(
+                collision_meshes=MeshReplacementStrategy.kWithConvexDecomposition,
+            ),
+        )
+
+        # Use converter
+        converter = DrakeReadyURDFConverter(
+            test_urdf8,
+            config=config,
+        )
+
+        # Test
+        new_urdf_path = converter.convert_urdf()
+
+        # Verify that the new file exists
+        self.assertTrue(new_urdf_path.exists())
+
+        # Verify that the new file contains only obj files
+        new_tree = ElementTree(file=new_urdf_path)
+        for mesh_elt in new_tree.iter("mesh"):
+            self.assertIn(
+                ".obj",
+                mesh_elt.attrib["filename"]
+            )
+
+        # Verify that the new file contains multiple collision geometries
+        collision_elts = new_tree.findall(".//link/collision")
+        self.assertTrue(collision_elts is not None)
+        self.assertGreater(
+            len(list(collision_elts)),
+            1,
+        )
+
+        # Verify that the new file can be added to a MultibodyPlant
+        temp_plant = MultibodyPlant(time_step=1e-3)
+        added_models = Parser(temp_plant).AddModels(str(new_urdf_path))
+        self.assertTrue(
+            len(added_models) > 0,
+            "The URDF could not be added to the MultibodyPlant."
+        )
+
     # TODO: Fix this test
 
     # def test_convert_urdf10(self):

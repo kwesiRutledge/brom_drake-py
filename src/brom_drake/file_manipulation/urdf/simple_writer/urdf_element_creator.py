@@ -70,6 +70,8 @@ class URDFElementCreator:
                     mesh_file_path=mesh_file_path
                 )
             )
+
+        return collision
     
     @staticmethod
     def CreateOriginElement(

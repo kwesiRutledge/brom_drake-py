@@ -254,12 +254,14 @@ class DrakeReadyURDFConverter:
             mesh = coacd.Mesh(mesh.vertices, mesh.faces)
             parts = coacd.run_coacd(mesh) # a list of convex hulls
 
-            print(f"Found {len(parts)} convex parts in the mesh file.")
+            self.log(
+                f"coacd created {len(parts)} convex parts from the mesh file \"{original_mesh_path}\""
+            )
 
             for ii, part_ii in enumerate(parts):
-                print(part_ii)
-                print(type(part_ii))
-                print(len(part_ii))
+                # print(part_ii)
+                # print(type(part_ii))
+                # print(len(part_ii))
 
                 # Export new part to an .obj file
                 mesh_ii = trimesh.Trimesh(
@@ -270,13 +272,14 @@ class DrakeReadyURDFConverter:
                 mesh_ii_file_path = self.file_manager.output_file_directory() / mesh_ii_file_relative_path
                 mesh_ii.export(mesh_ii_file_path)
 
-
                 # Create a new collision element for each part
                 collision_element_ii = URDFElementCreator.CreateCollisionElement(
                     name=f"{collision_elt.attrib.get('name', 'collision')}_part_{ii}",
                     mesh_file_path="./" + str(mesh_ii_file_relative_path),
                 )
                 new_elts.append(collision_element_ii)
+
+                n_replacements_made += 1
 
         # Check to see if the collision element has a mesh element within it
         
