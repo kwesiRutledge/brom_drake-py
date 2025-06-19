@@ -27,6 +27,7 @@ from brom_drake.PortWatcher.port_figure_arrangement import PortFigureArrangement
 from brom_drake.productions.ids import ProductionID
 from brom_drake.example_helpers import BlockHandlerSystem
 from brom_drake.file_manipulation.urdf import DrakeReadyURDFConverter, drakeify_my_urdf
+from brom_drake.file_manipulation.urdf.DrakeReadyURDFConverter.config import MeshReplacementStrategy
 from brom_drake.robots.gripper_type import GripperType
 from brom_drake.utils.watcher import add_watcher, add_watcher_and_build, parse_list_of_simplified_targets
 from brom_drake.utils.leaf_systems import (

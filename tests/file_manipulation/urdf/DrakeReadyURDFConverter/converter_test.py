@@ -64,6 +64,17 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
             impresources.files(resources_dir) / "test6_multiple_collision_geometries.urdf"
         )
 
+        self.test_urdfs = [
+            impresources.files(resources_dir) / "test1.urdf",
+            impresources.files(brom_drake) / "robots/models/ur/ur10e.urdf",
+            impresources.files(resources_dir) / "test_package/urdf/baxter.urdf",
+            impresources.files(resources_dir) / "test3_relative.urdf",
+            impresources.files(resources_dir) / "test4_relative.urdf",
+            impresources.files(resources_dir) / "test5_absolute.urdf",
+            impresources.files(resources_dir) / "test6_multiple_collision_geometries.urdf",
+            impresources.files(resources_dir) / "test8_beaker.urdf"
+        ]
+
     def test_convert_tree1(self):
         """
         Description
@@ -72,7 +83,7 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         :return:
         """
         # Setup
-        test_urdf1 = self.test_urdf1_filename
+        test_urdf1 = self.test_urdfs[0]
         config = DrakeReadyURDFConverterConfig(
             overwrite_old_logs=True,
             log_file_name="test_convert_tree1.log",
@@ -81,7 +92,9 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         test_tree = ElementTree(file=test_urdf1)
 
         # Algorithm
-        tree_out = converter.convert_tree(test_tree)
+        trees_out = converter.convert_tree(test_tree)
+        self.assertEqual(len(trees_out), 1, f"Expected 1 tree, got {len(trees_out)}")
+        tree_out = trees_out[0]
 
         # Test
         # Verify that the tree's root has the same tag as the original
@@ -100,7 +113,7 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         :return:
         """
         # Setup
-        test_urdf1 = self.test_urdf1_filename
+        test_urdf1 = self.test_urdfs[0]
         test_tree = ElementTree(file=test_urdf1)
 
         loguru.logger.remove()
@@ -116,7 +129,13 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
             test_urdf1,
             config=config,
         )
-        new_root = converter.convert_tree_element(test_tree.getroot())
+        new_elts = converter.convert_tree_element(test_tree.getroot())
+        self.assertEqual(
+            len(new_elts),
+            1,
+            f"Expected 1 element, got {len(new_elts)}"
+        )
+        new_root = new_elts[0]
 
         # Root of tree should not be modified
         self.assertEqual(test_tree.getroot().tag, new_root.tag)
@@ -134,7 +153,7 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         :return:
         """
         # Setup
-        test_urdf1 = self.test_urdf1_filename
+        test_urdf1 = self.test_urdfs[0]
         test_tree = ElementTree(file=test_urdf1)
 
         loguru.logger.remove()
@@ -152,7 +171,13 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         )
         # Find an element that references a .dae file
         target_visual_elt = test_tree.getroot().find("link/visual")
-        new_visual_elt = converter.convert_tree_element(target_visual_elt)
+        new_visual_elts = converter.convert_tree_element(target_visual_elt)
+
+        self.assertEqual(
+            len(new_visual_elts),
+            1,
+        )
+        new_visual_elt = new_visual_elts[0]
 
         # Compare the filenames of the mesh and the new obj file
         self.assertNotEqual(
@@ -174,7 +199,7 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         :return:
         """
         # Setup
-        test_urdf1 = self.test_urdf1_filename
+        test_urdf1 = self.test_urdfs[0]
         test_tree = ElementTree(file=test_urdf1)
 
         # Get the tree with the dae file
@@ -196,43 +221,12 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         new_elt = converter.create_obj_to_replace_mesh_file(dae_tree.attrib["filename"])
 
         # Check that the file was created
-        directory_for_transformed_file = converter.output_file_directory() / Path(dae_tree.attrib["filename"]).parent
+        directory_for_transformed_file = converter.file_manager.output_file_directory() / Path(dae_tree.attrib["filename"]).parent
         self.assertTrue(
             (directory_for_transformed_file / Path(dae_tree.attrib["filename"]).name.replace(".dae", ".obj")).exists()
         )
 
         self.assertTrue(True)
-
-    def test_output_file_name1(self):
-        """
-        Description
-        -----------
-        This test verifies that our function properly returns the SAME
-        output file name when we give it in the construction of the converter.
-        :return:
-        """
-        # Setup
-        test_urdf1 = self.test_urdf1_filename
-        output_filename = "test.urdf"
-
-        # Create config
-        config = DrakeReadyURDFConverterConfig(
-            output_urdf_file_path=output_filename,
-            overwrite_old_logs=True,
-            log_file_name="test_output_file_name1.log",
-        )
-
-        # Create converter
-        converter = DrakeReadyURDFConverter(
-            test_urdf1,
-            config=config,
-        )
-
-        # Test
-        self.assertEqual(
-            output_filename,
-            converter.output_urdf_file_name(),
-        )
 
     def test_convert_urdf1(self):
         """
@@ -245,7 +239,7 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         :return:
         """
         # Setup
-        test_urdf1 = self.test_urdf1_filename
+        test_urdf1 = self.test_urdfs[0]
         config = DrakeReadyURDFConverterConfig(
             overwrite_old_logs=True,
             log_file_name="test_convert_urdf1.log",
@@ -282,7 +276,7 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         :return:
         """
         # Setup
-        test_urdf2 = self.test_urdf2_filename
+        test_urdf2 = self.test_urdfs[1]
         config = DrakeReadyURDFConverterConfig(
             overwrite_old_logs=True,
             log_file_name="test_convert_urdf2.log",
@@ -324,7 +318,7 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         :return:
         """
         # Setup
-        test_urdf3 = self.test_urdf3_filename
+        test_urdf3 = self.test_urdfs[2]
         config = DrakeReadyURDFConverterConfig(
             overwrite_old_logs=True,
             log_file_name="test_convert_urdf3.log",
@@ -361,7 +355,7 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         :return:
         """
         # Setup
-        test_urdf4 = self.test_urdf4_filename
+        test_urdf4 = self.test_urdfs[3]
         config = DrakeReadyURDFConverterConfig(
             overwrite_old_logs=True,
             log_file_name="test_convert_urdf4.log",
@@ -389,7 +383,7 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
 
             # Verify that the new mesh files exist
             self.assertTrue(
-                (converter.output_file_directory() / Path(mesh_elt.attrib["filename"])).exists()
+                (converter.file_manager.output_file_directory() / Path(mesh_elt.attrib["filename"])).exists()
             )
 
     def test_convert_urdf5(self):
@@ -404,7 +398,7 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         :return:
         """
         # Setup
-        test_urdf5 = self.test_urdf5_filename
+        test_urdf5 = self.test_urdfs[4]
         config = DrakeReadyURDFConverterConfig(
             overwrite_old_logs=True,
             log_file_name="test_convert_urdf5.log",
@@ -432,7 +426,7 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
 
             # Verify that the new mesh files exist
             self.assertTrue(
-                (converter.output_file_directory() / Path(mesh_elt.attrib["filename"])).exists()
+                (converter.file_manager.output_file_directory() / Path(mesh_elt.attrib["filename"])).exists()
             )
 
     def test_convert_urdf6(self):
@@ -447,8 +441,8 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         :return:
         """
         # Setup
-        test_urdf5 = self.test_urdf5_filename
-        test_urdf6 = self.test_urdf6_filename
+        test_urdf5 = self.test_urdfs[4]
+        test_urdf6 = self.test_urdfs[5]
 
         # Create pay to the collision base file
         test_dir = Path(__file__).parent
@@ -489,7 +483,7 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
 
             # Verify that the new mesh files exist
             self.assertTrue(
-                (converter.output_file_directory() / Path(mesh_elt.attrib["filename"])).exists()
+                (converter.file_manager.output_file_directory() / Path(mesh_elt.attrib["filename"])).exists()
             )
 
         # Make sure that this can be added to a plant
@@ -505,7 +499,7 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         with the option to replace collision geometries with visual geometries.
         """
         # Setup
-        test_urdf = self.test_urdf1_filename
+        test_urdf = self.test_urdfs[0]
 
         # Create pay to the collision base file
         test_dir = Path(__file__).parent
@@ -566,7 +560,7 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         :return:
         """
         # Setup
-        test_urdf1 = self.test_urdf7_filename
+        test_urdf1 = self.test_urdfs[6]
         config = DrakeReadyURDFConverterConfig(
             overwrite_old_logs=True,
             log_file_name="test_convert_urdf8.log",
@@ -623,7 +617,7 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         :return:
         """
         # Setup
-        test_urdf2 = self.test_urdf2_filename
+        test_urdf2 = self.test_urdfs[1]
         config = DrakeReadyURDFConverterConfig(
             overwrite_old_logs=True,
             log_file_name="test_convert_urdf9.log",
@@ -663,7 +657,7 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         We do this by running a URDF through the converter twice.
         """
         # Setup
-        test_urdf2 = self.test_urdf2_filename
+        test_urdf2 = self.test_urdfs[1]
         config = DrakeReadyURDFConverterConfig(
             overwrite_old_logs=True,
             log_file_name="test_convert_urdf10-1.log",
@@ -709,7 +703,7 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         Let's catch the exception and verify that it is problematic.
         """
         # Setup
-        test_urdf2 = self.test_urdf2_filename
+        test_urdf2 = self.test_urdfs[1]
         config = DrakeReadyURDFConverterConfig(
             overwrite_old_logs=True,
             log_file_name="test_convert_urdf11.log",
@@ -737,7 +731,7 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         field is defined.
         """
         # Setup
-        test_urdf2 = self.test_urdf2_filename
+        test_urdf2 = self.test_urdfs[1]
         config = DrakeReadyURDFConverterConfig(
             overwrite_old_logs=True,
             log_file_name="test_convert_urdf12.log",
@@ -761,6 +755,68 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
                 material_elt.find("color").attrib["rgba"],
                 "1.0 0.5 0.2 0.1"
             )
+
+    def test_convert_urdf13(self):
+        """
+        Description
+        -----------
+        In this test, we verify that the converter properly handles a URDF file
+        that contains a non-convex collision element.
+        We will use the `kWithConvexDecomposition` strategy to replace the
+        non-convex collision element with multiple convex collision elements.
+        We'll verify that:
+        - the new URDF exists,
+        - that it contains mesh elements that only refer to .obj files, and
+        - that the new URDF can be added to a MultibodyPlant.
+        """
+        # Setup
+        test_urdf8 = self.test_urdfs[7]
+
+        # Create config for the converter
+        config = DrakeReadyURDFConverterConfig(
+            output_urdf_file_path="./brom/resources/test_convert_urdf13.urdf",
+            overwrite_old_logs=True,
+            log_file_name="test_convert_urdf13.log",
+            mesh_replacement_strategies=MeshReplacementStrategies(
+                collision_meshes=MeshReplacementStrategy.kWithConvexDecomposition,
+            ),
+        )
+
+        # Use converter
+        converter = DrakeReadyURDFConverter(
+            test_urdf8,
+            config=config,
+        )
+
+        # Test
+        new_urdf_path = converter.convert_urdf()
+
+        # Verify that the new file exists
+        self.assertTrue(new_urdf_path.exists())
+
+        # Verify that the new file contains only obj files
+        new_tree = ElementTree(file=new_urdf_path)
+        for mesh_elt in new_tree.iter("mesh"):
+            self.assertIn(
+                ".obj",
+                mesh_elt.attrib["filename"]
+            )
+
+        # Verify that the new file contains multiple collision geometries
+        collision_elts = new_tree.findall(".//link/collision")
+        self.assertTrue(collision_elts is not None)
+        self.assertGreater(
+            len(list(collision_elts)),
+            1,
+        )
+
+        # Verify that the new file can be added to a MultibodyPlant
+        temp_plant = MultibodyPlant(time_step=1e-3)
+        added_models = Parser(temp_plant).AddModels(str(new_urdf_path))
+        self.assertTrue(
+            len(added_models) > 0,
+            "The URDF could not be added to the MultibodyPlant."
+        )
 
     # TODO: Fix this test
 
@@ -827,13 +883,13 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
 
     #                     # Check that the file exists
     #                     print("output file directory")
-    #                     print(converter.output_file_directory())
+    #                     print(converter.file_manager.output_file_directory())
     #                     print("new mesh elt")
     #                     print(new_mesh_elt.attrib["filename"])
     #                     print(new_mesh_elt.attrib["filename"].replace("package://baxter_description/", ""))
     #                     self.assertTrue(
     #                         (
-    #                             converter.output_file_directory() / 
+    #                             converter.file_manager.output_file_directory() / 
     #                             Path(new_mesh_elt.attrib["filename"].replace("package://baxter_description/", ""))
     #                         ).exists()
     #                     )
@@ -881,6 +937,47 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         # Run simulation
         simulator.Initialize()
         simulator.AdvanceTo(5.0)
+
+    def test_convert_collision_element1(self):
+        """
+        Description
+        -----------
+        This test extracts a non-convex collision element from a URDF file
+        and verifies that during conversion, it is replaced by multiple
+        convex collision elements (when the strategy is set to
+        kWithConvexDecomposition).
+        """
+        # Setup
+        test_urdf8 = self.test_urdfs[7]
+
+        # Create config for the converter
+        config = DrakeReadyURDFConverterConfig(
+            output_urdf_file_path="./brom/resources/test_convert_collision_element1.urdf",
+            overwrite_old_logs=True,
+            log_file_name="test_convert_collision_element1.log",
+            mesh_replacement_strategies=MeshReplacementStrategies(
+                collision_meshes=MeshReplacementStrategy.kWithConvexDecomposition,
+            ),
+        )
+
+        # Load the URDF file into an ElementTree
+        test_tree = ElementTree(file=test_urdf8)
+
+        # Create converter and call method
+        converter = DrakeReadyURDFConverter(
+            test_urdf8,
+            config=config,
+        )
+        new_collision_elts = converter.convert_collision_element(
+            test_tree.getroot().find("link/collision")
+        )
+        
+        self.assertGreater(
+            len(new_collision_elts),
+            1,
+            "Expected more than one collision element after conversion."
+        )
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -24,6 +24,7 @@ if __name__ == "__main__":
             'drake', 'meshcat',
             'loguru', 'matplotlib', 'numpy',
             'pycollada', 'trimesh',
+            'coacd',
         ],
         keywords=["drake", "robotics", "testing", "logging"],
         classifiers=[
