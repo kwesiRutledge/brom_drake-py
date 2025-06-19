@@ -19,7 +19,6 @@ class DrakeReadyURDFConverterFileManager:
     models_directory: Path = Path(DEFAULT_BROM_MODELS_DIR)
     log_file_name: str = None
     _output_urdf_path: Union[str, Path] = None
-    _mesh_directory: Path = None
 
     def clean_up_models_dir(self):
         """
