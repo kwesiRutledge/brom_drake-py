@@ -263,13 +263,16 @@ class DrakeReadyURDFConverter:
                 # print(type(part_ii))
                 # print(len(part_ii))
 
-                # Export new part to an .obj file
+                # Construct new mesh and choose the path to export it to
                 mesh_ii = trimesh.Trimesh(
                     vertices=part_ii[0], faces=part_ii[1]
                 )
                 mesh_file_name_ii = original_mesh_path.name[:original_mesh_path.name.index(".")]
-                mesh_ii_file_relative_path = f"meshes/{mesh_file_name_ii}_part_{ii}.obj"
+                mesh_ii_file_relative_path = f"meshes/{mesh_file_name_ii}/{mesh_file_name_ii}_part_{ii}.obj"
                 mesh_ii_file_path = self.file_manager.output_file_directory() / mesh_ii_file_relative_path
+                
+                # Export after checking that the parent directory exists
+                os.makedirs(mesh_ii_file_path.parent, exist_ok=True)
                 mesh_ii.export(mesh_ii_file_path)
 
                 # Create a new collision element for each part
@@ -343,7 +346,7 @@ class DrakeReadyURDFConverter:
 
         # Algorithm
         self.log(
-            f"Converting geometry element with strtegy \"{replacement_strategy}\"."
+            f"Converting geometry element with strategy \"{replacement_strategy}\"."
         )
 
         # Iterate through every element of the geometry element

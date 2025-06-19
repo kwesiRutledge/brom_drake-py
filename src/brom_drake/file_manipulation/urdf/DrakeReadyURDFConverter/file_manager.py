@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 import os
 from pathlib import Path
+import shutil
 from typing import Union
 
 # Internal Imports
@@ -28,7 +29,7 @@ class DrakeReadyURDFConverterFileManager:
         """
         # Make sure that the models directory exists
         os.makedirs(self.models_directory, exist_ok=True) # TODO: Can we just use Pathlib here to check for existence?
-        os.system(f"rm -r {self.models_directory}")
+        shutil.rmtree(self.models_directory, ignore_errors=True)
 
     def output_file_directory(self) -> Path:
         """
