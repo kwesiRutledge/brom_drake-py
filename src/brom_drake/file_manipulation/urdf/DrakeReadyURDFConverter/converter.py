@@ -276,7 +276,7 @@ class DrakeReadyURDFConverter:
                 mesh_ii.export(mesh_ii_file_path)
 
                 # Create a new collision element for each part
-                collision_element_ii = URDFElementCreator.CreateCollisionElement(
+                collision_element_ii = URDFElementCreator.create_collision_element(
                     name=f"{collision_elt.attrib.get('name', 'collision')}_part_{ii}",
                     mesh_file_path="./" + str(mesh_ii_file_relative_path),
                 )

@@ -12,7 +12,7 @@ class URDFElementCreator:
     A class to create URDF elements quickly and easily.
     """
     @staticmethod
-    def CreateCollisionElement(
+    def create_collision_element(
         name: str,
         pose_ParentMesh: Union[None, np.ndarray, RigidTransform] = None,
         mesh_file_path: Union[str, None] = None,
@@ -57,7 +57,7 @@ class URDFElementCreator:
 
         # Add the origin sub-element to the collision element
         collision.append(
-            URDFElementCreator.CreateOriginElement(
+            URDFElementCreator.create_origin_element(
                 pose_ParentOrigin=pose_ParentMesh
             )
         )
@@ -66,7 +66,7 @@ class URDFElementCreator:
         # with a mesh sub-element inside it
         if mesh_file_path is not None:
             collision.append(
-                URDFElementCreator.CreateGeometryElement(
+                URDFElementCreator.create_geometry_element(
                     mesh_file_path=mesh_file_path
                 )
             )
@@ -74,7 +74,7 @@ class URDFElementCreator:
         return collision
     
     @staticmethod
-    def CreateOriginElement(
+    def create_origin_element(
         pose_ParentOrigin: RigidTransform,
     ) -> ET.Element:
         """
@@ -105,7 +105,7 @@ class URDFElementCreator:
         return origin
     
     @staticmethod   
-    def CreateGeometryElement(
+    def create_geometry_element(
         mesh_file_path: str = None,
         definition: ShapeDefinition = None,
     ) -> ET.Element:
