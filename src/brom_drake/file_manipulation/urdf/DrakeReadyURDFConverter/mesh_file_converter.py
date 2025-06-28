@@ -1,4 +1,4 @@
-import loguru
+import logging
 import os
 from pathlib import Path
 from typing import Tuple
@@ -15,6 +15,7 @@ class MeshFileConverter:
         mesh_file_path: str,
         urdf_dir: Path,
         new_urdf_dir: Path,
+        logger: logging.Logger,
     ):
         """
         Description
@@ -37,6 +38,7 @@ class MeshFileConverter:
         self.mesh_file = mesh_file_path
         self.urdf_dir = urdf_dir
         self.new_urdf_dir = new_urdf_dir
+        self.logger = logger
 
     def convert(
         self,
@@ -159,7 +161,7 @@ class MeshFileConverter:
             
             # Check to see if "package.xml" exists in the directory
             if (candidate_path / "package.xml").exists():
-                self.log(f"Found package path at {candidate_path}.")
+                self.logger.info(f"[MeshFileConverter] Found package path at {candidate_path}.")
                 package_found = True
             else:
                 candidate_path = candidate_path.parent
@@ -179,17 +181,6 @@ class MeshFileConverter:
         package_name = package_root.find("name").text
 
         return package_dir, package_name
-
-    @staticmethod
-    def log(message: str):
-        """
-        Description
-        -----------
-        Logs a message to the logger.
-        :param message: A string with the message we want to send to the logs.
-        :return:
-        """
-        loguru.logger.log(URDF_CONVERSION_LOG_LEVEL_NAME, message)
 
     def mesh_file_path_is_relative(self):
         """

@@ -5,9 +5,9 @@ Description:
     This file defines the PortWatcher class. This class is used to watch the ports of a
     diagram.
 """
+import logging
 from pathlib import Path
 from typing import List, Tuple, Union, NamedTuple
-import loguru
 import numpy as np
 import matplotlib.pyplot as plt
 import os
@@ -39,6 +39,7 @@ class PortWatcher:
         self,
         output_port: OutputPort,
         builder: DiagramBuilder,
+        python_logger: logging.Logger,
         logger_name: str = None,
         options: PortWatcherOptions = PortWatcherOptions(),
         plot_dir: str = DEFAULT_PLOT_DIR,
@@ -72,6 +73,7 @@ class PortWatcher:
         self.plot_handles = None
         self.plot_dir = plot_dir
         self.raw_data_dir = raw_data_dir
+        self.python_logger = python_logger
 
         # Set up directories
         os.makedirs(self.options.plot_dir(), exist_ok=True)
@@ -97,6 +99,7 @@ class PortWatcher:
             self.plotter = PortWatcherPlotter(
                 logger=self.logger,
                 port=self.port,
+                python_logger=self.python_logger,
                 plotting_options=self.options.plotting,
                 plot_dir=self.options.plot_dir(),
             )

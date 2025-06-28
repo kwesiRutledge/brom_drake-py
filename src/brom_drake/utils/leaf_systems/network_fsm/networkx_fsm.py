@@ -1,5 +1,7 @@
+import logging
 import networkx as nx
 import numpy as np
+from pathlib import Path
 from pydrake.all import (
     AbstractValue,
     BasicVector,
@@ -22,16 +24,25 @@ from brom_drake.utils.leaf_systems.network_fsm.errors import (
     NumberOfStartNodesError,
     OutputPortNotInitializedError,
 )
+from brom_drake.utils.leaf_systems.network_fsm.config import NetworkXFSMConfig
+from brom_drake.directories import DEFAULT_NETWORKX_FSM_DIR
 
 class NetworkXFSM(LeafSystem):
     def __init__(
         self,
         fsm_graph: nx.DiGraph,
+        config: NetworkXFSMConfig = NetworkXFSMConfig(),
     ):
         LeafSystem.__init__(self)
 
+        # Setup
+        self.config = config
+
         # Prepare to Create FSM from Graph
         self.fsm_graph = fsm_graph
+
+        # Configure the logger
+        self.logger = self.create_logger()
 
         # Check if the FSM is valid
         exceptions_during_check = self.supports_this_digraph(self.fsm_graph)
@@ -77,8 +88,9 @@ class NetworkXFSM(LeafSystem):
             if edge_definition.src == s_t
         ]
 
-        # print(f"Current state: {s_t}")
-        # print(f"Edge definitions for state {s_t}: {s_t_edge_definitions}")
+        if debug_flag:
+            self.log(f"Current state: {s_t}", level=logging.DEBUG)
+            self.log(f"Edge definitions for state {s_t}: {s_t_edge_definitions}", level=logging.DEBUG)
 
         # Iterate through all edge definitions to find the next state (if it exists)
         edge_conditions_satisfied = [False for _ in range(len(s_t_edge_definitions))]
@@ -101,12 +113,18 @@ class NetworkXFSM(LeafSystem):
             edge_conditions_satisfied[ii] = all_conditions_met_for_ii
 
         if debug_flag:
-            print(f"Edge conditions satisfied: {edge_conditions_satisfied}")
+            self.log(
+                f"Edge conditions satisfied: {edge_conditions_satisfied}",
+                level=logging.DEBUG,
+            )
 
         # Check the number of conditions that are satisfied
         num_edges_that_are_triggered = sum(edge_conditions_satisfied)
         if (num_edges_that_are_triggered >= 1) and debug_flag:
-            print(f"Number of conditions satisfied: {num_edges_that_are_triggered} at time {context.get_time()}")
+            self.log(
+                f"Number of conditions satisfied: {num_edges_that_are_triggered} at time {context.get_time()}",
+                level=logging.DEBUG,
+            )
 
         if num_edges_that_are_triggered == 0:
             # If no conditions are satisfied, then stay in the same state
@@ -125,7 +143,8 @@ class NetworkXFSM(LeafSystem):
             # TODO(kwesi): make this error more verbose to explain to people how to create
             #              mutually exclusive conditions for transition.
         
-        print(f"Transitioning from state {s_t} to state {next_state} at time {context.get_time()}")
+        if debug_flag:
+            print(f"Transitioning from state {s_t} to state {next_state} at time {context.get_time()}")
 
         # Update the current state
         # self.current_state = next_state
@@ -164,13 +183,17 @@ class NetworkXFSM(LeafSystem):
         # Setup
         edge_definitions = []
 
+        # Announce the beginning of the edge collection
+        self.logger.info(
+            "Collecting edge definitions from the FSM graph...",
+        )
+
         # Iterate through all edges of the FSM graph
         # and identify:
         #   - The input ports that are required for each edge
         for ii, edge_ii in enumerate(fsm_graph.edges):
             src_ii, dst_ii = edge_ii 
-            if debug_flag:
-                print(f"Edge: {src_ii} -> {dst_ii}")
+            self.log(f"- Edge: {src_ii} -> {dst_ii}", level=logging.INFO)
 
             edge_data = fsm_graph.edges[edge_ii]
 
@@ -188,6 +211,59 @@ class NetworkXFSM(LeafSystem):
             edge_definitions.append(edge_definition)
 
         return edge_definitions
+
+    def create_logger(self) -> logging.Logger:
+        """
+        Description
+        -----------
+        This function configures the logger for the FSM.
+        It sets the logger to log messages at the INFO level.
+        """
+        # Setup
+        config = self.config
+
+        # Create logger
+        logger = logging.getLogger(config.name + " logger")
+
+        # Create a console handler
+        if config.show_logs_in_terminal:
+            console_handler = logging.StreamHandler()
+            console_handler.setLevel(logging.WARNING)
+
+            # Create a formatter and set it for the handler
+            formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(name)s | %(message)s')
+            console_handler.setFormatter(formatter)
+
+            # Add the handler to the logger
+            logger.addHandler(console_handler)
+
+        # Create a file handler
+        if config.log_file_name is not None:
+            # Create directory if it doesn't exist
+            networkx_fsm_log_dir = Path(DEFAULT_NETWORKX_FSM_DIR)
+            networkx_fsm_log_dir.mkdir(parents=True, exist_ok=True)
+
+            # Create a file handler
+            file_handler = logging.FileHandler(
+                filename=DEFAULT_NETWORKX_FSM_DIR + "/" + config.log_file_name,
+                mode='w'
+            )
+            file_handler.setLevel(logging.INFO) # Set to DEBUG to get REALLY verbose logs
+
+            # Create a formatter and set it for the handler
+            formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+            file_handler.setFormatter(formatter)
+
+            # Add the handler to the logger
+            logger.addHandler(file_handler)
+
+        # Avoid duplicate logs
+        logger.propagate = False
+
+        # Make sure the logger responds to all messages of level DEBUG and above
+        logger.setLevel(logging.DEBUG)  # Set to DEBUG to capture all messages
+
+        return logger
 
     def create_output_port_function(
         self,
@@ -214,7 +290,9 @@ class NetworkXFSM(LeafSystem):
                     # Update the output value
                     self.last_output_value[port_name_ii] = update_map_ii[s_t]
 
-                # print(f"Output value for port {port_name_ii} is {self.last_output_value[port_name_ii]} at time {context.get_time()}")
+                self.logger.debug(
+                    f"Output value for port {port_name_ii} is {self.last_output_value[port_name_ii]} at time {context.get_time()}",
+                    )
                 output.SetFrom(AbstractValue.Make(self.last_output_value[port_name_ii]))
         else:
             def dummy_output_function_ii(context: Context, output: BasicVector):
@@ -250,15 +328,15 @@ class NetworkXFSM(LeafSystem):
 
             # Get the input port names
             for jj, condition_jj in enumerate(ii_th_conditions):
-                if debug_flag:
-                    print(f"Condition {jj} of edge {ii} has:\n" +
-                          f"- Input port \"{condition_jj.input_port_name}\"\n" +
-                          f"- Condition value \"{condition_jj.condition_value}\"" +
-                          f"- Condition type \"{condition_jj.type}\"")
+                # Log what we've found
+                self.logger.info(f"Condition {jj} of edge {ii} has:\n" +
+                        f"- Input port \"{condition_jj.input_port_name}\"\n" +
+                        f"- Condition value \"{condition_jj.condition_value}\"" +
+                        f"- Condition type \"{condition_jj.type}\"",
+                        )
 
                 if not condition_jj.requires_input_port():
-                    if debug_flag:
-                        print(f"Condition {jj} does not require an input port.")
+                    self.log(f"Condition {jj} does not require an input port.", level=logging.INFO)
 
                     continue
 
@@ -517,6 +595,14 @@ class NetworkXFSM(LeafSystem):
             1,
             self.CalcFSMState,
         )
+
+    def log(self, message: str, level: int = logging.INFO):
+        """
+        Description
+        -----------
+        This function logs a message to the logger.
+        """
+        self.logger.log(level, message)
 
     @staticmethod
     def supports_this_digraph(

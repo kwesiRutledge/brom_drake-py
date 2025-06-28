@@ -53,7 +53,11 @@ Feel free to cite this project if it helped with your work!
 [Inheritance](https://en.wikipedia.org/wiki/Eragon) series by Christopher Paolini.
 He is a wise mentor that helps Eragon (the protagonist) master dragons. ;)
 
+### Where are the release notes?
 
+You can follow the development of Brom by:
+- Following the Release Notes on Substack ([[Substack](https://bromreleasenotes.substack.com/)])
+- Studying the Pull Requests (available above in the `Pull Requests` tab of GitHub), or
 
 ### How can I support this project?
 

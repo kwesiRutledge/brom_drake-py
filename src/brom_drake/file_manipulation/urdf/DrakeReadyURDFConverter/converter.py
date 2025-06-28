@@ -9,11 +9,11 @@ import coacd
 from copy import copy, deepcopy
 from doctest import UnexpectedException
 from enum import IntEnum
+import logging
 import os
 import trimesh
 from typing import List
 
-import loguru
 import numpy as np
 from pathlib import Path
 from pydrake.all import RigidTransform, RotationMatrix, RollPitchYaw
@@ -97,12 +97,8 @@ class DrakeReadyURDFConverter:
         # (If it already exists, then we will overwrite it with the proper flag set)
         self.file_manager.models_directory = Path(DEFAULT_BROM_MODELS_DIR)
         
-        overwrite_old_logs = self.config.overwrite_old_logs
         overwrite_old_models = self.config.overwrite_old_models
-        log_file_name = self.config.log_file_name
 
-        if overwrite_old_logs and os.path.exists(self.file_manager.output_file_directory() / log_file_name):
-            os.remove(self.file_manager.output_file_directory() / log_file_name)
         if overwrite_old_models:
             self.file_manager.clean_up_models_dir()
         os.makedirs(self.file_manager.models_directory, exist_ok=True)
@@ -115,9 +111,9 @@ class DrakeReadyURDFConverter:
             raise ValueError("Original URDF file must have a .urdf extension!")
 
         # Set Up logger
-        self.configure_logger()
-        DrakeReadyURDFConverter.log(
-            f"Created a new DrakeReadyURDFConverter for file \"{self.original_urdf_filename}\"."
+        self.logger = self.create_logger()
+        self.log(
+            f"Created a new DrakeReadyURDFConverter for file \"{self.original_urdf_filename}\".",
         )
 
         # Configure coacd, just in case
@@ -126,45 +122,54 @@ class DrakeReadyURDFConverter:
         # Keep Track of the Joints In The Diagram
         self.actuated_joint_names = []
 
-    def configure_logger(self):
+    def create_logger(self) -> logging.Logger:
         """
         Description
         -----------
-        This method configures the loguru logger for the URDF conversion.
+        This method configures the `logging` logger for the URDF conversion.
         :return:
         """
         # Setup
         urdf_conversion_level_exists = False
         log_file_name = self.config.log_file_name
+        target_file = self.original_urdf_filename
 
-        # Check to see if the log level exists
-        try:
-            found_level = loguru.logger.level(URDF_CONVERSION_LOG_LEVEL_NAME)
-            urdf_conversion_level_exists = (found_level.name == URDF_CONVERSION_LOG_LEVEL_NAME)
-        except Exception as e:
-            # If the logger doesn't exist, then we will create it.
-            expected_message = f"Level '{URDF_CONVERSION_LOG_LEVEL_NAME}' does not exist"
-            if expected_message in str(e):
-                pass
-            else:
-                raise UnexpectedException(f"Unexpected exception: {e}")
+        # Check if the log level exists in the logging module
+        overwrite_old_logs = self.config.overwrite_old_logs
+        if overwrite_old_logs and os.path.exists(self.file_manager.output_file_directory() / log_file_name):
+            os.remove(self.file_manager.output_file_directory() / log_file_name)
 
-        # Remove the old logger
-        loguru.logger.remove()
+        # Create (or collect) a logger for the given file
+        logger = logging.getLogger("DrakeReadyURDFConverter ({target_file})" )
 
-        # Configure logger if it doesn't exist
-        if not urdf_conversion_level_exists:
-            loguru.logger.level(
-                URDF_CONVERSION_LOG_LEVEL_NAME,
-                no=URDF_CONVERSION_LEVEL,
-            )
+        # Create the file handler
+        if not self.file_manager.output_file_directory().exists():
+            # Create the parent directory if it does not exist
+            self.file_manager.output_file_directory().mkdir(parents=True, exist_ok=True)
 
-        # Add logger
-        loguru.logger.add(
+        file_handler = logging.FileHandler(
             self.file_manager.output_file_directory() / log_file_name,
-            level=URDF_CONVERSION_LOG_LEVEL_NAME,
-            filter=lambda record: record['level'].name == URDF_CONVERSION_LOG_LEVEL_NAME,
+            mode='w'
         )
+        file_handler.setLevel(logging.INFO)
+
+        # Create a formatter and set it for the file handler
+        formatter = logging.Formatter(
+            '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+            datefmt='%Y-%m-%d %H:%M:%S'
+        )
+        file_handler.setFormatter(formatter)
+
+        # Add the file handler to the logger
+        logger.addHandler(file_handler)
+
+        # Avoid duplicate logs
+        logger.propagate = False
+
+        # Make sure the logger responds to all messages of level DEBUG and above
+        logger.setLevel(logging.DEBUG)  # Set to DEBUG to capture all messages
+
+        return logger
 
     def convert_collision_element(self, collision_elt: ET.Element) -> List[ET.Element]:
         """
@@ -516,7 +521,7 @@ class DrakeReadyURDFConverter:
 
         new_tree.write(output_urdf_path)
 
-        DrakeReadyURDFConverter.log(
+        self.log(
             f"Converted URDF file to Drake-compatible URDF file at {output_urdf_path}.\n\n"
         )
         return output_urdf_path
@@ -685,6 +690,7 @@ class DrakeReadyURDFConverter:
             mesh_file_path=mesh_file_name,
             urdf_dir=Path(original_urdf_dir),
             new_urdf_dir=self.file_manager.output_file_directory(),
+            logger=self.logger,
         )
         new_mesh_path = converter.convert()
 
@@ -784,8 +790,7 @@ class DrakeReadyURDFConverter:
         )
         return material_elt
 
-    @staticmethod
-    def log(message: str):
+    def log(self, message: str):
         """
         Description
         -----------
@@ -800,7 +805,7 @@ class DrakeReadyURDFConverter:
         -------
         None
         """
-        loguru.logger.log(URDF_CONVERSION_LOG_LEVEL_NAME, message)
+        self.logger.log(logging.INFO, message)
 
     def replace_element_with_enclosing_cylinder(self, collision_elt: ET.Element) -> ET.Element:
         """
@@ -842,6 +847,7 @@ class DrakeReadyURDFConverter:
             mesh_file_path=mesh_file_name,
             urdf_dir=Path(original_urdf_dir),
             new_urdf_dir=self.file_manager.output_file_directory(),
+            logger=self.logger,
         )
         mesh = trimesh.load_mesh(
             str(converter.urdf_dir / converter.true_mesh_file_path())

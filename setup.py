@@ -22,7 +22,7 @@ if __name__ == "__main__":
         # packages=find_packages(where='src/brom_drake'),
         install_requires=[
             'drake', 'meshcat',
-            'loguru', 'matplotlib', 'numpy',
+            'matplotlib', 'numpy',
             'pycollada', 'trimesh',
             'coacd',
         ],

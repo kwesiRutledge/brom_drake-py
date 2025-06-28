@@ -9,7 +9,8 @@ import os
 from typing import List, Union
 import matplotlib.pyplot as plt
 import numpy as np
-import loguru
+from pathlib import Path
+import logging
 
 from pydrake.multibody.plant import MultibodyPlant
 from pydrake.systems.framework import Diagram, DiagramBuilder, LeafSystem, PortDataType
@@ -70,7 +71,7 @@ class DiagramWatcher:
 
         # Create directory to plot in
         os.makedirs(self.options.base_directory, exist_ok=True)
-        self.configure_brom_activity_summary()  # Create an "activity summary" log
+        self.logger = self.create_logger()  # Create an "activity summary" log
                                                 # which details what the
                                                 # DiagramWatcher is doing.
 
@@ -82,9 +83,9 @@ class DiagramWatcher:
             self.check_targets(targets, self.eligible_systems)
 
         # Log the list of eligible systems
-        loguru.logger.info(f"Found {len(self.eligible_systems)} systems in diagram are eligible for targeting:")
+        self.logger.info(f"Found {len(self.eligible_systems)} systems in diagram are eligible for targeting:")
         for idx, system in enumerate(self.eligible_systems):
-            loguru.logger.info(f"{idx}: {system.get_name()}")
+            self.logger.info(f"{idx}: {system.get_name()}")
 
         # For Each Target with None ports, we will try to
         # "smartly" create the targets that we want to monitor
@@ -93,7 +94,7 @@ class DiagramWatcher:
 
         # For each target's port, we will add a logger
         self.port_watchers = {target.name: {} for target in inferred_targets}
-        loguru.logger.info("Adding loggers to the diagram... (via PortWatcher objects)")
+        self.logger.info("Adding loggers to the diagram... (via PortWatcher objects)")
         for target in inferred_targets:
             system = subject.GetSubsystemByName(target.name)
             for port_index in target.ports:
@@ -103,23 +104,31 @@ class DiagramWatcher:
                 try:
                     # Configure PortWatcher
                     self.port_watchers[target.name][target_port.get_name()] = PortWatcher(
-                        target_port, subject,
+                        target_port, subject, self.logger,
                         logger_name=f"{target.name}_logger_{port_index}",
                         plot_dir=options_for_target_port.plot_dir(),
                         options=options_for_target_port,
                     )
-                except Exception as e:
-                    if not self.options.hide_messages.during_port_watcher_connection:
-                        print(f"[Warning] Unable to log port named \"{target_port.get_name()}\" of system \"{target.name}\". See log file ({options_for_target_port.plot_dir()}/activity_summary.log) for more details.")
-                    
-                    loguru.logger.warning(
-                        f"There was an error attempting to add a watcher to port {target_port.get_name()} of system {target.name}"
-                    )
-                    loguru.logger.warning(f"Error: {e}")
-                    continue
 
-                # Announce that we successfully added logger
-                loguru.logger.info(f"Added logger to port {target_port.get_name()} of system {target.name}")
+                except Exception as e:
+                    if self.options.hide_messages.during_port_watcher_connection:
+                        continue
+
+                    # If we have an error, we will log it
+                    self.logger.debug(
+                        f"Failed to add a watcher to port {target_port.get_name()} of system {target.name}: {e}",
+                        exc_info=False,
+                    )
+
+                if target_port.get_name() in self.port_watchers[target.name]:
+                    # Announce that we successfully added logger
+                    self.logger.info(f"Added logger to port {target_port.get_name()} of system {target.name}")
+                else:
+                    # If we did not add the logger, then we will send a small note.
+                    self.logger.info(
+                        f"Unable to add logger to port {target_port.get_name()} of system {target.name}",
+                    )
+                    
 
     def create_new_port_watcher_options(
         self,
@@ -186,7 +195,7 @@ class DiagramWatcher:
         self.save_figures()
         self.save_raw_data()
 
-    def configure_brom_activity_summary(self):
+    def create_logger(self) -> logging.Logger:
         """
         Description:
             Configures the "activity summary" a log of brom's activity.
@@ -195,9 +204,48 @@ class DiagramWatcher:
         # Setup
         options = self.options
 
-        # Configure the logger
-        loguru.logger.remove()  # Remove the default logger
-        loguru.logger.add(options.base_directory + "/activity_summary.log")
+        # Create the basic logger
+        logger = logging.getLogger("brom_drake.DiagramWatcher")
+        for handler in logger.handlers:
+            # Remove all existing handlers
+            logger.removeHandler(handler)
+        
+        # Create a file handler, if none exists
+        
+        # Create a logging directory if it does not exist
+        watcher_outputs_base_directory = Path(options.base_directory)
+        watcher_outputs_base_directory.mkdir(parents=True, exist_ok=True)
+
+        # Create a file handler
+        file_handler = logging.FileHandler(
+            filename=options.base_directory + "/activity_summary.log",
+            mode='w',  # Append mode
+        )
+        file_handler.setLevel(logging.DEBUG)
+
+        # Create a formatter and set it for the file handler
+        formatter = logging.Formatter(
+            "%(asctime)s | %(levelname)s | %(name)s | %(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S",
+        )
+        file_handler.setFormatter(formatter)
+
+        # Add the file handler to the logger
+        logger.addHandler(file_handler)
+
+        # Create a terminal handler
+        terminal_handler = logging.StreamHandler()
+        terminal_handler.setLevel(logging.WARNING)  # Set to WARNING to avoid cluttering terminal with INFO messages
+        terminal_handler.setFormatter(formatter)
+        logger.addHandler(terminal_handler)
+
+        # Avoid duplicate logs
+        logger.propagate = False
+
+        # Make sure the logger responds to all messages of level DEBUG and above
+        logger.setLevel(logging.DEBUG)  # Set to DEBUG to capture all messages
+
+        return logger
 
     def check_targets(
         self,
@@ -262,16 +310,19 @@ class DiagramWatcher:
         # Find all the systems that are eligible for logging
         eligible_systems = []
 
-        loguru.logger.info("Finding all eligible systems for logging...")
+        self.logger.info("Finding all eligible systems for logging...")
         for system in builder.GetSystems():
             if type(system) in INELIGIBLE_SYSTEM_TYPES:
-                loguru.logger.warning(
+                self.logger.warning(
                     f"System {system.get_name()} (of type {type(system)}) is not eligible for logging! Skipping..."
                 )
                 continue
 
             # Otherwise add to list
             eligible_systems.append(system)
+            self.logger.info(
+                f"System {system.get_name()} (of type {type(system)}) is eligible for logging with the watcher."
+            )
 
         return eligible_systems
 
@@ -302,7 +353,7 @@ class DiagramWatcher:
             # TODO: Add support for investigating output ports
             num_ports = system.num_output_ports()
             if num_ports == 0:
-                loguru.logger.warning(f"System {target.name} has no output ports! Skipping...")
+                self.logger.warning(f"System {target.name} has no output ports! Skipping...")
                 continue
 
             output_ports_to_watch = [port_index for port_index in range(num_ports)]
@@ -313,9 +364,9 @@ class DiagramWatcher:
             )
 
         # Log the list of inferred targets
-        loguru.logger.info(f"Found {len(smart_targets)} inferred targets:")
+        self.logger.info(f"Found {len(smart_targets)} inferred targets:")
         for idx, target in enumerate(smart_targets):
-            loguru.logger.info(f"{idx}: {target.name} - {target.ports}")
+            self.logger.info(f"{idx}: {target.name} - {target.ports}")
 
         return smart_targets
 
@@ -326,21 +377,21 @@ class DiagramWatcher:
         :return:
         """
         # Announce Saving Figures has started
-        loguru.logger.info("Saving figures...")
+        self.logger.info("Saving figures...")
 
         # Algorithm
         for system_name in self.port_watchers:
             system_ii = self.diagram.GetSubsystemByName(system_name)
             ports_on_ii = self.port_watchers[system_name]
 
-            loguru.logger.info(f"Saving figures for system {system_name}...")
+            self.logger.info(f"Saving figures for system {system_name}...")
 
             for port_name in ports_on_ii:
                 temp_port_watcher = ports_on_ii[port_name]
                 temp_plotting_options = temp_port_watcher.options.plotting
                 if temp_plotting_options.save_to_file: # Plot only if the PortWatcher flag is set
                     temp_port_watcher.plotter.save_figures(self.diagram_context)
-                    loguru.logger.info(f"Saved figures for port {port_name} on system {system_name}")
+                    self.logger.info(f"Saved figures for port {port_name} on system {system_name}")
 
     def save_raw_data(self):
         """
@@ -349,14 +400,14 @@ class DiagramWatcher:
         :return:
         """
         # Announce Saving Raw Data has started
-        loguru.logger.info("Saving raw data...")
+        self.logger.info("Saving raw data...")
 
         # Algorithm
         for system_name in self.port_watchers:
             system_ii = self.diagram.GetSubsystemByName(system_name)
             ports_on_ii = self.port_watchers[system_name]
 
-            loguru.logger.info(f"Saving raw data for system {system_name}...")
+            self.logger.info(f"Saving raw data for system {system_name}...")
 
             for port_name in ports_on_ii:
                 temp_port_watcher = ports_on_ii[port_name]
@@ -364,4 +415,4 @@ class DiagramWatcher:
                 if temp_raw_data_options.save_to_file:
                     temp_port_watcher.save_raw_data(self.diagram_context)
 
-                    loguru.logger.info(f"Saved raw data for port {port_name} on system {system_name}")
+                    self.logger.info(f"Saved raw data for port {port_name} on system {system_name}")
