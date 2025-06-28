@@ -212,7 +212,7 @@ class PortWatcherPlotter:
         # Setup
         plotting_options = self.plotting_options
         python_logger = self.python_logger
-        
+
         n_dims = self.data_dimension()
         system = self.port.get_system()
 
@@ -473,7 +473,7 @@ class PortWatcherPlotter:
         # If no figures are returned, then return early!
         if figs is None:
             self.add_warning_to_python_report(
-                "No figures to save for {}; plot_logger_data was empty."
+                f"No figures to save for {self.port.get_name()} of system {self.port.get_system().get_name()}; plot_logger_data was empty."
             )
             return
 

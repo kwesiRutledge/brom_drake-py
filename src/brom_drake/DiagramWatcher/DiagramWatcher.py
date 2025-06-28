@@ -209,7 +209,6 @@ class DiagramWatcher:
         for handler in logger.handlers:
             # Remove all existing handlers
             logger.removeHandler(handler)
-
         
         # Create a file handler, if none exists
         
@@ -239,6 +238,12 @@ class DiagramWatcher:
         terminal_handler.setLevel(logging.WARNING)  # Set to WARNING to avoid cluttering terminal with INFO messages
         terminal_handler.setFormatter(formatter)
         logger.addHandler(terminal_handler)
+
+        # Avoid duplicate logs
+        logger.propagate = False
+
+        # Make sure the logger responds to all messages of level DEBUG and above
+        logger.setLevel(logging.DEBUG)  # Set to DEBUG to capture all messages
 
         return logger
 
@@ -315,6 +320,9 @@ class DiagramWatcher:
 
             # Otherwise add to list
             eligible_systems.append(system)
+            self.logger.info(
+                f"System {system.get_name()} (of type {type(system)}) is eligible for logging with the watcher."
+            )
 
         return eligible_systems
 

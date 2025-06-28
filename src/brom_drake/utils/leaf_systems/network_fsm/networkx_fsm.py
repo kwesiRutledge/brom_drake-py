@@ -228,10 +228,10 @@ class NetworkXFSM(LeafSystem):
         # Create a console handler
         if config.show_logs_in_terminal:
             console_handler = logging.StreamHandler()
-            console_handler.setLevel(logging.DEBUG)
+            console_handler.setLevel(logging.WARNING)
 
             # Create a formatter and set it for the handler
-            formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+            formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(name)s | %(message)s')
             console_handler.setFormatter(formatter)
 
             # Add the handler to the logger
@@ -248,7 +248,7 @@ class NetworkXFSM(LeafSystem):
                 filename=DEFAULT_NETWORKX_FSM_DIR + "/" + config.log_file_name,
                 mode='w'
             )
-            file_handler.setLevel(logging.INFO)
+            file_handler.setLevel(logging.INFO) # Set to DEBUG to get REALLY verbose logs
 
             # Create a formatter and set it for the handler
             formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -256,6 +256,12 @@ class NetworkXFSM(LeafSystem):
 
             # Add the handler to the logger
             logger.addHandler(file_handler)
+
+        # Avoid duplicate logs
+        logger.propagate = False
+
+        # Make sure the logger responds to all messages of level DEBUG and above
+        logger.setLevel(logging.DEBUG)  # Set to DEBUG to capture all messages
 
         return logger
 
@@ -284,9 +290,8 @@ class NetworkXFSM(LeafSystem):
                     # Update the output value
                     self.last_output_value[port_name_ii] = update_map_ii[s_t]
 
-                self.log(
+                self.logger.debug(
                     f"Output value for port {port_name_ii} is {self.last_output_value[port_name_ii]} at time {context.get_time()}",
-                    level=logging.INFO
                     )
                 output.SetFrom(AbstractValue.Make(self.last_output_value[port_name_ii]))
         else:
@@ -328,7 +333,6 @@ class NetworkXFSM(LeafSystem):
                         f"- Input port \"{condition_jj.input_port_name}\"\n" +
                         f"- Condition value \"{condition_jj.condition_value}\"" +
                         f"- Condition type \"{condition_jj.type}\"",
-                        level=logging.INFO
                         )
 
                 if not condition_jj.requires_input_port():

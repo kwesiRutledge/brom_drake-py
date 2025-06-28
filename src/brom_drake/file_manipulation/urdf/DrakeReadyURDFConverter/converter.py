@@ -158,6 +158,12 @@ class DrakeReadyURDFConverter:
         # Add the file handler to the logger
         logger.addHandler(file_handler)
 
+        # Avoid duplicate logs
+        logger.propagate = False
+
+        # Make sure the logger responds to all messages of level DEBUG and above
+        logger.setLevel(logging.DEBUG)  # Set to DEBUG to capture all messages
+
         return logger
 
     def convert_collision_element(self, collision_elt: ET.Element) -> List[ET.Element]:
