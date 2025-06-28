@@ -5,7 +5,6 @@ Description:
     files into a new URDF.
 """
 from importlib import resources as impresources
-import loguru
 import numpy as np
 from pathlib import Path
 import unittest
@@ -116,8 +115,6 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         test_urdf1 = self.test_urdfs[0]
         test_tree = ElementTree(file=test_urdf1)
 
-        loguru.logger.remove()
-
         # Create configuration for the converter
         config = DrakeReadyURDFConverterConfig(
             log_file_name="test_convert_tree_element1.log",
@@ -155,8 +152,6 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         # Setup
         test_urdf1 = self.test_urdfs[0]
         test_tree = ElementTree(file=test_urdf1)
-
-        loguru.logger.remove()
 
         # Create configuration for the converter
         config = DrakeReadyURDFConverterConfig(

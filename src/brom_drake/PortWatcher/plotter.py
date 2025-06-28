@@ -1,4 +1,4 @@
-import loguru
+import logging
 import matplotlib.pyplot as plt
 import numpy as np
 import os
@@ -26,6 +26,7 @@ class PortWatcherPlotter:
         self,
         logger: SupportedLogger,
         port: OutputPort,
+        python_logger: logging.Logger,
         plotting_options: PortWatcherPlottingOptions = PortWatcherPlottingOptions(),
         plot_dir: str = DEFAULT_PLOT_DIR,
     ):
@@ -34,6 +35,7 @@ class PortWatcherPlotter:
         self.port = port
         self.plotting_options = plotting_options
         self.plot_dir = plot_dir
+        self.python_logger = python_logger
 
     def compute_plot_shape(self, n_dims: int) -> Tuple[int, int]:
         """
@@ -169,20 +171,18 @@ class PortWatcherPlotter:
                 f"Invalid plot arrangement for figure naming convention {plotting_options.figure_naming_convention}: {options.plot_arrangement}."
             )
 
-    @staticmethod
-    def report_to_loguru_info(message: str):
+    def add_to_python_report(self, message: str):
         """
         Description
         -----------
-        Logs a message to the loguru logger.
+        Logs a message to the Python logger.
         :param message: A string with the message we want to send to the logs.
         :return:
         """
-        loguru.logger.info(message)
+        self.python_logger.info(message)
 
-    @staticmethod
-    def report_to_loguru_warning(message: str):
-        loguru.logger.warning(message)
+    def add_warning_to_python_report(self, message: str):
+        self.python_logger.warning(message)
 
     def name_of_data_at_index(
         self,
@@ -211,6 +211,8 @@ class PortWatcherPlotter:
         """
         # Setup
         plotting_options = self.plotting_options
+        python_logger = self.python_logger
+        
         n_dims = self.data_dimension()
         system = self.port.get_system()
 
@@ -235,7 +237,7 @@ class PortWatcherPlotter:
                 name = state_names[dim_index]
             else:
                 # Announce that we are using the default name
-                loguru.logger.warning(
+                python_logger.warning(
                     f"Using default name for data at index {dim_index} of port {self.port.get_name()} of system {system.get_name()}."
                 )
 
@@ -304,6 +306,7 @@ class PortWatcherPlotter:
         """
         # Setup
         logger = self.logger
+        python_logger = self.python_logger
         plotting_options = self.plotting_options
         system = self.port.get_system()
 
@@ -314,7 +317,7 @@ class PortWatcherPlotter:
         log_data = temp_log.data()
 
         if (log_data.shape[1] == 0) or (log_data.shape[0] == 0):
-            loguru.logger.warning(
+            python_logger.warning(
                 f"No data found for {system.get_name()} - Port {self.port.get_name()}! Skipping...")
             return None, None
 
@@ -380,7 +383,7 @@ class PortWatcherPlotter:
         # Plot the data
         n_rows, n_cols = self.compute_plot_shape(n_dims)
 
-        self.report_to_loguru_info(
+        self.add_to_python_report(
             f"Plotting {n_dims} dimensions in a {n_rows}x{n_cols} grid."
             )
 
@@ -469,13 +472,13 @@ class PortWatcherPlotter:
 
         # If no figures are returned, then return early!
         if figs is None:
-            self.report_to_loguru_warning(
+            self.add_warning_to_python_report(
                 "No figures to save for {}; plot_logger_data was empty."
             )
             return
 
         if len(figs) == 0:
-            self.report_to_loguru_warning(
+            self.add_warning_to_python_report(
                 "Zero figures to save; plot_logger_data was empty."
             )
             return # Do nothing
