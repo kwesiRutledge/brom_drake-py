@@ -21,7 +21,6 @@ pytest-cov
 # Debugging
 ipdb
 typer
-loguru
 
 # Graphs
 networkx

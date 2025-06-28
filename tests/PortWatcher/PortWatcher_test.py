@@ -10,6 +10,7 @@ import unittest
 import os
 
 import numpy as np
+from pathlib import Path
 from pydrake.all import (
     AbstractValue,
     AddMultibodyPlantSceneGraph,
@@ -41,21 +42,31 @@ class PortWatcherTest(unittest.TestCase):
         self.delete_test_brom_directory_on_teardown = True
         self.T_sim1 = 5.0  # Time to simulate
 
+    def create_dummy_logger(self, log_file_name: str):
         # Create dummy logger
-        self.python_logger = logging.getLogger("PortWatcherTest")
-        for handler in self.python_logger.handlers:
-            self.python_logger.removeHandler(handler)
+        python_logger = logging.getLogger("PortWatcher Test Logger")
+        for handler in python_logger.handlers:
+            python_logger.removeHandler(handler)
 
         # Add a single file handler to the logger
+        parent_dir = Path(
+            DEFAULT_BROM_DIR + "/PortWatcherTest/" + log_file_name
+        ).parent
+        if not parent_dir.exists():
+            # Create the parent directory if it does not exist
+            parent_dir.mkdir(parents=True, exist_ok=True)
+
         file_handler = logging.FileHandler(
-            filename=DEFAULT_BROM_DIR + "/PortWatcherTest.log",
+            filename=parent_dir / log_file_name,
             mode='w'
         )
         file_handler.setLevel(logging.DEBUG)
         # Create a formatter and set it for the handler
         formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(name)s | %(message)s')
         file_handler.setFormatter(formatter)
-        self.python_logger.addHandler(file_handler)
+        python_logger.addHandler(file_handler)
+
+        return python_logger
 
 
     def get_brom_drake_dir(self):
@@ -86,7 +97,10 @@ class PortWatcherTest(unittest.TestCase):
         plant = builder.AddNamedSystem("my_plant", MultibodyPlant(time_step=time_step))
         plant.Finalize()
 
-        pw0 = PortWatcher(plant.GetOutputPort("state"), builder, python_logger=self.python_logger)
+        pw0 = PortWatcher(
+            plant.GetOutputPort("state"), builder,
+            python_logger=self.create_dummy_logger("PortWatcherTest_init1.log")
+            )
 
         self.assertTrue(True)
         self.assertIn(
@@ -122,7 +136,7 @@ class PortWatcherTest(unittest.TestCase):
         try:
             pw0 = PortWatcher(
                 plant_test_port, builder,
-                python_logger=self.python_logger,
+                python_logger=self.create_dummy_logger("PortWatcherTest_init2.log"),
             )
         except ValueError as e:
             expected_error = PortWatcher.create_port_value_type_error(plant_test_port)
@@ -178,7 +192,7 @@ class PortWatcherTest(unittest.TestCase):
         pw0 = PortWatcher(
             plant.GetOutputPort("state"),
             builder,
-            python_logger=self.python_logger,
+            python_logger=self.create_dummy_logger("PortWatcherTest_time_and_raw_data_names1.log"),
         )
 
         # Verify
@@ -207,7 +221,10 @@ class PortWatcherTest(unittest.TestCase):
         )
 
         # Create PortWatcher object
-        pw0 = PortWatcher(pose_source.get_output_port(), builder, python_logger=self.python_logger)
+        pw0 = PortWatcher(
+            pose_source.get_output_port(), builder,
+            python_logger=self.create_dummy_logger("PortWatcherTest_check_port_type1.log"),
+        )
 
         # this test will only fail if an error is raised
         self.assertTrue(True)
@@ -234,7 +251,7 @@ class PortWatcherTest(unittest.TestCase):
         pw0 = PortWatcher(
             pose_source.get_output_port(),
             builder,
-            python_logger=self.python_logger,
+            python_logger=self.create_dummy_logger("PortWatcherTest_save_raw_data1.log"),
             options=pw_options0,
         )
 

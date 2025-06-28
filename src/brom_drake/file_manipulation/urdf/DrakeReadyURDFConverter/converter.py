@@ -97,12 +97,8 @@ class DrakeReadyURDFConverter:
         # (If it already exists, then we will overwrite it with the proper flag set)
         self.file_manager.models_directory = Path(DEFAULT_BROM_MODELS_DIR)
         
-        overwrite_old_logs = self.config.overwrite_old_logs
         overwrite_old_models = self.config.overwrite_old_models
-        log_file_name = self.config.log_file_name
 
-        if overwrite_old_logs and os.path.exists(self.file_manager.output_file_directory() / log_file_name):
-            os.remove(self.file_manager.output_file_directory() / log_file_name)
         if overwrite_old_models:
             self.file_manager.clean_up_models_dir()
         os.makedirs(self.file_manager.models_directory, exist_ok=True)
@@ -137,6 +133,11 @@ class DrakeReadyURDFConverter:
         urdf_conversion_level_exists = False
         log_file_name = self.config.log_file_name
         target_file = self.original_urdf_filename
+
+        # Check if the log level exists in the logging module
+        overwrite_old_logs = self.config.overwrite_old_logs
+        if overwrite_old_logs and os.path.exists(self.file_manager.output_file_directory() / log_file_name):
+            os.remove(self.file_manager.output_file_directory() / log_file_name)
 
         # Create (or collect) a logger for the given file
         logger = logging.getLogger("DrakeReadyURDFConverter ({target_file})" )

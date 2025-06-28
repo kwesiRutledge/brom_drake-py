@@ -2,6 +2,7 @@ from importlib import resources as impresources
 import logging
 import numpy as np
 import os
+from pathlib import Path
 from pydrake.all import (
     AbstractValue,
     AddMultibodyPlantSceneGraph,
@@ -51,21 +52,31 @@ class PortWatcherPlotterTest(unittest.TestCase):
         self.delete_test_brom_directory_on_teardown = True
         self.T_sim1 = 5.0  # Time to simulate
 
+    def create_dummy_logger(self, log_file_name: str):
         # Create dummy logger
-        self.python_logger = logging.getLogger("PortWatcherTest")
-        for handler in self.python_logger.handlers:
-            self.python_logger.removeHandler(handler)
+        python_logger = logging.getLogger("PortWatcherPlotter Test Logger")
+        for handler in python_logger.handlers:
+            python_logger.removeHandler(handler)
 
         # Add a single file handler to the logger
+        parent_dir = Path(
+            DEFAULT_BROM_DIR + "/PortWatcherPlotterTest/" + log_file_name
+        ).parent
+        if not parent_dir.exists():
+            # Create the parent directory if it does not exist
+            parent_dir.mkdir(parents=True, exist_ok=True)
+
         file_handler = logging.FileHandler(
-            filename=DEFAULT_BROM_DIR + "/PortWatcherPlotterTest.log",
+            filename=parent_dir / log_file_name,
             mode='w'
         )
         file_handler.setLevel(logging.DEBUG)
         # Create a formatter and set it for the handler
         formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(name)s | %(message)s')
         file_handler.setFormatter(formatter)
-        self.python_logger.addHandler(file_handler)
+        python_logger.addHandler(file_handler)
+
+        return python_logger
         
     def test_compute_plot_shape1(self):
         """
@@ -92,7 +103,7 @@ class PortWatcherPlotterTest(unittest.TestCase):
         plotter0 = PortWatcherPlotter(
             logger0,
             plant.GetOutputPort("state"),
-            python_logger=self.python_logger,
+            python_logger=self.create_dummy_logger("PortWatcherPlotterTest_compute_plot_shape1.log"),
         )
 
         # Test
@@ -126,7 +137,7 @@ class PortWatcherPlotterTest(unittest.TestCase):
         plotter0 = PortWatcherPlotter(
             logger0,
             plant.GetOutputPort("state"),
-            python_logger=self.python_logger,
+            python_logger=self.create_dummy_logger("PortWatcherPlotterTest_compute_plot_shape2.log"),
         )
 
         # Test
@@ -161,7 +172,7 @@ class PortWatcherPlotterTest(unittest.TestCase):
         plotter0 = PortWatcherPlotter(
             logger0,
             plant.GetOutputPort("state"),
-            python_logger=self.python_logger,
+            python_logger=self.create_dummy_logger("PortWatcherPlotterTest_compute_plot_shape3.log"),
         )
 
         # Test
@@ -196,7 +207,7 @@ class PortWatcherPlotterTest(unittest.TestCase):
         plotter0 = PortWatcherPlotter(
             logger0,
             plant.GetOutputPort("state"),
-            python_logger=self.python_logger,
+            python_logger=self.create_dummy_logger("PortWatcherPlotterTest_compute_plot_shape4.log"),
         )
 
         # Test
@@ -257,7 +268,7 @@ class PortWatcherPlotterTest(unittest.TestCase):
         plotter0 = PortWatcherPlotter(
             logger0,
             plant.GetOutputPort("state"),
-            python_logger=self.python_logger,
+            python_logger=self.create_dummy_logger("PortWatcherPlotterTest_plot_logger_data1.log"),
         )
 
         # Setup simulation
@@ -342,7 +353,7 @@ class PortWatcherPlotterTest(unittest.TestCase):
         plotter0 = PortWatcherPlotter(
             logger0,
             plant.GetOutputPort("state"),
-            python_logger=self.python_logger,
+            python_logger=self.create_dummy_logger("PortWatcherPlotterTest_plot_logger_data2.log"),
             plotting_options=PortWatcherPlottingOptions(
                 plot_arrangement=PortFigureArrangement.OnePlotPerDim,
             )
@@ -432,7 +443,7 @@ class PortWatcherPlotterTest(unittest.TestCase):
         plotter0 = PortWatcherPlotter(
             logger0,
             plant.GetOutputPort("state"),
-            python_logger=self.python_logger,
+            python_logger=self.create_dummy_logger("PortWatcherPlotterTest_plot_logger_data3.log"),
             plotting_options=PortWatcherPlottingOptions(
                 plot_arrangement=PortFigureArrangement.OnePlotPerDim,
             )
@@ -520,7 +531,7 @@ class PortWatcherPlotterTest(unittest.TestCase):
         plotter0 = PortWatcherPlotter(
             logger0,
             plant.GetOutputPort("state"),
-            python_logger=self.python_logger,
+            python_logger=self.create_dummy_logger("PortWatcherPlotterTest_plot_logger_data_subplots1.log"),
         )
 
         # pw0 = PortWatcher(
@@ -620,7 +631,7 @@ class PortWatcherPlotterTest(unittest.TestCase):
         plotter0 = PortWatcherPlotter(
             logger0,
             plant.GetOutputPort("state"),
-            python_logger=self.python_logger,
+            python_logger=self.create_dummy_logger("PortWatcherPlotterTest_plot_logger_data_subplots1.log"),
             plotting_options=plotting_options,
             plot_dir=plot_dir,
         )
@@ -942,7 +953,7 @@ class PortWatcherPlotterTest(unittest.TestCase):
         pw0 = PortWatcher(
             pose_source.get_output_port(),
             builder,
-            python_logger=self.python_logger,
+            python_logger=self.create_dummy_logger("PortWatcherPlotterTest_save_figures8.log"),
             options=pw_options0,
         )
 
@@ -995,7 +1006,7 @@ class PortWatcherPlotterTest(unittest.TestCase):
         plotter0 = PortWatcherPlotter(
             logger0,
             plant.GetOutputPort("state"),
-            python_logger=self.python_logger,
+            python_logger=self.create_dummy_logger("PortWatcherPlotterTest_system_is_multibody_plant1.log"),
             plotting_options=PortWatcherPlottingOptions(
                 plot_arrangement=PortFigureArrangement.OnePlotPerDim,
             )
@@ -1032,7 +1043,7 @@ class PortWatcherPlotterTest(unittest.TestCase):
         plotter0 = PortWatcherPlotter(
             logger0,
             constant_vector_source.get_output_port(),
-            python_logger=self.python_logger,
+            python_logger=self.create_dummy_logger("PortWatcherPlotterTest_system_is_multibody_plant2.log"),
         )
 
         # Test
@@ -1074,7 +1085,7 @@ class PortWatcherPlotterTest(unittest.TestCase):
         plotter0 = PortWatcherPlotter(
             logger0,
             plant.GetOutputPort("state"),
-            python_logger=self.python_logger,
+            python_logger=self.create_dummy_logger("PortWatcherPlotterTest_name_of_data_at_index1.log"),
             plotting_options=options,
         )
 
