@@ -142,9 +142,13 @@ class DrakeReadyURDFConverter:
         logger = logging.getLogger("DrakeReadyURDFConverter ({target_file})" )
 
         # Create the file handler
+        if not self.file_manager.output_file_directory().exists():
+            # Create the parent directory if it does not exist
+            self.file_manager.output_file_directory().mkdir(parents=True, exist_ok=True)
+
         file_handler = logging.FileHandler(
             self.file_manager.output_file_directory() / log_file_name,
-            mode='w' if self.config.overwrite_old_logs else 'a',
+            mode='w'
         )
         file_handler.setLevel(logging.INFO)
 
