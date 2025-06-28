@@ -842,6 +842,7 @@ class DrakeReadyURDFConverter:
             mesh_file_path=mesh_file_name,
             urdf_dir=Path(original_urdf_dir),
             new_urdf_dir=self.file_manager.output_file_directory(),
+            logger=self.logger,
         )
         mesh = trimesh.load_mesh(
             str(converter.urdf_dir / converter.true_mesh_file_path())

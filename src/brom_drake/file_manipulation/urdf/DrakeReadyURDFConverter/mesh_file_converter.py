@@ -161,7 +161,7 @@ class MeshFileConverter:
             
             # Check to see if "package.xml" exists in the directory
             if (candidate_path / "package.xml").exists():
-                self.log(f"Found package path at {candidate_path}.")
+                self.logger.info(f"[MeshFileConverter] Found package path at {candidate_path}.")
                 package_found = True
             else:
                 candidate_path = candidate_path.parent
@@ -181,16 +181,6 @@ class MeshFileConverter:
         package_name = package_root.find("name").text
 
         return package_dir, package_name
-
-    def log(self, message: str):
-        """
-        Description
-        -----------
-        Logs a message to the logger.
-        :param message: A string with the message we want to send to the logs.
-        :return:
-        """
-        self.logger.log(URDF_CONVERSION_LOG_LEVEL_NAME, message)
 
     def mesh_file_path_is_relative(self):
         """
