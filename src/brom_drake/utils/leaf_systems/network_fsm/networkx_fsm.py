@@ -125,7 +125,8 @@ class NetworkXFSM(LeafSystem):
             # TODO(kwesi): make this error more verbose to explain to people how to create
             #              mutually exclusive conditions for transition.
         
-        print(f"Transitioning from state {s_t} to state {next_state} at time {context.get_time()}")
+        if debug_flag:
+            print(f"Transitioning from state {s_t} to state {next_state} at time {context.get_time()}")
 
         # Update the current state
         # self.current_state = next_state
