@@ -1,5 +1,6 @@
 from importlib import resources as impresources
 from typing import List, Tuple, Union
+from dataclasses import dataclass
 import networkx as nx
 import numpy as np
 from pydrake.all import (
@@ -45,20 +46,26 @@ from brom_drake.productions.debug.show_me.show_me_system import ShowMeSystem
 from .attempt_grasp_script import AttemptGraspScript
 
 class AttemptGrasp(BasicGraspingDebuggingProduction):
+    # Define some internal classes/enums
+    @dataclass
+    class Configuration:
+        meshcat_port_number: int = 7001
+        time_step: float = 1e-3
+        show_collision_geometries: bool = False
+        initial_gripper_joint_positions: Union[List[float], np.ndarray] = None
+        target_body_on_gripper: str = None # The "Gripper" Frame that we use to define X_GripperObject
+        gripper_color: List[float] = None
+        show_gripper_base_frame: bool = False
+        script: AttemptGraspScript = AttemptGraspScript()
+
+    # Member functions
     def __init__(
         self,
         path_to_object: str,
         gripper_choice: GripperType,
         grasp_joint_positions: np.ndarray,
         X_ObjectTarget: RigidTransform = None,
-        meshcat_port_number: int = 7001, # Usually turn off for CI (i.e., make it None)
-        show_collision_geometries: bool = False,
-        initial_gripper_joint_positions: Union[List[float], np.ndarray] = None,
-        time_step: float = 1e-3,
-        target_body_on_gripper: str = None,
-        gripper_color: List[float] = None,
-        show_gripper_base_frame: bool = False,
-        script: AttemptGraspScript = AttemptGraspScript()
+        config: Configuration = Configuration(),
     ):
         # Use the enum to choose the gripper URDF from a set of supported grippers
         if gripper_choice == GripperType.Robotiq_2f_85:
@@ -72,13 +79,13 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
         super().__init__(
             path_to_object=path_to_object,
             path_to_gripper=path_to_gripper,
-            X_ObjectTarget=X_ObjectTarget,
-            meshcat_port_number=meshcat_port_number,
-            time_step=time_step,
-            target_body_on_gripper=target_body_on_gripper,
-            gripper_color=gripper_color,
-            show_gripper_base_frame=show_gripper_base_frame,
-            show_collision_geometries=show_collision_geometries,
+            X_ObjectGripper=X_ObjectTarget,
+            meshcat_port_number=config.meshcat_port_number,
+            time_step=config.time_step,
+            target_body_on_gripper=config.target_body_on_gripper,
+            gripper_color=config.gripper_color,
+            show_gripper_base_frame=config.show_gripper_base_frame,
+            show_collision_geometries=config.show_collision_geometries,
         )
 
         # This will define the following fields for the production:
@@ -106,7 +113,7 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
         #     f"in the model, but received length {len(grasp_joint_positions)} array."
         
         self.grasp_joint_positions = grasp_joint_positions
-        self.script = script
+        self.config = config
         
         # Add Name to plantPlant and Scene Graph for easy simulation
         self.plant.set_name("DemonstrateStaticGrasp_plant")
@@ -200,7 +207,7 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
 
         # Add the gripper to the builder
         X_WorldGripper = self.find_X_WorldGripper(
-            X_ObjectTarget=self.X_ObjectTarget,
+            X_ObjectTarget=self.X_ObjectGripper,
             target_frame_name=self.target_body_name_on_gripper,
             desired_joint_positions=self.initial_gripper_joint_positions,
         )
@@ -374,7 +381,7 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
     def create_executive_system(self) -> NetworkXFSM:
         # Setup
         builder: DiagramBuilder = self.builder
-        script: AttemptGraspScript = self.script
+        script: AttemptGraspScript = self.config.script
 
         # Create the NetworkXFSM from the graph
         executive = builder.AddSystem(script.to_fsm())
