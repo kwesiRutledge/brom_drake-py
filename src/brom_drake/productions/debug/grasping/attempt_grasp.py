@@ -1,6 +1,6 @@
 from importlib import resources as impresources
 from typing import List, Tuple, Union
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import networkx as nx
 import numpy as np
 from pydrake.all import (
@@ -56,7 +56,7 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
         target_body_on_gripper: str = None # The "Gripper" Frame that we use to define X_GripperObject
         gripper_color: List[float] = None
         show_gripper_base_frame: bool = False
-        script: AttemptGraspScript = AttemptGraspScript()
+        script: AttemptGraspScript = field(default_factory=AttemptGraspScript) #By default, use the standard script
 
     # Member functions
     def __init__(
@@ -207,7 +207,7 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
 
         # Add the gripper to the builder
         X_WorldGripper = self.find_X_WorldGripper(
-            X_ObjectTarget=self.X_ObjectGripper,
+            X_ObjectGripper=self.X_ObjectGripper,
             target_frame_name=self.target_body_name_on_gripper,
             desired_joint_positions=self.initial_gripper_joint_positions,
         )
@@ -565,7 +565,7 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
 
     def find_X_WorldGripper(
         self,
-        X_ObjectTarget: RigidTransform,
+        X_ObjectGripper: RigidTransform,
         target_frame_name: str,
         desired_joint_positions: List[float],
     ) -> RigidTransform:
@@ -607,16 +607,18 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
         # )
 
         # Get the transform of the gripper's base in the static world frame
-        X_GripperBase_Target = shadow_plant.EvalBodyPoseInWorld(
+        X_GripperBase_GripperTarget = shadow_plant.EvalBodyPoseInWorld(
             shadow_plant.GetMyContextFromRoot(shadow_diagram_context),
             shadow_plant.GetBodyByName(target_frame_name),
         )
 
-        X_ObjectGripperBase = X_ObjectTarget.multiply(
-            X_GripperBase_Target.inverse(),
+        X_Object_GripperTarget = X_ObjectGripper
+        X_WorldObject = RigidTransform.Identity()
+        X_Object_GripperBase = X_Object_GripperTarget.multiply(
+            X_GripperBase_GripperTarget.inverse(),
         )
 
-        return X_ObjectGripperBase
+        return X_WorldObject.multiply(X_Object_GripperBase)
 
     def floor_z_creates_collisions(
         self,
