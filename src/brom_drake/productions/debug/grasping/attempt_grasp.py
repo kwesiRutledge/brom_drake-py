@@ -42,6 +42,7 @@ from brom_drake.utils.model_instances import (
     find_number_of_positions_in_welded_model,
 )
 from brom_drake.productions.debug.show_me.show_me_system import ShowMeSystem
+from .attempt_grasp_script import AttemptGraspScript
 
 class AttemptGrasp(BasicGraspingDebuggingProduction):
     def __init__(
@@ -57,6 +58,7 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
         target_body_on_gripper: str = None,
         gripper_color: List[float] = None,
         show_gripper_base_frame: bool = False,
+        script: AttemptGraspScript = AttemptGraspScript()
     ):
         # Use the enum to choose the gripper URDF from a set of supported grippers
         if gripper_choice == GripperType.Robotiq_2f_85:
@@ -104,8 +106,8 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
         #     f"in the model, but received length {len(grasp_joint_positions)} array."
         
         self.grasp_joint_positions = grasp_joint_positions
+        self.script = script
         
-
         # Add Name to plantPlant and Scene Graph for easy simulation
         self.plant.set_name("DemonstrateStaticGrasp_plant")
 
@@ -372,53 +374,10 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
     def create_executive_system(self) -> NetworkXFSM:
         # Setup
         builder: DiagramBuilder = self.builder
-        graph = nx.DiGraph()
-
-        # TODO(kwesi): Create a smart way to choose the timing of things.
-        t_gripper_start = 2.0
-        t_floor_falls = 12.0
-
-        # Create NetworkX FSM to trigger the floor trajectory
-        graph.add_node(
-            0,
-            outputs=[
-                FSMOutputDefinition("start_floor", False),  # Floor trigger
-                FSMOutputDefinition("start_gripper", False),  # Gripper trigger
-            ]
-        )
-        graph.add_node(
-            1,
-            outputs=[
-                FSMOutputDefinition("start_gripper", True),
-            ]
-        )
-        graph.add_node(
-            2,
-            outputs=[
-                FSMOutputDefinition("start_floor", True),  # second
-            ]
-        )
-
-        # connect 0 -> 1
-        graph.add_edge(0, 1, conditions=[
-            FSMTransitionCondition(
-                condition_type=FSMTransitionConditionType.kAfterThisManySeconds,
-                condition_value=t_gripper_start,
-            )
-        ])
-
-        # connect 1 -> 2
-        graph.add_edge(1, 2, conditions=[
-            FSMTransitionCondition(
-                condition_type=FSMTransitionConditionType.kAfterThisManySeconds,
-                condition_value=t_floor_falls - t_gripper_start,
-            )
-        ])
+        script: AttemptGraspScript = self.script
 
         # Create the NetworkXFSM from the graph
-        executive = builder.AddSystem(
-            NetworkXFSM(graph)
-        )
+        executive = builder.AddSystem(script.to_fsm())
 
         return executive
 
