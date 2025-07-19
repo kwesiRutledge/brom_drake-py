@@ -134,7 +134,7 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
 
     def add_floor_to_plant(
         self,
-        floor_mass: float = 1_000.0,
+        floor_mass: float = 100.0,
         plant: MultibodyPlant = None,
     ) -> Tuple[
         float, List[float], ModelInstanceIndex, JointActuator
@@ -319,7 +319,7 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
         # Connect a PID Controller to the floor actuator
         kp = np.array([[floor_mass * 9.81 * 1.0e-1]]) #Idk how I'm picking this number.
         ki = np.zeros(kp.shape) # 0.1 * np.sqrt(kp)
-        kd = np.sqrt(kp)
+        kd = 4.0 * np.sqrt(kp)
         floor_controller = self.builder.AddSystem(
             PidController(kp=kp, ki=ki, kd=kd),
         )
