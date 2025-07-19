@@ -46,11 +46,15 @@ def main(meshcat_port_number: int = 7001):
 
 
     # Create the production
+    config = ShowMeThisStaticGrasp.Configuration(
+        meshcat_port_number=meshcat_port_number, # Use None for CI
+        time_step=1e-3,
+    )
     production = ShowMeThisStaticGrasp(
         path_to_object=str(drakeified_flask_urdf),
         path_to_gripper=gripper_urdf,
-        meshcat_port_number=meshcat_port_number, # Use None for CI
-        X_ObjectTarget=X_ObjectTarget,
+        X_ObjectGripper=X_ObjectTarget,
+        config=config,
     )
 
     # Call the method

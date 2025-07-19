@@ -1,5 +1,5 @@
 from typing import List, Tuple, Union
-
+from dataclasses import dataclass
 import numpy as np
 from pydrake.all import (
     GeometryProperties,
@@ -32,30 +32,34 @@ from brom_drake.utils.model_instances import (
 from brom_drake.productions.debug.show_me.show_me_system import ShowMeSystem
 
 class ShowMeThisStaticGrasp(BasicGraspingDebuggingProduction):
+    @dataclass
+    class Configuration:
+        meshcat_port_number: int = 7001
+        time_step: float = 1e-3
+        show_collision_geometries: bool = False
+        target_body_on_gripper: str = None # The "Gripper" Frame that we use to define X_GripperObject
+        gripper_color: List[float] = None
+        show_gripper_base_frame: bool = False
+
     def __init__(
         self,
         path_to_object: str,
         path_to_gripper: str,
-        X_ObjectTarget: RigidTransform = None,
-        meshcat_port_number: int = 7001, # Usually turn off for CI (i.e., make it None)
-        show_collision_geometries: bool = False,
+        X_ObjectGripper: RigidTransform = None,
         gripper_joint_positions: Union[List[float], np.ndarray] = None,
-        time_step: float = 1e-3,
-        target_body_on_gripper: str = None,
-        gripper_color: List[float] = None,
-        show_gripper_base_frame: bool = False,
+        config: Configuration = Configuration(),
     ):
         # Call the parent constructor
         super().__init__(
             path_to_object=path_to_object,
             path_to_gripper=path_to_gripper,
-            X_ObjectTarget=X_ObjectTarget,
-            meshcat_port_number=meshcat_port_number,
-            time_step=time_step,
-            target_body_on_gripper=target_body_on_gripper,
-            gripper_color=gripper_color,
-            show_gripper_base_frame=show_gripper_base_frame,
-            show_collision_geometries=show_collision_geometries,
+            X_ObjectGripper=X_ObjectGripper,
+            meshcat_port_number=config.meshcat_port_number,
+            time_step=config.time_step,
+            target_body_on_gripper=config.target_body_on_gripper,
+            gripper_color=config.gripper_color,
+            show_gripper_base_frame=config.show_gripper_base_frame,
+            show_collision_geometries=config.show_collision_geometries,
         )
 
         # This will define the following fields for the production:
@@ -80,6 +84,8 @@ class ShowMeThisStaticGrasp(BasicGraspingDebuggingProduction):
 
         # Create show me system for holding object in place
         self.show_me_system = None
+
+        self.config = config
 
     def add_cast_and_build(
         self,
@@ -111,7 +117,7 @@ class ShowMeThisStaticGrasp(BasicGraspingDebuggingProduction):
 
         # Add the gripper to the builder
         X_WorldGripper = self.find_X_WorldGripper(
-            X_ObjectTarget=self.X_ObjectTarget,
+            X_ObjectGripper=self.X_ObjectGripper,
             target_frame_name=self.target_body_name_on_gripper,
             desired_joint_positions=self.gripper_joint_positions,
         )
@@ -153,7 +159,7 @@ class ShowMeThisStaticGrasp(BasicGraspingDebuggingProduction):
 
     def find_X_WorldGripper(
         self,
-        X_ObjectTarget: RigidTransform,
+        X_ObjectGripper: RigidTransform,
         target_frame_name: str,
         desired_joint_positions: List[float],
     ) -> RigidTransform:
@@ -195,16 +201,19 @@ class ShowMeThisStaticGrasp(BasicGraspingDebuggingProduction):
         )
 
         # Get the transform of the gripper's base in the static world frame
-        X_GripperBase_Target = shadow_plant.EvalBodyPoseInWorld(
+        X_GripperBase_GripperTarget = shadow_plant.EvalBodyPoseInWorld(
             shadow_plant.GetMyContextFromRoot(shadow_diagram_context),
             shadow_plant.GetBodyByName(target_frame_name),
         )
 
-        X_ObjectGripperBase = X_ObjectTarget.multiply(
-            X_GripperBase_Target.inverse(),
+        X_Object_GripperTarget = X_ObjectGripper
+        X_WorldObject = RigidTransform.Identity() # Identity
+
+        X_Object_GripperBase = X_Object_GripperTarget.multiply(
+            X_GripperBase_GripperTarget.inverse()
         )
 
-        return X_ObjectGripperBase
+        return X_WorldObject.multiply(X_Object_GripperBase)
 
     @property
     def id(self):
