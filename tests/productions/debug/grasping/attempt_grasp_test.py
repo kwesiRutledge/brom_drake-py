@@ -44,11 +44,14 @@ class AttemptGraspTest(unittest.TestCase):
         flask_urdf = self.drakeified_flask_urdf
 
         # Create the production
+        config = AttemptGrasp.Configuration(
+            meshcat_port_number=None, # Use None for CI
+        )
         production = AttemptGrasp(
             path_to_object=flask_urdf,
             gripper_choice=GripperType.Robotiq_2f_85,
             grasp_joint_positions=np.array([0.7]),
-            meshcat_port_number=None, # Use None for CI
+            config=config
         )
         production.add_supporting_cast()
 
@@ -131,11 +134,14 @@ class AttemptGraspTest(unittest.TestCase):
         flask_urdf = self.drakeified_flask_urdf  
 
         # Create the production
+        config = AttemptGrasp.Configuration(
+            meshcat_port_number=None, # Use None for CI
+        )
         production = AttemptGrasp(
             path_to_object=flask_urdf,
             gripper_choice=GripperType.Robotiq_2f_85,
             grasp_joint_positions=np.array([0.7]),
-            meshcat_port_number=None, # Use None for CI
+            config=config
         )
 
         # Call the method
@@ -165,11 +171,14 @@ class AttemptGraspTest(unittest.TestCase):
         flask_urdf = self.drakeified_flask_urdf
 
         # Create the production
+        config = AttemptGrasp.Configuration(
+            meshcat_port_number=None, # Use None for CI
+        )
         production = AttemptGrasp(
             path_to_object=flask_urdf,
             gripper_choice=GripperType.Robotiq_2f_85,
             grasp_joint_positions=np.array([0.7]),
-            meshcat_port_number=None, # Use None for CI
+            config=config
         )
 
         # Call the method

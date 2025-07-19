@@ -31,7 +31,7 @@ class BasicGraspingDebuggingProduction(BaseProduction):
         self, 
         path_to_object: str,
         path_to_gripper: str,
-        X_ObjectTarget: RigidTransform,
+        X_ObjectGripper: RigidTransform,
         meshcat_port_number: int = None,
         time_step: float = 0.001,
         target_body_on_gripper: str = None,
@@ -50,7 +50,7 @@ class BasicGraspingDebuggingProduction(BaseProduction):
             A string representing the path to the object urdf file.
         path_to_gripper: str
             A string representing the path to the gripper urdf file.
-        X_ObjectTarget: RigidTransform
+        X_GripperObject: RigidTransform
             A RigidTransform object representing the transform from the object frame to the target frame.
         meshcat_port_number: int (Optional, default=None)
             An integer representing the port number for the meshcat server.
@@ -77,9 +77,9 @@ class BasicGraspingDebuggingProduction(BaseProduction):
         self.gripper_color = gripper_color
         self.show_gripper_base_frame = show_gripper_base_frame
         
-        if X_ObjectTarget is None:
-            X_ObjectTarget = RigidTransform()
-        self.X_ObjectTarget = X_ObjectTarget
+        if X_ObjectGripper is None:
+            X_ObjectGripper = RigidTransform()
+        self.X_ObjectGripper = X_ObjectGripper
         
         self.meshcat_port_number = meshcat_port_number
         self.show_collision_geometries = show_collision_geometries
