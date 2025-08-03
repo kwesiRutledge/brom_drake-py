@@ -46,7 +46,7 @@ def main(meshcat_port_number: int = 7001):
 
 
     # Create the production
-    config = ShowMeThisStaticGrasp.Configuration(
+    config = ShowMeThisStaticGraspConfiguration(
         meshcat_port_number=meshcat_port_number, # Use None for CI
         time_step=1e-3,
     )
