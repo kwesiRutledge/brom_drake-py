@@ -4,7 +4,7 @@ from pydrake.all import HPolyhedron
 import unittest
 
 # Internal Imports
-from brom_drake.utils.pick_and_place_target_description import PickAndPlaceTargetDescription
+from brom_drake.utils.pick_and_place.target_description import PickAndPlaceTargetDescription
 
 class PickAndPlaceTargetDescriptionTest(unittest.TestCase):
     def test_name1(self):

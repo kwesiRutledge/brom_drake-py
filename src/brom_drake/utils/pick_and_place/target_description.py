@@ -4,7 +4,7 @@ from pydrake.geometry.optimization import HPolyhedron
 from pydrake.all import ModelInstanceIndex
 
 # Internal Imports
-from brom_drake.utils.pick_and_place_phase import PickAndPlacePhase
+from brom_drake.utils.pick_and_place.phase import PickAndPlacePhase
 
 @dataclass
 class PickAndPlaceTargetDescription:

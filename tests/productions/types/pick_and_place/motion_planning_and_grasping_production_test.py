@@ -4,13 +4,13 @@ from pydrake.all import HPolyhedron
 import unittest
 
 # Internal Imports
-from brom_drake.utils.pick_and_place_phase import PickAndPlacePhase
-from brom_drake.utils.pick_and_place_target_description import PickAndPlaceTargetDescription
+from brom_drake.utils.pick_and_place.phase import PickAndPlacePhase
+from brom_drake.utils.pick_and_place.target_description import PickAndPlaceTargetDescription
 from brom_drake.productions.types.pick_and_place import (
-    MotionPlanningAndGraspingProductionScript
+    MotionPlanningAndGraspingProduction
 )
 
-class MotionPlanningAndGraspingProductionScriptTest(unittest.TestCase):
+class MotionPlanningAndGraspingProductionTest(unittest.TestCase):
     def test_to_networkx_graph1(self):
         """
         Description
@@ -38,7 +38,7 @@ class MotionPlanningAndGraspingProductionScriptTest(unittest.TestCase):
             model_instance_index=1,
         )
 
-        script0 = MotionPlanningAndGraspingProductionScript(
+        script0 = MotionPlanningAndGraspingProduction.Script(
             grasping_targets=[my_target0, my_target1],
             time_outs=[0.1, 10.0],
             initial_settling_time=2.5,
