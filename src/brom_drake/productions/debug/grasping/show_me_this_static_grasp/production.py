@@ -30,24 +30,16 @@ from brom_drake.utils.model_instances import (
     find_number_of_positions_in_welded_model,
 )
 from brom_drake.productions.debug.show_me.show_me_system import ShowMeSystem
+from .config import Configuration as ShowMeThisStaticGraspConfiguration
 
 class ShowMeThisStaticGrasp(BasicGraspingDebuggingProduction):
-    @dataclass
-    class Configuration:
-        meshcat_port_number: int = 7001
-        time_step: float = 1e-3
-        show_collision_geometries: bool = False
-        target_body_on_gripper: str = None # The "Gripper" Frame that we use to define X_GripperObject
-        gripper_color: List[float] = None
-        show_gripper_base_frame: bool = False
-
     def __init__(
         self,
         path_to_object: str,
         path_to_gripper: str,
         X_ObjectGripper: RigidTransform = None,
         gripper_joint_positions: Union[List[float], np.ndarray] = None,
-        config: Configuration = Configuration(),
+        config: ShowMeThisStaticGraspConfiguration = ShowMeThisStaticGraspConfiguration(),
     ):
         # Call the parent constructor
         super().__init__(

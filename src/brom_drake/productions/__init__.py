@@ -20,10 +20,11 @@ from brom_drake.productions.types.pick_and_place import (
 from brom_drake.productions.pick_and_place import (
     ChemLab3,
 )
-from brom_drake.productions.debug.grasping.show_me_this_static_grasp import (
+from brom_drake.productions.debug.grasping.show_me_this_static_grasp.production import (
     ShowMeThisStaticGrasp,
 )
-from brom_drake.productions.debug.grasping.attempt_grasp import (
+from brom_drake.productions.debug.grasping.show_me_this_static_grasp import Configuration as ShowMeThisStaticGraspConfiguration
+from brom_drake.productions.debug.grasping.attempt_grasp.production import (
     AttemptGrasp,
 )
 
@@ -33,11 +34,12 @@ __all__ = [
     "ChemLab1",
     "ChemLab2",
     "ChemLab3",
-    "ShowMeThisStaticGrasp",
     "KinematicMotionPlanningProduction",
     "MotionPlanningAndGraspingProduction",
     "OfflineDynamicMotionPlanningProduction",
     "ProductionID",
     "ShowMeThisModel",
+    "ShowMeThisStaticGrasp",
+    "ShowMeThisStaticGraspConfiguration",
     "ShelfPlanning1",
 ]
