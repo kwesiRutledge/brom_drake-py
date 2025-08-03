@@ -6,8 +6,9 @@ from brom_drake.utils.leaf_systems.network_fsm import (
     NetworkXFSM, FSMOutputDefinition, FSMTransitionCondition, FSMTransitionConditionType
 )
 
+# Define some internal classes/enums
 @dataclass
-class AttemptGraspScript:
+class Script:
     """
     Description
     -----------

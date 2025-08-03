@@ -43,10 +43,9 @@ from brom_drake.utils.model_instances import (
     find_number_of_positions_in_welded_model,
 )
 from brom_drake.productions.debug.show_me.show_me_system import ShowMeSystem
-from .attempt_grasp_script import AttemptGraspScript
+from .script import Script as AttemptGraspScript
 
 class AttemptGrasp(BasicGraspingDebuggingProduction):
-    # Define some internal classes/enums
     @dataclass
     class Configuration:
         meshcat_port_number: int = 7001
