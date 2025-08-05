@@ -16,6 +16,9 @@ from .collision_checking import using_point_pair_penetration
 from .ground import AddGround, GroundShape
 from .triads import AddMultibodyTriad, AddTriad
 
+from .pick_and_place.phase import PickAndPlacePhase
+from .pick_and_place.target_description import PickAndPlaceTargetDescription
+
 __all__ = [
     "AddMultibodyTriad",
     "AddTriad",
@@ -32,6 +35,8 @@ __all__ = [
     "Performer",
     "MotionPlan",
     "NetworkXFSM",
+    "PickAndPlacePhase",
+    "PickAndPlaceTargetDescription",
     "AddGround",
     "GroundShape",
     "RigidTransformToVectorSystem",
