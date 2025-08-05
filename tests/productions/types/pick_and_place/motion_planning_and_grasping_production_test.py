@@ -7,7 +7,8 @@ import unittest
 from brom_drake.utils.pick_and_place.phase import PickAndPlacePhase
 from brom_drake.utils.pick_and_place.target_description import PickAndPlaceTargetDescription
 from brom_drake.productions.types.pick_and_place import (
-    MotionPlanningAndGraspingProduction
+    MotionPlanningAndGraspingProduction,
+    MotionPlanningAndGraspingProductionScript
 )
 
 class MotionPlanningAndGraspingProductionTest(unittest.TestCase):
@@ -38,7 +39,7 @@ class MotionPlanningAndGraspingProductionTest(unittest.TestCase):
             model_instance_index=1,
         )
 
-        script0 = MotionPlanningAndGraspingProduction.Script(
+        script0 = MotionPlanningAndGraspingProductionScript(
             grasping_targets=[my_target0, my_target1],
             time_outs=[0.1, 10.0],
             initial_settling_time=2.5,

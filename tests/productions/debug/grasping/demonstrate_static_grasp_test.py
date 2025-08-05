@@ -12,7 +12,7 @@ import unittest
 # Internal Imports
 from brom_drake.all import drakeify_my_urdf
 from brom_drake.productions.debug.grasping.show_me_this_static_grasp import (
-    ShowMeThisStaticGrasp,
+    ShowMeThisStaticGrasp, ShowMeThisStaticGraspConfiguration
 )
 from brom_drake.utils.model_instances import (
     get_name_of_first_body_in_urdf,
@@ -51,7 +51,7 @@ class DemonstrateStaticGraspTest(unittest.TestCase):
         gripper_urdf = self.gripper_urdf_path      
 
         # Create the production
-        config = ShowMeThisStaticGrasp.Configuration(
+        config = ShowMeThisStaticGraspConfiguration(
             meshcat_port_number=None, # Use None for CI
             time_step=1e-3,
         )
@@ -140,7 +140,7 @@ class DemonstrateStaticGraspTest(unittest.TestCase):
 
 
         # Create the production
-        config = ShowMeThisStaticGrasp.Configuration(
+        config = ShowMeThisStaticGraspConfiguration(
             meshcat_port_number=None, # Use None for CI
         )
         production = ShowMeThisStaticGrasp(
@@ -176,7 +176,7 @@ class DemonstrateStaticGraspTest(unittest.TestCase):
         gripper_urdf = self.gripper_urdf_path      
 
         # Create the production
-        config = ShowMeThisStaticGrasp.Configuration(
+        config = ShowMeThisStaticGraspConfiguration(
             meshcat_port_number=None, # Use None for CI
             time_step=1e-3,
         )
@@ -228,7 +228,7 @@ class DemonstrateStaticGraspTest(unittest.TestCase):
         gripper_urdf = self.gripper_urdf_path      
 
         # Create the production
-        config = ShowMeThisStaticGrasp.Configuration(
+        config = ShowMeThisStaticGraspConfiguration(
             meshcat_port_number=None, # Use None for CI
             time_step=1e-3,
             show_gripper_base_frame=True,

@@ -23,7 +23,7 @@ from brom_drake.productions.pick_and_place import (
 from brom_drake.productions.debug.grasping.show_me_this_static_grasp.production import (
     ShowMeThisStaticGrasp,
 )
-from brom_drake.productions.debug.grasping.show_me_this_static_grasp import Configuration as ShowMeThisStaticGraspConfiguration
+from brom_drake.productions.debug.grasping.show_me_this_static_grasp.config import Configuration as ShowMeThisStaticGraspConfiguration
 from brom_drake.productions.debug.grasping.attempt_grasp.production import (
     AttemptGrasp,
 )
