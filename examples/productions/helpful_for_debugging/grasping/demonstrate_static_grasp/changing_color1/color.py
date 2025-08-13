@@ -45,11 +45,12 @@ def main(meshcat_port_number: int = 7001):
     )
 
 
-    # Create the production
-    config = ShowMeThisStaticGraspConfiguration(
-        meshcat_port_number=meshcat_port_number, # Use None for CI
-        gripper_color=[0.0, 1.0, 0.0, 0.6], # Green
-    )
+    # Create the config for the production
+    config = ShowMeThisStaticGraspConfiguration()
+    config.meshcat_port_number = meshcat_port_number
+    config.gripper_color = [0.0, 1.0, 0.0, 0.6] # Green
+
+    # Create production
     production = ShowMeThisStaticGrasp(
         path_to_object=str(drakeified_flask_urdf),
         path_to_gripper=gripper_urdf,

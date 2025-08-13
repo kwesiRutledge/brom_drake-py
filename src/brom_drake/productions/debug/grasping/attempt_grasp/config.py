@@ -15,3 +15,11 @@ class Configuration:
     gripper_color: List[float] = None
     show_gripper_base_frame: bool = False
     script: AttemptGraspScript = field(default_factory=AttemptGraspScript) #By default, use the standard script
+
+    @property
+    def meshcat_port_number(self):
+        return self.base.meshcat_port_number
+
+    @meshcat_port_number.setter
+    def meshcat_port_number(self, new_value: int):
+        self.base.meshcat_port_number = new_value
