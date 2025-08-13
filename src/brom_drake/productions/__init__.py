@@ -27,9 +27,11 @@ from brom_drake.productions.debug.grasping.show_me_this_static_grasp.config impo
 from brom_drake.productions.debug.grasping.attempt_grasp.production import (
     AttemptGrasp,
 )
+from brom_drake.productions.debug.grasping.attempt_grasp.config import Configuration as AttemptGraspConfiguration
 
 __all__ = [
     "AttemptGrasp",
+    "AttemptGraspConfiguration",
     "BaseProduction",
     "ChemLab1",
     "ChemLab2",

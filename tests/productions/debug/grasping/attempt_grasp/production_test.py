@@ -15,6 +15,7 @@ from brom_drake.all import drakeify_my_urdf, add_watcher_and_build, GripperType
 from brom_drake import robots
 from brom_drake.file_manipulation.urdf.shapes.box import BoxDefinition
 from brom_drake.file_manipulation.urdf.simple_writer.urdf_definition import SimpleShapeURDFDefinition
+from brom_drake.productions.types.base import Configuration as BaseConfiguration
 from brom_drake.productions.debug.grasping.attempt_grasp.production import AttemptGrasp
 from brom_drake.productions.debug.grasping.attempt_grasp.config import Configuration as AttemptGraspConfiguration
 from brom_drake.utils.model_instances import (
@@ -46,7 +47,9 @@ class AttemptGraspTest(unittest.TestCase):
 
         # Create the production
         config = AttemptGraspConfiguration(
-            meshcat_port_number=None, # Use None for CI
+            base=BaseConfiguration(
+                meshcat_port_number=None, # Use None for CI
+            ),
         )
         production = AttemptGrasp(
             path_to_object=flask_urdf,
@@ -136,7 +139,9 @@ class AttemptGraspTest(unittest.TestCase):
 
         # Create the production
         config = AttemptGraspConfiguration(
-            meshcat_port_number=None, # Use None for CI
+            base=BaseConfiguration(
+                meshcat_port_number=None, # Use None for CI
+            ),
         )
         production = AttemptGrasp(
             path_to_object=flask_urdf,
@@ -173,7 +178,9 @@ class AttemptGraspTest(unittest.TestCase):
 
         # Create the production
         config = AttemptGraspConfiguration(
-            meshcat_port_number=None, # Use None for CI
+            base=BaseConfiguration(
+                meshcat_port_number=None, # Use None for CI
+            ),
         )
         production = AttemptGrasp(
             path_to_object=flask_urdf,
