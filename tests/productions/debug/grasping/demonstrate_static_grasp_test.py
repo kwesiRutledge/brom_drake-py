@@ -14,6 +14,7 @@ from brom_drake.all import drakeify_my_urdf
 from brom_drake.productions.debug.grasping.show_me_this_static_grasp import (
     ShowMeThisStaticGrasp, ShowMeThisStaticGraspConfiguration
 )
+from brom_drake.productions.types.base import Configuration as BaseConfiguration
 from brom_drake.utils.model_instances import (
     get_name_of_first_body_in_urdf,
     get_name_of_all_bodies_in_urdf,
@@ -52,8 +53,10 @@ class DemonstrateStaticGraspTest(unittest.TestCase):
 
         # Create the production
         config = ShowMeThisStaticGraspConfiguration(
-            meshcat_port_number=None, # Use None for CI
-            time_step=1e-3,
+            base=BaseConfiguration(
+                meshcat_port_number=None, # Use None for CI
+                time_step=1e-3,
+            ),
         )
         production = ShowMeThisStaticGrasp(
             path_to_object=flask_urdf,
@@ -141,7 +144,9 @@ class DemonstrateStaticGraspTest(unittest.TestCase):
 
         # Create the production
         config = ShowMeThisStaticGraspConfiguration(
-            meshcat_port_number=None, # Use None for CI
+            base=BaseConfiguration(
+                meshcat_port_number=None, # Use None for CI
+            ),
         )
         production = ShowMeThisStaticGrasp(
             path_to_object=flask_urdf,
@@ -177,8 +182,10 @@ class DemonstrateStaticGraspTest(unittest.TestCase):
 
         # Create the production
         config = ShowMeThisStaticGraspConfiguration(
-            meshcat_port_number=None, # Use None for CI
-            time_step=1e-3,
+            base=BaseConfiguration(
+                meshcat_port_number=None, # Use None for CI
+                time_step=1e-3,
+            ),
         )
         production = ShowMeThisStaticGrasp(
             path_to_object=flask_urdf,
@@ -229,8 +236,10 @@ class DemonstrateStaticGraspTest(unittest.TestCase):
 
         # Create the production
         config = ShowMeThisStaticGraspConfiguration(
-            meshcat_port_number=None, # Use None for CI
-            time_step=1e-3,
+            base=BaseConfiguration(
+                meshcat_port_number=None, # Use None for CI
+                time_step=1e-3,
+            ),
             show_gripper_base_frame=True,
             target_body_on_gripper="left_inner_finger_pad",
         )
