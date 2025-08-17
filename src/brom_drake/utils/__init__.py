@@ -18,6 +18,7 @@ from .triads import AddMultibodyTriad, AddTriad
 
 from .pick_and_place.phase import PickAndPlacePhase
 from .pick_and_place.target_description import PickAndPlaceTargetDescription
+from .puppetmaker import Puppeteer, PuppeteerConfiguration
 
 __all__ = [
     "AddMultibodyTriad",
@@ -37,6 +38,8 @@ __all__ = [
     "NetworkXFSM",
     "PickAndPlacePhase",
     "PickAndPlaceTargetDescription",
+    "Puppeteer",
+    "PuppeteerConfiguration",
     "AddGround",
     "GroundShape",
     "RigidTransformToVectorSystem",
