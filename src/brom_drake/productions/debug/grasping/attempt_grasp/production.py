@@ -114,7 +114,7 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
         self.floor_actuator = None
         self.floor_shape = None
 
-        # Create a
+        # Create an executive/brain
         self.executive = self.create_executive_system() # The executive system that coordinates ALL the systems
 
     def add_cast_and_build(
