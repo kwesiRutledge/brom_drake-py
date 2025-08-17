@@ -46,9 +46,6 @@ class Puppetmaker:
             config=config,
         )
 
-        # Set name
-        self.set_name(self.config.name)
-
         # Create all actuators
         self.translation_joints, self.rotation_joint = [], None
         self.translation_actuators, self.rotation_actuator = [], None
