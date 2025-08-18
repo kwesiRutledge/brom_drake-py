@@ -89,16 +89,7 @@ class ShowMeThisModel(BaseProduction):
             ),
         )
 
-        # Add Source
-        desired_joint_positions_source = self.builder.AddSystem(
-            ConstantVectorSource(np.array(self.q_des)),
-        )
-
-        # Connect the source to the system
-        self.builder.Connect(
-            desired_joint_positions_source.get_output_port(0),
-            self.show_me_system.get_input_port(0),
-        )
+        self.create_and_connect_source_of_joint_positions()
 
         # Add Sink
         output_joints_sink = self.builder.AddSystem(
@@ -111,8 +102,7 @@ class ShowMeThisModel(BaseProduction):
             output_joints_sink.get_input_port(0),
         )
 
-        # Add A Triad to base?
-        AddMultibodyTriad(self.plant.world_frame(), self.scene_graph)
+        self.add_multibody_triads()
 
         # Weld the base link to the world frame
         self.plant.WeldFrames(
@@ -154,6 +144,54 @@ class ShowMeThisModel(BaseProduction):
         )
 
         return self.diagram, self.diagram_context
+
+    def add_multibody_triads(self):
+        """
+        Description
+        -----------
+        This method will add triads to the world frame
+        and any other relevant frames.
+        """
+        # Setup
+
+        # Input Checking
+        assert self.model_index is not None, \
+            "The model index is not yet set. Please call add_supporting_cast() first."
+
+        # Add A Triad to base?
+        AddMultibodyTriad(self.plant.world_frame(), self.scene_graph)
+
+
+    def create_and_connect_source_of_joint_positions(self):
+        """
+        Description
+        -----------
+        This method will create and connect a source of joint positions
+        to the ShowMeSystem.
+
+        Assumptions
+        -----------
+        - self.show_me_system is not None
+        - self.q_des is not None
+        """
+        # Setup
+
+        assert self.show_me_system is not None, \
+            "The show_me_system is not yet created. Please call add_supporting_cast() first."
+
+        assert self.q_des is not None, \
+            "The desired joint positions are not yet set. Please provide them at initialization."
+
+        # Add Source
+        desired_joint_positions_source = self.builder.AddSystem(
+            ConstantVectorSource(np.array(self.q_des)),
+        )
+
+        # Connect the source to the system
+        self.builder.Connect(
+            desired_joint_positions_source.get_output_port(0),
+            self.show_me_system.get_input_port(0),
+        )
 
     def find_number_of_positions_in_model(
         self,

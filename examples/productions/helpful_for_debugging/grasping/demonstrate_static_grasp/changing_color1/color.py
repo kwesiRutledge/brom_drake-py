@@ -11,7 +11,7 @@ import typer
 from brom_drake.all import drakeify_my_urdf
 from brom_drake import robots
 from brom_drake.productions import (
-    ShowMeThisStaticGrasp,
+    ShowMeThisStaticGrasp, ShowMeThisStaticGraspConfiguration
 )
 
 def main(meshcat_port_number: int = 7001):
@@ -45,13 +45,17 @@ def main(meshcat_port_number: int = 7001):
     )
 
 
-    # Create the production
+    # Create the config for the production
+    config = ShowMeThisStaticGraspConfiguration()
+    config.meshcat_port_number = meshcat_port_number
+    config.gripper_color = [0.0, 1.0, 0.0, 0.6] # Green
+
+    # Create production
     production = ShowMeThisStaticGrasp(
         path_to_object=str(drakeified_flask_urdf),
         path_to_gripper=gripper_urdf,
-        meshcat_port_number=meshcat_port_number, # Use None for CI
-        X_ObjectTarget=X_ObjectTarget,
-        gripper_color=[0.0, 1.0, 0.0, 0.6], # Green
+        X_ObjectGripper=X_ObjectTarget,
+        config=config
     )
 
     # Call the method

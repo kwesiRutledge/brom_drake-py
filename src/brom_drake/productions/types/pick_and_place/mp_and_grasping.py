@@ -1,6 +1,7 @@
+from dataclasses import dataclass
 import os
 from pathlib import Path
-from typing import Tuple, Callable
+from typing import List, Tuple, Callable
 
 import networkx as nx
 import numpy as np
@@ -24,14 +25,20 @@ from brom_drake.productions.roles import kKinematicMotionPlanner, Role
 from brom_drake.file_manipulation.urdf.shapes.sphere import SphereDefinition
 from brom_drake.file_manipulation.urdf.simple_writer.urdf_definition import SimpleShapeURDFDefinition
 from brom_drake.utils import Performer, MotionPlan
+from brom_drake.utils.leaf_systems.network_fsm import (
+    NetworkXFSM, FSMOutputDefinition
+)
+from brom_drake.utils.pick_and_place.phase import PickAndPlacePhase
+from brom_drake.utils.pick_and_place.target_description import PickAndPlaceTargetDescription
 
+# Internal Imports
+from .script import Script as MotionPlanningAndGraspingProductionScript
 
 class MotionPlanningAndGraspingProduction(BaseProduction):
     def __init__(
         self,
         start_configuration: np.ndarray = None,
         start_pose: RigidTransform = None,
-
         **kwargs,
     ):
         super().__init__(**kwargs)

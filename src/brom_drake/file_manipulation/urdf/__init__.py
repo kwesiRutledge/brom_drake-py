@@ -10,6 +10,7 @@ from .DrakeReadyURDFConverter.util import (
     tree_contains_transmission_for_joint,
     create_transmission_element_for_joint,
 )
+from brom_drake.file_manipulation.urdf.simple_writer.urdf_definition import SimpleShapeURDFDefinition
 
 __all__ = [
     'DrakeReadyURDFConverter',
@@ -20,4 +21,5 @@ __all__ = [
     'find_mesh_file_path_in',
     'tree_contains_transmission_for_joint',
     'create_transmission_element_for_joint',
+    'SimpleShapeURDFDefinition',
 ]

@@ -1,4 +1,4 @@
-from brom_drake.productions.types.base import BaseProduction, Performer
+from brom_drake.productions.types.base.base import BaseProduction
 from brom_drake.productions.types.motion_planning.offline import (
     KinematicMotionPlanningProduction,
     OfflineDynamicMotionPlanningProduction,
@@ -12,5 +12,4 @@ __all__ = [
     "KinematicMotionPlanningProduction",
     "MotionPlanningAndGraspingProduction",
     "OfflineDynamicMotionPlanningProduction",
-    "Performer",
 ]

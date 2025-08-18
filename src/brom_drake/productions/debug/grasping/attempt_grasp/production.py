@@ -1,5 +1,6 @@
 from importlib import resources as impresources
 from typing import List, Tuple, Union
+from dataclasses import dataclass, field
 import networkx as nx
 import numpy as np
 from pydrake.all import (
@@ -42,21 +43,18 @@ from brom_drake.utils.model_instances import (
     find_number_of_positions_in_welded_model,
 )
 from brom_drake.productions.debug.show_me.show_me_system import ShowMeSystem
+from .config import Configuration
+from .script import Script as AttemptGraspScript
 
 class AttemptGrasp(BasicGraspingDebuggingProduction):
+    # Member functions
     def __init__(
         self,
         path_to_object: str,
         gripper_choice: GripperType,
         grasp_joint_positions: np.ndarray,
         X_ObjectTarget: RigidTransform = None,
-        meshcat_port_number: int = 7001, # Usually turn off for CI (i.e., make it None)
-        show_collision_geometries: bool = False,
-        initial_gripper_joint_positions: Union[List[float], np.ndarray] = None,
-        time_step: float = 1e-3,
-        target_body_on_gripper: str = None,
-        gripper_color: List[float] = None,
-        show_gripper_base_frame: bool = False,
+        config: Configuration = Configuration(),
     ):
         # Use the enum to choose the gripper URDF from a set of supported grippers
         if gripper_choice == GripperType.Robotiq_2f_85:
@@ -70,13 +68,13 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
         super().__init__(
             path_to_object=path_to_object,
             path_to_gripper=path_to_gripper,
-            X_ObjectTarget=X_ObjectTarget,
-            meshcat_port_number=meshcat_port_number,
-            time_step=time_step,
-            target_body_on_gripper=target_body_on_gripper,
-            gripper_color=gripper_color,
-            show_gripper_base_frame=show_gripper_base_frame,
-            show_collision_geometries=show_collision_geometries,
+            X_ObjectGripper=X_ObjectTarget,
+            meshcat_port_number=config.base.meshcat_port_number,
+            time_step=config.base.time_step,
+            target_body_on_gripper=config.target_body_on_gripper,
+            gripper_color=config.gripper_color,
+            show_gripper_base_frame=config.show_gripper_base_frame,
+            show_collision_geometries=config.show_collision_geometries,
         )
 
         # This will define the following fields for the production:
@@ -104,8 +102,8 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
         #     f"in the model, but received length {len(grasp_joint_positions)} array."
         
         self.grasp_joint_positions = grasp_joint_positions
+        self.config = config
         
-
         # Add Name to plantPlant and Scene Graph for easy simulation
         self.plant.set_name("DemonstrateStaticGrasp_plant")
 
@@ -116,7 +114,7 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
         self.floor_actuator = None
         self.floor_shape = None
 
-        # Create a
+        # Create an executive/brain
         self.executive = self.create_executive_system() # The executive system that coordinates ALL the systems
 
     def add_cast_and_build(
@@ -134,7 +132,7 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
 
     def add_floor_to_plant(
         self,
-        floor_mass: float = 1_000.0,
+        floor_mass: float = 100.0,
         plant: MultibodyPlant = None,
     ) -> Tuple[
         float, List[float], ModelInstanceIndex, JointActuator
@@ -198,7 +196,7 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
 
         # Add the gripper to the builder
         X_WorldGripper = self.find_X_WorldGripper(
-            X_ObjectTarget=self.X_ObjectTarget,
+            X_ObjectGripper=self.X_ObjectGripper,
             target_frame_name=self.target_body_name_on_gripper,
             desired_joint_positions=self.initial_gripper_joint_positions,
         )
@@ -319,7 +317,7 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
         # Connect a PID Controller to the floor actuator
         kp = np.array([[floor_mass * 9.81 * 1.0e-1]]) #Idk how I'm picking this number.
         ki = np.zeros(kp.shape) # 0.1 * np.sqrt(kp)
-        kd = np.sqrt(kp)
+        kd = 4.0 * np.sqrt(kp)
         floor_controller = self.builder.AddSystem(
             PidController(kp=kp, ki=ki, kd=kd),
         )
@@ -372,53 +370,10 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
     def create_executive_system(self) -> NetworkXFSM:
         # Setup
         builder: DiagramBuilder = self.builder
-        graph = nx.DiGraph()
-
-        # TODO(kwesi): Create a smart way to choose the timing of things.
-        t_gripper_start = 2.0
-        t_floor_falls = 12.0
-
-        # Create NetworkX FSM to trigger the floor trajectory
-        graph.add_node(
-            0,
-            outputs=[
-                FSMOutputDefinition("start_floor", False),  # Floor trigger
-                FSMOutputDefinition("start_gripper", False),  # Gripper trigger
-            ]
-        )
-        graph.add_node(
-            1,
-            outputs=[
-                FSMOutputDefinition("start_gripper", True),
-            ]
-        )
-        graph.add_node(
-            2,
-            outputs=[
-                FSMOutputDefinition("start_floor", True),  # second
-            ]
-        )
-
-        # connect 0 -> 1
-        graph.add_edge(0, 1, conditions=[
-            FSMTransitionCondition(
-                condition_type=FSMTransitionConditionType.kAfterThisManySeconds,
-                condition_value=t_gripper_start,
-            )
-        ])
-
-        # connect 1 -> 2
-        graph.add_edge(1, 2, conditions=[
-            FSMTransitionCondition(
-                condition_type=FSMTransitionConditionType.kAfterThisManySeconds,
-                condition_value=t_floor_falls - t_gripper_start,
-            )
-        ])
+        script: AttemptGraspScript = self.config.script
 
         # Create the NetworkXFSM from the graph
-        executive = builder.AddSystem(
-            NetworkXFSM(graph)
-        )
+        executive = builder.AddSystem(script.to_fsm())
 
         return executive
 
@@ -599,7 +554,7 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
 
     def find_X_WorldGripper(
         self,
-        X_ObjectTarget: RigidTransform,
+        X_ObjectGripper: RigidTransform,
         target_frame_name: str,
         desired_joint_positions: List[float],
     ) -> RigidTransform:
@@ -641,16 +596,18 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
         # )
 
         # Get the transform of the gripper's base in the static world frame
-        X_GripperBase_Target = shadow_plant.EvalBodyPoseInWorld(
+        X_GripperBase_GripperTarget = shadow_plant.EvalBodyPoseInWorld(
             shadow_plant.GetMyContextFromRoot(shadow_diagram_context),
             shadow_plant.GetBodyByName(target_frame_name),
         )
 
-        X_ObjectGripperBase = X_ObjectTarget.multiply(
-            X_GripperBase_Target.inverse(),
+        X_Object_GripperTarget = X_ObjectGripper
+        X_WorldObject = RigidTransform.Identity()
+        X_Object_GripperBase = X_Object_GripperTarget.multiply(
+            X_GripperBase_GripperTarget.inverse(),
         )
 
-        return X_ObjectGripperBase
+        return X_WorldObject.multiply(X_Object_GripperBase)
 
     def floor_z_creates_collisions(
         self,

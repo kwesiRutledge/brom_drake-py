@@ -12,8 +12,9 @@ import unittest
 # Internal Imports
 from brom_drake.all import drakeify_my_urdf
 from brom_drake.productions.debug.grasping.show_me_this_static_grasp import (
-    ShowMeThisStaticGrasp,
+    ShowMeThisStaticGrasp, ShowMeThisStaticGraspConfiguration
 )
+from brom_drake.productions.types.base import Configuration as BaseConfiguration
 from brom_drake.utils.model_instances import (
     get_name_of_first_body_in_urdf,
     get_name_of_all_bodies_in_urdf,
@@ -51,10 +52,16 @@ class DemonstrateStaticGraspTest(unittest.TestCase):
         gripper_urdf = self.gripper_urdf_path      
 
         # Create the production
+        config = ShowMeThisStaticGraspConfiguration(
+            base=BaseConfiguration(
+                meshcat_port_number=None, # Use None for CI
+                time_step=1e-3,
+            ),
+        )
         production = ShowMeThisStaticGrasp(
             path_to_object=flask_urdf,
             path_to_gripper=gripper_urdf,
-            meshcat_port_number=None, # Use None for CI
+            config=config,
         )
 
         # Call the method
@@ -136,11 +143,16 @@ class DemonstrateStaticGraspTest(unittest.TestCase):
 
 
         # Create the production
+        config = ShowMeThisStaticGraspConfiguration(
+            base=BaseConfiguration(
+                meshcat_port_number=None, # Use None for CI
+            ),
+        )
         production = ShowMeThisStaticGrasp(
             path_to_object=flask_urdf,
             path_to_gripper=gripper_urdf,
-            meshcat_port_number=None, # Use None for CI
-            X_ObjectTarget=X_ObjectTarget,
+            X_ObjectGripper=X_ObjectTarget,
+            config=config,
         )
 
         # Call the method
@@ -169,10 +181,16 @@ class DemonstrateStaticGraspTest(unittest.TestCase):
         gripper_urdf = self.gripper_urdf_path      
 
         # Create the production
+        config = ShowMeThisStaticGraspConfiguration(
+            base=BaseConfiguration(
+                meshcat_port_number=None, # Use None for CI
+                time_step=1e-3,
+            ),
+        )
         production = ShowMeThisStaticGrasp(
             path_to_object=flask_urdf,
             path_to_gripper=gripper_urdf,
-            meshcat_port_number=None, # Use None for CI
+            config=config,
         )
 
         # Call the method
@@ -217,12 +235,18 @@ class DemonstrateStaticGraspTest(unittest.TestCase):
         gripper_urdf = self.gripper_urdf_path      
 
         # Create the production
+        config = ShowMeThisStaticGraspConfiguration(
+            base=BaseConfiguration(
+                meshcat_port_number=None, # Use None for CI
+                time_step=1e-3,
+            ),
+            show_gripper_base_frame=True,
+            target_body_on_gripper="left_inner_finger_pad",
+        )
         production = ShowMeThisStaticGrasp(
             path_to_object=flask_urdf,
             path_to_gripper=gripper_urdf,
-            meshcat_port_number=None, # Use None for CI
-            target_body_on_gripper="left_inner_finger_pad",
-            show_gripper_base_frame=True,
+            config=config,
         )
 
         # Call the method

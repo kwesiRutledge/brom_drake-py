@@ -52,7 +52,16 @@ class FSMTransitionCondition:
                 f"Condition value must be a float for condition type \"{self.type}\"."
             assert self.condition_value > 0.0, \
                 f"Condition value must be a positive float for condition type \"{self.type}\"."
-            
+
+    @staticmethod
+    def ForAfterThisManySeconds(seconds: float) -> "FSMTransitionConditionType":
+        """Convenience method for creating transition conditions that are \'after `seconds` seconds\'"""
+        # Setup
+        return FSMTransitionCondition(
+            condition_type=FSMTransitionConditionType.kAfterThisManySeconds,
+            condition_value=seconds,
+        )
+
     def evaluate_comparison(self, input_port_value: Union[bool, float, np.ndarray]):
         """
         Description
