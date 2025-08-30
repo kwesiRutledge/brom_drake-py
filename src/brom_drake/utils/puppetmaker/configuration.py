@@ -8,7 +8,7 @@ from pydrake.all import (
 class Configuration:
     frame_on_parent: Frame
     name: str
-    frame_on_child: Frame
+    frame_on_child: Frame = None
     sphere_radius: float = 0.1
     sphere_color: np.ndarray = None
-    
+    create_actuators_on_init: bool = True
