@@ -37,8 +37,9 @@ class PuppetmakerTest(unittest.TestCase):
         # Add the test sphere to the plant
         sphere_model_idcs = Parser(plant=plant).AddModels(sphere_urdf)
 
-        # Try to call the puppetmaker
-        puppetmaker0 = Puppetmaker(sphere_model_idcs[0], plant)
+        # Create the puppetmaker and add strings to the sphere
+        puppetmaker0 = Puppetmaker(plant)
+        puppetmaker0.add_strings_for(sphere_model_idcs[0])
 
         # Finalize
         plant.Finalize()
@@ -82,8 +83,12 @@ class PuppetmakerTest(unittest.TestCase):
 
         # Try to call the puppetmaker
         try:
-            puppetmaker0 = Puppetmaker(sphere_model_idcs[0], plant)
-            self.assertTrue(False, "The puppetmaker constructor should fail before reaching here!")
+            puppetmaker0 = Puppetmaker(plant)
+            puppetmaker0.add_strings_for(sphere_model_idcs[0])
+            self.assertTrue(
+                False,
+                "The puppetmaker constructor should fail before reaching here!"
+            )
         except Exception as e:
             self.assertIn(
                 "finalize",
