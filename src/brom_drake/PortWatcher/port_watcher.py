@@ -194,6 +194,9 @@ class PortWatcher:
                 converter_system = builder.AddSystem(
                     RigidTransformToVectorSystem()
                 )
+                converter_system.set_name(
+                    f"RigidTransformToVectorSystem_{self.safe_system_name()}"
+                )
 
                 # Connect the system to the port
                 builder.Connect(
