@@ -8,13 +8,13 @@ from pydrake.all import (
     Parser,
     Meshcat,
     MeshcatVisualizer,
+    MultibodyPlant,
     DiagramBuilder,
     Simulator,
 )
 import typer
 
 # Internal imports
-from brom_drake.utils import AddMultibodyTriad
 from brom_drake.file_manipulation.urdf.shapes import (
     BoxDefinition,
 )
@@ -27,7 +27,6 @@ from brom_drake.all import add_watcher_and_build
 
 def create_piecewise_pose_trajectory(t_final: float = 15.0):
     # Setup
-    times = np.array([0.0, t_final])
 
     # Create position trajectory
     x0 = np.array([0.0, 0.1, 0.1])
@@ -88,6 +87,7 @@ def main(t_final: float = 15.0):
     # plant = builder.AddSystem(MultibodyPlant(time_step=time_step)) #Add plant to diagram builder
     plant, scene_graph = AddMultibodyPlantSceneGraph(builder, time_step=1e-3)
 
+
     # Create Cube 3d model
     simple_cube = BoxDefinition(size=[0.05,0.05,0.05])
     cube_urdf_defn = SimpleShapeURDFDefinition(
@@ -101,7 +101,16 @@ def main(t_final: float = 15.0):
     cube_model = Parser(plant=plant).AddModels(cube_urdf_path)[0]
 
     # Add "puppet strings" for the cube
-    puppetmaker0 = Puppetmaker(plant=plant)
+    pm_config0 = PuppetmakerConfiguration(
+        frame_on_parent=plant.world_frame(),
+        name="cube_puppet",
+        sphere_radius=0.02,
+        sphere_color=np.array([1.0,0.0,0.0,0.8]), # Change the color of the puppet links to red
+    )
+    puppetmaker0 = Puppetmaker(
+        plant=plant,
+        config=pm_config0,
+    )
     cube_signature = puppetmaker0.add_strings_for(cube_model)
 
     # Finalize the plant
