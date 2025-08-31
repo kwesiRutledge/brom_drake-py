@@ -349,7 +349,8 @@ class Puppetmaker:
         # Connect a PoseToVector System to the PID controller
         # as reference.
         p2v_config = RigidTransformToVectorSystemConfiguration(
-            output_format="vector_xyz_euler(rpy)"
+            name=f"[{self.config.name}]Pose to vector for puppeteering \"{signature.name}\"",
+            output_format="vector_xyz_euler(rpy)",
         )
         pose_to_vector = builder.AddSystem(
             RigidTransformToVectorSystem(p2v_config)
