@@ -1,11 +1,14 @@
 from dataclasses import dataclass
 import numpy as np
 from pydrake.all import (
+    Demultiplexer,
+    DiagramBuilder,
     Frame,
     LeafSystem,
     ModelInstanceIndex,
     MultibodyPlant,
     Parser,
+    PidController,
     PrismaticJoint,
     RevoluteJoint,
     Joint,
@@ -15,17 +18,10 @@ from typing import List, Tuple
 
 # Internal Imports
 from .configuration import Configuration as PuppetmakerConfiguration
+from .puppet_signature import PuppetSignature, PuppeteerJointSignature
 from brom_drake.file_manipulation.urdf import SimpleShapeURDFDefinition
 from brom_drake.file_manipulation.urdf.shapes import SphereDefinition
-
-@dataclass
-class PuppetSignature:
-    name: str
-    model_instance_index: ModelInstanceIndex
-    prismatic_joints: List[Joint]
-    prismatic_joint_actuators: List[JointActuator]
-    revolute_joints: List[Joint]
-    revolute_joint_actuators: List[JointActuator]
+from brom_drake.utils.leaf_systems.rigid_transform_to_vector_system import RigidTransformToVectorSystem
 
 class Puppetmaker:
     """
@@ -123,7 +119,7 @@ class Puppetmaker:
         self,
         target_model: ModelInstanceIndex,
         massless_sphere_indices: List[ModelInstanceIndex],
-    ) -> Tuple[List[Joint], List[JointActuator]]:
+    ) -> List[PuppeteerJointSignature]:
         # Setup
         config = self.config
         plant: MultibodyPlant = self.plant
@@ -156,13 +152,29 @@ class Puppetmaker:
             joints.append(joint_ii)
             joint_actuators.append(joint_actuator_ii)
 
-        return joints, joint_actuators
+        return [
+            PuppeteerJointSignature(
+                joint=joints[ii],
+                joint_actuator=joint_actuators[ii]
+            )
+            for ii in range(len(joints))
+        ]
 
     def add_all_actuated_revolute_joints(
         self,
         target_model: ModelInstanceIndex,
         massless_sphere_indices: List[ModelInstanceIndex],
-    ) -> Tuple[List[Joint], List[JointActuator]]:
+    ) -> List[PuppeteerJointSignature]:
+        """
+        Description
+        -----------
+
+        Notes
+        -----
+        This function expects 3 massless sphere inputs.
+        The first sphere in the list should be the one representing the last 
+        translation sphere (i.e., the one we should connect the first revolute sphere to.)
+        """
         # Setup
         config = self.config
         plant: MultibodyPlant = self.plant
@@ -171,8 +183,9 @@ class Puppetmaker:
         joints = []
         joint_actuators = []
 
-        # Find the previous joint to connect the FIRST rotation joint
-        sphere2 = massless_sphere_indices[2]
+        # Find the previous joint to connect the FIRST rotation joint to
+        # (This should be the sphere used for the last translation joint.)
+        sphere2 = massless_sphere_indices[0]
         sphere2_bodies = plant.GetBodyIndices(sphere2)
         previous_frame = plant.get_body(sphere2_bodies[0]).body_frame()
 
@@ -181,7 +194,7 @@ class Puppetmaker:
         for axis_dimension, joint_name_ii in enumerate(rotation_joint_names[:2]):
             # Compute the next frame to connect to from sphere_ii
             # It will be the only frame in the sphere model
-            sphere_ii = massless_sphere_indices[axis_dimension + 3]
+            sphere_ii = massless_sphere_indices[axis_dimension+1]
             sphere_ii_bodies = plant.GetBodyIndices(sphere_ii)
             sphere_ii_frame = plant.get_body(sphere_ii_bodies[0]).body_frame()
 
@@ -212,14 +225,20 @@ class Puppetmaker:
         joints.append(joint_ii)
         joint_actuators.append(joint_actuator_ii)
 
-        return joints, joint_actuators
+        return [
+            PuppeteerJointSignature(
+                joint=joints[ii],
+                joint_actuator=joint_actuators[ii]
+            )
+            for ii in range(len(joints))
+        ]
 
     def add_strings_for(
         self,
         target_model: ModelInstanceIndex,
     ) -> PuppetSignature:
         """Adds the necessary actuators for the puppet's joints."""
-        self.add_actuators_for(target_model)
+        return self.add_actuators_for(target_model)
 
     def add_actuators_for(
         self,
@@ -247,29 +266,91 @@ class Puppetmaker:
             )
 
         # Create some fictitious bodies which will be used to connect some new actuators
-        massless_sphere_indices = self.create_ghost_bodies_for_actuators()
+        translation_ghost_models, revolute_ghost_models = self.create_ghost_bodies_for_actuators()
 
         # Create Three Translation Joints
-        prismatic_joints, prismatic_joint_actuators = self.add_all_actuated_prismatic_joints(
+        prismatic_signatures = self.add_all_actuated_prismatic_joints(
             target_model=target_model,
-            massless_sphere_indices=massless_sphere_indices,
+            massless_sphere_indices=translation_ghost_models,
         )
 
         # Create the rotational joints
-        revolute_joints, revolute_joint_actuators = self.add_all_actuated_revolute_joints(
+        revolute_signatures = self.add_all_actuated_revolute_joints(
             target_model=target_model,
-            massless_sphere_indices=massless_sphere_indices,
+            massless_sphere_indices=[translation_ghost_models[-1]] + revolute_ghost_models,
         )
 
         # Return
         return PuppetSignature(
-            name=f"[{config.name}]Puppet for {plant.GetModelInstanceName(target_model)}",
+            name=f"[{config.name}] Puppet Signature for {plant.GetModelInstanceName(target_model)}",
             model_instance_index=target_model,
-            prismatic_joints=prismatic_joints,
-            prismatic_joint_actuators=prismatic_joint_actuators,
-            revolute_joints=revolute_joints,
-            revolute_joint_actuators=revolute_joint_actuators,
+            prismatic_ghost_bodies=translation_ghost_models,
+            revolute_ghost_bodies=revolute_ghost_models,
+            prismatic_joints=prismatic_signatures,
+            revolute_joints=revolute_signatures,
         )
+    
+    def add_puppet_controller_for(
+        self,
+        signature: PuppetSignature,
+        builder: DiagramBuilder,
+        Kp: np.ndarray = None,
+        Kd: np.ndarray = None,
+    ) -> LeafSystem:
+        # Setup
+        plant: MultibodyPlant = self.plant
+        n_actuators_for_puppet = signature.n_joints
+
+        # Input Processing
+        # - Verify that plant is finalized already
+        if not self.plant.is_finalized():
+            raise ValueError("Plant is not finalized yet.\nPlant must be finalized before calling this method!")
+
+        if Kp is None:
+            Kp = np.diag([100.0]*n_actuators_for_puppet)
+
+        if Kd is None:
+            Kd = np.sqrt(Kp)
+
+        # Create a demultiplexer to combine all actuator inputs
+        demux = builder.AddSystem(
+            Demultiplexer(size=n_actuators_for_puppet),
+        )
+
+        # Connect demultiplexer to each of the actuators
+        for ii, model_ii in enumerate(signature.all_models):
+            builder.Connect(
+                demux.get_output_port(ii),
+                plant.get_actuation_input_port(model_ii),
+            )
+
+        # Create the PID Controller
+        controller = builder.AddSystem(
+            PidController(
+                Kp=Kp,
+                Ki=np.diag([0.0]*n_actuators_for_puppet),
+                Kd=Kd,
+            )
+        )
+
+        # Connect the PID Controller to the demultiplexer
+        builder.Connect(
+            controller.get_output_port(0),
+            demux.get_input_port(0),
+        )
+
+        # Connect a PoseToVector System to the PID controller
+        # as reference.
+        pose_to_vector = builder.AddSystem(
+            RigidTransformToVectorSystem()
+        )
+
+        builder.Connect(
+            pose_to_vector.get_output_port(0),
+            controller.get_input_port(0),
+        )
+
+        return pose_to_vector
 
     def config_from_initialization_params(
         self,
@@ -309,7 +390,9 @@ class Puppetmaker:
 
         return temp_config
 
-    def create_ghost_bodies_for_actuators(self) -> List[ModelInstanceIndex]:
+    def create_ghost_bodies_for_actuators(
+        self,
+    ) -> Tuple[List[ModelInstanceIndex], List[ModelInstanceIndex]]:
         """
         Description
         -----------
@@ -322,7 +405,8 @@ class Puppetmaker:
         config = self.config
 
         # Create list of ModelInstances
-        out: List[ModelInstanceIndex] = []
+        translation_ghost_models: List[ModelInstanceIndex] = []
+        revolute_ghost_models: List[ModelInstanceIndex] = []
 
         # Create the spheres that connect the translation joints
         for translation_sphere_idx in range(2):
@@ -330,7 +414,7 @@ class Puppetmaker:
             sphere_ii_name = f"[{config.name}]translation_{translation_sphere_idx}_to_translation_{translation_sphere_idx+1}"
 
             # Update the output list
-            out.append(
+            translation_ghost_models.append(
                 self.add_massless_sphere_to_plant_with_name(
                     name=sphere_ii_name,
                     color=config.sphere_color,
@@ -339,7 +423,7 @@ class Puppetmaker:
 
         # Create the sphere that connects the last translation joint to the first rotation joint
         sphere_2_name = f"[{config.name}]translation_2_to_rotation_0"
-        out.append(
+        translation_ghost_models.append(
             self.add_massless_sphere_to_plant_with_name(
                 name=sphere_2_name,
                 color=config.sphere_color,
@@ -351,14 +435,14 @@ class Puppetmaker:
             # Create the name of the sphere
             sphere_jj_name = f"[{config.name}]rotation_{rotation_sphere_idx}_to_rotation_{rotation_sphere_idx+1}"
             # Update the output list
-            out.append(
+            revolute_ghost_models.append(
                 self.add_massless_sphere_to_plant_with_name(
                     name=sphere_jj_name,
                     color=config.sphere_color,
                 )
             )
 
-        return out
+        return translation_ghost_models, revolute_ghost_models
 
     def add_massless_sphere_to_plant_with_name(self, name: str, color: np.ndarray = None) -> ModelInstanceIndex:
         """
@@ -415,8 +499,8 @@ class Puppetmaker:
 
     @property
     def rotation_axis_names(self) -> str:
-        return ["Roll", "Pitch", "Yaw"]
-    
+        return ["roll", "pitch", "yaw"]
+
     def rotation_joint_names(
         self,
         target_model: ModelInstanceIndex,
