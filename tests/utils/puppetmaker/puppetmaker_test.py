@@ -126,8 +126,8 @@ class PuppetmakerTest(unittest.TestCase):
         puppet_signature1 = puppetmaker0.add_actuators_for(sphere_model_idcs[0])
 
         # Check the signature's value
-        self.assertEqual(len(puppet_signature1.prismatic_joints), 3)
-        self.assertEqual(len(puppet_signature1.revolute_joints), 3)
+        self.assertEqual(len(puppet_signature1.joints.prismatic), 3)
+        self.assertEqual(len(puppet_signature1.joints.revolute), 3)
 
         # Finalize plant
         plant.Finalize()

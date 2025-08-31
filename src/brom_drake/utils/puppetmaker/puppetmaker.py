@@ -1,12 +1,14 @@
 from dataclasses import dataclass
 import numpy as np
 from pydrake.all import (
+    ConstantVectorSource,
     Demultiplexer,
     DiagramBuilder,
     Frame,
     LeafSystem,
     ModelInstanceIndex,
     MultibodyPlant,
+    Multiplexer,
     Parser,
     PidController,
     PrismaticJoint,
@@ -18,10 +20,13 @@ from typing import List, Tuple
 
 # Internal Imports
 from .configuration import Configuration as PuppetmakerConfiguration
-from .puppet_signature import PuppetSignature, PuppeteerJointSignature
+from .puppet_signature import PuppetSignature, PuppeteerJointSignature, AllJointSignatures
 from brom_drake.file_manipulation.urdf import SimpleShapeURDFDefinition
 from brom_drake.file_manipulation.urdf.shapes import SphereDefinition
-from brom_drake.utils.leaf_systems.rigid_transform_to_vector_system import RigidTransformToVectorSystem
+from brom_drake.utils.leaf_systems.rigid_transform_to_vector_system import (
+    RigidTransformToVectorSystem,
+    RigidTransformToVectorSystemConfiguration,
+)
 
 class Puppetmaker:
     """
@@ -286,17 +291,19 @@ class Puppetmaker:
             model_instance_index=target_model,
             prismatic_ghost_bodies=translation_ghost_models,
             revolute_ghost_bodies=revolute_ghost_models,
-            prismatic_joints=prismatic_signatures,
-            revolute_joints=revolute_signatures,
+            joints=AllJointSignatures(
+                prismatic=prismatic_signatures,
+                revolute=revolute_signatures,
+            ),
         )
-    
+
     def add_puppet_controller_for(
         self,
         signature: PuppetSignature,
         builder: DiagramBuilder,
         Kp: np.ndarray = None,
         Kd: np.ndarray = None,
-    ) -> LeafSystem:
+    ) -> RigidTransformToVectorSystem:
         # Setup
         plant: MultibodyPlant = self.plant
         n_actuators_for_puppet = signature.n_joints
@@ -307,48 +314,74 @@ class Puppetmaker:
             raise ValueError("Plant is not finalized yet.\nPlant must be finalized before calling this method!")
 
         if Kp is None:
-            Kp = np.diag([100.0]*n_actuators_for_puppet)
+            Kp = np.array([100.0]*n_actuators_for_puppet)
 
         if Kd is None:
             Kd = np.sqrt(Kp)
 
         # Create a demultiplexer to combine all actuator inputs
-        demux = builder.AddSystem(
+        actuator_demux = builder.AddSystem(
             Demultiplexer(size=n_actuators_for_puppet),
         )
 
         # Connect demultiplexer to each of the actuators
         for ii, model_ii in enumerate(signature.all_models):
             builder.Connect(
-                demux.get_output_port(ii),
+                actuator_demux.get_output_port(ii),
                 plant.get_actuation_input_port(model_ii),
             )
 
         # Create the PID Controller
-        controller = builder.AddSystem(
+        controller: PidController = builder.AddSystem(
             PidController(
-                Kp=Kp,
-                Ki=np.diag([0.0]*n_actuators_for_puppet),
-                Kd=Kd,
+                kp=Kp,
+                ki=np.array([0.0]*n_actuators_for_puppet),
+                kd=Kd,
             )
         )
 
         # Connect the PID Controller to the demultiplexer
         builder.Connect(
             controller.get_output_port(0),
-            demux.get_input_port(0),
+            actuator_demux.get_input_port(0),
         )
 
         # Connect a PoseToVector System to the PID controller
         # as reference.
+        p2v_config = RigidTransformToVectorSystemConfiguration(
+            output_format="vector_xyz_euler(rpy)"
+        )
         pose_to_vector = builder.AddSystem(
-            RigidTransformToVectorSystem()
+            RigidTransformToVectorSystem(p2v_config)
         )
 
+        # Reference signal is a state which will be the
+        # target pose as well as the target twist
+        zero_twist_source = builder.AddSystem(
+            ConstantVectorSource(np.zeros((6,)))
+        )
+
+        target_state_mux = builder.AddSystem(
+            Multiplexer(input_sizes=[6, 6]),
+        )
+
+        # Connect mux inputs
         builder.Connect(
             pose_to_vector.get_output_port(0),
-            controller.get_input_port(0),
+            target_state_mux.get_input_port(0),
         )
+        builder.Connect(
+            zero_twist_source.get_output_port(0),
+            target_state_mux.get_input_port(1),
+        )
+        
+        # Connect mux output (i.e., the desired state) to PID
+        builder.Connect(
+            target_state_mux.get_output_port(0),
+            controller.get_input_port_desired_state(),
+        )
+
+        self.connect_plant_to_controller(builder, controller, signature)
 
         return pose_to_vector
 
@@ -389,6 +422,59 @@ class Puppetmaker:
             temp_config.sphere_radius = sphere_radius
 
         return temp_config
+
+    def connect_plant_to_controller(
+        self,
+        builder: DiagramBuilder,
+        controller: PidController,
+        signature: PuppetSignature,
+    ) -> None:
+        """
+        Connect the plant to the controller.
+        """
+        # Setup
+        plant: MultibodyPlant = self.plant
+
+        # Create a massive multiplexer to combine all of the
+        # states (2 each) of the models (there should be 6) in the puppet
+        state_mux = builder.AddSystem(
+            Multiplexer(num_scalar_inputs=2*len(signature.all_models)),
+        )
+
+        # Create connections to the state of each model (in the puppet)
+        # to new demultiplexers
+        all_state_demuxes = []
+        for model_ii in signature.all_models:
+            # Create demultiplexer for this model
+            n_state_ii = plant.num_multibody_states(model_ii)
+            state_demux_ii: Demultiplexer = builder.AddSystem(
+                Demultiplexer(size=n_state_ii),
+            )
+
+            # Connect the plant state to the demux
+            builder.Connect(
+                plant.get_state_output_port(model_ii),
+                state_demux_ii.get_input_port(0),
+            )
+
+            all_state_demuxes.append(state_demux_ii)
+
+        # Connect all demuxes to the state mux
+        for ii, demux_ii in enumerate(all_state_demuxes):
+            builder.Connect(
+                demux_ii.get_output_port(0),
+                state_mux.get_input_port(ii),
+            )
+            builder.Connect(
+                demux_ii.get_output_port(1),
+                state_mux.get_input_port(len(all_state_demuxes) + ii),
+            )
+
+        # Connect the output of the state demux to the controller
+        builder.Connect(
+            state_mux.get_output_port(0),
+            controller.get_input_port_estimated_state(),
+        )
 
     def create_ghost_bodies_for_actuators(
         self,

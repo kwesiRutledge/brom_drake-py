@@ -12,17 +12,25 @@ class PuppeteerJointSignature:
     joint_actuator: JointActuator
 
 @dataclass
+class AllJointSignatures:
+    prismatic: List[PuppeteerJointSignature]
+    revolute: List[PuppeteerJointSignature]
+
+    @property
+    def n_joints(self) -> int:
+        return len(self.prismatic) + len(self.revolute)
+
+@dataclass
 class PuppetSignature:
     name: str
     model_instance_index: ModelInstanceIndex
     prismatic_ghost_bodies: List[ModelInstanceIndex]
     revolute_ghost_bodies: List[ModelInstanceIndex]
-    prismatic_joints: List[PuppeteerJointSignature]
-    revolute_joints: List[PuppeteerJointSignature]
+    joints: AllJointSignatures
 
     @property
     def all_joint_actuators(self) -> List[JointActuator]:
-        return [sig.joint_actuator for sig in self.prismatic_joints + self.revolute_joints]
+        return [sig.joint_actuator for sig in self.joints.prismatic + self.joints.revolute]
 
     @property
     def all_models(self) -> List[ModelInstanceIndex]:
@@ -30,6 +38,6 @@ class PuppetSignature:
 
     @property
     def n_joints(self) -> int:
-        return len(self.prismatic_joints) + len(self.revolute_joints)
+        return self.joints.n_joints
     
     
