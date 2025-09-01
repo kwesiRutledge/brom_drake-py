@@ -314,7 +314,11 @@ class Puppetmaker:
             raise ValueError("Plant is not finalized yet.\nPlant must be finalized before calling this method!")
 
         if Kp is None:
-            Kp = np.array([100.0]*n_actuators_for_puppet)
+            bodies_in_puppet = plant.GetBodyIndices(signature.model_instance_index)
+            m, gravity = 0.0, 9.81
+            for body_ii in bodies_in_puppet:
+                m += plant.get_body(body_ii).default_mass()
+            Kp = np.array([10.0*m*gravity]*n_actuators_for_puppet)
 
         if Kd is None:
             Kd = np.sqrt(Kp)
