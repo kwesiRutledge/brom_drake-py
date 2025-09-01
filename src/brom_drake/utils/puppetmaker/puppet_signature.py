@@ -39,5 +39,3 @@ class PuppetSignature:
     @property
     def n_joints(self) -> int:
         return self.joints.n_joints
-    
-    
