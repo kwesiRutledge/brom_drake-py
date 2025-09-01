@@ -148,12 +148,6 @@ class PuppetmakerTest(unittest.TestCase):
         - A Demultiplexer to send the combined control signals to the actuators and
         - A PID controller for the vector of inputs to the puppet.
         """
-        """
-        Description
-        -----------
-        This test verifies that the output of add_actuators_for is as expected.
-        We should see 6 joints and 6 actuators created by default.
-        """
         # Setup
         builder = DiagramBuilder()
 
@@ -181,7 +175,12 @@ class PuppetmakerTest(unittest.TestCase):
         plant.Finalize()
 
         # Call the method
-        puppetmaker0.add_puppet_controller_for(puppet_signature1, builder)
+        input_converter = puppetmaker0.add_puppet_controller_for(puppet_signature1, builder)
+
+        self.assertEqual(
+            input_converter.get_output_port().size(),
+            6,
+        )
 
 if __name__ == '__main__':
     unittest.main()
