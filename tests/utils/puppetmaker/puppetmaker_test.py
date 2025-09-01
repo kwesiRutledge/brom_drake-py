@@ -37,8 +37,9 @@ class PuppetmakerTest(unittest.TestCase):
         # Add the test sphere to the plant
         sphere_model_idcs = Parser(plant=plant).AddModels(sphere_urdf)
 
-        # Try to call the puppetmaker
-        puppetmaker0 = Puppetmaker(sphere_model_idcs[0], plant)
+        # Create the puppetmaker and add strings to the sphere
+        puppetmaker0 = Puppetmaker(plant)
+        puppetmaker0.add_strings_for(sphere_model_idcs[0])
 
         # Finalize
         plant.Finalize()
@@ -82,13 +83,104 @@ class PuppetmakerTest(unittest.TestCase):
 
         # Try to call the puppetmaker
         try:
-            puppetmaker0 = Puppetmaker(sphere_model_idcs[0], plant)
-            self.assertTrue(False, "The puppetmaker constructor should fail before reaching here!")
+            puppetmaker0 = Puppetmaker(plant)
+            puppetmaker0.add_strings_for(sphere_model_idcs[0])
+            self.assertTrue(
+                False,
+                "The puppetmaker constructor should fail before reaching here!"
+            )
         except Exception as e:
             self.assertIn(
                 "finalize",
                 str(e)
             )
+
+    def test_add_actuators_for1(self):
+        """
+        Description
+        -----------
+        This test verifies that the output of add_actuators_for is as expected.
+        We should see 6 joints and 6 actuators created by default.
+        """
+        # Setup
+        builder = DiagramBuilder()
+
+        # Create plant with the single object
+        plant_sg_pair = AddMultibodyPlant(MultibodyPlantConfig(), builder)
+        plant: MultibodyPlant = plant_sg_pair[0]
+
+        # Create a simple shape URDF
+        sphere_geometry_defn = SphereDefinition(radius=0.1)
+        sphere_urdf_defn = SimpleShapeURDFDefinition(
+            name="test_sphere",
+            shape=sphere_geometry_defn,
+            mass=0.2,
+        )
+        sphere_urdf = sphere_urdf_defn.write_to_file()
+
+        # Add the test sphere to the plant
+        sphere_model_idcs = Parser(plant=plant).AddModels(sphere_urdf)
+
+        # Create the puppetmaker and add strings to the sphere
+        puppetmaker0 = Puppetmaker(plant)
+        puppet_signature1 = puppetmaker0.add_actuators_for(sphere_model_idcs[0])
+
+        # Check the signature's value
+        self.assertEqual(len(puppet_signature1.joints.prismatic), 3)
+        self.assertEqual(len(puppet_signature1.joints.revolute), 3)
+
+        # Finalize plant
+        plant.Finalize()
+
+        # Check for all of the actuators that the puppetmaker should have added to the plant
+        for joint_actuator in puppet_signature1.all_joint_actuators:
+            try:
+                plant.GetJointActuatorByName(joint_actuator.name())
+            except Exception as e:
+                self.fail(f"Failed to find joint actuator {joint_actuator.name}: {e}")
+
+    def test_add_puppet_controller_for1(self):
+        """
+        Description
+        -----------
+        This test verifies that the add_puppet_controller_for() method correctly
+        creates:
+        - A Demultiplexer to send the combined control signals to the actuators and
+        - A PID controller for the vector of inputs to the puppet.
+        """
+        # Setup
+        builder = DiagramBuilder()
+
+        # Create plant with the single object
+        plant_sg_pair = AddMultibodyPlant(MultibodyPlantConfig(), builder)
+        plant: MultibodyPlant = plant_sg_pair[0]
+
+        # Create a simple shape URDF
+        sphere_geometry_defn = SphereDefinition(radius=0.1)
+        sphere_urdf_defn = SimpleShapeURDFDefinition(
+            name="test_sphere",
+            shape=sphere_geometry_defn,
+            mass=0.2,
+        )
+        sphere_urdf = sphere_urdf_defn.write_to_file()
+
+        # Add the test sphere to the plant
+        sphere_model_idcs = Parser(plant=plant).AddModels(sphere_urdf)
+
+        # Create the puppetmaker and add strings to the sphere
+        puppetmaker0 = Puppetmaker(plant)
+        puppet_signature1 = puppetmaker0.add_actuators_for(sphere_model_idcs[0])
+
+        # Finalize plant
+        plant.Finalize()
+
+        # Call the method
+        input_converter = puppetmaker0.add_puppet_controller_for(puppet_signature1, builder)
+
+        self.assertEqual(
+            input_converter.get_output_port().size(),
+            6,
+        )
 
 if __name__ == '__main__':
     unittest.main()
