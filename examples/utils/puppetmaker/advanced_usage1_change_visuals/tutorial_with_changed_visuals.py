@@ -21,9 +21,12 @@ from brom_drake.file_manipulation.urdf.shapes import (
 from brom_drake.file_manipulation.urdf import (
     SimpleShapeURDFDefinition,
 )
-from brom_drake.utils.puppetmaker import Puppetmaker, PuppetmakerConfiguration
 from brom_drake.motion_planning.systems.open_loop_dispensers import OpenLoopPosePlanDispenser
-from brom_drake.all import add_watcher_and_build
+from brom_drake.all import (
+    add_watcher_and_build,
+    Puppetmaker,
+    PuppetmakerConfiguration,
+)
 
 def create_piecewise_pose_trajectory(t_final: float = 15.0):
     # Setup

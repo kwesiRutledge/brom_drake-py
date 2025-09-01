@@ -35,6 +35,10 @@ from brom_drake.utils.leaf_systems import (
     EndEffectorWrenchCalculator,
     RigidTransformToVectorSystem,
 )
+from brom_drake.utils.leaf_systems.rigid_transform_to_vector_system.configuration import Configuration as RigidTransformToVectorSystemConfiguration
+from brom_drake.utils.puppetmaker.puppetmaker import Puppetmaker
+from brom_drake.utils.puppetmaker.configuration import Configuration as PuppetmakerConfiguration
+from brom_drake.utils.puppetmaker.puppet_signature import PuppeteerJointSignature, PuppetSignature
 __all__ = [
     'add_watcher',
     'add_watcher_and_build',
@@ -59,7 +63,13 @@ __all__ = [
     'PortWatcherOptions',
     'ProductionID',
     'PrototypicalPlannerSystem',
+    'PuppeteerJointSignature',
+    'Puppetmaker',
+    'PuppetmakerConfiguration',
+    'PuppetmakerJointSignature',
+    'PuppetSignature',
     'RigidTransformToVectorSystem',
+    'RigidTransformToVectorSystemConfiguration',
     'RRTConnectPlannerConfig',
     'RRTConnectPlanner',
     'StateOfPlanInMemory',
