@@ -585,7 +585,7 @@ class Puppetmaker:
 
 
     @property
-    def rotation_axis_names(self) -> str:
+    def rotation_axis_names(self) -> List[str]:
         return ["roll", "pitch", "yaw"]
 
     def rotation_joint_names(
@@ -610,7 +610,7 @@ class Puppetmaker:
         ]
 
     @property
-    def translation_axis_names(self) -> str:
+    def translation_axis_names(self) -> List[str]:
         return ["X", "Y", "Z"]
 
     def translation_joint_names(
