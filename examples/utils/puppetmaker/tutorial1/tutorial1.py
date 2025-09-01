@@ -29,7 +29,6 @@ from brom_drake.all import (
 
 def create_piecewise_pose_trajectory(t_final: float = 15.0):
     # Setup
-    times = np.array([0.0, t_final])
 
     # Create position trajectory
     x0 = np.array([0.0, 0.1, 0.1])
@@ -97,7 +96,7 @@ def main(t_final: float = 15.0):
         shape=simple_cube,
         color=[0.1,0.1,0.5,1.0],
     )
-    cube_urdf_path =cube_urdf_defn.write_to_file()
+    cube_urdf_path = cube_urdf_defn.write_to_file()
 
     # Add cube urdf to plant
     cube_model = Parser(plant=plant).AddModels(cube_urdf_path)[0]
