@@ -1,0 +1,32 @@
+<robot name="wrench">
+    <link name="wrench_base_link">
+        <inertial>
+            <origin
+                xyz="0.10033996066894936 1.3874499517585422e-06 5.5300044859263774e-05"
+                rpy="0 0 0" />
+            <mass
+                value="0.02857838012119553e3" />
+            <inertia
+                ixx="3.455112055449e-03"
+                ixy="3.299585298311813e-07"
+                ixz="-1.0092145645725366e-03"
+                iyy="0.00017860106925991035e3"
+                iyz="1.565385446755911e-08"
+                izz="0.00017536540042393947e03" />
+        </inertial>
+        <visual>
+            <geometry>
+                <mesh filename="DIN_3110_Double_Wrench_18x21.obj" scale="4.0 4.0 4.0"/>
+            </geometry>
+            <material name="silver_coating">
+                <color rgba="0.75 0.75 0.75 0.8"/>
+            </material>
+        </visual>
+        <collision>
+            <geometry>
+                <mesh filename="DIN_3110_Double_Wrench_18x21.obj" scale="4.0 4.0 4.0"/>
+            </geometry>
+        </collision>
+    </link>
+
+</robot>
