@@ -24,6 +24,10 @@ class InitialCondition:
         if self.configuration is None:
             return
 
+        # - If the plant is not yet finalized, then raise an exception!
+        if not plant.is_finalized():
+            raise RuntimeError("Plant is not yet finalized! Finalize before calling set_initial_configuration()!")
+
         # - If the configuration value exists, then verify that it has the correct size
         if len(self.configuration) != plant.num_positions(self.model_instance_index):
             raise ValueError(f"Configuration size {len(self.configuration)} does not match plant's num_positions {plant.num_positions()}")

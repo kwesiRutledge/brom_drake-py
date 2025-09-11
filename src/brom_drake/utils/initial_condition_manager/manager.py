@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import numpy as np
 from pydrake.all import (
     Frame,
@@ -13,7 +13,7 @@ from brom_drake.utils.initial_condition_manager.initial_condition import Initial
 
 @dataclass
 class InitialConditionManager:
-    _ic_tuples: List[InitialCondition]
+    _ic_tuples: List[InitialCondition] = field(default_factory=list)
 
     def add_initial_condition(self, ic_tuple: InitialCondition):
         self._ic_tuples.append(ic_tuple)
