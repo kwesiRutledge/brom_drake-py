@@ -14,7 +14,7 @@ from typing import List
 
 # Internal Imports
 from brom_drake.file_manipulation.urdf.drakeify import drakeify_my_urdf
-from brom_drake.productions.types.base import BaseProduction
+from brom_drake.productions.types.base.base import BaseProduction
 from brom_drake.utils.model_instances import (
     get_name_of_first_body_in_urdf,
     get_name_of_all_bodies_in_urdf,
