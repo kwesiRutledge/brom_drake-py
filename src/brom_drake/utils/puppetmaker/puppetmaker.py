@@ -562,7 +562,7 @@ class Puppetmaker:
             name=name,
             shape=sphere_shape,
             create_collision=False,
-            mass=1e-3,
+            mass=config.sphere_mass,
             color=color,
         )
         sphere_urdf = sphere_urdf_defn.write_to_file()
