@@ -7,6 +7,7 @@ from brom_drake.productions.roles import Role
 from brom_drake.productions.ids import ProductionID
 from brom_drake.utils import Performer
 from brom_drake.utils.watcher import add_watcher_and_build
+from brom_drake.utils.initial_condition_manager import InitialConditionManager
 
 class BaseProduction:
     """
@@ -25,6 +26,9 @@ class BaseProduction:
 
         # Create an extra place to save DiagramWatcher objects
         self.watcher = None
+
+        # Create an initial condition manager
+        self.initial_condition_manager = InitialConditionManager()
 
     def add_supporting_cast(self):
         """

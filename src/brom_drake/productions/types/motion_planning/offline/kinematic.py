@@ -360,6 +360,10 @@ class KinematicMotionPlanningProduction(BaseProduction):
             planner_role, prototypical_planner
         )
 
+        # Set up initial conditions for all objects in the supporting cast
+        if self.plant is not None:
+            self.initial_condition_manager.set_all_initial_conditions(plant=self.plant)
+
         # Build
         return self.build_production(with_watcher=with_watcher)
 
