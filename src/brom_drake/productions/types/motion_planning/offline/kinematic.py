@@ -35,6 +35,9 @@ class KinematicMotionPlanningProduction(BaseProduction):
         **kwargs,
     ):
         super().__init__(**kwargs)
+        # Note the following objects will exist:
+        # - self.plant
+        # - self.scene_graph
 
         # Start and Goal Configurations
         self._start_config = start_configuration
@@ -43,9 +46,6 @@ class KinematicMotionPlanningProduction(BaseProduction):
         # Start and Goal Poses
         self._start_pose = start_pose
         self._goal_pose = goal_pose
-
-        # Create placeholder for the plant
-        self.plant = None
 
         # Create placeholder for the robot model index
         self.robot_model_idx_ = None
@@ -359,10 +359,6 @@ class KinematicMotionPlanningProduction(BaseProduction):
         self.create_optional_outputs_if_necessary(
             planner_role, prototypical_planner
         )
-
-        # Set up initial conditions for all objects in the supporting cast
-        if self.plant is not None:
-            self.initial_condition_manager.set_all_initial_conditions(plant=self.plant)
 
         # Build
         return self.build_production(with_watcher=with_watcher)

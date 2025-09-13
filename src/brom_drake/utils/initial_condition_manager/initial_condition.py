@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 import numpy as np
 from pydrake.all import (
+    Context,
     ModelInstanceIndex,
     MultibodyPlant,
     RigidTransform
@@ -13,7 +14,11 @@ class InitialCondition:
     configuration: np.ndarray = None
     target_body_index: int = 0
 
-    def set_initial_configuration(self, plant: MultibodyPlant):
+    def set_initial_configuration(
+        self,
+        plant: MultibodyPlant,
+        diagram_context: Context = None
+    ):
         """
         Description
         -----------
@@ -34,7 +39,12 @@ class InitialCondition:
 
         # Set initial configuration
         plant.SetDefaultPositions(self.model_instance_index, self.configuration)
-        # plant.SetPositions(self.model_instance_index, self.configuration)
+        if diagram_context is not None:
+            plant.SetPositions(
+                plant.GetMyMutableContextFromRoot(diagram_context),
+                self.model_instance_index,
+                self.configuration
+            )
 
     def set_initial_pose(self, plant: MultibodyPlant):
         """

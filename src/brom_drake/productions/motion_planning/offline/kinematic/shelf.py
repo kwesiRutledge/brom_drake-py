@@ -100,6 +100,7 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
             model_instance_index=self.arm,
             configuration=self.start_configuration,
         )
+        # The initial condition will be set for the plant when we build the production.
 
         # Print message to user
         print("Added all secondary cast members to the builder.")

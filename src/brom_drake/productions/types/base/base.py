@@ -27,6 +27,9 @@ class BaseProduction:
         # Create an extra place to save DiagramWatcher objects
         self.watcher = None
 
+        # Create a place to save the plant and scene_graph, if needed
+        self.plant, self.scene_graph = None, None
+
         # Create an initial condition manager
         self.initial_condition_manager = InitialConditionManager()
 
@@ -105,6 +108,13 @@ class BaseProduction:
         else:
             self.diagram = builder.Build()
             self.diagram_context = self.diagram.CreateDefaultContext()
+
+        # Set all initial conditions, if any
+        if self.plant is not None:
+            self.initial_condition_manager.set_all_initial_conditions(
+                plant=self.plant,
+                diagram_context=self.diagram_context,
+            )
 
         return self.diagram, self.diagram_context
 

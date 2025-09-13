@@ -43,6 +43,10 @@ class MotionPlanningAndGraspingProduction(BaseProduction):
     ):
         super().__init__(**kwargs)
 
+        # Note the following objects will exist:
+        # - self.plant
+        # - self.scene_graph
+
         # Start and Goal Configurations
         self._start_config = start_configuration
         self._goal_config = None
@@ -50,12 +54,6 @@ class MotionPlanningAndGraspingProduction(BaseProduction):
         # Start and Goal Poses
         self._start_pose = start_pose
         self._goal_pose = None
-
-        # Create placeholder for the some of the systems that we'll use, including:
-        # - plant
-        # - scene_graph
-        self.plant = None
-        self.scene_graph = None
 
         # If the performer does not have plan_is_ready port, then
         # let's create a dummy value and connect it to the right place.

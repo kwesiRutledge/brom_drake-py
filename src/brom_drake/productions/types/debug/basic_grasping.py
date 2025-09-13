@@ -71,6 +71,10 @@ class BasicGraspingDebuggingProduction(BaseProduction):
         # Call the base class constructor
         super().__init__()
 
+        # Note the following objects will exist:
+        # - self.plant
+        # - self.scene_graph
+
         # Add the model to the Production
         self.path_to_object = path_to_object
         self.path_to_gripper = path_to_gripper
