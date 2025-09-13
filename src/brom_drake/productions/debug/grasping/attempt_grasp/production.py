@@ -30,19 +30,19 @@ from brom_drake.file_manipulation.urdf.shapes.box import BoxDefinition
 from brom_drake.file_manipulation.urdf.simple_writer import SimpleShapeURDFDefinition
 from brom_drake.robots import find_base_link_name_in, GripperType
 from brom_drake import robots
-from brom_drake.motion_planning.systems import OpenLoopPlanDispenser
+from brom_drake.motion_planning.systems import OpenLoopPlanDispenser, OpenLoopPosePlanDispenser
 from brom_drake.productions.types.debug import BasicGraspingDebuggingProduction
 from brom_drake.productions import ProductionID
 from brom_drake.productions.roles.role import Role
 from brom_drake.utils import (
     Performer, collision_checking, NetworkXFSM, FlexiblePortSwitch, FSMTransitionCondition,
-    FSMOutputDefinition, FSMTransitionConditionType
+    FSMOutputDefinition, FSMTransitionConditionType, Puppetmaker, PuppetmakerConfiguration, PuppetSignature
 )
+from brom_drake.utils.leaf_systems import RigidTransformToVectorSystem
 from brom_drake.utils.model_instances import (
     get_name_of_first_body_in_urdf,
     find_number_of_positions_in_welded_model,
 )
-from brom_drake.productions.debug.show_me.show_me_system import ShowMeSystem
 from .config import Configuration
 from .script import Script as AttemptGraspScript
 
@@ -88,6 +88,7 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
         # - show_gripper_base_frame
         # - show_collision_geometries
         # - plant
+        # - scene_graph
 
         # TODO(kwesi): Figure out a better way to handle the initial joint positions
         # Create INITIAL joint position array
@@ -129,6 +130,66 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
         # )
 
         return self.diagram, self.diagram_context
+    
+    def add_floor_controller_and_connect(self, floor_mass: float):
+        # Setup
+        plant: MultibodyPlant = self.plant
+
+        # Find the z position of the floor
+        z_floor = self.find_floor_z_via_line_search()
+
+        # Connect a PID Controller to the floor actuator
+        kp = np.array([[floor_mass * 9.81 * 1.0e-1]]) #Idk how I'm picking this number.
+        ki = np.zeros(kp.shape) # 0.1 * np.sqrt(kp)
+        kd = 4.0 * np.sqrt(kp)
+        floor_controller = self.builder.AddSystem(
+            PidController(kp=kp, ki=ki, kd=kd),
+        )
+        floor_controller.set_name("[Floor] PID Controller")
+
+        # Create a feedforward term that we will add to the PID controller's
+        # output to keep the floor at a constant height
+        # (i.e., the weight of the object)
+        feedforward_term = self.builder.AddSystem(
+            ConstantVectorSource(np.array([[floor_mass * 9.81]])),  # Weight of the object
+        )
+        feedforward_term.set_name("[Floor] Feedforward")
+
+        # Summer to combine the PID output and the feedforward term
+        summer = self.builder.AddSystem(
+            Adder(2, 1),
+        )
+
+        self.builder.Connect(
+            floor_controller.get_output_port(0),  # PID output
+            summer.get_input_port(0),  # summer input
+        )
+
+        self.builder.Connect(
+            feedforward_term.get_output_port(0),  # Weight of the object
+            summer.get_input_port(1),  # Feedforward term
+        )
+
+        # Connect the target height to the PID controller
+        target_height_source = self.create_floor_trajectory_source(z_floor=z_floor)
+
+        # Connect the source to the floor actuator
+        self.builder.Connect(
+            summer.get_output_port(0),
+            plant.get_actuation_input_port(self.floor_model_index),
+        )
+
+        # Connect the target height to the PID controller
+        self.builder.Connect(
+            target_height_source.get_output_port(0),
+            floor_controller.get_input_port_desired_state(),
+        )
+
+        # Connect the current height of the floor to the PID controller
+        self.builder.Connect(
+            plant.get_state_output_port(self.floor_model_index),
+            floor_controller.get_input_port_estimated_state(),
+        )
 
     def add_floor_to_plant(
         self,
@@ -179,50 +240,17 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
 
         return floor_mass, floor_shape, floor_model_index, floor_actuator
 
-    def add_supporting_cast(self):
-        """
-        Description
-        -----------
-        This method will add:
-        - The user's object model to the builder.
-        - The user's gripper model to the builder.
-        - The gripper triad to the builder.
-        """
+    def add_gripper_controllers_and_connect(self, gripper_puppet_input: RigidTransformToVectorSystem):
         # Setup
-        plant: MultibodyPlant = self.plant
+        gripper_poses = self.compute_gripper_poses_for_attempted_grasp()
 
-        # Add the object to the builder
-        self.add_manipuland_to_plant()
+        # Create a controller to "puppet" the gripper's base
+        self.add_gripper_puppet_controller_and_connect(gripper_puppet_input, gripper_poses)
 
-        # Add the gripper to the builder
-        X_WorldGripper = self.find_X_WorldGripper(
-            X_ObjectGripper=self.X_ObjectGripper,
-            target_frame_name=self.target_body_name_on_gripper,
-            desired_joint_positions=self.initial_gripper_joint_positions,
-        )
-        self.add_gripper_to_plant(
-            and_weld_to=plant.world_frame(),
-            with_X_WorldGripper=X_WorldGripper,
-        )
+        # Connect controller for all of the joints
+        self.add_gripper_joint_controllers_and_connect()
 
-        # Add the floor
-        floor_mass, self.floor_shape, self.floor_model_index, self.floor_actuator = self.add_floor_to_plant()
-
-        # Connect the plant to the meshcat, if requested
-        if self.meshcat_port_number is not None:
-            self.connect_to_meshcat()
-
-        # Finalize the plant
-        self.plant.Finalize()
-
-        # Add controllers for gripper AND floor
-        self.add_gripper_controller_and_connect()
-        self.add_floor_controller_and_connect(floor_mass)
-
-        # Create defaults for plant
-        self.set_plant_defaults()
-
-    def add_gripper_controller_and_connect(self):
+    def add_gripper_joint_controllers_and_connect(self):
         # Setup
         builder: DiagramBuilder = self.builder
         plant: MultibodyPlant = self.plant
@@ -232,14 +260,6 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
         # Get gripper initial and final positions
         p_gripper0 = self.initial_gripper_joint_positions
         p_gripper_final = self.grasp_joint_positions
-
-        # # Create a system to control the gripper's actuators
-        # self.show_me_system = ShowMeSystem(
-        #     plant=plant,
-        #     model_index=self.gripper_model_index,
-        #     desired_joint_positions=self.initial_gripper_joint_positions,
-        # )
-        # builder.AddSystem(self.show_me_system)
 
         # Create a desired trajectory for the gripper to track while attempting to grasp
         gripper_trajectory_dispatcher = builder.AddSystem(
@@ -306,66 +326,139 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
             gripper_controller.GetInputPort("gripper_state"),
         )
 
+    def add_gripper_puppet_controller_and_connect(
+        self,
+        gripper_puppet_input: RigidTransformToVectorSystem,
+        pose_trajectory: List[RigidTransform]
+    ):
+        # Setup
+        builder: DiagramBuilder = self.builder
 
-    def add_floor_controller_and_connect(self, floor_mass: float):
+        # Create dispenser of trajectory
+        trajectory_dispenser = builder.AddSystem(
+            OpenLoopPosePlanDispenser(speed=0.075),
+        )
+        trajectory_dispenser.set_name("[Gripper] Trajectory Dispenser")
+        # Notes about this dispenser:
+        # - We will trigger this with an "executive" signal
+        # - We will feed it a trajectory that goes from an initial position to the grasp position
+        # - This will provide the input to the gripper puppet
+
+        # Connect trajectory dispenser to the gripper puppet input
+        builder.Connect(
+            trajectory_dispenser.GetOutputPort("point_in_plan"),
+            gripper_puppet_input.get_input_port(),
+        )
+
+        # Create a source for the trajectory
+        trajectory_source = builder.AddSystem(
+            ConstantValueSource(AbstractValue.Make(pose_trajectory)),
+        )
+
+        # Connect the source to the dispenser
+        builder.Connect(
+            trajectory_source.get_output_port(),
+            trajectory_dispenser.GetInputPort("plan"),
+        )
+
+        return trajectory_source
+
+    def add_initial_conditions_to_plant(self):
+        # Setup
+        X_WorldGripper = self.find_X_WorldGripper(
+            X_ObjectGripper=self.X_ObjectGripper,
+            target_frame_name=self.target_body_name_on_gripper,
+            desired_joint_positions=self.initial_gripper_joint_positions,
+        )
+
+        # Set all initial conditions for the gripper model
+        self.initial_condition_manager.add_initial_pose(
+            model_instance_index=self.gripper_model_index,
+            pose_wrt_parent=X_WorldGripper,
+        )
+
+    def add_puppeteer_for_gripper(self) -> Tuple[Puppetmaker, PuppetSignature]:
+        # Setup
+        plant : MultibodyPlant = self.plant
+
+        # Create a puppet maker
+        puppetmaker0 = Puppetmaker(
+            plant=plant,
+            config=PuppetmakerConfiguration(
+                frame_on_parent=plant.world_frame(),
+                name="attempt_grasp_puppetmaker",
+                sphere_radius=0.02,
+                sphere_color=np.array([0.0,1.0,0.0,0.8]), # Change the color of the puppet links to green
+            )
+        )
+
+        # Add puppet strings for the gripper
+        puppet_signature0 = puppetmaker0.add_strings_for(self.gripper_model_index)
+
+        return puppetmaker0, puppet_signature0
+
+    def add_supporting_cast(self):
+        """
+        Description
+        -----------
+        This method will add:
+        - The user's object model to the builder.
+        - The user's gripper model to the builder.
+        - The gripper triad to the builder.
+        """
+        # Setup
+
+        # Add the object to the builder
+        self.add_manipuland_to_plant()
+
+        # Add the gripper to the builder
+        self.add_gripper_to_plant()
+        maker0, puppet_signature0 = self.add_puppeteer_for_gripper()
+
+        # Add the floor
+        floor_mass, self.floor_shape, self.floor_model_index, self.floor_actuator = self.add_floor_to_plant()
+
+        # Connect the plant to the meshcat, if requested
+        if self.meshcat_port_number is not None:
+            self.connect_to_meshcat()
+
+        # Finalize the plant
+        self.plant.Finalize()
+        puppet_pose_input = maker0.add_puppet_controller_for(puppet_signature0, self.builder)
+
+        # Add controllers for gripper AND floor
+        self.add_gripper_controllers_and_connect(puppet_pose_input)
+        self.add_floor_controller_and_connect(floor_mass)
+
+        # Create defaults for plant
+        self.set_plant_defaults()
+        self.add_initial_conditions_to_plant()    
+
+    def compute_gripper_poses_for_attempted_grasp(self) -> List[RigidTransform]:
         # Setup
         plant: MultibodyPlant = self.plant
 
-        # Find the z position of the floor
-        z_floor = self.find_floor_z_via_line_search()
-
-        # Connect a PID Controller to the floor actuator
-        kp = np.array([[floor_mass * 9.81 * 1.0e-1]]) #Idk how I'm picking this number.
-        ki = np.zeros(kp.shape) # 0.1 * np.sqrt(kp)
-        kd = 4.0 * np.sqrt(kp)
-        floor_controller = self.builder.AddSystem(
-            PidController(kp=kp, ki=ki, kd=kd),
-        )
-        floor_controller.set_name("[Floor] PID Controller")
-
-        # Create a feedforward term that we will add to the PID controller's
-        # output to keep the floor at a constant height
-        # (i.e., the weight of the object)
-        feedforward_term = self.builder.AddSystem(
-            ConstantVectorSource(np.array([[floor_mass * 9.81]])),  # Weight of the object
-        )
-        feedforward_term.set_name("[Floor] Feedforward")
-
-        # Summer to combine the PID output and the feedforward term
-        summer = self.builder.AddSystem(
-            Adder(2, 1),
+        # Compute the Grasp Pose of the gripper in the world frame
+        X_WorldGripper = self.find_X_WorldGripper(
+            X_ObjectGripper=self.X_ObjectGripper,
+            target_frame_name=self.target_body_name_on_gripper,
+            desired_joint_positions=self.grasp_joint_positions,
         )
 
-        self.builder.Connect(
-            floor_controller.get_output_port(0),  # PID output
-            summer.get_input_port(0),  # summer input
+        # Compute a pre-grasp pose for the gripper in the world frame
+        # (i.e., a pose that is 10cm back from the grasp pose)
+        X_GripperInitial_PreGrasp = RigidTransform(
+            p=np.array([0.0, -0.10, -0.10]),  # 10cm back along the gripper's z-axis
         )
+        X_WorldGripper_initial = X_WorldGripper.multiply(X_GripperInitial_PreGrasp)
 
-        self.builder.Connect(
-            feedforward_term.get_output_port(0),  # Weight of the object
-            summer.get_input_port(1),  # Feedforward term
-        )
+        # Create a list of poses for the gripper to move through
+        gripper_poses = [
+            X_WorldGripper_initial,
+            self.X_ObjectGripper,
+        ]
 
-        # Connect the target height to the PID controller
-        target_height_source = self.create_floor_trajectory_source(z_floor=z_floor)
-
-        # Connect the source to the floor actuator
-        self.builder.Connect(
-            summer.get_output_port(0),
-            plant.get_actuation_input_port(self.floor_model_index),
-        )
-
-        # Connect the target height to the PID controller
-        self.builder.Connect(
-            target_height_source.get_output_port(0),
-            floor_controller.get_input_port_desired_state(),
-        )
-
-        # Connect the current height of the floor to the PID controller
-        self.builder.Connect(
-            plant.get_state_output_port(self.floor_model_index),
-            floor_controller.get_input_port_estimated_state(),
-        )
+        return gripper_poses
 
     def create_executive_system(self) -> NetworkXFSM:
         # Setup
@@ -659,7 +752,7 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
 
     @property
     def id(self):
-        return ProductionID.kDemonstrateStaticGrasp
+        return ProductionID.kAttemptGrasp
 
     def set_plant_defaults(self):
         """

@@ -330,6 +330,16 @@ class Puppetmaker:
 
         # Connect demultiplexer to each of the actuators
         for ii, model_ii in enumerate(signature.all_models):
+            if plant.num_actuators(model_ii) == 0:
+                continue
+
+            print(f"n_actuators for model {plant.GetModelInstanceName(model_ii)}: {plant.num_actuators(model_ii)}")
+
+            plant.get_joint_actuator()
+
+            for port_jj in plant.GetActuatorNames(model_ii):
+                print(f"Actuator on model {plant.GetModelInstanceName(model_ii)}: {port_jj}")
+                
             builder.Connect(
                 actuator_demux.get_output_port(ii),
                 plant.get_actuation_input_port(model_ii),

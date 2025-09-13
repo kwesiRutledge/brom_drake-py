@@ -18,7 +18,7 @@ from .triads import AddMultibodyTriad, AddTriad
 
 from .pick_and_place.phase import PickAndPlacePhase
 from .pick_and_place.target_description import PickAndPlaceTargetDescription
-from .puppetmaker import Puppetmaker, PuppetmakerConfiguration
+from .puppetmaker import Puppetmaker, PuppetmakerConfiguration, PuppetSignature
 
 __all__ = [
     "AddMultibodyTriad",
@@ -40,6 +40,7 @@ __all__ = [
     "PickAndPlaceTargetDescription",
     "Puppetmaker",
     "PuppetmakerConfiguration",
+    "PuppetSignature",
     "AddGround",
     "GroundShape",
     "RigidTransformToVectorSystem",
