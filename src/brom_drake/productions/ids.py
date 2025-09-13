@@ -9,3 +9,4 @@ class ProductionID(Enum):
     kChemLab2 = "ChemLab-Planning2"
     kChemLab3 = "ChemLab-Planning3"
     kDemonstrateStaticGrasp = "Demonstrate-StaticGrasp"
+    kAttemptGrasp = "Attempt-Grasp"
