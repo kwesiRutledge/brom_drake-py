@@ -5,6 +5,7 @@ import networkx as nx
 import numpy as np
 from pydrake.all import (
     AbstractValue,
+    AffineSystem,
     Adder,
     ConstantValueSource,
     GeometryProperties,
@@ -12,6 +13,7 @@ from pydrake.all import (
     IllustrationProperties,
     JointActuator,
     ModelInstanceIndex,
+    PassThrough,
     PidController,
     PrismaticJoint,
     RigidBodyFrame,
@@ -240,7 +242,11 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
 
         return floor_mass, floor_shape, floor_model_index, floor_actuator
 
-    def add_gripper_controllers_and_connect(self, gripper_puppet_input: RigidTransformToVectorSystem):
+    def add_gripper_controllers_and_connect(
+        self,
+        gripper_puppet_input: RigidTransformToVectorSystem,
+        gripper_joint_input: PassThrough,
+    ):
         # Setup
         gripper_poses = self.compute_gripper_poses_for_attempted_grasp()
 
@@ -248,9 +254,12 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
         self.add_gripper_puppet_controller_and_connect(gripper_puppet_input, gripper_poses)
 
         # Connect controller for all of the joints
-        self.add_gripper_joint_controllers_and_connect()
+        self.add_gripper_joint_controllers_and_connect(gripper_joint_input)
 
-    def add_gripper_joint_controllers_and_connect(self):
+    def add_gripper_joint_controllers_and_connect(
+        self,
+        gripper_joint_input: PassThrough
+    ):
         # Setup
         builder: DiagramBuilder = self.builder
         plant: MultibodyPlant = self.plant
@@ -299,7 +308,7 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
         # Connect the gripper controller to the gripper
         builder.Connect(
             gripper_controller.GetOutputPort("applied_gripper_torque"),
-            plant.get_actuation_input_port(self.gripper_model_index),
+            gripper_joint_input.get_input_port(),
         )
 
         # Connect plan to the controller
@@ -321,8 +330,25 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
         )
 
         # Connect the plant to the gripper controller
+        n_x: int = plant.num_positions(self.gripper_model_index) * 2
+        n_y: int = n_x - 2
+        D = np.zeros((n_y, n_x))
+        for ii in range(n_y//2):
+            D[ii, ii] = 1.0
+            D[ii + n_y//2, ii + n_x//2] = 1.0
+
+        state_compressor = builder.AddSystem(
+            AffineSystem(
+                D=D,
+            )
+        )
         builder.Connect(
             plant.get_state_output_port(self.gripper_model_index),
+            state_compressor.get_input_port(),
+        )
+
+        builder.Connect(
+            state_compressor.get_output_port(),
             gripper_controller.GetInputPort("gripper_state"),
         )
 
@@ -330,7 +356,7 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
         self,
         gripper_puppet_input: RigidTransformToVectorSystem,
         pose_trajectory: List[RigidTransform]
-    ):
+    ) -> OpenLoopPosePlanDispenser:
         # Setup
         builder: DiagramBuilder = self.builder
 
@@ -346,7 +372,7 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
 
         # Connect trajectory dispenser to the gripper puppet input
         builder.Connect(
-            trajectory_dispenser.GetOutputPort("point_in_plan"),
+            trajectory_dispenser.GetOutputPort("pose_in_plan"),
             gripper_puppet_input.get_input_port(),
         )
 
@@ -424,10 +450,10 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
 
         # Finalize the plant
         self.plant.Finalize()
-        puppet_pose_input = maker0.add_puppet_controller_for(puppet_signature0, self.builder)
+        puppet_pose_input, replacement_gripper_actuator_inputs = maker0.add_puppet_controller_for(puppet_signature0, self.builder)
 
         # Add controllers for gripper AND floor
-        self.add_gripper_controllers_and_connect(puppet_pose_input)
+        self.add_gripper_controllers_and_connect(puppet_pose_input, replacement_gripper_actuator_inputs)
         self.add_floor_controller_and_connect(floor_mass)
 
         # Create defaults for plant
@@ -772,10 +798,11 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
             np.array([z_floor]),
         )
 
-        n_gripper_positions = find_number_of_positions_in_welded_model(self.path_to_gripper)
+        n_gripper_positions0 = find_number_of_positions_in_welded_model(self.path_to_gripper)
+        n_gripper_positions1 = plant.num_positions(self.gripper_model_index)
         plant.SetDefaultPositions(
             self.gripper_model_index,
-            np.zeros((n_gripper_positions,)),
+            np.zeros((n_gripper_positions0+1,)),
         )
 
     @property
