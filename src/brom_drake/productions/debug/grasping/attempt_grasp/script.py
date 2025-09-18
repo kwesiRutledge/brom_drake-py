@@ -30,7 +30,8 @@ class Script:
             AttemptGraspPhase.kObjectSettlingOnFloor,
             outputs=[
                 FSMOutputDefinition("start_floor", False),  # Floor trigger
-                FSMOutputDefinition("start_gripper", False),  # Gripper trigger
+                FSMOutputDefinition("enable_gripper_approach", False),  # Make gripper move towards object
+                FSMOutputDefinition("close_gripper", False),  # Gripper trigger
             ]
         )
 
@@ -38,8 +39,9 @@ class Script:
         graph.add_node(
             AttemptGraspPhase.kGripperApproach,
             outputs=[
+                FSMOutputDefinition("enable_gripper_approach", True),  # Make gripper move towards object
                 FSMOutputDefinition("start_floor", False),  # Floor trigger
-                FSMOutputDefinition("start_gripper", False),  # Gripper trigger
+                FSMOutputDefinition("close_gripper", False),  # Gripper trigger
             ]
         )
 
@@ -47,7 +49,8 @@ class Script:
         graph.add_node(
             AttemptGraspPhase.kGripperClosing,
             outputs=[
-                FSMOutputDefinition("start_gripper", True),
+                FSMOutputDefinition("enable_gripper_approach", False),  # Stop gripper movement
+                FSMOutputDefinition("close_gripper", True),
             ]
         )
 

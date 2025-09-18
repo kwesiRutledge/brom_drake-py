@@ -35,7 +35,7 @@ class InitialCondition:
 
         # - If the configuration value exists, then verify that it has the correct size
         if len(self.configuration) != plant.num_positions(self.model_instance_index):
-            raise ValueError(f"Configuration size {len(self.configuration)} does not match plant's num_positions {plant.num_positions()}")
+            raise ValueError(f"Configuration size {len(self.configuration)} does not match plant's num_positions {plant.num_positions(self.model_instance_index)}")
 
         # Set initial configuration
         plant.SetDefaultPositions(self.model_instance_index, self.configuration)

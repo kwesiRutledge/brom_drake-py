@@ -387,8 +387,9 @@ class Puppetmaker:
             ConstantVectorSource(np.zeros((6,)))
         )
 
-        target_state_mux = builder.AddSystem(
-            Multiplexer(input_sizes=[6, 6]),
+        target_state_mux = builder.AddNamedSystem(
+            name=f"[{self.config.name}] Target State Mux for puppeteering \"{signature.name}\"",
+            system=Multiplexer(input_sizes=[6, 6]),
         )
 
         # Connect mux inputs
@@ -463,8 +464,9 @@ class Puppetmaker:
 
         # Create a massive multiplexer to combine all of the
         # states (2 each) of the models (there should be 6) in the puppet
-        state_mux = builder.AddSystem(
-            Multiplexer(num_scalar_inputs=2*len(signature.all_models)),
+        state_mux = builder.AddNamedSystem(
+            name=f"[{self.config.name}] State Mux for puppeteering \"{signature.name}\"",
+            system=Multiplexer(num_scalar_inputs=2*len(signature.all_models)),
         )
 
         # Create connections to the state of each model (in the puppet)
@@ -581,13 +583,20 @@ class Puppetmaker:
         n_default_actuators_in_puppet = plant.num_actuators(puppet_model_idx)
         
         # Create a Multiplexer system to combine all actuator inputs
-        passthrough_mux = builder.AddSystem(
-            Multiplexer(input_sizes=[n_default_actuators_in_puppet-1,1]),
+        passthrough_mux = builder.AddNamedSystem(
+            name=f"[{self.config.name}] Total Actuation Mux for puppeteering \"{signature.name}\" WITH default inputs needed",
+            system=Multiplexer(input_sizes=[n_default_actuators_in_puppet-1,1]),
         )
 
         # Create a passthrough system to pass the combined actuator inputs to the puppet
         default_actuator_inputs_passthrough = builder.AddSystem(
             PassThrough(value=np.zeros((n_default_actuators_in_puppet-1,))),
+        )
+
+        # Connect the default actuator inputs to the multiplexer
+        builder.Connect(
+            default_actuator_inputs_passthrough.get_output_port(0),
+            passthrough_mux.get_input_port(0),
         )
 
         # Connect the puppet actuator input to the multiplexer

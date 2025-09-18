@@ -9,38 +9,36 @@ from pydrake.all import (
 import typer
 
 # Internal Imports
-from brom_drake.all import drakeify_my_urdf, GripperType
+from brom_drake.all import drakeify_my_urdf, GripperType, MeshReplacementStrategy
 from brom_drake import robots
 from brom_drake.productions import AttemptGrasp, AttemptGraspConfiguration
-from brom_drake.productions.types.base.configuration import Configuration as BaseConfiguration
 
 def main():
     # Setup
+    robots_dir = impresources.files(robots)
 
     # Create erlenmeyer flask urdf
-    erlenmeyer_flask_file = str(
-        impresources.files(robots) / "models/erlenmeyer_flask/500ml.urdf"
-    )
+    wrench_file = robots_dir / "../../../examples/productions/helpful_for_debugging/grasping/attempt_grasp/wrench_with_nonconvex_geometries2/wrench.urdf"
 
     drakeified_flask_urdf = drakeify_my_urdf(
-        erlenmeyer_flask_file,
+        wrench_file,
         overwrite_old_logs=True,
         log_file_name="DemonstrateStaticGripTest_AddManipulandToPlant_flask.log",
+        # For you (yes, you!): Comment out the line below, to see what the default collision mesh looks like
+        collision_mesh_replacement_strategy=MeshReplacementStrategy.kWithConvexDecomposition,
     )
 
     # Create the transform representing the target (i.e. gripper) frame
     # relative to the object frame
     X_ObjectTarget = RigidTransform(
         p=np.array([-0.08, 0.05, 0.15]),
-        rpy=RollPitchYaw(0.0, np.pi/2.0, 0.0),
+        rpy=RollPitchYaw(0.0, np.pi, 0.0),
     )
 
     # Create the production
-    config = AttemptGraspConfiguration(
-        base=BaseConfiguration(
-            meshcat_port_number=7001, # Use None for CI
-        )
-    )
+    config = AttemptGraspConfiguration()
+    # config.meshcat_port_number = None # Use None for CI
+
     production = AttemptGrasp(
         path_to_object=str(drakeified_flask_urdf),
         gripper_choice=GripperType.Robotiq_2f_85,
@@ -57,7 +55,8 @@ def main():
     simulator.set_target_realtime_rate(1.0)
     simulator.set_publish_every_time_step(False)
     simulator.Initialize()
-    simulator.AdvanceTo(20.0)
+    simulator.AdvanceTo(60.0)
 
 if __name__ == "__main__":
-    main()
+    with ipdb.launch_ipdb_on_exception():
+        typer.run(main)
