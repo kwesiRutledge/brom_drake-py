@@ -92,7 +92,7 @@ def main(t_final: float = 15.0):
     plant, scene_graph = AddMultibodyPlantSceneGraph(builder, time_step=time_step)
 
     # Load the wrench model
-    wrench_file = impresources.files(robots) / "../../../examples/utils/puppetmaker/wrench1/wrench.urdf"
+    wrench_file = impresources.files(robots) / "models/wrenches/wrench1/wrench.urdf"
 
     drakeified_wrench_urdf = drakeify_my_urdf(
         wrench_file,
