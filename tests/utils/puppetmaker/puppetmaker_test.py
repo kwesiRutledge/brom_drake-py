@@ -1,3 +1,5 @@
+import importlib.resources as impresources
+import numpy as np
 from pydrake.all import (
     AddMultibodyPlant,
     DiagramBuilder,
@@ -9,6 +11,8 @@ from pydrake.all import (
 import unittest
 
 # Internal Imports
+from brom_drake import robots
+from brom_drake.all import drakeify_my_urdf
 from brom_drake.file_manipulation.urdf.shapes import SphereDefinition
 from brom_drake.file_manipulation.urdf import SimpleShapeURDFDefinition
 from brom_drake.utils import Puppetmaker
@@ -175,11 +179,114 @@ class PuppetmakerTest(unittest.TestCase):
         plant.Finalize()
 
         # Call the method
-        input_converter = puppetmaker0.add_puppet_controller_for(puppet_signature1, builder)
+        input_converter, _ = puppetmaker0.add_puppet_controller_for(puppet_signature1, builder)
 
         self.assertEqual(
             input_converter.get_output_port().size(),
             6,
+        )
+
+    def test_create_actuator_demux1(self):
+        """
+        Description
+        -----------
+        This test verifies that the create_actuator_demux()
+        method correctly DOES NOT create a passthrough system when the puppet has no
+        default actuators.
+        """
+        # Setup
+        builder = DiagramBuilder()
+
+        # Create plant with the single object
+        plant_sg_pair = AddMultibodyPlant(MultibodyPlantConfig(), builder)
+        plant: MultibodyPlant = plant_sg_pair[0]
+
+        # Create a simple shape URDF
+        sphere_geometry_defn = SphereDefinition(radius=0.1)
+        sphere_urdf_defn = SimpleShapeURDFDefinition(
+            name="test_sphere",
+            shape=sphere_geometry_defn,
+            mass=0.2,
+        )
+        sphere_urdf = sphere_urdf_defn.write_to_file()
+
+        # Add the test sphere to the plant
+        sphere_model_idcs = Parser(plant=plant).AddModels(sphere_urdf)
+
+        # Create the puppetmaker and add strings to the sphere
+        puppetmaker0 = Puppetmaker(plant)
+        puppet_signature1 = puppetmaker0.add_actuators_for(sphere_model_idcs[0])
+
+        # Finalize plant
+        plant.Finalize()
+
+        # Call the method
+        demux, potential_passthrough = puppetmaker0.create_actuator_demux(puppet_signature1, builder)
+
+        # Check the demux output size
+        for ii in range(6):
+            self.assertEqual(
+                demux.get_output_port(ii).size(),
+                1,
+            )
+
+        # Check that the passthrough system was not created
+        self.assertIsNone(potential_passthrough)
+
+    def test_create_actuator_demux2(self):
+        """
+        Description
+        -----------
+        This test verifies that the create_actuator_demux()
+        method correctly creates a passthrough system when the puppet has
+        default actuators. In this case, the puppet is a UR10e robot which has
+        7 revolute joints and thus 7 default actuators.
+        We expect to see a demux with 7 outputs and a passthrough system
+        with size 1.
+        """
+        # Setup
+        builder = DiagramBuilder()
+
+        urdf_file_path = str(
+            impresources.files(robots) / "models/ur/ur10e.urdf"
+        )
+
+        # Create plant with the single object
+        plant_sg_pair = AddMultibodyPlant(MultibodyPlantConfig(), builder)
+        plant: MultibodyPlant = plant_sg_pair[0]
+
+        # Convert the URDF
+        new_urdf_path = drakeify_my_urdf(
+            urdf_file_path,
+            overwrite_old_logs=True,
+            log_file_name="drakeify-my-urdf1.log",
+        )
+
+        # Add the UR10e model to the plant
+        ur10e_model_idcs = Parser(plant=plant).AddModels(str(new_urdf_path))
+
+        # Create the puppetmaker and add strings to the sphere
+        puppetmaker0 = Puppetmaker(plant)
+        puppet_signature1 = puppetmaker0.add_actuators_for(ur10e_model_idcs[0])
+
+        # Finalize plant
+        plant.Finalize()
+
+        # Call the method
+        demux, potential_passthrough = puppetmaker0.create_actuator_demux(puppet_signature1, builder)
+
+        # Check the demux output size
+        for ii in range(6):
+            self.assertEqual(
+                demux.get_output_port(ii).size(),
+                1,
+            )
+
+        # Check that the passthrough system was created
+        self.assertIsNotNone(potential_passthrough)
+        self.assertEqual(
+            potential_passthrough.get_output_port().size(),
+            6, # Number of dof in UR10es
         )
 
 if __name__ == '__main__':

@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 import numpy as np
 from pydrake.all import (
+    Adder,
     ConstantVectorSource,
     Demultiplexer,
     DiagramBuilder,
@@ -10,6 +11,7 @@ from pydrake.all import (
     MultibodyPlant,
     Multiplexer,
     Parser,
+    PassThrough,
     PidController,
     PrismaticJoint,
     RevoluteJoint,
@@ -303,7 +305,35 @@ class Puppetmaker:
         builder: DiagramBuilder,
         Kp: np.ndarray = None,
         Kd: np.ndarray = None,
-    ) -> RigidTransformToVectorSystem:
+    ) -> Tuple[RigidTransformToVectorSystem, PassThrough|None]:
+        """
+        Description
+        -----------
+        This method will create a simple PID controller to actuate the puppet
+        to a desired pose.
+
+        Arguments
+        ---------
+        signature : PuppetSignature
+            The signature of the puppet to be controlled.
+        builder : DiagramBuilder
+            The diagram builder to add the controller to.
+        Kp : np.ndarray, optional
+            The proportional gain for the PID controller. If not provided, a default value will be used.
+        Kd : np.ndarray, optional
+            The derivative gain for the PID controller. If not provided, a default value will be used.
+
+        Returns
+        -------
+        pose_to_vector_system : RigidTransformToVectorSystem
+            The system that converts the desired pose to a vector format.
+            This system is what provides the target to the PID controller.
+            You can think of this as the "reference" signal for the controller.
+        passthrough_system : PassThrough|None
+            A passthrough system that can be used to provide inputs to the
+            "puppet" if the Puppet contains actuated joints.
+            If the puppet does not contain any actuated joints, then this will be None.
+        """
         # Setup
         plant: MultibodyPlant = self.plant
         n_actuators_for_puppet = signature.n_joints
@@ -324,26 +354,7 @@ class Puppetmaker:
             Kd = np.sqrt(Kp)
 
         # Create a demultiplexer to combine all actuator inputs
-        actuator_demux = builder.AddSystem(
-            Demultiplexer(size=n_actuators_for_puppet),
-        )
-
-        # Connect demultiplexer to each of the actuators
-        for ii, model_ii in enumerate(signature.all_models):
-            if plant.num_actuators(model_ii) == 0:
-                continue
-
-            print(f"n_actuators for model {plant.GetModelInstanceName(model_ii)}: {plant.num_actuators(model_ii)}")
-
-            plant.get_joint_actuator()
-
-            for port_jj in plant.GetActuatorNames(model_ii):
-                print(f"Actuator on model {plant.GetModelInstanceName(model_ii)}: {port_jj}")
-                
-            builder.Connect(
-                actuator_demux.get_output_port(ii),
-                plant.get_actuation_input_port(model_ii),
-            )
+        actuator_demux , pass_through_system = self.create_actuator_demux(signature, builder)
 
         # Create the PID Controller
         controller: PidController = builder.AddSystem(
@@ -398,7 +409,7 @@ class Puppetmaker:
 
         self.connect_plant_to_controller(builder, controller, signature)
 
-        return pose_to_vector
+        return pose_to_vector, pass_through_system
 
     def config_from_initialization_params(
         self,
@@ -490,6 +501,112 @@ class Puppetmaker:
             state_mux.get_output_port(0),
             controller.get_input_port_estimated_state(),
         )
+
+    def create_actuator_demux(
+        self,
+        signature: PuppetSignature,
+        builder: DiagramBuilder,
+    ) -> Tuple[Demultiplexer, PassThrough|None]:
+        """
+        Description
+        -----------
+        This method creates a demultiplexer to split the actuator inputs
+        to the puppet's various models.
+        """
+        # Setup
+        plant: MultibodyPlant = self.plant
+        n_actuators_for_puppet = signature.n_joints
+
+        # Create a demultiplexer to combine all actuator inputs
+        actuator_demux = builder.AddSystem(
+            Demultiplexer(size=n_actuators_for_puppet),
+        )
+
+        # Connect demultiplexer to each of the actuators
+        pass_through_system = None # Default output, if the puppet has no actuators
+
+        for ii, model_ii in enumerate(signature.all_models):
+            if plant.num_actuators(model_ii) == 0:
+                continue
+
+            print(f"n_actuators for model {plant.GetModelInstanceName(model_ii)}: {plant.num_actuators(model_ii)}")
+
+            # for port_jj in plant.GetActuatorNames(model_ii):
+            #     print(f"Actuator on model {plant.GetModelInstanceName(model_ii)}: {port_jj}")
+                
+            if plant.num_actuators(model_ii) == 1:
+                # If there is only one actuator for this model,
+                # then it is the actuator that we created and 
+                # we can connect it directly to the demux input
+
+                builder.Connect(
+                    actuator_demux.get_output_port(ii),
+                    plant.get_actuation_input_port(model_ii),
+                )
+            else:
+                # If there is more than one actuator for this model,
+                # then we will need to create a passthrough system to
+                # pass the "default" actuator inputs for the puppet's (default) actuated joints
+                # and a separate passthrough system to pass the "puppet" actuator input for puppeteering.
+                
+                default_actuator_pass_through, puppeteer_pass_through = self.create_actuator_passthrough_for_puppet_with_actuated_joints(
+                    signature=signature,
+                    builder=builder,
+                )
+                pass_through_system = default_actuator_pass_through
+
+                # Connect the puppeteer passthrough to the demux
+                builder.Connect(
+                    actuator_demux.get_output_port(ii),
+                    puppeteer_pass_through.get_input_port(),
+                )                
+
+        return actuator_demux, pass_through_system
+    
+    def create_actuator_passthrough_for_puppet_with_actuated_joints(
+        self,
+        signature: PuppetSignature,
+        builder: DiagramBuilder,
+    ) -> Tuple[PassThrough, PassThrough]:
+        """
+        Description
+        -----------
+        This method creates two passthrough systems:
+        1. passes the "default" actuator inputs for the puppet's (default) actuated joints,
+        2. passes the "puppet" actuator input for puppeteering.
+        """
+        # Setup
+        plant: MultibodyPlant = self.plant
+        puppet_model_idx = signature.model_instance_index
+        n_default_actuators_in_puppet = plant.num_actuators(puppet_model_idx)
+        
+        # Create a Multiplexer system to combine all actuator inputs
+        passthrough_mux = builder.AddSystem(
+            Multiplexer(input_sizes=[n_default_actuators_in_puppet-1,1]),
+        )
+
+        # Create a passthrough system to pass the combined actuator inputs to the puppet
+        default_actuator_inputs_passthrough = builder.AddSystem(
+            PassThrough(value=np.zeros((n_default_actuators_in_puppet-1,))),
+        )
+
+        # Connect the puppet actuator input to the multiplexer
+        puppet_actuator_input = builder.AddSystem(
+            PassThrough(value=np.zeros((1,))),
+        )
+        builder.Connect(
+            puppet_actuator_input.get_output_port(0),
+            passthrough_mux.get_input_port(1),
+        )
+
+        # connect the multiplexer to the plant's input for the
+        # puppet's FULL set of actuators (both the ones we added and the ones that it already contains)
+        builder.Connect(
+            passthrough_mux.get_output_port(),
+            plant.get_actuation_input_port(puppet_model_idx),
+        )
+
+        return default_actuator_inputs_passthrough, puppet_actuator_input
 
     def create_ghost_bodies_for_actuators(
         self,
