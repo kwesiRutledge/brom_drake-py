@@ -3,6 +3,7 @@ from typing import Union, Tuple, List
 from pydrake.systems.framework import DiagramBuilder, LeafSystem, Diagram, Context
 
 # Internal Imports
+from brom_drake.PortWatcher.plotter import FigureNamingConvention
 from brom_drake.productions.roles import Role
 from brom_drake.productions.ids import ProductionID
 from brom_drake.utils import Performer
@@ -90,6 +91,7 @@ class BaseProduction:
     def build_production(
         self,
         with_watcher: bool = True,
+        figure_naming_convention: FigureNamingConvention = FigureNamingConvention.kFlat,
     ) -> Tuple[Diagram, Context]:
         """
         Description
@@ -104,7 +106,10 @@ class BaseProduction:
 
         # Build the diagram
         if with_watcher:
-            self.watcher, self.diagram, self.diagram_context = add_watcher_and_build(builder)
+            self.watcher, self.diagram, self.diagram_context = add_watcher_and_build(
+                builder,
+                figure_naming_convention=figure_naming_convention
+            )
         else:
             self.diagram = builder.Build()
             self.diagram_context = self.diagram.CreateDefaultContext()
@@ -122,6 +127,7 @@ class BaseProduction:
         self,
         main_cast_members: Tuple[Role, Performer] = [],
         with_watcher: bool = True,
+        figure_naming_convention: FigureNamingConvention = FigureNamingConvention.kFlat,
     ) -> Tuple[Diagram, Context]:
         # Setup
 
@@ -129,7 +135,10 @@ class BaseProduction:
         self.add_supporting_cast()
         self.add_main_cast(cast=main_cast_members)
 
-        return self.build_production(with_watcher=with_watcher)
+        return self.build_production(
+            with_watcher=with_watcher,
+            figure_naming_convention=figure_naming_convention,
+        )
 
     @property
     def id(self) -> ProductionID:

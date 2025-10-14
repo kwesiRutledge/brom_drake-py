@@ -38,8 +38,9 @@ from brom_drake.productions import ProductionID
 from brom_drake.productions.roles.role import Role
 from brom_drake.utils import (
     Performer, collision_checking, NetworkXFSM, FlexiblePortSwitch, FSMTransitionCondition,
-    FSMOutputDefinition, FSMTransitionConditionType, Puppetmaker, PuppetmakerConfiguration, PuppetSignature
+    FSMOutputDefinition, FSMTransitionConditionType, Puppetmaker, PuppetmakerConfiguration, PuppetSignature,
 )
+from brom_drake.utils.initial_condition_manager import InitialConditionManager
 from brom_drake.utils.leaf_systems import RigidTransformToVectorSystem
 from brom_drake.utils.model_instances import (
     get_name_of_first_body_in_urdf,
@@ -108,7 +109,7 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
         self.config = config
         
         # Add Name to plantPlant and Scene Graph for easy simulation
-        self.plant.set_name("DemonstrateStaticGrasp_plant")
+        self.plant.set_name("AttemptDynamicGrasp_plant")
 
         # Create show me system for holding object in place
         self.show_me_system = None
@@ -119,19 +120,6 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
 
         # Create an executive/brain
         self.executive = self.create_executive_system() # The executive system that coordinates ALL the systems
-
-    def add_cast_and_build(
-        self,
-        cast: Tuple[Role, Performer] = [],
-    ) -> Tuple[Diagram, Context]:
-        super().add_cast_and_build(cast, with_watcher=True)
-
-        # Assign the diagram context to the internal show_me_system
-        # self.show_me_system.mutable_plant_context = self.plant.GetMyMutableContextFromRoot(
-        #     self.diagram_context,
-        # )
-
-        return self.diagram, self.diagram_context
     
     def add_floor_controller_and_connect(self, floor_mass: float):
         # Setup
@@ -251,7 +239,8 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
         gripper_poses = self.compute_gripper_poses_for_attempted_grasp()
 
         # Create a controller to "puppet" the gripper's base
-        self.add_gripper_puppet_controller_and_connect(gripper_puppet_input, gripper_poses)
+        trajectory_dispenser = self.add_gripper_puppet_controller_and_connect(gripper_puppet_input, gripper_poses)
+        self.connect_executive_to_gripper_puppet_controller(trajectory_dispenser)
 
         # Connect controller for all of the joints
         self.add_gripper_joint_controllers_and_connect(gripper_joint_input)
@@ -278,7 +267,7 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
 
         # Connect executive to the plan dispatcher
         builder.Connect(
-            self.executive.GetOutputPort("start_gripper"),
+            self.executive.GetOutputPort("close_gripper"),
             gripper_trajectory_dispatcher.GetInputPort("plan_ready"),  # Trigger input
         )
 
@@ -337,8 +326,9 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
             D[ii, ii] = 1.0
             D[ii + n_y//2, ii + n_x//2] = 1.0
 
-        state_compressor = builder.AddSystem(
-            AffineSystem(
+        state_compressor = builder.AddNamedSystem(
+            name=f"[AttemptGrasp] Plant State To Gripper State Converter",
+            system=AffineSystem(
                 D=D,
             )
         )
@@ -387,7 +377,7 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
             trajectory_dispenser.GetInputPort("plan"),
         )
 
-        return trajectory_source
+        return trajectory_dispenser
 
     def add_initial_conditions_to_plant(self):
         # Setup
@@ -450,7 +440,11 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
 
         # Finalize the plant
         self.plant.Finalize()
-        puppet_pose_input, replacement_gripper_actuator_inputs = maker0.add_puppet_controller_for(puppet_signature0, self.builder)
+        puppet_pose_input, replacement_gripper_actuator_inputs = maker0.add_puppet_controller_for(
+            puppet_signature0,
+            self.builder,
+            Kp=np.array([1e3, 1e3, 1e3, 1e2, 1e2, 1e2])
+        )
 
         # Add controllers for gripper AND floor
         self.add_gripper_controllers_and_connect(puppet_pose_input, replacement_gripper_actuator_inputs)
@@ -459,6 +453,17 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
         # Create defaults for plant
         self.set_plant_defaults()
         self.add_initial_conditions_to_plant()    
+
+    def connect_executive_to_gripper_puppet_controller(self, trajectory_dispenser):
+        # Setup
+        builder: DiagramBuilder = self.builder
+        executive: NetworkXFSM = self.executive
+
+        # Connect the executive to the trajectory dispenser
+        builder.Connect(
+            executive.GetOutputPort("enable_gripper_approach"),
+            trajectory_dispenser.GetInputPort("plan_ready"),  # Trigger input
+        )
 
     def compute_gripper_poses_for_attempted_grasp(self) -> List[RigidTransform]:
         # Setup
@@ -788,21 +793,23 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
         """
         # Setup
         plant: MultibodyPlant = self.plant
+        ic_manager: InitialConditionManager = self.initial_condition_manager
 
         # Find the z position of the floor
         z_floor = self.find_floor_z_via_line_search()
 
         # Set the default state of the floor to be at the desired height
-        plant.SetDefaultPositions(
-            self.floor_model_index,
-            np.array([z_floor]),
+        ic_manager.add_initial_configuration(
+            model_instance_index=self.floor_model_index,
+            configuration=np.array([z_floor]),
         )
 
+        # Set the initial configuration of the gripper
         n_gripper_positions0 = find_number_of_positions_in_welded_model(self.path_to_gripper)
         n_gripper_positions1 = plant.num_positions(self.gripper_model_index)
-        plant.SetDefaultPositions(
-            self.gripper_model_index,
-            np.zeros((n_gripper_positions0+1,)),
+        ic_manager.add_initial_configuration(
+            model_instance_index=self.gripper_model_index,
+            configuration=np.zeros((n_gripper_positions0+1,)),
         )
 
     @property

@@ -20,6 +20,8 @@ from pydrake.all import (
 )
 from typing import List, Tuple
 
+from brom_drake.utils.model_instances import get_all_bodies_in
+
 # Internal Imports
 from .configuration import Configuration as PuppetmakerConfiguration
 from .puppet_signature import PuppetSignature, PuppeteerJointSignature, AllJointSignatures
@@ -299,6 +301,58 @@ class Puppetmaker:
             ),
         )
 
+    def add_feedforward_sum_system_for(
+        self,
+        signature: PuppetSignature,
+        builder: DiagramBuilder,
+    ) -> Tuple[Adder, ConstantVectorSource]:
+        """
+        Description
+        -----------
+        This method will create a simple Adder system to add feedforward
+        inputs to the PID controller output.
+        """
+        # Setup
+        plant: MultibodyPlant = self.plant
+        n_actuators_for_puppet = signature.n_joints
+
+        # Create the adder system
+        feedforward_adder = builder.AddNamedSystem(
+            name=f"[{self.config.name}] Feedforward Adder for puppeteering \"{signature.name}\"",
+            system=Adder(
+                num_inputs=2,
+                size=n_actuators_for_puppet,
+            ),
+        )
+
+        # Create a constant vector source to provide feedforward gravity compensation
+        # for the linear actuators
+        gravity_field = plant.gravity_field()
+        gravity_vector = gravity_field.gravity_vector()
+
+        # Calculate mass of the puppet
+        bodies_in_puppet = get_all_bodies_in(plant, signature.model_instance_index)
+        total_mass = np.sum(
+            [body_ii.default_mass() for body_ii in bodies_in_puppet]
+        )
+
+        gravity_compensation = np.zeros((n_actuators_for_puppet,))
+        gravity_compensation[3:] = -total_mass * 9.81 * gravity_vector
+
+        # Create the constant vector source
+        gravity_compensation_source = builder.AddNamedSystem(
+            name=f"[{self.config.name}] Gravity Compensation for puppeteering \"{signature.name}\"",
+            system=ConstantVectorSource(gravity_compensation),
+        )
+
+        # Connect the gravity compensation to the adder
+        builder.Connect(
+            gravity_compensation_source.get_output_port(0),
+            feedforward_adder.get_input_port(0),
+        )
+
+        return feedforward_adder, gravity_compensation_source
+
     def add_puppet_controller_for(
         self,
         signature: PuppetSignature,
@@ -348,26 +402,39 @@ class Puppetmaker:
             m, gravity = 0.0, 9.81
             for body_ii in bodies_in_puppet:
                 m += plant.get_body(body_ii).default_mass()
-            Kp = np.array([10.0*m*gravity]*n_actuators_for_puppet)
+            Kp = np.zeros((n_actuators_for_puppet,))
+            Kp[:3] = np.array([10.0*m*gravity]*3)
+            Kp[3:] = np.array([0.1*m*gravity]*3)
 
         if Kd is None:
             Kd = np.sqrt(Kp)
 
         # Create a demultiplexer to combine all actuator inputs
-        actuator_demux , pass_through_system = self.create_actuator_demux(signature, builder)
+        actuator_demux, pass_through_system = self.create_actuator_demux(signature, builder)
 
         # Create the PID Controller
         controller: PidController = builder.AddSystem(
             PidController(
                 kp=Kp,
-                ki=np.array([0.0]*n_actuators_for_puppet),
+                ki=np.zeros(Kp.shape),
                 kd=Kd,
             )
         )
 
-        # Connect the PID Controller to the demultiplexer
+        # Create the feedforward adder system
+        feedforward_adder, _ = self.add_feedforward_sum_system_for(signature, builder)
+
+        # Connect the feedforward adder to the controller
+        self.combine_feedforward_and_controller_for(
+            builder=builder,
+            feedforward_adder=feedforward_adder,
+            controller=controller,
+        )
+
+        # Connect the adder (which combines the PID Controller and the feedforward term)
+        # to the demultiplexer
         builder.Connect(
-            controller.get_output_port(0),
+            feedforward_adder.get_output_port(0),
             actuator_demux.get_input_port(0),
         )
 
@@ -411,6 +478,28 @@ class Puppetmaker:
         self.connect_plant_to_controller(builder, controller, signature)
 
         return pose_to_vector, pass_through_system
+
+    def combine_feedforward_and_controller_for(
+        self,
+        builder: DiagramBuilder,
+        feedforward_adder: Adder,
+        controller: PidController,
+    ) -> Tuple[Adder, ConstantVectorSource]:
+        """
+        Description
+        -----------
+        This method will connect the output of the PID controller to one input
+        of the feedforward adder.
+        """
+        # Setup
+
+        # Connect the output of the controller to one input of the adder
+        builder.Connect(
+            controller.get_output_port(0),
+            feedforward_adder.get_input_port(1),
+        )
+
+        return feedforward_adder, None
 
     def config_from_initialization_params(
         self,
@@ -472,9 +561,10 @@ class Puppetmaker:
         # Create connections to the state of each model (in the puppet)
         # to new demultiplexers
         all_state_demuxes = []
-        for model_ii in signature.all_models:
+        for ii, model_ii in enumerate(signature.all_models):
             # Create demultiplexer for this model
             n_state_ii = plant.num_multibody_states(model_ii)
+            print(f"Model #{ii}'s states: {plant.GetStateNames(model_ii)}")
             state_demux_ii: Demultiplexer = builder.AddSystem(
                 Demultiplexer(size=n_state_ii),
             )
@@ -489,12 +579,27 @@ class Puppetmaker:
 
         # Connect all demuxes to the state mux
         for ii, demux_ii in enumerate(all_state_demuxes):
-            builder.Connect(
-                demux_ii.get_output_port(0),
-                state_mux.get_input_port(ii),
+            model_ii = signature.all_models[ii]
+
+            # Find position component of puppet joint state and
+            # send it to the state_mux
+            position_ii_state_index = self.find_index_of_position_state_in(
+                model_instance_index=model_ii,
+                signature=signature,
             )
             builder.Connect(
-                demux_ii.get_output_port(1),
+                demux_ii.get_output_port(position_ii_state_index),
+                state_mux.get_input_port(ii),
+            )
+
+            # Find velocity component of puppet joint state and
+            # send it to the state_mux
+            velocity_ii_state_index = self.find_index_of_velocity_state_in(
+                model_instance_index=model_ii,
+                signature=signature,
+            )
+            builder.Connect(
+                demux_ii.get_output_port(velocity_ii_state_index),
                 state_mux.get_input_port(len(all_state_demuxes) + ii),
             )
 
@@ -723,6 +828,71 @@ class Puppetmaker:
             first_frame_on_first_body = first_body.body_frame()
             return first_frame_on_first_body
 
+    def find_index_of_position_state_in(
+        self,
+        model_instance_index: ModelInstanceIndex,
+        signature: PuppetSignature,
+    ) -> int|None:
+        """
+        Description
+        -----------
+        This method finds the names of the "position" component for the
+        state of the joint connected to model_instance_index.
+        """
+        # Setup
+        plant: MultibodyPlant = self.plant
+        target_model: ModelInstanceIndex = signature.model_instance_index
+
+        # For each state state name,
+        for ii, state_name_ii in enumerate(plant.GetStateNames(model_instance_index)):
+            print("state name: ", state_name_ii)
+            # Check to see if name is either:
+            # - A Translational joint state name (for the target model)
+            for translation_joint_name_jj in self.translation_joint_names(target_model, remove_puppeteer_prefix=True):
+                print("- translation_joint_name: ", translation_joint_name_jj)
+                if (translation_joint_name_jj in state_name_ii) and ("_x" in state_name_ii):
+                    return ii
+                
+            # - A Rotational Joint state name
+            for rotational_joint_name_jj in self.rotation_joint_names(target_model, remove_puppeteer_prefix=True):
+                print("- rotational_joint_name: ", rotational_joint_name_jj)
+                if (rotational_joint_name_jj in state_name_ii) and ("_q" in state_name_ii):
+                    return ii
+                
+        # If none of the states contained a joint name, then return None
+        return None
+
+
+    def find_index_of_velocity_state_in(
+        self,
+        model_instance_index: ModelInstanceIndex,
+        signature: PuppetSignature,
+    ) -> int|None:
+        """
+        Description
+        -----------
+        This method finds the names of the "velocity" component for the
+        state of the joint connected to model_instance_index.
+        """
+        # Setup
+        plant: MultibodyPlant = self.plant
+        target_model: ModelInstanceIndex = signature.model_instance_index
+
+        # For each state state name,
+        for ii, state_name_ii in enumerate(plant.GetStateNames(model_instance_index)):
+            # Check to see if name is either:
+            # - A Translational joint state name
+            for translation_joint_name_jj in self.translation_joint_names(target_model, remove_puppeteer_prefix=True):
+                if (translation_joint_name_jj in state_name_ii) and ("_v" in state_name_ii):
+                    return ii
+                
+            # - A Rotational Joint state name
+            for rotational_joint_name_jj in self.rotation_joint_names(target_model, remove_puppeteer_prefix=True):
+                if (rotational_joint_name_jj in state_name_ii) and ("_w" in state_name_ii):
+                    return ii
+                
+        # If none of the states contained a joint name, then return None
+        return None
 
     @property
     def rotation_axis_names(self) -> List[str]:
@@ -731,6 +901,7 @@ class Puppetmaker:
     def rotation_joint_names(
         self,
         target_model: ModelInstanceIndex,
+        remove_puppeteer_prefix: bool = False,
     ) -> List[str]:
         """
         Description
@@ -743,9 +914,10 @@ class Puppetmaker:
 
         # Find name of plant
         target_model_name = plant.GetModelInstanceName(target_model)
+        puppeteer_prefix = "" if remove_puppeteer_prefix else f"[{config.name}]"
 
         return [
-            f"[{config.name}]{target_model_name}_rotation_joint_{axis_name}"
+            f"{puppeteer_prefix}{target_model_name}_rotation_joint_{axis_name}"
             for axis_name in self.rotation_axis_names
         ]
 
@@ -756,6 +928,7 @@ class Puppetmaker:
     def translation_joint_names(
         self,
         target_model: ModelInstanceIndex,
+        remove_puppeteer_prefix: bool = False,
     ) -> List[str]:
         """
         Description
@@ -768,8 +941,9 @@ class Puppetmaker:
 
         # Find name of plant
         target_model_name = plant.GetModelInstanceName(target_model)
+        puppeteer_prefix = "" if remove_puppeteer_prefix else f"[{config.name}]"
 
         return [
-            f"[{config.name}]{target_model_name}_translation_joint_{axis_name}"
+            f"{puppeteer_prefix}{target_model_name}_translation_joint_{axis_name}"
             for axis_name in self.translation_axis_names
         ]
