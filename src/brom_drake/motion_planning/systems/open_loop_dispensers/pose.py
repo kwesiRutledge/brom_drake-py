@@ -93,7 +93,11 @@ class OpenLoopPosePlanDispenser(LeafSystem):
         ]))
 
         # Output The Current Point
-        if t > self.t_final:
+        if t < 0.0:
+            output_point.SetFrom(
+                AbstractValue.Make(self.planned_trajectory.GetPose(0.0))
+            )
+        elif t > self.t_final:
             output_point.SetFrom(
                 AbstractValue.Make(self.planned_trajectory.GetPose(self.t_final))
             )
