@@ -24,6 +24,7 @@ from pydrake.systems.framework import DiagramBuilder, Diagram, Context
 from pydrake.systems.primitives import ConstantVectorSource, VectorLogSink
 
 # Internal Imports
+from brom_drake.PortWatcher.port_watcher_options import FigureNamingConvention
 from brom_drake.control.grippers import GripperController, GripperTarget
 from brom_drake.file_manipulation.urdf.drakeify import drakeify_my_urdf
 from brom_drake.file_manipulation.urdf.shapes.box import BoxDefinition
@@ -120,13 +121,9 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
     def add_cast_and_build(
         self,
         cast: Tuple[Role, Performer] = [],
+        figure_naming_convention: FigureNamingConvention = FigureNamingConvention.kHierarchical,
     ) -> Tuple[Diagram, Context]:
-        super().add_cast_and_build(cast, with_watcher=True)
-
-        # Assign the diagram context to the internal show_me_system
-        # self.show_me_system.mutable_plant_context = self.plant.GetMyMutableContextFromRoot(
-        #     self.diagram_context,
-        # )
+        super().add_cast_and_build(cast, with_watcher=True, figure_naming_convention=figure_naming_convention)
 
         return self.diagram, self.diagram_context
 
