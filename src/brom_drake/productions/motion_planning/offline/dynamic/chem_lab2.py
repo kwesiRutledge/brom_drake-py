@@ -140,6 +140,13 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         self.add_start_and_goal_sources_to_builder()
         # self.add_dummy_gripper_components()
 
+        # Add initial conditions for the arm
+        self.initial_condition_manager.add_initial_configuration(
+            model_instance_index=self.arm,
+            configuration=self.start_configuration,
+        )
+        # The initial condition will be set for the plant when we build the production.
+
         print("Completed adding supporting cast members.")
 
     def add_beaker(self):
@@ -683,6 +690,7 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         # Use station's plant to solve the forward kinematics problem
         shadow_plant = shadow_station.plant
         
+        # Set the arm's joint positions
         temp_context = shadow_plant.CreateDefaultContext()
         shadow_plant.SetPositions(
             temp_context,

@@ -3,10 +3,12 @@ from typing import Union, Tuple, List
 from pydrake.systems.framework import DiagramBuilder, LeafSystem, Diagram, Context
 
 # Internal Imports
+from brom_drake.PortWatcher.plotter import FigureNamingConvention
 from brom_drake.productions.roles import Role
 from brom_drake.productions.ids import ProductionID
 from brom_drake.utils import Performer
 from brom_drake.utils.watcher import add_watcher_and_build
+from brom_drake.utils.initial_condition_manager import InitialConditionManager
 
 class BaseProduction:
     """
@@ -25,6 +27,12 @@ class BaseProduction:
 
         # Create an extra place to save DiagramWatcher objects
         self.watcher = None
+
+        # Create a place to save the plant and scene_graph, if needed
+        self.plant, self.scene_graph = None, None
+
+        # Create an initial condition manager
+        self.initial_condition_manager = InitialConditionManager()
 
     def add_supporting_cast(self):
         """
@@ -83,6 +91,7 @@ class BaseProduction:
     def build_production(
         self,
         with_watcher: bool = True,
+        figure_naming_convention: FigureNamingConvention = FigureNamingConvention.kFlat,
     ) -> Tuple[Diagram, Context]:
         """
         Description
@@ -97,10 +106,20 @@ class BaseProduction:
 
         # Build the diagram
         if with_watcher:
-            self.watcher, self.diagram, self.diagram_context = add_watcher_and_build(builder)
+            self.watcher, self.diagram, self.diagram_context = add_watcher_and_build(
+                builder,
+                figure_naming_convention=figure_naming_convention
+            )
         else:
             self.diagram = builder.Build()
             self.diagram_context = self.diagram.CreateDefaultContext()
+
+        # Set all initial conditions, if any
+        if self.plant is not None:
+            self.initial_condition_manager.set_all_initial_conditions(
+                plant=self.plant,
+                diagram_context=self.diagram_context,
+            )
 
         return self.diagram, self.diagram_context
 
@@ -108,6 +127,7 @@ class BaseProduction:
         self,
         main_cast_members: Tuple[Role, Performer] = [],
         with_watcher: bool = True,
+        figure_naming_convention: FigureNamingConvention = FigureNamingConvention.kFlat,
     ) -> Tuple[Diagram, Context]:
         # Setup
 
@@ -115,7 +135,10 @@ class BaseProduction:
         self.add_supporting_cast()
         self.add_main_cast(cast=main_cast_members)
 
-        return self.build_production(with_watcher=with_watcher)
+        return self.build_production(
+            with_watcher=with_watcher,
+            figure_naming_convention=figure_naming_convention,
+        )
 
     @property
     def id(self) -> ProductionID:

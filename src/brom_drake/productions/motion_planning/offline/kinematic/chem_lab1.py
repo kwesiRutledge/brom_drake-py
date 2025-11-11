@@ -148,6 +148,13 @@ class ChemLab1(KinematicMotionPlanningProduction):
         self.add_start_and_goal_sources_to_builder()
         # self.add_dummy_gripper_components()
 
+        # Add initial conditions for the arm
+        self.initial_condition_manager.add_initial_configuration(
+            model_instance_index=self.arm,
+            configuration=self.start_configuration,
+        )
+        # The initial condition will be set for the plant when we build the production.
+
         print("Completed adding supporting cast members.")
 
     def add_beaker(self):
@@ -450,22 +457,6 @@ class ChemLab1(KinematicMotionPlanningProduction):
 
         self.performers[0].set_internal_root_context(
             diagram_context
-        )
-
-        # # Set the positions of the gripper
-        # gripper = self.station.gripper
-        # n_gripper_positions = self.station.plant.num_positions(gripper)
-        # self.station.plant.SetPositions(
-        #     self.station.plant.GetMyMutableContextFromRoot(diagram_context),
-        #     gripper,
-        #     np.zeros((n_gripper_positions,)),
-        # )
-
-        # Set the initial positions of the arm
-        self.station.plant.SetPositions(
-            self.station.plant.GetMyMutableContextFromRoot(diagram_context),
-            self.arm,
-            self.start_configuration,
         )
 
         return diagram, diagram_context

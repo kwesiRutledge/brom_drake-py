@@ -95,8 +95,12 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
 
         self.add_start_and_goal_sources_to_builder()
 
-        # Connect motion planning components to station
-        # self.connect_motion_planning_components()
+        # Add initial conditions for the arm
+        self.initial_condition_manager.add_initial_configuration(
+            model_instance_index=self.arm,
+            configuration=self.start_configuration,
+        )
+        # The initial condition will be set for the plant when we build the production.
 
         # Print message to user
         print("Added all secondary cast members to the builder.")
@@ -301,11 +305,11 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
         )
 
         # Set the initial positions of the arm
-        self.station.plant.SetPositions(
-            self.station.plant.GetMyMutableContextFromRoot(diagram_context),
-            self.arm,
-            self.start_configuration,
-        )
+        # self.station.plant.SetPositions(
+        #     self.station.plant.GetMyMutableContextFromRoot(diagram_context),
+        #     self.arm,
+        #     self.start_configuration,
+        # )
 
         return diagram, diagram_context
 

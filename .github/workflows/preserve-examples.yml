@@ -22,11 +22,12 @@ jobs:
           'examples/productions/helpful_for_debugging/grasping/demonstrate_static_grasp/suggested_use1/demonstrate.py',
           'examples/productions/helpful_for_debugging/grasping/demonstrate_static_grasp/changing_color1/color.py',
           'examples/productions/helpful_for_debugging/grasping/demonstrate_static_grasp/defining_grasp_wrt_finger1/defining.py',
-          'examples/productions/helpful_for_debugging/grasping/attempt_grasp/suggested_use1/attempt.py',
+          'examples/productions/helpful_for_debugging/grasping/attempt_grasp/with_static_wrist/suggested_use1/attempt.py',
           'examples/conversion/nonconvex_mesh1/nonconvex_mesh.py',
-          'examples/productions/helpful_for_debugging/grasping/attempt_grasp/with_nonconvex_geometries1/attempt.py',
+          'examples/productions/helpful_for_debugging/grasping/attempt_grasp/with_static_wrist/with_nonconvex_geometries1/attempt.py',
           'examples/utils/puppetmaker/tutorial1/tutorial1.py',
-          'examples/utils/puppetmaker/advanced_usage1_change_visuals/tutorial_with_changed_visuals.py'
+          'examples/utils/puppetmaker/advanced_usage1_change_visuals/tutorial_with_changed_visuals.py',
+          'examples/utils/puppetmaker/wrench1/puppet_wrench.py'
         ]
     steps:
       - name: Checkout

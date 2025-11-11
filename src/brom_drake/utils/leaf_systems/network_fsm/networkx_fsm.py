@@ -77,7 +77,7 @@ class NetworkXFSM(LeafSystem):
         conditions established in the FSM graph.
         """
         # Setup
-        s_t = context.get_discrete_state_vector().GetAtIndex(0)
+        s_t = context.get_discrete_state(self.current_state_index).GetAtIndex(0)
         input_port_dict = self.input_port_dict
         edge_definitions = self.edge_definitions
 
@@ -133,8 +133,14 @@ class NetworkXFSM(LeafSystem):
             # If exactly one condition is satisfied, then transition to the next state
             next_state = s_t_edge_definitions[edge_conditions_satisfied.index(True)].dst
 
-            # And update transition time
+            # And update the following variables:
+            # - transition time
+            # - previous state
             self.t_start_of_current_state = context.get_time()
+            context.SetDiscreteState(
+                group_index=self.previous_state_index,
+                xd=np.array([s_t])
+            )
         else:
             # If more than one condition is satisfied, then raise an error
             raise ValueError(
@@ -149,7 +155,8 @@ class NetworkXFSM(LeafSystem):
         # Update the current state
         # self.current_state = next_state
         context.SetDiscreteState(
-            np.array([next_state])
+            group_index=self.current_state_index,
+            xd=np.array([next_state])
         )
 
     def CalcFSMState(self, context: Context, fsm_state: BasicVector):
@@ -163,7 +170,8 @@ class NetworkXFSM(LeafSystem):
         # Call advance function
         self.advance_state_if_necessary(context)
 
-        s_t = context.get_discrete_state_vector()
+        # Get the current state
+        s_t = context.get_discrete_state(self.current_state_index)
 
         # Set the FSM state
         fsm_state.SetFrom(s_t)
@@ -283,7 +291,8 @@ class NetworkXFSM(LeafSystem):
         if create_abstract_port:
             def dummy_output_function_ii(context: Context, output: AbstractValue):
                 self.advance_state_if_necessary(context)
-                s_t = context.get_discrete_state_vector().GetAtIndex(0)
+                # Get Current State
+                s_t = context.get_discrete_state(self.current_state_index).GetAtIndex(0)
 
                 # Check to see if the state value has changed
                 if s_t in update_map_ii:
@@ -297,7 +306,8 @@ class NetworkXFSM(LeafSystem):
         else:
             def dummy_output_function_ii(context: Context, output: BasicVector):
                 self.advance_state_if_necessary(context)
-                s_t = context.get_discrete_state_vector().GetAtIndex(0)
+                # Get Current State
+                s_t = context.get_discrete_state(self.current_state_index).GetAtIndex(0)
 
                 # Check to see if the state value has changed
                 if s_t in update_map_ii:
@@ -557,8 +567,6 @@ class NetworkXFSM(LeafSystem):
             # Create the last output value map
             self.last_output_value[port_name_ii] = output_value_ii
 
-        
-
     def initialize_fsm_state(self):
         """
         Description
@@ -580,13 +588,21 @@ class NetworkXFSM(LeafSystem):
 
         # Declare Discrete State for the FSM State
         self.current_state_index = self.DeclareDiscreteState(1)
+        self.previous_state_index = self.DeclareDiscreteState(1)
+
         def discrete_state_init(context: Context, discrete_values: DiscreteValues):
             """
-            Initialization function for the current state of the fsm
+            Initialization function for:
+            - the current state of the fsm
+            - the previous state of the fsm
             """
             discrete_values.SetFrom(
-                DiscreteValues(BasicVector(np.array([initial_node])))
+                DiscreteValues([
+                    BasicVector(np.array([initial_node]))
+                    for _ in range(2)
+                ])
             )
+
         self.DeclareInitializationDiscreteUpdateEvent(discrete_state_init)
 
         # Create the output port for the FSM state

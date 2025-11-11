@@ -5,6 +5,7 @@ from brom_drake.utils.leaf_systems.network_fsm.fsm_transition_condition import (
     FSMTransitionConditionType,
 )
 from brom_drake.utils.leaf_systems.network_fsm.networkx_fsm import NetworkXFSM
+from brom_drake.utils.leaf_systems.network_fsm.config import NetworkXFSMConfig
 
 __all__ = [
     "FSMEdgeDefinition",
@@ -12,4 +13,5 @@ __all__ = [
     "FSMTransitionCondition",
     "FSMTransitionConditionType",
     "NetworkXFSM",
+    "NetworkXFSMConfig",
 ]

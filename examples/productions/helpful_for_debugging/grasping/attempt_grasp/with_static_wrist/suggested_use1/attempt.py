@@ -1,0 +1,65 @@
+from importlib import resources as impresources
+import ipdb
+import numpy as np
+from pydrake.all import (
+    RigidTransform,
+    RollPitchYaw,
+    Simulator,
+)
+import typer
+
+# Internal Imports
+from brom_drake.all import drakeify_my_urdf, GripperType, FigureNamingConvention
+from brom_drake import robots
+from brom_drake.productions import AttemptGraspWithStaticWrist, AttemptGraspWithStaticWristConfiguration
+from brom_drake.productions.types.base.configuration import Configuration as BaseConfiguration
+
+def main():
+    # Setup
+
+    # Create erlenmeyer flask urdf
+    erlenmeyer_flask_file = str(
+        impresources.files(robots) / "models/erlenmeyer_flask/500ml.urdf"
+    )
+
+    drakeified_flask_urdf = drakeify_my_urdf(
+        erlenmeyer_flask_file,
+        overwrite_old_logs=True,
+        log_file_name="DemonstrateStaticGripTest_AddManipulandToPlant_flask.log",
+    )
+
+    # Create the transform representing the target (i.e. gripper) frame
+    # relative to the object frame
+    X_ObjectTarget = RigidTransform(
+        p=np.array([-0.08, 0.05, 0.15]),
+        rpy=RollPitchYaw(0.0, np.pi/2.0, 0.0),
+    )
+
+    # Create the production
+    config = AttemptGraspWithStaticWristConfiguration(
+        base=BaseConfiguration(
+            meshcat_port_number=7001, # Use None for CI
+        )
+    )
+    production = AttemptGraspWithStaticWrist(
+        path_to_object=str(drakeified_flask_urdf),
+        gripper_choice=GripperType.Robotiq_2f_85,
+        grasp_joint_positions=np.array([0.7]),
+        X_ObjectTarget=X_ObjectTarget,
+        config=config
+    )
+
+    # Build with watcher
+    diagram, diagram_context = production.add_cast_and_build(
+        figure_naming_convention=FigureNamingConvention.kHierarchical
+    )
+
+    # Set up simulation
+    simulator = Simulator(diagram, diagram_context)
+    simulator.set_target_realtime_rate(1.0)
+    simulator.set_publish_every_time_step(False)
+    simulator.Initialize()
+    simulator.AdvanceTo(20.0)
+
+if __name__ == "__main__":
+    main()

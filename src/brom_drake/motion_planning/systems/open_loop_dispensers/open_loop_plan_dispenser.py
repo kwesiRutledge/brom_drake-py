@@ -115,7 +115,11 @@ class OpenLoopPlanDispenser(LeafSystem):
         ]))
 
         # Output The Current Point
-        if t > self.t_final:
+        if t < 0.0:
+            output_point.SetFromVector(
+                self.planned_trajectory.value(0.0).flatten()
+            )
+        elif t > self.t_final:
             output_point.SetFromVector(
                 self.planned_trajectory.value(self.t_final).flatten()
             )

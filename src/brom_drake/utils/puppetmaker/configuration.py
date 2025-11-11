@@ -11,4 +11,5 @@ class Configuration:
     frame_on_child: Frame = None
     sphere_radius: float = 0.1
     sphere_color: np.ndarray = None
+    sphere_mass: float = 1e-3
     create_actuators_on_init: bool = True

@@ -76,7 +76,6 @@ Some other work in the open-source Drake community:
 ## To-Dos
 
 - [ ] Figure out how to tell if two systems are connected in Drake.
-- [ ] Add support for abstract output ports?
 - [ ] Add more readme explanations of what is going on under the hood.
 - [ ] Create a method that makes each material in a URDF file have unique names if they have specific values
 - [ ] Allow for the user to give "Drake-unfriendly" URDFs to `ShowMeThisModel` production

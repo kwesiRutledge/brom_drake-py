@@ -16,7 +16,7 @@ class Script:
     This class defines the "script" or the sequence of events that is meant to happen in the
     AttemptGrasp production.
     """
-    settling_time_on_floor: float = 2.0
+    settling_time_on_floor: float = 10.0
     gripper_approach_time: float = 5.0
     grasp_closing_time: float = 2.0
     post_grasp_settling_time: float = 0.1
@@ -30,7 +30,8 @@ class Script:
             AttemptGraspPhase.kObjectSettlingOnFloor,
             outputs=[
                 FSMOutputDefinition("start_floor", False),  # Floor trigger
-                FSMOutputDefinition("start_gripper", False),  # Gripper trigger
+                FSMOutputDefinition("enable_gripper_approach", True),  # Make gripper move towards object
+                FSMOutputDefinition("close_gripper", False),  # Gripper trigger
             ]
         )
 
@@ -38,8 +39,9 @@ class Script:
         graph.add_node(
             AttemptGraspPhase.kGripperApproach,
             outputs=[
+                FSMOutputDefinition("enable_gripper_approach", True),  # Make gripper move towards object
                 FSMOutputDefinition("start_floor", False),  # Floor trigger
-                FSMOutputDefinition("start_gripper", False),  # Gripper trigger
+                FSMOutputDefinition("close_gripper", False),  # Gripper trigger
             ]
         )
 
@@ -47,7 +49,8 @@ class Script:
         graph.add_node(
             AttemptGraspPhase.kGripperClosing,
             outputs=[
-                FSMOutputDefinition("start_gripper", True),
+                FSMOutputDefinition("enable_gripper_approach", True),  # Stop gripper movement
+                FSMOutputDefinition("close_gripper", True),
             ]
         )
 
