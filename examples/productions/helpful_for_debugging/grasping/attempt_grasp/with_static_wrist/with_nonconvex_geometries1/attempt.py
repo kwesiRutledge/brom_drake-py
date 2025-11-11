@@ -11,7 +11,7 @@ import typer
 # Internal Imports
 from brom_drake.all import drakeify_my_urdf, GripperType, MeshReplacementStrategy
 from brom_drake import robots
-from brom_drake.productions import AttemptGrasp
+from brom_drake.productions import AttemptGraspWithStaticWrist
 
 def main():
     # Setup
@@ -37,7 +37,7 @@ def main():
     )
 
     # Create the production
-    production = AttemptGrasp(
+    production = AttemptGraspWithStaticWrist(
         path_to_object=str(drakeified_flask_urdf),
         gripper_choice=GripperType.Robotiq_2f_85,
         grasp_joint_positions=np.array([0.7]),

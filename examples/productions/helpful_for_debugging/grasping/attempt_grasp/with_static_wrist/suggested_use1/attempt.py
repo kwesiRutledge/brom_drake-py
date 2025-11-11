@@ -9,9 +9,9 @@ from pydrake.all import (
 import typer
 
 # Internal Imports
-from brom_drake.all import drakeify_my_urdf, GripperType
+from brom_drake.all import drakeify_my_urdf, GripperType, FigureNamingConvention
 from brom_drake import robots
-from brom_drake.productions import AttemptGrasp, AttemptGraspConfiguration
+from brom_drake.productions import AttemptGraspWithStaticWrist, AttemptGraspWithStaticWristConfiguration
 from brom_drake.productions.types.base.configuration import Configuration as BaseConfiguration
 
 def main():
@@ -36,12 +36,12 @@ def main():
     )
 
     # Create the production
-    config = AttemptGraspConfiguration(
+    config = AttemptGraspWithStaticWristConfiguration(
         base=BaseConfiguration(
             meshcat_port_number=7001, # Use None for CI
         )
     )
-    production = AttemptGrasp(
+    production = AttemptGraspWithStaticWrist(
         path_to_object=str(drakeified_flask_urdf),
         gripper_choice=GripperType.Robotiq_2f_85,
         grasp_joint_positions=np.array([0.7]),
@@ -50,7 +50,9 @@ def main():
     )
 
     # Build with watcher
-    diagram, diagram_context = production.add_cast_and_build()
+    diagram, diagram_context = production.add_cast_and_build(
+        figure_naming_convention=FigureNamingConvention.kHierarchical
+    )
 
     # Set up simulation
     simulator = Simulator(diagram, diagram_context)
