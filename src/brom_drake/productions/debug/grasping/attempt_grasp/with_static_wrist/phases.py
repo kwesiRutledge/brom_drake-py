@@ -1,8 +1,7 @@
 from enum import IntEnum
 
-class AttemptGraspPhase(IntEnum):
+class AttemptGraspWithStaticWristPhase(IntEnum):
     kObjectSettlingOnFloor = 1
-    kGripperApproach = 2
-    kGripperClosing = 3
-    kObjectSettlingInGrasp = 4
-    kFloorDrop = 5
+    kGripperClosing = 2
+    kObjectSettlingInGrasp = 3
+    kFloorDrop = 4

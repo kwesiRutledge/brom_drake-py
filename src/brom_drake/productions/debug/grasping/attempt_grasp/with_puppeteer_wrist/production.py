@@ -47,9 +47,9 @@ from brom_drake.utils.model_instances import (
     find_number_of_positions_in_welded_model,
 )
 from .config import Configuration
-from .script import Script as AttemptGraspScript
+from .script import Script as AttemptGraspWithPuppeteerWristScript
 
-class AttemptGrasp(BasicGraspingDebuggingProduction):
+class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
     # Member functions
     def __init__(
         self,
@@ -57,6 +57,7 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
         gripper_choice: GripperType,
         grasp_joint_positions: np.ndarray,
         X_ObjectTarget: RigidTransform = None,
+        meshcat_port_number: int = None,
         config: Configuration = Configuration(),
     ):
         """
@@ -75,6 +76,10 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
             )
         else:
             raise ValueError(f"Gripper type {gripper_choice} not supported for this scene! Create an issue on GitHub if you want it to be!")
+
+        # Handle config
+        if meshcat_port_number is not None:
+            config.base.meshcat_port_number = meshcat_port_number
 
         # Call the parent constructor
         super().__init__(
@@ -505,7 +510,7 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
     def create_executive_system(self) -> NetworkXFSM:
         # Setup
         builder: DiagramBuilder = self.builder
-        script: AttemptGraspScript = self.config.script
+        script: AttemptGraspWithPuppeteerWristScript = self.config.script
 
         # Create the NetworkXFSM from the graph
         executive = builder.AddSystem(script.to_fsm())

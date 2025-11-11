@@ -4,7 +4,7 @@ from typing import List, Union
 
 # Internal Imports
 from brom_drake.productions.types.base.configuration import Configuration as BaseConfiguration
-from .script import Script as AttemptGraspScript
+from .script import Script as AttemptGraspWithPuppeteerWristScript
 
 @dataclass
 class Configuration:
@@ -14,7 +14,7 @@ class Configuration:
     target_body_on_gripper: str = None # The "Gripper" Frame that we use to define X_GripperObject
     gripper_color: List[float] = None
     show_gripper_base_frame: bool = False
-    script: AttemptGraspScript = field(default_factory=AttemptGraspScript) #By default, use the standard script
+    script: AttemptGraspWithPuppeteerWristScript = field(default_factory=AttemptGraspWithPuppeteerWristScript) #By default, use the standard script
 
     @property
     def meshcat_port_number(self):

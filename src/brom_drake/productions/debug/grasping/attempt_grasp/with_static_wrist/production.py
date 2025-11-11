@@ -13,10 +13,13 @@ from pydrake.all import (
     JointActuator,
     ModelInstanceIndex,
     PidController,
+    PiecewiseTrajectory,
+    PiecewisePolynomial,
     PrismaticJoint,
     RigidBodyFrame,
     RigidTransform,
     SceneGraphInspector,
+    TrajectorySource,
 )
 from pydrake.multibody.parsing import Parser
 from pydrake.multibody.plant import AddMultibodyPlantSceneGraph, MultibodyPlant
@@ -45,7 +48,8 @@ from brom_drake.utils.model_instances import (
 )
 from brom_drake.productions.debug.show_me.show_me_system import ShowMeSystem
 from .config import Configuration
-from .script import Script as AttemptGraspScript
+from .phases import AttemptGraspWithStaticWristPhase
+from .script import Script as AttemptGraspWithStaticWristScript
 
 class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
     # Member functions
@@ -55,6 +59,7 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
         gripper_choice: GripperType,
         grasp_joint_positions: np.ndarray,
         X_ObjectTarget: RigidTransform = None,
+        meshcat_port_number: int = None,
         config: Configuration = Configuration(),
     ):
         # Use the enum to choose the gripper URDF from a set of supported grippers
@@ -64,6 +69,10 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
             )
         else:
             raise ValueError(f"Gripper type {gripper_choice} not supported for this scene! Create an issue on GitHub if you want it to be!")
+
+        # Handle config
+        if meshcat_port_number is not None:
+            config.base.meshcat_port_number = meshcat_port_number
 
         # Call the parent constructor
         super().__init__(
@@ -219,50 +228,48 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
         # Create defaults for plant
         self.set_plant_defaults()
 
+    def add_gripper_trajectory_system(self) -> TrajectorySource:
+        # Setup
+        builder: DiagramBuilder = self.builder
+        script: AttemptGraspWithStaticWristScript = self.config.script
+
+        # Collect gripper initial and final positions
+        p_gripper0 = self.initial_gripper_joint_positions
+        p_gripper_final = self.grasp_joint_positions
+
+        # Find time to start closing the gripper from the script
+        t_gripper_close_start = script.start_time_of_phase(
+            phase=AttemptGraspWithStaticWristPhase.kGripperClosing
+        )
+        t_object_settling_in_grasp_start = script.start_time_of_phase(
+            phase=AttemptGraspWithStaticWristPhase.kObjectSettlingInGrasp
+        )
+
+        # Create a piecewise trajectory for the gripper to follow'
+        joint_position_samples = []
+        joint_position_samples.append(p_gripper0.reshape(-1, 1).tolist()) # This wild compression is needed because of bugs in Drake. :'(
+        joint_position_samples.append(p_gripper0.reshape(-1, 1).tolist())
+        joint_position_samples.append(p_gripper_final.reshape(-1, 1).tolist())
+        gripper_trajectory = PiecewisePolynomial.FirstOrderHold(
+            samples=joint_position_samples,
+            breaks=[0.0, t_gripper_close_start, t_object_settling_in_grasp_start],
+        )
+
+        # Add a trajectory source object to the builder
+        gripper_trajectory_source = builder.AddSystem(
+            TrajectorySource(gripper_trajectory)
+        )
+        gripper_trajectory_source.set_name("[Gripper] Trajectory Source")
+        return gripper_trajectory_source
+
+
     def add_gripper_controller_and_connect(self):
         # Setup
         builder: DiagramBuilder = self.builder
         plant: MultibodyPlant = self.plant
 
-        # n_gripper_positions = find_number_of_positions_in_welded_model(self.path_to_gripper)
-
-        # Get gripper initial and final positions
-        p_gripper0 = self.initial_gripper_joint_positions
-        p_gripper_final = self.grasp_joint_positions
-
-        # # Create a system to control the gripper's actuators
-        # self.show_me_system = ShowMeSystem(
-        #     plant=plant,
-        #     model_index=self.gripper_model_index,
-        #     desired_joint_positions=self.initial_gripper_joint_positions,
-        # )
-        # builder.AddSystem(self.show_me_system)
-
-        # Create a desired trajectory for the gripper to track while attempting to grasp
-        gripper_trajectory_dispatcher = builder.AddSystem(
-            OpenLoopPlanDispenser(p_gripper0.shape[0], speed=0.075),
-        )
-        gripper_trajectory_dispatcher.set_name("[Gripper] Trajectory Dispatcher")
-
-        # Connect executive to the plan dispatcher
-        builder.Connect(
-            self.executive.GetOutputPort("start_gripper"),
-            gripper_trajectory_dispatcher.GetInputPort("plan_ready"),  # Trigger input
-        )
-
-        # Create plan for the gripper
-        gripper_plan = np.array([
-            p_gripper0,
-            p_gripper_final,
-        ])
-        gripper_plan_source = builder.AddSystem(
-            ConstantValueSource(AbstractValue.Make(gripper_plan))
-        )
-
-        builder.Connect(
-            gripper_plan_source.get_output_port(),
-            gripper_trajectory_dispatcher.GetInputPort("plan"),
-        )
+        # Define System that dispatches the gripper trajectory
+        gripper_trajectory_source = self.add_gripper_trajectory_system()
 
         # Create a simple piece of logic to turn on/off the gripper (i.e., to close it)
         gripper_controller = builder.AddSystem(
@@ -281,7 +288,7 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
 
         # Connect plan to the controller
         builder.Connect(
-            gripper_trajectory_dispatcher.GetOutputPort("point_in_plan"),
+            gripper_trajectory_source.get_output_port(),
             gripper_controller.GetInputPort("gripper_target"),
         )
 
@@ -312,7 +319,7 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
         z_floor = self.find_floor_z_via_line_search()
 
         # Connect a PID Controller to the floor actuator
-        kp = np.array([[floor_mass * 9.81 * 1.0e-1]]) #Idk how I'm picking this number.
+        kp = np.array([[floor_mass * 9.81 * 1.0e0]]) #Idk how I'm picking this number.
         ki = np.zeros(kp.shape) # 0.1 * np.sqrt(kp)
         kd = 4.0 * np.sqrt(kp)
         floor_controller = self.builder.AddSystem(
@@ -367,7 +374,7 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
     def create_executive_system(self) -> NetworkXFSM:
         # Setup
         builder: DiagramBuilder = self.builder
-        script: AttemptGraspScript = self.config.script
+        script: AttemptGraspWithStaticWristScript = self.config.script
 
         # Create the NetworkXFSM from the graph
         executive = builder.AddSystem(script.to_fsm())

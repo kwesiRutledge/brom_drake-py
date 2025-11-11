@@ -1,7 +1,7 @@
 from .script import Script
-from .production import AttemptGrasp
+from .production import AttemptGraspWithPuppeteerWrist
 
 __all__ = [
     "Script",
-    "AttemptGrasp",
+    "AttemptGraspWithPuppeteerWrist",
 ]

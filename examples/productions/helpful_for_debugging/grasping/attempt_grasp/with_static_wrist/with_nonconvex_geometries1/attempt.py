@@ -1,4 +1,5 @@
 from importlib import resources as impresources
+from pathlib import Path
 import ipdb
 import numpy as np
 from pydrake.all import (
@@ -21,13 +22,15 @@ def main():
         impresources.files(robots) / "models/erlenmeyer_flask/500ml.urdf"
     )
 
-    drakeified_flask_urdf = drakeify_my_urdf(
-        erlenmeyer_flask_file,
-        overwrite_old_logs=True,
-        log_file_name="DemonstrateStaticGripTest_AddManipulandToPlant_flask.log",
-        # For you (yes, you!): Comment out the line below, to see what the default collision mesh looks like
-        collision_mesh_replacement_strategy=MeshReplacementStrategy.kWithConvexDecomposition,
-    )
+    drakeified_flask_urdf = Path("brom/models/500ml/500ml.drake.urdf")
+    if not drakeified_flask_urdf.exists():
+        drakeified_flask_urdf = drakeify_my_urdf(
+            erlenmeyer_flask_file,
+            overwrite_old_logs=True,
+            log_file_name="DemonstrateStaticGripTest_AddManipulandToPlant_flask.log",
+            # For you (yes, you!): Comment out the line below, to see what the default collision mesh looks like
+            collision_mesh_replacement_strategy=MeshReplacementStrategy.kWithConvexDecomposition,
+        )
 
     # Create the transform representing the target (i.e. gripper) frame
     # relative to the object frame
@@ -56,5 +59,4 @@ def main():
     simulator.AdvanceTo(60.0)
 
 if __name__ == "__main__":
-    with ipdb.launch_ipdb_on_exception():
-        typer.run(main)
+    main()
