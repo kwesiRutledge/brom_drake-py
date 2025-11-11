@@ -123,7 +123,7 @@ def main(t_final: float = 15.0):
     plant.Finalize()
 
     # Add the puppet controller to the builder
-    pose_converter_system = puppetmaker0.add_puppet_controller_for(
+    pose_converter_system, _ = puppetmaker0.add_puppet_controller_for(
         cube_signature,
         builder,
     )
