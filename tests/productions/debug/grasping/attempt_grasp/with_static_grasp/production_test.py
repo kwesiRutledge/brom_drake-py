@@ -16,13 +16,13 @@ from brom_drake import robots
 from brom_drake.file_manipulation.urdf.shapes.box import BoxDefinition
 from brom_drake.file_manipulation.urdf.simple_writer.urdf_definition import SimpleShapeURDFDefinition
 from brom_drake.productions.types.base import Configuration as BaseConfiguration
-from brom_drake.productions.debug.grasping.attempt_grasp.production import AttemptGrasp
-from brom_drake.productions.debug.grasping.attempt_grasp.config import Configuration as AttemptGraspConfiguration
+from brom_drake.productions.debug.grasping.attempt_grasp.with_static_wrist.production import AttemptGraspWithStaticWrist
+from brom_drake.productions.debug.grasping.attempt_grasp.with_static_wrist.config import Configuration as AttemptGraspWithStaticWristConfiguration
 from brom_drake.utils.model_instances import (
     get_name_of_first_body_in_urdf,
 )
 
-class AttemptGraspTest(unittest.TestCase):
+class AttemptGraspWithStaticWristTest(unittest.TestCase):
     def setUp(self):
         # Create erlenmeyer flask urdf
         erlenmeyer_flask_file = str(
@@ -46,12 +46,12 @@ class AttemptGraspTest(unittest.TestCase):
         flask_urdf = self.drakeified_flask_urdf
 
         # Create the production
-        config = AttemptGraspConfiguration(
+        config = AttemptGraspWithStaticWristConfiguration(
             base=BaseConfiguration(
                 meshcat_port_number=None, # Use None for CI
             ),
         )
-        production = AttemptGrasp(
+        production = AttemptGraspWithStaticWrist(
             path_to_object=flask_urdf,
             gripper_choice=GripperType.Robotiq_2f_85,
             grasp_joint_positions=np.array([0.7]),
@@ -138,12 +138,12 @@ class AttemptGraspTest(unittest.TestCase):
         flask_urdf = self.drakeified_flask_urdf  
 
         # Create the production
-        config = AttemptGraspConfiguration(
+        config = AttemptGraspWithStaticWristConfiguration(
             base=BaseConfiguration(
                 meshcat_port_number=None, # Use None for CI
             ),
         )
-        production = AttemptGrasp(
+        production = AttemptGraspWithStaticWrist(
             path_to_object=flask_urdf,
             gripper_choice=GripperType.Robotiq_2f_85,
             grasp_joint_positions=np.array([0.7]),
@@ -177,12 +177,12 @@ class AttemptGraspTest(unittest.TestCase):
         flask_urdf = self.drakeified_flask_urdf
 
         # Create the production
-        config = AttemptGraspConfiguration(
+        config = AttemptGraspWithStaticWristConfiguration(
             base=BaseConfiguration(
                 meshcat_port_number=None, # Use None for CI
             ),
         )
-        production = AttemptGrasp(
+        production = AttemptGraspWithStaticWrist(
             path_to_object=flask_urdf,
             gripper_choice=GripperType.Robotiq_2f_85,
             grasp_joint_positions=np.array([0.7]),
