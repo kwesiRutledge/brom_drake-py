@@ -16,7 +16,7 @@ class Script:
     This class defines the "script" or the sequence of events that is meant to happen in the
     AttemptGrasp production.
     """
-    settling_time_on_floor: float = 2.0
+    settling_time_on_floor: float = 10.0
     gripper_approach_time: float = 5.0
     grasp_closing_time: float = 2.0
     post_grasp_settling_time: float = 0.1

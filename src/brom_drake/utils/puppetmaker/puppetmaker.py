@@ -403,7 +403,7 @@ class Puppetmaker:
             for body_ii in bodies_in_puppet:
                 m += plant.get_body(body_ii).default_mass()
             Kp = np.zeros((n_actuators_for_puppet,))
-            Kp[:3] = np.array([10.0*m*gravity]*3)
+            Kp[:3] = np.array([1.0*m*gravity]*3)
             Kp[3:] = np.array([0.1*m*gravity]*3)
 
         if Kd is None:
