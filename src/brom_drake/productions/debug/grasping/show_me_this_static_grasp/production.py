@@ -45,7 +45,7 @@ class ShowMeThisStaticGrasp(BasicGraspingDebuggingProduction):
         super().__init__(
             path_to_object=path_to_object,
             path_to_gripper=path_to_gripper,
-            X_ObjectGripper=X_ObjectGripper,
+            X_ObjectGrasp=X_ObjectGripper,
             meshcat_port_number=config.base.meshcat_port_number,
             time_step=config.base.time_step,
             target_body_on_gripper=config.target_body_on_gripper,

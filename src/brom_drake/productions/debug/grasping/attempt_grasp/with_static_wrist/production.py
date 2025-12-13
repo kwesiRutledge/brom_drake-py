@@ -60,6 +60,7 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
         grasp_joint_positions: np.ndarray,
         X_ObjectTarget: RigidTransform = None,
         meshcat_port_number: int = None,
+        script: AttemptGraspWithStaticWristScript = None,
         config: Configuration = Configuration(),
     ):
         # Use the enum to choose the gripper URDF from a set of supported grippers
@@ -73,12 +74,15 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
         # Handle config
         if meshcat_port_number is not None:
             config.base.meshcat_port_number = meshcat_port_number
+        
+        if script is not None: # If the user provided a "script" for this production, then use it!
+            config.script = script
 
         # Call the parent constructor
         super().__init__(
             path_to_object=path_to_object,
             path_to_gripper=path_to_gripper,
-            X_ObjectGripper=X_ObjectTarget,
+            X_ObjectGrasp=X_ObjectTarget,
             meshcat_port_number=config.base.meshcat_port_number,
             time_step=config.base.time_step,
             target_body_on_gripper=config.target_body_on_gripper,

@@ -1,6 +1,6 @@
 from enum import IntEnum
 
-class AttemptGraspPhase(IntEnum):
+class AttemptGraspWithPuppeteerWristPhase(IntEnum):
     kObjectSettlingOnFloor = 1
     kGripperApproach = 2
     kGripperClosing = 3

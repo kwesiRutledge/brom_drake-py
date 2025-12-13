@@ -337,7 +337,7 @@ class Puppetmaker:
         )
 
         gravity_compensation = np.zeros((n_actuators_for_puppet,))
-        gravity_compensation[3:] = -total_mass * 9.81 * gravity_vector
+        gravity_compensation[:3] = -total_mass * 9.81 * gravity_vector
 
         # Create the constant vector source
         gravity_compensation_source = builder.AddNamedSystem(
@@ -555,12 +555,12 @@ class Puppetmaker:
         # states (2 each) of the models (there should be 6) in the puppet
         state_mux = builder.AddNamedSystem(
             name=f"[{self.config.name}] State Mux for puppeteering \"{signature.name}\"",
-            system=Multiplexer(num_scalar_inputs=2*len(signature.all_models)),
+            system=Multiplexer(num_scalar_inputs=2*signature.n_models),
         )
 
         # Create connections to the state of each model (in the puppet)
         # to new demultiplexers
-        all_state_demuxes = []
+        all_state_demuxes: List[Demultiplexer] = []
         for ii, model_ii in enumerate(signature.all_models):
             # Create demultiplexer for this model
             n_state_ii = plant.num_multibody_states(model_ii)
@@ -600,7 +600,7 @@ class Puppetmaker:
             )
             builder.Connect(
                 demux_ii.get_output_port(velocity_ii_state_index),
-                state_mux.get_input_port(len(all_state_demuxes) + ii),
+                state_mux.get_input_port(signature.n_models + ii),
             )
 
         # Connect the output of the state demux to the controller

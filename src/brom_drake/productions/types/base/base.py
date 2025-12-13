@@ -104,6 +104,13 @@ class BaseProduction:
         # Setup
         builder = self.builder
 
+        # Set all initial conditions, if any
+        if self.plant is not None:
+            self.initial_condition_manager.set_all_initial_conditions(
+                plant=self.plant,
+                # diagram_context=self.diagram_context,
+            )
+
         # Build the diagram
         if with_watcher:
             self.watcher, self.diagram, self.diagram_context = add_watcher_and_build(
@@ -113,13 +120,6 @@ class BaseProduction:
         else:
             self.diagram = builder.Build()
             self.diagram_context = self.diagram.CreateDefaultContext()
-
-        # Set all initial conditions, if any
-        if self.plant is not None:
-            self.initial_condition_manager.set_all_initial_conditions(
-                plant=self.plant,
-                diagram_context=self.diagram_context,
-            )
 
         return self.diagram, self.diagram_context
 

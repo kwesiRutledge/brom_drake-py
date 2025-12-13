@@ -65,7 +65,13 @@ def AddTriad(
     scene_graph.RegisterGeometry(source_id, frame_id, geom)
 
 
-def AddMultibodyTriad(frame: Frame, scene_graph: SceneGraph, length: float =0.25, radius: float =0.01, opacity: float =1.0):
+def AddMultibodyTriad(
+    frame: Frame,
+    scene_graph: SceneGraph,
+    length: float = 0.25,
+    radius: float = 0.01,
+    opacity: float = 1.0
+):
     plant = frame.GetParentPlant()
     AddTriad(
         plant.get_source_id(),
