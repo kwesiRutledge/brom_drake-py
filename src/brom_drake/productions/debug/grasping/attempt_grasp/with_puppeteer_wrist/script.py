@@ -152,5 +152,5 @@ class Script:
         return graph
 
     def total_time(self) -> float:
-        return self.settling_time_on_floor + self.grasp_closing_time + self.post_grasp_settling_time + self.drop_time
+        return self.settling_time_on_floor + self.gripper_approach_time + self.grasp_closing_time + self.post_grasp_settling_time + self.drop_time
     
