@@ -452,35 +452,6 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         gripper_trajectory_source.set_name("[Gripper] Trajectory Source")
         return gripper_trajectory_source
 
-    def add_initial_conditions_to_plant(self):
-        # Setup
-        X_WorldGripper = self.find_X_WorldGripper(
-            X_ObjectGripper=self.X_ObjectGripper,
-            target_frame_name=self.target_body_name_on_gripper,
-            desired_joint_positions=self.initial_gripper_joint_positions,
-        )
-
-        # Set all initial conditions for the gripper model
-        # self.initial_condition_manager.add_initial_pose(
-        #     model_instance_index=self.gripper_model_index,
-        #     pose_wrt_parent=X_WorldGripper,
-        # )
-
-        # Set initial conditions for the puppeteer joints
-        for joint_index, joint_actuator_i in enumerate(self.puppet_signature.all_joint_actuators):
-            if joint_index < 3:
-                self.initial_condition_manager.add_initial_configuration(
-                    model_instance_index=joint_actuator_i.model_instance(),
-                    configuration=np.array([X_WorldGripper.translation()[joint_index]])
-                )
-            if joint_index >=3 and joint_index <5:
-                # Roll and Pitch
-                self.initial_condition_manager.add_initial_configuration(
-                    model_instance_index=joint_actuator_i.model_instance(),
-                    configuration=np.array([X_WorldGripper.rotation().ToRollPitchYaw().vector()[joint_index - 3]])
-                )
-
-
     def add_puppeteer_for_gripper(self) -> Tuple[Puppetmaker, PuppetSignature]:
         # Setup
         plant : MultibodyPlant = self.plant
@@ -539,7 +510,7 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         self.add_floor_controller_and_connect(floor_mass)
 
         # Create defaults for plant
-        self.set_plant_defaults()
+        self.set_initial_conditions()
         # self.add_initial_conditions_to_plant()    
 
     def connect_executive_to_gripper_puppet_controller(self, trajectory_dispenser):
@@ -901,7 +872,7 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
     def id(self):
         return ProductionID.kAttemptGraspWithPuppeteer
 
-    def set_plant_defaults(self):
+    def set_initial_conditions(self):
         """
         Description
         -----------
