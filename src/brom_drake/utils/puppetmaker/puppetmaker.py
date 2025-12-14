@@ -36,8 +36,15 @@ class Puppetmaker:
     """
     Description
     -----------
-    This system is used to actuate a free body that has been added to
-    an input plant.
+    This object is used to:
+    - Add "invisible" actuators for moving a free body (i.e., `add_strings_for` or `add_actuators_for`), and
+    - Control actuate a free body that has been added with the expected "puppet" actuators (i.e., `add_puppet_controller_for)
+
+    Notes
+    -----
+    - The puppet is assumed to be a free body (i.e., it has no existing joints connecting it to the world).
+      After adding the puppet actuators, the puppet will NO LONGER be a free body.
+    - You must call add_strings_for or add_actuators_for BEFORE finalizing the plant.
     """
     def __init__(
         self,
@@ -67,6 +74,28 @@ class Puppetmaker:
         next_frame: Frame,
         joint_name: str,
     ) -> Tuple[PrismaticJoint, JointActuator]:
+        """
+        Description
+        -----------
+        This method will add an prismatic joint in the direction `axis_dimension`
+        between `previous_frame` and `next_frame`, along with an actuator to control it.
+        
+        Arguments
+        ---------
+        :param axis_dimension: The axis to translate in (0 for X, 1 for Y, 2 for Z).
+        :type axis_dimension: int
+        :param previous_frame: The frame of the parent side of the joint.
+        :type previous_frame: Frame
+        :param next_frame: The frame of the child side of the joint.
+        :type next_frame: Frame
+        :param joint_name: The name of the joint we are creating.
+        :type joint_name: str
+
+        Returns
+        -------
+        :return: The created prismatic joint and its actuator.
+        :rtype: Tuple[PrismaticJoint, JointActuator]
+        """
         # Setup
         plant: MultibodyPlant = self.plant
 
