@@ -17,7 +17,7 @@ class TestAttemptGraspWithPuppeteerWristScript(unittest.TestCase):
         graph = script.to_networkx_graph()
 
         # Check the number of nodes
-        self.assertEqual(len(list(graph.nodes)), 4)
+        self.assertEqual(len(list(graph.nodes)), 5)
 
     def test_total_time1(self):
         """
