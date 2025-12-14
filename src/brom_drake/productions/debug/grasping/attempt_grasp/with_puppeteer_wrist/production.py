@@ -291,7 +291,7 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         # Setup
         builder = self.builder
         # Legacy
-        # gripper_poses = self.compute_gripper_poses_for_attempted_grasp()
+        # gripper_poses = sel f.compute_gripper_poses_for_attempted_grasp()
         # trajectory_dispenser = self.add_gripper_puppet_controller_and_connect(gripper_puppet_input, gripper_poses)
         # self.connect_executive_to_gripper_puppet_controller(trajectory_dispenser)
 
@@ -325,7 +325,7 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         gripper_controller = builder.AddSystem(
             GripperController(
                 GripperType.Robotiq_2f_85,
-                Kp=1e1 * np.eye(2),
+                Kp=1e2 * np.eye(2),
             ),
         )
         gripper_controller.set_name("[Gripper] Gripper Controller")
@@ -531,7 +531,7 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         puppet_pose_input, replacement_gripper_actuator_inputs = maker0.add_puppet_controller_for(
             self.puppet_signature,
             self.builder,
-            Kp=np.array([5e1, 5e1, 5e1, 1e0, 1e0, 1e0])
+            Kp=np.array([1e2, 1e2, 1e2, 1e1, 1e1, 2e0])
         )
 
         # Add controllers for gripper AND floor
@@ -583,7 +583,7 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         poses = []
         
         # - Create initial pose
-        times.append(-1.0)
+        times.append(0.0)
         poses.append(pose_WorldGripper_initial)
 
         # - Create pre-grasp pose (will be same as initial pose)

@@ -36,13 +36,13 @@ def main():
     # Create the transform representing the target (i.e. gripper) frame
     # relative to the object frame
     X_ObjectTarget = RigidTransform(
-        p=np.array([-0.08, 0.05, 0.5]),
+        p=np.array([-0.08, 0.05, 0.2]),
         rpy=RollPitchYaw(0.0, np.pi/2.0, 0.0),
     )
 
     X_WorldPreGrasp = X_ObjectTarget.multiply(
         RigidTransform(
-            p=np.array([0.0, 0.0, -0.3]),
+            p=np.array([0.0, 0.0, -0.2]),
             rpy=RollPitchYaw(0.0, 0.0, 0.0),
         )
     )

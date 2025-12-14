@@ -328,7 +328,7 @@ class Puppetmaker:
         # Create a constant vector source to provide feedforward gravity compensation
         # for the linear actuators
         gravity_field = plant.gravity_field()
-        gravity_vector = gravity_field.gravity_vector()
+        gravity_vector = gravity_field.gravity_vector() # Returns the gravity vector in world frame in units of m/s^2
 
         # Calculate mass of the puppet
         bodies_in_puppet = get_all_bodies_in(plant, signature.model_instance_index)
@@ -337,7 +337,7 @@ class Puppetmaker:
         )
 
         gravity_compensation = np.zeros((n_actuators_for_puppet,))
-        gravity_compensation[:3] = -total_mass * 9.81 * gravity_vector
+        gravity_compensation[:3] = -total_mass * gravity_vector
 
         # Create the constant vector source
         gravity_compensation_source = builder.AddNamedSystem(
