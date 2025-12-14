@@ -16,6 +16,16 @@ from brom_drake import robots
 from brom_drake.productions import AttemptGraspWithPuppeteerWrist
 
 def main():
+    """
+    Description
+    -----------
+    In this example, we will demonstrate how to:
+    - Load a model into the `AttempptGraspWithPuppeteerWrist` production
+    - Specify a sequence of target poses for the gripper wrist to follow
+      in order to attempt a grasp on the object.
+    - Run a simulation of the grasp attempt, visualizing the results in Meshcat.
+    """
+
     # Setup
 
     # Create erlenmeyer flask urdf
@@ -33,13 +43,14 @@ def main():
             collision_mesh_replacement_strategy=MeshReplacementStrategy.kWithConvexDecomposition,
         )
 
-    # Create the transform representing the target (i.e. gripper) frame
-    # relative to the object frame
+    # Create the following poses (transforms):
+    # - The Grasp Pose (i.e. the target pose of the gripper wrist when grasping the object)
     X_ObjectTarget = RigidTransform(
         p=np.array([-0.08, 0.05, 0.2]),
         rpy=RollPitchYaw(0.0, np.pi/2.0, 0.0),
     )
 
+    # - The Pre-Grasp Pose (i.e. the pose of the gripper wrist just before reaching to grasp the object)
     X_WorldPreGrasp = X_ObjectTarget.multiply(
         RigidTransform(
             p=np.array([0.0, 0.0, -0.2]),
@@ -56,18 +67,17 @@ def main():
         meshcat_port_number=7001, # Use None for CI
     )
 
-    # Build with watcher
+    # Build with watcher (so we can view the simulation's data in `brom/watcher/plots` which is helpful for debugging)
     diagram, diagram_context = production.add_cast_and_build(
         figure_naming_convention=FigureNamingConvention.kHierarchical
     )
 
     # Set up simulation
     simulator = Simulator(diagram, diagram_context)
-    simulator.set_target_realtime_rate(2.5)
+    simulator.set_target_realtime_rate(1.0)
     simulator.set_publish_every_time_step(False)
     simulator.Initialize()
-    simulator.AdvanceTo(20.0)
+    simulator.AdvanceTo(60.0)
 
 if __name__ == "__main__":
-    with ipdb.launch_ipdb_on_exception():
-        typer.run(main)
+    main()
