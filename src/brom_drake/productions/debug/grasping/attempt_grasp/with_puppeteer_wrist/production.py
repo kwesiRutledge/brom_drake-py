@@ -265,11 +265,11 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         for i, pose_i in enumerate(pose_trajectory):
             frame_i = FixedOffsetFrame(
                 name = "Gripper Base Frame Traj Pt " + str(i),
-                P=plant.world_frame(), # Parent Frame
+                P= self.plant.world_frame(), # Parent Frame
                 X_PF=pose_i,
             )
-            self.plant.AddFrame(frame_i)
-            gripper_base_frames.append(frame_i)
+            frame_i_added = self.plant.AddFrame(frame_i)
+            gripper_base_frames.append(frame_i_added)
 
         for i, gripper_base_frame_i in enumerate(gripper_base_frames):
             # Add a triad for each frame
