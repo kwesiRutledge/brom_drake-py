@@ -5,7 +5,7 @@ import networkx as nx
 from brom_drake.utils.leaf_systems.network_fsm import (
     NetworkXFSM, FSMOutputDefinition, FSMTransitionCondition, FSMTransitionConditionType
 )
-from .phases import AttemptGraspPhase
+from .phases import AttemptGraspWithPuppeteerWristPhase
 
 # Define some internal classes/enums
 @dataclass
@@ -27,7 +27,7 @@ class Script:
 
         # First State: Object settled
         graph.add_node(
-            AttemptGraspPhase.kObjectSettlingOnFloor,
+            AttemptGraspWithPuppeteerWristPhase.kObjectSettlingOnFloor,
             outputs=[
                 FSMOutputDefinition("start_floor", False),  # Floor trigger
                 FSMOutputDefinition("enable_gripper_approach", True),  # Make gripper move towards object
@@ -37,7 +37,7 @@ class Script:
 
         # Second State: Gripper approach
         graph.add_node(
-            AttemptGraspPhase.kGripperApproach,
+            AttemptGraspWithPuppeteerWristPhase.kGripperApproach,
             outputs=[
                 FSMOutputDefinition("enable_gripper_approach", True),  # Make gripper move towards object
                 FSMOutputDefinition("start_floor", False),  # Floor trigger
@@ -47,7 +47,7 @@ class Script:
 
         # Third State: Close gripper
         graph.add_node(
-            AttemptGraspPhase.kGripperClosing,
+            AttemptGraspWithPuppeteerWristPhase.kGripperClosing,
             outputs=[
                 FSMOutputDefinition("enable_gripper_approach", True),  # Stop gripper movement
                 FSMOutputDefinition("close_gripper", True),
@@ -56,12 +56,26 @@ class Script:
 
         # Fourth State: Drop the floor
         graph.add_node(
-            AttemptGraspPhase.kFloorDrop,
+            AttemptGraspWithPuppeteerWristPhase.kFloorDrop,
             outputs=[
                 FSMOutputDefinition("start_floor", True),
             ]
         )
 
+    def start_time_of_phase(self, phase: AttemptGraspWithPuppeteerWristPhase) -> float:
+        match phase:
+            case AttemptGraspWithPuppeteerWristPhase.kObjectSettlingOnFloor:
+                return 0.0
+            case AttemptGraspWithPuppeteerWristPhase.kGripperApproach:
+                return self.settling_time_on_floor
+            case AttemptGraspWithPuppeteerWristPhase.kGripperClosing:
+                return self.settling_time_on_floor + self.gripper_approach_time
+            case AttemptGraspWithPuppeteerWristPhase.kObjectSettlingInGrasp:
+                return self.settling_time_on_floor + self.gripper_approach_time + self.grasp_closing_time
+            case AttemptGraspWithPuppeteerWristPhase.kFloorDrop:
+                return self.settling_time_on_floor + self.gripper_approach_time + self.grasp_closing_time + self.post_grasp_settling_time
+            case _:
+                raise ValueError(f"Unrecognized phase {phase}!")
 
     def to_fsm(self) -> NetworkXFSM:
         return NetworkXFSM(self.to_networkx_graph())
@@ -75,8 +89,8 @@ class Script:
 
         # Create time from init -> Let object settle
         graph.add_edge(
-            AttemptGraspPhase.kObjectSettlingOnFloor,
-            AttemptGraspPhase.kGripperApproach, 
+            AttemptGraspWithPuppeteerWristPhase.kObjectSettlingOnFloor,
+            AttemptGraspWithPuppeteerWristPhase.kGripperApproach, 
             conditions=[
                 FSMTransitionCondition(
                     condition_type=FSMTransitionConditionType.kAfterThisManySeconds,
@@ -87,8 +101,8 @@ class Script:
 
         # Create time between gripper approach and start og grasp closing
         graph.add_edge(
-            AttemptGraspPhase.kGripperApproach,
-            AttemptGraspPhase.kGripperClosing, 
+            AttemptGraspWithPuppeteerWristPhase.kGripperApproach,
+            AttemptGraspWithPuppeteerWristPhase.kGripperClosing, 
             conditions=[
                 FSMTransitionCondition(
                     condition_type=FSMTransitionConditionType.kAfterThisManySeconds,
@@ -100,8 +114,8 @@ class Script:
         if self.post_grasp_settling_time > 0.0:
             # Create time from gripper start to end of grasp closing
             graph.add_edge(
-                AttemptGraspPhase.kGripperClosing,
-                AttemptGraspPhase.kObjectSettlingInGrasp,
+                AttemptGraspWithPuppeteerWristPhase.kGripperClosing,
+                AttemptGraspWithPuppeteerWristPhase.kObjectSettlingInGrasp,
                 conditions=[
                     FSMTransitionCondition(
                         condition_type=FSMTransitionConditionType.kAfterThisManySeconds,
@@ -112,8 +126,8 @@ class Script:
 
             # Create time from end of grasp closing to floor drop start
             graph.add_edge(
-                AttemptGraspPhase.kObjectSettlingInGrasp,
-                AttemptGraspPhase.kFloorDrop,
+                AttemptGraspWithPuppeteerWristPhase.kObjectSettlingInGrasp,
+                AttemptGraspWithPuppeteerWristPhase.kFloorDrop,
                 conditions=[
                     FSMTransitionCondition(
                         condition_type=FSMTransitionConditionType.kAfterThisManySeconds,
@@ -125,8 +139,8 @@ class Script:
         else:
             # Create time from end of grasp closing to end of production
             graph.add_edge(
-                AttemptGraspPhase.kGripperClosing,
-                AttemptGraspPhase.kFloorDrop,
+                AttemptGraspWithPuppeteerWristPhase.kGripperClosing,
+                AttemptGraspWithPuppeteerWristPhase.kFloorDrop,
                 conditions=[
                     FSMTransitionCondition(
                         condition_type=FSMTransitionConditionType.kAfterThisManySeconds,
@@ -138,5 +152,5 @@ class Script:
         return graph
 
     def total_time(self) -> float:
-        return self.settling_time_on_floor + self.grasp_closing_time + self.post_grasp_settling_time + self.drop_time
+        return self.settling_time_on_floor + self.gripper_approach_time + self.grasp_closing_time + self.post_grasp_settling_time + self.drop_time
     

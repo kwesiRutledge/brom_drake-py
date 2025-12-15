@@ -36,8 +36,15 @@ class Puppetmaker:
     """
     Description
     -----------
-    This system is used to actuate a free body that has been added to
-    an input plant.
+    This object is used to:
+    - Add "invisible" actuators for moving a free body (i.e., `add_strings_for` or `add_actuators_for`), and
+    - Control actuate a free body that has been added with the expected "puppet" actuators (i.e., `add_puppet_controller_for)
+
+    Notes
+    -----
+    - The puppet is assumed to be a free body (i.e., it has no existing joints connecting it to the world).
+      After adding the puppet actuators, the puppet will NO LONGER be a free body.
+    - You must call add_strings_for or add_actuators_for BEFORE finalizing the plant.
     """
     def __init__(
         self,
@@ -67,6 +74,28 @@ class Puppetmaker:
         next_frame: Frame,
         joint_name: str,
     ) -> Tuple[PrismaticJoint, JointActuator]:
+        """
+        Description
+        -----------
+        This method will add an prismatic joint in the direction `axis_dimension`
+        between `previous_frame` and `next_frame`, along with an actuator to control it.
+        
+        Arguments
+        ---------
+        :param axis_dimension: The axis to translate in (0 for X, 1 for Y, 2 for Z).
+        :type axis_dimension: int
+        :param previous_frame: The frame of the parent side of the joint.
+        :type previous_frame: Frame
+        :param next_frame: The frame of the child side of the joint.
+        :type next_frame: Frame
+        :param joint_name: The name of the joint we are creating.
+        :type joint_name: str
+
+        Returns
+        -------
+        :return: The created prismatic joint and its actuator.
+        :rtype: Tuple[PrismaticJoint, JointActuator]
+        """
         # Setup
         plant: MultibodyPlant = self.plant
 
@@ -328,7 +357,7 @@ class Puppetmaker:
         # Create a constant vector source to provide feedforward gravity compensation
         # for the linear actuators
         gravity_field = plant.gravity_field()
-        gravity_vector = gravity_field.gravity_vector()
+        gravity_vector = gravity_field.gravity_vector() # Returns the gravity vector in world frame in units of m/s^2
 
         # Calculate mass of the puppet
         bodies_in_puppet = get_all_bodies_in(plant, signature.model_instance_index)
@@ -337,7 +366,7 @@ class Puppetmaker:
         )
 
         gravity_compensation = np.zeros((n_actuators_for_puppet,))
-        gravity_compensation[3:] = -total_mass * 9.81 * gravity_vector
+        gravity_compensation[:3] = -total_mass * gravity_vector
 
         # Create the constant vector source
         gravity_compensation_source = builder.AddNamedSystem(
@@ -555,12 +584,12 @@ class Puppetmaker:
         # states (2 each) of the models (there should be 6) in the puppet
         state_mux = builder.AddNamedSystem(
             name=f"[{self.config.name}] State Mux for puppeteering \"{signature.name}\"",
-            system=Multiplexer(num_scalar_inputs=2*len(signature.all_models)),
+            system=Multiplexer(num_scalar_inputs=2*signature.n_models),
         )
 
         # Create connections to the state of each model (in the puppet)
         # to new demultiplexers
-        all_state_demuxes = []
+        all_state_demuxes: List[Demultiplexer] = []
         for ii, model_ii in enumerate(signature.all_models):
             # Create demultiplexer for this model
             n_state_ii = plant.num_multibody_states(model_ii)
@@ -600,7 +629,7 @@ class Puppetmaker:
             )
             builder.Connect(
                 demux_ii.get_output_port(velocity_ii_state_index),
-                state_mux.get_input_port(len(all_state_demuxes) + ii),
+                state_mux.get_input_port(signature.n_models + ii),
             )
 
         # Connect the output of the state demux to the controller

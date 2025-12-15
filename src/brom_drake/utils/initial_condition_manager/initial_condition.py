@@ -4,7 +4,8 @@ from pydrake.all import (
     Context,
     ModelInstanceIndex,
     MultibodyPlant,
-    RigidTransform
+    RigidTransform,
+    SpatialVelocity
 )
 
 @dataclass
@@ -23,6 +24,10 @@ class InitialCondition:
         Description
         -----------
         Set the initial configuration for the given model instance in the plant.
+
+        Note: Defining the default positions will fail, if the context for the plant
+        has already been created. In that case, we also set the positions in the provided
+        diagram context (if any).
         """
         # Input Processing
         # - If no configuration is provided, then skip this function
@@ -46,7 +51,7 @@ class InitialCondition:
                 self.configuration
             )
 
-    def set_initial_pose(self, plant: MultibodyPlant):
+    def set_initial_pose(self, plant: MultibodyPlant, diagram_context: Context = None):
         """
         Description
         -----------
@@ -65,4 +70,16 @@ class InitialCondition:
         plant.SetDefaultFreeBodyPose(
             plant.get_body(target_body_index),
             self.pose_wrt_parent)
+        
+        if diagram_context is not None:
+            plant.SetFreeBodyPose(
+                plant.GetMyMutableContextFromRoot(diagram_context),
+                plant.get_body(target_body_index),
+                self.pose_wrt_parent)
+            
+            plant.SetFreeBodySpatialVelocity(
+                body=plant.get_body(target_body_index),
+                V_PB=SpatialVelocity.Zero(),
+                context=plant.GetMyMutableContextFromRoot(diagram_context),
+            )
         

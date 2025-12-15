@@ -8,6 +8,8 @@ from pydrake.all import (
     AffineSystem,
     Adder,
     ConstantValueSource,
+    FixedOffsetFrame,
+    Frame,
     GeometryProperties,
     InputPortIndex,
     IllustrationProperties,
@@ -15,10 +17,13 @@ from pydrake.all import (
     ModelInstanceIndex,
     PassThrough,
     PidController,
+    PiecewisePolynomial,
+    PiecewisePose,
     PrismaticJoint,
     RigidBodyFrame,
     RigidTransform,
     SceneGraphInspector,
+    TrajectorySource,
 )
 from pydrake.multibody.parsing import Parser
 from pydrake.multibody.plant import AddMultibodyPlantSceneGraph, MultibodyPlant
@@ -30,6 +35,7 @@ from brom_drake.control.grippers import GripperController, GripperTarget
 from brom_drake.file_manipulation.urdf.drakeify import drakeify_my_urdf
 from brom_drake.file_manipulation.urdf.shapes.box import BoxDefinition
 from brom_drake.file_manipulation.urdf.simple_writer import SimpleShapeURDFDefinition
+from brom_drake.motion_planning.systems.open_loop_dispensers.pose_trajectory_source import PoseTrajectorySource
 from brom_drake.robots import find_base_link_name_in, GripperType
 from brom_drake import robots
 from brom_drake.motion_planning.systems import OpenLoopPlanDispenser, OpenLoopPosePlanDispenser
@@ -41,22 +47,25 @@ from brom_drake.utils import (
     FSMOutputDefinition, FSMTransitionConditionType, Puppetmaker, PuppetmakerConfiguration, PuppetSignature,
 )
 from brom_drake.utils.initial_condition_manager import InitialConditionManager
-from brom_drake.utils.leaf_systems import RigidTransformToVectorSystem
+from brom_drake.utils.leaf_systems import RigidTransformToVectorSystem, define_named_vector_selection_system
 from brom_drake.utils.model_instances import (
     get_name_of_first_body_in_urdf,
     find_number_of_positions_in_welded_model,
 )
+from brom_drake.utils.triads import AddMultibodyTriad
 from .config import Configuration
-from .script import Script as AttemptGraspScript
+from .phases import AttemptGraspWithPuppeteerWristPhase
+from .script import Script as AttemptGraspWithPuppeteerWristScript
 
-class AttemptGrasp(BasicGraspingDebuggingProduction):
+class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
     # Member functions
     def __init__(
         self,
         path_to_object: str,
         gripper_choice: GripperType,
         grasp_joint_positions: np.ndarray,
-        X_ObjectTarget: RigidTransform = None,
+        X_WorldGripper_trajectory: List[RigidTransform] = None,
+        meshcat_port_number: int = None,
         config: Configuration = Configuration(),
     ):
         """
@@ -65,8 +74,10 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
 
         Arguments
         ---------
-        X_ObjectTarget: RigidTransform
-            The pose of the target frame (i.e., the desired grasp pose) in the object frame.
+        X_ObjectGripper_trajectory: List[RigidTransform]
+            The desired trajectory for the Gripper Frame.
+            A sequence of poses of the Gripper Frame (usually attached to the base of the gripper)
+            with respect to the object being grasped.
         """
         # Use the enum to choose the gripper URDF from a set of supported grippers
         if gripper_choice == GripperType.Robotiq_2f_85:
@@ -76,11 +87,15 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
         else:
             raise ValueError(f"Gripper type {gripper_choice} not supported for this scene! Create an issue on GitHub if you want it to be!")
 
+        # Handle config
+        if meshcat_port_number is not None:
+            config.base.meshcat_port_number = meshcat_port_number
+
         # Call the parent constructor
         super().__init__(
             path_to_object=path_to_object,
             path_to_gripper=path_to_gripper,
-            X_ObjectGripper=X_ObjectTarget,
+            X_ObjectGrasp=X_WorldGripper_trajectory[-1],
             meshcat_port_number=config.base.meshcat_port_number,
             time_step=config.base.time_step,
             target_body_on_gripper=config.target_body_on_gripper,
@@ -109,10 +124,9 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
         #     initial_gripper_joint_positions = [0.0] * n_gripper_positions
         self.initial_gripper_joint_positions = np.zeros(grasp_joint_positions.shape)# initial_gripper_joint_positions
 
-        # Save target joint position array
-        # assert len(grasp_joint_positions) != n_gripper_positions, \
-        #     f"Expected for the \"grasp_joint_positions\" array to contain {n_gripper_positions} values (the number of positions)" + \
-        #     f"in the model, but received length {len(grasp_joint_positions)} array."
+        # Save the trajectory of the gripper frame
+        self.X_WorldGripper_trajectory = X_WorldGripper_trajectory
+        self.add_frames_for_gripper_base_trajectory(self.X_WorldGripper_trajectory)
         
         self.grasp_joint_positions = grasp_joint_positions
         self.config = config
@@ -129,7 +143,7 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
 
         # Create an executive/brain
         self.executive = self.create_executive_system() # The executive system that coordinates ALL the systems
-    
+
     def add_floor_controller_and_connect(self, floor_mass: float):
         # Setup
         plant: MultibodyPlant = self.plant
@@ -239,17 +253,59 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
 
         return floor_mass, floor_shape, floor_model_index, floor_actuator
 
+    def add_frames_for_gripper_base_trajectory(
+        self,
+        pose_trajectory: List[RigidTransform]
+    ):
+        # Setup
+        plant: MultibodyPlant = self.plant
+
+        # Create frames for each pose in the trajectory
+        gripper_base_frames = []
+        for i, pose_i in enumerate(pose_trajectory):
+            frame_i = FixedOffsetFrame(
+                name = "Gripper Base Frame Traj Pt " + str(i),
+                P= self.plant.world_frame(), # Parent Frame
+                X_PF=pose_i,
+            )
+            frame_i_added = self.plant.AddFrame(frame_i)
+            gripper_base_frames.append(frame_i_added)
+
+        for i, gripper_base_frame_i in enumerate(gripper_base_frames):
+            # Add a triad for each frame
+            AddMultibodyTriad(
+                frame=gripper_base_frame_i,
+                scene_graph=self.scene_graph,
+                length=0.05,
+                radius=0.005,
+                opacity=1.0,
+            )
+
+        return gripper_base_frames
+
     def add_gripper_controllers_and_connect(
         self,
         gripper_puppet_input: RigidTransformToVectorSystem,
         gripper_joint_input: PassThrough,
     ):
         # Setup
-        gripper_poses = self.compute_gripper_poses_for_attempted_grasp()
+        builder = self.builder
+        # Legacy
+        # gripper_poses = sel f.compute_gripper_poses_for_attempted_grasp()
+        # trajectory_dispenser = self.add_gripper_puppet_controller_and_connect(gripper_puppet_input, gripper_poses)
+        # self.connect_executive_to_gripper_puppet_controller(trajectory_dispenser)
 
-        # Create a controller to "puppet" the gripper's base
-        trajectory_dispenser = self.add_gripper_puppet_controller_and_connect(gripper_puppet_input, gripper_poses)
-        self.connect_executive_to_gripper_puppet_controller(trajectory_dispenser)
+        gripper_base_trajectory = self.compute_gripper_base_pose_trajectory_for_attempted_grasp()
+
+        # Create a trajectory source for the gripper base and connect that to the puppet
+        gripper_pose_source = builder.AddNamedSystem(
+            name="Gripper Base Pose Source",
+            system=PoseTrajectorySource(gripper_base_trajectory),
+        )
+        builder.Connect(
+            gripper_pose_source.get_output_port(),
+            gripper_puppet_input.get_input_port(),
+        )
 
         # Connect controller for all of the joints
         self.add_gripper_joint_controllers_and_connect(gripper_joint_input)
@@ -262,43 +318,14 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
         builder: DiagramBuilder = self.builder
         plant: MultibodyPlant = self.plant
 
-        # n_gripper_positions = find_number_of_positions_in_welded_model(self.path_to_gripper)
-
-        # Get gripper initial and final positions
-        p_gripper0 = self.initial_gripper_joint_positions
-        p_gripper_final = self.grasp_joint_positions
-
-        # Create a desired trajectory for the gripper to track while attempting to grasp
-        gripper_trajectory_dispatcher = builder.AddSystem(
-            OpenLoopPlanDispenser(p_gripper0.shape[0], speed=0.075),
-        )
-        gripper_trajectory_dispatcher.set_name("[Gripper] Trajectory Dispatcher")
-
-        # Connect executive to the plan dispatcher
-        builder.Connect(
-            self.executive.GetOutputPort("close_gripper"),
-            gripper_trajectory_dispatcher.GetInputPort("plan_ready"),  # Trigger input
-        )
-
-        # Create plan for the gripper
-        gripper_plan = np.array([
-            p_gripper0,
-            p_gripper_final,
-        ])
-        gripper_plan_source = builder.AddSystem(
-            ConstantValueSource(AbstractValue.Make(gripper_plan))
-        )
-
-        builder.Connect(
-            gripper_plan_source.get_output_port(),
-            gripper_trajectory_dispatcher.GetInputPort("plan"),
-        )
+        # Create a trajectory source for the gripper joints
+        gripper_trajectory_source = self.add_gripper_trajectory_system()
 
         # Create a simple piece of logic to turn on/off the gripper (i.e., to close it)
         gripper_controller = builder.AddSystem(
             GripperController(
                 GripperType.Robotiq_2f_85,
-                Kp=1_000.0 * np.eye(2),
+                Kp=1e2 * np.eye(2),
             ),
         )
         gripper_controller.set_name("[Gripper] Gripper Controller")
@@ -311,7 +338,7 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
 
         # Connect plan to the controller
         builder.Connect(
-            gripper_trajectory_dispatcher.GetOutputPort("point_in_plan"),
+            gripper_trajectory_source.get_output_port(),
             gripper_controller.GetInputPort("gripper_target"),
         )
 
@@ -327,20 +354,23 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
             gripper_controller.GetInputPort("gripper_target_type"),
         )
 
-        # Connect the plant to the gripper controller
-        n_x: int = plant.num_positions(self.gripper_model_index) * 2
-        n_y: int = n_x - 2
-        D = np.zeros((n_y, n_x))
-        for ii in range(n_y//2):
-            D[ii, ii] = 1.0
-            D[ii + n_y//2, ii + n_x//2] = 1.0
+        # Create a system that selects ONLY the elements of the gripper state
+        # that are relevant to the gripper controller (i.e., the gripper joint
+        # positions and velocities, but none of the puppeteer states)
+        states_to_pass_to_gripper_controller = [
+            state_name 
+            for state_name in plant.GetStateNames(self.gripper_model_index)
+            if "puppetmaker" not in state_name
+        ]
 
         state_compressor = builder.AddNamedSystem(
             name=f"[AttemptGrasp] Plant State To Gripper State Converter",
-            system=AffineSystem(
-                D=D,
+            system=define_named_vector_selection_system(
+                all_element_names=plant.GetStateNames(self.gripper_model_index),
+                desired_inputs=states_to_pass_to_gripper_controller,
             )
         )
+
         builder.Connect(
             plant.get_state_output_port(self.gripper_model_index),
             state_compressor.get_input_port(),
@@ -363,7 +393,7 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
         trajectory_dispenser = builder.AddSystem(
             OpenLoopPosePlanDispenser(speed=0.075),
         )
-        trajectory_dispenser.set_name("[Gripper] Trajectory Dispenser")
+        trajectory_dispenser.set_name("[Puppeteer] Trajectory Dispenser")
         # Notes about this dispenser:
         # - We will trigger this with an "executive" signal
         # - We will feed it a trajectory that goes from an initial position to the grasp position
@@ -388,19 +418,39 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
 
         return trajectory_dispenser
 
-    def add_initial_conditions_to_plant(self):
+    def add_gripper_trajectory_system(self) -> TrajectorySource:
         # Setup
-        X_WorldGripper = self.find_X_WorldGripper(
-            X_ObjectGripper=self.X_ObjectGripper,
-            target_frame_name=self.target_body_name_on_gripper,
-            desired_joint_positions=self.initial_gripper_joint_positions,
+        builder: DiagramBuilder = self.builder
+        script: AttemptGraspWithPuppeteerWristScript = self.config.script
+
+        # Collect gripper initial and final positions
+        p_gripper0 = self.initial_gripper_joint_positions
+        p_gripper_final = self.grasp_joint_positions
+
+        # Find times for each phase
+        t_gripper_close_start = script.start_time_of_phase(
+            phase=AttemptGraspWithPuppeteerWristPhase.kGripperClosing
+        )
+        t_object_settling_in_grasp_start = script.start_time_of_phase(
+            phase=AttemptGraspWithPuppeteerWristPhase.kObjectSettlingInGrasp
         )
 
-        # Set all initial conditions for the gripper model
-        self.initial_condition_manager.add_initial_pose(
-            model_instance_index=self.gripper_model_index,
-            pose_wrt_parent=X_WorldGripper,
+        # Create a piecewise trajectory for the gripper to follow
+        joint_position_samples = []
+        joint_position_samples.append(p_gripper0.reshape(-1, 1).tolist()) # This wild compression is needed because of bugs in Drake. :'(
+        joint_position_samples.append(p_gripper0.reshape(-1, 1).tolist())
+        joint_position_samples.append(p_gripper_final.reshape(-1, 1).tolist())
+        gripper_trajectory = PiecewisePolynomial.FirstOrderHold(
+            samples=joint_position_samples,
+            breaks=[0.0, t_gripper_close_start, t_object_settling_in_grasp_start],
         )
+
+        # Add a trajectory source object to the builder
+        gripper_trajectory_source = builder.AddSystem(
+            TrajectorySource(gripper_trajectory),
+        )
+        gripper_trajectory_source.set_name("[Gripper] Trajectory Source")
+        return gripper_trajectory_source
 
     def add_puppeteer_for_gripper(self) -> Tuple[Puppetmaker, PuppetSignature]:
         # Setup
@@ -438,7 +488,7 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
 
         # Add the gripper to the builder
         self.add_gripper_to_plant()
-        maker0, puppet_signature0 = self.add_puppeteer_for_gripper()
+        maker0, self.puppet_signature = self.add_puppeteer_for_gripper()
 
         # Add the floor
         floor_mass, self.floor_shape, self.floor_model_index, self.floor_actuator = self.add_floor_to_plant()
@@ -450,9 +500,9 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
         # Finalize the plant
         self.plant.Finalize()
         puppet_pose_input, replacement_gripper_actuator_inputs = maker0.add_puppet_controller_for(
-            puppet_signature0,
+            self.puppet_signature,
             self.builder,
-            Kp=np.array([1e1, 1e1, 1e1, 1e0, 1e0, 1e0])
+            Kp=np.array([1e2, 1e2, 1e2, 1e1, 1e1, 2e0])
         )
 
         # Add controllers for gripper AND floor
@@ -460,8 +510,8 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
         self.add_floor_controller_and_connect(floor_mass)
 
         # Create defaults for plant
-        self.set_plant_defaults()
-        self.add_initial_conditions_to_plant()    
+        self.set_initial_conditions()
+        # self.add_initial_conditions_to_plant()    
 
     def connect_executive_to_gripper_puppet_controller(self, trajectory_dispenser):
         # Setup
@@ -473,39 +523,65 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
             executive.GetOutputPort("enable_gripper_approach"),
             trajectory_dispenser.GetInputPort("plan_ready"),  # Trigger input
         )
+    
+    def compute_gripper_base_pose_trajectory_for_attempted_grasp(self) -> PiecewisePose:
+        """
+        Description
+        -----------
+        Returns a PiecewisePose trajectory for the gripper base to follow during the
+        attempted grasp.
 
-    def compute_gripper_poses_for_attempted_grasp(self) -> List[RigidTransform]:
+        The trajectory should be an interpolation between two poses that is then held
+        until the end of the production.
+
+        Arguments
+        ---------
+        TBD
+        :param self: Description
+        :return: Description
+        :rtype: PiecewisePose
+        """
+
         # Setup
-        plant: MultibodyPlant = self.plant
+        script = self.config.script
 
         # Compute the Grasp Pose of the gripper in the world frame
-        X_WorldGripper = self.find_X_WorldGripper(
-            X_ObjectGripper=self.X_ObjectGripper,
-            target_frame_name=self.target_body_name_on_gripper,
-            desired_joint_positions=self.grasp_joint_positions,
+        pose_WorldGripper_initial = self.X_WorldGripper_trajectory[0]
+        pose_WorldGripper_final = self.X_WorldGripper_trajectory[-1]
+
+        # For each event in the script, create (i) a time and (ii) a pose
+        times = []
+        poses = []
+        
+        # - Create initial pose
+        times.append(0.0)
+        poses.append(pose_WorldGripper_initial)
+
+        # - Create pre-grasp pose (will be same as initial pose)
+        t_pre_grasp = script.start_time_of_phase(
+            phase=AttemptGraspWithPuppeteerWristPhase.kGripperApproach
         )
-        print("Computed Grasp Pose of the gripper in the world frame:")
-        print(X_WorldGripper)
+        times.append(t_pre_grasp)
+        poses.append(pose_WorldGripper_initial)
 
-        # Compute a pre-grasp pose for the gripper in the world frame
-        # (i.e., a pose that is 10cm back from the grasp pose)
-        X_GripperInitial_PreGrasp = RigidTransform(
-            p=np.array([0.0, -0.10, +0.10]),  # 10cm back along the gripper's z-axis
+        # - Create pose at which we start closing the gripper
+        t_approach_grasp = script.start_time_of_phase(
+            phase=AttemptGraspWithPuppeteerWristPhase.kGripperClosing
         )
-        X_WorldGripper_initial = X_WorldGripper.multiply(X_GripperInitial_PreGrasp)
+        times.append(t_approach_grasp)
+        poses.append(pose_WorldGripper_final)
 
-        # Create a list of poses for the gripper to move through
-        gripper_poses = [
-            X_WorldGripper_initial,
-            X_WorldGripper,
-        ]
-
-        return gripper_poses
+        # Assemble into a PiecewisePose
+        gripper_base_trajectory = PiecewisePose.MakeLinear(
+            times=times,
+            poses=poses,
+        )
+        return gripper_base_trajectory
 
     def create_executive_system(self) -> NetworkXFSM:
         # Setup
         builder: DiagramBuilder = self.builder
-        script: AttemptGraspScript = self.config.script
+        script: AttemptGraspWithPuppeteerWristScript = self.config.script
 
         # Create the NetworkXFSM from the graph
         executive = builder.AddSystem(script.to_fsm())
@@ -796,7 +872,7 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
     def id(self):
         return ProductionID.kAttemptGraspWithPuppeteer
 
-    def set_plant_defaults(self):
+    def set_initial_conditions(self):
         """
         Description
         -----------
@@ -816,7 +892,6 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
         )
 
         # Set the initial pose of the object
-        X_WorldObject = RigidTransform.Identity()
         ic_manager.add_initial_pose(
             model_instance_index=self.manipuland_index,
             pose_wrt_parent=RigidTransform.Identity(),
@@ -826,17 +901,53 @@ class AttemptGrasp(BasicGraspingDebuggingProduction):
         # - Set the gripper positions (i.e., initial positions of the joints)
         n_gripper_positions0 = find_number_of_positions_in_welded_model(self.path_to_gripper)
         n_gripper_positions1 = plant.num_positions(self.gripper_model_index)
+
+        initial_gripper_configuration = np.zeros((n_gripper_positions1,))        
+        initial_gripper_configuration[1:] = self.initial_gripper_joint_positions
+        
         ic_manager.add_initial_configuration(
             model_instance_index=self.gripper_model_index,
-            configuration=np.zeros((n_gripper_positions0+1,)),
+            configuration=initial_gripper_configuration,
         )
 
-        # - Set the gripper's base pose
-        X_WorldObject = X_WorldObject.multiply(self.X_ObjectGripper)
-        ic_manager.add_initial_pose(
-            model_instance_index=self.gripper_model_index,
-            pose_wrt_parent=X_WorldObject,
-        )
+        # # - Set the initial configuration of some of the puppet joints to match the gripper
+        # #   (i.e., so that the puppet and gripper start in the same position)
+        # X_WorldObject = X_WorldObject.multiply(self.X_ObjectGripper)
+        # for jj in range(3):
+        #     puppet_model_jj = self.puppet_signature.all_models[jj]
+        #     ic_manager.add_initial_configuration(
+        #         model_instance_index=puppet_model_jj,
+        #         configuration=np.array([self.X_World_PreGrasp.translation()[jj]]),
+        #     )
+
+        # for jj in range(2):
+        #     puppet_model_jj = self.puppet_signature.all_models[jj + 3]
+        #     ic_manager.add_initial_configuration(
+        #         model_instance_index=puppet_model_jj,
+        #         configuration=np.array([self.X_World_PreGrasp.rotation().ToRollPitchYaw().vector()[jj]]),
+        #     )
+
+        # Set initial conditions for the puppeteer joints
+        X_World_PreGrasp = self.X_WorldGripper_trajectory[0]
+        for joint_index, joint_actuator_i in enumerate(self.puppet_signature.all_joint_actuators):
+            if joint_index < 3:
+                self.initial_condition_manager.add_initial_configuration(
+                    model_instance_index=joint_actuator_i.model_instance(),
+                    configuration=np.array([X_World_PreGrasp.translation()[joint_index]])
+                )
+            if joint_index >=3 and joint_index <5:
+                # Roll and Pitch
+                self.initial_condition_manager.add_initial_configuration(
+                    model_instance_index=joint_actuator_i.model_instance(),
+                    configuration=np.array([X_World_PreGrasp.rotation().ToRollPitchYaw().vector()[joint_index - 3]])
+                )
+
+        # # - Set the gripper's base pose
+        # X_WorldObject = X_WorldObject.multiply(self.X_ObjectGripper)
+        # ic_manager.add_initial_pose(
+        #     model_instance_index=self.gripper_model_index,
+        #     pose_wrt_parent=X_WorldObject,
+        # )
 
         
 

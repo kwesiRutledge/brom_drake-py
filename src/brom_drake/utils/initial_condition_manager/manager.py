@@ -41,7 +41,7 @@ class InitialConditionManager:
         for the given plant.
         """
         self.set_all_initial_configurations(plant, diagram_context=diagram_context)
-        self.set_all_initial_poses(plant)
+        self.set_all_initial_poses(plant, diagram_context=diagram_context)
 
     def set_all_initial_configurations(self, plant: MultibodyPlant, diagram_context: Context = None):
         """Set all known initial configurations for the given plant."""
@@ -49,7 +49,7 @@ class InitialConditionManager:
             ic_tuple.set_initial_configuration(plant, diagram_context=diagram_context)
 
 
-    def set_all_initial_poses(self, plant: MultibodyPlant):
+    def set_all_initial_poses(self, plant: MultibodyPlant, diagram_context: Context = None):
         """Set all known initial poses for the given plant."""
         for ic_tuple in self._ic_tuples:
-            ic_tuple.set_initial_pose(plant)
+            ic_tuple.set_initial_pose(plant, diagram_context=diagram_context)
