@@ -1,10 +1,14 @@
 from importlib import resources as impresources
+from importlib import import_module
+import inspect
+import os
 from pathlib import Path
 import pkgutil
 import shutil
 import subprocess
 import tempfile
 import typer
+from typing import List
 
 import brom_drake
 
@@ -26,6 +30,12 @@ def generate_all_discoverable_docs(
 
     package_name = package_dir.name
 
+    extended_package_name = str(package_dir)
+    extended_package_name = extended_package_name[
+        extended_package_name.find("brom_drake-py/src/brom_drake") + len("brom_drake-py/src/"):
+    ]
+    extended_package_name = extended_package_name.replace("/", ".")
+
     # Identify all submodules in this package
     canonicalized_modules, submodule_names = [], []
     for _, name, is_pkg in pkgutil.walk_packages([package_dir]):
@@ -43,8 +53,19 @@ def generate_all_discoverable_docs(
 
         print(f"Found submodule: {full_module_name}")
     
-    # Identify all files in this package
-    # TODO(Kwesi): Implement this, if the above loop does not work
+    # Identify all functions in this package
+    package_dir_contents = os.listdir(package_dir)
+    files_in_package_dir = [
+        elt
+        for elt in package_dir_contents
+        if ".py" in elt
+    ]
+
+    available_functions = identify_available_functions_in_package(
+        extended_package_name,
+        subpackage_names=submodule_names,
+        python_file_names=files_in_package_dir
+    )
 
     # Organize modules alphabetically
     canonicalized_modules = sorted(canonicalized_modules, key=str.lower)
@@ -74,12 +95,92 @@ def generate_all_discoverable_docs(
         package_name=package_name,
         output_dir=output_dir,
         submodules=submodule_names,
+        functions=available_functions,
     )
+
+def identify_available_functions_in_package(
+    canonicalized_package_name: str,
+    subpackage_names: List[str],
+    python_file_names: List[str]
+) -> List[str]:
+    # Announce the beginning of this function
+    print("Determining the functions (i.e., the things which are not subpackages) in:")
+    print(f"- Canonicalized package: {canonicalized_package_name}")
+    print(f"- Subpackages to avoid adding:")
+    for subpkg in subpackage_names:
+        print(f"  + {subpkg}")
+
+    # Collect all contents of package
+    pkg_contents = dir(import_module(canonicalized_package_name))
+    available_functions = []
+    for candidate in pkg_contents:
+        # Do not add to the list any functions that are built-in
+        # (i.e., those that start with double underscores)
+        if candidate[:2] == "__":
+            continue
+
+        # Do not add subpackages to the list of available functions
+        if candidate in subpackage_names:
+            continue
+
+        # Do not add files to the list of available functions
+        # candidate_as_python_file = candidate + ".py"
+        # if candidate_as_python_file in python_file_names:
+        #     continue
+
+        # Do not add to the list something that is detected as a "module"
+        # and not a function or class
+        candidate_obj = eval(f"{canonicalized_package_name}.{candidate}")
+        if inspect.ismodule(candidate_obj):
+            continue
+
+        # If all other checks pass, then add the fcn to the available_functions list
+        available_functions.append(candidate)
+
+    print("- Available functions:")
+    for candidate in available_functions:
+        print(f"  + {candidate}")
+    
+    return available_functions
+
+def get_canonicalized_function_name(
+    output_dir: Path,
+    function_name: str,
+) -> str:
+    """
+    Docstring for get_canonicalized_function_name
+    
+    :param output_dir: Description
+    :type output_dir: Path
+    :param function_name: Description
+    :type function_name: str
+    :return: Description
+    :rtype: str
+    """
+    # Create output string container
+    out = "brom_drake."
+
+    # Extract the component of the output_dir that should
+    # mirror the path in the canonical import
+    # "source/generated/control/arms" -> "control/arms"
+    expected_prefix = "source/generated/"
+    if expected_prefix not in str(output_dir):
+        raise ValueError(f"`output_dir` does not contain the expected prefix: {expected_prefix}")
+
+    # Add the component that should be relevant to the expected output
+    # e.g., adds "control.arms" to out
+    out += \
+        str(output_dir)[str(output_dir).find(expected_prefix)+len(expected_prefix):]
+    out = out.replace("/",".")
+
+    # Make sure to add the trailing period and then the function name
+    return out + "." + function_name
 
 def write_rst_file_for_package(
     package_name: str,
     output_dir: Path,
     submodules: list[str],
+    functions: list[str]
 ):
     """
     Writes an .rst file that is compatible with
@@ -124,12 +225,24 @@ def write_rst_file_for_package(
             rst_file.write(f"- `{submodule} <{submodule}/{submodule}.html>`_\n")
         rst_file.write("\n")
 
-        # Write hyperlinks to submodules
-        rst_file.write(".. toctree::\n")
-        rst_file.write("   :maxdepth: 2\n\n")
-        for submodule in submodules:
-            rst_file.write(f"   {submodule}\n")
-        rst_file.write("\n")
+        # Write the list of functions
+        rst_file.write("Functions\n")
+        rst_file.write("---------\n\n")
+
+        if len(functions) == 0:
+            rst_file.write("(None found)\n\n")
+        else:
+            for fcn in sorted(functions, key=str.lower):
+                canonical_fcn_name = get_canonicalized_function_name(output_dir, function_name=fcn)
+                rst_file.write(f".. autofunction:: {canonical_fcn_name}\n")
+            rst_file.write("\n")
+
+        # # Write hyperlinks to submodules
+        # rst_file.write(".. toctree::\n")
+        # rst_file.write("   :maxdepth: 2\n\n")
+        # for submodule in submodules:
+        #     rst_file.write(f"   {submodule}/{submodule}\n")
+        # rst_file.write("\n")
 
         # # Write autosummary table
         # rst_file.write(".. autosummary::\n")
