@@ -10,8 +10,8 @@ from typing import List, Union
 from pathlib import Path
 
 # Internal Imports
-from .DrakeReadyURDFConverter.converter import DrakeReadyURDFConverter
-from brom_drake.file_manipulation.urdf.DrakeReadyURDFConverter.config import (
+from .drake_ready_urdf_converter.converter import DrakeReadyURDFConverter
+from brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.config import (
     MeshReplacementStrategy, MeshReplacementStrategies, DrakeReadyURDFConverterConfig
 )
 

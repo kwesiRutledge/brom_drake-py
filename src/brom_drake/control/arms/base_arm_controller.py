@@ -9,18 +9,22 @@ class BaseArmController(LeafSystem):
     """
     A controller which provides the basic functionality for controlling
     a robotic arm.
-                                ------------------------
-                                |                      |
-                                |                      |
-    ee_target ----------------> |  BaseArmController   | ----> applied_arm_torque
-    ee_target_type -----------> |                      |
-                                |                      |
-                                |                      | ----> measured_ee_pose
-    arm_joint_position -------> |                      | ----> measured_ee_twist
-    arm_joint_velocity ------>  |                      |
-                                |                      |
-                                |                      |
-                                ------------------------
+
+    A block diagram will be included in the docstring below this comment. ::
+
+                                    ------------------------
+                                    |                      |
+                                    |                      |
+        ee_target ----------------> |  BaseArmController   | ----> applied_arm_torque
+        ee_target_type -----------> |                      |
+                                    |                      |
+                                    |                      | ----> measured_ee_pose
+        arm_joint_position -------> |                      | ----> measured_ee_twist
+        arm_joint_velocity ------>  |                      |
+                                    |                      |
+                                    |                      |
+                                    ------------------------
+    
     The type of target is determined by ee_target_type, and the options are defined in the
     end effector target.
     """
