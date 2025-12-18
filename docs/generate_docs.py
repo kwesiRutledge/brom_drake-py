@@ -66,6 +66,7 @@ def generate_all_discoverable_docs(
         subpackage_names=submodule_names,
         python_file_names=files_in_package_dir
     )
+    available_classes = identify_available_classes_in_package(extended_package_name, subpackage_names=submodule_names)
 
     # Organize modules alphabetically
     canonicalized_modules = sorted(canonicalized_modules, key=str.lower)
@@ -96,7 +97,51 @@ def generate_all_discoverable_docs(
         output_dir=output_dir,
         submodules=submodule_names,
         functions=available_functions,
+        classes=available_classes
     )
+
+def identify_available_classes_in_package(
+    canonicalized_package_name: str,
+    subpackage_names: List[str],
+) -> List[str]:
+    # Announce the beginning of this function
+    print("Determining the functions (i.e., the things which are not subpackages) in:")
+    print(f"- Canonicalized package: {canonicalized_package_name}")
+    print(f"- Subpackages to avoid adding:")
+    for subpkg in subpackage_names:
+        print(f"  + {subpkg}")
+
+    # Collect all contents of package
+    pkg_contents = dir(import_module(canonicalized_package_name))
+    available_classes = []
+    for candidate in pkg_contents:
+        # Do not add to the list any functions that are built-in
+        # (i.e., those that start with double underscores)
+        if candidate[:2] == "__":
+            continue
+
+        # Do not add subpackages to the list of available functions
+        if candidate in subpackage_names:
+            continue
+
+        # Do not add files to the list of available functions
+        # candidate_as_python_file = candidate + ".py"
+        # if candidate_as_python_file in python_file_names:
+        #     continue
+
+        # Do not add to the list something that is detected as not a "class"
+        candidate_obj = eval(f"{canonicalized_package_name}.{candidate}")
+        if not inspect.isclass(candidate_obj):
+            continue
+
+        # If all other checks pass, then add the fcn to the available_functions list
+        available_classes.append(candidate)
+
+    print("- Available functions:")
+    for candidate in available_classes:
+        print(f"  + {candidate}")
+    
+    return available_classes
 
 def identify_available_functions_in_package(
     canonicalized_package_name: str,
@@ -129,9 +174,8 @@ def identify_available_functions_in_package(
         #     continue
 
         # Do not add to the list something that is detected as a "module"
-        # and not a function or class
         candidate_obj = eval(f"{canonicalized_package_name}.{candidate}")
-        if inspect.ismodule(candidate_obj):
+        if not inspect.isfunction(candidate_obj):
             continue
 
         # If all other checks pass, then add the fcn to the available_functions list
@@ -180,7 +224,8 @@ def write_rst_file_for_package(
     package_name: str,
     output_dir: Path,
     submodules: list[str],
-    functions: list[str]
+    functions: list[str],
+    classes: list[str],
 ):
     """
     Writes an .rst file that is compatible with
@@ -221,9 +266,29 @@ def write_rst_file_for_package(
         rst_file.write("Submodules\n")
         rst_file.write("----------\n\n")
 
+        # for submodule in sorted(submodules, key=str.lower):
+        #     rst_file.write(f"- `{submodule} <{submodule}/{submodule}.html>`_\n")
+        # rst_file.write("\n")
+
+        # Write hyperlinks to submodules
+        rst_file.write(".. toctree::\n")
+        rst_file.write("   :maxdepth: 1\n\n")
         for submodule in sorted(submodules, key=str.lower):
-            rst_file.write(f"- `{submodule} <{submodule}/{submodule}.html>`_\n")
+            rst_file.write(f"   {submodule}/{submodule}\n")
         rst_file.write("\n")
+
+        # Write the list of classes
+        rst_file.write("Classes\n")
+        rst_file.write("-------\n\n")
+
+        if len(classes) == 0:
+            rst_file.write("(None found)\n\n")
+        else:
+            for cls in sorted(classes, key=str.lower):
+                canonical_cls_name = get_canonicalized_function_name(output_dir, function_name=cls)
+                rst_file.write(f".. autoclass:: {canonical_cls_name}\n")
+                rst_file.write(f"   :members:\n")
+            rst_file.write("\n")
 
         # Write the list of functions
         rst_file.write("Functions\n")
@@ -236,13 +301,6 @@ def write_rst_file_for_package(
                 canonical_fcn_name = get_canonicalized_function_name(output_dir, function_name=fcn)
                 rst_file.write(f".. autofunction:: {canonical_fcn_name}\n")
             rst_file.write("\n")
-
-        # # Write hyperlinks to submodules
-        # rst_file.write(".. toctree::\n")
-        # rst_file.write("   :maxdepth: 2\n\n")
-        # for submodule in submodules:
-        #     rst_file.write(f"   {submodule}/{submodule}\n")
-        # rst_file.write("\n")
 
         # # Write autosummary table
         # rst_file.write(".. autosummary::\n")

@@ -7,6 +7,8 @@ from pydrake.systems.framework import LeafSystem, BasicVector
 
 class BaseArmController(LeafSystem):
     """
+    Description
+    -----------
     A controller which provides the basic functionality for controlling
     a robotic arm.
 
