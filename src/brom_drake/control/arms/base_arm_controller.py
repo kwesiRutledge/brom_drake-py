@@ -1,4 +1,5 @@
 import numpy as np
+from pydrake.all import Context
 from pydrake.math import RollPitchYaw
 from pydrake.multibody.plant import MultibodyPlant
 from pydrake.multibody.tree import JacobianWrtVariable, ModelInstanceIndex
@@ -63,7 +64,10 @@ class BaseArmController(LeafSystem):
         -----------
         Defines the input ports for the arm state. This is useful for
         connecting the arm state to the controller.
-        :return:
+        
+        The input ports defined are:
+            - arm_joint_position
+            - arm_joint_velocity
         """
         self.arm_joint_position_port = self.DeclareVectorInputPort(
             "arm_joint_position",
@@ -80,7 +84,10 @@ class BaseArmController(LeafSystem):
         -----------
         Defines the output ports for the controller that have to deal with
         the sensed state of the input arm.
-        :return:
+        
+        The output ports defined are:
+            - measured_ee_pose
+            - measured_ee_twist
         """
         self.DeclareVectorOutputPort(
             "measured_ee_pose",
@@ -94,8 +101,10 @@ class BaseArmController(LeafSystem):
             self.CalcEndEffectorTwist,
             {self.time_ticket()})
 
-    def CalcEndEffectorPose(self, context, output):
+    def CalcEndEffectorPose(self, context: Context, output: BasicVector):
         """
+        Description
+        -----------
         This method is called each timestep to determine the end-effector pose
         """
         q = self.arm_joint_position_port.Eval(context)
@@ -117,12 +126,19 @@ class BaseArmController(LeafSystem):
 
         output.SetFromVector(ee_pose)
 
-    def CalcEndEffectorTwist(self, context, output):
+    def CalcEndEffectorTwist(self, context: Context, output: BasicVector):
         """
-        This method is called each timestep to determine the end-effector twist
+        Description
+        -----------
+        Callback for the `measured_ee_twist` output port.
+        This method computes the end-effector twist based on the current
+        joint positions and velocities.
         """
+        # Setup
         q = self.arm_joint_position_port.Eval(context)
         qd = self.arm_joint_velocity_port.Eval(context)
+
+        # Set the plant state
         self.plant.SetPositions(self.context, self.arm, q)
         self.plant.SetVelocities(self.context, self.arm, qd)
 
@@ -139,19 +155,22 @@ class BaseArmController(LeafSystem):
         ee_twist = J @ qd
         output.SetFromVector(ee_twist)
 
-        # print("Calculated end effector twist")
-
     def GetJointLimits(self):
         """
-        Iterate through self.plant to establish joint angle
-        and velocity limits.
+        Description
+        -----------
+        Iterate through the associated plant to determine
+        the joint limits (i.e., on position and velocity)
+        of all joints associated with the arm.
+        
+        Notes
+        -----
+        Sets the following internal variables:
 
-        Sets:
-
-            self.q_min
-            self.q_max
-            self.qd_min
-            self.qd_max
+        - q_min
+        - q_max
+        - qd_min
+        - qd_max
 
         """
         q_min = []
