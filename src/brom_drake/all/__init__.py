@@ -1,3 +1,6 @@
+from brom_drake.control.arms.arm_control_mode import ArmControlMode
+from brom_drake.control.arms.end_effector_target import EndEffectorTarget
+from brom_drake.control.arms.joint_target import JointTarget
 from brom_drake.control.grippers.gripper_target import GripperTarget
 from brom_drake.DiagramTarget import DiagramTarget
 from brom_drake.DiagramWatcher import DiagramWatcher, DiagramWatcherOptions
@@ -42,6 +45,7 @@ from brom_drake.utils.puppetmaker.puppet_signature import PuppeteerJointSignatur
 __all__ = [
     'add_watcher',
     'add_watcher_and_build',
+    'ArmControlMode',
     'BaseRRTPlannerConfig',
     'BaseRRTPlanner',
     'BoolToVectorSystem',
@@ -51,10 +55,12 @@ __all__ = [
     'drakeify_my_urdf', 
     'DrakeReadyURDFConverter',
     'DrakeReadyURDFConverterConfig',
+    'EndEffectorTarget',
     'EndEffectorWrenchCalculator',
     'FigureNamingConvention',
     'GripperTarget',
     'GripperType',
+    'JointTarget',
     'MeshReplacementStrategy',
     'MeshReplacementStrategies',
     'parse_list_of_simplified_targets',

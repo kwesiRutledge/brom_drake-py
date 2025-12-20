@@ -8,8 +8,8 @@ from pydrake.systems.framework import LeafSystem, BasicVector
 
 class BaseArmController(LeafSystem):
     """
-    Description
-    -----------
+    *Description*
+    
     A controller which provides the basic functionality for controlling
     a robotic arm.
 
@@ -30,6 +30,16 @@ class BaseArmController(LeafSystem):
     
     The type of target is determined by ee_target_type, and the options are defined in the
     end effector target.
+
+    *Parameters*
+    
+    plant: pydrake.multibody.plant.MultibodyPlant
+        The multibody plant containing the arm to be controlled.
+        This plant is assumed to be finalized.
+    arm_model: pydrake.multibody.tree.ModelInstanceIndex
+        The model instance index of the arm to be controlled.
+    end_effector_frame_name: str, optional
+        The name of the end-effector frame in the plant, by default "end_effector_frame".
     """
     def __init__(
         self,
@@ -60,8 +70,8 @@ class BaseArmController(LeafSystem):
 
     def define_input_ports_for_arm_state(self):
         """
-        Description
-        -----------
+        *Description*
+        
         Defines the input ports for the arm state. This is useful for
         connecting the arm state to the controller.
         
@@ -80,8 +90,8 @@ class BaseArmController(LeafSystem):
 
     def define_output_measurement_ports(self):
         """
-        Description
-        -----------
+        *Description*
+        
         Defines the output ports for the controller that have to deal with
         the sensed state of the input arm.
         
@@ -103,8 +113,8 @@ class BaseArmController(LeafSystem):
 
     def CalcEndEffectorPose(self, context: Context, output: BasicVector):
         """
-        Description
-        -----------
+        *Description*
+        
         This method is called each timestep to determine the end-effector pose
         """
         q = self.arm_joint_position_port.Eval(context)
@@ -128,8 +138,8 @@ class BaseArmController(LeafSystem):
 
     def CalcEndEffectorTwist(self, context: Context, output: BasicVector):
         """
-        Description
-        -----------
+        *Description*
+        
         Callback for the `measured_ee_twist` output port.
         This method computes the end-effector twist based on the current
         joint positions and velocities.
@@ -157,14 +167,14 @@ class BaseArmController(LeafSystem):
 
     def GetJointLimits(self):
         """
-        Description
-        -----------
+        *Description*
+        
         Iterate through the associated plant to determine
         the joint limits (i.e., on position and velocity)
         of all joints associated with the arm.
         
-        Notes
-        -----
+        *Notes*
+        
         Sets the following internal variables:
 
         - q_min

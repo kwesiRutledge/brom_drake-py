@@ -6,6 +6,8 @@ from enum import IntEnum
 
 class ArmControlMode(IntEnum):
     """
+    *Description*
+
     An enum describing the multiple control types that can be used for an
     arm in Brom.
 
@@ -13,8 +15,15 @@ class ArmControlMode(IntEnum):
         kJoint or
         kEndEffector
 
-    Usage:
+    *Usage*
+    
+    .. code:: python
 
+        from brom_drake.control.arms.arm_control_mode import ArmControlMode
+        # or
+        # from brom_drake.all import ArmControlMode
+    
+        # Selecting the joint control mode
         arm_control_mode = ArmControlMode.kJoint
     """
     kJoint = 0

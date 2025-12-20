@@ -6,6 +6,7 @@ Description:
     torque based control commands for the targeted arm.
 """
 # External Imports
+from pydrake.all import DifferentialInverseKinematicsStatus
 from pydrake.common.value import AbstractValue
 from pydrake.math import RollPitchYaw, RigidTransform, RotationMatrix
 from pydrake.multibody.inverse_kinematics import (
@@ -26,20 +27,29 @@ from .base_arm_controller import BaseArmController
 
 class CartesianArmController(BaseArmController):
     """
-    A controller which imitates the cartesian control mode of the Kinova gen3 arm.
+    *Description*
+    
+    .. warning::
+        This controller appears to be only partially tested/implemented.
+        Use at your own risk.
+        As usual, if you find any issues/problems, then please report them on the GitHub issue tracker!
 
-                                -----------------------------
-                                |                           |
-                                |                           |
-    ee_target ----------------> |  CartesianArmController   | ----> applied_arm_torque
-    ee_target_type -----------> |                           |
-                                |                           |
-                                |                           | ----> measured_ee_pose
-    arm_joint_position -------> |                           | ----> measured_ee_twist
-    arm_joint_velocity ------>  |                           |
-                                |                           |
-                                |                           |
-                                -----------------------------
+    A LeafSystem controller for any arm that imitates the cartesian control mode of the Kinova Gen3 arm.
+
+    A block diagram explaining the LeafSystem's input and output ports will be included below this comment. ::
+
+                                    -----------------------------
+                                    |                           |
+                                    |                           |
+        ee_target ----------------> |  CartesianArmController   | ----> applied_arm_torque
+        ee_target_type -----------> |                           |
+                                    |                           |
+                                    |                           | ----> measured_ee_pose
+        arm_joint_position -------> |                           | ----> measured_ee_twist
+        arm_joint_velocity ------>  |                           |
+                                    |                           |
+                                    |                           |
+                                    -----------------------------
 
     Note that many ports are defined by the base class (BaseArmController).
     """
@@ -74,10 +84,16 @@ class CartesianArmController(BaseArmController):
 
     def define_cartesian_target_input_ports(self):
         """
-        Description
-        -----------
+        *Description*
+        
         Define the input ports for the CartesianArmController system
-        :return:
+        
+        This method should instantiate the following input ports:
+        
+        - ee_target: A vector input port of size 7 representing the desired end-effector target. It's a bit strange that this is always 7 dimensional, given the types of targets that are possible.
+        - ee_target_type: An abstract input port representing the type of end-effector target. Recall the types of targets are defined in the EndEffectorTarget class.
+        - arm_joint_position: A vector input port representing the current joint positions of the arm.
+        - arm_joint_velocity: A vector input port representing the current joint velocities of the arm.
         """
         # Input Processing
         plant : MultibodyPlant = self.plant
@@ -99,6 +115,8 @@ class CartesianArmController(BaseArmController):
 
     def CalcArmTorques(self, context, output):
         """
+        *Description*
+
         This method is called each timestep to determine output torques
         """
         q = self.arm_joint_position_port.Eval(context)
@@ -117,12 +135,13 @@ class CartesianArmController(BaseArmController):
             wrench_des = self.ee_target_port.Eval(context)
 
             # Compute end-effector jacobian
-            J = self.plant.CalcJacobianSpatialVelocity(self.context,
-                                                       JacobianWrtVariable.kV,
-                                                       self.ee_frame,
-                                                       np.zeros(3),
-                                                       self.world_frame,
-                                                       self.world_frame)
+            J = self.plant.CalcJacobianSpatialVelocity(
+                self.context,
+                JacobianWrtVariable.kV,
+                self.ee_frame,
+                np.zeros(3),
+                self.world_frame,
+                self.world_frame)
 
             tau = tau_g + J.T @ wrench_des
 
