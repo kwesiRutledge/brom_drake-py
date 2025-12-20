@@ -12,10 +12,9 @@ from brom_drake import DiagramTarget
 
 class UnrecognizedTargetError(ValueError):
     """
-    UnrecognizedSystemError
-    Description:
+    *Description*
 
-        Raised when a system is not recognized by the DiagramWatcher.
+    Raised when a system is not recognized by the DiagramWatcher.
     """
     def __init__(self, target: DiagramTarget, system_names: List[str] = None):
         self.target = target

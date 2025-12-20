@@ -5,19 +5,25 @@ from pydrake.systems.framework import LeafSystem, BasicVector
 
 class EndEffectorWrenchCalculator(LeafSystem):
     """
+    Description
+    -----------
     A simple system which takes as input joint torques and outputs the corresponding
     wrench applied to the end-effector.
 
-                       ---------------------------------
-                       |                               |
-                       |                               |
-                       |                               |
-    joint_positions -> |  EndEffectorWrenchCalculator  | ---> end_effector_wrench
-    joint_angles ----> |                               |
-    joint_torques ---> |                               |
-                       |                               |
-                       |                               |
-                       ---------------------------------
+    Diagram
+    -------
+    The system can be illustrated with the following block: ::
+
+                            ---------------------------------
+                            |                               |
+                            |                               |
+                            |                               |
+        joint_positions --> |  EndEffectorWrenchCalculator  | ---> end_effector_wrench
+        joint_angles -----> |                               |
+        joint_torques ----> |                               |
+                            |                               |
+                            |                               |
+                            ---------------------------------
     """
     def __init__(self, plant, end_effector_frame):
         LeafSystem.__init__(self)
