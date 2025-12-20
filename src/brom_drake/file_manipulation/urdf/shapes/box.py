@@ -8,9 +8,38 @@ from .shape_definition import ShapeDefinition, ShapeEnum
 
 @dataclass
 class BoxDefinition(ShapeDefinition):
+    """
+    *Description*
+
+    Defines a box shape as per URDF specifications.
+
+    *Attributes*
+
+    size: Union[float, list, tuple, np.ndarray]
+        The size of the box along the x, y, and z axes.
+        If this is a float, it is assumed to be a cube with equal sides.
+    """
     size: Union[float, list, tuple, np.ndarray]
 
-    def add_geometry_to_element(self, target_element: ET.Element):
+    def add_geometry_to_element(self, target_element: ET.Element) -> ET.Element:
+        """
+        *Description*
+
+        Adds the box geometry as a sub-element to the given target element.
+
+        This method is an implementation of the abstract method defined in the
+        ShapeDefinition base class.
+
+        *Parameters*
+
+        target_element: xml.etree.ElementTree.Element
+            The target XML element to which the box geometry will be added.
+
+        *Returns*
+
+        xml.etree.ElementTree.Element
+            The element `target_element` with the box geometry added as a sub-element.
+        """
         # Setup
 
         # Convert the size to a numpy array
@@ -29,5 +58,18 @@ class BoxDefinition(ShapeDefinition):
         )
 
     @property
-    def type(self):
+    def type(self) -> ShapeEnum:
+        """
+        *Description*
+
+        Always returns ShapeEnum.kBox to indicate this is a box shape.
+
+        This method is an implementation of the abstract method defined in the
+        ShapeDefinition base class.
+
+        *Returns*
+
+        ShapeEnum
+            The shape type, which is always ShapeEnum.kBox for this class.
+        """
         return ShapeEnum.kBox

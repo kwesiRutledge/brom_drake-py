@@ -21,7 +21,48 @@ from brom_drake.directories import DEFAULT_BROM_MODELS_DIR
 @dataclass
 class SimpleShapeURDFDefinition:
     """
-    A dataclass that defines a simple shape URDF.
+    *Description*
+
+    A simple shape along with the optional and required options to fully
+    specifiy it in a URDF.
+
+    *Attributes*
+    
+    name: str
+        The name of the shape.
+
+    shape: ShapeDefinition
+        The shape definition for the shape.
+
+    color: np.ndarray, optional
+        The RGBA color of the shape.
+
+    create_collision: bool, optional
+        Whether to create the collision elements of the urdf.
+
+    mass: float, optional
+        The mass of the shape.
+        Defaiults to 1.0.
+
+    inertia: InertiaDefinition, optional
+        The inertia of the shape.
+        If not specified, a default inertia will be used.
+
+    pose: RigidTransform, optional
+        The pose of the shape.
+        Defaults to identity.
+
+    mu_static: float, optional
+        The static friction coefficient of the shape.
+        Defaults to 0.7.
+
+    mu_dynamic: float, optional
+        The dynamic friction coefficient of the shape.
+        Defaults to 0.4.
+
+    is_hydroelastic: bool, optional
+        Whether to use hydroelastic collision for the shape.
+        Defaults to True.
     """
     name: str
     shape: ShapeDefinition
@@ -36,8 +77,14 @@ class SimpleShapeURDFDefinition:
 
     def as_urdf(self) -> ET.Element:
         """
+        *Description*
+
         Create the URDF for the simple shape using python's built-in xml library.
-        :return:
+
+        *Returns*
+
+        xml.etree.ElementTree.Element
+            The root element of the desired URDF.
         """
         # Setup
         root = ET.Element(
@@ -63,9 +110,18 @@ class SimpleShapeURDFDefinition:
 
     def add_inertial_elements_to(self, link_elt: ET.Element):
         """
+        *Description*
+
         Add the inertial elements to the link element.
-        :param link_elt: The ET.Element object for the link.
-        :return: Nothing, but modifies the link_elt in place.
+        
+        *Parameters*
+
+        link_elt: xml.etree.ElementTree.Element
+            The ET.Element object for the link.
+
+        *Returns*
+
+        Nothing, but modifies the link_elt in place.
         """
         # Setup
         inertial_link = ET.SubElement(link_elt, "inertial")
@@ -87,9 +143,18 @@ class SimpleShapeURDFDefinition:
 
     def add_visual_elements_to(self, link_elt: ET.Element):
         """
+        *Description*
+
         Add the visual elements to the link element.
-        :param link_elt: The ET.Element object for the link.
-        :return: Nothing, but modifies the link_elt in place.
+        
+        *Parameters*
+
+        link_elt: xml.etree.ElementTree.Element
+            The ET.Element object for the link.
+
+        *Returns*
+
+        Nothing, but modifies the link_elt in place.
         """
         # Setup
         visual_link = ET.SubElement(link_elt, "visual")
@@ -114,9 +179,17 @@ class SimpleShapeURDFDefinition:
 
     def add_collision_elements_to(self, link_elt: ET.Element):
         """
+        *Description*
+
         Add the collision elements to the link element.
-        :param link_elt: The ET.Element object for the link.
-        :return:
+
+        *Parameters*
+
+        link_elt: xml.etree.ElementTree.Element
+            The ET.Element object for the link.
+
+        *Returns*
+        Nothing, but modifies the link_elt in place.
         """
         # Setup
         collision_link = ET.SubElement(link_elt, "collision")
@@ -133,9 +206,18 @@ class SimpleShapeURDFDefinition:
 
     def add_proximity_properties_to(self, collision_elt: ET.Element):
         """
+        *Description*
+
         Add the proximity properties to the collision element.
-        :param collision_elt: The ET.Element object for the collision.
-        :return: Nothing, but modifies the collision_elt in place.
+
+        *Parameters*
+
+        collision_elt: xml.etree.ElementTree.Element
+            The ET.Element object for the collision object.
+
+        *Returns*
+
+        Nothing, but modifies the collision_elt in place.
         """
         # Setup
         proximity_properties = ET.SubElement(collision_elt, "proximity_properties")
@@ -162,9 +244,17 @@ class SimpleShapeURDFDefinition:
 
     def add_origin_element_to(self, target_element: ET.Element):
         """
+        *Description*
+
         Add the origin element to the target element.
-        :param target_element: The element to which the origin element will be added.
-        :return: Nothing, but modifies the target_element in place.
+        
+        *Parameters*
+
+        target_element: xml.etree.ElementTree.Element
+            The ET.Element object to which the origin element will be added.
+
+        *Returns*
+        Nothing, but modifies the target_element in place.
         """
         # Setup
         translation = self.pose.translation()
@@ -181,24 +271,30 @@ class SimpleShapeURDFDefinition:
     @property
     def base_link_name(self) -> str:
         """
+        *Description*
+
         The name of the base link.
-        :return: The name of the base link.
+
+        *Returns*
+
+        str
+            The name of the base link.
         """
         return self.name + "_base_link"
 
     def write_to_file(self, file_path: str = None) -> str:
         """
-        Description
-        -----------
+        *Description*
+
         Write the URDF to a file.
 
-        Arguments
-        ---------
+        *Parameters*
+
         file_path: str
             The path to the file where the URDF will be written.
         
-        Returns
-        -------
+        *Returns*
+        
         str
             The path to the file where the URDF was written.
         """

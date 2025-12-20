@@ -38,15 +38,29 @@ from brom_drake.file_manipulation.urdf.simple_writer.urdf_element_creator import
 
 class DrakeReadyURDFConverter:
     """
-    Description
-    -----------
+    *Description*
+    
     This class is used to convert a URDF file into a Drake-compatible URDF file.
     It makes the following considerations when parsing a URDF file:
+
     - If a mesh file is not supported by the Drake parser,
       then it will convert it into a .obj file (which is supported).
     - If a joint in the URDF file is not "fixed" (i.e., it is actuated)
       and the parser finds no transmission element for it, then it will add
       a transmission element to the URDF file.
+
+    *Parameters*
+        
+    original_urdf_filename: str
+        The path to the original URDF file.
+    
+    config: DrakeReadyURDFConverterConfig (optional)
+        The configuration for the URDF converter.
+        This controls:
+
+        - whether or not to convert unsupported mesh files
+        - whether or not to add missing transmissions
+        - etc.
     """
 
     def __init__(
@@ -55,30 +69,21 @@ class DrakeReadyURDFConverter:
         config: DrakeReadyURDFConverterConfig = DrakeReadyURDFConverterConfig(),
     ):
         """
-        Description
-        -----------
+        *Description*
+        
         This method initializes the DrakeReadyURDFConverter.
 
-        Arguments
-        ---------
+        *Parameters*
+        
         original_urdf_filename: str
             The path to the original URDF file.
-        output_urdf_file_path: str (optional)
-            The path to the output URDF file. If None, then the output file will be placed in the 
-            brom models directory.
-        overwrite_old_models: bool (optional)
-            A flag that indicates whether or not to overwrite old models directory.
-            This is dangerous, so use with caution. Default is False.
-        overwrite_old_logs: bool (optional)
-            A flag that indicates whether or not to overwrite old logs.
-            Default is False.
-        log_file_name: str (optional)
-            The name of the log file. Default is "conversion.log".
-        collision_mesh_replacement_strategy: MeshReplacementStrategy (optional)
-            The strategy for replacing collision meshes. 
-            Each "incompatible" mesh file can be replaced by an .obj file (kWithObj)
-            or by a minimal enclosing cylinder (kWithMinimalEnclosingCylinder).
-            Default is MeshReplacementStrategy.kWithObj.
+
+        config: DrakeReadyURDFConverterConfig (optional)
+            The configuration for the URDF converter.
+            This controls:
+            - whether or not to convert unsupported mesh files
+            - whether or not to add missing transmissions
+            - etc.
         """
         # Setup
         self.config = config
@@ -124,13 +129,16 @@ class DrakeReadyURDFConverter:
 
     def create_logger(self) -> logging.Logger:
         """
-        Description
-        -----------
+        *Description*
+        
         This method configures the `logging` logger for the URDF conversion.
-        :return:
+        
+        *Returns*
+
+        logging.Logger
+            The configured logger.
         """
         # Setup
-        urdf_conversion_level_exists = False
         log_file_name = self.config.log_file_name
         target_file = self.original_urdf_filename
 
@@ -173,19 +181,21 @@ class DrakeReadyURDFConverter:
 
     def convert_collision_element(self, collision_elt: ET.Element) -> List[ET.Element]:
         """
-        Description
-        -----------
+        *Description*
+        
         This method will convert the collision element in the URDF file.
 
-        Arguments
-        ---------
-        collision_elt: ET.Element
+        *Parameters*
+        
+        collision_elt: xml.etree.ElementTree.Element
             The collision element that we want to convert.
         
-        Returns
-        -------
-        ET.Element
-            The new collision element.
+        *Returns*
+        
+        List[xml.etree.ElementTree.Element]
+            The collision elements that will replace the original collision element.
+            Usually, this is a list of length 1, but in some cases (e.g., convex decomposition)
+            it may be longer.
         """
         # Setup
         replacement_strategy = self.config.mesh_replacement_strategies.collision_meshes
@@ -340,19 +350,22 @@ class DrakeReadyURDFConverter:
         replacement_strategy: MeshReplacementStrategy
     ) -> ET.Element:
         """
-        Description
-        -----------
+        *Description*
+        
         This method will convert the geometry element in the URDF (i.e., an XML) file
         according to the conversion strategy provided as input.
         
-        Arguments
-        ---------
-        geometry_elt: ET.Element
-            The geometry element that we want to convert.
+        *Parameters*
         
-        Returns
-        -------
-        ET.Element
+        geometry_elt: xml.etree.ElementTree.Element
+            The geometry element that we want to convert.
+
+        replacement_strategy: MeshReplacementStrategy
+            The strategy to use for replacing mesh files.
+        
+        *Returns*
+        
+        xml.etree.ElementTree.Element
             The new geometry element.
         """
         # Setup
@@ -381,21 +394,21 @@ class DrakeReadyURDFConverter:
     
     def convert_visual_element(self, visual_elt: ET.Element) -> ET.Element:
         """
-        Description
-        -----------
+        *Description*
+        
         This method will convert the collision element in the URDF file.
 
         For now, this is very similar to the collision element handling, but it may
         change in the future.
 
-        Arguments
-        ---------
-        visual_elt: ET.Element
+        *Parameters*
+        
+        visual_elt: xml.etree.ElementTree.Element
             The visual element that we want to convert.
 
-        Returns
-        -------
-        ET.Element
+        *Returns*
+        
+        xml.etree.ElementTree.Element
             The new visual element.
         """
         # Setup
@@ -483,12 +496,12 @@ class DrakeReadyURDFConverter:
 
     def convert_urdf(self) -> Path:
         """
-        Description
-        -----------
+        *Description*
+        
         Converts the original URDF file into a Drake-compatible URDF file.
 
-        Returns
-        -------
+        *Returns*
+        
         Path
             The path to the new URDF file.
         """
@@ -527,6 +540,22 @@ class DrakeReadyURDFConverter:
         return output_urdf_path
 
     def convert_mesh_element(self, mesh_elt_in: ET.Element) -> ET.Element:
+        """
+        *Description*
+
+        This method will convert the mesh element in the URDF file
+        into a Drake-compatible mesh element.
+
+        *Parameters*
+
+        mesh_elt_in: xml.etree.ElementTree.Element
+            The mesh element that we want to convert.
+
+        *Returns*
+
+        xml.etree.ElementTree.Element
+            The new mesh element.
+        """
         # Setup
         new_elt = deepcopy(mesh_elt_in)
 
@@ -575,21 +604,21 @@ class DrakeReadyURDFConverter:
         current_tree: ET.ElementTree
     ) -> List[ET.ElementTree]:
         """
-        Description
-        -----------`
+        *Description*
+        
         This recursive method is used to parse each element of the
         xml element tree and replace the components that are not
         supported by the Drake URDF parser.
 
-        Arguments
-        ---------
-        current_tree: ET.ElementTree
+        *Parameters*
+        
+        current_tree: xml.etree.ElementTree.ElementTree
             The current tree that we are parsing.
         
-        Returns
-        -------
-        ET.ElementTree
-            The new tree that has been converted.
+        *Returns*
+        
+        List[xml.etree.ElementTree.ElementTree]
+            The new trees that has been converted.
         """
         # Setup
         root = deepcopy(current_tree.getroot())
@@ -621,22 +650,22 @@ class DrakeReadyURDFConverter:
         elt: ET.Element,
     ) -> List[ET.Element]:
         """
-        Description
-        -----------
+        *Description*
+        
         This method is used to transform one element in the XML tree into an eleemnt
         that that Drake URDF parser can handle. If necessary, it will create a new
         3d model file and place it into the right directory.
 
-        Arguments
-        ---------
-        elt: ET.Element
+        *Parameters*
+        
+        elt: xml.etree.ElementTree.Element
             An element in the ElementTree that we would like to convert
             into a Drake-ready element.
         
-        Returns
-        -------
-        ET.Element
-            The new element that has been converted.
+        *Returns*
+        
+        List[xml.etree.ElementTree.Element]
+            The new elements that has been converted.
         """
         # Setup
         new_elts = []
@@ -667,18 +696,18 @@ class DrakeReadyURDFConverter:
         mesh_file_name: str,
     ) -> str:
         """
-        Description
-        -----------
+        *Description*
+        
         This function will create an .obj file to replace the
         .stl or .dae file that is given in mesh file "mesh_file_name".
 
-        Arguments
-        ---------
+        *Parameters*
+        
         mesh_file_name: str
             The name of the mesh file that we want to convert.
         
-        Returns
-        -------
+        *Returns*
+        
         str
             The name of the new .obj file that has been created.
         """
@@ -702,8 +731,8 @@ class DrakeReadyURDFConverter:
 
     def handle_joint_element(self, joint_elt: ET.Element):
         """
-        Description
-        -----------
+        *Description*
+        
         This method will handle the joint element in the URDF file.
         Specifically, it will check to see if the joint is actuated
         and (if it is) add it to the list of actuated joints.
@@ -711,13 +740,13 @@ class DrakeReadyURDFConverter:
         This is useful when attempting to add transmissions to the URDF file
         later on.
         
-        Arguments
-        ---------
-        joint_elt: ET.Element
+        *Parameters*
+        
+        joint_elt: xml.etree.ElementTree.Element
             The joint element that we want to handle.
         
-        Returns
-        -------
+        *Returns*
+        
         None
         """
         # Setup
@@ -739,8 +768,8 @@ class DrakeReadyURDFConverter:
 
     def create_new_material_element(self, material_elt: ET.Element):
         """
-        Description
-        -----------
+        *Description*
+        
         This method will handle the material element in the URDF file.
         Specifically, it will check to see if the user wants us to assign a color to the 
         material element. If so, then we will assign the color to the material element.
@@ -748,13 +777,13 @@ class DrakeReadyURDFConverter:
         This is useful when attempting to add transmissions to the URDF file
         later on.
         
-        Arguments
-        ---------
-        material_elt: ET.Element
+        *Parameters*
+    
+        material_elt: xml.etree.ElementTree.Element
             The material element that we want to handle.
         
-        Returns
-        -------
+        *Returns*
+        
         None, but modifies the material element.
         """
         # Setup
@@ -792,35 +821,35 @@ class DrakeReadyURDFConverter:
 
     def log(self, message: str):
         """
-        Description
-        -----------
-        Logs a message to the logger.
+        *Description*
+        
+        Logs a message to the logging.logger.
 
-        Arguments
-        ---------
+        *Parameters*
+        
         message: str
             The message that we want to log.
         
-        Returns
-        -------
+        *Returns*
+        
         None
         """
         self.logger.log(logging.INFO, message)
 
     def replace_element_with_enclosing_cylinder(self, collision_elt: ET.Element) -> ET.Element:
         """
-        Description
-        -----------
+        *Description*
+        
         This method will replace the geometry element with an enclosing cylinder.
 
-        Arguments
-        ---------
-        collision_elt: ET.Element
+        *Parameters*
+        
+        collision_elt: xml.etree.ElementTree.Element
             The collision element that we want to replace.
 
-        Returns
-        -------
-        ET.Element
+        *Returns*
+        
+        xml.etree.ElementTree.Element
             The new collision element with the enclosing cylinder.
         """
         # Setup
