@@ -24,7 +24,7 @@ jobs:
         if: ${{ startsWith(github.ref, 'refs/tags/') }}
         run: echo "TAG_NAME=$(echo $GITHUB_REF | cut -d / -f 3)" >> $GITHUB_ENV
       - name: Return tag name as an output
-        run: echo "TAG_NAME=${{ env.TAG_NAME }}" >> $GITHUB_OUTPUT
+        run: echo "TAG_NAME=${{ env.TAG_NAME }}" >> "$GITHUB_OUTPUT"
 
   docs:
     runs-on: ubuntu-latest
