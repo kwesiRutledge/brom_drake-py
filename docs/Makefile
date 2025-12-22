@@ -16,6 +16,7 @@ help:
 
 generate-and-build-docs:
 	python3 generate_docs.py --output-dir "$(SOURCEDIR)"
+	python3 update_version_in_conf.py "$(VERSION)"
 
 # Catch-all target: route all unknown targets to Sphinx using the new
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
