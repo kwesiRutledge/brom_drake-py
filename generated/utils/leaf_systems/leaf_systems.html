@@ -409,16 +409,13 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="brom_drake.utils.leaf_systems.BoolToVectorSystem">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brom_drake.utils.leaf_systems.</span></span><span class="sig-name descname"><span class="pre">BoolToVectorSystem</span></span><a class="headerlink" href="#brom_drake.utils.leaf_systems.BoolToVectorSystem" title="Link to this definition">¶</a></dt>
-<dd><section id="description">
-<h3>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h3>
+<dd><p><em>Description</em></p>
 <p>This LeafSystem recieves boolean inputs (i.e., AbstractValue) inputs
 and returns an output vector of size 1 (i.e., BasicVector) where the
 single element is 1 if the input bool is True and 0 if the input bool
 is False.</p>
-</section>
-<section id="diagram">
-<h3>Diagram<a class="headerlink" href="#diagram" title="Link to this heading">¶</a></h3>
-<p>The system can be illustrated with the following block:</p>
+<p><em>Diagram</em></p>
+<p>The LeafSystem’s input and output ports can be illustrated with the following block:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>                <span class="o">|---------------|</span>
                 <span class="o">|</span> <span class="n">Bool</span>          <span class="o">|</span>
 <span class="n">bool_in</span> <span class="o">----&gt;</span>   <span class="o">|</span> <span class="n">To</span>            <span class="o">|</span> <span class="o">---&gt;</span> <span class="n">vector_out</span> 
@@ -429,14 +426,11 @@ is False.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.utils.leaf_systems.BoolToVectorSystem.CalcVectorOutput">
 <span class="sig-name descname"><span class="pre">CalcVectorOutput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BasicVector</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.utils.leaf_systems.BoolToVectorSystem.CalcVectorOutput" title="Link to this definition">¶</a></dt>
-<dd><section id="id1">
-<h4>Description<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h4>
+<dd><p><em>Description</em></p>
 <p>Callback function for calculating the output vector of the <cite>BoolToVectorSystem</cite>.
 This function takes in a bool and outputs a vector of size 1.</p>
-</section>
 </dd></dl>
 
-</section>
 </dd></dl>
 
 <dl class="py class">
@@ -464,8 +458,7 @@ wrench applied to the end-effector.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="brom_drake.utils.leaf_systems.FlexiblePortSwitch">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brom_drake.utils.leaf_systems.</span></span><span class="sig-name descname"><span class="pre">FlexiblePortSwitch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim:</span> <span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selector_type_in:</span> <span class="pre">type</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'str'&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.utils.leaf_systems.FlexiblePortSwitch" title="Link to this definition">¶</a></dt>
-<dd><section id="id2">
-<h3>Description<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h3>
+<dd><p><em>Description</em></p>
 <p>This system is a simplification of the PortSwitch system primitive
 that is built into Drake. It allows for you to command the switch
 with a simple input (i.e., a string or an int) instead of
@@ -473,8 +466,8 @@ a more complicated type.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.utils.leaf_systems.FlexiblePortSwitch.DeclareInputPort">
 <span class="sig-name descname"><span class="pre">DeclareInputPort</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">InputPort</span></span></span><a class="headerlink" href="#brom_drake.utils.leaf_systems.FlexiblePortSwitch.DeclareInputPort" title="Link to this definition">¶</a></dt>
-<dd><section id="id3">
-<h4>Description<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h4>
+<dd><section id="description">
+<h3>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h3>
 <p>This method will declare an input port for the system.</p>
 </section>
 </dd></dl>
@@ -482,8 +475,8 @@ a more complicated type.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.utils.leaf_systems.FlexiblePortSwitch.DoCalcValue">
 <span class="sig-name descname"><span class="pre">DoCalcValue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BasicVector</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.utils.leaf_systems.FlexiblePortSwitch.DoCalcValue" title="Link to this definition">¶</a></dt>
-<dd><section id="id4">
-<h4>Description<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h4>
+<dd><section id="id1">
+<h3>Description<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
 <p>This method will calculate the value of the output port.</p>
 </section>
 </dd></dl>
@@ -491,13 +484,12 @@ a more complicated type.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.utils.leaf_systems.FlexiblePortSwitch.get_port_selector_input_port">
 <span class="sig-name descname"><span class="pre">get_port_selector_input_port</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">InputPort</span></span></span><a class="headerlink" href="#brom_drake.utils.leaf_systems.FlexiblePortSwitch.get_port_selector_input_port" title="Link to this definition">¶</a></dt>
-<dd><section id="id5">
-<h4>Description<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h4>
+<dd><section id="id2">
+<h3>Description<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h3>
 <p>This method will return the port selector input port.</p>
 </section>
 </dd></dl>
 
-</section>
 </dd></dl>
 
 <dl class="py class">
@@ -526,8 +518,8 @@ between states in a finite state machine.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.utils.leaf_systems.FSMTransitionCondition.evaluate_comparison">
 <span class="sig-name descname"><span class="pre">evaluate_comparison</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_port_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.utils.leaf_systems.FSMTransitionCondition.evaluate_comparison" title="Link to this definition">¶</a></dt>
-<dd><section id="id6">
-<h3>Description<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h3>
+<dd><section id="id3">
+<h3>Description<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h3>
 <p>This function evaluates the condition based on the input port value.</p>
 </section>
 </dd></dl>
@@ -535,8 +527,8 @@ between states in a finite state machine.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.utils.leaf_systems.FSMTransitionCondition.requires_input_port">
 <span class="sig-name descname"><span class="pre">requires_input_port</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.utils.leaf_systems.FSMTransitionCondition.requires_input_port" title="Link to this definition">¶</a></dt>
-<dd><section id="id7">
-<h3>Description<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h3>
+<dd><section id="id4">
+<h3>Description<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h3>
 <p>This function returns whether or not the condition requires an input port.</p>
 </section>
 </dd></dl>
@@ -556,8 +548,8 @@ transition between states in a finite state machine.</p>
 <dd><dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.utils.leaf_systems.NetworkXFSM.CalcFSMState">
 <span class="sig-name descname"><span class="pre">CalcFSMState</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fsm_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BasicVector</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.utils.leaf_systems.NetworkXFSM.CalcFSMState" title="Link to this definition">¶</a></dt>
-<dd><section id="id8">
-<h3>Description<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h3>
+<dd><section id="id5">
+<h3>Description<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
 <p>This function calculates the current state of the FSM.
 It uses the various Edge Definitions to determine the next state,
 based on the current state and the input values.</p>
@@ -567,8 +559,8 @@ based on the current state and the input values.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.utils.leaf_systems.NetworkXFSM.advance_state_if_necessary">
 <span class="sig-name descname"><span class="pre">advance_state_if_necessary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug_flag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.utils.leaf_systems.NetworkXFSM.advance_state_if_necessary" title="Link to this definition">¶</a></dt>
-<dd><section id="id9">
-<h3>Description<a class="headerlink" href="#id9" title="Link to this heading">¶</a></h3>
+<dd><section id="id6">
+<h3>Description<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h3>
 <p>Checks the current values of all relevant inputs
 and advances the state if necessary according to the
 conditions established in the FSM graph.</p>
@@ -578,8 +570,8 @@ conditions established in the FSM graph.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.utils.leaf_systems.NetworkXFSM.collect_edge_definitions">
 <span class="sig-name descname"><span class="pre">collect_edge_definitions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fsm_graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DiGraph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug_flag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../utils.html#brom_drake.utils.FSMEdgeDefinition" title="brom_drake.utils.leaf_systems.network_fsm.fsm_edge_definition.FSMEdgeDefinition"><span class="pre">FSMEdgeDefinition</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#brom_drake.utils.leaf_systems.NetworkXFSM.collect_edge_definitions" title="Link to this definition">¶</a></dt>
-<dd><section id="id10">
-<h3>Description<a class="headerlink" href="#id10" title="Link to this heading">¶</a></h3>
+<dd><section id="id7">
+<h3>Description<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h3>
 <p>This function collects the edge definitions from the FSM graph.
 It uses the data from the graph to create an internal representation
 (FSMEdgeDefinition) for each edge in the graph.</p>
@@ -589,8 +581,8 @@ It uses the data from the graph to create an internal representation
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.utils.leaf_systems.NetworkXFSM.create_logger">
 <span class="sig-name descname"><span class="pre">create_logger</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Logger</span></span></span><a class="headerlink" href="#brom_drake.utils.leaf_systems.NetworkXFSM.create_logger" title="Link to this definition">¶</a></dt>
-<dd><section id="id11">
-<h3>Description<a class="headerlink" href="#id11" title="Link to this heading">¶</a></h3>
+<dd><section id="id8">
+<h3>Description<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h3>
 <p>This function configures the logger for the FSM.
 It sets the logger to log messages at the INFO level.</p>
 </section>
@@ -599,8 +591,8 @@ It sets the logger to log messages at the INFO level.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.utils.leaf_systems.NetworkXFSM.create_output_port_function">
 <span class="sig-name descname"><span class="pre">create_output_port_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">port_name_ii</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">create_abstract_port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Context</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">AbstractValue</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#brom_drake.utils.leaf_systems.NetworkXFSM.create_output_port_function" title="Link to this definition">¶</a></dt>
-<dd><section id="id12">
-<h3>Description<a class="headerlink" href="#id12" title="Link to this heading">¶</a></h3>
+<dd><section id="id9">
+<h3>Description<a class="headerlink" href="#id9" title="Link to this heading">¶</a></h3>
 <p>This function creates the output port function for the FSM.</p>
 </section>
 </dd></dl>
@@ -608,8 +600,8 @@ It sets the logger to log messages at the INFO level.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.utils.leaf_systems.NetworkXFSM.derive_input_ports_from_graph">
 <span class="sig-name descname"><span class="pre">derive_input_ports_from_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">debug_flag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.utils.leaf_systems.NetworkXFSM.derive_input_ports_from_graph" title="Link to this definition">¶</a></dt>
-<dd><section id="id13">
-<h3>Description<a class="headerlink" href="#id13" title="Link to this heading">¶</a></h3>
+<dd><section id="id10">
+<h3>Description<a class="headerlink" href="#id10" title="Link to this heading">¶</a></h3>
 <p>This function creates the input ports for the FSM.</p>
 </section>
 </dd></dl>
@@ -617,8 +609,8 @@ It sets the logger to log messages at the INFO level.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.utils.leaf_systems.NetworkXFSM.derive_output_ports_from_graph">
 <span class="sig-name descname"><span class="pre">derive_output_ports_from_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">debug_flag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.utils.leaf_systems.NetworkXFSM.derive_output_ports_from_graph" title="Link to this definition">¶</a></dt>
-<dd><section id="id14">
-<h3>Description<a class="headerlink" href="#id14" title="Link to this heading">¶</a></h3>
+<dd><section id="id11">
+<h3>Description<a class="headerlink" href="#id11" title="Link to this heading">¶</a></h3>
 <p>This method uses the fsm_graph to infer what output ports
 should be created for the FSM.</p>
 </section>
@@ -634,8 +626,8 @@ inferred from the initial node.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.utils.leaf_systems.NetworkXFSM.derive_output_update_map">
 <span class="sig-name descname"><span class="pre">derive_output_update_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">port_name_ii</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#brom_drake.utils.leaf_systems.NetworkXFSM.derive_output_update_map" title="Link to this definition">¶</a></dt>
-<dd><section id="id15">
-<h3>Description<a class="headerlink" href="#id15" title="Link to this heading">¶</a></h3>
+<dd><section id="id12">
+<h3>Description<a class="headerlink" href="#id12" title="Link to this heading">¶</a></h3>
 <p>This method constructs a small mapping of WHEN to change the value of
 port_name_ii.
 The key to each element in the mapping is a value of the state (i.e.,
@@ -654,8 +646,8 @@ the value is the value that the state should be changed to when we reach there.<
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.utils.leaf_systems.NetworkXFSM.evaluate_transition_condition">
 <span class="sig-name descname"><span class="pre">evaluate_transition_condition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">condition</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../utils.html#brom_drake.utils.FSMTransitionCondition" title="brom_drake.utils.leaf_systems.network_fsm.fsm_transition_condition.FSMTransitionCondition"><span class="pre">FSMTransitionCondition</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Context</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#brom_drake.utils.leaf_systems.NetworkXFSM.evaluate_transition_condition" title="Link to this definition">¶</a></dt>
-<dd><section id="id16">
-<h3>Description<a class="headerlink" href="#id16" title="Link to this heading">¶</a></h3>
+<dd><section id="id13">
+<h3>Description<a class="headerlink" href="#id13" title="Link to this heading">¶</a></h3>
 <p>This function evaluates the condition for a given input port value.</p>
 </section>
 </dd></dl>
@@ -663,8 +655,8 @@ the value is the value that the state should be changed to when we reach there.<
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.utils.leaf_systems.NetworkXFSM.initialize_fsm_state">
 <span class="sig-name descname"><span class="pre">initialize_fsm_state</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.utils.leaf_systems.NetworkXFSM.initialize_fsm_state" title="Link to this definition">¶</a></dt>
-<dd><section id="id17">
-<h3>Description<a class="headerlink" href="#id17" title="Link to this heading">¶</a></h3>
+<dd><section id="id14">
+<h3>Description<a class="headerlink" href="#id14" title="Link to this heading">¶</a></h3>
 <p>This function initializes the FSM state by:
 - Creating the output port for the fsm state,
 - Setting the initial state of the FSM (as an internal variable)</p>
@@ -674,8 +666,8 @@ the value is the value that the state should be changed to when we reach there.<
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.utils.leaf_systems.NetworkXFSM.initialize_last_output_value_map">
 <span class="sig-name descname"><span class="pre">initialize_last_output_value_map</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.utils.leaf_systems.NetworkXFSM.initialize_last_output_value_map" title="Link to this definition">¶</a></dt>
-<dd><section id="id18">
-<h3>Description<a class="headerlink" href="#id18" title="Link to this heading">¶</a></h3>
+<dd><section id="id15">
+<h3>Description<a class="headerlink" href="#id15" title="Link to this heading">¶</a></h3>
 <p>This function takes the initial node and then uses
 all of the output definitions for that node to define
 the initial values for the <cite>last_output_value</cite> map.</p>
@@ -685,8 +677,8 @@ the initial values for the <cite>last_output_value</cite> map.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.utils.leaf_systems.NetworkXFSM.log">
 <span class="sig-name descname"><span class="pre">log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.utils.leaf_systems.NetworkXFSM.log" title="Link to this definition">¶</a></dt>
-<dd><section id="id19">
-<h3>Description<a class="headerlink" href="#id19" title="Link to this heading">¶</a></h3>
+<dd><section id="id16">
+<h3>Description<a class="headerlink" href="#id16" title="Link to this heading">¶</a></h3>
 <p>This function logs a message to the logger.</p>
 </section>
 </dd></dl>
@@ -694,8 +686,8 @@ the initial values for the <cite>last_output_value</cite> map.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.utils.leaf_systems.NetworkXFSM.supports_this_digraph">
 <em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">supports_this_digraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">digraph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DiGraph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug_flag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ValueError</span></span></span><a class="headerlink" href="#brom_drake.utils.leaf_systems.NetworkXFSM.supports_this_digraph" title="Link to this definition">¶</a></dt>
-<dd><section id="id20">
-<h3>Description<a class="headerlink" href="#id20" title="Link to this heading">¶</a></h3>
+<dd><section id="id17">
+<h3>Description<a class="headerlink" href="#id17" title="Link to this heading">¶</a></h3>
 <p>This function checks if the given directed graph is a valid FSM.</p>
 </section>
 <section id="parameters">
@@ -741,15 +733,15 @@ of the rotation.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="brom_drake.utils.leaf_systems.define_named_vector_selection_system">
 <span class="sig-prename descclassname"><span class="pre">brom_drake.utils.leaf_systems.</span></span><span class="sig-name descname"><span class="pre">define_named_vector_selection_system</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">all_element_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desired_inputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AffineSystem</span></span></span><a class="headerlink" href="#brom_drake.utils.leaf_systems.define_named_vector_selection_system" title="Link to this definition">¶</a></dt>
-<dd><section id="id21">
-<h3>Description<a class="headerlink" href="#id21" title="Link to this heading">¶</a></h3>
+<dd><section id="id18">
+<h3>Description<a class="headerlink" href="#id18" title="Link to this heading">¶</a></h3>
 <p>This method creates an Affine System that will receive as input
 a vector where each element is named according to <cite>all_element_names</cite>
 and returns an output vector that selects only the elements
 specified in <cite>desired_inputs</cite>.</p>
 </section>
-<section id="id22">
-<h3>Parameters<a class="headerlink" href="#id22" title="Link to this heading">¶</a></h3>
+<section id="id19">
+<h3>Parameters<a class="headerlink" href="#id19" title="Link to this heading">¶</a></h3>
 <dl class="simple">
 <dt>name<span class="classifier">str</span></dt><dd><p>The name of the system to be added.</p>
 </dd>
@@ -759,8 +751,8 @@ specified in <cite>desired_inputs</cite>.</p>
 </dd>
 </dl>
 </section>
-<section id="id23">
-<h3>Returns<a class="headerlink" href="#id23" title="Link to this heading">¶</a></h3>
+<section id="id20">
+<h3>Returns<a class="headerlink" href="#id20" title="Link to this heading">¶</a></h3>
 <dl class="simple">
 <dt>AffineSystem</dt><dd><p>The created NamedVectorSelectionSystem.</p>
 </dd>

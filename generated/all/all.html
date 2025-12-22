@@ -494,16 +494,13 @@ to be .</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="brom_drake.all.BoolToVectorSystem">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brom_drake.all.</span></span><span class="sig-name descname"><span class="pre">BoolToVectorSystem</span></span><a class="headerlink" href="#brom_drake.all.BoolToVectorSystem" title="Link to this definition">¶</a></dt>
-<dd><section id="id1">
-<h3>Description<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
+<dd><p><em>Description</em></p>
 <p>This LeafSystem recieves boolean inputs (i.e., AbstractValue) inputs
 and returns an output vector of size 1 (i.e., BasicVector) where the
 single element is 1 if the input bool is True and 0 if the input bool
 is False.</p>
-</section>
-<section id="diagram">
-<h3>Diagram<a class="headerlink" href="#diagram" title="Link to this heading">¶</a></h3>
-<p>The system can be illustrated with the following block:</p>
+<p><em>Diagram</em></p>
+<p>The LeafSystem’s input and output ports can be illustrated with the following block:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>                <span class="o">|---------------|</span>
                 <span class="o">|</span> <span class="n">Bool</span>          <span class="o">|</span>
 <span class="n">bool_in</span> <span class="o">----&gt;</span>   <span class="o">|</span> <span class="n">To</span>            <span class="o">|</span> <span class="o">---&gt;</span> <span class="n">vector_out</span> 
@@ -514,14 +511,11 @@ is False.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.all.BoolToVectorSystem.CalcVectorOutput">
 <span class="sig-name descname"><span class="pre">CalcVectorOutput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BasicVector</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.all.BoolToVectorSystem.CalcVectorOutput" title="Link to this definition">¶</a></dt>
-<dd><section id="id2">
-<h4>Description<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h4>
+<dd><p><em>Description</em></p>
 <p>Callback function for calculating the output vector of the <cite>BoolToVectorSystem</cite>.
 This function takes in a bool and outputs a vector of size 1.</p>
-</section>
 </dd></dl>
 
-</section>
 </dd></dl>
 
 <dl class="py class">
@@ -1028,8 +1022,8 @@ wrench applied to the end-effector.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="brom_drake.all.FigureNamingConvention">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brom_drake.all.</span></span><span class="sig-name descname"><span class="pre">FigureNamingConvention</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.all.FigureNamingConvention" title="Link to this definition">¶</a></dt>
-<dd><section id="id3">
-<h3>Description<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h3>
+<dd><section id="id1">
+<h3>Description<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
 <p>This enum is used to define the naming convention for the figures.</p>
 </section>
 </dd></dl>
@@ -1042,8 +1036,8 @@ wrench applied to the end-effector.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="brom_drake.all.GripperType">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brom_drake.all.</span></span><span class="sig-name descname"><span class="pre">GripperType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.all.GripperType" title="Link to this definition">¶</a></dt>
-<dd><section id="id4">
-<h3>Description<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h3>
+<dd><section id="id2">
+<h3>Description<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h3>
 <p>An enum class that defines the type of gripper being used.</p>
 </section>
 </dd></dl>
@@ -1107,8 +1101,8 @@ kWithConvexDecomposition</p>
 <dd><dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.all.PortWatcher.check_port_type">
 <span class="sig-name descname"><span class="pre">check_port_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.all.PortWatcher.check_port_type" title="Link to this definition">¶</a></dt>
-<dd><section id="id5">
-<h3>Description<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
+<dd><section id="id3">
+<h3>Description<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h3>
 <p>Checks to see if the port is of the correct type for plotting.</p>
 </section>
 </dd></dl>
@@ -1116,8 +1110,8 @@ kWithConvexDecomposition</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.all.PortWatcher.create_port_value_type_error">
 <em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_port_value_type_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">OutputPort</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ValueError</span></span></span><a class="headerlink" href="#brom_drake.all.PortWatcher.create_port_value_type_error" title="Link to this definition">¶</a></dt>
-<dd><section id="id6">
-<h3>Description<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h3>
+<dd><section id="id4">
+<h3>Description<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h3>
 <p>Creates an error message for the port value type.</p>
 </section>
 <section id="arguments">
@@ -1136,19 +1130,19 @@ kWithConvexDecomposition</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.all.PortWatcher.prepare_logger">
 <span class="sig-name descname"><span class="pre">prepare_logger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">builder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DiagramBuilder</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.all.PortWatcher.prepare_logger" title="Link to this definition">¶</a></dt>
-<dd><section id="id7">
-<h3>Description<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h3>
+<dd><section id="id5">
+<h3>Description<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
 <p>Prepares the logger for the port.</p>
 </section>
-<section id="id8">
-<h3>Arguments<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h3>
+<section id="id6">
+<h3>Arguments<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h3>
 <dl class="simple">
 <dt>builder: DiagramBuilder</dt><dd><p>The diagram builder that is used to create the logger.</p>
 </dd>
 </dl>
 </section>
-<section id="id9">
-<h3>Returns<a class="headerlink" href="#id9" title="Link to this heading">¶</a></h3>
+<section id="id7">
+<h3>Returns<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h3>
 <p>None</p>
 </section>
 </dd></dl>
@@ -1160,12 +1154,12 @@ kWithConvexDecomposition</p>
 <dt>Description:</dt><dd><p>Returns a safe name for the system.</p>
 </dd>
 </dl>
-<section id="id10">
-<h3>Arguments<a class="headerlink" href="#id10" title="Link to this heading">¶</a></h3>
+<section id="id8">
+<h3>Arguments<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h3>
 <p>None</p>
 </section>
-<section id="id11">
-<h3>Returns<a class="headerlink" href="#id11" title="Link to this heading">¶</a></h3>
+<section id="id9">
+<h3>Returns<a class="headerlink" href="#id9" title="Link to this heading">¶</a></h3>
 <p>name: System’s name.</p>
 </section>
 </dd></dl>
@@ -1177,15 +1171,15 @@ kWithConvexDecomposition</p>
 <dt>Description:</dt><dd><p>Saves the raw data to a file.</p>
 </dd>
 </dl>
-<section id="id12">
-<h3>Arguments<a class="headerlink" href="#id12" title="Link to this heading">¶</a></h3>
+<section id="id10">
+<h3>Arguments<a class="headerlink" href="#id10" title="Link to this heading">¶</a></h3>
 <dl class="simple">
 <dt>diagram_context: Context</dt><dd><p>The context of the diagram.</p>
 </dd>
 </dl>
 </section>
-<section id="id13">
-<h3>Returns<a class="headerlink" href="#id13" title="Link to this heading">¶</a></h3>
+<section id="id11">
+<h3>Returns<a class="headerlink" href="#id11" title="Link to this heading">¶</a></h3>
 <p>Nothing</p>
 </section>
 </dd></dl>
@@ -1197,12 +1191,12 @@ kWithConvexDecomposition</p>
 <dt>Description:</dt><dd><p>Returns the names that will be given to the raw data for this port.</p>
 </dd>
 </dl>
-<section id="id14">
-<h3>Arguments<a class="headerlink" href="#id14" title="Link to this heading">¶</a></h3>
+<section id="id12">
+<h3>Arguments<a class="headerlink" href="#id12" title="Link to this heading">¶</a></h3>
 <p>Nothing</p>
 </section>
-<section id="id15">
-<h3>Returns<a class="headerlink" href="#id15" title="Link to this heading">¶</a></h3>
+<section id="id13">
+<h3>Returns<a class="headerlink" href="#id13" title="Link to this heading">¶</a></h3>
 <p>Tuple of strings where:
 - the first string is the name of the time data and,
 - the second string is the name of the data.</p>
@@ -1223,12 +1217,12 @@ kWithConvexDecomposition</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.all.PortWatcherOptions.plot_dir">
 <span class="sig-name descname"><span class="pre">plot_dir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#brom_drake.all.PortWatcherOptions.plot_dir" title="Link to this definition">¶</a></dt>
-<dd><section id="id16">
-<h3>Description<a class="headerlink" href="#id16" title="Link to this heading">¶</a></h3>
+<dd><section id="id14">
+<h3>Description<a class="headerlink" href="#id14" title="Link to this heading">¶</a></h3>
 <p>This function returns the directory where the plots will be saved.</p>
 </section>
-<section id="id17">
-<h3>Returns<a class="headerlink" href="#id17" title="Link to this heading">¶</a></h3>
+<section id="id15">
+<h3>Returns<a class="headerlink" href="#id15" title="Link to this heading">¶</a></h3>
 <dl class="simple">
 <dt>str</dt><dd><p>The directory where the plots will be saved.</p>
 </dd>
@@ -1251,12 +1245,12 @@ kWithConvexDecomposition</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.all.PortWatcherOptions.raw_data_dir">
 <span class="sig-name descname"><span class="pre">raw_data_dir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.all.PortWatcherOptions.raw_data_dir" title="Link to this definition">¶</a></dt>
-<dd><section id="id18">
-<h3>Description<a class="headerlink" href="#id18" title="Link to this heading">¶</a></h3>
+<dd><section id="id16">
+<h3>Description<a class="headerlink" href="#id16" title="Link to this heading">¶</a></h3>
 <p>This function returns the directory where the raw data will be saved.</p>
 </section>
-<section id="id19">
-<h3>Returns<a class="headerlink" href="#id19" title="Link to this heading">¶</a></h3>
+<section id="id17">
+<h3>Returns<a class="headerlink" href="#id17" title="Link to this heading">¶</a></h3>
 <dl class="simple">
 <dt>str</dt><dd><p>The directory where the raw data will be saved.</p>
 </dd>
@@ -1326,8 +1320,8 @@ kWithConvexDecomposition</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="brom_drake.all.PrototypicalPlannerSystem">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brom_drake.all.</span></span><span class="sig-name descname"><span class="pre">PrototypicalPlannerSystem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plant</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MultibodyPlant</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scene_graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SceneGraph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">planning_algorithm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">DiGraph</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">robot_model_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ModelInstanceIndex</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.all.PrototypicalPlannerSystem" title="Link to this definition">¶</a></dt>
-<dd><section id="id20">
-<h3>Description<a class="headerlink" href="#id20" title="Link to this heading">¶</a></h3>
+<dd><section id="id18">
+<h3>Description<a class="headerlink" href="#id18" title="Link to this heading">¶</a></h3>
 <p>This function is meant to be a prototypical planner system.
 It will receive a planning algorithm and wrap that algorithm in a LeafSystem
 that works in Brom.</p>
@@ -1343,12 +1337,12 @@ that works in Brom.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.all.PrototypicalPlannerSystem.check_collision_in_config">
 <span class="sig-name descname"><span class="pre">check_collision_in_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">q_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#brom_drake.all.PrototypicalPlannerSystem.check_collision_in_config" title="Link to this definition">¶</a></dt>
-<dd><section id="id21">
-<h4>Description<a class="headerlink" href="#id21" title="Link to this heading">¶</a></h4>
+<dd><section id="id19">
+<h4>Description<a class="headerlink" href="#id19" title="Link to this heading">¶</a></h4>
 <p>This function checks for collisions in the robot’s environment.</p>
 </section>
-<section id="id22">
-<h4>Arguments<a class="headerlink" href="#id22" title="Link to this heading">¶</a></h4>
+<section id="id20">
+<h4>Arguments<a class="headerlink" href="#id20" title="Link to this heading">¶</a></h4>
 <dl class="simple">
 <dt>q_model<span class="classifier">np.ndarray</span></dt><dd><p>The model configuration that we are checking for collisions.</p>
 </dd>
@@ -1359,12 +1353,12 @@ that works in Brom.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.all.PrototypicalPlannerSystem.compute_plan_if_not_available">
 <span class="sig-name descname"><span class="pre">compute_plan_if_not_available</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AbstractValue</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.all.PrototypicalPlannerSystem.compute_plan_if_not_available" title="Link to this definition">¶</a></dt>
-<dd><section id="id23">
-<h4>Description<a class="headerlink" href="#id23" title="Link to this heading">¶</a></h4>
+<dd><section id="id21">
+<h4>Description<a class="headerlink" href="#id21" title="Link to this heading">¶</a></h4>
 <p>This function computes the plan if it is not available.</p>
 </section>
-<section id="id24">
-<h4>Arguments<a class="headerlink" href="#id24" title="Link to this heading">¶</a></h4>
+<section id="id22">
+<h4>Arguments<a class="headerlink" href="#id22" title="Link to this heading">¶</a></h4>
 <dl class="simple">
 <dt>context<span class="classifier">Context</span></dt><dd><p>The context that we are working with.</p>
 </dd>
@@ -1395,8 +1389,8 @@ that works in Brom.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.all.PrototypicalPlannerSystem.define_pose_ik_problem">
 <span class="sig-name descname"><span class="pre">define_pose_ik_problem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_pose_vec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.025</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">InverseKinematics</span></span></span><a class="headerlink" href="#brom_drake.all.PrototypicalPlannerSystem.define_pose_ik_problem" title="Link to this definition">¶</a></dt>
-<dd><section id="id25">
-<h4>Description<a class="headerlink" href="#id25" title="Link to this heading">¶</a></h4>
+<dd><section id="id23">
+<h4>Description<a class="headerlink" href="#id23" title="Link to this heading">¶</a></h4>
 <p>Sets up the inverse kinematics problem for the start pose
 input to theis function.
 :return:</p>
@@ -1406,8 +1400,8 @@ input to theis function.
 <dl class="py property">
 <dt class="sig sig-object py" id="brom_drake.all.PrototypicalPlannerSystem.n_actuated_dof">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n_actuated_dof</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#brom_drake.all.PrototypicalPlannerSystem.n_actuated_dof" title="Link to this definition">¶</a></dt>
-<dd><section id="id26">
-<h4>Description<a class="headerlink" href="#id26" title="Link to this heading">¶</a></h4>
+<dd><section id="id24">
+<h4>Description<a class="headerlink" href="#id24" title="Link to this heading">¶</a></h4>
 <p>This method uses the plant and the robot model idx
 to identify the numer of degrees of freedom we have for control.
 :return:</p>
@@ -1417,12 +1411,12 @@ to identify the numer of degrees of freedom we have for control.
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.all.PrototypicalPlannerSystem.planning_result_to_array">
 <span class="sig-name descname"><span class="pre">planning_result_to_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">planning_result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">DiGraph</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">DiGraph</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#brom_drake.all.PrototypicalPlannerSystem.planning_result_to_array" title="Link to this definition">¶</a></dt>
-<dd><section id="id27">
-<h4>Description<a class="headerlink" href="#id27" title="Link to this heading">¶</a></h4>
+<dd><section id="id25">
+<h4>Description<a class="headerlink" href="#id25" title="Link to this heading">¶</a></h4>
 <p>This function converts the planning result to an array.</p>
 </section>
-<section id="id28">
-<h4>Arguments<a class="headerlink" href="#id28" title="Link to this heading">¶</a></h4>
+<section id="id26">
+<h4>Arguments<a class="headerlink" href="#id26" title="Link to this heading">¶</a></h4>
 <dl class="simple">
 <dt>planning_result<span class="classifier">MotionPlanningResult</span></dt><dd><p>The plan that we are converting to an array.</p>
 </dd>
@@ -1441,11 +1435,11 @@ to identify the numer of degrees of freedom we have for control.
 <dl class="py class">
 <dt class="sig sig-object py" id="brom_drake.all.Puppetmaker">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brom_drake.all.</span></span><span class="sig-name descname"><span class="pre">Puppetmaker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plant</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MultibodyPlant</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">puppet_anchored_to</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Frame</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame_on_puppet</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Frame</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sphere_radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Configuration</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.all.Puppetmaker" title="Link to this definition">¶</a></dt>
-<dd><section id="id29">
-<h3>Description<a class="headerlink" href="#id29" title="Link to this heading">¶</a></h3>
+<dd><section id="id27">
+<h3>Description<a class="headerlink" href="#id27" title="Link to this heading">¶</a></h3>
 <p>This object is used to:
 - Add “invisible” actuators for moving a free body (i.e., <cite>add_strings_for</cite> or <cite>add_actuators_for</cite>), and
-- Control actuate a free body that has been added with the expected “puppet” actuators (i.e., <a href="#id30"><span class="problematic" id="id31">`</span></a>add_puppet_controller_for)</p>
+- Control actuate a free body that has been added with the expected “puppet” actuators (i.e., <a href="#id28"><span class="problematic" id="id29">`</span></a>add_puppet_controller_for)</p>
 </section>
 <section id="notes">
 <h3>Notes<a class="headerlink" href="#notes" title="Link to this heading">¶</a></h3>
@@ -1457,13 +1451,13 @@ After adding the puppet actuators, the puppet will NO LONGER be a free body.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.all.Puppetmaker.add_actuated_prismatic_joint">
 <span class="sig-name descname"><span class="pre">add_actuated_prismatic_joint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axis_dimension</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">previous_frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">next_frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">joint_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">PrismaticJoint</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">JointActuator</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#brom_drake.all.Puppetmaker.add_actuated_prismatic_joint" title="Link to this definition">¶</a></dt>
-<dd><section id="id32">
-<h4>Description<a class="headerlink" href="#id32" title="Link to this heading">¶</a></h4>
+<dd><section id="id30">
+<h4>Description<a class="headerlink" href="#id30" title="Link to this heading">¶</a></h4>
 <p>This method will add an prismatic joint in the direction <cite>axis_dimension</cite>
 between <cite>previous_frame</cite> and <cite>next_frame</cite>, along with an actuator to control it.</p>
 </section>
-<section id="id33">
-<h4>Arguments<a class="headerlink" href="#id33" title="Link to this heading">¶</a></h4>
+<section id="id31">
+<h4>Arguments<a class="headerlink" href="#id31" title="Link to this heading">¶</a></h4>
 <dl class="field-list simple">
 <dt class="field-odd">param axis_dimension<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The axis to translate in (0 for X, 1 for Y, 2 for Z).</p>
@@ -1491,8 +1485,8 @@ between <cite>previous_frame</cite> and <cite>next_frame</cite>, along with an a
 </dd>
 </dl>
 </section>
-<section id="id34">
-<h4>Returns<a class="headerlink" href="#id34" title="Link to this heading">¶</a></h4>
+<section id="id32">
+<h4>Returns<a class="headerlink" href="#id32" title="Link to this heading">¶</a></h4>
 <dl class="field-list simple">
 <dt class="field-odd">return<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The created prismatic joint and its actuator.</p>
@@ -1507,8 +1501,8 @@ between <cite>previous_frame</cite> and <cite>next_frame</cite>, along with an a
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.all.Puppetmaker.add_actuators_for">
 <span class="sig-name descname"><span class="pre">add_actuators_for</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ModelInstanceIndex</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../utils/utils.html#brom_drake.utils.PuppetSignature" title="brom_drake.utils.puppetmaker.puppet_signature.PuppetSignature"><span class="pre">PuppetSignature</span></a></span></span><a class="headerlink" href="#brom_drake.all.Puppetmaker.add_actuators_for" title="Link to this definition">¶</a></dt>
-<dd><section id="id35">
-<h4>Description<a class="headerlink" href="#id35" title="Link to this heading">¶</a></h4>
+<dd><section id="id33">
+<h4>Description<a class="headerlink" href="#id33" title="Link to this heading">¶</a></h4>
 <p>Creates actuated joints on the object we want to be the “puppet” so that we can control
 its entire pose. This will be 4 joints:
 1. Translation in X
@@ -1521,11 +1515,11 @@ its entire pose. This will be 4 joints:
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.all.Puppetmaker.add_all_actuated_revolute_joints">
 <span class="sig-name descname"><span class="pre">add_all_actuated_revolute_joints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ModelInstanceIndex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">massless_sphere_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">ModelInstanceIndex</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#brom_drake.all.PuppeteerJointSignature" title="brom_drake.utils.puppetmaker.puppet_signature.PuppeteerJointSignature"><span class="pre">PuppeteerJointSignature</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#brom_drake.all.Puppetmaker.add_all_actuated_revolute_joints" title="Link to this definition">¶</a></dt>
-<dd><section id="id36">
-<h4>Description<a class="headerlink" href="#id36" title="Link to this heading">¶</a></h4>
+<dd><section id="id34">
+<h4>Description<a class="headerlink" href="#id34" title="Link to this heading">¶</a></h4>
 </section>
-<section id="id37">
-<h4>Notes<a class="headerlink" href="#id37" title="Link to this heading">¶</a></h4>
+<section id="id35">
+<h4>Notes<a class="headerlink" href="#id35" title="Link to this heading">¶</a></h4>
 <p>This function expects 3 massless sphere inputs.
 The first sphere in the list should be the one representing the last 
 translation sphere (i.e., the one we should connect the first revolute sphere to.)</p>
@@ -1535,8 +1529,8 @@ translation sphere (i.e., the one we should connect the first revolute sphere to
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.all.Puppetmaker.add_feedforward_sum_system_for">
 <span class="sig-name descname"><span class="pre">add_feedforward_sum_system_for</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signature</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../utils/utils.html#brom_drake.utils.PuppetSignature" title="brom_drake.utils.puppetmaker.puppet_signature.PuppetSignature"><span class="pre">PuppetSignature</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">builder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DiagramBuilder</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Adder</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ConstantVectorSource</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#brom_drake.all.Puppetmaker.add_feedforward_sum_system_for" title="Link to this definition">¶</a></dt>
-<dd><section id="id38">
-<h4>Description<a class="headerlink" href="#id38" title="Link to this heading">¶</a></h4>
+<dd><section id="id36">
+<h4>Description<a class="headerlink" href="#id36" title="Link to this heading">¶</a></h4>
 <p>This method will create a simple Adder system to add feedforward
 inputs to the PID controller output.</p>
 </section>
@@ -1545,8 +1539,8 @@ inputs to the PID controller output.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.all.Puppetmaker.add_massless_sphere_to_plant_with_name">
 <span class="sig-name descname"><span class="pre">add_massless_sphere_to_plant_with_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ModelInstanceIndex</span></span></span><a class="headerlink" href="#brom_drake.all.Puppetmaker.add_massless_sphere_to_plant_with_name" title="Link to this definition">¶</a></dt>
-<dd><section id="id39">
-<h4>Description<a class="headerlink" href="#id39" title="Link to this heading">¶</a></h4>
+<dd><section id="id37">
+<h4>Description<a class="headerlink" href="#id37" title="Link to this heading">¶</a></h4>
 <p>This method adds a sphere with:
 - zero mass
 - no collision geometry,
@@ -1559,13 +1553,13 @@ The sphere’s name will be assigned by the input to the function.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.all.Puppetmaker.add_puppet_controller_for">
 <span class="sig-name descname"><span class="pre">add_puppet_controller_for</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signature</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../utils/utils.html#brom_drake.utils.PuppetSignature" title="brom_drake.utils.puppetmaker.puppet_signature.PuppetSignature"><span class="pre">PuppetSignature</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">builder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DiagramBuilder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Kp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Kd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../utils/utils.html#brom_drake.utils.RigidTransformToVectorSystem" title="brom_drake.utils.leaf_systems.rigid_transform_to_vector_system.system.RigidTransformToVectorSystem"><span class="pre">RigidTransformToVectorSystem</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">PassThrough</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#brom_drake.all.Puppetmaker.add_puppet_controller_for" title="Link to this definition">¶</a></dt>
-<dd><section id="id40">
-<h4>Description<a class="headerlink" href="#id40" title="Link to this heading">¶</a></h4>
+<dd><section id="id38">
+<h4>Description<a class="headerlink" href="#id38" title="Link to this heading">¶</a></h4>
 <p>This method will create a simple PID controller to actuate the puppet
 to a desired pose.</p>
 </section>
-<section id="id41">
-<h4>Arguments<a class="headerlink" href="#id41" title="Link to this heading">¶</a></h4>
+<section id="id39">
+<h4>Arguments<a class="headerlink" href="#id39" title="Link to this heading">¶</a></h4>
 <dl class="simple">
 <dt>signature<span class="classifier">PuppetSignature</span></dt><dd><p>The signature of the puppet to be controlled.</p>
 </dd>
@@ -1577,8 +1571,8 @@ to a desired pose.</p>
 </dd>
 </dl>
 </section>
-<section id="id42">
-<h4>Returns<a class="headerlink" href="#id42" title="Link to this heading">¶</a></h4>
+<section id="id40">
+<h4>Returns<a class="headerlink" href="#id40" title="Link to this heading">¶</a></h4>
 <dl class="simple">
 <dt>pose_to_vector_system<span class="classifier">RigidTransformToVectorSystem</span></dt><dd><p>The system that converts the desired pose to a vector format.
 This system is what provides the target to the PID controller.
@@ -1601,8 +1595,8 @@ If the puppet does not contain any actuated joints, then this will be None.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.all.Puppetmaker.combine_feedforward_and_controller_for">
 <span class="sig-name descname"><span class="pre">combine_feedforward_and_controller_for</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">builder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DiagramBuilder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feedforward_adder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Adder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controller</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PidController</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Adder</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ConstantVectorSource</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#brom_drake.all.Puppetmaker.combine_feedforward_and_controller_for" title="Link to this definition">¶</a></dt>
-<dd><section id="id43">
-<h4>Description<a class="headerlink" href="#id43" title="Link to this heading">¶</a></h4>
+<dd><section id="id41">
+<h4>Description<a class="headerlink" href="#id41" title="Link to this heading">¶</a></h4>
 <p>This method will connect the output of the PID controller to one input
 of the feedforward adder.</p>
 </section>
@@ -1617,8 +1611,8 @@ of the feedforward adder.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.all.Puppetmaker.create_actuator_demux">
 <span class="sig-name descname"><span class="pre">create_actuator_demux</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signature</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../utils/utils.html#brom_drake.utils.PuppetSignature" title="brom_drake.utils.puppetmaker.puppet_signature.PuppetSignature"><span class="pre">PuppetSignature</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">builder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DiagramBuilder</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Demultiplexer</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">PassThrough</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#brom_drake.all.Puppetmaker.create_actuator_demux" title="Link to this definition">¶</a></dt>
-<dd><section id="id44">
-<h4>Description<a class="headerlink" href="#id44" title="Link to this heading">¶</a></h4>
+<dd><section id="id42">
+<h4>Description<a class="headerlink" href="#id42" title="Link to this heading">¶</a></h4>
 <p>This method creates a demultiplexer to split the actuator inputs
 to the puppet’s various models.</p>
 </section>
@@ -1627,8 +1621,8 @@ to the puppet’s various models.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.all.Puppetmaker.create_actuator_passthrough_for_puppet_with_actuated_joints">
 <span class="sig-name descname"><span class="pre">create_actuator_passthrough_for_puppet_with_actuated_joints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signature</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../utils/utils.html#brom_drake.utils.PuppetSignature" title="brom_drake.utils.puppetmaker.puppet_signature.PuppetSignature"><span class="pre">PuppetSignature</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">builder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DiagramBuilder</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">PassThrough</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">PassThrough</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#brom_drake.all.Puppetmaker.create_actuator_passthrough_for_puppet_with_actuated_joints" title="Link to this definition">¶</a></dt>
-<dd><section id="id45">
-<h4>Description<a class="headerlink" href="#id45" title="Link to this heading">¶</a></h4>
+<dd><section id="id43">
+<h4>Description<a class="headerlink" href="#id43" title="Link to this heading">¶</a></h4>
 <p>This method creates two passthrough systems:
 1. passes the “default” actuator inputs for the puppet’s (default) actuated joints,
 2. passes the “puppet” actuator input for puppeteering.</p>
@@ -1638,8 +1632,8 @@ to the puppet’s various models.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.all.Puppetmaker.create_ghost_bodies_for_actuators">
 <span class="sig-name descname"><span class="pre">create_ghost_bodies_for_actuators</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">ModelInstanceIndex</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">ModelInstanceIndex</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#brom_drake.all.Puppetmaker.create_ghost_bodies_for_actuators" title="Link to this definition">¶</a></dt>
-<dd><section id="id46">
-<h4>Description<a class="headerlink" href="#id46" title="Link to this heading">¶</a></h4>
+<dd><section id="id44">
+<h4>Description<a class="headerlink" href="#id44" title="Link to this heading">¶</a></h4>
 <p>This method creates a set of simple spheres which we will use to connect
 actuators to the “puppet”. We will reuse the simple shape API’s in Brom
 to create a set of new URDFs that will have (i) no mass, and
@@ -1650,8 +1644,8 @@ to create a set of new URDFs that will have (i) no mass, and
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.all.Puppetmaker.find_index_of_position_state_in">
 <span class="sig-name descname"><span class="pre">find_index_of_position_state_in</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_instance_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ModelInstanceIndex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">signature</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../utils/utils.html#brom_drake.utils.PuppetSignature" title="brom_drake.utils.puppetmaker.puppet_signature.PuppetSignature"><span class="pre">PuppetSignature</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#brom_drake.all.Puppetmaker.find_index_of_position_state_in" title="Link to this definition">¶</a></dt>
-<dd><section id="id47">
-<h4>Description<a class="headerlink" href="#id47" title="Link to this heading">¶</a></h4>
+<dd><section id="id45">
+<h4>Description<a class="headerlink" href="#id45" title="Link to this heading">¶</a></h4>
 <p>This method finds the names of the “position” component for the
 state of the joint connected to model_instance_index.</p>
 </section>
@@ -1660,8 +1654,8 @@ state of the joint connected to model_instance_index.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.all.Puppetmaker.find_index_of_velocity_state_in">
 <span class="sig-name descname"><span class="pre">find_index_of_velocity_state_in</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_instance_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ModelInstanceIndex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">signature</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../utils/utils.html#brom_drake.utils.PuppetSignature" title="brom_drake.utils.puppetmaker.puppet_signature.PuppetSignature"><span class="pre">PuppetSignature</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#brom_drake.all.Puppetmaker.find_index_of_velocity_state_in" title="Link to this definition">¶</a></dt>
-<dd><section id="id48">
-<h4>Description<a class="headerlink" href="#id48" title="Link to this heading">¶</a></h4>
+<dd><section id="id46">
+<h4>Description<a class="headerlink" href="#id46" title="Link to this heading">¶</a></h4>
 <p>This method finds the names of the “velocity” component for the
 state of the joint connected to model_instance_index.</p>
 </section>
@@ -1670,8 +1664,8 @@ state of the joint connected to model_instance_index.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.all.Puppetmaker.rotation_joint_names">
 <span class="sig-name descname"><span class="pre">rotation_joint_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ModelInstanceIndex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_puppeteer_prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#brom_drake.all.Puppetmaker.rotation_joint_names" title="Link to this definition">¶</a></dt>
-<dd><section id="id49">
-<h4>Description<a class="headerlink" href="#id49" title="Link to this heading">¶</a></h4>
+<dd><section id="id47">
+<h4>Description<a class="headerlink" href="#id47" title="Link to this heading">¶</a></h4>
 <p>This method returns the names of all rotation joints created for the puppet.</p>
 </section>
 </dd></dl>
@@ -1679,8 +1673,8 @@ state of the joint connected to model_instance_index.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.all.Puppetmaker.translation_joint_names">
 <span class="sig-name descname"><span class="pre">translation_joint_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ModelInstanceIndex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_puppeteer_prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#brom_drake.all.Puppetmaker.translation_joint_names" title="Link to this definition">¶</a></dt>
-<dd><section id="id50">
-<h4>Description<a class="headerlink" href="#id50" title="Link to this heading">¶</a></h4>
+<dd><section id="id48">
+<h4>Description<a class="headerlink" href="#id48" title="Link to this heading">¶</a></h4>
 <p>This method returns the names of all translation joints created for the puppet.</p>
 </section>
 </dd></dl>
@@ -1812,8 +1806,8 @@ of the rotation.</p>
 <p>watcher = add_watcher(builder, [(“plant”,)])</p>
 <p>watcher = add_watcher(builder, [(“plant”, 0), (“controller”, 0)])</p>
 </div></blockquote>
-<section id="id51">
-<h3>Arguments<a class="headerlink" href="#id51" title="Link to this heading">¶</a></h3>
+<section id="id49">
+<h3>Arguments<a class="headerlink" href="#id49" title="Link to this heading">¶</a></h3>
 <dl class="simple">
 <dt>builder: DiagramBuilder</dt><dd><p>The diagram builder to which we want to add the watcher.</p>
 </dd>
@@ -1831,8 +1825,8 @@ of the rotation.</p>
 </dd>
 </dl>
 </section>
-<section id="id52">
-<h3>Returns<a class="headerlink" href="#id52" title="Link to this heading">¶</a></h3>
+<section id="id50">
+<h3>Returns<a class="headerlink" href="#id50" title="Link to this heading">¶</a></h3>
 <dl class="field-list simple">
 <dt class="field-odd">return<span class="colon">:</span></dt>
 <dd class="field-odd"><p>DiagramWatcher. The watcher that we have added to the diagram builder.</p>
@@ -1874,8 +1868,8 @@ Default is MeshReplacementStrategy.kWithObj.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="brom_drake.all.parse_list_of_simplified_targets">
 <span class="sig-prename descclassname"><span class="pre">brom_drake.all.</span></span><span class="sig-name descname"><span class="pre">parse_list_of_simplified_targets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">builder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DiagramBuilder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#brom_drake.all.DiagramTarget" title="brom_drake.DiagramTarget.DiagramTarget.DiagramTarget"><span class="pre">DiagramTarget</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#brom_drake.all.parse_list_of_simplified_targets" title="Link to this definition">¶</a></dt>
-<dd><section id="id53">
-<h3>Description<a class="headerlink" href="#id53" title="Link to this heading">¶</a></h3>
+<dd><section id="id51">
+<h3>Description<a class="headerlink" href="#id51" title="Link to this heading">¶</a></h3>
 <p>This function takes a list of simplified targets and converts them to the full form.</p>
 </section>
 <section id="example-usage">
@@ -1883,8 +1877,8 @@ Default is MeshReplacementStrategy.kWithObj.</p>
 <p>targets = [(“plant”, 0), (“controller”, 0)]
 parsed_targets = parse_list_of_simplified_targets(targets)</p>
 </section>
-<section id="id54">
-<h3>Arguments<a class="headerlink" href="#id54" title="Link to this heading">¶</a></h3>
+<section id="id52">
+<h3>Arguments<a class="headerlink" href="#id52" title="Link to this heading">¶</a></h3>
 <dl class="simple">
 <dt>builder<span class="classifier">DiagramBuilder</span></dt><dd><p>The diagram builder to which we want to add the watcher.</p>
 </dd>
@@ -1892,8 +1886,8 @@ parsed_targets = parse_list_of_simplified_targets(targets)</p>
 </dd>
 </dl>
 </section>
-<section id="id55">
-<h3>Returns<a class="headerlink" href="#id55" title="Link to this heading">¶</a></h3>
+<section id="id53">
+<h3>Returns<a class="headerlink" href="#id53" title="Link to this heading">¶</a></h3>
 <dl class="simple">
 <dt>List[DiagramTarget]</dt><dd><p>A list of all the targets that we want to watch.</p>
 </dd>
