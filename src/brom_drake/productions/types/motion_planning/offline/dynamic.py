@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from typing import Tuple, Callable
+from typing import List, Tuple, Callable
 
 import networkx as nx
 import numpy as np
@@ -26,6 +26,58 @@ from brom_drake.utils import Performer, MotionPlan
 
 
 class OfflineDynamicMotionPlanningProduction(BaseProduction):
+    """
+    *Description*
+
+    This base class is used for defining productions where we perform
+    offline motion planning WITH dynamics taken into account.
+
+    *Parameters*
+
+    start_configuration: np.ndarray, optional
+        The starting configuration of the robot, by default None.
+
+    start_pose: RigidTransform, optional
+        The starting pose of the robot, by default None.
+
+    goal_configuration: np.ndarray, optional
+        The goal configuration of the robot, by default None.
+
+    goal_pose: RigidTransform, optional
+        The goal pose of the robot, by default None.
+
+    *Usage*
+
+    To use this class, simply subclass it and implement the required
+    properties and methods. A good example of this should be found in
+    the ChemLab2Production class.
+
+    A partial example of how to use this class is shown below: ::
+
+        class MyDynamicMotionPlanningProduction(OfflineDynamicMotionPlanningProduction):
+            def __init__(
+                self,
+                start_configuration: np.ndarray = None,
+                start_pose: RigidTransform = None,
+                goal_configuration: np.ndarray = None,
+                goal_pose: RigidTransform = None,
+                **kwargs
+            ):
+                super().__init__(**kwargs)
+                # Your custom initialization code here
+
+                # Save the start and goal configurations/poses (required)
+
+                # Do other stuff
+
+            def add_supporting_cast(self):
+                # Add visual elements for the start and goal poses
+                self.add_start_and_goal_to_plant(self.plant)
+
+                # Your custom code to add the supporting cast
+            
+
+    """
     def __init__(
         self,
         start_configuration: np.ndarray = None,
@@ -63,24 +115,19 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
 
     def add_supporting_cast(self):
         """
-        Description
-        -----------
-        This method will add the start and goal poses to the builder.
+        *Description*
         
-        Returns
-        -------
-        None
+        This method will add the start and goal poses to the builder.
         """
         # Add visual elements for the start and goal poses
         self.add_start_and_goal_to_plant(self.plant)
 
     def add_robot_source_system(self):
         """
-        Description
-        -----------
+        *Description*
+        
         This method adds a source for providing the motion planner
         with the model index for the robot that we are trying to control.
-        :return:
         """
         # Setup
 
@@ -94,19 +141,19 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
 
     def add_start_and_goal_to_plant(self, plant: MultibodyPlant):
         """
-        Description
-        -----------
+        *Description*
+        
         Add the start and goal to this plant.
-        Parameters
-        ----------
-        :param plant: The plant to add the start and goal to.
 
-        Notes
-        -----
-        Feel free to overwrite this if you have specific sizes of the start and goal in mind,
-        or if you want to add more than just spheres, etc.
-        :return:
+        .. note::
 
+            Feel free to overwrite this if you have specific sizes of the start and goal in mind,
+            or if you want to add more than just spheres, etc.
+
+        *Parameters*
+        
+        plant: pydrake.multibody.plant.MultibodyPlant
+            The plant to add the start and goal to.
         """
 
         # Create a sphere for the start
@@ -151,9 +198,13 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
 
     def add_start_and_goal_sources_to_builder(self):
         """
-        Description
-        -----------
+        *Description*
+        
         This method will add the start and goal sources to the builder.
+
+        .. warning::
+
+            This method should only be called AFTER the plant has been finalized.
         """
         # Input Processing
         assert self.plant.is_finalized(), "Plant must be finalized before adding start and goal sources."
@@ -165,7 +216,6 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
     def add_start_source_system(self):
         """
         Add a source system for the start pose.
-        :return:
         """
         # Setup
 
@@ -177,8 +227,9 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
 
     def add_goal_source_system(self):
         """
+        *Description*
+
         Add a source system for the goal pose.
-        :return:
         """
         # Setup
 
@@ -190,15 +241,21 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
 
     def add_main_cast(
         self,
-        cast: Tuple[Role, Performer] = [],
+        cast: List[Tuple[Role, Performer]] = [],
     ):
         """
-        Description
-        -----------
+        *Description*
+        
         This small modification to the normal add_main_cast()
         function includes a call to create the optional inputs if needed.
-        :param cast:
-        :return:
+        
+        TODO(kwesi): Consider moving this to the base class? Don't we only need to fill one role? (Motion Planner?)
+
+        *Parameters*
+
+        cast: List[Tuple[Role, Performer]], optional
+            The cast to add to the production, by default [].
+
         """
         # Setup
 
@@ -216,15 +273,25 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
         with_watcher: bool = True,
     ) -> Tuple[Diagram, Context]:
         """
-        Description
-        -----------
+        *Description*
+        
         This method builds the production.
         It assumes that all components have been added to the builder.
 
-        Arguments
-        ---------
-        with_watcher: bool
+        *Parameters*
+        
+        with_watcher: bool, optional
             A Boolean that determines whether to add a watcher to the diagram.
+            Default is True.
+
+        *Returns*
+
+        diagram: Diagram
+            The built diagram.
+
+        diagram_context: Context
+            The context for the built diagram.
+            This is the context that the watcher (if any) will use.
         """
         # Setup
 
@@ -253,19 +320,25 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
         performer: Performer,
     ):
         """
-        Description
-        -----------
+        *Description*
+        
         This method checks to see if all optional outputs were connected
         for the given role. If all of them were, then we do nothing.
         If any of the optional outputs were NOT connected,
         then we add a dummy value to replace it.
 
-        Requirements
-        ------------
-        This method should only be called after the full production has
-        been built. Otherwise, this may have unexpected behavior.
+        .. important::
+        
+            This method should only be called after the full production has
+            been built. Otherwise, this may have unexpected behavior.
 
-        :return:
+        *Parameters*
+
+        role: Role
+            The role to add to the builder.
+
+        performer: Performer
+            The performer that fulfills the role.
         """
         # Setup
 
@@ -323,11 +396,29 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
         orientation_cost_scaling: float = 0.25,
     ) -> InverseKinematics:
         """
-        Description
-        -----------
+        *Description*
+        
         Sets up the inverse kinematics problem for the start pose
         input to theis function.
-        :return:
+        
+        *Parameters*
+
+        pose_WorldTarget: RigidTransform
+            The desired target pose of the end effector in the world frame.
+
+        target_frame_name: str
+            The name of the target frame on the robot.
+
+        eps0: float, optional
+            The position tolerance for the IK problem, by default 2.5e-2.
+
+        orientation_cost_scaling: float, optional
+            The scaling factor for the orientation cost, by default 0.25.
+
+        *Returns*
+
+        ik_problem: InverseKinematics
+            The defined inverse kinematics problem.
         """
         # Setup
 
@@ -371,13 +462,26 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
         with_watcher: bool = True,
     ) -> Tuple[Diagram, Context]:
         """
-        Description
-        -----------
+        *Description*
+        
         This function is used to easily cast and build the production.
-        :param planning_algorithm: The algorithm that we will use to
-        plan the motion.
-        :param with_watcher: A Boolean that determines whether to add a watcher to the diagram.
-        :return:
+
+        *Parameters*
+
+        planning_algorithm: Callable[[np.ndarray, np.ndarray, Callable[[np.ndarray], bool]], Tuple[MotionPlan, bool]]
+            The algorithm that we will use to plan the motion.
+
+        with_watcher: bool, optional
+            A Boolean that determines whether to add a watcher to the diagram.
+            Default is True.
+
+        *Returns*
+
+        diagram: Diagram
+            The built diagram.
+
+        diagram_context: Context
+            The context for the built diagram.
         """
         # Setup
 
@@ -418,13 +522,18 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
         system: Performer,
     ):
         """
-        Description
-        -----------
+        *Description*
+        
         This method should be implemented by the subclass. It should add the
         system to the role.
-        :param role:
-        :param system:
-        :return:
+
+        *Parameters*
+
+        role: Role
+            The role that we are filling in the production.
+
+        system: Performer
+            The performer that fulfills the role.
         """
         # Setup
         builder = self.builder
@@ -458,8 +567,14 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
     @property
     def goal_configuration(self) -> np.ndarray:
         """
+        *Description*
+        
         Get the goal pose. This should be defined by the subclass.
-        :return:
+
+        *Returns*
+
+        q_goal: np.ndarray
+            The goal configuration of the robot.
         """
         if self._goal_config is not None:
             return self._goal_config
@@ -475,8 +590,14 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
     @property
     def goal_pose(self) -> RigidTransform:
         """
+        *Description*
+
         Get the goal pose. This should be defined by the subclass.
-        :return:
+
+        *Returns*
+
+        pose_WorldGoal: RigidTransform
+            The goal pose of the robot.
         """
         if self._goal_pose is not None:
             return self._goal_pose
@@ -499,8 +620,14 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
     @property
     def robot_model_index(self) -> ModelInstanceIndex:
         """
+        *Description*
+
         Get the robot model index. This should be defined by the subclass.
-        :return:
+
+        *Returns*
+
+        robot_model_index: ModelInstanceIndex
+            The model instance index of the robot.
         """
         if self.robot_model_idx_ is not None:
             return self.robot_model_idx_
@@ -512,8 +639,14 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
     @property
     def start_configuration(self) -> np.ndarray:
         """
-        Description:
-            This function returns the start and goal poses as a single array.
+        *Description*
+
+        This function returns the start and goal poses as a single array.
+
+        *Returns*
+
+        q_start: np.ndarray
+            The start configuration of the robot.
         """
         if self._start_config is not None:
             return self._start_config
@@ -529,8 +662,14 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
     @property
     def start_pose(self) -> RigidTransform:
         """
+        *Description*
+
         Get the start pose. This should be defined by the subclass.
-        :return:
+
+        *Returns*
+
+        pose_WorldStart: RigidTransform
+            The start pose of the robot.
         """
         if self._start_pose is not None:
             return self._start_pose
@@ -550,7 +689,18 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
                 "This function should be implemented by the subclass."
             )
 
-    def suggested_roles(self):
+    def suggested_roles(self) -> List[Role]:
+        """
+        *Description*
+        
+        This method suggests the roles that should be filled
+        in this production.
+        
+        *Returns*
+        
+        roles: List[Role]
+            The list of roles that should be filled in this production.
+        """
         return [kKinematicMotionPlanner]
 
     def solve_pose_ik_problem(
@@ -560,9 +710,27 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
         robot_joint_names: list = None,
     ) -> np.ndarray:
         """
-        Description:
-        :param input_pose_vec: An n-dimensional vector
-        :return:
+        *Description*
+
+        This function solves the inverse kinematics problem
+        for the given target pose.
+
+        *Parameters*
+        
+        pose_WorldTarget: RigidTransform
+            The desired target pose of the end effector in the world frame.
+
+        frame_name: str, optional
+            The name of the target frame on the robot, by default "ft_frame".
+
+        robot_joint_names: list, optional
+            The list of joint names that correspond to the robot's joints.
+            If None, then all joints in the plant will be considered, by default None.
+
+        *Returns*
+
+        q_out_list: np.ndarray
+            The joint configuration that achieves the desired pose.
         """
         # Input Processing
         assert self.plant is not None, "Plant must be defined before solving IK problem!"

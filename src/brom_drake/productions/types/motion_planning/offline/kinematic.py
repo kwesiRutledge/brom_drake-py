@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from typing import Tuple, Callable
+from typing import List, Tuple, Callable
 
 import networkx as nx
 import numpy as np
@@ -26,6 +26,34 @@ from brom_drake.utils import Performer, MotionPlan
 
 
 class KinematicMotionPlanningProduction(BaseProduction):
+    """
+    *Description*
+
+    This class defines a basic kinematic motion planning production.
+
+    It includes the ability to define start and goal configurations or poses,
+    and to add them to the plant as visual elements.
+
+    .. important::
+
+        This production assumes that either the start pose or configuration is defined.
+        (One can be inferred from the other using inverse kinematics, if needed.)
+        Similarly, either the goal pose or configuration must be defined.
+
+    *Parameters*
+
+    start_configuration: np.ndarray, optional
+        The starting configuration of the robot, by default None.
+
+    start_pose: RigidTransform, optional
+        The starting pose of the robot, by default None.
+
+    goal_configuration: np.ndarray, optional
+        The goal configuration of the robot, by default None.
+
+    goal_pose: RigidTransform, optional
+        The goal pose of the robot, by default None.
+    """
     def __init__(
         self,
         start_configuration: np.ndarray = None,
@@ -52,21 +80,59 @@ class KinematicMotionPlanningProduction(BaseProduction):
 
     def add_supporting_cast(self):
         """
-        Description
-        -----------
-        This method will add the start and goal poses to the builder.
-        :return:
+        *Description*
+        
+        Create illustrations for the start and goal poses to the builder.
+
+        .. important::
+
+            The child classes of this base class should add their
+            own logic to their own add_supporting_cast() method, and
+            then call this method via super().add_supporting_cast().
+
+            This method is only meant to add the start and goal visualizations
+            to the plant.
+        
+        .. warning::
+
+            We recommend that the plant NOT be finalized before calling this method.
+            This is because this method adds visual elements to the plant.
+        
+            
+        *Usage*
+
+        To demonstrate how to use this method in a child class, see the
+        following example: ::
+
+            class MyKinematicMotionPlanningProduction(KinematicMotionPlanningProduction):
+                # Some code here...
+
+                def add_supporting_cast(self):
+                    # First, call the parent class's method to add start and goal visuals
+                    super().add_supporting_cast()
+
+                    # Then, add the robot and anything else
+                    self.add_robot_to_plant(self.plant)
+
+                    # Finally, finalize the plant
+                    self.plant.Finalize()
+
+                    # Create systems which share the pose where the start and goal
+                    # are located.
+                    self.add_start_and_goal_sources_to_builder()
+
+
+
         """
         # Add visual elements for the start and goal poses
         self.add_start_and_goal_to_plant(self.plant)
 
     def add_robot_source_system(self):
         """
-        Description
-        -----------
+        *Description*
+        
         This method adds a source for providing the motion planner
         with the model index for the robot that we are trying to control.
-        :return:
         """
         # Setup
 
@@ -80,19 +146,20 @@ class KinematicMotionPlanningProduction(BaseProduction):
 
     def add_start_and_goal_to_plant(self, plant: MultibodyPlant):
         """
-        Description
-        -----------
-        Add the start and goal to this plant.
-        Parameters
-        ----------
-        :param plant: The plant to add the start and goal to.
+        *Description*
+        
+        Add 3D visualizations of the pose where the start and goal
+        are for the current production.
 
-        Notes
-        -----
-        Feel free to overwrite this if you have specific sizes of the start and goal in mind,
-        or if you want to add more than just spheres, etc.
-        :return:
+        .. tip::
 
+            Feel free to overwrite this if you have specific sizes of the start and goal in mind,
+            or if you want to add more than just spheres, etc.
+        
+        *Parameters*
+        
+        plant: pydrake.multibody.plant.MultibodyPlant
+            The plant to add the start and goal to.
         """
 
         # Create a sphere for the start
@@ -137,9 +204,13 @@ class KinematicMotionPlanningProduction(BaseProduction):
 
     def add_start_and_goal_sources_to_builder(self):
         """
-        Description
-        -----------
+        *Description*
+        
         This method will add the start and goal sources to the builder.
+
+        .. warning::
+
+            The plant must be finalized before calling this method.
         """
         # Input Processing
         assert self.plant.is_finalized(), "Plant must be finalized before adding start and goal sources."
@@ -150,8 +221,11 @@ class KinematicMotionPlanningProduction(BaseProduction):
 
     def add_start_source_system(self):
         """
+        *Description*
+
         Add a source system for the start pose.
-        :return:
+        This will be a ConstantVectorSource that outputs the start configuration
+        in the diagram.
         """
         # Setup
 
@@ -163,8 +237,12 @@ class KinematicMotionPlanningProduction(BaseProduction):
 
     def add_goal_source_system(self):
         """
+        *Description*
+        
         Add a source system for the goal pose.
-        :return:
+        
+        This will be a ConstantVectorSource that outputs the goal configuration
+        in the diagram.
         """
         # Setup
 
@@ -176,15 +254,18 @@ class KinematicMotionPlanningProduction(BaseProduction):
 
     def add_main_cast(
         self,
-        cast: Tuple[Role, Performer] = [],
+        cast: List[Tuple[Role, Performer]] = [],
     ):
         """
-        Description
-        -----------
+        *Description*
+        
         This small modification to the normal add_main_cast()
         function includes a call to create the optional inputs if needed.
-        :param cast:
-        :return:
+        
+        *Parameters*
+
+        cast: List[Tuple[Role, Performer]], optional
+            The cast to add to the production, by default [].
         """
         # Setup
 

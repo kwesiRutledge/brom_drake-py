@@ -124,7 +124,7 @@ class BaseProduction:
 
     def add_main_cast(
         self,
-        cast: Tuple[Role, Performer] = [],
+        cast: List[Tuple[Role, Performer]] = [],
     ):
         # Setup
 
