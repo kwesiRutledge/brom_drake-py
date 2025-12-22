@@ -328,8 +328,12 @@ def main(
     # Build the docs using sphinx-build
     subprocess.run(
         [
-            "make",
+            "sphinx-build",
+            "-M",
             "html",
+            "source", # Source directory
+            "build",  # Build directory
+
         ]
     )
 
