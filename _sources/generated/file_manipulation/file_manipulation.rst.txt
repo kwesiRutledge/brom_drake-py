@@ -1,0 +1,21 @@
+file_manipulation
+=================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   urdf/urdf
+
+Classes
+-------
+
+(None found)
+
+Functions
+---------
+
+(None found)
+

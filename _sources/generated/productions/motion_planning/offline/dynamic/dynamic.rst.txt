@@ -1,0 +1,21 @@
+dynamic
+=======
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+
+Classes
+-------
+
+.. autoclass:: brom_drake.productions.motion_planning.offline.dynamic.ChemLab2
+   :members:
+
+Functions
+---------
+
+(None found)
+

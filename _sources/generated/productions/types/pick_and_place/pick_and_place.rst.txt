@@ -1,0 +1,23 @@
+pick_and_place
+==============
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+
+Classes
+-------
+
+.. autoclass:: brom_drake.productions.types.pick_and_place.MotionPlanningAndGraspingProduction
+   :members:
+.. autoclass:: brom_drake.productions.types.pick_and_place.MotionPlanningAndGraspingProductionScript
+   :members:
+
+Functions
+---------
+
+(None found)
+

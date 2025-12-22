@@ -1,0 +1,23 @@
+show_me
+=======
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+
+Classes
+-------
+
+.. autoclass:: brom_drake.productions.debug.show_me.ShowMeSystem
+   :members:
+.. autoclass:: brom_drake.productions.debug.show_me.ShowMeThisModel
+   :members:
+
+Functions
+---------
+
+(None found)
+

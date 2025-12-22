@@ -1,0 +1,22 @@
+algorithms
+==========
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   rrt/rrt
+
+Classes
+-------
+
+.. autoclass:: brom_drake.motion_planning.algorithms.MotionPlanner
+   :members:
+
+Functions
+---------
+
+(None found)
+

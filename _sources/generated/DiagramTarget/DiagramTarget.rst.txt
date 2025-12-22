@@ -1,0 +1,21 @@
+DiagramTarget
+=============
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+
+Classes
+-------
+
+.. autoclass:: brom_drake.DiagramTarget.DiagramTarget
+   :members:
+
+Functions
+---------
+
+(None found)
+

@@ -1,0 +1,23 @@
+with_static_wrist
+=================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+
+Classes
+-------
+
+.. autoclass:: brom_drake.productions.debug.grasping.attempt_grasp.with_static_wrist.AttemptGraspWithStaticWristPhase
+   :members:
+.. autoclass:: brom_drake.productions.debug.grasping.attempt_grasp.with_static_wrist.Configuration
+   :members:
+
+Functions
+---------
+
+(None found)
+

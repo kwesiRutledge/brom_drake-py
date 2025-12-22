@@ -1,0 +1,31 @@
+control
+=======
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   arms/arms
+   grippers/grippers
+
+Classes
+-------
+
+.. autoclass:: brom_drake.control.CartesianArmController
+   :members:
+.. autoclass:: brom_drake.control.EndEffectorTarget
+   :members:
+.. autoclass:: brom_drake.control.GripperController
+   :members:
+.. autoclass:: brom_drake.control.GripperTarget
+   :members:
+.. autoclass:: brom_drake.control.IdealJointPositionController
+   :members:
+
+Functions
+---------
+
+(None found)
+

@@ -1,0 +1,23 @@
+grippers
+========
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+
+Classes
+-------
+
+.. autoclass:: brom_drake.control.grippers.GripperController
+   :members:
+.. autoclass:: brom_drake.control.grippers.GripperTarget
+   :members:
+
+Functions
+---------
+
+(None found)
+

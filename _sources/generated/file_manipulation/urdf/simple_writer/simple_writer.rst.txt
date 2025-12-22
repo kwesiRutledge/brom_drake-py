@@ -1,0 +1,23 @@
+simple_writer
+=============
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+
+Classes
+-------
+
+.. autoclass:: brom_drake.file_manipulation.urdf.simple_writer.InertiaDefinition
+   :members:
+.. autoclass:: brom_drake.file_manipulation.urdf.simple_writer.SimpleShapeURDFDefinition
+   :members:
+
+Functions
+---------
+
+(None found)
+

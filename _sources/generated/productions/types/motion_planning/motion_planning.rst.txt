@@ -1,0 +1,22 @@
+motion_planning
+===============
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   offline/offline
+
+Classes
+-------
+
+.. autoclass:: brom_drake.productions.types.motion_planning.KinematicMotionPlanningProduction
+   :members:
+
+Functions
+---------
+
+(None found)
+

@@ -1,0 +1,25 @@
+puppetmaker
+===========
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+
+Classes
+-------
+
+.. autoclass:: brom_drake.utils.puppetmaker.Puppetmaker
+   :members:
+.. autoclass:: brom_drake.utils.puppetmaker.PuppetmakerConfiguration
+   :members:
+.. autoclass:: brom_drake.utils.puppetmaker.PuppetSignature
+   :members:
+
+Functions
+---------
+
+(None found)
+

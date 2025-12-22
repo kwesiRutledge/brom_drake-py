@@ -1,0 +1,29 @@
+shapes
+======
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+
+Classes
+-------
+
+.. autoclass:: brom_drake.file_manipulation.urdf.shapes.BoxDefinition
+   :members:
+.. autoclass:: brom_drake.file_manipulation.urdf.shapes.CylinderDefinition
+   :members:
+.. autoclass:: brom_drake.file_manipulation.urdf.shapes.ShapeDefinition
+   :members:
+.. autoclass:: brom_drake.file_manipulation.urdf.shapes.ShapeEnum
+   :members:
+.. autoclass:: brom_drake.file_manipulation.urdf.shapes.SphereDefinition
+   :members:
+
+Functions
+---------
+
+(None found)
+

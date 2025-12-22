@@ -1,0 +1,29 @@
+systems
+=======
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   open_loop_dispensers/open_loop_dispensers
+   proximity_pose_plan_dispenser/proximity_pose_plan_dispenser
+
+Classes
+-------
+
+.. autoclass:: brom_drake.motion_planning.systems.OpenLoopPlanDispenser
+   :members:
+.. autoclass:: brom_drake.motion_planning.systems.OpenLoopPosePlanDispenser
+   :members:
+.. autoclass:: brom_drake.motion_planning.systems.PrototypicalPlannerSystem
+   :members:
+.. autoclass:: brom_drake.motion_planning.systems.StateOfPlanInMemory
+   :members:
+
+Functions
+---------
+
+(None found)
+

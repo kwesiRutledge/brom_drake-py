@@ -1,0 +1,21 @@
+pick_and_place
+==============
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+
+Classes
+-------
+
+.. autoclass:: brom_drake.productions.pick_and_place.ChemLab3
+   :members:
+
+Functions
+---------
+
+(None found)
+

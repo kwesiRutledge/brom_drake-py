@@ -1,0 +1,26 @@
+motion_planning
+===============
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   offline/offline
+
+Classes
+-------
+
+.. autoclass:: brom_drake.productions.motion_planning.ChemLab1
+   :members:
+.. autoclass:: brom_drake.productions.motion_planning.ChemLab2
+   :members:
+.. autoclass:: brom_drake.productions.motion_planning.ShelfPlanning1
+   :members:
+
+Functions
+---------
+
+(None found)
+

@@ -1,0 +1,23 @@
+open_loop_dispensers
+====================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+
+Classes
+-------
+
+.. autoclass:: brom_drake.motion_planning.systems.open_loop_dispensers.OpenLoopPlanDispenser
+   :members:
+.. autoclass:: brom_drake.motion_planning.systems.open_loop_dispensers.OpenLoopPosePlanDispenser
+   :members:
+
+Functions
+---------
+
+(None found)
+

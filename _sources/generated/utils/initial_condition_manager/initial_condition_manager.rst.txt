@@ -1,0 +1,23 @@
+initial_condition_manager
+=========================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+
+Classes
+-------
+
+.. autoclass:: brom_drake.utils.initial_condition_manager.InitialCondition
+   :members:
+.. autoclass:: brom_drake.utils.initial_condition_manager.InitialConditionManager
+   :members:
+
+Functions
+---------
+
+(None found)
+

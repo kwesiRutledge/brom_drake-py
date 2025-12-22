@@ -1,0 +1,27 @@
+proximity_pose_plan_dispenser
+=============================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+
+Classes
+-------
+
+.. autoclass:: brom_drake.motion_planning.systems.proximity_pose_plan_dispenser.DispenserInternalState
+   :members:
+.. autoclass:: brom_drake.motion_planning.systems.proximity_pose_plan_dispenser.DispenserTransitionRequest
+   :members:
+.. autoclass:: brom_drake.motion_planning.systems.proximity_pose_plan_dispenser.ProximityPosePlanDispenser
+   :members:
+.. autoclass:: brom_drake.motion_planning.systems.proximity_pose_plan_dispenser.ProximityPosePlanDispenserConfig
+   :members:
+
+Functions
+---------
+
+(None found)
+

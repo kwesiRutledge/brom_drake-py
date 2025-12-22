@@ -1,0 +1,23 @@
+pick_and_place
+==============
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+
+Classes
+-------
+
+.. autoclass:: brom_drake.utils.pick_and_place.PickAndPlacePhase
+   :members:
+.. autoclass:: brom_drake.utils.pick_and_place.PickAndPlaceTargetDescription
+   :members:
+
+Functions
+---------
+
+(None found)
+

@@ -1,0 +1,23 @@
+base
+====
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+
+Classes
+-------
+
+.. autoclass:: brom_drake.productions.types.base.BaseProduction
+   :members:
+.. autoclass:: brom_drake.productions.types.base.Configuration
+   :members:
+
+Functions
+---------
+
+(None found)
+

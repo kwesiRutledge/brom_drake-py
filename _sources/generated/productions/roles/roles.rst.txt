@@ -1,0 +1,24 @@
+roles
+=====
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   motion_planners/motion_planners
+
+Classes
+-------
+
+.. autoclass:: brom_drake.productions.roles.Role
+   :members:
+.. autoclass:: brom_drake.productions.roles.RolePortAssignment
+   :members:
+
+Functions
+---------
+
+(None found)
+

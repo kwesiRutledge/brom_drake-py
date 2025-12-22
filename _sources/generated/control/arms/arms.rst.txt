@@ -1,0 +1,31 @@
+arms
+====
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+
+Classes
+-------
+
+.. autoclass:: brom_drake.control.arms.ArmControlMode
+   :members:
+.. autoclass:: brom_drake.control.arms.BaseArmController
+   :members:
+.. autoclass:: brom_drake.control.arms.CartesianArmController
+   :members:
+.. autoclass:: brom_drake.control.arms.EndEffectorTarget
+   :members:
+.. autoclass:: brom_drake.control.arms.JointArmController
+   :members:
+.. autoclass:: brom_drake.control.arms.JointTarget
+   :members:
+
+Functions
+---------
+
+(None found)
+

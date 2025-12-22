@@ -1,0 +1,58 @@
+productions
+===========
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   debug/debug
+   motion_planning/motion_planning
+   pick_and_place/pick_and_place
+   roles/roles
+   types/types
+
+Classes
+-------
+
+.. autoclass:: brom_drake.productions.AttemptGraspWithPuppeteerWrist
+   :members:
+.. autoclass:: brom_drake.productions.AttemptGraspWithPuppeteerWristConfiguration
+   :members:
+.. autoclass:: brom_drake.productions.AttemptGraspWithPuppeteerWristScript
+   :members:
+.. autoclass:: brom_drake.productions.AttemptGraspWithStaticWrist
+   :members:
+.. autoclass:: brom_drake.productions.AttemptGraspWithStaticWristConfiguration
+   :members:
+.. autoclass:: brom_drake.productions.BaseProduction
+   :members:
+.. autoclass:: brom_drake.productions.ChemLab1
+   :members:
+.. autoclass:: brom_drake.productions.ChemLab2
+   :members:
+.. autoclass:: brom_drake.productions.ChemLab3
+   :members:
+.. autoclass:: brom_drake.productions.KinematicMotionPlanningProduction
+   :members:
+.. autoclass:: brom_drake.productions.MotionPlanningAndGraspingProduction
+   :members:
+.. autoclass:: brom_drake.productions.OfflineDynamicMotionPlanningProduction
+   :members:
+.. autoclass:: brom_drake.productions.ProductionID
+   :members:
+.. autoclass:: brom_drake.productions.ShelfPlanning1
+   :members:
+.. autoclass:: brom_drake.productions.ShowMeThisModel
+   :members:
+.. autoclass:: brom_drake.productions.ShowMeThisStaticGrasp
+   :members:
+.. autoclass:: brom_drake.productions.ShowMeThisStaticGraspConfiguration
+   :members:
+
+Functions
+---------
+
+(None found)
+

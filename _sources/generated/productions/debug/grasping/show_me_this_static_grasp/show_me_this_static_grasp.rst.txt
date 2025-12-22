@@ -1,0 +1,23 @@
+show_me_this_static_grasp
+=========================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+
+Classes
+-------
+
+.. autoclass:: brom_drake.productions.debug.grasping.show_me_this_static_grasp.Configuration
+   :members:
+.. autoclass:: brom_drake.productions.debug.grasping.show_me_this_static_grasp.ShowMeThisStaticGrasp
+   :members:
+
+Functions
+---------
+
+(None found)
+

@@ -1,0 +1,27 @@
+offline
+=======
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   dynamic/dynamic
+   kinematic/kinematic
+
+Classes
+-------
+
+.. autoclass:: brom_drake.productions.motion_planning.offline.ChemLab1
+   :members:
+.. autoclass:: brom_drake.productions.motion_planning.offline.ChemLab2
+   :members:
+.. autoclass:: brom_drake.productions.motion_planning.offline.ShelfPlanning1
+   :members:
+
+Functions
+---------
+
+(None found)
+

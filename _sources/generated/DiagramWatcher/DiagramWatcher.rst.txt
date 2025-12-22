@@ -1,0 +1,25 @@
+DiagramWatcher
+==============
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+
+Classes
+-------
+
+.. autoclass:: brom_drake.DiagramWatcher.DiagramWatcher
+   :members:
+.. autoclass:: brom_drake.DiagramWatcher.DiagramWatcherOptions
+   :members:
+.. autoclass:: brom_drake.DiagramWatcher.UnrecognizedTargetError
+   :members:
+
+Functions
+---------
+
+(None found)
+

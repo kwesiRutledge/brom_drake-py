@@ -1,0 +1,23 @@
+debug
+=====
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   grasping/grasping
+   show_me/show_me
+
+Classes
+-------
+
+.. autoclass:: brom_drake.productions.debug.ShowMeThisModel
+   :members:
+
+Functions
+---------
+
+(None found)
+

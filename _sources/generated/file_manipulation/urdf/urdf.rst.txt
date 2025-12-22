@@ -1,0 +1,35 @@
+urdf
+====
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   drake_ready_urdf_converter/drake_ready_urdf_converter
+   shapes/shapes
+   simple_writer/simple_writer
+
+Classes
+-------
+
+.. autoclass:: brom_drake.file_manipulation.urdf.DrakeReadyURDFConverter
+   :members:
+.. autoclass:: brom_drake.file_manipulation.urdf.DrakeReadyURDFConverterConfig
+   :members:
+.. autoclass:: brom_drake.file_manipulation.urdf.MeshReplacementStrategies
+   :members:
+.. autoclass:: brom_drake.file_manipulation.urdf.MeshReplacementStrategy
+   :members:
+.. autoclass:: brom_drake.file_manipulation.urdf.SimpleShapeURDFDefinition
+   :members:
+
+Functions
+---------
+
+.. autofunction:: brom_drake.file_manipulation.urdf.create_transmission_element_for_joint
+.. autofunction:: brom_drake.file_manipulation.urdf.drakeify_my_urdf
+.. autofunction:: brom_drake.file_manipulation.urdf.find_mesh_file_path_in
+.. autofunction:: brom_drake.file_manipulation.urdf.tree_contains_transmission_for_joint
+

@@ -1,0 +1,29 @@
+grasping
+========
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   attempt_grasp/attempt_grasp
+   show_me_this_static_grasp/show_me_this_static_grasp
+
+Classes
+-------
+
+.. autoclass:: brom_drake.productions.debug.grasping.AttemptGraspWithStaticWrist
+   :members:
+.. autoclass:: brom_drake.productions.debug.grasping.AttemptGraspWithStaticWristConfiguration
+   :members:
+.. autoclass:: brom_drake.productions.debug.grasping.ShowMeThisStaticGrasp
+   :members:
+.. autoclass:: brom_drake.productions.debug.grasping.ShowMeThisStaticGraspConfiguration
+   :members:
+
+Functions
+---------
+
+(None found)
+

@@ -1,0 +1,21 @@
+kinematic
+=========
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+
+Classes
+-------
+
+.. autoclass:: brom_drake.stations.kinematic.UR10eStation
+   :members:
+
+Functions
+---------
+
+(None found)
+

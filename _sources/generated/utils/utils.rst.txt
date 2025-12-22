@@ -1,0 +1,59 @@
+utils
+=====
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   initial_condition_manager/initial_condition_manager
+   leaf_systems/leaf_systems
+   pick_and_place/pick_and_place
+   puppetmaker/puppetmaker
+   watcher/watcher
+
+Classes
+-------
+
+.. autoclass:: brom_drake.utils.BoolToVectorSystem
+   :members:
+.. autoclass:: brom_drake.utils.EndEffectorWrenchCalculator
+   :members:
+.. autoclass:: brom_drake.utils.FlexiblePortSwitch
+   :members:
+.. autoclass:: brom_drake.utils.FSMEdgeDefinition
+   :members:
+.. autoclass:: brom_drake.utils.FSMOutputDefinition
+   :members:
+.. autoclass:: brom_drake.utils.FSMTransitionCondition
+   :members:
+.. autoclass:: brom_drake.utils.FSMTransitionConditionType
+   :members:
+.. autoclass:: brom_drake.utils.GroundShape
+   :members:
+.. autoclass:: brom_drake.utils.NetworkXFSM
+   :members:
+.. autoclass:: brom_drake.utils.PickAndPlacePhase
+   :members:
+.. autoclass:: brom_drake.utils.PickAndPlaceTargetDescription
+   :members:
+.. autoclass:: brom_drake.utils.Puppetmaker
+   :members:
+.. autoclass:: brom_drake.utils.PuppetmakerConfiguration
+   :members:
+.. autoclass:: brom_drake.utils.PuppetSignature
+   :members:
+.. autoclass:: brom_drake.utils.RigidTransformToVectorSystem
+   :members:
+
+Functions
+---------
+
+.. autofunction:: brom_drake.utils.AddGround
+.. autofunction:: brom_drake.utils.AddMultibodyTriad
+.. autofunction:: brom_drake.utils.AddTriad
+.. autofunction:: brom_drake.utils.find_all_systems_with_input_port
+.. autofunction:: brom_drake.utils.find_all_systems_with_output_port
+.. autofunction:: brom_drake.utils.using_point_pair_penetration
+

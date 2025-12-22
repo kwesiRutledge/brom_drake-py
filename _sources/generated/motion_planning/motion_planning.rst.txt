@@ -1,0 +1,23 @@
+motion_planning
+===============
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   algorithms/algorithms
+   systems/systems
+
+Classes
+-------
+
+.. autoclass:: brom_drake.motion_planning.PlanningNode
+   :members:
+
+Functions
+---------
+
+(None found)
+

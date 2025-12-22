@@ -1,0 +1,27 @@
+with_puppeteer_wrist
+====================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+
+Classes
+-------
+
+.. autoclass:: brom_drake.productions.debug.grasping.attempt_grasp.with_puppeteer_wrist.AttemptGraspWithPuppeteerWrist
+   :members:
+.. autoclass:: brom_drake.productions.debug.grasping.attempt_grasp.with_puppeteer_wrist.AttemptGraspWithPuppeteerWristPhase
+   :members:
+.. autoclass:: brom_drake.productions.debug.grasping.attempt_grasp.with_puppeteer_wrist.Configuration
+   :members:
+.. autoclass:: brom_drake.productions.debug.grasping.attempt_grasp.with_puppeteer_wrist.Script
+   :members:
+
+Functions
+---------
+
+(None found)
+
