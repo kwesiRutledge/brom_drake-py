@@ -32,12 +32,11 @@ from brom_drake import robots
 
 class UR10eStation(Diagram):
     """
-    Description
-    -----------
+    *Description*
+
     A template system diagram for controlling a UR10e robot in a simulated environment.
 
-    Diagram
-    -------
+    *Diagram*
     
     """
     def __init__(
@@ -49,11 +48,11 @@ class UR10eStation(Diagram):
         end_effector_frame_name: str = "tool0",
     ):
         """
-        Description:
+        *Description*
 
-            This class defines the KINEMATIC UR10e Manipulation Station.
-            This station is based off of the Drake Manipulation Station showcased
-            in Russ Tedrake's manipulation course.
+        This class defines the KINEMATIC UR10e Manipulation Station.
+        This station is based off of the Drake Manipulation Station showcased
+        in Russ Tedrake's manipulation course.
         """
         # Input Processing
         self.force_conversion_of_original_urdf = force_conversion_of_original_urdf
@@ -101,19 +100,32 @@ class UR10eStation(Diagram):
         X_ee: RigidTransform = RigidTransform(),
     ) -> Tuple[ModelInstanceIndex, Frame]:
         """
-        Description
-        -----------
+        *Description*
+        
         This function adds the "arm" object at the arm_urdf_path location to the plant.
 
-        Arguments
-        ---------
+        *Parameters*
+        
         arm_urdf_path : str
             The path to the URDF file for the arm.
+
         plant : MultibodyPlant
             The plant to which the arm will be added.
-        :param arm_urdf_path:
-        :param plant:
-        :return:
+
+        new_frame_name : str, optional
+            The name of the new end-effector frame to be added, by default "end_effector".
+
+        X_ee : RigidTransform, optional
+            The transform from the arm's end-effector frame to the new end-effector frame,
+            by default RigidTransform().
+
+        *Returns*
+
+        arm : ModelInstanceIndex
+            The model instance index of the added arm.
+
+        new_frame : Frame
+            The newly added end-effector frame.
         """
         # Setup
 
@@ -237,8 +249,8 @@ class UR10eStation(Diagram):
 
     def connect_gripper_controller(self):
         """
-        Description
-        -----------
+        *Description*
+        
         Connects the gripper controller to:
         - The Gripper Actuators (done via the plant of the station)
         
@@ -276,7 +288,18 @@ class UR10eStation(Diagram):
             "measured_gripper_velocity",
         )
 
-    def ConnectToMeshcatVisualizer(self, port=None):
+    def ConnectToMeshcatVisualizer(self, port: int=None):
+        """
+        *Description*
+
+        This function connects the station to a Meshcat visualizer.
+
+        *Parameters*
+
+        port: int, optional
+            The port number for the Meshcat server.
+            If None, the default port will be used.
+        """
         self.meshcat = Meshcat(port)
         m = MeshcatVisualizer(self.meshcat)
         m.AddToBuilder(
@@ -290,10 +313,9 @@ class UR10eStation(Diagram):
 
     def create_plants_and_scene_graph(self):
         """
-        Description
-        -----------
+        *Description*
+        
         This function creates the plant for the UR10e station, if needed.
-        :return:
         """
         # Setup
 
@@ -323,11 +345,14 @@ class UR10eStation(Diagram):
 
     def Finalize(self):
         """
-        Description
-        ----------
+        *Description*
+        
         This finalizes the diagram by:
         - Finalizing all plants in the diagram
-        :return: Nothing
+        - Setting up the scene graph connections
+        - Connecting to Meshcat (if desired)
+        - Creating the arm and gripper controllers
+        - Building the diagram
         """
         # Setup
 
@@ -371,8 +396,8 @@ class UR10eStation(Diagram):
         self,
     ):
         """
-        Description
-        -----------
+        *Description*
+        
         This function creates a Cartesian arm controller and connects it to the rest of the system.
         :return:
         """
@@ -404,10 +429,14 @@ class UR10eStation(Diagram):
         self,
     )-> IdealJointPositionController:
         """
-        Description
-        -----------
+        *Description*
+        
         Creates an ideal joint position controller and exports the necessary inputs + outputs.
-        :return:
+        
+        *Returns*
+
+        joint_controller: IdealJointPositionController
+            The created joint position controller.
         """
         # Setup
         arm = self.arm
@@ -431,16 +460,31 @@ class UR10eStation(Diagram):
 
         return joint_controller
 
-    def use_meshcat(self):
+    def use_meshcat(self) -> bool:
+        """
+        *Description*
+
+        This function returns whether or not Meshcat visualization is being used.
+
+        *Returns*
+
+        meshcat_should_be_used: bool
+            True if Meshcat visualization is being used, False otherwise.
+        """
         return self.meshcat_port_number is not None
     
     def UpdateInternalContexts(self, context: Context):
         """
-        Description
-        -----------
+        *Description*
+
         This function updates the internal contexts of the plant and the controller.
-        :param context:
-        :return:
+
+        TODO(Kwesi): Clean up this method of unused variables.
+
+        *Parameters*
+
+        context: pydrake.systems.framework.Context
+            The context from which to update the internal contexts.
         """
         # Setup
         plant_context = self.plant.GetMyMutableContextFromRoot(context)

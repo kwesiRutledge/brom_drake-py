@@ -28,22 +28,26 @@ from brom_drake import robots
 
 class UR10eStation(Diagram):
     """
+    *Description*
+
     A template system diagram for controlling a UR10e robot in a simulated environment.
     
-    Diagram
-    -------
-                                        -----------------
-                                        |               |
-    gripper_target -------------------->|               |
-    (Vector, np.array)                  |   UR10e       |
-                                        |               |
-    gripper_target_type --------------->|   Station     |
-    (Abstract, GripperTarget Enum)      |               |
-                                        |               |
-    desired_joint_positions ----------->|               |
-    (Vector, np.array)                  |               |
-                                        |               |
-                                        -----------------
+    *Diagram*
+    
+    The diagram's inputs and outputs can be represented as: ::
+
+                                            -----------------
+                                            |               |
+        gripper_target -------------------->|               |
+        (Vector, np.array)                  |   UR10e       |
+                                            |               |
+        gripper_target_type --------------->|   Station     |
+        (Abstract, GripperTarget Enum)      |               |
+                                            |               |
+        desired_joint_positions ----------->|               |
+        (Vector, np.array)                  |               |
+                                            |               |
+                                            -----------------
     """
 
     def __init__(
@@ -53,9 +57,9 @@ class UR10eStation(Diagram):
         gripper_type: GripperType = GripperType.Robotiq_2f_85,
     ):
         """
-        Description:
+        *Description*
 
-            This class defines the UR10e Station.
+        This class defines the UR10e Station.
         """
         # Input Processing
         self.meshcat_port_number = meshcat_port_number
@@ -97,21 +101,24 @@ class UR10eStation(Diagram):
         X_ee: RigidTransform = RigidTransform(),
     ) -> Tuple[ModelInstanceIndex, Frame]:
         """
-        Description
-        -----------
+        *Description*
+        
         This function adds the "arm" object at the arm_urdf_path location to the plant.
 
-        Arguments
-        ---------
+        *Parameters*
+        
         arm_urdf_path : str
             The path to the URDF file for the arm.
         plant : MultibodyPlant
             The plant to which the arm will be added.
         
-        Returns
-        -------
-        Tuple[ModelInstanceIndex, Frame]
+        *Returns*
+        
+        arm: ModelInstanceIndex
             The model instance index of the arm and the frame of the end effector.
+        
+        end_effector_frame: Frame
+            The frame of the end effector.
         """
         # Setup
 
@@ -125,7 +132,7 @@ class UR10eStation(Diagram):
         )
 
         # Add Frame for the end effector
-        new_frame = plant.AddFrame(
+        end_effector_frame = plant.AddFrame(
             FixedOffsetFrame(
                 new_frame_name,
                 plant.GetFrameByName(self.end_effector_frame_name, arm),
@@ -134,12 +141,12 @@ class UR10eStation(Diagram):
             )
         )
 
-        return arm, new_frame
+        return arm, end_effector_frame
     
     def add_gripper_controller(self):
         """
-        Description
-        -----------
+        *Description*
+        
         This funciton adds a controller for the gripper to the station.
         It is optional and may not be necessary for all stations.
         """
@@ -153,6 +160,8 @@ class UR10eStation(Diagram):
 
     def AddArm(self):
         """
+        *Description*
+        
         Add the UR10e arm to the system.
         """
         # Setup
@@ -182,6 +191,8 @@ class UR10eStation(Diagram):
 
     def Add2f85Gripper(self):
         """
+        *Description*
+
         Add the Robotiq 2F-85 gripper to the system. The arm must be added first.
         """
         # Setup
@@ -264,8 +275,8 @@ class UR10eStation(Diagram):
 
     def CreateGripperControllerAndConnect(self):
         """
-        Description
-        -----------
+        *Description*
+        
         Connects the gripper controller to:
         - The Gripper Actuators (done via the plant of the station)
         
@@ -307,13 +318,14 @@ class UR10eStation(Diagram):
 
     def create_plants_and_scene_graph(self, time_step: float = 0.001):
         """
-        Description
-        -----------
+        *Description*
+        
         This function creates the plant and scene graph for the diagram.
 
-        Outputs
-        -------
-        None
+        *Parameters*
+        
+        time_step : float
+            The time step for the MultibodyPlant.
         """
         # Setup
 
@@ -334,8 +346,8 @@ class UR10eStation(Diagram):
 
     def ExportArmPositionInputPort(self):
         """
-        Description
-        -----------
+        *Description*
+        
         Creates the input port for the arm position (i.e. the joint position)
         for the station.
         This requires creating a special connection to the arm controller
@@ -378,8 +390,8 @@ class UR10eStation(Diagram):
 
     def ExportArmControllerPorts(self):
         """
-        Description
-        -----------
+        *Description*
+        
         This function creates the input and output ports for the diagram
         that are related to the arm controller.
         """
@@ -444,8 +456,8 @@ class UR10eStation(Diagram):
 
     def ExportGripperStatePort(self):
         """
-        Description
-        -----------
+        *Description*
+        
         This function exports the gripper's state
         as a port of the diagram.
         """
@@ -459,11 +471,15 @@ class UR10eStation(Diagram):
     
     def Finalize(self):
         """
-        Description
-        ----------
+        *Description*
+        
         This finalizes the diagram by:
+
         - Finalizing all plants in the diagram
-        :return: Nothing
+        - Setting up the visualizer (if desired)
+        - Creating and connecting the arm controller
+        - Creating and connecting the gripper controller (if desired)
+        - Building the diagram
         """
         # Setup
 
@@ -499,8 +515,8 @@ class UR10eStation(Diagram):
     
     def use_meshcat(self) -> bool:
         """
-        Description
-        -----------
+        *Description*
+        
         This function returns whether or not to use meshcat for visualization.
         :return: (bool) Whether or not to use meshcat for visualization.
         """

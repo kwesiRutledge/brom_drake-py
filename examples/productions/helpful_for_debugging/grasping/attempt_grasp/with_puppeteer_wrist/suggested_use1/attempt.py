@@ -17,8 +17,8 @@ from brom_drake.productions import AttemptGraspWithPuppeteerWrist
 
 def main():
     """
-    Description
-    -----------
+    *Description*
+    
     In this example, we will demonstrate how to:
     - Load a model into the `AttempptGraspWithPuppeteerWrist` production
     - Specify a sequence of target poses for the gripper wrist to follow

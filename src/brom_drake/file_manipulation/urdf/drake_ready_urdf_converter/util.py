@@ -5,14 +5,23 @@ from typing import Union
 URDF_CONVERSION_LOG_LEVEL_NAME = "BROM_URDF_CONVERSION"
 URDF_CONVERSION_LEVEL = 21
 
-def does_drake_parser_support(filename: str):
+def does_drake_parser_support(filename: str) -> bool:
     """
-    Description
-    -----------
+    *Description*
+    
     This function cleanly answers whether the given 3d object
     file is supported by Drake.
-    :param filename:
-    :return:
+    
+    *Parameters*
+
+    filename: str
+        The name of the file to check.
+    
+    *Returns*
+
+    does_support: bool
+        True if the file is supported by Drake, False otherwise.
+    
     """
     return ".obj" in filename # TODO(kwesi): Determine if .sdf should be put here.
 
@@ -20,11 +29,19 @@ def create_transmission_element_for_joint(
     actuated_joint_name: str,
 ) -> ET.Element:
     """
-    Description
-    -----------
+    *Description*
+    
     This function creates a transmission element for the given joint.
-    :param actuated_joint_name: The name of the joint that will be actuated
-    :return: XML Element defining the new transmission for the actuated joint
+
+    *Parameters*
+
+    actuated_joint_name: str
+        The name of the joint that will be actuated
+
+    *Returns*
+
+    transmission_element: xml.etree.ElementTree.Element
+        The transmission element for the given joint.
     """
 
     # Create the transmission element
@@ -54,13 +71,23 @@ def tree_contains_transmission_for_joint(
     actuated_joint_name: str,
 ) -> bool:
     """
-    Description
-    -----------
+    *Description*
+    
     This function determines if the given tree contains a transmission
     element for the given actuated joint.
-    :param tree:
-    :param actuated_joint_name:
-    :return:
+
+    *Parameters*
+
+    tree: xml.etree.ElementTree.ElementTree
+        The tree to search for the transmission element.
+
+    actuated_joint_name: str
+        The name of the joint that will be actuated.
+
+    *Returns*
+
+    transmission_exists: bool
+        True if the tree contains a transmission element for the given joint,
     """
     # Setup
     root = tree.getroot()
@@ -87,18 +114,18 @@ def tree_contains_transmission_for_joint(
 
 def get_mesh_element_in(collision_element: ET.Element) -> Union[ET.Element, None]:
     """
-    Description
-    -----------
+    *Description*
+    
     This function finds the mesh element in the given collision element.
 
-    Parameters
-    ----------
+    *Parameters*
+    
     collision_element: ET.Element
         The collision element to search for a mesh element
     
-    Returns
-    -------
-    ET.Element or None
+    *Returns*
+   
+    new_element: ET.Element or None
         The mesh element if found, otherwise None
     """
     # Check if the collision element has a <geometry> child
@@ -114,18 +141,18 @@ def get_mesh_element_in(collision_element: ET.Element) -> Union[ET.Element, None
 
 def find_mesh_file_path_in(collision_element: ET.Element) -> Union[Path, None]:
     """
-    Description
-    -----------
+    *Description*
+    
     This function finds the mesh filename in the given collision element.
 
-    Parameters
-    ----------
+    *Parameters*
+    
     collision_element: ET.Element
         The collision element to search for a mesh filename
     
-    Returns
-    -------
-    str or None
+    *Returns*
+    
+    mesh_file_path: Path|None
         The mesh filename if found, otherwise None
     """
     # Setup

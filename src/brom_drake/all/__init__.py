@@ -28,6 +28,7 @@ from brom_drake.PortWatcher.port_watcher_options import (
 )
 from brom_drake.PortWatcher.port_figure_arrangement import PortFigureArrangement
 from brom_drake.productions.ids import ProductionID
+from brom_drake.productions.debug.grasping.attempt_grasp.with_puppeteer_wrist import Script as AttemptGraspWithPuppeteerWristScript
 from brom_drake.example_helpers import BlockHandlerSystem
 from brom_drake.file_manipulation.urdf import DrakeReadyURDFConverter, drakeify_my_urdf
 from brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.config import MeshReplacementStrategy
@@ -46,6 +47,7 @@ __all__ = [
     'add_watcher',
     'add_watcher_and_build',
     'ArmControlMode',
+    'AttemptGraspWithPuppeteerWristScript',
     'BaseRRTPlannerConfig',
     'BaseRRTPlanner',
     'BoolToVectorSystem',
