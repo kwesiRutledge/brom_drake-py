@@ -3,8 +3,9 @@ name: Upload Sphinx Documentation
 on:
   push:
     branches:
-      - main
-      - kr/documentation/*
+     - kr/documentation/*
+    tags:
+     - '*'  # Trigger on any tag push
   workflow_dispatch:
 
 permissions:
