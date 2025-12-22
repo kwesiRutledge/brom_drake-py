@@ -6,7 +6,6 @@ from pathlib import Path
 import pkgutil
 import shutil
 import subprocess
-import tempfile
 import typer
 from typing import List
 
