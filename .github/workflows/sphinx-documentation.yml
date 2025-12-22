@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - kr/documentation/*
   workflow_dispatch:
 
 permissions:
