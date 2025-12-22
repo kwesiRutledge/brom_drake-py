@@ -14,7 +14,7 @@ def main(version: str):
 
     # List of configuration files to update
     config_files = [
-        "docs/conf.py",
+        "source/conf.py",
     ]
 
     for config_file in config_files:

@@ -39,7 +39,7 @@ jobs:
         run: pip install -e .
       - name: Sphinx build
         run: |
-          cd docs && make generate-and-build-docs
+          cd docs && make generate-and-build-docs BROM_VERSION=${{ needs.extract-tag.outputs.tag_name }}
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
