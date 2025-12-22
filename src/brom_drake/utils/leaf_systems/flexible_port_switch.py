@@ -10,8 +10,8 @@ from typing import Union
 
 class FlexiblePortSwitch(LeafSystem):
     """
-    Description
-    -----------
+    *Description*
+    
     This system is a simplification of the PortSwitch system primitive
     that is built into Drake. It allows for you to command the switch
     with a simple input (i.e., a string or an int) instead of
