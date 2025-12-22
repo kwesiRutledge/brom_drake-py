@@ -17,13 +17,14 @@ jobs:
     env:
       TAG_NAME: latest
     outputs:
-      tag_name: ${{ steps.tag.outputs.TAG_NAME }}
+      tag_name: ${{ steps.final_tag.outputs.TAG_NAME }}
     steps:
       - name: Extract tag name, if it exists
-        id: tag
+        id: tag_extraction
         if: ${{ startsWith(github.ref, 'refs/tags/') }}
         run: echo "TAG_NAME=$(echo $GITHUB_REF | cut -d / -f 3)" >> $GITHUB_ENV
       - name: Return tag name as an output
+        id: final_tag
         run: echo "TAG_NAME=${{ env.TAG_NAME }}" >> "$GITHUB_OUTPUT"
 
   docs:
