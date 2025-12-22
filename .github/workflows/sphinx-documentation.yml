@@ -32,6 +32,8 @@ jobs:
       - name: Install Sphinx dependencies
         run: |
           pip install sphinx sphinx_rtd_theme myst_parser
+      - name: Install Brom dependencies
+        run: pip install -r requirements.txt
       - name: Update version in setup.py
         run: >-
           sed -i "s/{{VERSION_PLACEHOLDER}}/${{ needs.extract-tag.outputs.tag_name }}/g" setup.py
