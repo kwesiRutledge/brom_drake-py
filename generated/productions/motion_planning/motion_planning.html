@@ -602,183 +602,289 @@ by itself.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.ChemLab2">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brom_drake.productions.motion_planning.</span></span><span class="sig-name descname"><span class="pre">ChemLab2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meshcat_port_number</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">7001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plan_execution_speed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pose_WorldBeaker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">RigidTransform</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_height</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shelf_pose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">RigidTransform</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gripper_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../robots/robots.html#brom_drake.robots.GripperType" title="brom_drake.robots.gripper_type.GripperType"><span class="pre">GripperType</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">GripperType.Robotiq_2f_85</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.productions.motion_planning.ChemLab2" title="Link to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>Description:</dt><dd><p>This production is the first in the chemistry lab series.
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brom_drake.productions.motion_planning.</span></span><span class="sig-name descname"><span class="pre">ChemLab2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meshcat_port_number</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">7001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plan_execution_speed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pose_WorldBeaker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">RigidTransform</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_height</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shelf_pose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">RigidTransform</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gripper_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../robots/robots.html#brom_drake.robots.GripperType" title="brom_drake.robots.gripper_type.GripperType"><span class="pre">GripperType</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">GripperType.Robotiq_2f_85</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.productions.motion_planning.ChemLab2" title="Link to this definition">¶</a></dt>
+<dd><p><em>Description</em></p>
+<p>This production is the first in the chemistry lab series.
 It is used to test the motion planning capabilities of the robot
 in a chemistry lab setting with minimal constraints.</p>
+<p><em>Parameters</em></p>
+<dl class="simple">
+<dt>time_step: float, optional</dt><dd><p>The time step for the production, by default 1e-3.</p>
+</dd>
+<dt>meshcat_port_number: int, optional</dt><dd><p>The port number for meshcat visualization, by default 7001.</p>
+</dd>
+<dt>plan_execution_speed: float, optional</dt><dd><p>The speed at which to execute the motion plan, by default 0.2.</p>
+</dd>
+<dt>pose_WorldBeaker: RigidTransform, optional</dt><dd><p>The pose of the beaker in the world frame, by default None.</p>
+</dd>
+<dt>table_length: float, optional</dt><dd><p>The length of the table, by default 0.6.</p>
+</dd>
+<dt>table_width: float, optional</dt><dd><p>The width of the table, by default 2.0.</p>
+</dd>
+<dt>table_height: float, optional</dt><dd><p>The height of the table, by default 0.1.</p>
+</dd>
+<dt>shelf_pose: RigidTransform, optional</dt><dd><p>The pose of the shelf in the world frame, by default None.</p>
+</dd>
+<dt>gripper_type: GripperType, optional</dt><dd><p>The type of gripper to use, by default GripperType.Robotiq_2f_85.</p>
 </dd>
 </dl>
+<p><em>Usage</em></p>
+<p>To use this production, create an instance of the ChemLab2 class,
+provide it with a motion planning function, and then build it.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">brom_drake.motion_planning.algorithms.rrt.bidirectional_connect</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BidirectionalRRTConnectPlanner</span><span class="p">,</span>
+    <span class="n">BidirectionalRRTConnectPlannerConfig</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">brom_drake.productions</span> <span class="kn">import</span> <span class="n">ChemLab2</span>
+
+<span class="c1"># Create the production</span>
+<span class="n">production</span> <span class="o">=</span> <span class="n">ChemLab2</span><span class="p">()</span>
+
+<span class="c1"># Create a planner object which will be used to plan the motion</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">BidirectionalRRTConnectPlannerConfig</span><span class="p">(</span>
+    <span class="n">steering_step_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">planner2</span> <span class="o">=</span> <span class="n">BidirectionalRRTConnectPlanner</span><span class="p">(</span>
+    <span class="n">production</span><span class="o">.</span><span class="n">arm</span><span class="p">,</span>
+    <span class="n">production</span><span class="o">.</span><span class="n">plant</span><span class="p">,</span>
+    <span class="n">production</span><span class="o">.</span><span class="n">scene_graph</span><span class="p">,</span>
+    <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># To build the production, we only need to provide a planning function</span>
+<span class="c1"># (can come from anywhere, not just a BaseRRTPlanner object)</span>
+<span class="n">diagram</span><span class="p">,</span> <span class="n">diagram_context</span> <span class="o">=</span> <span class="n">production</span><span class="o">.</span><span class="n">easy_cast_and_build</span><span class="p">(</span>
+    <span class="n">planner2</span><span class="o">.</span><span class="n">plan</span><span class="p">,</span>
+    <span class="n">with_watcher</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Simulating...&quot;</span><span class="p">)</span>
+
+<span class="c1"># Simulate the diagram</span>
+<span class="n">simulator</span> <span class="o">=</span> <span class="n">Simulator</span><span class="p">(</span><span class="n">diagram</span><span class="p">,</span> <span class="n">diagram_context</span><span class="p">)</span>
+<span class="n">simulator</span><span class="o">.</span><span class="n">set_target_realtime_rate</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
+
+<span class="c1"># Run simulation</span>
+<span class="n">simulator</span><span class="o">.</span><span class="n">Initialize</span><span class="p">()</span>
+<span class="n">simulator</span><span class="o">.</span><span class="n">AdvanceTo</span><span class="p">(</span><span class="mf">0.05</span><span class="p">)</span>
+<span class="n">planned_trajectory</span> <span class="o">=</span> <span class="n">production</span><span class="o">.</span><span class="n">plan_dispenser</span><span class="o">.</span><span class="n">planned_trajectory</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected end time of trajectory: </span><span class="si">{</span><span class="n">planned_trajectory</span><span class="o">.</span><span class="n">end_time</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">simulator</span><span class="o">.</span><span class="n">AdvanceTo</span><span class="p">(</span><span class="n">planned_trajectory</span><span class="o">.</span><span class="n">end_time</span><span class="p">()</span><span class="o">+</span><span class="mf">2.0</span><span class="p">)</span>
+</pre></div>
+</div>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.ChemLab2.add_beaker">
 <span class="sig-name descname"><span class="pre">add_beaker</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.productions.motion_planning.ChemLab2.add_beaker" title="Link to this definition">¶</a></dt>
-<dd><section id="id13">
-<h3>Description<a class="headerlink" href="#id13" title="Link to this heading">¶</a></h3>
-<p>This method adds the beaker to the production.</p>
-</section>
+<dd><p><em>Description</em></p>
+<p>This method adds the beaker URDF to the production’s plant.
+The beaker’s URDF comes from the brom_drake <cite>robots</cite> directories.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.ChemLab2.add_cast_and_build">
-<span class="sig-name descname"><span class="pre">add_cast_and_build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cast</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../roles/roles.html#brom_drake.productions.roles.Role" title="brom_drake.productions.roles.role.Role"><span class="pre">Role</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">LeafSystem</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Diagram</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_watcher</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Diagram</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Context</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#brom_drake.productions.motion_planning.ChemLab2.add_cast_and_build" title="Link to this definition">¶</a></dt>
-<dd><section id="id14">
-<h3>Description<a class="headerlink" href="#id14" title="Link to this heading">¶</a></h3>
+<span class="sig-name descname"><span class="pre">add_cast_and_build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cast</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../roles/roles.html#brom_drake.productions.roles.Role" title="brom_drake.productions.roles.role.Role"><span class="pre">Role</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">LeafSystem</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Diagram</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_watcher</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Diagram</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Context</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#brom_drake.productions.motion_planning.ChemLab2.add_cast_and_build" title="Link to this definition">¶</a></dt>
+<dd><p><em>Description</em></p>
 <p>Modifies the normal add_cast_and_build, so that
 we share the context of the plant with the appropriate
-parts of the system.
-:param cast:
-:param with_watcher: A Boolean that determines whether to add a watcher to the diagram.
-:return:</p>
-</section>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="brom_drake.productions.motion_planning.ChemLab2.add_dummy_gripper_components">
-<span class="sig-name descname"><span class="pre">add_dummy_gripper_components</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.productions.motion_planning.ChemLab2.add_dummy_gripper_components" title="Link to this definition">¶</a></dt>
-<dd><section id="id15">
-<h3>Description<a class="headerlink" href="#id15" title="Link to this heading">¶</a></h3>
-<p>Add more components to the production that are used
-to hold the gripper in place.</p>
-</section>
+parts of the system.</p>
+<p>TODO(kwesi): Consider making this a standard part of the
+OfflineDynamicMotionPlanningProduction class.</p>
+<p><em>Parameters</em></p>
+<dl class="simple">
+<dt>cast: List[Tuple[Role, Performer]], optional</dt><dd><p>The cast to add to the production, by default [].</p>
+</dd>
+<dt>with_watcher: bool, optional</dt><dd><p>A Boolean that determines whether to add a watcher to the diagram, by default False.</p>
+</dd>
+</dl>
+<p><em>Returns</em></p>
+<dl class="simple">
+<dt>diagram: Diagram</dt><dd><p>The built diagram.</p>
+</dd>
+<dt>diagram_context: Context</dt><dd><p>The context for the built diagram.
+This context will be used to initialize the watcher.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.ChemLab2.add_motion_planning_components">
 <span class="sig-name descname"><span class="pre">add_motion_planning_components</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.productions.motion_planning.ChemLab2.add_motion_planning_components" title="Link to this definition">¶</a></dt>
-<dd><p>Add the motion planning components to the builder.
-:return:</p>
+<dd><p><em>Description</em></p>
+<p>Add the following components to the production’s
+<code class="docutils literal notranslate"><span class="pre">builder</span></code> in order to help with motion planning:</p>
+<ul class="simple">
+<li><p><cite>plan_dispenser</cite>: An OpenLoopPlanDispenser which will describe the reference robot trajectory.</p></li>
+<li><p>Connections between reference trajectory and UR10e station.</p></li>
+<li><p>Gripper control components (type of control and an “open” command)</p></li>
+</ul>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.ChemLab2.add_shelf">
 <span class="sig-name descname"><span class="pre">add_shelf</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.productions.motion_planning.ChemLab2.add_shelf" title="Link to this definition">¶</a></dt>
-<dd><p>Add the shelf to the production.
-:return:</p>
+<dd><p><em>Description</em></p>
+<p>Add the shelf to the production’s plant.
+Welds the shelf to the world frame.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.ChemLab2.add_supporting_cast">
 <span class="sig-name descname"><span class="pre">add_supporting_cast</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.productions.motion_planning.ChemLab2.add_supporting_cast" title="Link to this definition">¶</a></dt>
-<dd><section id="id16">
-<h3>Description<a class="headerlink" href="#id16" title="Link to this heading">¶</a></h3>
+<dd><p><em>Description</em></p>
 <p>This method adds all secondary cast members to the builder.
-The secondary cast members in the production are the:
-- Table, where the robot exists
-- Test Tube Holders
-- Component which share’s the robot model reference
-- Motion Planning components (e.g., dispensers, etc.)
-- Start and Goal sources
-:return:</p>
-</section>
+The secondary cast members in the production are the:</p>
+<ul class="simple">
+<li><p>Table, where the robot exists</p></li>
+<li><p>Test Tube Holders</p></li>
+<li><p>Component which share’s the robot model reference</p></li>
+<li><p>Motion Planning components (e.g., dispensers, etc.)</p></li>
+<li><p>Start and Goal sources</p></li>
+</ul>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.ChemLab2.add_table">
 <span class="sig-name descname"><span class="pre">add_table</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.productions.motion_planning.ChemLab2.add_table" title="Link to this definition">¶</a></dt>
-<dd><section id="id17">
-<h3>Description<a class="headerlink" href="#id17" title="Link to this heading">¶</a></h3>
-<p>This method adds the table to the production.
-The table will be a simple shape that the robot will interact with.
-:return:</p>
-</section>
+<dd><p><em>Description</em></p>
+<p>This method adds the table to the production’s plant.
+Welds the table to the world frame.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.ChemLab2.add_test_tube_holders">
 <span class="sig-name descname"><span class="pre">add_test_tube_holders</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.productions.motion_planning.ChemLab2.add_test_tube_holders" title="Link to this definition">¶</a></dt>
-<dd><section id="id18">
-<h3>Description<a class="headerlink" href="#id18" title="Link to this heading">¶</a></h3>
-<p>This method adds the test tube holders to the production.
-:return:</p>
-</section>
+<dd><p><em>Description</em></p>
+<p>This method adds the test tube holders to the production’s plant.
+Welds the test tube holders to the world frame with using
+predefined poses.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.ChemLab2.configure_collision_filter">
 <span class="sig-name descname"><span class="pre">configure_collision_filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scene_graph_context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.productions.motion_planning.ChemLab2.configure_collision_filter" title="Link to this definition">¶</a></dt>
-<dd><section id="id19">
-<h3>Description<a class="headerlink" href="#id19" title="Link to this heading">¶</a></h3>
-<p>This method configures the collision filter for the production.
-:param scene_graph_context:
-:return:</p>
-</section>
+<dd><p><em>Description</em></p>
+<p>This method configures the collision filter in the scene graph so that we ignore:
+- Self collisions of the shelf
+- Collisions between adjacent robot links (TODO)</p>
+<p><em>Parameters</em></p>
+<dl class="simple">
+<dt>scene_graph_context: Context</dt><dd><p>The context for the scene graph.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.ChemLab2.define_pose_ik_problem">
 <span class="sig-name descname"><span class="pre">define_pose_ik_problem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pose_WorldTarget</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">RigidTransform</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_frame_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.025</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation_cost_scaling</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.25</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">InverseKinematics</span></span></span><a class="headerlink" href="#brom_drake.productions.motion_planning.ChemLab2.define_pose_ik_problem" title="Link to this definition">¶</a></dt>
-<dd><section id="id20">
-<h3>Description<a class="headerlink" href="#id20" title="Link to this heading">¶</a></h3>
+<dd><p><em>Description</em></p>
 <p>Sets up the inverse kinematics problem for the start pose
 input to theis function.
 :return:</p>
-</section>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.ChemLab2.easy_cast_and_build">
 <span class="sig-name descname"><span class="pre">easy_cast_and_build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">planning_algorithm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">DiGraph</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_watcher</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Diagram</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Context</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#brom_drake.productions.motion_planning.ChemLab2.easy_cast_and_build" title="Link to this definition">¶</a></dt>
-<dd><section id="id21">
-<h3>Description<a class="headerlink" href="#id21" title="Link to this heading">¶</a></h3>
-<p>This function is used to easily cast and build the production.
-:param planning_algorithm: The algorithm that we will use to
-plan the motion.
-:param with_watcher: A Boolean that determines whether to add a watcher to the diagram.
-:return:</p>
-</section>
+<dd><p><em>Description</em></p>
+<p>This function is used to easily cast and build the production.</p>
+<p><em>Parameters</em></p>
+<dl class="simple">
+<dt>planning_algorithm: Callable[[np.ndarray, np.ndarray, Callable[[np.ndarray], bool]],Tuple[MotionPlan, bool]]</dt><dd><p>The algorithm that we will use to plan the motion.</p>
+</dd>
+<dt>with_watcher: A Boolean that determines whether to add a watcher to the diagram.</dt><dd><p>by default False.</p>
+</dd>
+</dl>
+<p><em>Returns</em></p>
+<dl class="simple">
+<dt>diagram: Diagram</dt><dd><p>The built diagram.</p>
+</dd>
+<dt>diagram_context: Context</dt><dd><p>The context for the built diagram.
+If with_watcher is True, this context will be used to initialize the watcher.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.ChemLab2.goal_configuration">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">goal_configuration</span></span><a class="headerlink" href="#brom_drake.productions.motion_planning.ChemLab2.goal_configuration" title="Link to this definition">¶</a></dt>
-<dd><p>Get the goal pose. This should be defined by the subclass.
-:return:</p>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">goal_configuration</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#brom_drake.productions.motion_planning.ChemLab2.goal_configuration" title="Link to this definition">¶</a></dt>
+<dd><p><em>Description</em></p>
+<p>Get the goal pose. This should be defined by the subclass.</p>
+<p><em>Returns</em></p>
+<dl class="simple">
+<dt>q_goal: np.ndarray</dt><dd><p>The goal configuration of the robot.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.ChemLab2.goal_pose">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">goal_pose</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">RigidTransform</span></em><a class="headerlink" href="#brom_drake.productions.motion_planning.ChemLab2.goal_pose" title="Link to this definition">¶</a></dt>
-<dd><section id="id22">
-<h3>Description<a class="headerlink" href="#id22" title="Link to this heading">¶</a></h3>
+<dd><p><em>Description</em></p>
 <p>Get the goal pose of the end effector frame.</p>
-</section>
+<p><em>Returns</em></p>
+<dl class="simple">
+<dt>pose_WorldGoal: RigidTransform</dt><dd><p>The goal pose of the end effector frame.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.ChemLab2.id">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../productions.html#brom_drake.productions.ProductionID" title="brom_drake.productions.ids.ProductionID"><span class="pre">ProductionID</span></a></em><a class="headerlink" href="#brom_drake.productions.motion_planning.ChemLab2.id" title="Link to this definition">¶</a></dt>
 <dd><p><em>Description</em></p>
-<p>The unique identifier for the production.</p>
-<p>If not defined, returns ProductionID.kNotDefined.</p>
+<p>Always returns the ProductionID for ChemLab2.</p>
 <p><em>Returns</em></p>
 <dl class="simple">
-<dt>ProductionID</dt><dd><p>The unique identifier for the production.</p>
+<dt>ProductionID.kChemLab2: ProductionID</dt><dd><p>The ProductionID for ChemLab2.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="brom_drake.productions.motion_planning.ChemLab2.initialize_pose_data">
+<span class="sig-name descname"><span class="pre">initialize_pose_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.productions.motion_planning.ChemLab2.initialize_pose_data" title="Link to this definition">¶</a></dt>
+<dd><p><em>Description</em></p>
+<p>Initialize the following poses if they are not already set:</p>
+<ul class="simple">
+<li><p>pose_WorldShelf</p></li>
+<li><p>pose_WorldBeaker</p></li>
+<li><p>pose_WorldHolder</p></li>
+<li><p>pose_BeakerGoal</p></li>
+<li><p>pose_HolderStart</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.ChemLab2.solve_forward_kinematics_problem_for_arm">
 <span class="sig-name descname"><span class="pre">solve_forward_kinematics_problem_for_arm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">robot_joint_positions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">RigidTransform</span></span></span><a class="headerlink" href="#brom_drake.productions.motion_planning.ChemLab2.solve_forward_kinematics_problem_for_arm" title="Link to this definition">¶</a></dt>
-<dd><section id="id23">
-<h3>Description<a class="headerlink" href="#id23" title="Link to this heading">¶</a></h3>
+<dd><p><em>Description</em></p>
 <p>This method solves the forward kinematics problem for the UR10e arm
 by itself.</p>
-</section>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.ChemLab2.start_configuration">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">start_configuration</span></span><a class="headerlink" href="#brom_drake.productions.motion_planning.ChemLab2.start_configuration" title="Link to this definition">¶</a></dt>
-<dd><p>Get the goal pose. This should be defined by the subclass.
-:return:</p>
+<dd><p><em>Description</em></p>
+<p>Get the goal pose. This should be defined by the subclass.</p>
+<p><em>Returns</em></p>
+<dl class="simple">
+<dt>q_start: np.ndarray</dt><dd><p>The start configuration of the robot.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.ChemLab2.start_pose">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">start_pose</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">RigidTransform</span></em><a class="headerlink" href="#brom_drake.productions.motion_planning.ChemLab2.start_pose" title="Link to this definition">¶</a></dt>
-<dd><p>Get the start pose. This should be defined by the subclass.
-:return:</p>
+<dd><p><em>Description</em></p>
+<p>Get the start pose. This should be defined by the subclass.</p>
+<p><em>Returns</em></p>
+<dl class="simple">
+<dt>pose_WorldStart: RigidTransform</dt><dd><p>The start pose of the end effector frame.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -789,8 +895,8 @@ by itself.</p>
 <dd><dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.ShelfPlanning1.add_cast_and_build">
 <span class="sig-name descname"><span class="pre">add_cast_and_build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cast</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../roles/roles.html#brom_drake.productions.roles.Role" title="brom_drake.productions.roles.role.Role"><span class="pre">Role</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">LeafSystem</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Diagram</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_watcher</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Diagram</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Context</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#brom_drake.productions.motion_planning.ShelfPlanning1.add_cast_and_build" title="Link to this definition">¶</a></dt>
-<dd><section id="id24">
-<h3>Description<a class="headerlink" href="#id24" title="Link to this heading">¶</a></h3>
+<dd><section id="id13">
+<h3>Description<a class="headerlink" href="#id13" title="Link to this heading">¶</a></h3>
 <p>Modifies the normal add_cast_and_build, so that
 we share the context of the plant with the appropriate
 parts of the system.
@@ -824,8 +930,8 @@ parts of the system.
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.ShelfPlanning1.add_ur10e_station">
 <span class="sig-name descname"><span class="pre">add_ur10e_station</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.productions.motion_planning.ShelfPlanning1.add_ur10e_station" title="Link to this definition">¶</a></dt>
-<dd><section id="id25">
-<h3>Description<a class="headerlink" href="#id25" title="Link to this heading">¶</a></h3>
+<dd><section id="id14">
+<h3>Description<a class="headerlink" href="#id14" title="Link to this heading">¶</a></h3>
 <p>Add the Kinematic UR10e station to the production for simple motion planning.
 :return:</p>
 </section>
@@ -834,8 +940,8 @@ parts of the system.
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.ShelfPlanning1.configure_collision_filter">
 <span class="sig-name descname"><span class="pre">configure_collision_filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scene_graph_context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.productions.motion_planning.ShelfPlanning1.configure_collision_filter" title="Link to this definition">¶</a></dt>
-<dd><section id="id26">
-<h3>Description<a class="headerlink" href="#id26" title="Link to this heading">¶</a></h3>
+<dd><section id="id15">
+<h3>Description<a class="headerlink" href="#id15" title="Link to this heading">¶</a></h3>
 <p>This method configures the collision filter for the production.
 :param scene_graph_context:
 :return:</p>
@@ -845,8 +951,8 @@ parts of the system.
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.ShelfPlanning1.connect_motion_planning_components">
 <span class="sig-name descname"><span class="pre">connect_motion_planning_components</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.productions.motion_planning.ShelfPlanning1.connect_motion_planning_components" title="Link to this definition">¶</a></dt>
-<dd><section id="id27">
-<h3>Description<a class="headerlink" href="#id27" title="Link to this heading">¶</a></h3>
+<dd><section id="id16">
+<h3>Description<a class="headerlink" href="#id16" title="Link to this heading">¶</a></h3>
 <p>This method connects the motion planning components directly to the
 kinematic controller.
 :return:</p>
@@ -856,8 +962,8 @@ kinematic controller.
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.ShelfPlanning1.easy_cast_and_build">
 <span class="sig-name descname"><span class="pre">easy_cast_and_build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">planning_algorithm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">DiGraph</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_watcher</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Diagram</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Context</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#brom_drake.productions.motion_planning.ShelfPlanning1.easy_cast_and_build" title="Link to this definition">¶</a></dt>
-<dd><section id="id28">
-<h3>Description<a class="headerlink" href="#id28" title="Link to this heading">¶</a></h3>
+<dd><section id="id17">
+<h3>Description<a class="headerlink" href="#id17" title="Link to this heading">¶</a></h3>
 <p>This function is used to easily cast and build the production.
 :param planning_algorithm: The algorithm that we will use to
 plan the motion.
@@ -869,12 +975,12 @@ plan the motion.
 <dl class="py property">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.ShelfPlanning1.goal_pose">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">goal_pose</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">RigidTransform</span></em><a class="headerlink" href="#brom_drake.productions.motion_planning.ShelfPlanning1.goal_pose" title="Link to this definition">¶</a></dt>
-<dd><section id="id29">
-<h3>Description<a class="headerlink" href="#id29" title="Link to this heading">¶</a></h3>
+<dd><section id="id18">
+<h3>Description<a class="headerlink" href="#id18" title="Link to this heading">¶</a></h3>
 <p>Get the goal pose.</p>
 </section>
-<section id="id30">
-<h3>Returns<a class="headerlink" href="#id30" title="Link to this heading">¶</a></h3>
+<section id="id19">
+<h3>Returns<a class="headerlink" href="#id19" title="Link to this heading">¶</a></h3>
 <dl class="simple">
 <dt>RigidTransform</dt><dd><p>The goal pose.</p>
 </dd>
@@ -898,8 +1004,8 @@ plan the motion.
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.ShelfPlanning1.solve_forward_kinematics_problem_for_arm">
 <span class="sig-name descname"><span class="pre">solve_forward_kinematics_problem_for_arm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">robot_joint_positions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_frame_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'ft_frame'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">RigidTransform</span></span></span><a class="headerlink" href="#brom_drake.productions.motion_planning.ShelfPlanning1.solve_forward_kinematics_problem_for_arm" title="Link to this definition">¶</a></dt>
-<dd><section id="id31">
-<h3>Description<a class="headerlink" href="#id31" title="Link to this heading">¶</a></h3>
+<dd><section id="id20">
+<h3>Description<a class="headerlink" href="#id20" title="Link to this heading">¶</a></h3>
 <p>This method solves the forward kinematics problem for the UR10e arm
 by itself.</p>
 </section>
@@ -908,12 +1014,12 @@ by itself.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.ShelfPlanning1.start_pose">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">start_pose</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">RigidTransform</span></em><a class="headerlink" href="#brom_drake.productions.motion_planning.ShelfPlanning1.start_pose" title="Link to this definition">¶</a></dt>
-<dd><section id="id32">
-<h3>Description<a class="headerlink" href="#id32" title="Link to this heading">¶</a></h3>
+<dd><section id="id21">
+<h3>Description<a class="headerlink" href="#id21" title="Link to this heading">¶</a></h3>
 <p>Get the start pose. This should be defined by the subclass.</p>
 </section>
-<section id="id33">
-<h3>Returns<a class="headerlink" href="#id33" title="Link to this heading">¶</a></h3>
+<section id="id22">
+<h3>Returns<a class="headerlink" href="#id22" title="Link to this heading">¶</a></h3>
 <dl class="simple">
 <dt>RigidTransform</dt><dd><p>The start pose.</p>
 </dd>
@@ -1010,7 +1116,6 @@ by itself.</p>
 <li><a class="reference internal" href="#brom_drake.productions.motion_planning.ChemLab2"><code class="docutils literal notranslate"><span class="pre">ChemLab2</span></code></a><ul>
 <li><a class="reference internal" href="#brom_drake.productions.motion_planning.ChemLab2.add_beaker"><code class="docutils literal notranslate"><span class="pre">ChemLab2.add_beaker()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.motion_planning.ChemLab2.add_cast_and_build"><code class="docutils literal notranslate"><span class="pre">ChemLab2.add_cast_and_build()</span></code></a></li>
-<li><a class="reference internal" href="#brom_drake.productions.motion_planning.ChemLab2.add_dummy_gripper_components"><code class="docutils literal notranslate"><span class="pre">ChemLab2.add_dummy_gripper_components()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.motion_planning.ChemLab2.add_motion_planning_components"><code class="docutils literal notranslate"><span class="pre">ChemLab2.add_motion_planning_components()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.motion_planning.ChemLab2.add_shelf"><code class="docutils literal notranslate"><span class="pre">ChemLab2.add_shelf()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.motion_planning.ChemLab2.add_supporting_cast"><code class="docutils literal notranslate"><span class="pre">ChemLab2.add_supporting_cast()</span></code></a></li>
@@ -1022,6 +1127,7 @@ by itself.</p>
 <li><a class="reference internal" href="#brom_drake.productions.motion_planning.ChemLab2.goal_configuration"><code class="docutils literal notranslate"><span class="pre">ChemLab2.goal_configuration</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.motion_planning.ChemLab2.goal_pose"><code class="docutils literal notranslate"><span class="pre">ChemLab2.goal_pose</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.motion_planning.ChemLab2.id"><code class="docutils literal notranslate"><span class="pre">ChemLab2.id</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.productions.motion_planning.ChemLab2.initialize_pose_data"><code class="docutils literal notranslate"><span class="pre">ChemLab2.initialize_pose_data()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.motion_planning.ChemLab2.solve_forward_kinematics_problem_for_arm"><code class="docutils literal notranslate"><span class="pre">ChemLab2.solve_forward_kinematics_problem_for_arm()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.motion_planning.ChemLab2.start_configuration"><code class="docutils literal notranslate"><span class="pre">ChemLab2.start_configuration</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.motion_planning.ChemLab2.start_pose"><code class="docutils literal notranslate"><span class="pre">ChemLab2.start_pose</span></code></a></li>
