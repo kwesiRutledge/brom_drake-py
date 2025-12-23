@@ -43,9 +43,13 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
     """
     *Description*
 
-    This production is the first in the chemistry lab series.
+    This production is the second in the chemistry lab series.
     It is used to test the motion planning capabilities of the robot
-    in a chemistry lab setting with minimal constraints.
+    in a chemistry lab setting with minimal constraints, but with full
+    dynamics of the robot included in the simulation.
+
+    The earlier chemistry lab production (ChemLab1) ignored the physics of the
+    arm and objects in order to simplify some calculations.
 
     *Parameters*
 
@@ -121,7 +125,6 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
 
         print(f"Expected end time of trajectory: {planned_trajectory.end_time()}")
         simulator.AdvanceTo(planned_trajectory.end_time()+2.0)
-
 
     """
     def __init__(
@@ -685,7 +688,7 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         """
         *Description*
 
-        Get the goal pose. This should be defined by the subclass.
+        Get the goal pose.
         
         *Returns*
 
@@ -855,7 +858,7 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         """
         *Description*
 
-        Get the goal pose. This should be defined by the subclass.
+        Get the start configuration of the robot in the production.
 
         *Returns*
 

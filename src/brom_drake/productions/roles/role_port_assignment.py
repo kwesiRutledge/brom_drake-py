@@ -17,11 +17,41 @@ TargetName = Union[PortName, SystemName]
 
 
 class PairingType(IntEnum):
+    """
+    *Descriptoin*
+
+    Describes the type of connection defined by a RolePortAssignment.
+
+    kInput => Connection is between an external target and a performer's INPUT port.
+
+    kOutput => Connection is between an external target and a performer's OUTPUT port.
+    """
     kInput = 1
     kOutput = 2
 
 @dataclass
 class RolePortAssignment:
+    """
+    *Description*
+
+    A potential connection between an object that "fills a role" in a Drake diagram,
+    and the rest of the diagram. Some connections are required, but they need not be.
+
+    *Parameters*
+
+    external_target_name: TargetName
+        The name of the port (or system) that we want to connect this port to
+
+    performer_port_name: PortName
+        The name of the port that should exist on the LeafSystem (or Diagram) that "fills the role".
+
+    pairing_type: PairingType
+        Describes whether or not `performer_port_name` is an input or output port.
+        This determines whether or not external_target_name should be an output or input port, respectively.
+
+    is_required: bool, optional
+        Default is True.
+    """
     external_target_name: TargetName  # The name of the port (or system) that we want to connect this port to
     performer_port_name: PortName
     pairing_type: PairingType
@@ -33,12 +63,19 @@ class RolePortAssignment:
         performer: Performer,
     ):
         """
-        Description
-        -----------
+        *Description*
+        
+        Creates the connection between the performer and the appropriate
+        port in the incomplete Drake diagram specified by `builder`.
 
-        :param builder:
-        :param performer:
-        :return:
+        *Parameters*
+
+        builder: DiagramBuilder
+            Contains the partially built Diagram.
+
+        performer: Performer
+            The LeafSystem (or Diagram) that we wish to connect to the incomplete
+            Diagram in ``builder``.
         """
 
         if self.pairing_type == PairingType.kInput:
@@ -61,6 +98,11 @@ class RolePortAssignment:
         builder: DiagramBuilder,
         performer: Performer,
     ):
+        """
+        *Description*
+
+        
+        """
         # Setup
 
         # Check to see if the performer has the given input port
@@ -137,8 +179,8 @@ class RolePortAssignment:
         performer: Performer,
     ):
         """
-        Description
-        -----------
+        *Description*
+        
         Creates the connections from the performer's output port to
         the external system's input ports.
         :param builder:

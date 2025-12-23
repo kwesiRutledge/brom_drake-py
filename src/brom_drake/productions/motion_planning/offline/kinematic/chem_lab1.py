@@ -15,7 +15,7 @@ from pydrake.all import (
     Quaternion,
 )
 from pydrake.math import RollPitchYaw, RigidTransform
-from typing import Callable, Tuple
+from typing import Callable, List, Tuple
 
 # Internal Imports
 from brom_drake.directories import DEFAULT_BROM_MODELS_DIR
@@ -38,14 +38,86 @@ from brom_drake.utils import Performer, AddGround, MotionPlan
 
 class ChemLab1(KinematicMotionPlanningProduction):
     """
-    Description:
-        This production is the first in the chemistry lab series.
-        It is used to test the motion planning capabilities of the robot
-        in a chemistry lab setting with minimal constraints.
+    *Description*
+
+    This production is the first in the chemistry lab series.
+    It is used to test the motion planning capabilities of the robot
+    in a chemistry lab setting with minimal constraints.
+    
+    *Parameters*
+
+    time_step: float, optional
+        The time step for the production, by default 1e-3.
+
+    meshcat_port_number: int, optional
+        The port number for meshcat visualization, by default 7001.
+
+    plan_execution_speed: float, optional
+        The speed at which to execute the motion plan, by default 0.2.
+
+    pose_WorldBeaker: RigidTransform, optional
+        The pose of the beaker in the world frame, by default None.
+
+    table_length: float, optional
+        The length of the table, by default 0.6.
+
+    table_width: float, optional
+        The width of the table, by default 2.0.
+
+    table_height: float, optional
+        The height of the table, by default 0.1.
+
+    shelf_pose: RigidTransform, optional
+        The pose of the shelf in the world frame, by default None.
+
+    *Usage*
+
+    To use this production, create an instance of the ChemLab1 class
+    provide it with a motion planning function, and then build it. ::
+
+        # Create the production
+        production = ChemLab1()
+
+        # Create a planner object which will be used to plan the motion
+        config = RRTConnectPlannerConfig(
+            steering_step_size=0.1,
+            prob_sample_goal=0.30,
+            max_iterations=int(1e5),
+            convergence_threshold=1e-3,
+            debug_flag=True,
+        )
+        planner2 = RRTConnectPlanner(
+            production.arm,
+            production.plant,
+            production.scene_graph,
+            config=config,
+        )
+
+        # To build the production, we only need to provide a planning function
+        # (can come from anywhere, not just a BaseRRTPlanner object)
+        diagram, diagram_context = production.easy_cast_and_build(
+            planner2.plan,
+            with_watcher=True,
+        )
+
+        print("Simulating...")
+
+        # Simulate the diagram
+        simulator = Simulator(diagram, diagram_context)
+        simulator.set_target_realtime_rate(1.0)
+
+        # Run simulation
+        simulator.Initialize()
+        simulator.AdvanceTo(0.1)
+        planned_trajectory = production.plan_dispenser.planned_trajectory
+        print(f"Expected end time of trajectory: {planned_trajectory.end_time()}")
+
+        # Advance to the end of the simulation
+        simulator.AdvanceTo(planned_trajectory.end_time()+1.0)
     """
     def __init__(
         self,
-        time_step=1e-3,
+        time_step: float =1e-3,
         meshcat_port_number: int = 7000,
         plan_execution_speed: float = 0.2,
         table_length: float = 0.6,
@@ -55,9 +127,36 @@ class ChemLab1(KinematicMotionPlanningProduction):
         **kwargs,
     ):
         """
-        Description:
-            Constructor for the ChemLab1Scene class.
-        :param meshcat_port_number:
+        *Description*
+            
+        Constructor for the ChemLab1Scene class.
+
+        *Parameters*
+
+        time_step: float, optional
+            The time step for the production, by default 1e-3.
+
+        meshcat_port_number: int, optional
+            The port number for meshcat visualization, by default 7001.
+
+        plan_execution_speed: float, optional
+            The speed at which to execute the motion plan, by default 0.2.
+
+        pose_WorldBeaker: RigidTransform, optional
+            The pose of the beaker in the world frame, by default None.
+
+        table_length: float, optional
+            The length of the table, by default 0.6.
+
+        table_width: float, optional
+            The width of the table, by default 2.0.
+
+        table_height: float, optional
+            The height of the table, by default 0.1.
+
+        shelf_pose: RigidTransform, optional
+            The pose of the shelf in the world frame, by default None.
+        
         """
         # Superclass constructor
         super().__init__(**kwargs)
@@ -112,16 +211,17 @@ class ChemLab1(KinematicMotionPlanningProduction):
 
     def add_supporting_cast(self):
         """
-        Description
-        -----------
+        *Description*
+        
         This method adds all secondary cast members to the builder.
         The secondary cast members in the production are the:
+        
         - Table, where the robot exists
         - Test Tube Holders
         - Component which share's the robot model reference
         - Motion Planning components (e.g., dispensers, etc.)
         - Start and Goal sources
-        :return:
+        
         """
         # Call the superclass method
         super().add_supporting_cast()
@@ -146,7 +246,6 @@ class ChemLab1(KinematicMotionPlanningProduction):
         self.add_robot_source_system()
         self.add_motion_planning_components()
         self.add_start_and_goal_sources_to_builder()
-        # self.add_dummy_gripper_components()
 
         # Add initial conditions for the arm
         self.initial_condition_manager.add_initial_configuration(
@@ -159,9 +258,14 @@ class ChemLab1(KinematicMotionPlanningProduction):
 
     def add_beaker(self):
         """
-        Description
-        -----------
-        This method adds the beaker to the production.
+        *Description*
+        
+        This method adds a model of a beaker to the production.
+        The beaker is welded in place at the pose pose_WorldBeaker
+        with respect to the world origin.
+
+        The beaker's URDF is specified in the `brom_drake` robots
+        package.
         """
         # Setup
         plant = self.plant
@@ -183,41 +287,11 @@ class ChemLab1(KinematicMotionPlanningProduction):
             self.pose_WorldBeaker,
         )
 
-    def add_dummy_gripper_components(self):
-        """
-        Description
-        -----------
-        Add more components to the production that are used
-        to hold the gripper in place.
-        """
-        # Setup
-
-        # Create a dummy target type object for the gripper and connect it to the gripper controller
-        dummy_gripper_target_type_source = self.builder.AddSystem(
-            ConstantValueSource(
-                AbstractValue.Make(GripperTarget.kPosition)
-            ),
-        )
-        
-        self.builder.Connect(
-            dummy_gripper_target_type_source.get_output_port(),
-            self.station.GetInputPort("gripper_target_type"),
-        )
-
-        # Create a dummy gripper target value and connect it to the gripper controller
-        dummy_gripper_target_source = self.builder.AddSystem(
-            ConstantVectorSource(np.array([0.0])),
-        )
-        self.builder.Connect(
-            dummy_gripper_target_source.get_output_port(),
-            self.station.GetInputPort("gripper_target"),
-        )
-
-
     def add_motion_planning_components(self):
         """
+        *Description*
+
         Add the motion planning components to the builder.
-        :return:
         """
         # Setup
         arm = self.arm
@@ -235,8 +309,12 @@ class ChemLab1(KinematicMotionPlanningProduction):
 
     def add_shelf(self):
         """
-        Add the shelf to the production.
-        :return:
+        *Description*
+
+        Add a model of a shelf to the production's plant.
+        The shelf's pydrake.multibody.tree.ModelInstanceIndex will be saved in the internal variable
+        ``self.shelf_model_index``.
+        The shelf is fixed at the pose ``self.pose_WorldShelf`` with respect to the world origin.
         """
         # Setup
         plant = self.plant
@@ -257,11 +335,11 @@ class ChemLab1(KinematicMotionPlanningProduction):
 
     def add_table(self):
         """
-        Description
-        -----------
-        This method adds the table to the production.
+        *Description*
+        
+        This method adds a model of a table to the production's plant.
         The table will be a simple shape that the robot will interact with.
-        :return:
+        The table is fixed in a pose with respect to the origin (pose chosen in this function).
         """
         # Setup
 
@@ -298,10 +376,11 @@ class ChemLab1(KinematicMotionPlanningProduction):
 
     def add_test_tube_holders(self):
         """
-        Description
-        -----------
+        *Description*
+        
         This method adds the test tube holders to the production.
-        :return:
+        The test tube holder is fixed at pose ``self.pose_WorldHolder``
+        with respect to the world origin.
         """
         # Setup
         test_tube_urdf1 = str(
@@ -325,18 +404,46 @@ class ChemLab1(KinematicMotionPlanningProduction):
 
     def add_cast_and_build(
         self,
-        cast: Tuple[Role, Performer] = [],
+        cast: List[Tuple[Role, Performer]] = [],
         with_watcher: bool = False,
     ) -> Tuple[Diagram, Context]:
         """
-        Description
-        -----------
+        *Description*
+        
         Modifies the normal add_cast_and_build, so that
         we share the context of the plant with the appropriate
         parts of the system.
-        :param cast:
-        :param with_watcher: A Boolean that determines whether to add a watcher to the diagram.
-        :return:
+
+        In addition to using the parent class's implementation of add_cast_and_build, this:
+        - Configures the collision filter to avoid spurious collisions between the cupboard's 
+        various parts and itself
+        - Insert the motion planner role into the diagram and connect it properly
+        
+        *Parameters*
+
+        cast: List[Tuple[Role, Performer]], optional
+            The main cast members that we would like to assign to the production.
+            Default is None.
+            TODO(Kwesi): Will using the default lead to errors? Should we even allow that?
+        
+        with_watcher: bool, optional
+            A Boolean that determines whether to add a watcher to the diagram.
+            Default is False.
+        
+        *Returns*
+
+        diagram: pydrake.systems.framework.Diagram
+            The diagram that represents the fully assembled cast, all connected together.
+
+        diagram_context: pdrake.systems.framework.Context
+            The context for the diagram (used by the diagram watcher to monitor the system, if defined).
+
+        .. note:
+
+            When constructing a simulation of the production, use the above diagram_context to construct the simulator.
+            Especially when the DiagramWatcher is created, you must use the same diagram context as the watcher's context
+            in order for the data to be saved in a place that the watcher can find.
+            
         """
         diagram, diagram_context = super().add_cast_and_build(
             main_cast_members=cast,
@@ -365,11 +472,19 @@ class ChemLab1(KinematicMotionPlanningProduction):
     
     def configure_collision_filter(self, scene_graph_context: Context):
         """
-        Description
-        -----------
-        This method configures the collision filter for the production.
-        :param scene_graph_context:
-        :return:
+        *Description*
+        
+        This method configures the collision filter, so that:
+        
+        - self collisions between the shelf's pieces,
+        
+        are ignored during simulation.
+
+        *Parameters*
+
+        scene_graph_context: pydrake.systems.framework.Context
+            The context of the scenegraph for the constructed production (i.e., the diagram
+            for the built Production).
         """
         # Setup
         scene_graph = self.scene_graph
@@ -425,13 +540,33 @@ class ChemLab1(KinematicMotionPlanningProduction):
         with_watcher: bool = False,
     ) -> Tuple[Diagram, Context]:
         """
-        Description
-        -----------
+        *Description*
+        
         This function is used to easily cast and build the production.
-        :param planning_algorithm: The algorithm that we will use to
-        plan the motion.
-        :param with_watcher: A Boolean that determines whether to add a watcher to the diagram.
-        :return:
+
+        *Parameters*
+
+        planning_algorithm: Callable[[np.ndarray, np.ndarray, Callable[[np.ndarray], bool]], Tuple[MotionPlan, bool]
+            The algorithm that produces a path from the start configuration to goal configuration
+            using the collision checker for the scene.
+
+        with_watcher: bool, optional
+            A Boolean that determines whether to add a watcher to the diagram.
+            Default is False.
+        
+        *Returns*
+
+        diagram: pydrake.systems.framework.Diagram
+            The diagram that represents the fully assembled cast, all connected together.
+
+        diagram_context: pdrake.systems.framework.Context
+            The context for the diagram (used by the diagram watcher to monitor the system, if defined).
+
+        .. note:
+
+            When constructing a simulation of the production, use the above diagram_context to construct the simulator.
+            Especially when the DiagramWatcher is created, you must use the same diagram context as the watcher's context
+            in order for the data to be saved in a place that the watcher can find.
         """
         # Setup
 
@@ -462,10 +597,18 @@ class ChemLab1(KinematicMotionPlanningProduction):
         return diagram, diagram_context
 
     @property
-    def goal_configuration(self):
+    def goal_configuration(self) -> np.ndarray:
         """
-        Get the goal pose. This should be defined by the subclass.
-        :return:
+        *Description*
+
+        Goal configuration of the robot in the production.
+
+        Depending on the inputs, this may be computed the first time it is called.
+
+        *Returns*
+
+        q_goal: np.ndarray of shape (6,)
+            The goal configuration of the robot.
         """
         # Setup
         hardcoded_robot_joint_names = [
@@ -501,13 +644,13 @@ class ChemLab1(KinematicMotionPlanningProduction):
     @property
     def goal_pose(self) -> RigidTransform:
         """
-        Description
-        -----------
+        *Description*
+        
         Get the goal pose of the end effector frame.
 
-        Returns
-        -------
-        RigidTransform
+        *Returns*
+        
+        goal_pose: RigidTransform
             The goal pose of the robot.
         """
         # Setup
@@ -543,6 +686,9 @@ class ChemLab1(KinematicMotionPlanningProduction):
 
     @property
     def id(self) -> ProductionID:
+        """
+        Always returns ``ProductionID.kChemLab1``.
+        """
         return ProductionID.kChemLab1
         
     def solve_forward_kinematics_problem_for_arm(
@@ -551,15 +697,24 @@ class ChemLab1(KinematicMotionPlanningProduction):
         target_frame_name: str = "ft_frame",
     ) -> RigidTransform:
         """
-        Description
-        -----------
+        *Description*
+        
         This method solves the forward kinematics problem for the UR10e arm
         by itself.
 
-        Returns
-        -------
-        RigidTransform
-            The end effector pose of the robot.
+        *Parameters*
+
+        robot_joint_positions: np.ndarray of shape (6,)
+            The joint configuration of the robot in the production.
+
+        target_frame_name: str, optional
+            The frame that we compute the pose of with respect to the world origin frame.
+            Default is "ft_frame"
+        
+        *Returns*
+        
+        pose_WorldTarget: RigidTransform
+            The end effector pose of the robot expressed in the world frame.
         """
         # Setup
 
@@ -591,8 +746,17 @@ class ChemLab1(KinematicMotionPlanningProduction):
     @property
     def start_configuration(self):
         """
-        Get the goal pose. This should be defined by the subclass.
-        :return:
+        *Description*
+
+        Get the start configuration.
+
+        This may be computed using inverse kinematics on the first time it is requested,
+        depending on the construction of the production.
+        
+        *Returns*
+
+        q_start: np.ndarray of shape(6,)
+            The starting configuration of the production's robot.
         """
         # Setup
         hardcoded_robot_joint_names = [
@@ -622,14 +786,14 @@ class ChemLab1(KinematicMotionPlanningProduction):
     @property
     def start_pose(self) -> RigidTransform:
         """
-        Description
-        -----------
+        *Description*
+        
         Get the start pose.
         
-        Returns
-        -------
-        RigidTransform
-            The start pose of the robot.
+        *Returns*
+
+        pose_WorldStart: RigidTransform
+            The start pose of the robot's end effector frame with respect to the world frame.
         """
         # Setup
 
