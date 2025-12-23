@@ -15,7 +15,7 @@ jobs:
   extract-tag:
     runs-on: ubuntu-latest
     env:
-      TAG_NAME: v0.0.0+sphinxFallback
+      TAG_NAME: v0.0.0+githubActionDefault
     outputs:
       tag_name: ${{ steps.final_tag.outputs.TAG_NAME }}
     steps:
