@@ -66,7 +66,8 @@ def main(meshcat_port_number: int = 7001):
     simulator.AdvanceTo(0.1)
     planned_trajectory = production.plan_dispenser.planned_trajectory
     print(f"Expected end time of the planned trajectory: {planned_trajectory.end_time()}")
-    # return
+    
+    # Simulate the full plan
     simulator.AdvanceTo(planned_trajectory.end_time()+1.0)
 
 if __name__ == "__main__":
