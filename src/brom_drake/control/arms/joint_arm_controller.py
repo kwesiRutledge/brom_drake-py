@@ -66,8 +66,8 @@ class JointArmController(BaseArmController):
         
         Define the input ports for the JointArmController system
         
-        *Arguments*
-        
+        *Parameters*
+
         joint_target_type: JointTarget
             The type of joint target being provided to the controller.
         """
@@ -86,7 +86,7 @@ class JointArmController(BaseArmController):
         
         Calculate the arm torques based on the joint target and the current state of the arm.
         
-        *Arguments*
+        *Parameters*
 
         context: pydrake.systems.framework.Context
             The context of the system at the current timestep.
