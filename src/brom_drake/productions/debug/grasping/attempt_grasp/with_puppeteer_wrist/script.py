@@ -62,10 +62,6 @@ class Script:
         graph: nx.DiGraph
             A blank NetworkX directed graph to which the states will be added.
 
-        *Returns*
-
-        Nothing. The graph is modified in place.
-
         """
         # Setup
 
