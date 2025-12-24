@@ -22,7 +22,7 @@ from brom_drake.all import (
     drakeify_my_urdf,
 )
 from brom_drake.productions.debug import ShowMeThisModel
-from brom_drake.file_manipulation.urdf.DrakeReadyURDFConverter import MeshReplacementStrategy
+from brom_drake.file_manipulation.urdf.drake_ready_urdf_converter import MeshReplacementStrategy
 from brom_drake.utils import AddGround
 
 

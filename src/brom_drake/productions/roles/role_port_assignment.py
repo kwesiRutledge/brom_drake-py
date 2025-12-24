@@ -17,11 +17,43 @@ TargetName = Union[PortName, SystemName]
 
 
 class PairingType(IntEnum):
+    """
+    *Description*
+
+    Describes the type of connection defined by a RolePortAssignment.
+
+    kInput => Connection is between an external target and a performer's INPUT port.
+
+    kOutput => Connection is between an external target and a performer's OUTPUT port.
+    """
     kInput = 1
     kOutput = 2
 
 @dataclass
 class RolePortAssignment:
+    """
+    *Description*
+
+    A potential connection between an object that "fills a role" in a Drake diagram,
+    and the rest of the diagram. Some connections are required, but they need not be.
+
+    TODO(Kwesi): Refactor this class to use the ``DiagramTarget`` object.
+    
+    *Parameters*
+
+    external_target_name: TargetName
+        The name of the port (or system) that we want to connect this port to
+
+    performer_port_name: PortName
+        The name of the port that should exist on the LeafSystem (or Diagram) that "fills the role".
+
+    pairing_type: PairingType
+        Describes whether or not `performer_port_name` is an input or output port.
+        This determines whether or not external_target_name should be an output or input port, respectively.
+
+    is_required: bool, optional
+        Default is True.
+    """
     external_target_name: TargetName  # The name of the port (or system) that we want to connect this port to
     performer_port_name: PortName
     pairing_type: PairingType
@@ -33,12 +65,19 @@ class RolePortAssignment:
         performer: Performer,
     ):
         """
-        Description
-        -----------
+        *Description*
+        
+        Creates the connection between the performer and the appropriate
+        port in the incomplete Drake diagram specified by `builder`.
 
-        :param builder:
-        :param performer:
-        :return:
+        *Parameters*
+
+        builder: DiagramBuilder
+            Contains the partially built Diagram.
+
+        performer: Performer
+            The LeafSystem (or Diagram) that we wish to connect to the incomplete
+            Diagram in ``builder``.
         """
 
         if self.pairing_type == PairingType.kInput:
@@ -61,6 +100,24 @@ class RolePortAssignment:
         builder: DiagramBuilder,
         performer: Performer,
     ):
+        """
+        *Description*
+
+        Assuming that the assignment defines an input port connection, this function
+        finds either:
+
+        - A system with the target name, and connects the first output port of the target to the performer's input OR
+        - The first system with the port given by the constraints, and connects that output port to the performer's input port.
+
+        *Parameters*
+
+        builder: DiagramBuilder
+            Contains the partially built Diagram.
+
+        performer: Performer
+            The LeafSystem (or Diagram) that we wish to connect to the incomplete
+            Diagram in ``builder``.
+        """
         # Setup
 
         # Check to see if the performer has the given input port
@@ -101,14 +158,23 @@ class RolePortAssignment:
         builder: DiagramBuilder,
     ) -> List[LeafSystem]:
         """
-        Description
-        -----------
+        *Description*
+        
         This function attempts to find all targets that match the output
         target definition, i.e.:
+        
         - A system with the output port with given name
         - A system with the given name.
-        :param builder:
-        :return:
+        
+        *Parameters*
+
+        builder: DiagramBuilder
+            Contains the partially built Diagram.
+
+        *Returns*
+
+        matching_systems_list: List[LeafSystem]
+            A list of all systems that match the constraints/target definition.
         """
         # Setup
         external_target_name = self.external_target_name
@@ -137,13 +203,22 @@ class RolePortAssignment:
         performer: Performer,
     ):
         """
-        Description
-        -----------
-        Creates the connections from the performer's output port to
-        the external system's input ports.
-        :param builder:
-        :param performer:
-        :return:
+        *Description*
+
+        Assuming that the assignment defines an OUTPUT port connection, this function
+        finds either:
+
+        - A system with the target name, and connects the first input port of the target to the performer's output OR
+        - The first system with the input port given by the constraints, and connects that input port to the performer's output port.
+
+        *Parameters*
+
+        builder: DiagramBuilder
+            Contains the partially built Diagram.
+
+        performer: Performer
+            The LeafSystem (or Diagram) that we wish to connect to the incomplete
+            Diagram in ``builder``.
         """
         # Setup
 
@@ -181,14 +256,23 @@ class RolePortAssignment:
         builder: DiagramBuilder,
     ) -> List[LeafSystem]:
         """
-        Description
-        -----------
+        *Description*
+        
         This function attempts to find all targets that match the input
         target definition, i.e.:
+
         - A system with the input port with given name
         - A system with the given name.
-        :param builder:
-        :return:
+        
+        TODO(Kwesi): Compress this method and the output targets method?
+
+        builder: DiagramBuilder
+            Contains the partially built Diagram.
+
+        *Returns*
+
+        matching_systems_list: List[LeafSystem]
+            A list of all systems that match the constraints/target definition.
         """
         # Setup
         external_target_name = self.external_target_name
@@ -211,6 +295,13 @@ class RolePortAssignment:
         raise self.create_no_target_found_error()
 
     def create_assignment_port_unavailable_error(self) -> ValueError:
+        """
+        *Description*
+
+        Creates the appropriate version of "Performer does not have required input port" error message.
+
+        TODO(Kwesi): Should we create an error type for this?
+        """
         # Setup
         port_type_str = "UNKNOWN"
         if self.pairing_type == PairingType.kInput:

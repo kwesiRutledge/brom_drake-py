@@ -1,5 +1,5 @@
 from importlib import resources as impresources
-from typing import Tuple, Callable
+from typing import List, Tuple, Callable
 
 import networkx as nx
 import numpy as np
@@ -23,14 +23,125 @@ from brom_drake.utils import Performer, GroundShape, AddGround, MotionPlan
 
 
 class ShelfPlanning1(KinematicMotionPlanningProduction):
+    """
+    *Description*
+
+    This production contains a simple motion planning task
+    where we attempt to reach to different places around the shelfs
+    of a bookcase.
+
+    This is a Kinematic motion planning production, which means that the
+    the robot's actuators will not be driven. Instead, the robot's links will
+    be reset to "exactly" the configurations in the motion plan. This is not realistic
+    but tests the correctness of the plan without worrying about the control problem
+    of moving the arm.
+
+    *Parameters*
+
+    time_step: float, optional
+        The time step for the production, by default 1e-3.
+
+    shelf_pose: RigidTransform, optional
+        The pose of the shelf in the world frame, by default None.
+
+    meshcat_port_number: int, optional
+        The port number for meshcat visualization, by default 7001.
+
+    plan_execution_speed: float, optional
+        The speed at which to execute the motion plan, by default 0.2
+
+    *Usage*
+
+    You may use this in a similar way to all other KinematicMotionPlanningProduction
+    objects. ::
+
+        # Other imports above...
+        from brom_drake.motion_planning.algorithms.rrt import RRTConnectPlannerConfig, RRTConnectPlanner
+        from brom_drake.productions.motion_planning.offline import ShelfPlanning1
+
+        # Define the goal pose
+        easy_goal_position = np.array([+0.0, 1.0, 1.05])
+        goal_orientation = RollPitchYaw(np.pi / 2.0, np.pi / 2.0, 0.0).ToQuaternion()
+        goal_pose = RigidTransform(goal_orientation, easy_goal_position)
+
+        # Create the production
+        production = ShelfPlanning1(
+            meshcat_port_number=meshcat_port_number, # Use None for CI
+            goal_pose=goal_pose,
+        )
+
+        # Create a planner object which will be used to plan the motion
+        config = RRTConnectPlannerConfig(
+            steering_step_size=0.01,
+            prob_sample_goal=0.05,
+            max_iterations=int(1e5),
+            convergence_threshold=1e-3,
+        )
+        planner2 = RRTConnectPlanner(
+            production.arm,
+            production.plant,
+            production.scene_graph,
+            config=config,
+        )
+
+        # To build the production, we only need to provide a planning function
+        # (can come from anywhere, not just a BaseRRTPlanner object)
+        diagram, diagram_context = production.easy_cast_and_build(
+            planner2.plan,
+            with_watcher=True,
+        )
+
+        print("Simulating...")
+
+        # Simulate the diagram
+        simulator = Simulator(diagram, diagram_context)
+        simulator.set_target_realtime_rate(1.0)
+
+        # Run simulation
+        simulator.Initialize()
+        simulator.AdvanceTo(0.1)
+        planned_trajectory = production.plan_dispenser.planned_trajectory
+        print(f"Expected end time of the planned trajectory: {planned_trajectory.end_time()}")
+        # return
+        simulator.AdvanceTo(planned_trajectory.end_time()+1.0)
+
+
+    """
     def __init__(
         self,
-        time_step=1e-3,
+        time_step: float = 1e-3,
         shelf_pose: RigidTransform = None, # The pose of the shelf
         meshcat_port_number: int = 7001, # Usually turn off for CI (i.e., make it None)
         plan_execution_speed: float = 0.2,
         **kwargs,
     ):
+        """
+        *Description*
+
+        Constructor for ShelfPlanning1.
+        
+        This:
+        
+        - Stores all inputs in the appropriate places
+        - Selects the default shelf_pose, if none is given
+        - Sets the cupboard joints to be in the "open" configuration
+        - constructs the KinematicUR10eStation used in testing
+        - Sets the names of the plant and scene graph to use the ShelfPlanning tag
+
+        *Parameters*
+
+        time_step: float, optional
+            The time step for the production, by default 1e-3.
+
+        shelf_pose: RigidTransform, optional
+            The pose of the shelf in the world frame, by default None.
+
+        meshcat_port_number: int, optional
+            The port number for meshcat visualization, by default 7001.
+
+        plan_execution_speed: float, optional
+            The speed at which to execute the motion plan, by default 0.2        
+        """
         super().__init__(**kwargs)
 
         self.time_step = time_step
@@ -72,8 +183,18 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
 
     def add_supporting_cast(self):
         """
-        Add all secondary cast members to the builder.
-        :return:
+        *Description*
+
+        Modifies the plant and the builder by:
+        - Adding UR10e station to the plant
+        - Adding shelf to the plant
+        - Adding a "ground" to the plant
+        - Adding features required by the KinematicMotionPlanningProductionFeatures
+          + Robot's ModelInstanceIndex Source
+          + Motion Planning Components
+          + Start and Goal Pose sources
+        - Setting initial configuration of the arm for the plant
+        
         """
         # Call the parent class method
         super().add_supporting_cast()
@@ -107,8 +228,11 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
 
     def add_motion_planning_components(self):
         """
-        Add the motion planning components to the builder.
-        :return:
+        *Description*
+
+        Connects the plan dispenser's output port (i.e., the reference signal for the
+        arm's joint controller) to the input of the UR10eStation.
+
         """
         # Setup
         n_actuated_dof = self.plant.num_actuated_dofs()
@@ -125,8 +249,14 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
 
     def add_shelf(self, plant: MultibodyPlant):
         """
-        Add the shelf to the production.
-        :return:
+        *Description*
+
+        Adds a model of the cupboard to the production's plant.
+
+        *Parameter*
+
+        plant: pydrake.multibody.plant.MultibodyPlant
+            The plant that we want to add the cupboard to.
         """
         # Setup
         urdf_file_path = str(
@@ -146,10 +276,9 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
 
     def add_ur10e_station(self):
         """
-        Description
-        -----------
-        Add the Kinematic UR10e station to the production for simple motion planning.
-        :return:
+        *Description*
+        
+        Add the Kinematic UR10e station to the production's plant for simple motion planning.
         """
         # Setup
 
@@ -158,18 +287,40 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
 
     def add_cast_and_build(
         self,
-        cast: Tuple[Role, Performer] = [],
+        cast: List[Tuple[Role, Performer]] = [],
         with_watcher: bool = False,
     ) -> Tuple[Diagram, Context]:
         """
-        Description
-        -----------
+        *Description*
+        
         Modifies the normal add_cast_and_build, so that
         we share the context of the plant with the appropriate
         parts of the system.
-        :param cast:
-        :param with_watcher: A Boolean that determines whether to add a watcher to the diagram.
-        :return:
+
+        In addition to using the parent class's implementation of add_cast_and_build, this:
+        - Configures the collision filter to avoid spurious collisions between the cupboard's 
+        various parts and itself
+        - Insert the motion planner role into the diagram and connect it properly
+
+        TODO(kwesi): Consider making this a standard part of the
+        OfflineKinematicMotionPlanningProduction class.
+
+        *Parameters*
+
+        cast: List[Tuple[Role, Performer]], optional
+            The cast to add to the production, by default [].
+
+        with_watcher: bool, optional
+            A Boolean that determines whether to add a watcher to the diagram, by default False.
+
+        *Returns*
+
+        diagram: Diagram
+            The built diagram.
+
+        diagram_context: Context
+            The context for the built diagram.
+            This context will be used to initialize the watcher.
         """
         diagram, diagram_context = super().add_cast_and_build(
             main_cast_members=cast,
@@ -198,11 +349,20 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
 
     def configure_collision_filter(self, scene_graph_context: Context):
         """
-        Description
-        -----------
-        This method configures the collision filter for the production.
-        :param scene_graph_context:
-        :return:
+        *Description*
+        
+        This method configures the collision filter, so that:
+        
+        - self collisions between the shelf's pieces, and
+        - self collisions between the arm's parts,
+        
+        are ignored during simulation.
+
+        *Parameters*
+
+        scene_graph_context: pydrake.systems.framework.Context
+            The context of the scenegraph for the constructed production (i.e., the diagram
+            for the built Production).
         """
         # Setup
         scene_graph = self.scene_graph
@@ -249,20 +409,6 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
             )
         )
 
-    def connect_motion_planning_components(
-        self,
-    ):
-        """
-        Description
-        -----------
-        This method connects the motion planning components directly to the
-        kinematic controller.
-        :return:
-        """
-
-        # Connect the plan dispenser to the station
-        pass
-
     def easy_cast_and_build(
         self,
         planning_algorithm: Callable[
@@ -272,13 +418,33 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
         with_watcher: bool = False,
     ) -> Tuple[Diagram, Context]:
         """
-        Description
-        -----------
+        *Description*
+        
         This function is used to easily cast and build the production.
-        :param planning_algorithm: The algorithm that we will use to
-        plan the motion.
-        :param with_watcher: A Boolean that determines whether to add a watcher to the diagram.
-        :return:
+
+        *Parameters*
+
+        planning_algorithm: Callable[[np.ndarray, np.ndarray, Callable[[np.ndarray], bool]], Tuple[MotionPlan, bool]
+            The algorithm that produces a path from the start configuration to goal configuration
+            using the collision checker for the scene.
+
+        with_watcher: bool, optional
+            A Boolean that determines whether to add a watcher to the diagram.
+            Default is False.
+        
+        *Returns*
+
+        diagram: pydrake.systems.framework.Diagram
+            The diagram that represents the fully assembled cast, all connected together.
+
+        diagram_context: pdrake.systems.framework.Context
+            The context for the diagram (used by the diagram watcher to monitor the system, if defined).
+
+        .. note:
+
+            When constructing a simulation of the production, use the above diagram_context to construct the simulator.
+            Especially when the DiagramWatcher is created, you must use the same diagram context as the watcher's context
+            in order for the data to be saved in a place that the watcher can find.
         """
         # Setup
 
@@ -316,13 +482,13 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
     @property
     def goal_pose(self) -> RigidTransform:
         """
-        Description
-        -----------
+        *Description*
+
         Get the goal pose. 
         
-        Returns
-        -------
-        RigidTransform
+        *Returns*
+        
+        pose_WorldGoal: RigidTransform
             The goal pose.
         """
 
@@ -349,6 +515,7 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
 
     @property
     def id(self) -> ProductionID:
+        """Always returns ``ProductionID.kShelfPlanning1``"""
         return ProductionID.kShelfPlanning1
 
     def solve_forward_kinematics_problem_for_arm(
@@ -357,10 +524,26 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
         target_frame_name: str = "ft_frame",
     ) -> RigidTransform:
         """
-        Description
-        -----------
+        *Description*
+        
         This method solves the forward kinematics problem for the UR10e arm
         by itself.
+
+        TODO(Kwesi): Attempt to make this a utility (it is duplicated multiple times!)
+
+        *Parameters*
+
+        robot_joint_positions: np.ndarray of shape (6,)
+            The joint configuration of the robot in the production.
+
+        target_frame_name: str, optional
+            The frame that we compute the pose of with respect to the world origin frame.
+            Default is "ft_frame"
+        
+        *Returns*
+        
+        pose_WorldTarget: RigidTransform
+            The end effector pose of the robot expressed in the world frame.
         """
         # Setup
 
@@ -392,14 +575,14 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
     @property
     def start_pose(self) -> RigidTransform:
         """
-        Description
-        -----------
-        Get the start pose. This should be defined by the subclass.
+        *Description*
         
-        Returns
-        -------
-        RigidTransform
-            The start pose.
+        Get the start pose.
+        
+        *Returns*
+
+        pose_WorldStart: RigidTransform
+            The start pose of the robot's end effector frame with respect to the world frame.
         """
         # Setup
 

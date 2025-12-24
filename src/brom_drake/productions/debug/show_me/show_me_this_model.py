@@ -18,6 +18,96 @@ from brom_drake.utils import Performer, AddMultibodyTriad
 from .show_me_system import ShowMeSystem
 
 class ShowMeThisModel(BaseProduction):
+    """
+    *Description*
+    
+    A production which allows the user to visualize a specified model
+    in Meshcat, with the ability to set desired joint positions, if the model is
+    a robot/articulated.
+    
+    *Parameters*
+    
+    path_to_model: str
+        The path to the model file to be visualized.
+        TODO: Add support for Path type.
+
+    with_these_joint_positions: List[float], optional
+        A list of joint positions to set the model to when visualized.
+        The length of this list must match the number of positions in the model.
+        If None, the model will be visualized in its default configuration.
+        Default is None.
+
+    base_link_name: str, optional
+        The name of the base link of the model. If None, the production will
+        attempt to automatically determine the base link name.
+        Default is None.
+
+    time_step: float, optional
+        The time step to use for the MultibodyPlant.
+        Default is 1e-3.
+
+    meshcat_port_number: int, optional
+        The port number to use for Meshcat visualization.
+        If None, Meshcat visualization will be disabled.
+        Default is 7001.
+
+    show_collision_geometries: bool, optional
+        A boolean flag indicating whether to show collision geometries in Meshcat
+        INSTEAD of the visual geometries.
+        Default is False.
+
+    *Usage*
+
+    The production can be used to show both simple models (e.g., single objects)
+    or articulated models (e.g., robots). 
+    
+    To show a simple model, simply provide the path to the model file. ::
+
+        from brom_drake.productions import ShowMeThisModel
+
+        # Some stuff here
+
+        urdf_file_path = "path/to/your/model.urdf"
+
+        # Create the production
+        production = ShowMeThisModel(
+            urdf_file_path,
+            time_step=1e-3,
+        )
+
+        # Add the cast to the production, build the diagram, and simulate
+        diagram, diagram_context = production.add_cast_and_build()
+
+        # Set up simulation
+        simulator = Simulator(diagram, diagram_context)
+        simulator.set_target_realtime_rate(1.0)
+        simulator.set_publish_every_time_step(False)
+
+    If the model is articulated, then you can also provide desired joint positions. ::
+
+        from brom_drake.productions import ShowMeThisModel
+
+        # Some stuff here
+
+        urdf_file_path = "path/to/your/articulated_model.urdf"
+        desired_joint_positions = [0.0, 1.0, -1.0, 0.5]  # Example joint positions
+
+        # Create the production
+        production = ShowMeThisModel(
+            urdf_file_path,
+            with_these_joint_positions=desired_joint_positions,
+            time_step=1e-3,
+        )
+
+        # Add the cast to the production, build the diagram, and simulate
+        diagram, diagram_context = production.add_cast_and_build()
+
+        # Set up simulation
+        simulator = Simulator(diagram, diagram_context)
+        simulator.set_target_realtime_rate(1.0)
+        simulator.set_publish_every_time_step(False)
+
+    """
     def __init__(
         self,
         path_to_model: str,
@@ -56,11 +146,14 @@ class ShowMeThisModel(BaseProduction):
 
     def add_supporting_cast(self):
         """
-        Description
-        -----------
-        This method will add just the user's model to the builder.
+        *Description*
+        
+        This method updates the production's
+        - MultibodyPlant with the user's model
+        - Using the ShowMeSystem to freeze the model in place
+        - Connects to Meshcat, if requested
 
-        :return:
+        This is required to be implemented by all children of the BaseProduction class.
         """
         # Setup
 
@@ -136,6 +229,26 @@ class ShowMeThisModel(BaseProduction):
         self,
         cast: Tuple[Role, Performer] = [],
     ) -> Tuple[Diagram, Context]:
+        """
+        *Description*
+        
+        This method builds the production's diagram and context,
+        and assigns the plant context to the internal ShowMeSystem.
+        
+        *Parameters*
+        
+        cast: Tuple[Role, Performer], optional
+            The cast to be added to the production.
+            Default is an empty tuple.
+            
+        *Returns*
+
+        diagram: Diagram
+            The built Diagram of the production.
+
+        diagram_context: Context
+            The built Context of the production.
+        """
         super().add_cast_and_build(cast)
 
         # Assign the diagram context to the internal show_me_system
@@ -147,8 +260,8 @@ class ShowMeThisModel(BaseProduction):
 
     def add_multibody_triads(self):
         """
-        Description
-        -----------
+        *Description*
+        
         This method will add triads to the world frame
         and any other relevant frames.
         """
@@ -161,18 +274,17 @@ class ShowMeThisModel(BaseProduction):
         # Add A Triad to base?
         AddMultibodyTriad(self.plant.world_frame(), self.scene_graph)
 
-
     def create_and_connect_source_of_joint_positions(self):
         """
-        Description
-        -----------
+        *Description*
+        
         This method will create and connect a source of joint positions
         to the ShowMeSystem.
 
-        Assumptions
-        -----------
-        - self.show_me_system is not None
-        - self.q_des is not None
+        *Assumptions*
+
+        - ``self.show_me_system`` is not None
+        - ``self.q_des`` is not None
         """
         # Setup
 
@@ -197,14 +309,14 @@ class ShowMeThisModel(BaseProduction):
         self,
     ) -> int:
         """
-        Description
-        -----------
+        *Description*
+        
         This method will return the number of positions in the model
         as defined by the user (through the path_to_model).
 
-        Returns
-        -------
-        int
+        *Returns*
+        
+        n_positions: int
             The number of positions in the model.
         """
         # Setup
@@ -226,9 +338,35 @@ class ShowMeThisModel(BaseProduction):
         return shadow_plant.num_positions()
 
     @property
-    def id(self):
+    def id(self) -> ProductionID:
+        """
+        *Description*
+        
+        This property returns the unique identifier for this production.
+        (i.e., ProductionID.kShowMeThisModel)
+
+        This is required to be implemented by all children of the BaseProduction class.
+
+        *Returns*
+        
+        id: ProductionID
+            The unique identifier for this production.
+        """
         return ProductionID.kShowMeThisModel
 
     @property
     def suggested_roles(self) -> List[Role]:
+        """
+        *Description*
+
+        This property returns an empty list, because there are no suggested
+        roles for this production.
+
+        This is required to be implemented by all children of the BaseProduction class.
+
+        *Returns*
+
+        roles: List[Role]
+            A list of suggested roles for this production.
+        """
         return []

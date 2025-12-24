@@ -11,8 +11,7 @@ from pydrake.common.value import AbstractValue
 from pydrake.multibody.parsing import Parser
 from pydrake.multibody.plant import MultibodyPlant
 from pydrake.multibody.tree import JacobianWrtVariable
-from pydrake.systems.framework import LeafSystem
-from pydrake.systems.framework import BasicVector
+from pydrake.systems.framework import BasicVector, LeafSystem, Context
 
 import os
 
@@ -31,25 +30,44 @@ package_dir = os.path.dirname(os.path.abspath(__file__))
 
 class GripperController(LeafSystem):
     """
+    *Description*
+
     A simple gripper controller with two modes: position and velocity.
     Both modes are essentially simple PD controllers.
 
-                            -------------------------
-                            |                       |
-                            |                       |
-    gripper_target -------> |   GripperController   | ---> applied_gripper_torques
-    gripper_target_type --> |                       |
-                            |                       | ---> measured_gripper_position
-                            |                       | ---> measured_gripper_velocity
-    gripper_state --------> |                       |
-                            |                       |
-                            |                       |
-                            -------------------------
+    *Diagram*
+
+    The GripperController LeafSystem can be represented with the following block diagram. ::
+
+                                -------------------------
+                                |                       |
+                                |                       |
+        gripper_target -------> |   GripperController   | ---> applied_gripper_torques
+        gripper_target_type --> |                       |
+                                |                       | ---> measured_gripper_position
+                                |                       | ---> measured_gripper_velocity
+        gripper_state --------> |                       |
+                                |                       |
+                                |                       |
+                                -------------------------
+
+    *Parameters*
+
+    gripper_type: GripperType
+        The type of gripper being controlled.
+
+    Kp: np.ndarray, optional
+        The proportional gain matrix for the PD controller.
+        By default, this is set based on the gripper type.
+
+    Kd: np.ndarray, optional
+        The derivative gain matrix for the PD controller.
+        By default, this is set based on the gripper type.
     """
     def __init__(self, gripper_type: GripperType, Kp: np.ndarray = None, Kd: np.ndarray = None):
         """
-        Description
-        -----------
+        *Description*
+        
         Constructor for the GripperController class.
         :param gripper_type: The type can be "Robotiq_2f_85" or "NoGripper"
         """
@@ -114,7 +132,20 @@ class GripperController(LeafSystem):
         self.Kp, self.Kd = None, None
         self.initialize_gains(Kp, Kd)
 
-    def CalcGripperPosition(self, context, output):
+    def CalcGripperPosition(self, context: Context, output: BasicVector):
+        """
+        *Description*
+
+        Calculate the gripper position from the state input port.
+
+        *Parameters*
+
+        context: pydrake.systems.framework.Context
+            The current context of the system.
+
+        output: pydrake.systems.framework.BasicVector
+            The output vector to store the gripper position.
+        """
         state = self.state_port.Eval(context)
 
         if self.type == "hande":
@@ -131,6 +162,19 @@ class GripperController(LeafSystem):
         output.SetFromVector([net_position])
 
     def CalcGripperVelocity(self, context, output):
+        """
+        *Description*
+        
+        Calculate the gripper velocity from the state input port.
+        
+        *Parameters*
+        
+        context: pydrake.systems.framework.Context
+            The current context of the system.
+            
+        output: pydrake.systems.framework.BasicVector
+            The output vector to store the gripper velocity.
+        """
         state = self.state_port.Eval(context)
 
         if self.type == "hande":
@@ -148,9 +192,21 @@ class GripperController(LeafSystem):
 
     def ComputePosition(self, state: np.ndarray) -> np.ndarray:
         """
+        *Description*
+
         Compute the gripper position from state data.
         This is especially useful for the 2F-85 gripper, since the
         state does not map neatly to the finger positions.
+
+        *Parameters*
+
+        state: np.ndarray
+            The state vector of the gripper.
+
+        *Returns*
+
+        finger_position: np.ndarray of shape (2,)
+            The positions of the gripper fingers.
         """
         # Setup
         finger_position = None
@@ -182,11 +238,22 @@ class GripperController(LeafSystem):
 
         return finger_position
 
-    def ComputeVelocity(self, state):
+    def ComputeVelocity(self, state: np.ndarray) -> np.ndarray:
         """
+        *Description*
+
         Compute the gripper velocity from state data.
         This is especially useful for the 2F-85 gripper, since the
         state does not map neatly to the finger positions.
+
+        *Parameters*
+
+        state: np.ndarray
+            The state vector of the gripper.
+
+        *Returns*
+        finger_velocity: np.ndarray of shape (2,)
+            The velocities of the gripper fingers.
         """
         if self.type == GripperType.Robotiq_2f_85:
             # For the more complex 2F-85 gripper, we need to do some kinematics
@@ -214,7 +281,21 @@ class GripperController(LeafSystem):
 
         return finger_velocity
 
-    def CalcGripperPosition(self, context, output):
+    def CalcGripperPosition(self, context: Context, output: BasicVector):
+        """
+        *Description*
+
+        Callback function for the `measured_gripper_position` output port.
+        This method computes the gripper position based on the current state input.
+
+        *Parameters*
+
+        context: pydrake.systems.framework.Context
+            The current context of the system.
+
+        output: pydrake.systems.framework.BasicVector
+            The output vector to store the gripper position.
+        """
         state = self.state_port.Eval(context)
 
         if self.type == "hande":
@@ -281,11 +362,17 @@ class GripperController(LeafSystem):
 
     def initialize_gains(self, Kp: np.ndarray, Kd: np.ndarray):
         """
-        Description
-        -----------
+        *Description*
+        
         Initialize the gains for the gripper controller.
-        :param Kp: The proportional gain
-        :param Kd: The derivative gain
+
+        *Parameters*
+        
+        Kp: np.ndarray
+            The proportional gain
+
+        Kd: np.ndarray
+            The derivative gain
         """
         # Handle proportional gain
         if Kp is not None:
@@ -312,12 +399,16 @@ class GripperController(LeafSystem):
                 raise NotImplementedError("Gripper type %s does not have Kd initialized" % self.type)
     
     @property
-    def gripper_width(self):
+    def gripper_width(self) -> float:
         """
-        Description
-        -----------
+        *Description*
+        
         Return the gripper width.
-        :return: The gripper width
+        
+        *Returns*
+
+        width: float
+            The width of the gripper.
         """
         if self.type == GripperType.Robotiq_2f_85:
             return 0.06

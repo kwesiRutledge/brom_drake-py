@@ -11,10 +11,32 @@ from .phases import AttemptGraspWithPuppeteerWristPhase
 @dataclass
 class Script:
     """
-    Description
-    -----------
+    *Description*
+    
     This class defines the "script" or the sequence of events that is meant to happen in the
     AttemptGrasp production.
+
+    *Attributes*
+
+    settling_time_on_floor: float, optional
+        The time (in seconds) to let the object settle on the floor before the gripper approaches.
+        Default is 10.0 seconds.
+
+    gripper_approach_time: float, optional
+        The time (in seconds) for the gripper to approach the object.
+        Default is 5.0 seconds.
+
+    grasp_closing_time: float, optional
+        The time (in seconds) for the gripper to close around the object.
+        Default is 2.0 seconds.
+
+    post_grasp_settling_time: float, optional
+        The time (in seconds) to let the object settle in the grasp after the gripper has closed.
+        Default is 0.1 seconds.
+
+    drop_time: float, optional
+        The time (in seconds) to let the object fall after releasing the grasp.
+        Default is 10.0 seconds.
     """
     settling_time_on_floor: float = 10.0
     gripper_approach_time: float = 5.0
@@ -22,7 +44,25 @@ class Script:
     post_grasp_settling_time: float = 0.1
     drop_time: float = 10.0
 
-    def add_all_states_to_networkx_graph(self, graph: nx.DiGraph) -> list[int]:
+    def add_all_states_to_networkx_graph(self, graph: nx.DiGraph) -> None:
+        """
+        *Description*
+        
+        This method adds all the states to the provided NetworkX graph.
+        
+        .. note::
+            :collapsible:
+
+            One of the states (kObjectSettlingInGrasp) is not explicitly created
+            here, but it may be created anyway when the edges are added. (This is a feature
+            of NetworkX where nodes can be created implicitly when edges are added.)
+
+        *Parameters*
+        
+        graph: nx.DiGraph
+            A blank NetworkX directed graph to which the states will be added.
+
+        """
         # Setup
 
         # First State: Object settled
@@ -63,6 +103,21 @@ class Script:
         )
 
     def start_time_of_phase(self, phase: AttemptGraspWithPuppeteerWristPhase) -> float:
+        """
+        *Description*
+        
+        This method returns the start time of the given phase.
+        
+        *Parameters*
+        
+        phase: AttemptGraspWithPuppeteerWristPhase
+            The phase for which to get the start time.
+            
+        *Returns*
+        
+        start_time: float
+            The start time of the given phase in seconds.
+        """
         match phase:
             case AttemptGraspWithPuppeteerWristPhase.kObjectSettlingOnFloor:
                 return 0.0
@@ -78,9 +133,29 @@ class Script:
                 raise ValueError(f"Unrecognized phase {phase}!")
 
     def to_fsm(self) -> NetworkXFSM:
+        """
+        *Description*
+
+        This method converts the script to a NetworkXFSM instance.
+
+        *Returns*
+
+        fsm: NetworkXFSM
+            The NetworkXFSM LeafSystem which coordinates/sends triggers out according to the script.
+        """
         return NetworkXFSM(self.to_networkx_graph())
 
     def to_networkx_graph(self) -> nx.DiGraph:
+        """
+        *Description*
+        
+        This method converts the script to a NetworkX directed graph.
+
+        *Returns*
+        
+        graph: nx.DiGraph
+            The NetworkX directed graph representing the FSM of the script.
+        """
         # Setup
         graph = nx.DiGraph()
 
@@ -152,5 +227,15 @@ class Script:
         return graph
 
     def total_time(self) -> float:
+        """
+        *Description*
+
+        This method returns the total time of the script.
+
+        *Returns*
+
+        total_time: float
+            The total time of the script in seconds.
+        """
         return self.settling_time_on_floor + self.gripper_approach_time + self.grasp_closing_time + self.post_grasp_settling_time + self.drop_time
     

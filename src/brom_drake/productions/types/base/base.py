@@ -12,7 +12,42 @@ from brom_drake.utils.initial_condition_manager import InitialConditionManager
 
 class BaseProduction:
     """
+    *Description*
+
     Base class for all productions.
+
+    *Attributes*
+
+    builder : DiagramBuilder
+        The DiagramBuilder used to build the production.
+
+    diagram : Diagram
+        The Diagram of the production.
+        This is None and must be built using the build_production method.
+
+    diagram_context : Context
+        The Context of the production's Diagram.
+        This is None and must be built using the build_production method.
+
+    performers : List[Performer]
+        A list of all performers added to the production.
+
+    watcher : Optional[DiagramWatcher]
+        The DiagramWatcher for the production.
+        This is None, unless the production is built with a watcher.
+
+    plant : Optional[MultibodyPlant]
+        The MultibodyPlant of the production, if applicable.
+        This is None by default.
+
+    scene_graph : Optional[SceneGraph]
+        The SceneGraph of the production, if applicable.
+        This is None by default.
+
+    initial_condition_manager : InitialConditionManager
+        The InitialConditionManager used to manage initial conditions
+        for the production.
+        
     """
     def __init__(self, **kwargs):
         # Create a builder for the production
@@ -36,22 +71,26 @@ class BaseProduction:
 
     def add_supporting_cast(self):
         """
-        Description
-        -----------
+        *Description*
+        
         This method must be implemented by the subclass.
         It should add all "secondary" elements to the builder (i.e., the
         cast members that the user doesn't need to worry about).
-        :return:
+        
         """
         pass
 
     def suggested_roles(self) -> List[Role]:
         """
-        Description
-        -----------
+        *Description*
+        
         This method should be implemented by the subclass.
         It should return a list of roles that are suggested for the production.
-        :return:
+        
+        *Returns*
+
+        suggested_roles: List[Role]
+            A list of roles that are suggested for the production.
         """
         return []
 
@@ -61,13 +100,18 @@ class BaseProduction:
         system: Performer,
     ):
         """
-        Description
-        -----------
+        *Description*
+        
         This method should be implemented by the subclass. It should add the
         system to the role.
-        :param role:
-        :param system:
-        :return:
+        
+        *Parameters*
+
+        role: Role
+            The role to be filled.
+
+        system: Performer
+            The system to fill the role with.
         """
         # Setup
         builder = self.builder
@@ -80,7 +124,7 @@ class BaseProduction:
 
     def add_main_cast(
         self,
-        cast: Tuple[Role, Performer] = [],
+        cast: List[Tuple[Role, Performer]] = [],
     ):
         # Setup
 
@@ -94,12 +138,29 @@ class BaseProduction:
         figure_naming_convention: FigureNamingConvention = FigureNamingConvention.kFlat,
     ) -> Tuple[Diagram, Context]:
         """
-        Description
-        -----------
+        *Description*
+        
         This method builds the production.
         It assumes that all components have been added to the builder.
-        :param with_watcher: A Boolean that determines whether to add a watcher to the diagram.
-        :return:
+        
+        *Parameters*
+
+        with_watcher: bool, optional
+            Whether to build the production with a DiagramWatcher.
+            Default is True.
+
+        figure_naming_convention: FigureNamingConvention, optional
+            The naming convention to use for figures in the watcher.
+            Default is FigureNamingConvention.kFlat.
+
+        *Returns*
+
+        diagram: Diagram
+            The built Diagram of the production.
+
+        diagram_context: Context
+            The Context of the built Diagram.
+            If with_watcher is True, this will be the Context of the DiagramWatcher, as well.
         """
         # Setup
         builder = self.builder
@@ -143,9 +204,15 @@ class BaseProduction:
     @property
     def id(self) -> ProductionID:
         """
-        Description
-        -----------
+        *Description*
+        
         The unique identifier for the production.
-        :return:
+
+        If not defined, returns ProductionID.kNotDefined.
+        
+        *Returns*
+        
+        ProductionID
+            The unique identifier for the production.
         """
         return ProductionID.kNotDefined

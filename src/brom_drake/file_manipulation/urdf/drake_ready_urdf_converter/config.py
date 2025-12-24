@@ -4,7 +4,27 @@ from typing import List
 
 class MeshReplacementStrategy(IntEnum):
     """
+    *Description*
+
     The different strategies for replacing mesh files.
+
+    Options are:
+        kDoNotReplace
+        kWithObj
+        kWithMinimalEnclosingCylinder
+        kWithConvexDecomposition
+
+    *Usage*
+
+    .. code:: python
+
+        from brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.config import MeshReplacementStrategy
+        # or
+        # from brom_drake.all import MeshReplacementStrategy
+
+        # Selecting the strategy to replace meshes with OBJ files
+        strategy = MeshReplacementStrategy.kWithObj
+
     """
     kDoNotReplace = 0 
     kWithObj = 1
@@ -14,8 +34,8 @@ class MeshReplacementStrategy(IntEnum):
 @dataclass(frozen=True)
 class MeshReplacementStrategies:
     """
-    Description
-    -----------
+    *Description*
+    
     A dataclass that specifies the different strategies for replacing mesh files in:
     - the <collision> section of the URDF
     - the <visual> section of the URDF
@@ -26,15 +46,16 @@ class MeshReplacementStrategies:
 @dataclass
 class DrakeReadyURDFConverterConfig:
     """
-    Description
-    -----------
+    *Description*
+    
     A dataclass that specifies how the DrakeReadyURDFConverter
     should convert the URDF file.
 
-    Attributes
-    ----------
+    *Attributes*
+    
     output_urdf_file_path: str
         The path where the converted URDF file will be saved. If None, it defaults to the models directory.
+        
     coacd_log_level: str
         The log level for the coacd tool. Options are "off", "info", "error".
     """

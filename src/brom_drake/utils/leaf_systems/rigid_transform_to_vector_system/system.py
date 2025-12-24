@@ -10,20 +10,22 @@ from .configuration import Configuration as RigidTransformToVectorSystemConfigur
 
 class RigidTransformToVectorSystem(LeafSystem):
     """
-    Description
-    -----------
+    *Description*
+    
     This system will take in a RigidTransform and output a vector
     of size 7, where the first 3 elements are the translation
     and the last 4 elements are the quaternion representation
     of the rotation.
 
-    Diagram
-    -------
-                            |-------------------|
-                            | RigidTransform    |
-    rigid_transform ---->   | To                | vector_xyz_quat(wxyz) (BasicVector[7])
-    (RigidTransform)        | VectorSystem      |
-                            |-------------------|
+    *Diagram*
+
+    The LeafSystem's inputs and outputs can be represented as: ::
+    
+                                |-------------------|
+                                | RigidTransform    |
+        rigid_transform ---->   | To                | vector_xyz_quat(wxyz) (BasicVector[7])
+        (RigidTransform)        | VectorSystem      |
+                                |-------------------|
     """
     def __init__(
         self,

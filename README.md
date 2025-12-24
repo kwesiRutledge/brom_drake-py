@@ -14,7 +14,7 @@ The Drake-ify feature (converts your URDF file into a form that Drake can consum
 Productions (partially complete robot scenarios to test your algorithms) | (See [Examples Directory](https://github.com/kwesiRutledge/brom_drake-py/tree/main/examples/productions) or [the Wiki](https://github.com/kwesiRutledge/brom_drake-py/wiki/Productions)) | ![Kinematic Motion Planning Example](./promo/productions/motion_planning/kinematic/Chem-Lab-Demo.gif)
 Puppeteer (Move free bodies in drake with a `RigidTransform` input) | `Puppetmaker` class's methods | ![A cube being moved using the Puppetmaker's methods.](./promo/utils/puppetmaker-demo1.gif)
 
-To learn more, look through our documentation/Wiki [here](https://github.com/kwesiRutledge/brom_drake-py/wiki).
+To learn more, look through our documentation/Wiki [here](https://kwesirutledge.github.io/brom_drake-py/).
 
 ## Installation
 

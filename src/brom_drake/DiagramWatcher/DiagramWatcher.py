@@ -28,6 +28,25 @@ from brom_drake.DiagramWatcher.errors import UnrecognizedTargetError
 
 
 class DiagramWatcher:
+    """
+    *Description*
+    
+    An object that will iterate through all elements of a partially built
+    Drake Diagram (via the DiagramBuilder) and add PortWatchers to the specified targets.
+
+    *Parameters*
+
+    subject: DiagramBuilder
+        We will search through the subject (a diagram builder)
+        to find all the systems that we want to monitor.
+
+    targets: List[DiagramTarget], optional
+        The targets that we want to monitor, by default this tries to monitor
+        all systems in the diagram. (i.e., when this value is None, we will monitor all systems).
+
+    options: DiagramWatcherOptions, optional
+        The options that configure the DiagramWatcher, by default DiagramWatcherOptions()
+    """
     def __init__(
         self,
         subject: DiagramBuilder,
@@ -35,17 +54,19 @@ class DiagramWatcher:
         options: DiagramWatcherOptions = DiagramWatcherOptions(),
     ):
         """
-        Description
-        -----------
+        *Description*
+        
         Initializes the DiagramWatcher class.
 
-        Arguments
-        ---------
+        *Parameters*
+        
         subject : DiagramBuilder
             We will search through the subject (a diagram builder)
             to find all the systems that we want to monitor.
+
         targets : List[DiagramTarget], optional
             The targets that we want to monitor, by default None
+
         port_watcher_options : PortWatcherOptions, optional
             The options for the PortWatcher, by default PortWatcherOptions()
         """
@@ -137,12 +158,12 @@ class DiagramWatcher:
         raw_data_dir: str = None,
     ) -> PortWatcherOptions:
         """
-        Description
-        -----------
+        *Description*
+        
         Creates a new set of PortWatcherOptions with the given options.
 
-        Arguments
-        ---------
+        *Parameters*
+        
         options : PortWatcherOptions
             The options to use as a base.
         plot_dir : str, optional
@@ -178,8 +199,8 @@ class DiagramWatcher:
 
     def __del__(self):
         """
-        Description
-        -----------
+        *Description*
+        
         Destructor for the Diagram Watcher.
         Will plot the data from all of our loggers if we have access to the diagram context.
         """
@@ -197,9 +218,15 @@ class DiagramWatcher:
 
     def create_logger(self) -> logging.Logger:
         """
-        Description:
-            Configures the "activity summary" a log of brom's activity.
-        :return:
+        *Description*
+
+        Configures the "activity summary" a log of brom's activity.
+        
+        *Returns*
+
+        logging.Logger
+            The configured logger for LOG MESSAGES.
+            In other words, this is not a logger of signals from the diagram.
         """
         # Setup
         options = self.options
@@ -253,8 +280,8 @@ class DiagramWatcher:
         eligible_systems: List[Union[MultibodyPlant, AffineSystem, LeafSystem]],
     ) -> List[Union[MultibodyPlant, AffineSystem, LeafSystem]]:
         """
-        Description
-        -----------
+        *Description*
+        
         Finds the systems specified by the targets list that
         we want to watch/monitor.
         We will try to ignore all systems that are:
@@ -262,13 +289,13 @@ class DiagramWatcher:
         - Loggers
         and raise an error if the target is not found in the eligible systems.
 
-        Arguments
-        ---------
+        *Parameters*
+        
         targets : List[DiagramTarget]
             The targets that we want to monitor.
         eligible_systems : List[Union[MultibodyPlant, AffineSystem, LeafSystem]]
             The systems that are eligible for monitoring.
-        :return:
+        
         """
 
         # Find all the systems that are eligible for logging
@@ -300,11 +327,14 @@ class DiagramWatcher:
         builder: DiagramBuilder
     ) -> List[Union[MultibodyPlant, AffineSystem, LeafSystem]]:
         """
-        Description:
-            Finds all the systems that are eligible for logging.
-            We want to ignore all systems that are:
-            - Scene Graphs
-            - Loggers
+        *Description*
+
+        Finds all the systems that are eligible for logging.
+        We want to ignore all systems that are:
+
+        - Scene Graphs
+        - Loggers
+
         """
 
         # Find all the systems that are eligible for logging
@@ -332,12 +362,23 @@ class DiagramWatcher:
         targets: List[DiagramTarget],
     ) -> List[DiagramTarget]:
         """
-        Description:
-            For each target with None ports, we will try to
-            "smartly" create the targets that we want to monitor.
-        :param subject:
-        :param targets:
-        :return:
+        *Description*
+
+        For each target with None ports, we will try to
+        "smartly" create the targets that we want to monitor.
+
+        *Parameters*
+
+        subject : DiagramBuilder
+            The diagram builder that contains the systems.
+
+        targets : List[DiagramTarget]
+            The targets that we want to monitor.
+        
+        *Returns*
+
+        List[DiagramTarget]
+            The list of targets with inferred ports.
         """
         # Setup
         smart_targets = []
@@ -372,9 +413,10 @@ class DiagramWatcher:
 
     def save_figures(self):
         """
-        Description:
-            Saves all the figures from the port watchers.
-        :return:
+        *Description*
+
+        Saves all the figures made from plotting data
+        currently saved in the known port watchers.
         """
         # Announce Saving Figures has started
         self.logger.info("Saving figures...")
@@ -395,9 +437,9 @@ class DiagramWatcher:
 
     def save_raw_data(self):
         """
-        Description:
-            Saves all the raw data from the port watchers.
-        :return:
+        *Description*
+
+        Saves all the raw data from the port watchers.
         """
         # Announce Saving Raw Data has started
         self.logger.info("Saving raw data...")

@@ -172,3 +172,7 @@ brom-venv/
 # Example and Test outputs
 tests/file_manipulation/urdf/resources/**/**.obj
 tests/file_manipulation/urdf/resources/test5_absolute.urdf
+
+# Docs
+# Files that are automatically generated during doc production process
+docs/source/generated/

@@ -1,3 +1,6 @@
+from brom_drake.control.arms.arm_control_mode import ArmControlMode
+from brom_drake.control.arms.end_effector_target import EndEffectorTarget
+from brom_drake.control.arms.joint_target import JointTarget
 from brom_drake.control.grippers.gripper_target import GripperTarget
 from brom_drake.DiagramTarget import DiagramTarget
 from brom_drake.DiagramWatcher import DiagramWatcher, DiagramWatcherOptions
@@ -5,7 +8,7 @@ from brom_drake.file_manipulation.urdf import (
     drakeify_my_urdf,
     DrakeReadyURDFConverter,
 )
-from brom_drake.file_manipulation.urdf.DrakeReadyURDFConverter.config import (
+from brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.config import (
     DrakeReadyURDFConverterConfig,
     MeshReplacementStrategy,
     MeshReplacementStrategies,
@@ -25,9 +28,10 @@ from brom_drake.PortWatcher.port_watcher_options import (
 )
 from brom_drake.PortWatcher.port_figure_arrangement import PortFigureArrangement
 from brom_drake.productions.ids import ProductionID
+from brom_drake.productions.debug.grasping.attempt_grasp.with_puppeteer_wrist import Script as AttemptGraspWithPuppeteerWristScript
 from brom_drake.example_helpers import BlockHandlerSystem
 from brom_drake.file_manipulation.urdf import DrakeReadyURDFConverter, drakeify_my_urdf
-from brom_drake.file_manipulation.urdf.DrakeReadyURDFConverter.config import MeshReplacementStrategy
+from brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.config import MeshReplacementStrategy
 from brom_drake.robots.gripper_type import GripperType
 from brom_drake.utils.watcher import add_watcher, add_watcher_and_build, parse_list_of_simplified_targets
 from brom_drake.utils.leaf_systems import (
@@ -42,6 +46,8 @@ from brom_drake.utils.puppetmaker.puppet_signature import PuppeteerJointSignatur
 __all__ = [
     'add_watcher',
     'add_watcher_and_build',
+    'ArmControlMode',
+    'AttemptGraspWithPuppeteerWristScript',
     'BaseRRTPlannerConfig',
     'BaseRRTPlanner',
     'BoolToVectorSystem',
@@ -51,10 +57,12 @@ __all__ = [
     'drakeify_my_urdf', 
     'DrakeReadyURDFConverter',
     'DrakeReadyURDFConverterConfig',
+    'EndEffectorTarget',
     'EndEffectorWrenchCalculator',
     'FigureNamingConvention',
     'GripperTarget',
     'GripperType',
+    'JointTarget',
     'MeshReplacementStrategy',
     'MeshReplacementStrategies',
     'parse_list_of_simplified_targets',

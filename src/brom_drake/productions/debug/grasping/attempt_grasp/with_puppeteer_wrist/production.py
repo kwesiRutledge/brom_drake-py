@@ -58,7 +58,95 @@ from .phases import AttemptGraspWithPuppeteerWristPhase
 from .script import Script as AttemptGraspWithPuppeteerWristScript
 
 class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
-    # Member functions
+    """
+    *Description*
+
+    A production where the user can provide:
+    
+    - An object to be grasped
+    - A gripper
+    - The joint positions for the gripper to be in when performing the grasp
+    - A pose trajectory for a given gripper frame (usually at the base of the gripper)
+
+    and test whether or not the gripper can successfully grasp the object using the desired approach
+    trajectory.
+
+    This production uses a Puppetmaker to control the wrist of the gripper, allowing for
+    more complex wrist motions during the grasping attempt.
+
+    *Parameters*
+
+    path_to_object: str
+        The file path to the URDF/SDF of the object to be grasped.
+
+    gripper_choice: GripperType
+        An enum value from GripperType that specifies which gripper to use for the grasping attempt.
+
+    grasp_joint_positions: np.ndarray
+        An array of floats representing the joint positions the gripper should be in when performing the grasp.
+
+    X_WorldGripper_trajectory: List[RigidTransform], optional
+        The desired trajectory for the Gripper Frame.
+        A sequence of poses of the Gripper Frame (usually attached to the base of the gripper)
+        with respect to the world frame.
+        Default is None.
+
+    meshcat_port_number: int, optional
+        The port number for Meshcat visualization.
+
+    config: Configuration, optional
+        The configuration for the production.
+        See the Configuration dataclass for more details.
+        Default is the standard Configuration.
+
+    *Usage*
+
+    The user can create an instance of this production and simulate it to see if the grasp is successful in the following way: ::
+
+        from brom_drake.all import drakeify_my_urdf, GripperType, MeshReplacementStrategy
+        from brom_drake.productions import AttemptGraspWithPuppeteerWrist
+
+        # Create erlenmeyer flask urdf
+        model_file = ... # Some path to your urdf file
+
+        # Create the following poses (transforms):
+        # - The Grasp Pose (i.e. the target pose of the gripper wrist when grasping the object)
+        X_ObjectTarget = RigidTransform(
+            p=np.array([-0.08, 0.05, 0.2]),
+            rpy=RollPitchYaw(0.0, np.pi/2.0, 0.0),
+        )
+
+        # - The Pre-Grasp Pose (i.e. the pose of the gripper wrist just before reaching to grasp the object)
+        X_WorldPreGrasp = X_ObjectTarget.multiply(
+            RigidTransform(
+                p=np.array([0.0, 0.0, -0.2]),
+                rpy=RollPitchYaw(0.0, 0.0, 0.0),
+            )
+        )
+
+        # Create the production
+        production = AttemptGraspWithPuppeteerWrist(
+            path_to_object=model_file,
+            gripper_choice=GripperType.Robotiq_2f_85,
+            grasp_joint_positions=np.array([0.7]),
+            X_WorldGripper_trajectory=[X_WorldPreGrasp, X_ObjectTarget],
+            meshcat_port_number=7001, # Use None for CI
+        )
+
+        # Build with watcher (so we can view the simulation's data in `brom/watcher/plots` which is helpful for debugging)
+        diagram, diagram_context = production.add_cast_and_build()
+        script = production.config.script
+
+        # Set up simulation
+        simulator = Simulator(diagram, diagram_context)
+        simulator.set_target_realtime_rate(1.0)
+        simulator.set_publish_every_time_step(False)
+        simulator.Initialize()
+        simulator.AdvanceTo(script.total_time())
+
+    There are also several examples in the `examples/productions/debug/grasping/attempt_grasp_with_puppeteer_wrist` folder.
+        
+    """
     def __init__(
         self,
         path_to_object: str,
@@ -69,15 +157,32 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         config: Configuration = Configuration(),
     ):
         """
-        Description
-        -----------
+        *Description*
+        
 
-        Arguments
-        ---------
+        *Parameters*
+
+        path_to_object: str
+            The file path to the URDF/SDF of the object to be grasped.
+
+        gripper_choice: GripperType
+            An enum value from GripperType that specifies which gripper to use for the grasping attempt.
+
+        grasp_joint_positions: np.ndarray
+            An array of floats representing the joint positions the gripper should be in when performing the grasp.
+        
         X_ObjectGripper_trajectory: List[RigidTransform]
             The desired trajectory for the Gripper Frame.
             A sequence of poses of the Gripper Frame (usually attached to the base of the gripper)
             with respect to the object being grasped.
+
+        meshcat_port_number: int, optional
+            The port number for Meshcat visualization.
+
+        config: Configuration, optional
+            The configuration for the production.
+            See the Configuration dataclass for more details.
+            Default is the standard Configuration.
         """
         # Use the enum to choose the gripper URDF from a set of supported grippers
         if gripper_choice == GripperType.Robotiq_2f_85:
@@ -145,6 +250,18 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         self.executive = self.create_executive_system() # The executive system that coordinates ALL the systems
 
     def add_floor_controller_and_connect(self, floor_mass: float):
+        """
+        *Description*
+
+        This method will add a controller to the "actuated floor" in this production.
+        The controller will be a PID controller that maintains the floor at a constant height
+        during the first few phases of the production, but eventually we will tell the floor to drop.
+
+        *Parameters*
+
+        floor_mass: float
+            The mass of the floor object.
+        """
         # Setup
         plant: MultibodyPlant = self.plant
 
@@ -212,9 +329,35 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         float, List[float], ModelInstanceIndex, JointActuator
     ]:
         """
-        Description
-        -----------
-        This method will add a floor to the plant.
+        *Description*
+        
+        This method will add a "floor" (i.e., a rectangular prism with fixed mass)
+        to the simulation (i.e., to the plant). It also adds an actuated joint
+        between the world origin and the floor, that allows the floor to move up and down.
+
+        *Parameters*
+
+        floor_mass: float, optional
+            The mass of the floor object. Default is 100.0 kg.
+
+        plant: MultibodyPlant, optional
+            The plant to which the floor will be added.
+            If None, the production's plant will be used.
+            Default is None.
+
+        *Returns*
+
+        floor_mass: float
+            The mass of the floor object.
+
+        floor_shape: List[float]
+            The shape of the floor object as [length, width, height].
+
+        floor_model_index: ModelInstanceIndex
+            The model instance index of the floor in the plant.
+
+        floor_actuator: JointActuator
+            The joint actuator that controls the floor's vertical movement.
         """
         # Setup
         if plant is None:
@@ -257,9 +400,20 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         self,
         pose_trajectory: List[RigidTransform]
     ):
-        # Setup
-        plant: MultibodyPlant = self.plant
+        """
+        *Description*
+        
+        This method will add visualizations for the frames
+        that are the waypoints in the given gripper base trajectory.
 
+        *Parameters*
+
+        pose_trajectory: List[RigidTransform]
+            The desired trajectory for the Gripper Frame.
+            A sequence of poses of the Gripper Frame (usually attached to the base of the gripper)
+            with respect to the object being grasped.
+            TODO(Kwesi): Change the name of this parameter to include frame information.
+        """
         # Create frames for each pose in the trajectory
         gripper_base_frames = []
         for i, pose_i in enumerate(pose_trajectory):
@@ -319,7 +473,7 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         plant: MultibodyPlant = self.plant
 
         # Create a trajectory source for the gripper joints
-        gripper_trajectory_source = self.add_gripper_trajectory_system()
+        gripper_trajectory_source = self.add_gripper_joints_trajectory_system()
 
         # Create a simple piece of logic to turn on/off the gripper (i.e., to close it)
         gripper_controller = builder.AddSystem(
@@ -386,6 +540,31 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         gripper_puppet_input: RigidTransformToVectorSystem,
         pose_trajectory: List[RigidTransform]
     ) -> OpenLoopPosePlanDispenser:
+        """
+        *Description*
+        
+        This method creates and connects a reference input for the
+        gripper's base (i.e., the wrist) to the Puppetmaker controller of
+        the gripper.
+
+        *Parameters*
+
+        gripper_puppet_input: RigidTransformToVectorSystem
+            The input port of the Puppetmaker controller for the gripper.
+
+        pose_trajectory: List[RigidTransform]
+            The desired trajectory for the Gripper Frame.
+            A sequence of poses of the Gripper Frame (usually attached to the base of the gripper)
+            with respect to the object being grasped.
+            TODO(Kwesi): Change the name of this parameter to include frame information.
+
+        *Returns*
+
+        trajectory_dispenser: OpenLoopPosePlanDispenser
+            The trajectory dispenser system that provides the trajectory
+            to the gripper puppet controller.
+        """
+
         # Setup
         builder: DiagramBuilder = self.builder
 
@@ -418,7 +597,18 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
 
         return trajectory_dispenser
 
-    def add_gripper_trajectory_system(self) -> TrajectorySource:
+    def add_gripper_joints_trajectory_system(self) -> TrajectorySource:
+        """
+        *Description*
+
+        This method creates a LeafSystem that outputs a PiecewisePolynomial
+        trajectory for the gripper joints to follow during the grasping attempt.
+
+        *Returns*
+
+        gripper_trajectory_source: TrajectorySource
+            A TrajectorySource system that outputs the desired gripper joint trajectory.
+        """
         # Setup
         builder: DiagramBuilder = self.builder
         script: AttemptGraspWithPuppeteerWristScript = self.config.script
@@ -453,6 +643,25 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         return gripper_trajectory_source
 
     def add_puppeteer_for_gripper(self) -> Tuple[Puppetmaker, PuppetSignature]:
+        """
+        *Description*
+
+        This method will make the gripper model a "puppet" and return
+        the puppetmaker and puppet signature for the gripper.
+
+        By making the gripper a puppet, we can then control its wrist
+        using the Puppetmaker's controller.
+
+        *Returns*
+
+        puppetmaker0: Puppetmaker
+            The Puppetmaker system that CREATES the gripper puppet.
+
+        puppet_signature0: PuppetSignature
+            The PuppetSignature that describes the puppet strings
+            for the gripper puppet (i.e., the actuators on the puppet).
+        """
+
         # Setup
         plant : MultibodyPlant = self.plant
 
@@ -474,12 +683,14 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
 
     def add_supporting_cast(self):
         """
-        Description
-        -----------
-        This method will add:
-        - The user's object model to the builder.
-        - The user's gripper model to the builder.
-        - The gripper triad to the builder.
+        *Description*
+        
+        This method adds the supporting cast to the production.
+        This creates the plant (which contains the object being grasped,
+        the gripper, the floor), the controllers for the gripper and floor,
+        and the puppetmaker for the gripper wrist.
+
+        This method also is required in order to implement the BaseProduction class.
         """
         # Setup
 
@@ -513,7 +724,14 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         self.set_initial_conditions()
         # self.add_initial_conditions_to_plant()    
 
-    def connect_executive_to_gripper_puppet_controller(self, trajectory_dispenser):
+    def connect_executive_to_gripper_puppet_controller(self, trajectory_dispenser: OpenLoopPosePlanDispenser):
+        """
+        *Description*
+
+        This method connects the executive system to the trajectory dispenser
+        (i.e., provides the trigger signal to start the reference trajectory
+        for the gripper wrist).
+        """
         # Setup
         builder: DiagramBuilder = self.builder
         executive: NetworkXFSM = self.executive
@@ -526,20 +744,19 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
     
     def compute_gripper_base_pose_trajectory_for_attempted_grasp(self) -> PiecewisePose:
         """
-        Description
-        -----------
+        *Description*
+        
         Returns a PiecewisePose trajectory for the gripper base to follow during the
         attempted grasp.
 
         The trajectory should be an interpolation between two poses that is then held
         until the end of the production.
 
-        Arguments
-        ---------
-        TBD
-        :param self: Description
-        :return: Description
-        :rtype: PiecewisePose
+        *Returns*
+
+        gripper_base_trajectory: PiecewisePose
+            A PiecewisePose trajectory for the gripper base to follow during the
+            attempted grasp.
         """
 
         # Setup
@@ -579,6 +796,13 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         return gripper_base_trajectory
 
     def create_executive_system(self) -> NetworkXFSM:
+        """
+        *Description*
+        
+        This method creates the executive system for the production.
+        The executive system is responsible for coordinating the various
+        phases of the production.
+        """
         # Setup
         builder: DiagramBuilder = self.builder
         script: AttemptGraspWithPuppeteerWristScript = self.config.script
@@ -592,6 +816,24 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         self,
         z_floor: float
     ) -> Tuple[FlexiblePortSwitch]:
+        """
+        *Description*
+
+        This method creates a LeafSystem which outputs a reference trajectory
+        for the floor height during the production.
+
+        *Parameters*
+
+        z_floor: float
+            The initial height of the floor.
+
+        *Returns*
+
+        floor_target_height_source: FlexiblePortSwitch
+            A LeafSystem which outputs a reference trajectory for the floor height during the production.
+            It is a "switch" system that can switch between different input ports
+            based on the executive's commands.
+        """
         # Setup
         builder: DiagramBuilder = self.builder
 
@@ -627,13 +869,23 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         debug_flag: bool = True,
     ) -> float:
         """
-        Description
-        -----------
+        *Description*
+        
         This method will find the transform needed to put the floor at so that
         the object sits "just" on top of it.
 
         WARNING: This method does not work and I don't know why. (i.e., sometimes
         the floor is in collision with the object)
+
+        *Parameters*
+
+        debug_flag: bool, optional
+            If True, will print debug information during the computation. Default is True.
+
+        *Returns*
+
+        floor_z_translation: float
+            The z translation for the floor such that the object sits just on top of it.
         """
         # Setup
         shadow_builder = DiagramBuilder()
@@ -714,11 +966,21 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         debug_flag: bool = False,
     ) -> float:
         """
-        Description
-        -----------
+        *Description*
+        
         Use bounding box method to generate an initial guess for the floor height
         and then perform a line search to find the height that actually
         is collision free.
+
+        *Parameters*
+
+        debug_flag: bool, optional
+            If True, will print debug information during the computation. Default is False.
+
+        *Returns*
+
+        floor_z_translation: float
+            The z translation for the floor such that the object sits just on top of it
         """
         # Setup
         z_floor = self.find_floor_z_via_bounding_box(debug_flag=debug_flag)
@@ -770,9 +1032,27 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         desired_joint_positions: List[float],
     ) -> RigidTransform:
         """
-        Description
-        -----------
+        *Description*
+        
         This method will return the transform from the world frame to the gripper frame.
+
+        *Parameters*
+
+        X_ObjectGripper: RigidTransform
+            The desired transform from the object frame to the gripper target frame.
+
+        target_frame_name: str
+            The name of the target frame on the gripper.
+            (i.e., the frame that we define as "Gripper" in the X_ObjectGripper transform).
+
+        desired_joint_positions: List[float]
+            The desired joint positions for the gripper.
+            TODO(Kwesi): Is this needed? Maybe when we use the fingers as the target frame name.
+
+        *Returns*
+
+        X_WorldGripper: RigidTransform
+            The transform from the world frame to the gripper frame.
         """
         # Setup
         desired_joint_positions = np.array(desired_joint_positions)
@@ -825,6 +1105,26 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         floor_z_translation: float = 0.0,
         debug_flag: bool = False,
     ) -> bool:
+        """
+        *Description*
+        
+        This method will check if the given floor z translation
+        creates collisions with the object in the production.
+
+        *Parameters*
+
+        floor_z_translation: float, optional
+            The z translation of the floor to check for collisions. Default is 0.0.
+
+        debug_flag: bool, optional
+            If True, will print debug information during the computation. Default is False.
+            TODO(Kwesi): Implement debug information.
+
+        *Returns*
+
+        collision_detected: bool
+            True if a collision is detected between the floor and the object, False otherwise.
+        """
         # Setup
         shadow_builder = DiagramBuilder()
 
@@ -870,12 +1170,19 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
 
     @property
     def id(self):
+        """
+        *Description*
+
+        Always returns ProductionID.kAttemptGraspWithPuppeteer.
+        
+        This property is required to implement the BaseProduction class.
+        """
         return ProductionID.kAttemptGraspWithPuppeteer
 
     def set_initial_conditions(self):
         """
-        Description
-        -----------
+        *Description*
+        
         This method will set the default state of the plant to the desired joint positions.
         """
         # Setup
@@ -953,6 +1260,17 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
 
     @property
     def suggested_roles(self) -> List[Role]:
+        """
+        *Description*
+        
+        This property suggests the roles that are relevant for this production.
+
+        No roles are necessary here, so this method returns an empty list.
+        
+        *Returns*
+        suggested_roles: List[Role]
+            A list of Role enums that are relevant for this production.
+        """
         return []
     
     

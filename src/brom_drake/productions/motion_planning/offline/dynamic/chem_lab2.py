@@ -18,7 +18,7 @@ from pydrake.all import (
     RotationMatrix,
 )
 from pydrake.math import RollPitchYaw, RigidTransform
-from typing import Callable, Tuple
+from typing import Callable, List, Tuple
 
 # Internal Imports
 from brom_drake.directories import DEFAULT_BROM_MODELS_DIR
@@ -41,14 +41,95 @@ from brom_drake.utils import Performer, AddGround, MotionPlan
 
 class ChemLab2(OfflineDynamicMotionPlanningProduction):
     """
-    Description:
-        This production is the first in the chemistry lab series.
-        It is used to test the motion planning capabilities of the robot
-        in a chemistry lab setting with minimal constraints.
+    *Description*
+
+    This production is the second in the chemistry lab series.
+    It is used to test the motion planning capabilities of the robot
+    in a chemistry lab setting with minimal constraints, but with full
+    dynamics of the robot included in the simulation.
+
+    The earlier chemistry lab production (ChemLab1) ignored the physics of the
+    arm and objects in order to simplify some calculations.
+
+    *Parameters*
+
+    time_step: float, optional
+        The time step for the production, by default 1e-3.
+
+    meshcat_port_number: int, optional
+        The port number for meshcat visualization, by default 7001.
+
+    plan_execution_speed: float, optional
+        The speed at which to execute the motion plan, by default 0.2.
+
+    pose_WorldBeaker: RigidTransform, optional
+        The pose of the beaker in the world frame, by default None.
+
+    table_length: float, optional
+        The length of the table, by default 0.6.
+
+    table_width: float, optional
+        The width of the table, by default 2.0.
+
+    table_height: float, optional
+        The height of the table, by default 0.1.
+
+    shelf_pose: RigidTransform, optional
+        The pose of the shelf in the world frame, by default None.
+
+    gripper_type: GripperType, optional
+        The type of gripper to use, by default GripperType.Robotiq_2f_85.
+
+    *Usage*
+
+    To use this production, create an instance of the ChemLab2 class,
+    provide it with a motion planning function, and then build it. ::
+
+        from brom_drake.motion_planning.algorithms.rrt.bidirectional_connect import (
+            BidirectionalRRTConnectPlanner,
+            BidirectionalRRTConnectPlannerConfig,
+        )
+        from brom_drake.productions import ChemLab2
+    
+        # Create the production
+        production = ChemLab2()
+
+        # Create a planner object which will be used to plan the motion
+        config = BidirectionalRRTConnectPlannerConfig(
+            steering_step_size=0.2,
+        )
+        planner2 = BidirectionalRRTConnectPlanner(
+            production.arm,
+            production.plant,
+            production.scene_graph,
+            config=config,
+        )
+
+        # To build the production, we only need to provide a planning function
+        # (can come from anywhere, not just a BaseRRTPlanner object)
+        diagram, diagram_context = production.easy_cast_and_build(
+            planner2.plan,
+            with_watcher=True,
+        )
+
+        print("Simulating...")
+
+        # Simulate the diagram
+        simulator = Simulator(diagram, diagram_context)
+        simulator.set_target_realtime_rate(2.0)
+
+        # Run simulation
+        simulator.Initialize()
+        simulator.AdvanceTo(0.05)
+        planned_trajectory = production.plan_dispenser.planned_trajectory
+
+        print(f"Expected end time of trajectory: {planned_trajectory.end_time()}")
+        simulator.AdvanceTo(planned_trajectory.end_time()+2.0)
+
     """
     def __init__(
         self,
-        time_step=1e-3,
+        time_step: float = 1e-3,
         meshcat_port_number: int = 7001,
         plan_execution_speed: float = 0.2,
         pose_WorldBeaker: RigidTransform = None,
@@ -60,9 +141,39 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         **kwargs,
     ):
         """
-        Description:
-            Constructor for the ChemLab2 Production.
-        :param meshcat_port_number:
+        *Description*
+            
+        Constructor for the ChemLab2 Production.
+
+        *Parameters*
+
+        time_step: float, optional
+            The time step for the production, by default 1e-3.
+
+        meshcat_port_number: int, optional
+            The port number for meshcat visualization, by default 7001.
+
+        plan_execution_speed: float, optional
+            The speed at which to execute the motion plan, by default 0.2.
+
+        pose_WorldBeaker: RigidTransform, optional
+            The pose of the beaker in the world frame, by default None.
+
+        table_length: float, optional
+            The length of the table, by default 0.6.
+
+        table_width: float, optional
+            The width of the table, by default 2.0.
+
+        table_height: float, optional
+            The height of the table, by default 0.1.
+
+        shelf_pose: RigidTransform, optional
+            The pose of the shelf in the world frame, by default None.
+
+        gripper_type: GripperType, optional
+            The type of gripper to use, by default GripperType.Robotiq_2f_85.
+        
         """
         # Superclass constructor
         super().__init__(**kwargs)
@@ -104,16 +215,16 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
 
     def add_supporting_cast(self):
         """
-        Description
-        -----------
+        *Description*
+        
         This method adds all secondary cast members to the builder.
         The secondary cast members in the production are the:
+
         - Table, where the robot exists
         - Test Tube Holders
         - Component which share's the robot model reference
         - Motion Planning components (e.g., dispensers, etc.)
         - Start and Goal sources
-        :return:
         """
         # Call the superclass method
         super().add_supporting_cast()
@@ -138,7 +249,6 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         self.add_robot_source_system()
         self.add_motion_planning_components()
         self.add_start_and_goal_sources_to_builder()
-        # self.add_dummy_gripper_components()
 
         # Add initial conditions for the arm
         self.initial_condition_manager.add_initial_configuration(
@@ -151,9 +261,10 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
 
     def add_beaker(self):
         """
-        Description
-        -----------
-        This method adds the beaker to the production.
+        *Description*
+        
+        This method adds the beaker URDF to the production's plant.
+        The beaker's URDF comes from the brom_drake `robots` directories.
         """
         # Setup
         plant = self.plant
@@ -180,41 +291,16 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         #     self.pose_WorldBeaker,
         # )
 
-    def add_dummy_gripper_components(self):
-        """
-        Description
-        -----------
-        Add more components to the production that are used
-        to hold the gripper in place.
-        """
-        # Setup
-
-        # Create a dummy target type object for the gripper and connect it to the gripper controller
-        dummy_gripper_target_type_source = self.builder.AddSystem(
-            ConstantValueSource(
-                AbstractValue.Make(GripperTarget.kPosition)
-            ),
-        )
-        
-        self.builder.Connect(
-            dummy_gripper_target_type_source.get_output_port(),
-            self.station.GetInputPort("gripper_target_type"),
-        )
-
-        # Create a dummy gripper target value and connect it to the gripper controller
-        dummy_gripper_target_source = self.builder.AddSystem(
-            ConstantVectorSource(np.array([0.0])),
-        )
-        self.builder.Connect(
-            dummy_gripper_target_source.get_output_port(),
-            self.station.GetInputPort("gripper_target"),
-        )
-
-
     def add_motion_planning_components(self):
         """
-        Add the motion planning components to the builder.
-        :return:
+        *Description*
+
+        Add the following components to the production's
+        ``builder`` in order to help with motion planning:
+
+        - `plan_dispenser`: An OpenLoopPlanDispenser which will describe the reference robot trajectory.
+        - Connections between reference trajectory and UR10e station.
+        - Gripper control components (type of control and an "open" command)
         """
         # Setup
         arm = self.arm
@@ -263,8 +349,10 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
 
     def add_shelf(self):
         """
-        Add the shelf to the production.
-        :return:
+        *Description*
+
+        Add the shelf to the production's plant.
+        Welds the shelf to the world frame.
         """
         # Setup
         plant = self.plant
@@ -285,11 +373,10 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
 
     def add_table(self):
         """
-        Description
-        -----------
-        This method adds the table to the production.
-        The table will be a simple shape that the robot will interact with.
-        :return:
+        *Description*
+        
+        This method adds the table to the production's plant.
+        Welds the table to the world frame.
         """
         # Setup
 
@@ -326,10 +413,11 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
 
     def add_test_tube_holders(self):
         """
-        Description
-        -----------
-        This method adds the test tube holders to the production.
-        :return:
+        *Description*
+        
+        This method adds the test tube holders to the production's plant.
+        Welds the test tube holders to the world frame with using
+        predefined poses.
         """
         # Setup
         test_tube_urdf1 = str(
@@ -348,28 +436,37 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
             (self.test_tube_holder1, self.pose_WorldHolder),
         )
 
-        # # Weld the test tube holders to the world frame
-        # self.plant.WeldFrames(
-        #     self.plant.world_frame(),
-        #     self.plant.GetFrameByName("test_tube_holder_base_link", self.test_tube_holder1),
-        #     self.pose_WorldHolder,
-        # )
-
-
     def add_cast_and_build(
         self,
-        cast: Tuple[Role, Performer] = [],
+        cast: List[Tuple[Role, Performer]] = [],
         with_watcher: bool = False,
     ) -> Tuple[Diagram, Context]:
         """
-        Description
-        -----------
+        *Description*
+        
         Modifies the normal add_cast_and_build, so that
         we share the context of the plant with the appropriate
         parts of the system.
-        :param cast:
-        :param with_watcher: A Boolean that determines whether to add a watcher to the diagram.
-        :return:
+
+        TODO(kwesi): Consider making this a standard part of the
+        OfflineDynamicMotionPlanningProduction class.
+
+        *Parameters*
+
+        cast: List[Tuple[Role, Performer]], optional
+            The cast to add to the production, by default [].
+
+        with_watcher: bool, optional
+            A Boolean that determines whether to add a watcher to the diagram, by default False.
+
+        *Returns*
+
+        diagram: Diagram
+            The built diagram.
+
+        diagram_context: Context
+            The context for the built diagram.
+            This context will be used to initialize the watcher.
         """
         diagram, diagram_context = super().add_cast_and_build(
             main_cast_members=cast,
@@ -398,11 +495,16 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
     
     def configure_collision_filter(self, scene_graph_context: Context):
         """
-        Description
-        -----------
-        This method configures the collision filter for the production.
-        :param scene_graph_context:
-        :return:
+        *Description*
+        
+        This method configures the collision filter in the scene graph so that we ignore:
+        - Self collisions of the shelf
+        - Collisions between adjacent robot links (TODO)
+
+        *Parameters*
+
+        scene_graph_context: Context
+            The context for the scene graph.
         """
         # Setup
         scene_graph = self.scene_graph
@@ -457,8 +559,8 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         orientation_cost_scaling: float = 0.25,
     ) -> InverseKinematics:
         """
-        Description
-        -----------
+        *Description*
+        
         Sets up the inverse kinematics problem for the start pose
         input to theis function.
         :return:
@@ -515,13 +617,26 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         with_watcher: bool = False,
     ) -> Tuple[Diagram, Context]:
         """
-        Description
-        -----------
+        *Description*
+        
         This function is used to easily cast and build the production.
-        :param planning_algorithm: The algorithm that we will use to
-        plan the motion.
-        :param with_watcher: A Boolean that determines whether to add a watcher to the diagram.
-        :return:
+
+        *Parameters*
+
+        planning_algorithm: Callable[[np.ndarray, np.ndarray, Callable[[np.ndarray], bool]],Tuple[MotionPlan, bool]]
+            The algorithm that we will use to plan the motion.
+
+        with_watcher: A Boolean that determines whether to add a watcher to the diagram.
+            by default False.
+
+        *Returns*
+
+        diagram: Diagram
+            The built diagram.
+
+        diagram_context: Context
+            The context for the built diagram.
+            If with_watcher is True, this context will be used to initialize the watcher.
         """
         # Setup
 
@@ -569,10 +684,16 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         return diagram, diagram_context
 
     @property
-    def goal_configuration(self):
+    def goal_configuration(self) -> np.ndarray:
         """
-        Get the goal pose. This should be defined by the subclass.
-        :return:
+        *Description*
+
+        Get the goal pose.
+        
+        *Returns*
+
+        q_goal: np.ndarray
+            The goal configuration of the robot.
         """
         # Setup
         hardcoded_robot_joint_names = [
@@ -601,9 +722,14 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
     @property
     def goal_pose(self) -> RigidTransform:
         """
-        Description
-        -----------
+        *Description*
+        
         Get the goal pose of the end effector frame.
+
+        *Returns*
+
+        pose_WorldGoal: RigidTransform
+            The goal pose of the end effector frame.
         """
         # Setup
 
@@ -627,9 +753,30 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
 
     @property
     def id(self) -> ProductionID:
+        """
+        *Description*
+
+        Always returns the ProductionID for ChemLab2.
+
+        *Returns*
+
+        ProductionID.kChemLab2: ProductionID
+            The ProductionID for ChemLab2.
+        """
         return ProductionID.kChemLab2
         
     def initialize_pose_data(self):
+        """
+        *Description*
+
+        Initialize the following poses if they are not already set:
+
+        - pose_WorldShelf
+        - pose_WorldBeaker
+        - pose_WorldHolder
+        - pose_BeakerGoal
+        - pose_HolderStart
+        """
         # Set shelf pose
         if self.shelf_pose is None:
             self.pose_WorldShelf = RigidTransform(
@@ -671,8 +818,8 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         robot_joint_positions: np.ndarray,
     ) -> RigidTransform:
         """
-        Description
-        -----------
+        *Description*
+        
         This method solves the forward kinematics problem for the UR10e arm
         by itself.
         """
@@ -709,8 +856,14 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
     @property
     def start_configuration(self):
         """
-        Get the goal pose. This should be defined by the subclass.
-        :return:
+        *Description*
+
+        Get the start configuration of the robot in the production.
+
+        *Returns*
+
+        q_start: np.ndarray
+            The start configuration of the robot.
         """
         # Setup
         hardcoded_robot_joint_names = [
@@ -741,8 +894,14 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
     @property
     def start_pose(self) -> RigidTransform:
         """
+        *Description*
+
         Get the start pose. This should be defined by the subclass.
-        :return:
+
+        *Returns*
+
+        pose_WorldStart: RigidTransform
+            The start pose of the end effector frame.
         """
         # Setup
 

@@ -7,18 +7,23 @@ from pydrake.all import (
 
 class BoolToVectorSystem(LeafSystem):
     """
-    Description
-    -----------
-    This system will take in a bool and output a vector
-    of size 1.
+    *Description*
+    
+    This LeafSystem receives boolean inputs (i.e., AbstractValue) inputs
+    and returns an output vector of size 1 (i.e., BasicVector) where the
+    single element is 1 if the input bool is True and 0 if the input bool
+    is False.
 
-    Diagram
-    -------
-                    |---------------|
-                    | Bool          |
-    bool_in ---->   | To            | ---> vector_out 
-    (bool)          | VectorSystem  | (BasicVector[1])
-                    |---------------|
+    *Diagram*
+    
+    The LeafSystem's input and output ports can be illustrated with the following block: ::
+
+                        |---------------|
+                        | Bool          |
+        bool_in ---->   | To            | ---> vector_out 
+        (bool)          | VectorSystem  | (BasicVector[1])
+                        |---------------|
+
     """
     def __init__(self):
         LeafSystem.__init__(self)
@@ -34,8 +39,9 @@ class BoolToVectorSystem(LeafSystem):
 
     def CalcVectorOutput(self, context: Context, output: BasicVector):
         """
-        Description
-        -----------
+        *Description*
+        
+        Callback function for calculating the output vector of the `BoolToVectorSystem`.
         This function takes in a bool and outputs a vector of size 1.
         """
         # Setup
