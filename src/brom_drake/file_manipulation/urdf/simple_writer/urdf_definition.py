@@ -42,7 +42,7 @@ class SimpleShapeURDFDefinition:
 
     mass: float, optional
         The mass of the shape.
-        Defaiults to 1.0.
+        Defaults to 1.0.
 
     inertia: InertiaDefinition, optional
         The inertia of the shape.
