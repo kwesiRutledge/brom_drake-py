@@ -106,7 +106,7 @@ class ShowMeThisModel(BaseProduction):
         simulator = Simulator(diagram, diagram_context)
         simulator.set_target_realtime_rate(1.0)
         simulator.set_publish_every_time_step(False)
-        
+
     """
     def __init__(
         self,
@@ -153,7 +153,7 @@ class ShowMeThisModel(BaseProduction):
         - Using the ShowMeSystem to freeze the model in place
         - Connects to Meshcat, if requested
 
-        This is requred to be implemented by all children of the BaseProduction class.
+        This is required to be implemented by all children of the BaseProduction class.
         """
         # Setup
 
@@ -345,7 +345,7 @@ class ShowMeThisModel(BaseProduction):
         This property returns the unique identifier for this production.
         (i.e., ProductionID.kShowMeThisModel)
 
-        This is requred to be implemented by all children of the BaseProduction class.
+        This is required to be implemented by all children of the BaseProduction class.
 
         *Returns*
         
@@ -362,7 +362,7 @@ class ShowMeThisModel(BaseProduction):
         This property returns an empty list, because there are no suggested
         roles for this production.
 
-        This is requred to be implemented by all children of the BaseProduction class.
+        This is required to be implemented by all children of the BaseProduction class.
 
         *Returns*
 
