@@ -18,7 +18,7 @@ TargetName = Union[PortName, SystemName]
 
 class PairingType(IntEnum):
     """
-    *Descriptoin*
+    *Description*
 
     Describes the type of connection defined by a RolePortAssignment.
 
