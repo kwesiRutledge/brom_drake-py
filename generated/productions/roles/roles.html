@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html"><link rel="next" title="motion_planners" href="motion_planners/motion_planners.html"><link rel="prev" title="pick_and_place" href="../pick_and_place/pick_and_place.html">
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2025.12.19 -->
-        <title>roles - brom_drake-py v0.0.0+sphinxFallback documentation</title>
+        <title>roles - brom_drake-py v0.0.0+githubActionDefault documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -162,7 +162,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">brom_drake-py v0.0.0+sphinxFallback documentation</div></a>
+      <a href="../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +183,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py v0.0.0+sphinxFallback documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -407,67 +407,254 @@
 <h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="brom_drake.productions.roles.Role">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brom_drake.productions.roles.</span></span><span class="sig-name descname"><span class="pre">Role</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port_assignments</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#brom_drake.productions.roles.RolePortAssignment" title="brom_drake.productions.roles.role_port_assignment.RolePortAssignment"><span class="pre">brom_drake.productions.roles.role_port_assignment.RolePortAssignment</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.productions.roles.Role" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brom_drake.productions.roles.</span></span><span class="sig-name descname"><span class="pre">Role</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port_assignments</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#brom_drake.productions.roles.RolePortAssignment" title="brom_drake.productions.roles.role_port_assignment.RolePortAssignment"><span class="pre">RolePortAssignment</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.productions.roles.Role" title="Link to this definition">¶</a></dt>
+<dd><p><em>Description</em></p>
+<p>This class defines a “slot” to be filled in a Drake Diagram.
+A name is used for unique identification and a description is (optionally)
+used to describe what is expected of a drake LeafSystem (or Diagram) that
+properly “fills the role” (i.e., fills the slot) in a Drake Diagram.</p>
+<p><em>Parameters</em></p>
+<dl class="simple">
+<dt>name: str</dt><dd><p>Unique identifier of the role.</p>
+</dd>
+<dt>description: str</dt><dd><p>Non-binding description of the role.</p>
+</dd>
+<dt>port_assignments: List[RolePortAssigment]</dt><dd><p>Each element of this list describes:</p>
+<ul class="simple">
+<li><p>an external target (e.g., <cite>LeafSystems</cite>) that the role expects to connect to</p></li>
+<li><p>the port on the <code class="docutils literal notranslate"><span class="pre">LeafSystem</span></code> that fills this role that should connect to that target.</p></li>
+</ul>
+</dd>
+</dl>
+<p><em>Usage</em></p>
+<p>Consider the following pieces of code:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">brom_drake.productions.roles</span> <span class="kn">import</span> <span class="n">Role</span><span class="p">,</span> <span class="n">RolePortAssignment</span>
+<span class="kn">from</span> <span class="nn">brom_drake.productions.roles.role_port_assignment</span> <span class="kn">import</span> <span class="n">PairingType</span>
+
+<span class="n">kGraspConfirmer</span> <span class="o">=</span> <span class="n">Role</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Confirm-When-Grasp-Worked&quot;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Attempts to define with a boolean whether or not the object we&#39;re interested in is currently in our grasp.&quot;</span><span class="p">,</span>
+    <span class="n">port_assignments</span><span class="o">=</span><span class="p">[</span>
+        <span class="c1"># Required inputs for Role</span>
+        <span class="n">RolePortAssignment</span><span class="p">(</span>
+            <span class="n">external_target_name</span><span class="o">=</span><span class="s2">&quot;target_cube_pose&quot;</span><span class="p">,</span>
+            <span class="n">performer_port_name</span><span class="o">=</span><span class="s2">&quot;current_manipuland_pose&quot;</span><span class="p">,</span>
+            <span class="n">pairing_type</span><span class="o">=</span><span class="n">PairingType</span><span class="o">.</span><span class="n">kInput</span>
+        <span class="p">),</span>
+        <span class="n">RolePortAssignment</span><span class="p">(</span>
+            <span class="n">external_target_name</span><span class="o">=</span><span class="s2">&quot;cube_model_idx&quot;</span><span class="p">,</span>
+            <span class="n">performer_port_name</span><span class="o">=</span><span class="s2">&quot;object_model_index&quot;</span><span class="p">,</span>
+            <span class="n">pairing_type</span><span class="o">=</span><span class="n">PairingType</span><span class="o">.</span><span class="n">kInput</span>
+        <span class="p">),</span>
+        <span class="n">RolePortAssignment</span><span class="p">(</span>
+            <span class="n">external_target_name</span><span class="o">=</span><span class="s2">&quot;gripper_pose&quot;</span><span class="p">,</span>
+            <span class="n">performer_port_name</span><span class="o">=</span><span class="s2">&quot;gripper_pose&quot;</span><span class="p">,</span>
+            <span class="n">pairing_type</span><span class="o">=</span><span class="n">PairingType</span><span class="o">.</span><span class="n">kInput</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">RolePortAssignment</span><span class="p">(</span>
+            <span class="n">external_target_name</span><span class="o">=</span><span class="s2">&quot;production_gripper_model_idx&quot;</span><span class="p">,</span>
+            <span class="n">performer_port_name</span><span class="o">=</span><span class="s2">&quot;gripper_model_index&quot;</span><span class="p">,</span>
+            <span class="n">pairing_type</span><span class="o">=</span><span class="n">PairingType</span><span class="o">.</span><span class="n">kInput</span>
+        <span class="p">),</span>
+        <span class="n">RolePortAssignment</span><span class="p">(</span>
+            <span class="n">external_target_name</span><span class="o">=</span><span class="s2">&quot;gripper_configuration&quot;</span><span class="p">,</span>
+            <span class="n">performer_port_name</span><span class="o">=</span><span class="s2">&quot;gripper_configuration&quot;</span><span class="p">,</span>
+            <span class="n">pairing_type</span><span class="o">=</span><span class="n">PairingType</span><span class="o">.</span><span class="n">kInput</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="c1"># Output Of Role</span>
+        <span class="n">RolePortAssignment</span><span class="p">(</span>
+            <span class="n">external_target_name</span><span class="o">=</span><span class="s2">&quot;grasp_complete&quot;</span><span class="p">,</span>
+            <span class="n">performer_port_name</span><span class="o">=</span><span class="s2">&quot;grasp_success_flag&quot;</span><span class="p">,</span>
+            <span class="n">pairing_type</span><span class="o">=</span><span class="n">PairingType</span><span class="o">.</span><span class="n">kOutput</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>The above example defines a Role with:</p>
+<ul class="simple">
+<li><p>name: <code class="docutils literal notranslate"><span class="pre">&quot;Confirm-When-Grasp-Worked&quot;</span></code></p></li>
+<li><dl class="simple">
+<dt>Required Input Ports:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;current_manipuland_pose&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;object_model_index&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;gripper_pose&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;gripper_model_index&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;gripper_configuration&quot;</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Required Output Port:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;grasp_success_flag&quot;</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Required Ports to exist <em>somewhere else in the Diagram</em>:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;target_cube_pose&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;cube_model_idx&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;gripper_pose&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;production_gripper_model_idx&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;gripper_configuration&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;grasp_complete&quot;</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<p>Without all of these satisfied, we can not successfully place
+a <cite>LeafSystem</cite> into a Production that expects the <code class="docutils literal notranslate"><span class="pre">&quot;Confirm-When-Grasp-Worked&quot;</span></code>
+role.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="brom_drake.productions.roles.Role.connect_performer_ports_to">
+<span class="sig-name descname"><span class="pre">connect_performer_ports_to</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">builder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DiagramBuilder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">performer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">LeafSystem</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Diagram</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.productions.roles.Role.connect_performer_ports_to" title="Link to this definition">¶</a></dt>
+<dd><p><em>Description</em></p>
+<p>Connect each inputs and output port mentioned in <cite>self.port_assignments</cite>
+on <cite>performer</cite> to the first port found in <cite>builder</cite> with the correct name.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">.Build()</span></code> method should not have been called on <code class="docutils literal notranslate"><span class="pre">builder</span></code>
+before invoking this method.</p>
+</div>
+<p><em>Parameters</em></p>
+<dl class="simple">
+<dt>builder: DiagramBuilder</dt><dd><p>The <code class="docutils literal notranslate"><span class="pre">DiagramBuilder</span></code> containing a partially built diagram.</p>
+</dd>
+<dt>performer: Performer</dt><dd><p>The object that we think can fill the role defined by self.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="brom_drake.productions.roles.RolePortAssignment">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brom_drake.productions.roles.</span></span><span class="sig-name descname"><span class="pre">RolePortAssignment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">external_target_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">performer_port_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pairing_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">brom_drake.productions.roles.role_port_assignment.PairingType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_required</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.productions.roles.RolePortAssignment" title="Link to this definition">¶</a></dt>
-<dd><dl class="py method">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brom_drake.productions.roles.</span></span><span class="sig-name descname"><span class="pre">RolePortAssignment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">external_target_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">performer_port_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pairing_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PairingType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_required</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.productions.roles.RolePortAssignment" title="Link to this definition">¶</a></dt>
+<dd><p><em>Description</em></p>
+<p>A potential connection between an object that “fills a role” in a Drake diagram,
+and the rest of the diagram. Some connections are required, but they need not be.</p>
+<p>TODO(Kwesi): Refactor this class to use the <code class="docutils literal notranslate"><span class="pre">DiagramTarget</span></code> object.</p>
+<p><em>Parameters</em></p>
+<dl class="simple">
+<dt>external_target_name: TargetName</dt><dd><p>The name of the port (or system) that we want to connect this port to</p>
+</dd>
+<dt>performer_port_name: PortName</dt><dd><p>The name of the port that should exist on the LeafSystem (or Diagram) that “fills the role”.</p>
+</dd>
+<dt>pairing_type: PairingType</dt><dd><p>Describes whether or not <cite>performer_port_name</cite> is an input or output port.
+This determines whether or not external_target_name should be an output or input port, respectively.</p>
+</dd>
+<dt>is_required: bool, optional</dt><dd><p>Default is True.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="brom_drake.productions.roles.RolePortAssignment.create_assignment_port_unavailable_error">
+<span class="sig-name descname"><span class="pre">create_assignment_port_unavailable_error</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ValueError</span></span></span><a class="headerlink" href="#brom_drake.productions.roles.RolePortAssignment.create_assignment_port_unavailable_error" title="Link to this definition">¶</a></dt>
+<dd><p><em>Description</em></p>
+<p>Creates the appropriate version of “Performer does not have required input port” error message.</p>
+<p>TODO(Kwesi): Should we create an error type for this?</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.roles.RolePortAssignment.create_connections_in">
 <span class="sig-name descname"><span class="pre">create_connections_in</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">builder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DiagramBuilder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">performer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">LeafSystem</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Diagram</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.productions.roles.RolePortAssignment.create_connections_in" title="Link to this definition">¶</a></dt>
-<dd><section id="description">
-<h3>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h3>
-<dl class="field-list simple">
-<dt class="field-odd">param builder<span class="colon">:</span></dt>
-<dd class="field-odd"><p></p></dd>
-<dt class="field-even">param performer<span class="colon">:</span></dt>
-<dd class="field-even"><p></p></dd>
-<dt class="field-odd">return<span class="colon">:</span></dt>
-<dd class="field-odd"><p></p></dd>
+<dd><p><em>Description</em></p>
+<p>Creates the connection between the performer and the appropriate
+port in the incomplete Drake diagram specified by <cite>builder</cite>.</p>
+<p><em>Parameters</em></p>
+<dl class="simple">
+<dt>builder: DiagramBuilder</dt><dd><p>Contains the partially built Diagram.</p>
+</dd>
+<dt>performer: Performer</dt><dd><p>The LeafSystem (or Diagram) that we wish to connect to the incomplete
+Diagram in <code class="docutils literal notranslate"><span class="pre">builder</span></code>.</p>
+</dd>
 </dl>
-</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brom_drake.productions.roles.RolePortAssignment.create_input_port_connections_in">
+<span class="sig-name descname"><span class="pre">create_input_port_connections_in</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">builder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DiagramBuilder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">performer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">LeafSystem</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Diagram</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.productions.roles.RolePortAssignment.create_input_port_connections_in" title="Link to this definition">¶</a></dt>
+<dd><p><em>Description</em></p>
+<p>Assuming that the assignment defines an input port connection, this function
+finds either:</p>
+<ul class="simple">
+<li><p>A system with the target name, and connects the first output port of the target to the performer’s input OR</p></li>
+<li><p>The first system with the port given by the constraints, and connects that output port to the performer’s input port.</p></li>
+</ul>
+<p><em>Parameters</em></p>
+<dl class="simple">
+<dt>builder: DiagramBuilder</dt><dd><p>Contains the partially built Diagram.</p>
+</dd>
+<dt>performer: Performer</dt><dd><p>The LeafSystem (or Diagram) that we wish to connect to the incomplete
+Diagram in <code class="docutils literal notranslate"><span class="pre">builder</span></code>.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.roles.RolePortAssignment.create_output_port_connections_in">
 <span class="sig-name descname"><span class="pre">create_output_port_connections_in</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">builder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DiagramBuilder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">performer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">LeafSystem</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Diagram</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.productions.roles.RolePortAssignment.create_output_port_connections_in" title="Link to this definition">¶</a></dt>
-<dd><section id="id1">
-<h3>Description<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
-<p>Creates the connections from the performer’s output port to
-the external system’s input ports.
-:param builder:
-:param performer:
-:return:</p>
-</section>
+<dd><p><em>Description</em></p>
+<p>Assuming that the assignment defines an OUTPUT port connection, this function
+finds either:</p>
+<ul class="simple">
+<li><p>A system with the target name, and connects the first input port of the target to the performer’s output OR</p></li>
+<li><p>The first system with the input port given by the constraints, and connects that input port to the performer’s output port.</p></li>
+</ul>
+<p><em>Parameters</em></p>
+<dl class="simple">
+<dt>builder: DiagramBuilder</dt><dd><p>Contains the partially built Diagram.</p>
+</dd>
+<dt>performer: Performer</dt><dd><p>The LeafSystem (or Diagram) that we wish to connect to the incomplete
+Diagram in <code class="docutils literal notranslate"><span class="pre">builder</span></code>.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.roles.RolePortAssignment.find_any_matching_input_targets">
 <span class="sig-name descname"><span class="pre">find_any_matching_input_targets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">builder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DiagramBuilder</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">LeafSystem</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#brom_drake.productions.roles.RolePortAssignment.find_any_matching_input_targets" title="Link to this definition">¶</a></dt>
-<dd><section id="id2">
-<h3>Description<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h3>
+<dd><p><em>Description</em></p>
 <p>This function attempts to find all targets that match the input
-target definition, i.e.:
-- A system with the input port with given name
-- A system with the given name.
-:param builder:
-:return:</p>
-</section>
+target definition, i.e.:</p>
+<ul class="simple">
+<li><p>A system with the input port with given name</p></li>
+<li><p>A system with the given name.</p></li>
+</ul>
+<p>TODO(Kwesi): Compress this method and the output targets method?</p>
+<dl class="simple">
+<dt>builder: DiagramBuilder</dt><dd><p>Contains the partially built Diagram.</p>
+</dd>
+</dl>
+<p><em>Returns</em></p>
+<dl class="simple">
+<dt>matching_systems_list: List[LeafSystem]</dt><dd><p>A list of all systems that match the constraints/target definition.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.roles.RolePortAssignment.find_any_matching_output_targets">
 <span class="sig-name descname"><span class="pre">find_any_matching_output_targets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">builder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DiagramBuilder</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">LeafSystem</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#brom_drake.productions.roles.RolePortAssignment.find_any_matching_output_targets" title="Link to this definition">¶</a></dt>
-<dd><section id="id3">
-<h3>Description<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h3>
+<dd><p><em>Description</em></p>
 <p>This function attempts to find all targets that match the output
-target definition, i.e.:
-- A system with the output port with given name
-- A system with the given name.
-:param builder:
-:return:</p>
-</section>
+target definition, i.e.:</p>
+<ul class="simple">
+<li><p>A system with the output port with given name</p></li>
+<li><p>A system with the given name.</p></li>
+</ul>
+<p><em>Parameters</em></p>
+<dl class="simple">
+<dt>builder: DiagramBuilder</dt><dd><p>Contains the partially built Diagram.</p>
+</dd>
+</dl>
+<p><em>Returns</em></p>
+<dl class="simple">
+<dt>matching_systems_list: List[LeafSystem]</dt><dd><p>A list of all systems that match the constraints/target definition.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -537,9 +724,14 @@ target definition, i.e.:
 <li><a class="reference internal" href="#">roles</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#classes">Classes</a><ul>
-<li><a class="reference internal" href="#brom_drake.productions.roles.Role"><code class="docutils literal notranslate"><span class="pre">Role</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.productions.roles.Role"><code class="docutils literal notranslate"><span class="pre">Role</span></code></a><ul>
+<li><a class="reference internal" href="#brom_drake.productions.roles.Role.connect_performer_ports_to"><code class="docutils literal notranslate"><span class="pre">Role.connect_performer_ports_to()</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#brom_drake.productions.roles.RolePortAssignment"><code class="docutils literal notranslate"><span class="pre">RolePortAssignment</span></code></a><ul>
+<li><a class="reference internal" href="#brom_drake.productions.roles.RolePortAssignment.create_assignment_port_unavailable_error"><code class="docutils literal notranslate"><span class="pre">RolePortAssignment.create_assignment_port_unavailable_error()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.roles.RolePortAssignment.create_connections_in"><code class="docutils literal notranslate"><span class="pre">RolePortAssignment.create_connections_in()</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.productions.roles.RolePortAssignment.create_input_port_connections_in"><code class="docutils literal notranslate"><span class="pre">RolePortAssignment.create_input_port_connections_in()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.roles.RolePortAssignment.create_output_port_connections_in"><code class="docutils literal notranslate"><span class="pre">RolePortAssignment.create_output_port_connections_in()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.roles.RolePortAssignment.find_any_matching_input_targets"><code class="docutils literal notranslate"><span class="pre">RolePortAssignment.find_any_matching_input_targets()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.roles.RolePortAssignment.find_any_matching_output_targets"><code class="docutils literal notranslate"><span class="pre">RolePortAssignment.find_any_matching_output_targets()</span></code></a></li>
@@ -559,7 +751,7 @@ target definition, i.e.:
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=15b7e88b"></script>
+</div><script src="../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>

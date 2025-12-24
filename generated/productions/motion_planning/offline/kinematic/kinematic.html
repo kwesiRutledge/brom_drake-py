@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html"><link rel="next" title="pick_and_place" href="../../../pick_and_place/pick_and_place.html"><link rel="prev" title="dynamic" href="../dynamic/dynamic.html">
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2025.12.19 -->
-        <title>kinematic - brom_drake-py v0.0.0+sphinxFallback documentation</title>
+        <title>kinematic - brom_drake-py v0.0.0+githubActionDefault documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
@@ -162,7 +162,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../index.html"><div class="brand">brom_drake-py v0.0.0+sphinxFallback documentation</div></a>
+      <a href="../../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +183,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py v0.0.0+sphinxFallback documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -404,335 +404,531 @@
 <h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.offline.kinematic.ChemLab1">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brom_drake.productions.motion_planning.offline.kinematic.</span></span><span class="sig-name descname"><span class="pre">ChemLab1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meshcat_port_number</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">7000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plan_execution_speed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_height</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shelf_pose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">RigidTransform</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.kinematic.ChemLab1" title="Link to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>Description:</dt><dd><p>This production is the first in the chemistry lab series.
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brom_drake.productions.motion_planning.offline.kinematic.</span></span><span class="sig-name descname"><span class="pre">ChemLab1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meshcat_port_number</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">7000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plan_execution_speed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_height</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shelf_pose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">RigidTransform</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.kinematic.ChemLab1" title="Link to this definition">¶</a></dt>
+<dd><p><em>Description</em></p>
+<p>This production is the first in the chemistry lab series.
 It is used to test the motion planning capabilities of the robot
 in a chemistry lab setting with minimal constraints.</p>
+<p><em>Parameters</em></p>
+<dl class="simple">
+<dt>time_step: float, optional</dt><dd><p>The time step for the production, by default 1e-3.</p>
+</dd>
+<dt>meshcat_port_number: int, optional</dt><dd><p>The port number for meshcat visualization, by default 7001.</p>
+</dd>
+<dt>plan_execution_speed: float, optional</dt><dd><p>The speed at which to execute the motion plan, by default 0.2.</p>
+</dd>
+<dt>pose_WorldBeaker: RigidTransform, optional</dt><dd><p>The pose of the beaker in the world frame, by default None.</p>
+</dd>
+<dt>table_length: float, optional</dt><dd><p>The length of the table, by default 0.6.</p>
+</dd>
+<dt>table_width: float, optional</dt><dd><p>The width of the table, by default 2.0.</p>
+</dd>
+<dt>table_height: float, optional</dt><dd><p>The height of the table, by default 0.1.</p>
+</dd>
+<dt>shelf_pose: RigidTransform, optional</dt><dd><p>The pose of the shelf in the world frame, by default None.</p>
 </dd>
 </dl>
+<p><em>Usage</em></p>
+<p>To use this production, create an instance of the ChemLab1 class
+provide it with a motion planning function, and then build it.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create the production</span>
+<span class="n">production</span> <span class="o">=</span> <span class="n">ChemLab1</span><span class="p">()</span>
+
+<span class="c1"># Create a planner object which will be used to plan the motion</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">RRTConnectPlannerConfig</span><span class="p">(</span>
+    <span class="n">steering_step_size</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">prob_sample_goal</span><span class="o">=</span><span class="mf">0.30</span><span class="p">,</span>
+    <span class="n">max_iterations</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="mf">1e5</span><span class="p">),</span>
+    <span class="n">convergence_threshold</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span>
+    <span class="n">debug_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">planner2</span> <span class="o">=</span> <span class="n">RRTConnectPlanner</span><span class="p">(</span>
+    <span class="n">production</span><span class="o">.</span><span class="n">arm</span><span class="p">,</span>
+    <span class="n">production</span><span class="o">.</span><span class="n">plant</span><span class="p">,</span>
+    <span class="n">production</span><span class="o">.</span><span class="n">scene_graph</span><span class="p">,</span>
+    <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># To build the production, we only need to provide a planning function</span>
+<span class="c1"># (can come from anywhere, not just a BaseRRTPlanner object)</span>
+<span class="n">diagram</span><span class="p">,</span> <span class="n">diagram_context</span> <span class="o">=</span> <span class="n">production</span><span class="o">.</span><span class="n">easy_cast_and_build</span><span class="p">(</span>
+    <span class="n">planner2</span><span class="o">.</span><span class="n">plan</span><span class="p">,</span>
+    <span class="n">with_watcher</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Simulating...&quot;</span><span class="p">)</span>
+
+<span class="c1"># Simulate the diagram</span>
+<span class="n">simulator</span> <span class="o">=</span> <span class="n">Simulator</span><span class="p">(</span><span class="n">diagram</span><span class="p">,</span> <span class="n">diagram_context</span><span class="p">)</span>
+<span class="n">simulator</span><span class="o">.</span><span class="n">set_target_realtime_rate</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+
+<span class="c1"># Run simulation</span>
+<span class="n">simulator</span><span class="o">.</span><span class="n">Initialize</span><span class="p">()</span>
+<span class="n">simulator</span><span class="o">.</span><span class="n">AdvanceTo</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="n">planned_trajectory</span> <span class="o">=</span> <span class="n">production</span><span class="o">.</span><span class="n">plan_dispenser</span><span class="o">.</span><span class="n">planned_trajectory</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected end time of trajectory: </span><span class="si">{</span><span class="n">planned_trajectory</span><span class="o">.</span><span class="n">end_time</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Advance to the end of the simulation</span>
+<span class="n">simulator</span><span class="o">.</span><span class="n">AdvanceTo</span><span class="p">(</span><span class="n">planned_trajectory</span><span class="o">.</span><span class="n">end_time</span><span class="p">()</span><span class="o">+</span><span class="mf">1.0</span><span class="p">)</span>
+</pre></div>
+</div>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.offline.kinematic.ChemLab1.add_beaker">
 <span class="sig-name descname"><span class="pre">add_beaker</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.kinematic.ChemLab1.add_beaker" title="Link to this definition">¶</a></dt>
-<dd><section id="description">
-<h3>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h3>
-<p>This method adds the beaker to the production.</p>
-</section>
+<dd><p><em>Description</em></p>
+<p>This method adds a model of a beaker to the production.
+The beaker is welded in place at the pose pose_WorldBeaker
+with respect to the world origin.</p>
+<p>The beaker’s URDF is specified in the <cite>brom_drake</cite> robots
+package.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.offline.kinematic.ChemLab1.add_cast_and_build">
-<span class="sig-name descname"><span class="pre">add_cast_and_build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cast</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../../roles/roles.html#brom_drake.productions.roles.Role" title="brom_drake.productions.roles.role.Role"><span class="pre">Role</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">LeafSystem</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Diagram</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_watcher</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Diagram</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Context</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.kinematic.ChemLab1.add_cast_and_build" title="Link to this definition">¶</a></dt>
-<dd><section id="id1">
-<h3>Description<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
+<span class="sig-name descname"><span class="pre">add_cast_and_build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cast</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../../roles/roles.html#brom_drake.productions.roles.Role" title="brom_drake.productions.roles.role.Role"><span class="pre">Role</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">LeafSystem</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Diagram</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_watcher</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Diagram</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Context</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.kinematic.ChemLab1.add_cast_and_build" title="Link to this definition">¶</a></dt>
+<dd><p><em>Description</em></p>
 <p>Modifies the normal add_cast_and_build, so that
 we share the context of the plant with the appropriate
-parts of the system.
-:param cast:
-:param with_watcher: A Boolean that determines whether to add a watcher to the diagram.
-:return:</p>
-</section>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="brom_drake.productions.motion_planning.offline.kinematic.ChemLab1.add_dummy_gripper_components">
-<span class="sig-name descname"><span class="pre">add_dummy_gripper_components</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.kinematic.ChemLab1.add_dummy_gripper_components" title="Link to this definition">¶</a></dt>
-<dd><section id="id2">
-<h3>Description<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h3>
-<p>Add more components to the production that are used
-to hold the gripper in place.</p>
-</section>
+parts of the system.</p>
+<p>In addition to using the parent class’s implementation of add_cast_and_build, this:
+- Configures the collision filter to avoid spurious collisions between the cupboard’s 
+various parts and itself
+- Insert the motion planner role into the diagram and connect it properly</p>
+<p><em>Parameters</em></p>
+<dl class="simple">
+<dt>cast: List[Tuple[Role, Performer]], optional</dt><dd><p>The main cast members that we would like to assign to the production.
+Default is None.
+TODO(Kwesi): Will using the default lead to errors? Should we even allow that?</p>
+</dd>
+<dt>with_watcher: bool, optional</dt><dd><p>A Boolean that determines whether to add a watcher to the diagram.
+Default is False.</p>
+</dd>
+</dl>
+<p><em>Returns</em></p>
+<dl class="simple">
+<dt>diagram: pydrake.systems.framework.Diagram</dt><dd><p>The diagram that represents the fully assembled cast, all connected together.</p>
+</dd>
+<dt>diagram_context: pdrake.systems.framework.Context</dt><dd><p>The context for the diagram (used by the diagram watcher to monitor the system, if defined).</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.offline.kinematic.ChemLab1.add_motion_planning_components">
 <span class="sig-name descname"><span class="pre">add_motion_planning_components</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.kinematic.ChemLab1.add_motion_planning_components" title="Link to this definition">¶</a></dt>
-<dd><p>Add the motion planning components to the builder.
-:return:</p>
+<dd><p><em>Description</em></p>
+<p>Add the motion planning components to the builder.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.offline.kinematic.ChemLab1.add_shelf">
 <span class="sig-name descname"><span class="pre">add_shelf</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.kinematic.ChemLab1.add_shelf" title="Link to this definition">¶</a></dt>
-<dd><p>Add the shelf to the production.
-:return:</p>
+<dd><p><em>Description</em></p>
+<p>Add a model of a shelf to the production’s plant.
+The shelf’s pydrake.multibody.tree.ModelInstanceIndex will be saved in the internal variable
+<code class="docutils literal notranslate"><span class="pre">self.shelf_model_index</span></code>.
+The shelf is fixed at the pose <code class="docutils literal notranslate"><span class="pre">self.pose_WorldShelf</span></code> with respect to the world origin.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.offline.kinematic.ChemLab1.add_supporting_cast">
 <span class="sig-name descname"><span class="pre">add_supporting_cast</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.kinematic.ChemLab1.add_supporting_cast" title="Link to this definition">¶</a></dt>
-<dd><section id="id3">
-<h3>Description<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h3>
+<dd><p><em>Description</em></p>
 <p>This method adds all secondary cast members to the builder.
-The secondary cast members in the production are the:
-- Table, where the robot exists
-- Test Tube Holders
-- Component which share’s the robot model reference
-- Motion Planning components (e.g., dispensers, etc.)
-- Start and Goal sources
-:return:</p>
-</section>
+The secondary cast members in the production are the:</p>
+<ul class="simple">
+<li><p>Table, where the robot exists</p></li>
+<li><p>Test Tube Holders</p></li>
+<li><p>Component which share’s the robot model reference</p></li>
+<li><p>Motion Planning components (e.g., dispensers, etc.)</p></li>
+<li><p>Start and Goal sources</p></li>
+</ul>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.offline.kinematic.ChemLab1.add_table">
 <span class="sig-name descname"><span class="pre">add_table</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.kinematic.ChemLab1.add_table" title="Link to this definition">¶</a></dt>
-<dd><section id="id4">
-<h3>Description<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h3>
-<p>This method adds the table to the production.
+<dd><p><em>Description</em></p>
+<p>This method adds a model of a table to the production’s plant.
 The table will be a simple shape that the robot will interact with.
-:return:</p>
-</section>
+The table is fixed in a pose with respect to the origin (pose chosen in this function).</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.offline.kinematic.ChemLab1.add_test_tube_holders">
 <span class="sig-name descname"><span class="pre">add_test_tube_holders</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.kinematic.ChemLab1.add_test_tube_holders" title="Link to this definition">¶</a></dt>
-<dd><section id="id5">
-<h3>Description<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
+<dd><p><em>Description</em></p>
 <p>This method adds the test tube holders to the production.
-:return:</p>
-</section>
+The test tube holder is fixed at pose <code class="docutils literal notranslate"><span class="pre">self.pose_WorldHolder</span></code>
+with respect to the world origin.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.offline.kinematic.ChemLab1.configure_collision_filter">
 <span class="sig-name descname"><span class="pre">configure_collision_filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scene_graph_context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.kinematic.ChemLab1.configure_collision_filter" title="Link to this definition">¶</a></dt>
-<dd><section id="id6">
-<h3>Description<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h3>
-<p>This method configures the collision filter for the production.
-:param scene_graph_context:
-:return:</p>
-</section>
+<dd><p><em>Description</em></p>
+<p>This method configures the collision filter, so that:</p>
+<ul class="simple">
+<li><p>self collisions between the shelf’s pieces,</p></li>
+</ul>
+<p>are ignored during simulation.</p>
+<p><em>Parameters</em></p>
+<dl class="simple">
+<dt>scene_graph_context: pydrake.systems.framework.Context</dt><dd><p>The context of the scenegraph for the constructed production (i.e., the diagram
+for the built Production).</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.offline.kinematic.ChemLab1.easy_cast_and_build">
 <span class="sig-name descname"><span class="pre">easy_cast_and_build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">planning_algorithm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">DiGraph</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_watcher</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Diagram</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Context</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.kinematic.ChemLab1.easy_cast_and_build" title="Link to this definition">¶</a></dt>
-<dd><section id="id7">
-<h3>Description<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h3>
-<p>This function is used to easily cast and build the production.
-:param planning_algorithm: The algorithm that we will use to
-plan the motion.
-:param with_watcher: A Boolean that determines whether to add a watcher to the diagram.
-:return:</p>
-</section>
+<dd><p><em>Description</em></p>
+<p>This function is used to easily cast and build the production.</p>
+<p><em>Parameters</em></p>
+<dl class="simple">
+<dt>planning_algorithm: Callable[[np.ndarray, np.ndarray, Callable[[np.ndarray], bool]], Tuple[MotionPlan, bool]</dt><dd><p>The algorithm that produces a path from the start configuration to goal configuration
+using the collision checker for the scene.</p>
+</dd>
+<dt>with_watcher: bool, optional</dt><dd><p>A Boolean that determines whether to add a watcher to the diagram.
+Default is False.</p>
+</dd>
+</dl>
+<p><em>Returns</em></p>
+<dl class="simple">
+<dt>diagram: pydrake.systems.framework.Diagram</dt><dd><p>The diagram that represents the fully assembled cast, all connected together.</p>
+</dd>
+<dt>diagram_context: pdrake.systems.framework.Context</dt><dd><p>The context for the diagram (used by the diagram watcher to monitor the system, if defined).</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.offline.kinematic.ChemLab1.goal_configuration">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">goal_configuration</span></span><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.kinematic.ChemLab1.goal_configuration" title="Link to this definition">¶</a></dt>
-<dd><p>Get the goal pose. This should be defined by the subclass.
-:return:</p>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">goal_configuration</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.kinematic.ChemLab1.goal_configuration" title="Link to this definition">¶</a></dt>
+<dd><p><em>Description</em></p>
+<p>Goal configuration of the robot in the production.</p>
+<p>Depending on the inputs, this may be computed the first time it is called.</p>
+<p><em>Returns</em></p>
+<dl class="simple">
+<dt>q_goal: np.ndarray of shape (6,)</dt><dd><p>The goal configuration of the robot.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.offline.kinematic.ChemLab1.goal_pose">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">goal_pose</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">RigidTransform</span></em><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.kinematic.ChemLab1.goal_pose" title="Link to this definition">¶</a></dt>
-<dd><section id="id8">
-<h3>Description<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h3>
+<dd><p><em>Description</em></p>
 <p>Get the goal pose of the end effector frame.</p>
-</section>
-<section id="returns">
-<h3>Returns<a class="headerlink" href="#returns" title="Link to this heading">¶</a></h3>
+<p><em>Returns</em></p>
 <dl class="simple">
-<dt>RigidTransform</dt><dd><p>The goal pose of the robot.</p>
+<dt>goal_pose: RigidTransform</dt><dd><p>The goal pose of the robot.</p>
 </dd>
 </dl>
-</section>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.offline.kinematic.ChemLab1.id">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../../../productions.html#brom_drake.productions.ProductionID" title="brom_drake.productions.ids.ProductionID"><span class="pre">ProductionID</span></a></em><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.kinematic.ChemLab1.id" title="Link to this definition">¶</a></dt>
-<dd><p><em>Description</em></p>
-<p>The unique identifier for the production.</p>
-<p>If not defined, returns ProductionID.kNotDefined.</p>
-<p><em>Returns</em></p>
-<dl class="simple">
-<dt>ProductionID</dt><dd><p>The unique identifier for the production.</p>
-</dd>
-</dl>
+<dd><p>Always returns <code class="docutils literal notranslate"><span class="pre">ProductionID.kChemLab1</span></code>.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.offline.kinematic.ChemLab1.solve_forward_kinematics_problem_for_arm">
 <span class="sig-name descname"><span class="pre">solve_forward_kinematics_problem_for_arm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">robot_joint_positions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_frame_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'ft_frame'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">RigidTransform</span></span></span><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.kinematic.ChemLab1.solve_forward_kinematics_problem_for_arm" title="Link to this definition">¶</a></dt>
-<dd><section id="id9">
-<h3>Description<a class="headerlink" href="#id9" title="Link to this heading">¶</a></h3>
+<dd><p><em>Description</em></p>
 <p>This method solves the forward kinematics problem for the UR10e arm
 by itself.</p>
-</section>
-<section id="id10">
-<h3>Returns<a class="headerlink" href="#id10" title="Link to this heading">¶</a></h3>
+<p><em>Parameters</em></p>
 <dl class="simple">
-<dt>RigidTransform</dt><dd><p>The end effector pose of the robot.</p>
+<dt>robot_joint_positions: np.ndarray of shape (6,)</dt><dd><p>The joint configuration of the robot in the production.</p>
+</dd>
+<dt>target_frame_name: str, optional</dt><dd><p>The frame that we compute the pose of with respect to the world origin frame.
+Default is “ft_frame”</p>
 </dd>
 </dl>
-</section>
+<p><em>Returns</em></p>
+<dl class="simple">
+<dt>pose_WorldTarget: RigidTransform</dt><dd><p>The end effector pose of the robot expressed in the world frame.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.offline.kinematic.ChemLab1.start_configuration">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">start_configuration</span></span><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.kinematic.ChemLab1.start_configuration" title="Link to this definition">¶</a></dt>
-<dd><p>Get the goal pose. This should be defined by the subclass.
-:return:</p>
+<dd><p><em>Description</em></p>
+<p>Get the start configuration.</p>
+<p>This may be computed using inverse kinematics on the first time it is requested,
+depending on the construction of the production.</p>
+<p><em>Returns</em></p>
+<dl class="simple">
+<dt>q_start: np.ndarray of shape(6,)</dt><dd><p>The starting configuration of the production’s robot.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.offline.kinematic.ChemLab1.start_pose">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">start_pose</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">RigidTransform</span></em><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.kinematic.ChemLab1.start_pose" title="Link to this definition">¶</a></dt>
-<dd><section id="id11">
-<h3>Description<a class="headerlink" href="#id11" title="Link to this heading">¶</a></h3>
+<dd><p><em>Description</em></p>
 <p>Get the start pose.</p>
-</section>
-<section id="id12">
-<h3>Returns<a class="headerlink" href="#id12" title="Link to this heading">¶</a></h3>
+<p><em>Returns</em></p>
 <dl class="simple">
-<dt>RigidTransform</dt><dd><p>The start pose of the robot.</p>
+<dt>pose_WorldStart: RigidTransform</dt><dd><p>The start pose of the robot’s end effector frame with respect to the world frame.</p>
 </dd>
 </dl>
-</section>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.offline.kinematic.ShelfPlanning1">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brom_drake.productions.motion_planning.offline.kinematic.</span></span><span class="sig-name descname"><span class="pre">ShelfPlanning1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shelf_pose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">RigidTransform</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meshcat_port_number</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">7001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plan_execution_speed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.kinematic.ShelfPlanning1" title="Link to this definition">¶</a></dt>
-<dd><dl class="py method">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brom_drake.productions.motion_planning.offline.kinematic.</span></span><span class="sig-name descname"><span class="pre">ShelfPlanning1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shelf_pose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">RigidTransform</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meshcat_port_number</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">7001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plan_execution_speed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.kinematic.ShelfPlanning1" title="Link to this definition">¶</a></dt>
+<dd><p><em>Description</em></p>
+<p>This production contains a simple motion planning task
+where we attempt to reach to different places around the shelfs
+of a bookcase.</p>
+<p>This is a Kinematic motion planning production, which means that the
+the robot’s actuators will not be driven. Instead, the robot’s links will
+be reset to “exactly” the configurations in the motion plan. This is not realistic
+but tests the correctness of the plan without worrying about the control problem
+of moving the arm.</p>
+<p><em>Parameters</em></p>
+<dl class="simple">
+<dt>time_step: float, optional</dt><dd><p>The time step for the production, by default 1e-3.</p>
+</dd>
+<dt>shelf_pose: RigidTransform, optional</dt><dd><p>The pose of the shelf in the world frame, by default None.</p>
+</dd>
+<dt>meshcat_port_number: int, optional</dt><dd><p>The port number for meshcat visualization, by default 7001.</p>
+</dd>
+<dt>plan_execution_speed: float, optional</dt><dd><p>The speed at which to execute the motion plan, by default 0.2</p>
+</dd>
+</dl>
+<p><em>Usage</em></p>
+<p>You may use this in a similar way to all other KinematicMotionPlanningProduction
+objects.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Other imports above...</span>
+<span class="kn">from</span> <span class="nn">brom_drake.motion_planning.algorithms.rrt</span> <span class="kn">import</span> <span class="n">RRTConnectPlannerConfig</span><span class="p">,</span> <span class="n">RRTConnectPlanner</span>
+<span class="kn">from</span> <span class="nn">brom_drake.productions.motion_planning.offline</span> <span class="kn">import</span> <span class="n">ShelfPlanning1</span>
+
+<span class="c1"># Define the goal pose</span>
+<span class="n">easy_goal_position</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">+</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.05</span><span class="p">])</span>
+<span class="n">goal_orientation</span> <span class="o">=</span> <span class="n">RollPitchYaw</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span><span class="o">.</span><span class="n">ToQuaternion</span><span class="p">()</span>
+<span class="n">goal_pose</span> <span class="o">=</span> <span class="n">RigidTransform</span><span class="p">(</span><span class="n">goal_orientation</span><span class="p">,</span> <span class="n">easy_goal_position</span><span class="p">)</span>
+
+<span class="c1"># Create the production</span>
+<span class="n">production</span> <span class="o">=</span> <span class="n">ShelfPlanning1</span><span class="p">(</span>
+    <span class="n">meshcat_port_number</span><span class="o">=</span><span class="n">meshcat_port_number</span><span class="p">,</span> <span class="c1"># Use None for CI</span>
+    <span class="n">goal_pose</span><span class="o">=</span><span class="n">goal_pose</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Create a planner object which will be used to plan the motion</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">RRTConnectPlannerConfig</span><span class="p">(</span>
+    <span class="n">steering_step_size</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+    <span class="n">prob_sample_goal</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+    <span class="n">max_iterations</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="mf">1e5</span><span class="p">),</span>
+    <span class="n">convergence_threshold</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">planner2</span> <span class="o">=</span> <span class="n">RRTConnectPlanner</span><span class="p">(</span>
+    <span class="n">production</span><span class="o">.</span><span class="n">arm</span><span class="p">,</span>
+    <span class="n">production</span><span class="o">.</span><span class="n">plant</span><span class="p">,</span>
+    <span class="n">production</span><span class="o">.</span><span class="n">scene_graph</span><span class="p">,</span>
+    <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># To build the production, we only need to provide a planning function</span>
+<span class="c1"># (can come from anywhere, not just a BaseRRTPlanner object)</span>
+<span class="n">diagram</span><span class="p">,</span> <span class="n">diagram_context</span> <span class="o">=</span> <span class="n">production</span><span class="o">.</span><span class="n">easy_cast_and_build</span><span class="p">(</span>
+    <span class="n">planner2</span><span class="o">.</span><span class="n">plan</span><span class="p">,</span>
+    <span class="n">with_watcher</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Simulating...&quot;</span><span class="p">)</span>
+
+<span class="c1"># Simulate the diagram</span>
+<span class="n">simulator</span> <span class="o">=</span> <span class="n">Simulator</span><span class="p">(</span><span class="n">diagram</span><span class="p">,</span> <span class="n">diagram_context</span><span class="p">)</span>
+<span class="n">simulator</span><span class="o">.</span><span class="n">set_target_realtime_rate</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+
+<span class="c1"># Run simulation</span>
+<span class="n">simulator</span><span class="o">.</span><span class="n">Initialize</span><span class="p">()</span>
+<span class="n">simulator</span><span class="o">.</span><span class="n">AdvanceTo</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="n">planned_trajectory</span> <span class="o">=</span> <span class="n">production</span><span class="o">.</span><span class="n">plan_dispenser</span><span class="o">.</span><span class="n">planned_trajectory</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected end time of the planned trajectory: </span><span class="si">{</span><span class="n">planned_trajectory</span><span class="o">.</span><span class="n">end_time</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># return</span>
+<span class="n">simulator</span><span class="o">.</span><span class="n">AdvanceTo</span><span class="p">(</span><span class="n">planned_trajectory</span><span class="o">.</span><span class="n">end_time</span><span class="p">()</span><span class="o">+</span><span class="mf">1.0</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.offline.kinematic.ShelfPlanning1.add_cast_and_build">
-<span class="sig-name descname"><span class="pre">add_cast_and_build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cast</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../../roles/roles.html#brom_drake.productions.roles.Role" title="brom_drake.productions.roles.role.Role"><span class="pre">Role</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">LeafSystem</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Diagram</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_watcher</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Diagram</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Context</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.kinematic.ShelfPlanning1.add_cast_and_build" title="Link to this definition">¶</a></dt>
-<dd><section id="id13">
-<h3>Description<a class="headerlink" href="#id13" title="Link to this heading">¶</a></h3>
+<span class="sig-name descname"><span class="pre">add_cast_and_build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cast</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../../roles/roles.html#brom_drake.productions.roles.Role" title="brom_drake.productions.roles.role.Role"><span class="pre">Role</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">LeafSystem</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Diagram</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_watcher</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Diagram</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Context</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.kinematic.ShelfPlanning1.add_cast_and_build" title="Link to this definition">¶</a></dt>
+<dd><p><em>Description</em></p>
 <p>Modifies the normal add_cast_and_build, so that
 we share the context of the plant with the appropriate
-parts of the system.
-:param cast:
-:param with_watcher: A Boolean that determines whether to add a watcher to the diagram.
-:return:</p>
-</section>
+parts of the system.</p>
+<p>In addition to using the parent class’s implementation of add_cast_and_build, this:
+- Configures the collision filter to avoid spurious collisions between the cupboard’s 
+various parts and itself
+- Insert the motion planner role into the diagram and connect it properly</p>
+<p>TODO(kwesi): Consider making this a standard part of the
+OfflineKinematicMotionPlanningProduction class.</p>
+<p><em>Parameters</em></p>
+<dl class="simple">
+<dt>cast: List[Tuple[Role, Performer]], optional</dt><dd><p>The cast to add to the production, by default [].</p>
+</dd>
+<dt>with_watcher: bool, optional</dt><dd><p>A Boolean that determines whether to add a watcher to the diagram, by default False.</p>
+</dd>
+</dl>
+<p><em>Returns</em></p>
+<dl class="simple">
+<dt>diagram: Diagram</dt><dd><p>The built diagram.</p>
+</dd>
+<dt>diagram_context: Context</dt><dd><p>The context for the built diagram.
+This context will be used to initialize the watcher.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.offline.kinematic.ShelfPlanning1.add_motion_planning_components">
 <span class="sig-name descname"><span class="pre">add_motion_planning_components</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.kinematic.ShelfPlanning1.add_motion_planning_components" title="Link to this definition">¶</a></dt>
-<dd><p>Add the motion planning components to the builder.
-:return:</p>
+<dd><p><em>Description</em></p>
+<p>Connects the plan dispenser’s output port (i.e., the reference signal for the
+arm’s joint controller) to the input of the UR10eStation.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.offline.kinematic.ShelfPlanning1.add_shelf">
 <span class="sig-name descname"><span class="pre">add_shelf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plant</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MultibodyPlant</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.kinematic.ShelfPlanning1.add_shelf" title="Link to this definition">¶</a></dt>
-<dd><p>Add the shelf to the production.
-:return:</p>
+<dd><p><em>Description</em></p>
+<p>Adds a model of the cupboard to the production’s plant.</p>
+<p><em>Parameter</em></p>
+<dl class="simple">
+<dt>plant: pydrake.multibody.plant.MultibodyPlant</dt><dd><p>The plant that we want to add the cupboard to.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.offline.kinematic.ShelfPlanning1.add_supporting_cast">
 <span class="sig-name descname"><span class="pre">add_supporting_cast</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.kinematic.ShelfPlanning1.add_supporting_cast" title="Link to this definition">¶</a></dt>
-<dd><p>Add all secondary cast members to the builder.
-:return:</p>
+<dd><p><em>Description</em></p>
+<p>Modifies the plant and the builder by:
+- Adding UR10e station to the plant
+- Adding shelf to the plant
+- Adding a “ground” to the plant
+- Adding features required by the KinematicMotionPlanningProductionFeatures</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Robot’s ModelInstanceIndex Source</p></li>
+<li><p>Motion Planning Components</p></li>
+<li><p>Start and Goal Pose sources</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p>Setting initial configuration of the arm for the plant</p></li>
+</ul>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.offline.kinematic.ShelfPlanning1.add_ur10e_station">
 <span class="sig-name descname"><span class="pre">add_ur10e_station</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.kinematic.ShelfPlanning1.add_ur10e_station" title="Link to this definition">¶</a></dt>
-<dd><section id="id14">
-<h3>Description<a class="headerlink" href="#id14" title="Link to this heading">¶</a></h3>
-<p>Add the Kinematic UR10e station to the production for simple motion planning.
-:return:</p>
-</section>
+<dd><p><em>Description</em></p>
+<p>Add the Kinematic UR10e station to the production’s plant for simple motion planning.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.offline.kinematic.ShelfPlanning1.configure_collision_filter">
 <span class="sig-name descname"><span class="pre">configure_collision_filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scene_graph_context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.kinematic.ShelfPlanning1.configure_collision_filter" title="Link to this definition">¶</a></dt>
-<dd><section id="id15">
-<h3>Description<a class="headerlink" href="#id15" title="Link to this heading">¶</a></h3>
-<p>This method configures the collision filter for the production.
-:param scene_graph_context:
-:return:</p>
-</section>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="brom_drake.productions.motion_planning.offline.kinematic.ShelfPlanning1.connect_motion_planning_components">
-<span class="sig-name descname"><span class="pre">connect_motion_planning_components</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.kinematic.ShelfPlanning1.connect_motion_planning_components" title="Link to this definition">¶</a></dt>
-<dd><section id="id16">
-<h3>Description<a class="headerlink" href="#id16" title="Link to this heading">¶</a></h3>
-<p>This method connects the motion planning components directly to the
-kinematic controller.
-:return:</p>
-</section>
+<dd><p><em>Description</em></p>
+<p>This method configures the collision filter, so that:</p>
+<ul class="simple">
+<li><p>self collisions between the shelf’s pieces, and</p></li>
+<li><p>self collisions between the arm’s parts,</p></li>
+</ul>
+<p>are ignored during simulation.</p>
+<p><em>Parameters</em></p>
+<dl class="simple">
+<dt>scene_graph_context: pydrake.systems.framework.Context</dt><dd><p>The context of the scenegraph for the constructed production (i.e., the diagram
+for the built Production).</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.offline.kinematic.ShelfPlanning1.easy_cast_and_build">
 <span class="sig-name descname"><span class="pre">easy_cast_and_build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">planning_algorithm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">DiGraph</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_watcher</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Diagram</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Context</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.kinematic.ShelfPlanning1.easy_cast_and_build" title="Link to this definition">¶</a></dt>
-<dd><section id="id17">
-<h3>Description<a class="headerlink" href="#id17" title="Link to this heading">¶</a></h3>
-<p>This function is used to easily cast and build the production.
-:param planning_algorithm: The algorithm that we will use to
-plan the motion.
-:param with_watcher: A Boolean that determines whether to add a watcher to the diagram.
-:return:</p>
-</section>
+<dd><p><em>Description</em></p>
+<p>This function is used to easily cast and build the production.</p>
+<p><em>Parameters</em></p>
+<dl class="simple">
+<dt>planning_algorithm: Callable[[np.ndarray, np.ndarray, Callable[[np.ndarray], bool]], Tuple[MotionPlan, bool]</dt><dd><p>The algorithm that produces a path from the start configuration to goal configuration
+using the collision checker for the scene.</p>
+</dd>
+<dt>with_watcher: bool, optional</dt><dd><p>A Boolean that determines whether to add a watcher to the diagram.
+Default is False.</p>
+</dd>
+</dl>
+<p><em>Returns</em></p>
+<dl class="simple">
+<dt>diagram: pydrake.systems.framework.Diagram</dt><dd><p>The diagram that represents the fully assembled cast, all connected together.</p>
+</dd>
+<dt>diagram_context: pdrake.systems.framework.Context</dt><dd><p>The context for the diagram (used by the diagram watcher to monitor the system, if defined).</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.offline.kinematic.ShelfPlanning1.goal_pose">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">goal_pose</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">RigidTransform</span></em><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.kinematic.ShelfPlanning1.goal_pose" title="Link to this definition">¶</a></dt>
-<dd><section id="id18">
-<h3>Description<a class="headerlink" href="#id18" title="Link to this heading">¶</a></h3>
+<dd><p><em>Description</em></p>
 <p>Get the goal pose.</p>
-</section>
-<section id="id19">
-<h3>Returns<a class="headerlink" href="#id19" title="Link to this heading">¶</a></h3>
+<p><em>Returns</em></p>
 <dl class="simple">
-<dt>RigidTransform</dt><dd><p>The goal pose.</p>
+<dt>pose_WorldGoal: RigidTransform</dt><dd><p>The goal pose.</p>
 </dd>
 </dl>
-</section>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.offline.kinematic.ShelfPlanning1.id">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../../../productions.html#brom_drake.productions.ProductionID" title="brom_drake.productions.ids.ProductionID"><span class="pre">ProductionID</span></a></em><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.kinematic.ShelfPlanning1.id" title="Link to this definition">¶</a></dt>
-<dd><p><em>Description</em></p>
-<p>The unique identifier for the production.</p>
-<p>If not defined, returns ProductionID.kNotDefined.</p>
-<p><em>Returns</em></p>
-<dl class="simple">
-<dt>ProductionID</dt><dd><p>The unique identifier for the production.</p>
-</dd>
-</dl>
+<dd><p>Always returns <code class="docutils literal notranslate"><span class="pre">ProductionID.kShelfPlanning1</span></code></p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.offline.kinematic.ShelfPlanning1.solve_forward_kinematics_problem_for_arm">
 <span class="sig-name descname"><span class="pre">solve_forward_kinematics_problem_for_arm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">robot_joint_positions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_frame_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'ft_frame'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">RigidTransform</span></span></span><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.kinematic.ShelfPlanning1.solve_forward_kinematics_problem_for_arm" title="Link to this definition">¶</a></dt>
-<dd><section id="id20">
-<h3>Description<a class="headerlink" href="#id20" title="Link to this heading">¶</a></h3>
+<dd><p><em>Description</em></p>
 <p>This method solves the forward kinematics problem for the UR10e arm
 by itself.</p>
-</section>
+<p>TODO(Kwesi): Attempt to make this a utility (it is duplicated multiple times!)</p>
+<p><em>Parameters</em></p>
+<dl class="simple">
+<dt>robot_joint_positions: np.ndarray of shape (6,)</dt><dd><p>The joint configuration of the robot in the production.</p>
+</dd>
+<dt>target_frame_name: str, optional</dt><dd><p>The frame that we compute the pose of with respect to the world origin frame.
+Default is “ft_frame”</p>
+</dd>
+</dl>
+<p><em>Returns</em></p>
+<dl class="simple">
+<dt>pose_WorldTarget: RigidTransform</dt><dd><p>The end effector pose of the robot expressed in the world frame.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.offline.kinematic.ShelfPlanning1.start_pose">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">start_pose</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">RigidTransform</span></em><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.kinematic.ShelfPlanning1.start_pose" title="Link to this definition">¶</a></dt>
-<dd><section id="id21">
-<h3>Description<a class="headerlink" href="#id21" title="Link to this heading">¶</a></h3>
-<p>Get the start pose. This should be defined by the subclass.</p>
-</section>
-<section id="id22">
-<h3>Returns<a class="headerlink" href="#id22" title="Link to this heading">¶</a></h3>
+<dd><p><em>Description</em></p>
+<p>Get the start pose.</p>
+<p><em>Returns</em></p>
 <dl class="simple">
-<dt>RigidTransform</dt><dd><p>The start pose.</p>
+<dt>pose_WorldStart: RigidTransform</dt><dd><p>The start pose of the robot’s end effector frame with respect to the world frame.</p>
 </dd>
 </dl>
-</section>
 </dd></dl>
 
 </dd></dl>
@@ -805,7 +1001,6 @@ by itself.</p>
 <li><a class="reference internal" href="#brom_drake.productions.motion_planning.offline.kinematic.ChemLab1"><code class="docutils literal notranslate"><span class="pre">ChemLab1</span></code></a><ul>
 <li><a class="reference internal" href="#brom_drake.productions.motion_planning.offline.kinematic.ChemLab1.add_beaker"><code class="docutils literal notranslate"><span class="pre">ChemLab1.add_beaker()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.motion_planning.offline.kinematic.ChemLab1.add_cast_and_build"><code class="docutils literal notranslate"><span class="pre">ChemLab1.add_cast_and_build()</span></code></a></li>
-<li><a class="reference internal" href="#brom_drake.productions.motion_planning.offline.kinematic.ChemLab1.add_dummy_gripper_components"><code class="docutils literal notranslate"><span class="pre">ChemLab1.add_dummy_gripper_components()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.motion_planning.offline.kinematic.ChemLab1.add_motion_planning_components"><code class="docutils literal notranslate"><span class="pre">ChemLab1.add_motion_planning_components()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.motion_planning.offline.kinematic.ChemLab1.add_shelf"><code class="docutils literal notranslate"><span class="pre">ChemLab1.add_shelf()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.motion_planning.offline.kinematic.ChemLab1.add_supporting_cast"><code class="docutils literal notranslate"><span class="pre">ChemLab1.add_supporting_cast()</span></code></a></li>
@@ -828,7 +1023,6 @@ by itself.</p>
 <li><a class="reference internal" href="#brom_drake.productions.motion_planning.offline.kinematic.ShelfPlanning1.add_supporting_cast"><code class="docutils literal notranslate"><span class="pre">ShelfPlanning1.add_supporting_cast()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.motion_planning.offline.kinematic.ShelfPlanning1.add_ur10e_station"><code class="docutils literal notranslate"><span class="pre">ShelfPlanning1.add_ur10e_station()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.motion_planning.offline.kinematic.ShelfPlanning1.configure_collision_filter"><code class="docutils literal notranslate"><span class="pre">ShelfPlanning1.configure_collision_filter()</span></code></a></li>
-<li><a class="reference internal" href="#brom_drake.productions.motion_planning.offline.kinematic.ShelfPlanning1.connect_motion_planning_components"><code class="docutils literal notranslate"><span class="pre">ShelfPlanning1.connect_motion_planning_components()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.motion_planning.offline.kinematic.ShelfPlanning1.easy_cast_and_build"><code class="docutils literal notranslate"><span class="pre">ShelfPlanning1.easy_cast_and_build()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.motion_planning.offline.kinematic.ShelfPlanning1.goal_pose"><code class="docutils literal notranslate"><span class="pre">ShelfPlanning1.goal_pose</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.motion_planning.offline.kinematic.ShelfPlanning1.id"><code class="docutils literal notranslate"><span class="pre">ShelfPlanning1.id</span></code></a></li>
@@ -850,7 +1044,7 @@ by itself.</p>
       
     </aside>
   </div>
-</div><script src="../../../../../_static/documentation_options.js?v=15b7e88b"></script>
+</div><script src="../../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>
