@@ -1123,7 +1123,7 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         *Returns*
 
         collision_detected: bool
-            True if a collision is detected between the floor and the object,
+            True if a collision is detected between the floor and the object, False otherwise.
         """
         # Setup
         shadow_builder = DiagramBuilder()
