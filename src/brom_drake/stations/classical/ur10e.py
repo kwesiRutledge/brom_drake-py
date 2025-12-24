@@ -147,7 +147,7 @@ class UR10eStation(Diagram):
         """
         *Description*
         
-        This funciton adds a controller for the gripper to the station.
+        This function adds a controller for the gripper to the station.
         It is optional and may not be necessary for all stations.
         """
         # Setup
