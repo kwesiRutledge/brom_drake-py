@@ -265,10 +265,6 @@ def write_rst_file_for_package(
         rst_file.write("Submodules\n")
         rst_file.write("----------\n\n")
 
-        # for submodule in sorted(submodules, key=str.lower):
-        #     rst_file.write(f"- `{submodule} <{submodule}/{submodule}.html>`_\n")
-        # rst_file.write("\n")
-
         # Write hyperlinks to submodules
         rst_file.write(".. toctree::\n")
         rst_file.write("   :maxdepth: 1\n\n")
