@@ -74,6 +74,10 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
     This production uses a Puppetmaker to control the wrist of the gripper, allowing for
     more complex wrist motions during the grasping attempt.
 
+    The order of events is controlled by a `script` 
+    (an object of :py:class:`the corresponding Script type<brom_drake.productions.debug.grasping.attempt_grasp.with_puppeteer_wrist.script.Script>`)
+    accessible by accessing the `config.script` variable of this object.
+
     *Parameters*
 
     path_to_object: str
@@ -444,12 +448,14 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
     ):
         # Setup
         builder = self.builder
+        script = self.config.script
+
         # Legacy
         # gripper_poses = sel f.compute_gripper_poses_for_attempted_grasp()
         # trajectory_dispenser = self.add_gripper_puppet_controller_and_connect(gripper_puppet_input, gripper_poses)
         # self.connect_executive_to_gripper_puppet_controller(trajectory_dispenser)
 
-        gripper_base_trajectory = self.compute_gripper_base_pose_trajectory_for_attempted_grasp()
+        gripper_base_trajectory = script.build_gripper_approach_trajectory_from_waypoints(self.X_WorldGripper_trajectory)
 
         # Create a trajectory source for the gripper base and connect that to the puppet
         gripper_pose_source = builder.AddNamedSystem(
@@ -741,59 +747,6 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
             executive.GetOutputPort("enable_gripper_approach"),
             trajectory_dispenser.GetInputPort("plan_ready"),  # Trigger input
         )
-    
-    def compute_gripper_base_pose_trajectory_for_attempted_grasp(self) -> PiecewisePose:
-        """
-        *Description*
-        
-        Returns a PiecewisePose trajectory for the gripper base to follow during the
-        attempted grasp.
-
-        The trajectory should be an interpolation between two poses that is then held
-        until the end of the production.
-
-        *Returns*
-
-        gripper_base_trajectory: PiecewisePose
-            A PiecewisePose trajectory for the gripper base to follow during the
-            attempted grasp.
-        """
-
-        # Setup
-        script = self.config.script
-
-        # Compute the Grasp Pose of the gripper in the world frame
-        pose_WorldGripper_initial = self.X_WorldGripper_trajectory[0]
-        pose_WorldGripper_final = self.X_WorldGripper_trajectory[-1]
-
-        # For each event in the script, create (i) a time and (ii) a pose
-        times = []
-        poses = []
-        
-        # - Create initial pose
-        times.append(0.0)
-        poses.append(pose_WorldGripper_initial)
-
-        # - Create pre-grasp pose (will be same as initial pose)
-        t_pre_grasp = script.start_time_of_phase(
-            phase=AttemptGraspWithPuppeteerWristPhase.kGripperApproach
-        )
-        times.append(t_pre_grasp)
-        poses.append(pose_WorldGripper_initial)
-
-        # - Create pose at which we start closing the gripper
-        t_approach_grasp = script.start_time_of_phase(
-            phase=AttemptGraspWithPuppeteerWristPhase.kGripperClosing
-        )
-        times.append(t_approach_grasp)
-        poses.append(pose_WorldGripper_final)
-
-        # Assemble into a PiecewisePose
-        gripper_base_trajectory = PiecewisePose.MakeLinear(
-            times=times,
-            poses=poses,
-        )
-        return gripper_base_trajectory
 
     def create_executive_system(self) -> NetworkXFSM:
         """

@@ -1,5 +1,8 @@
 from dataclasses import dataclass
 import networkx as nx
+import numpy as np
+from pydrake.all import RigidTransform, PiecewisePose
+from typing import List
 
 # Internal Imports
 from brom_drake.utils.leaf_systems.network_fsm import (
@@ -54,7 +57,7 @@ class Script:
             :collapsible:
 
             One of the states (kObjectSettlingInGrasp) is not explicitly created
-            here, but it may be created anyway when the edges are added. (This is a feature
+            here, but it will be created anyway when the edges are added. (This is a feature
             of NetworkX where nodes can be created implicitly when edges are added.)
 
         *Parameters*
@@ -101,6 +104,64 @@ class Script:
                 FSMOutputDefinition("start_floor", True),
             ]
         )
+
+    def build_gripper_approach_trajectory_from_waypoints(self, waypoints_X_WorldGripper: List[RigidTransform]) -> PiecewisePose:
+        """
+        *Description*
+        
+        Returns a PiecewisePose trajectory for the gripper base to follow during the
+        attempted grasp.
+
+        The trajectory should be an interpolation between two poses that is then held
+        until the end of the production.
+
+        *Parameters*
+
+        waypoints_X_WorldGripper: List[RigidTransform]
+            The waypoints that the script will create a Pose trajectory for.
+            This trajectory will start at the initial waypoint and 
+
+        *Returns*
+
+        gripper_base_trajectory: PiecewisePose
+            A PiecewisePose trajectory for the gripper base to follow during the
+            attempted grasp.
+        """
+
+        # Setup
+        n_waypoints = len(waypoints_X_WorldGripper)
+
+        # Compute the Grasp Pose of the gripper in the world frame
+        pose_WorldGripper_initial = waypoints_X_WorldGripper[0]
+
+        # For each event in the script, create (i) a time and (ii) a pose
+        times = []
+        poses = []
+        
+        # - Create initial pose
+        times.append(0.0)
+        poses.append(pose_WorldGripper_initial)
+
+        # - Force all poses between (a) pre-grasp pose (will be same as initial pose) and (b) the final grasp pose
+        #   to occur during the time window between kGripperApproach and kGripperClosing
+        t_pre_grasp = self.start_time_of_phase(
+            phase=AttemptGraspWithPuppeteerWristPhase.kGripperApproach
+        )
+        t_gripper_closing = self.start_time_of_phase(
+            phase=AttemptGraspWithPuppeteerWristPhase.kGripperClosing
+        )
+
+        times_during_interpolation = np.linspace(start=t_pre_grasp, stop=t_gripper_closing, num=n_waypoints)
+        for idx, time_i in enumerate(times_during_interpolation):
+            times.append(time_i)
+            poses.append(waypoints_X_WorldGripper[idx])
+
+        # Assemble into a PiecewisePose
+        gripper_base_trajectory = PiecewisePose.MakeLinear(
+            times=times,
+            poses=poses,
+        )
+        return gripper_base_trajectory
 
     def start_time_of_phase(self, phase: AttemptGraspWithPuppeteerWristPhase) -> float:
         """
