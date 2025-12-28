@@ -216,6 +216,11 @@ class DiagramWatcher:
         self.save_figures()
         self.save_raw_data()
 
+        # Close all handlers in the logger and the remove them
+        for handler in self.logger.handlers:
+            handler.close()
+            self.logger.removeHandler(handler)
+
     def create_logger(self) -> logging.Logger:
         """
         *Description*
@@ -224,7 +229,7 @@ class DiagramWatcher:
         
         *Returns*
 
-        logging.Logger
+        logger: logging.Logger
             The configured logger for LOG MESSAGES.
             In other words, this is not a logger of signals from the diagram.
         """
