@@ -10,7 +10,7 @@ make generate-and-build-docs
 
 which you can run in your terminal.
 
-For more details, see below:
+For more details, see below.
 
 ## Output Format of the Docs
 

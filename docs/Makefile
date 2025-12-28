@@ -14,7 +14,7 @@ help:
 
 .PHONY: help Makefile
 
-BROM_VERSION := v0.4.5
+BROM_VERSION := v0.4.5-makeTargetDefault
 generate-and-build-docs:
 	python3 update_version_in_conf.py "$(BROM_VERSION)"
 	python3 generate_docs.py --output-dir "$(SOURCEDIR)"
