@@ -42,6 +42,7 @@ from brom_drake.motion_planning.systems import OpenLoopPlanDispenser, OpenLoopPo
 from brom_drake.productions.types.debug import BasicGraspingDebuggingProduction
 from brom_drake.productions import ProductionID
 from brom_drake.productions.roles.role import Role
+from brom_drake.systems.pose_composition import PoseCompositionSystem
 from brom_drake.utils import (
     Performer, collision_checking, NetworkXFSM, FlexiblePortSwitch, FSMTransitionCondition,
     FSMOutputDefinition, FSMTransitionConditionType, Puppetmaker, PuppetmakerConfiguration, PuppetSignature,
@@ -74,9 +75,9 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
     This production uses a Puppetmaker to control the wrist of the gripper, allowing for
     more complex wrist motions during the grasping attempt.
 
-    The order of events is controlled by a `script` 
+    The order of events is controlled by a *script*
     (an object of :py:class:`the corresponding Script type<brom_drake.productions.debug.grasping.attempt_grasp.with_puppeteer_wrist.script.Script>`)
-    accessible by accessing the `config.script` variable of this object.
+    accessible by accessing the ``config.script`` variable of this object.
 
     *Parameters*
 
@@ -89,7 +90,7 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
     grasp_joint_positions: np.ndarray
         An array of floats representing the joint positions the gripper should be in when performing the grasp.
 
-    X_WorldGripper_trajectory: List[RigidTransform], optional
+    X_ObjectGripper_trajectory: List[RigidTransform], optional
         The desired trajectory for the Gripper Frame.
         A sequence of poses of the Gripper Frame (usually attached to the base of the gripper)
         with respect to the world frame.
@@ -133,7 +134,7 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
             path_to_object=model_file,
             gripper_choice=GripperType.Robotiq_2f_85,
             grasp_joint_positions=np.array([0.7]),
-            X_WorldGripper_trajectory=[X_WorldPreGrasp, X_ObjectTarget],
+            X_ObjectGripper_trajectory=[X_WorldPreGrasp, X_ObjectTarget],
             meshcat_port_number=7001, # Use None for CI
         )
 
@@ -156,7 +157,7 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         path_to_object: str,
         gripper_choice: GripperType,
         grasp_joint_positions: np.ndarray,
-        X_WorldGripper_trajectory: List[RigidTransform] = None,
+        X_ObjectGripper_trajectory: List[RigidTransform] = None,
         meshcat_port_number: int = None,
         config: Configuration = Configuration(),
     ):
@@ -204,7 +205,7 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         super().__init__(
             path_to_object=path_to_object,
             path_to_gripper=path_to_gripper,
-            X_ObjectGrasp=X_WorldGripper_trajectory[-1],
+            X_ObjectGrasp=X_ObjectGripper_trajectory[-1],
             meshcat_port_number=config.base.meshcat_port_number,
             time_step=config.base.time_step,
             target_body_on_gripper=config.target_body_on_gripper,
@@ -234,8 +235,8 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         self.initial_gripper_joint_positions = np.zeros(grasp_joint_positions.shape)# initial_gripper_joint_positions
 
         # Save the trajectory of the gripper frame
-        self.X_WorldGripper_trajectory = X_WorldGripper_trajectory
-        self.add_frames_for_gripper_base_trajectory(self.X_WorldGripper_trajectory)
+        self.X_ObjectGripper_trajectory = X_ObjectGripper_trajectory
+        self.add_frames_for_gripper_base_trajectory(self.X_ObjectGripper_trajectory)
         
         self.grasp_joint_positions = grasp_joint_positions
         self.config = config
@@ -450,18 +451,26 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         builder = self.builder
         script = self.config.script
 
-        # Legacy
-        # gripper_poses = sel f.compute_gripper_poses_for_attempted_grasp()
-        # trajectory_dispenser = self.add_gripper_puppet_controller_and_connect(gripper_puppet_input, gripper_poses)
-        # self.connect_executive_to_gripper_puppet_controller(trajectory_dispenser)
-
-        gripper_base_trajectory = script.build_gripper_approach_trajectory_from_waypoints(self.X_WorldGripper_trajectory)
-
-        # Create a trajectory source for the gripper base and connect that to the puppet
+        # Create a trajectory source for the gripper base (X_ManipulandGripper)
+        pose_ManipulandGripper_trajectory = script.build_gripper_approach_trajectory_from_waypoints(self.X_ObjectGripper_trajectory)
         gripper_pose_source = builder.AddNamedSystem(
-            name="Gripper Base Pose Source",
-            system=PoseTrajectorySource(gripper_base_trajectory),
+            name="Source for Gripper Pose in Object Frame",
+            system=PoseTrajectorySource(pose_ManipulandGripper_trajectory),
         )
+
+        # Create a system that will convert the reference trajectory
+        # from the object frame to the world frame
+        object_to_world_converter = builder.AddNamedSystem(
+            name="Object to World Frame Converter for Gripper Pose",
+            system=PoseCompositionSystem(),
+        )
+        # - Connect the pose of the object in the world to the FIRST input port
+        # builder.Connect(
+        #     self.plant.get_state_output_port(self.manipuland_index),
+
+
+        # Combine gripper pose source (X_ManipulandGripper) with the current pose of the
+        # manipuland in the world (X_WorldManipuland) and send that signal to the puppet (X_WorldGripperDesired)
         builder.Connect(
             gripper_pose_source.get_output_port(),
             gripper_puppet_input.get_input_port(),
@@ -1188,7 +1197,7 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         #     )
 
         # Set initial conditions for the puppeteer joints
-        X_World_PreGrasp = self.X_WorldGripper_trajectory[0]
+        X_World_PreGrasp = self.X_ObjectGripper_trajectory[0]
         for joint_index, joint_actuator_i in enumerate(self.puppet_signature.all_joint_actuators):
             if joint_index < 3:
                 self.initial_condition_manager.add_initial_configuration(

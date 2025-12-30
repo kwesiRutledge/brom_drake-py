@@ -21,7 +21,8 @@ from pydrake.systems.primitives import LogVectorOutput
 from pydrake.systems.framework import Context
 
 # Internal Imports
-from brom_drake.directories import DEFAULT_PLOT_DIR, DEFAULT_RAW_DATA_DIR
+from brom_drake.directories import DEFAULT_BROM_DIR
+from .file_manager import PortWatcherFileManager
 from .port_watcher_options import (
     PortWatcherOptions, FigureNamingConvention,
     PortWatcherPlottingOptions, PortWatcherRawDataOptions,
@@ -42,8 +43,7 @@ class PortWatcher:
         python_logger: logging.Logger,
         logger_name: str = None,
         options: PortWatcherOptions = PortWatcherOptions(),
-        plot_dir: str = DEFAULT_PLOT_DIR,
-        raw_data_dir: str = DEFAULT_RAW_DATA_DIR,
+        base_watcher_dir: str = DEFAULT_BROM_DIR
     ):
         """
         Description
@@ -71,13 +71,12 @@ class PortWatcher:
         self.data = {}
         self.plot_handles = {}
         self.plot_handles = None
-        self.plot_dir = plot_dir
-        self.raw_data_dir = raw_data_dir
+        self.file_manager = PortWatcherFileManager(base_directory=Path(base_watcher_dir))
         self.python_logger = python_logger
 
         # Set up directories
-        os.makedirs(self.options.plot_dir(), exist_ok=True)
-        os.makedirs(self.options.raw_data_dir(), exist_ok=True)
+        os.makedirs(self.file_manager.plot_dir, exist_ok=True)
+        os.makedirs(self.file_manager.raw_data_dir, exist_ok=True)
 
         # Input Processing
         self.check_port_type()
@@ -101,7 +100,7 @@ class PortWatcher:
                 port=self.port,
                 python_logger=self.python_logger,
                 plotting_options=self.options.plotting,
-                plot_dir=self.options.plot_dir(),
+                plot_dir=self.file_manager.plot_dir,
             )
 
     def check_port_type(self):
@@ -133,18 +132,19 @@ class PortWatcher:
     @staticmethod
     def create_port_value_type_error(output_port: OutputPort) -> ValueError:
         """
-        Description
-        -----------
+        *Description*
+        
         Creates an error message for the port value type.
         
-        Arguments
-        ---------
+        *Parameters*
+        
         output_port: OutputPort
             The output port that is causing the error.
 
-        Returns
-        -------
-        ValueError
+        *Returns*
+        
+        error_out: ValueError
+            The error message.
         """
         # Setup
         example_value = output_port.Allocate()
@@ -161,18 +161,15 @@ class PortWatcher:
     
     def prepare_logger(self, builder: DiagramBuilder):
         """
-        Description
-        -----------
+        *Description*
+        
         Prepares the logger for the port.
         
-        Arguments
-        ---------
+        *Parameters*
+        
         builder: DiagramBuilder
             The diagram builder that is used to create the logger.
         
-        Returns
-        -------
-        None
         """
         # Setup
         system = self.port.get_system()
@@ -235,16 +232,14 @@ class PortWatcher:
     
     def safe_system_name(self) -> str:
         """
-        Description:
-            Returns a safe name for the system.
+        *Description*
+        
+        Returns a safe name for the system.
 
-        Arguments
-        ---------
-        None
-
-        Returns
-        -------
-        name: System's name.
+        *Returns*
+        
+        name: str
+            System's name
         """
         # Setup
         system = self.port.get_system()
@@ -262,17 +257,14 @@ class PortWatcher:
 
     def save_raw_data(self, diagram_context: Context):
         """
-        Description:
-            Saves the raw data to a file.
+        *Description*
 
-        Arguments
-        ---------
+        Saves the raw data to a file.
+
+        *Arguments*
+        
         diagram_context: Context
             The context of the diagram.
-        
-        Returns
-        -------
-        Nothing
         """
         # Setup
         log = self.logger.FindLog(diagram_context)
@@ -292,23 +284,20 @@ class PortWatcher:
 
     def time_and_raw_data_names(self) -> Tuple[str, str]:
         """
-        Description:
-            Returns the names that will be given to the raw data for this port.
+        *Description*
         
-        Arguments
-        ---------
-        Nothing
-
-        Returns
-        -------
+        Returns the names that will be given to the raw data for this port.
+        
+        *Returns*
+        
         Tuple of strings where:
         - the first string is the name of the time data and,
         - the second string is the name of the data.
         """
         # Setup
-        options = self.options
-        format = options.raw_data.file_format
-        raw_data_dir = options.raw_data_dir()
+        file_manager = self.file_manager
+        format = file_manager.raw_data_file_format
+        raw_data_dir = file_manager.raw_data_dir
 
         # If this has the flat naming convention, then the file should be contained within the plot_dir.
         return [

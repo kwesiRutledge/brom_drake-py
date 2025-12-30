@@ -245,14 +245,13 @@ class PortWatcherTest(unittest.TestCase):
         )
 
         # Create PortWatcher object
-        pw_options0 = PortWatcherOptions(
-            base_directory="./brom/test_save_raw_data1/watcher"
-        )
+        pw_options0 = PortWatcherOptions()
         pw0 = PortWatcher(
             pose_source.get_output_port(),
             builder,
             python_logger=self.create_dummy_logger("PortWatcherTest_save_raw_data1.log"),
             options=pw_options0,
+            base_watcher_dir="./brom/test_save_raw_data1/watcher"
         )
 
         # Build Diagram
@@ -270,12 +269,12 @@ class PortWatcherTest(unittest.TestCase):
 
         # Verify that the raw_data directory exists
         self.assertTrue(
-            os.path.exists(pw0.options.raw_data_dir()),
+            os.path.exists(pw0.file_manager.raw_data_dir),
         )
 
         # Verify that there is at least one file in the directory
         self.assertTrue(
-            len(os.listdir(pw0.options.raw_data_dir())) > 0,
+            len(os.listdir(pw0.file_manager.raw_data_dir)) > 0,
         )
 
 

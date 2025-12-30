@@ -6,7 +6,7 @@ Description:
     and automatically log signals of interest.
 """
 import os
-from typing import List, Union
+from typing import Dict, List, Union
 import matplotlib.pyplot as plt
 import numpy as np
 from pathlib import Path
@@ -114,7 +114,7 @@ class DiagramWatcher:
         self.inferred_targets = inferred_targets
 
         # For each target's port, we will add a logger
-        self.port_watchers = {target.name: {} for target in inferred_targets}
+        self.port_watchers: Dict[str, Dict[str, PortWatcher]] = {target.name: {} for target in inferred_targets}
         self.logger.info("Adding loggers to the diagram... (via PortWatcher objects)")
         for target in inferred_targets:
             system = subject.GetSubsystemByName(target.name)
@@ -127,7 +127,7 @@ class DiagramWatcher:
                     self.port_watchers[target.name][target_port.get_name()] = PortWatcher(
                         target_port, subject, self.logger,
                         logger_name=f"{target.name}_logger_{port_index}",
-                        plot_dir=options_for_target_port.plot_dir(),
+                        base_watcher_dir=options.base_directory,
                         options=options_for_target_port,
                     )
 
@@ -186,7 +186,6 @@ class DiagramWatcher:
                 plot_arrangement=options.plotting.plot_arrangement,
                 plot_dpi=options.plotting.plot_dpi,
                 save_to_file=options.plotting.save_to_file,
-                base_directory=new_plot_dir,
                 file_format=options.plotting.file_format,
                 figure_naming_convention=options.plotting.figure_naming_convention,
             ),
@@ -436,9 +435,16 @@ class DiagramWatcher:
             for port_name in ports_on_ii:
                 temp_port_watcher = ports_on_ii[port_name]
                 temp_plotting_options = temp_port_watcher.options.plotting
-                if temp_plotting_options.save_to_file: # Plot only if the PortWatcher flag is set
-                    temp_port_watcher.plotter.save_figures(self.diagram_context)
-                    self.logger.info(f"Saved figures for port {port_name} on system {system_name}")
+                
+                # Plot only if the PortWatcher flag is set
+                if temp_plotting_options.save_to_file: 
+                    try:
+                        temp_port_watcher.plotter.save_figures(self.diagram_context)
+                        self.logger.info(f"Saved figures for port {port_name} on system {system_name}")
+                    except Exception as e:
+                        self.logger.error(f"Failed to save figures for port {port_name} on system {system_name}: {e}")
+                else:
+                    self.logger.info(f"Skipped plotting for port {port_name} on system {system_name} (flag not set)")
 
     def save_raw_data(self):
         """
@@ -459,7 +465,16 @@ class DiagramWatcher:
             for port_name in ports_on_ii:
                 temp_port_watcher = ports_on_ii[port_name]
                 temp_raw_data_options = temp_port_watcher.options.raw_data
-                if temp_raw_data_options.save_to_file:
-                    temp_port_watcher.save_raw_data(self.diagram_context)
 
-                    self.logger.info(f"Saved raw data for port {port_name} on system {system_name}")
+                # Save raw data only if the PortWatcher flag is set
+                if temp_raw_data_options.save_to_file:
+                    try:
+                        temp_port_watcher.save_raw_data(self.diagram_context)
+
+                        self.logger.info(f"Saved raw data for port {port_name} on system {system_name}")
+
+                    except Exception as e:
+                        self.logger.error(f"Failed to save raw data for port {port_name} on system {system_name}: {e}")
+
+                else:
+                    self.logger.info(f"Skipped saving raw data for port {port_name} on system {system_name} (flag not set)")
