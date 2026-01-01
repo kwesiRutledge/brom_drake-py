@@ -70,7 +70,7 @@ class TestPoseComposition(unittest.TestCase):
 
         output_pose_port_watcher: PortWatcher = composition_system_port_watchers["pose_AC"]
         
-        log_for_output_pose = output_pose_port_watcher.logger.FindLog(diagram_context)
+        log_for_output_pose = output_pose_port_watcher.get_vector_log_sink().FindLog(diagram_context)
         final_output_pose_as_vec: np.ndarray = log_for_output_pose.data()[:,-1]
         final_output_pose = RigidTransform(
             p=final_output_pose_as_vec[:3],
@@ -137,7 +137,7 @@ class TestPoseComposition(unittest.TestCase):
 
         output_pose_port_watcher: PortWatcher = composition_system_port_watchers["pose_AC"]
         
-        log_for_output_pose = output_pose_port_watcher.logger.FindLog(diagram_context)
+        log_for_output_pose = output_pose_port_watcher.get_vector_log_sink().FindLog(diagram_context)
         final_output_pose_as_vec: np.ndarray = log_for_output_pose.data()[:,-1]
         final_output_pose = RigidTransform(
             p=final_output_pose_as_vec[:3],

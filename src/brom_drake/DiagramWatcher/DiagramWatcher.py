@@ -439,7 +439,7 @@ class DiagramWatcher:
                 # Plot only if the PortWatcher flag is set
                 if temp_plotting_options.save_to_file: 
                     try:
-                        temp_port_watcher.plotter.save_figures(self.diagram_context)
+                        temp_port_watcher.save_all_figures(self.diagram_context)
                         self.logger.info(f"Saved figures for port {port_name} on system {system_name}")
                     except Exception as e:
                         self.logger.error(f"Failed to save figures for port {port_name} on system {system_name}: {e}")

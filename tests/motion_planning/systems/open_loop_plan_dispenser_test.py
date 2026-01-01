@@ -15,10 +15,9 @@ from brom_drake.motion_planning.systems.open_loop_dispensers.open_loop_plan_disp
 class OpenLoopPlanDispenserTest(unittest.TestCase):
     def test_init1(self):
         """
-        Description
-        -----------
+        *Description*
+        
         This test checks if the open loop plan dispenser can be initialized without any errors.
-        :return:
         """
         # Setup
         dispenser = OpenLoopPlanDispenser(6, 1.0)
@@ -29,10 +28,9 @@ class OpenLoopPlanDispenserTest(unittest.TestCase):
     @staticmethod
     def setup_basic_sim1() -> Tuple[int, ConstantValueSource, ConstantValueSource]:
         """
-        Description
-        -----------
+        *Description*
+        
         This function will create a basic simulation which can be used to test the open loop plan dispenser.
-        :return:
         """
         # Setup
         n_dof = 6
@@ -52,10 +50,9 @@ class OpenLoopPlanDispenserTest(unittest.TestCase):
 
     def test_in_simulation1(self):
         """
-        Description
-        -----------
+        *Description*
+        
         This test checks if the open loop plan dispenser can be used in a simulation without any errors.
-        :return:
         """
         # Setup sim
         builder = DiagramBuilder()
@@ -93,11 +90,10 @@ class OpenLoopPlanDispenserTest(unittest.TestCase):
 
     def test_in_simulation2(self):
         """
-        Description
-        -----------
+        *Description*
+        
         This test checks if the open loop plan dispenser can be used in a simulation and returns the correct results.
         If doing proper interpolation, then this test will pass. If it is not interpolating correctly, then it will fail.
-        :return:
         """
         # Setup sim
         builder = DiagramBuilder()
@@ -135,7 +131,7 @@ class OpenLoopPlanDispenserTest(unittest.TestCase):
         # the last point of the simple_plan)
         first_key = dispenser.get_name()
         point_in_plan_watcher = watcher.port_watchers[first_key][dispenser.get_output_port(0).get_name()]
-        temp_log = point_in_plan_watcher.logger.FindLog(diagram_context)
+        temp_log = point_in_plan_watcher.get_vector_log_sink().FindLog(diagram_context)
         point_in_plan_data = temp_log.data()
         last_point = point_in_plan_data[:, -1]
 
@@ -229,7 +225,7 @@ class OpenLoopPlanDispenserTest(unittest.TestCase):
         # the last point of the simple_plan)
         first_key = dispenser.get_name()
         point_in_plan_watcher = watcher.port_watchers[first_key][dispenser.get_output_port(0).get_name()]
-        temp_log = point_in_plan_watcher.logger.FindLog(diagram_context)
+        temp_log = point_in_plan_watcher.get_vector_log_sink().FindLog(diagram_context)
         point_in_plan_data = temp_log.data()
         last_point = point_in_plan_data[:, -1]
 

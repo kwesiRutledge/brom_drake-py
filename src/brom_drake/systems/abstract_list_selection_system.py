@@ -26,7 +26,8 @@ class AbstractListSelectionSystem(LeafSystem):
     def __init__(
         self,
         index: int,
-        output_type: type = RigidTransform
+        output_type: type = RigidTransform,
+        output_port_name: str = "element_out"
     ):
         LeafSystem.__init__(self)
 
@@ -40,7 +41,7 @@ class AbstractListSelectionSystem(LeafSystem):
 
         # Define Output Port
         self.DeclareAbstractOutputPort(
-            "element_out",
+            output_port_name,
             lambda: AbstractValue.Make(output_type()),  # Placeholder; actual type will be checked at runtime
             self.CalcOutputElement,
         )

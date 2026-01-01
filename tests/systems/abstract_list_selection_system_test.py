@@ -56,7 +56,7 @@ class TestAbstractListSelectionSystem(unittest.TestCase):
         selector_dict_of_port_watchers = watcher.port_watchers["list_selector"]
         output_pose_port_watcher: PortWatcher = selector_dict_of_port_watchers["element_out"]
 
-        log_for_output_pose = output_pose_port_watcher.logger.FindLog(diagram_context)
+        log_for_output_pose = output_pose_port_watcher._drake_vector_logs.FindLog(diagram_context)
         final_output_pose_as_vec: np.ndarray = log_for_output_pose.data()[:,-1]
         final_output_pose = RigidTransform(
             p=final_output_pose_as_vec[:3],
