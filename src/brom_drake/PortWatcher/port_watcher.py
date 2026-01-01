@@ -247,7 +247,7 @@ class PortWatcher:
             # and then recursively call this function.
 
             for idx in range(len(example_value)):
-                output_port_name = "element_out"
+                output_port_name = f"element_{idx}_out"
 
                 # If this is a very specific port (body_poses),
                 # then propose a very specific name for the output port
@@ -292,6 +292,7 @@ class PortWatcher:
             self.prepare_vector_log_for_rigid_transform_port(
                 current_output_port, builder,
             )
+            self.name_vector_log_sink(current_output_port=current_output_port)
 
         elif type(example_value) == bool:
             # If the value is a boolean,
