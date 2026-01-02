@@ -42,6 +42,7 @@ from brom_drake.motion_planning.systems import OpenLoopPlanDispenser, OpenLoopPo
 from brom_drake.productions.types.debug import BasicGraspingDebuggingProduction
 from brom_drake.productions import ProductionID
 from brom_drake.productions.roles.role import Role
+from brom_drake.systems.abstract_list_selection_system import AbstractListSelectionSystem
 from brom_drake.systems.pose_composition import PoseCompositionSystem
 from brom_drake.utils import (
     Performer, collision_checking, NetworkXFSM, FlexiblePortSwitch, FSMTransitionCondition,
@@ -450,6 +451,7 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         # Setup
         builder = self.builder
         script = self.config.script
+        plant: MultibodyPlant = self.plant
 
         # Create a trajectory source for the gripper base (X_ManipulandGripper)
         pose_ManipulandGripper_trajectory = script.build_gripper_approach_trajectory_from_waypoints(self.X_ObjectGripper_trajectory)
@@ -464,15 +466,41 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
             name="Object to World Frame Converter for Gripper Pose",
             system=PoseCompositionSystem(),
         )
+
         # - Connect the pose of the object in the world to the FIRST input port
-        # builder.Connect(
-        #     self.plant.get_state_output_port(self.manipuland_index),
+        manipuland_body_indices = plant.GetBodyIndices(self.manipuland_index)
+        assert len(manipuland_body_indices) == 1, \
+            f"This production currently supports manipulands containing one body; please create an issue if you want more support for objects with multiple parts!"
+
+        pose_selector = builder.AddNamedSystem(
+            system=AbstractListSelectionSystem(
+                index=int(manipuland_body_indices[0]), 
+                output_type=RigidTransform
+            ),
+            name="Selector for Manipuland Pose in World Frame",
+        )
+        builder.Connect(
+            plant.get_body_poses_output_port(),
+            pose_selector.get_input_port(),
+        )
+
+        # - Connect the selected pose to the FIRST input port of the converter
+        builder.Connect(
+            pose_selector.get_output_port(),
+            object_to_world_converter.get_pose_AB_port(),
+        )
+
+        # - Connect the gripper pose source to the SECOND input port of the converter
+        builder.Connect(
+            gripper_pose_source.get_output_port(),
+            object_to_world_converter.get_pose_BC_port(),
+        )
 
 
         # Combine gripper pose source (X_ManipulandGripper) with the current pose of the
         # manipuland in the world (X_WorldManipuland) and send that signal to the puppet (X_WorldGripperDesired)
         builder.Connect(
-            gripper_pose_source.get_output_port(),
+            object_to_world_converter.get_output_port(),
             gripper_puppet_input.get_input_port(),
         )
 

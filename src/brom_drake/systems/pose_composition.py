@@ -1,6 +1,6 @@
 from pydrake.common.value import AbstractValue
 from pydrake.all import RigidTransform
-from pydrake.systems.framework import Context, LeafSystem
+from pydrake.systems.framework import Context, InputPort, LeafSystem
 
 class PoseCompositionSystem(LeafSystem):
     """
@@ -27,11 +27,11 @@ class PoseCompositionSystem(LeafSystem):
         LeafSystem.__init__(self)
 
         # Define Input Ports
-        self.pose_AB_port = self.DeclareAbstractInputPort(
+        self._pose_AB_port = self.DeclareAbstractInputPort(
             "pose_AB",
             AbstractValue.Make(RigidTransform())
         )
-        self.pose_BC_port = self.DeclareAbstractInputPort(
+        self._pose_BC_port = self.DeclareAbstractInputPort(
             "pose_BC",
             AbstractValue.Make(RigidTransform())
         )
@@ -66,3 +66,9 @@ class PoseCompositionSystem(LeafSystem):
         output.SetFrom(
             AbstractValue.Make(pose_AC)
         )
+
+    def get_pose_AB_port(self) -> InputPort:
+        return self._pose_AB_port
+
+    def get_pose_BC_port(self) -> InputPort:
+        return self._pose_BC_port

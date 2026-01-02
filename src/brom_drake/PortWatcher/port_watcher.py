@@ -32,6 +32,7 @@ from brom_drake.utils import (
     BoolToVectorSystem,
     RigidTransformToVectorSystem,
 )
+from brom_drake.utils.plant import get_all_associated_body_indices_in_plant
 from brom_drake.utils.type_checking import is_rigid_transform
 
 OutputPortNameLike = str
@@ -258,7 +259,8 @@ class PortWatcher:
                     if system_is_multibody_plant:
                         # Extract all body names
                         system_as_multibody_plant: MultibodyPlant = current_output_port.get_system()
-                        current_body_name = system_as_multibody_plant.get_body(body_index=idx).name()
+                        body_indices = get_all_associated_body_indices_in_plant(system_as_multibody_plant)
+                        current_body_name = system_as_multibody_plant.get_body(body_index=body_indices[idx]).name()
 
                         output_port_name = f"{current_body_name}"
 
@@ -397,8 +399,14 @@ class PortWatcher:
 
         # For each vector log, save one figure
         for output_port_name, log_sink in self._drake_vector_logs.items():
+            # Decide on whether or not there are "components"
+            # in this output port (i.e., multiple values in a list output; different from a vector with multiple dimensions)
+            port_component_name = None
+            if output_port_name != self.port.get_name():
+                port_component_name = output_port_name
+            
             # Call the plotter to save the figure
-            self.plotter.save_figures(log_sink, diagram_context)
+            self.plotter.save_figures(log_sink, diagram_context, port_component_name=port_component_name)
 
     def save_raw_data(self, diagram_context: Context):
         """
