@@ -189,9 +189,7 @@ class NetworkXFSM(LeafSystem):
         This function returns the allocation lambda for the given port name.
         """
         if port_name not in self.allocation_lambdas:
-            raise OutputPortNotInitializedError(
-                f"Output port {port_name} has not been initialized."
-            )
+            raise ValueError(f"Allocation lambda for port {port_name} cannot be created because we have no entry for it in the last_output_value dictionary!")
         
         return AbstractValue.Make(self.last_output_value[port_name])
 
