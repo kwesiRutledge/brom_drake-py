@@ -50,7 +50,7 @@ class PoseCompositionSystem(LeafSystem):
         This callback function computes the composed pose, ``pose_AC``,
         from the two inputs ``pose_AB`` and ``pose_BC``.
         """
-        # Retrive current input values
+        # Retrieve current input values
         pose_AB: RigidTransform = self.GetInputPort("pose_AB").Eval(context)
         pose_BC: RigidTransform = self.GetInputPort("pose_BC").Eval(context)
         
