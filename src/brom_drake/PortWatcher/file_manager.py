@@ -6,7 +6,7 @@ from brom_drake.PortWatcher.port_watcher_options import (
 from dataclasses import dataclass
 from pathlib import Path
 from pydrake.multibody.plant import MultibodyPlant
-from pydrake.systems.framework import LeafSystem, OutputPort
+from pydrake.systems.framework import OutputPort
 from pydrake.systems.primitives import VectorLogSink
 from typing import List
 
