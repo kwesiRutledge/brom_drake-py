@@ -11,7 +11,6 @@ from pydrake.multibody.parsing import Parser
 from pydrake.multibody.plant import AddMultibodyPlantSceneGraph, CoulombFriction, MultibodyPlant
 from pydrake.systems.framework import DiagramBuilder
 from pydrake.systems.primitives import LogVectorOutput
-import shutil
 import unittest
 
 class PortWatcherFileManagerTest(unittest.TestCase):
