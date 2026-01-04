@@ -1,6 +1,6 @@
 from pydrake.common.value import AbstractValue
 from pydrake.math import RigidTransform
-from pydrake.systems.framework import Context, LeafSystem, PortDataType
+from pydrake.systems.framework import Context, LeafSystem
 
 class AbstractListSelectionSystem(LeafSystem):
     """
