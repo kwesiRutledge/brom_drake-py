@@ -75,6 +75,7 @@ class Script:
                 FSMOutputDefinition("start_floor", False),  # Floor trigger
                 FSMOutputDefinition("enable_gripper_approach", True),  # Make gripper move towards object
                 FSMOutputDefinition("close_gripper", False),  # Gripper trigger
+                FSMOutputDefinition("switch_to_memory", "trajectory1"),  # Switch to memory system for gripper pose
             ]
         )
 
@@ -102,6 +103,7 @@ class Script:
             AttemptGraspWithPuppeteerWristPhase.kFloorDrop,
             outputs=[
                 FSMOutputDefinition("start_floor", True),
+                FSMOutputDefinition("switch_to_memory", "memory2"),  # Switch to memory system for gripper pose
             ]
         )
 

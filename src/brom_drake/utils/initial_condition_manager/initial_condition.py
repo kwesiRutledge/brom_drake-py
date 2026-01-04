@@ -21,8 +21,8 @@ class InitialCondition:
         diagram_context: Context = None
     ):
         """
-        Description
-        -----------
+        *Description*
+        
         Set the initial configuration for the given model instance in the plant.
 
         Note: Defining the default positions will fail, if the context for the plant
@@ -44,6 +44,7 @@ class InitialCondition:
 
         # Set initial configuration
         plant.SetDefaultPositions(self.model_instance_index, self.configuration)
+        print(f"Set default positions for model instance {self.model_instance_index} to {self.configuration}")
         if diagram_context is not None:
             plant.SetPositions(
                 plant.GetMyMutableContextFromRoot(diagram_context),

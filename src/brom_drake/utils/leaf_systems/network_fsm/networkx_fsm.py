@@ -1,3 +1,5 @@
+from copy import deepcopy
+from functools import partial, partialmethod
 import logging
 import networkx as nx
 import numpy as np
@@ -10,9 +12,11 @@ from pydrake.all import (
     LeafSystem,
     PortDataType,
 )
+from pydrake.systems.framework import OutputPort
 from typing import Callable, Dict, List, Union
 
 # Internal Imports
+from brom_drake.utils.leaf_systems.network_fsm.fsm_output_definition import FSMOutputDefinition
 from brom_drake.utils.leaf_systems.network_fsm.fsm_transition_condition import (
     FSMTransitionCondition, FSMTransitionConditionType
 )
@@ -61,6 +65,8 @@ class NetworkXFSM(LeafSystem):
         self.initialize_last_output_value_map()
 
         self.output_port_dict = {}
+        self.allocation_lambdas = {}
+        self.output_functions = {}
         self.derive_output_ports_from_graph()
 
         # Initialize the system in the initial state
@@ -68,10 +74,27 @@ class NetworkXFSM(LeafSystem):
         self.current_state_index = None
         self.initialize_fsm_state()
 
+        # Announce completion of initialization
+        self.logger.info("Finished initializing NetworkXFSM.")
+        self.logger.info("Output Ports Created:")
+        for output_port_name in self.output_port_dict:
+            self.logger.info(f"+ {output_port_name}")
+            output_port_i: OutputPort = self.output_port_dict[output_port_name]
+
+            self.logger.info(f"  - Type: {output_port_i.get_data_type()}")
+            if output_port_i.get_data_type() == PortDataType.kVectorValued:
+                self.logger.info(f"  - Size: {output_port_i.size()}")
+            else:
+                self.logger.info(f"  - Allocated Value: {output_port_i.Allocate()}")
+
+        self.logger.info("Last Output Value Map Initialized:")
+        for key in self.last_output_value:
+            self.logger.info(f"+ {key}: {self.last_output_value[key]}")
+
     def advance_state_if_necessary(self, context: Context, debug_flag: bool = False):
         """
-        Description
-        -----------
+        *Description*
+        
         Checks the current values of all relevant inputs
         and advances the state if necessary according to the
         conditions established in the FSM graph.
@@ -159,10 +182,23 @@ class NetworkXFSM(LeafSystem):
             xd=np.array([next_state])
         )
 
+    def universal_allocation_lambda(self, port_name: str) -> AbstractValue:
+        """
+        *Description*
+        
+        This function returns the allocation lambda for the given port name.
+        """
+        if port_name not in self.allocation_lambdas:
+            raise OutputPortNotInitializedError(
+                f"Output port {port_name} has not been initialized."
+            )
+        
+        return AbstractValue.Make(self.last_output_value[port_name])
+
     def CalcFSMState(self, context: Context, fsm_state: BasicVector):
         """
-        Description
-        -----------
+        *Description*
+        
         This function calculates the current state of the FSM.
         It uses the various Edge Definitions to determine the next state,
         based on the current state and the input values.
@@ -222,8 +258,8 @@ class NetworkXFSM(LeafSystem):
 
     def create_logger(self) -> logging.Logger:
         """
-        Description
-        -----------
+        *Description*
+        
         This function configures the logger for the FSM.
         It sets the logger to log messages at the INFO level.
         """
@@ -273,14 +309,73 @@ class NetworkXFSM(LeafSystem):
 
         return logger
 
+    def universal_abstract_output_port_function(
+        self,
+        port_name: str,
+        context: Context,
+        output: AbstractValue
+    ):
+        """
+        *Description*
+        
+        This function is a universal output port function for abstract-valued
+        output ports.
+        """
+        # Setup
+
+        # Advance the FSM state if necessary
+        self.advance_state_if_necessary(context)
+
+        # Get Current State
+        s_t = context.get_discrete_state(self.current_state_index).GetAtIndex(0)
+
+        # Check to see if the state value has changed
+        update_map_ii = self.derive_output_update_map(port_name)
+        if s_t in update_map_ii:
+            # Update the output value
+            self.last_output_value[port_name] = update_map_ii[s_t]
+
+        # self.logger.debug(
+        #     f"Output value for port {port_name_ii} is {self.last_output_value[port_name_ii]} at time {context.get_time()}",
+        #     )
+        output.SetFrom(AbstractValue.Make(self.last_output_value[port_name]))
+
+    def universal_vector_output_port_function(
+        self,
+        port_name_ii: str,
+        context: Context,
+        output: BasicVector
+    ):
+        """
+        *Description*
+        
+        This function is a universal output port function for vector-valued
+        output ports.
+        """
+        # Setup
+
+        # Advance the FSM state if necessary
+        self.advance_state_if_necessary(context)
+
+        # Get Current State
+        s_t = context.get_discrete_state(self.current_state_index).GetAtIndex(0)
+
+        # Check to see if the state value has changed
+        update_map_ii = self.derive_output_update_map(port_name_ii)
+        if s_t in update_map_ii:
+            # Update the output value
+            self.last_output_value[port_name_ii] = update_map_ii[s_t]
+            
+        output.SetFrom(self.last_output_value[port_name_ii])
+
     def create_output_port_function(
         self,
         port_name_ii: str,
         create_abstract_port: bool = False
     ) -> Callable[[Context, AbstractValue], None]:
         """
-        Description
-        -----------
+        *Description*
+        
         This function creates the output port function for the FSM.
         """
         # Setup
@@ -303,6 +398,8 @@ class NetworkXFSM(LeafSystem):
                     f"Output value for port {port_name_ii} is {self.last_output_value[port_name_ii]} at time {context.get_time()}",
                     )
                 output.SetFrom(AbstractValue.Make(self.last_output_value[port_name_ii]))
+
+            self.output_functions[port_name_ii] = dummy_output_function_ii
         else:
             def dummy_output_function_ii(context: Context, output: BasicVector):
                 self.advance_state_if_necessary(context)
@@ -316,13 +413,15 @@ class NetworkXFSM(LeafSystem):
                     
                 output.SetFrom(self.last_output_value[port_name_ii])
 
+            self.output_functions[port_name_ii] = dummy_output_function_ii
+        
 
-        return dummy_output_function_ii
+        return self.output_functions[port_name_ii]
 
     def derive_input_ports_from_graph(self, debug_flag: bool = False):
         """
-        Description
-        -----------
+        *Description*
+        
         This function creates the input ports for the FSM.
         """
         # Setup
@@ -359,6 +458,10 @@ class NetworkXFSM(LeafSystem):
         # After collecting all input port names, create the input ports
         for ii, input_port_definition in enumerate(input_port_definitions):
             # Debug messages
+            self.logger.info(
+                f"Creating input port \"{input_port_definition[0]}\" with example value \"{input_port_definition[1]}\"",
+            )
+
             if debug_flag:
                 print(f"Found definition for port \"{input_port_definition}\" with example value.")
 
@@ -379,11 +482,19 @@ class NetworkXFSM(LeafSystem):
                     port_name_ii,
                     input_port_size,
                 )
+                self.logger.info(
+                    f"Created vector input port \"{port_name_ii}\" of size {input_port_size}.",
+                )
             elif type(example_value_ii) == bool:
                 # Create port
                 self.input_port_dict[port_name_ii] = self.DeclareAbstractInputPort(
                     port_name_ii,
                     AbstractValue.Make(example_value_ii),
+                )
+
+                # Announce creation
+                self.logger.info(
+                    f"Created abstract input port \"{port_name_ii}\" of type bool.",
                 )
             else:
                 # Raise an error
@@ -394,8 +505,8 @@ class NetworkXFSM(LeafSystem):
 
     def derive_output_ports_from_graph(self, debug_flag: bool = False):
         """
-        Description
-        -----------
+        *Description*
+        
         This method uses the fsm_graph to infer what output ports
         should be created for the FSM.
 
@@ -419,7 +530,8 @@ class NetworkXFSM(LeafSystem):
         initial_node_data = fsm_graph.nodes[initial_node]
 
         # Create output ports
-        for output_index_ii, output_port_definition in enumerate(initial_node_data["outputs"]):
+        initial_outputs: List[FSMOutputDefinition] = initial_node_data["outputs"]
+        for output_index_ii, output_port_definition in enumerate(initial_outputs):
             # Extract values from the output port definition
             port_name_ii = output_port_definition.output_port_name
             output_value_ii = output_port_definition.output_port_value
@@ -440,11 +552,23 @@ class NetworkXFSM(LeafSystem):
                     output_port_size,
                     self.create_output_port_function(port_name_ii, create_abstract_port=False),
                 )
+
+                # Announce creation
+                self.logger.info(
+                    f"Created vector output port \"{port_name_ii}\" of size {output_port_size}.",
+                )
             elif (type(output_value_ii) == bool) or (type(output_value_ii) == str):
+                # Make sure to save the value we wish to allocate/the allocation function
+                self.allocation_lambdas[port_name_ii] = lambda: AbstractValue.Make(self.last_output_value[port_name_ii])
                 self.output_port_dict[port_name_ii] = self.DeclareAbstractOutputPort(
                     port_name_ii,
-                    lambda: AbstractValue.Make(output_value_ii),
+                    partial(self.universal_allocation_lambda, port_name=port_name_ii),
                     self.create_output_port_function(port_name_ii, create_abstract_port=True),
+                )
+
+                # Announce creation
+                self.logger.info(
+                    f"Created abstract output port \"{port_name_ii}\" of type {type(output_value_ii)}.",
                 )
             elif (type(output_value_ii) == int) or (type(output_value_ii) == float):
                 # Create a np.array from the scalar value
@@ -455,6 +579,11 @@ class NetworkXFSM(LeafSystem):
                     port_name_ii,
                     1,
                     self.create_output_port_function(port_name_ii, create_abstract_port=False),
+                )
+
+                # Announce creation
+                self.logger.info(
+                    f"Created vector output port \"{port_name_ii}\" of size 1.",
                 )
             else:
                 # Raise an error
@@ -468,16 +597,17 @@ class NetworkXFSM(LeafSystem):
         port_name_ii: str
     ) -> Dict[int, Union[str, int]]:
         """
-        Description
-        -----------
+        *Description*
+        
         This method constructs a small mapping of WHEN to change the value of
         port_name_ii.
+
         The key to each element in the mapping is a value of the state (i.e.,
         on this state, change the value of port_name_ii to this value) and
         the value is the value that the state should be changed to when we reach there.
 
-        Arguments
-        ---------
+        *Parameters*
+        
         port_name_ii: str
             The name of the port for which this mapping applies.
         """
@@ -498,7 +628,7 @@ class NetworkXFSM(LeafSystem):
         update_map = {}
         for node_ii in relevant_nodes:
             # Get the output port definition
-            output_port_definitions = fsm_graph.nodes[node_ii]["outputs"]
+            output_port_definitions: List[FSMOutputDefinition] = fsm_graph.nodes[node_ii]["outputs"]
             
             # Find the output port for our target port
             output_value_ii = None
@@ -540,8 +670,8 @@ class NetworkXFSM(LeafSystem):
 
     def initialize_last_output_value_map(self):
         """
-        Description
-        -----------
+        *Description*
+        
         This function takes the initial node and then uses
         all of the output definitions for that node to define
         the initial values for the `last_output_value` map.
@@ -566,6 +696,10 @@ class NetworkXFSM(LeafSystem):
 
             # Create the last output value map
             self.last_output_value[port_name_ii] = output_value_ii
+
+        self.logger.info(f"Initialized last output value map:")
+        for port_name, output_value in self.last_output_value.items():
+            self.logger.info(f"- Port \"{port_name}\": {output_value}, type {type(output_value)}")
 
     def initialize_fsm_state(self):
         """
