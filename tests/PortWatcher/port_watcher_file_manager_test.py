@@ -92,8 +92,6 @@ class PortWatcherFileManagerTest(unittest.TestCase):
         # Setup Diagram
         # - Create Builder
         # - Define Plant
-        time_step = 0.01
-
         builder = DiagramBuilder()
 
         # Define plant with:
@@ -102,10 +100,9 @@ class PortWatcherFileManagerTest(unittest.TestCase):
         plant, scene_graph = AddMultibodyPlantSceneGraph(builder, time_step=1e-3)
 
         block_model_path = Path(self.get_brom_drake_dir()) / "examples/watcher/suggested_use1/slider-block.urdf"
-        block_model_idx = Parser(plant=plant).AddModels(
+        Parser(plant=plant).AddModels(
             str(block_model_path)
-        )[0]
-        block_body_name = "block"
+        )
 
         p_GroundOrigin = [0, 0.0, 0.0]
         R_GroundOrigin = RotationMatrix.MakeXRotation(0.0)
@@ -153,8 +150,6 @@ class PortWatcherFileManagerTest(unittest.TestCase):
         # Setup Diagram
         # - Create Builder
         # - Define Plant
-        time_step = 0.01
-
         builder = DiagramBuilder()
 
         # Define plant with:
@@ -163,10 +158,9 @@ class PortWatcherFileManagerTest(unittest.TestCase):
         plant, scene_graph = AddMultibodyPlantSceneGraph(builder, time_step=1e-3)
 
         block_model_path = Path(self.get_brom_drake_dir()) / "examples/watcher/suggested_use1/slider-block.urdf"
-        block_model_idx = Parser(plant=plant).AddModels(
+        Parser(plant=plant).AddModels(
             str(block_model_path)
         )[0]
-        block_body_name = "block"
 
         p_GroundOrigin = [0, 0.0, 0.0]
         R_GroundOrigin = RotationMatrix.MakeXRotation(0.0)
