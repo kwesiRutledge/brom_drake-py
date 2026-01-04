@@ -269,7 +269,7 @@ class PortWatcherPlotter:
         
         This function saves the figures.
 
-        .. note:
+        .. note::
 
             TODO(kwesi): Make it so that this function computes names + directory structure based on plot arrangement.
 
@@ -341,7 +341,7 @@ class PortWatcherPlotter:
 
         *Returns*
         
-        is_plantbool
+        is_plant: bool
             True if the system is a MultibodyPlant.
         """
         # Setup
