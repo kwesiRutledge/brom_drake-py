@@ -9,8 +9,8 @@ class BoolToVectorSystem(LeafSystem):
     """
     *Description*
     
-    This LeafSystem receives boolean inputs (i.e., AbstractValue) inputs
-    and returns an output vector of size 1 (i.e., BasicVector) where the
+    This LeafSystem receives boolean inputs (i.e., AbstractValue inputs
+    containing bool values) and returns an output vector of size 1 (i.e., BasicVector) where the
     single element is 1 if the input bool is True and 0 if the input bool
     is False.
 

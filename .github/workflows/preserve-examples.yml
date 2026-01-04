@@ -1,7 +1,7 @@
 name: Verify that all examples still run
 on: [pull_request]
 jobs:
-  run:
+  run-examples:
     runs-on: ubuntu-latest
     name: Run example
     strategy:
@@ -27,7 +27,9 @@ jobs:
           'examples/productions/helpful_for_debugging/grasping/attempt_grasp/with_static_wrist/with_nonconvex_geometries1/attempt.py',
           'examples/utils/puppetmaker/tutorial1/tutorial1.py',
           'examples/utils/puppetmaker/advanced_usage1_change_visuals/tutorial_with_changed_visuals.py',
-          'examples/utils/puppetmaker/wrench1/puppet_wrench.py'
+          'examples/utils/puppetmaker/wrench1/puppet_wrench.py',
+          'examples/productions/helpful_for_debugging/grasping/attempt_grasp/with_puppeteer_wrist/suggested_use1/attempt.py',
+          'examples/productions/helpful_for_debugging/grasping/attempt_grasp/with_puppeteer_wrist/suggested_use2/attempt.py',
         ]
     steps:
       - name: Checkout

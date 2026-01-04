@@ -76,11 +76,11 @@ class BlockHandlerSystem(LeafSystem):
             RigidTransform(RollPitchYaw(pose_as_vec[:3]),pose_as_vec[3:])
         )
 
-        self.plant.SetFreeBodySpatialVelocity(
-            self.plant.GetBodyByName(self.block_body_name),
-            SpatialVelocity(np.zeros(3),np.array([0.0,0.0,0.0])),
-            plant_context
-            )
+        # self.plant.SetFreeBodySpatialVelocity(
+        #     self.plant.GetBodyByName(self.block_body_name),
+        #     SpatialVelocity(np.zeros(3),np.array([0.0,0.0,0.0])),
+        #     plant_context
+        # )
 
         X_WBlock = self.plant.GetFreeBodyPose(
             plant_context,

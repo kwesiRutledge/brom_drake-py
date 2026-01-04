@@ -9,7 +9,7 @@
 project = 'brom_drake-py'
 copyright = '2025, Kwesi Rutledge, Wrench Robotics'
 author = 'Kwesi Rutledge, Wrench Robotics'
-release = 'v0.4.5'
+release = 'v0.4.5-repoDefault'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

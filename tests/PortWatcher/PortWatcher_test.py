@@ -25,6 +25,7 @@ from pydrake.systems.framework import DiagramBuilder, PortDataType, Diagram, Con
 
 # Internal Imports
 from brom_drake.PortWatcher.port_watcher_options import PortWatcherOptions, PortWatcherPlottingOptions
+from brom_drake.PortWatcher.support_types import create_port_value_type_error
 from brom_drake.all import (
     PortWatcher,
 )
@@ -44,7 +45,7 @@ class PortWatcherTest(unittest.TestCase):
 
     def create_dummy_logger(self, log_file_name: str):
         # Create dummy logger
-        python_logger = logging.getLogger("PortWatcher Test Logger")
+        python_logger = logging.getLogger("PortWatcher Test Logger [" + log_file_name + "]")
         for handler in python_logger.handlers:
             python_logger.removeHandler(handler)
 
@@ -61,10 +62,17 @@ class PortWatcherTest(unittest.TestCase):
             mode='w'
         )
         file_handler.setLevel(logging.DEBUG)
+
         # Create a formatter and set it for the handler
         formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(name)s | %(message)s')
         file_handler.setFormatter(formatter)
         python_logger.addHandler(file_handler)
+
+        # Make sure that the logger responds to all messages of level DEBUG and higher
+        python_logger.setLevel(logging.DEBUG)
+
+        # Publish a test log message
+        python_logger.info("Created dummy logger for PortWatcher tests.")
 
         return python_logger
 
@@ -97,21 +105,31 @@ class PortWatcherTest(unittest.TestCase):
         plant = builder.AddNamedSystem("my_plant", MultibodyPlant(time_step=time_step))
         plant.Finalize()
 
+        # Create PortWatcher object
+        dummy_python_logger = self.create_dummy_logger("PortWatcherTest_init1.log")
         pw0 = PortWatcher(
             plant.GetOutputPort("state"), builder,
-            python_logger=self.create_dummy_logger("PortWatcherTest_init1.log")
+            python_logger=dummy_python_logger
             )
 
-        self.assertTrue(True)
+        # Verify that the PortWatcher object has the correct
+        # attributes
+        all_vector_logs_in_pw0 = list(pw0._drake_vector_logs.values())
+        first_vector_log = all_vector_logs_in_pw0[0]
         self.assertIn(
-            "PortWatcher", pw0.logger.get_name(),
+            "PortWatcher", first_vector_log.get_name(),
         )
         self.assertIn(
-            plant.get_name(), pw0.logger.get_name(),
+            plant.get_name(), first_vector_log.get_name(),
         )
         self.assertIn(
-            "state", pw0.logger.get_name(),
+            "state", first_vector_log.get_name(),
         )
+
+        # Clean up logger
+        for handler in dummy_python_logger.handlers:
+            handler.close()
+            dummy_python_logger.removeHandler(handler)
 
     def test_init2(self):
         """
@@ -135,74 +153,20 @@ class PortWatcherTest(unittest.TestCase):
 
         try:
             pw0 = PortWatcher(
-                plant_test_port, builder,
+                plant_test_port, 
+                builder,
                 python_logger=self.create_dummy_logger("PortWatcherTest_init2.log"),
             )
         except ValueError as e:
-            expected_error = PortWatcher.create_port_value_type_error(plant_test_port)
+            plant_test_port_allocation = plant_test_port.Allocate()
+            plant_test_port_value = plant_test_port_allocation.get_value()
+            expected_error = create_port_value_type_error(plant_test_port_value)
 
             self.assertEqual(
                 str(e), str(expected_error),
             )
         else:
             self.assertTrue(False)
-
-    def test_time_and_raw_data_names1(self):
-        """
-        Description
-        -----------
-        This test verifies that the time and raw data names are
-        correctly containing the system name and port name.
-        In this case, for the state port of a MultibodyPlant system.
-        """
-        # Setup
-        # Setup Diagram
-        # - Create Builder
-        # - Define Plant
-        time_step = 0.01
-
-        builder = DiagramBuilder()
-
-        # Define plant with:
-        # + add block model
-        # + ground
-        plant, scene_graph = AddMultibodyPlantSceneGraph(builder, time_step=1e-3)
-
-        block_model_idx = Parser(plant=plant).AddModels(
-            self.get_brom_drake_dir() + "/examples/watcher/suggested_use1/slider-block.urdf",
-        )[0]
-        block_body_name = "block"
-
-        p_GroundOrigin = [0, 0.0, 0.0]
-        R_GroundOrigin = RotationMatrix.MakeXRotation(0.0)
-        X_GroundOrigin = RigidTransform(R_GroundOrigin, p_GroundOrigin)
-        surface_friction = CoulombFriction(
-            static_friction=0.7,
-            dynamic_friction=0.5)
-        plant.RegisterCollisionGeometry(
-            plant.world_body(),
-            X_GroundOrigin,
-            HalfSpace(),
-            "ground_collision",
-            surface_friction)
-
-        plant.Finalize()
-
-        # Create PortWatcherPlotter
-        pw0 = PortWatcher(
-            plant.GetOutputPort("state"),
-            builder,
-            python_logger=self.create_dummy_logger("PortWatcherTest_time_and_raw_data_names1.log"),
-        )
-
-        # Verify
-        name_tuple = pw0.time_and_raw_data_names()
-        self.assertEqual(2, len(name_tuple))
-
-        for name_ii in name_tuple:
-            self.assertIn(plant.get_name(), name_ii)
-            self.assertIn("state", name_ii)
-        self.assertIn("times", name_tuple[0])
 
     def test_check_port_type1(self):
         """
@@ -231,8 +195,8 @@ class PortWatcherTest(unittest.TestCase):
 
     def test_save_raw_data1(self):
         """
-        Description
-        -----------
+        *Description*
+        
         This test verifies that the save_raw_data method
         correctly saves the raw data to the correct file.
         """
@@ -245,14 +209,13 @@ class PortWatcherTest(unittest.TestCase):
         )
 
         # Create PortWatcher object
-        pw_options0 = PortWatcherOptions(
-            base_directory="./brom/test_save_raw_data1/watcher"
-        )
+        pw_options0 = PortWatcherOptions()
         pw0 = PortWatcher(
             pose_source.get_output_port(),
             builder,
             python_logger=self.create_dummy_logger("PortWatcherTest_save_raw_data1.log"),
             options=pw_options0,
+            base_watcher_dir="./brom/test_save_raw_data1/watcher"
         )
 
         # Build Diagram
@@ -270,12 +233,12 @@ class PortWatcherTest(unittest.TestCase):
 
         # Verify that the raw_data directory exists
         self.assertTrue(
-            os.path.exists(pw0.options.raw_data_dir()),
+            os.path.exists(pw0.file_manager.raw_data_dir),
         )
 
         # Verify that there is at least one file in the directory
         self.assertTrue(
-            len(os.listdir(pw0.options.raw_data_dir())) > 0,
+            len(os.listdir(pw0.file_manager.raw_data_dir)) > 0,
         )
 
 

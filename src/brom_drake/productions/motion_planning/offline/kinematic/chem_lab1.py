@@ -438,11 +438,10 @@ class ChemLab1(KinematicMotionPlanningProduction):
         diagram_context: pdrake.systems.framework.Context
             The context for the diagram (used by the diagram watcher to monitor the system, if defined).
 
-        .. note:
+        .. note::
 
-            When constructing a simulation of the production, use the above diagram_context to construct the simulator.
-            Especially when the DiagramWatcher is created, you must use the same diagram context as the watcher's context
-            in order for the data to be saved in a place that the watcher can find.
+            This method returns a `pydrake.systems.framework.Diagram` and its associated `pydrake.systems.framework.Context`.
+            When constructing a Drake simulation of this, you should use these objects to create the `pydrake.systems.analysis.Simulator`.
             
         """
         diagram, diagram_context = super().add_cast_and_build(
@@ -562,11 +561,10 @@ class ChemLab1(KinematicMotionPlanningProduction):
         diagram_context: pdrake.systems.framework.Context
             The context for the diagram (used by the diagram watcher to monitor the system, if defined).
 
-        .. note:
+        .. note::
 
-            When constructing a simulation of the production, use the above diagram_context to construct the simulator.
-            Especially when the DiagramWatcher is created, you must use the same diagram context as the watcher's context
-            in order for the data to be saved in a place that the watcher can find.
+            This method returns a `pydrake.systems.framework.Diagram` and its associated `pydrake.systems.framework.Context`.
+            When constructing a Drake simulation of this, you should use these objects to create the `pydrake.systems.analysis.Simulator`.
         """
         # Setup
 

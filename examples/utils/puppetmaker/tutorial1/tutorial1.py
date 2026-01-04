@@ -90,11 +90,12 @@ def main(t_final: float = 15.0):
     plant, scene_graph = AddMultibodyPlantSceneGraph(builder, time_step=1e-3)
 
     # Create Cube 3d model
-    simple_cube = BoxDefinition(size=[0.05,0.05,0.05])
+    # (It will be our puppet, and we will color it green for better visibility)
+    simple_cube = BoxDefinition(size=[0.1,0.1,0.1])
     cube_urdf_defn = SimpleShapeURDFDefinition(
         name="tutorial-cube",
         shape=simple_cube,
-        color=[0.1,0.1,0.5,1.0],
+        color=[0.1,0.5,0.1,1.0],
     )
     cube_urdf_path = cube_urdf_defn.write_to_file()
 
@@ -102,14 +103,15 @@ def main(t_final: float = 15.0):
     cube_model = Parser(plant=plant).AddModels(cube_urdf_path)[0]
 
     # Add "puppet strings" for the cube
-    puppetmaker0 = Puppetmaker(plant=plant)
+    # (Each of the puppet joints will be an "almost massless" sphere in the visualization)
+    puppetmaker0 = Puppetmaker(plant=plant, sphere_radius=0.07)
     cube_signature = puppetmaker0.add_strings_for(cube_model)
 
     # Finalize the plant
     plant.Finalize()
 
     # Add the puppet controller to the builder
-    pose_converter_system = puppetmaker0.add_puppet_controller_for(
+    pose_converter_system, _ = puppetmaker0.add_puppet_controller_for(
         cube_signature,
         builder,
     )

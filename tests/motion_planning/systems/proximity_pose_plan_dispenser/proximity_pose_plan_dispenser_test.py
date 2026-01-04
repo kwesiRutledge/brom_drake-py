@@ -11,6 +11,7 @@ from pydrake.all import (
     RollPitchYaw, RotationMatrix,
     Simulator,
 )
+import shutil
 from typing import Tuple
 import unittest
 
@@ -60,8 +61,9 @@ class TestProximityPosePlanDispenser(unittest.TestCase):
         ]
 
         # Create a source to share the plan
-        plan_source = builder.AddSystem(
-            ConstantValueSource(AbstractValue.Make(plan))
+        plan_source = builder.AddNamedSystem(
+            system=ConstantValueSource(AbstractValue.Make(plan)),
+            name="plan_source",
         )
 
         # Create a source to share the plan_ready signal
@@ -84,10 +86,11 @@ class TestProximityPosePlanDispenser(unittest.TestCase):
 
     def test_advance_plan_if_necessary1(self):
         """
-        Description:
-            This test verifies that the advance_plan_if_necessary function works as expected.
-            We will check that the plan index is advanced when the current pose is within the 
-            proximity limit of the plan.
+        *Description*
+
+        This test verifies that the advance_plan_if_necessary function works as expected.
+        We will check that the plan index is advanced when the current pose is within the 
+        proximity limit of the plan.
         """
         # Setup
         builder, dispenser, plan = self.create_scenario1()
@@ -97,12 +100,17 @@ class TestProximityPosePlanDispenser(unittest.TestCase):
         current_pose_source = builder.AddSystem(
             ConstantValueSource(AbstractValue.Make(nearby_pose_to_plan_pose0))
         )
+        current_pose_source.set_name("current_pose_source")
 
         # Connect the current pose source to the dispenser
         builder.Connect(current_pose_source.get_output_port(0), dispenser.GetInputPort("current_pose"))
 
         # Build the diagram
-        watcher, diagram, diagram_context = add_watcher_and_build(builder)
+        test_watcher_dir = ".brom/proximity_necessary1"
+        watcher, diagram, diagram_context = add_watcher_and_build(
+            builder,
+            watcher_dir=test_watcher_dir,
+        )
 
         # Check that the initial plan index is 0
         self.assertEqual(dispenser.dispenser_plan_index, 0)
@@ -121,6 +129,9 @@ class TestProximityPosePlanDispenser(unittest.TestCase):
 
         # Check that the plan index is now 1
         self.assertEqual(dispenser.dispenser_plan_index, 1)
+
+        # Cleanup
+        shutil.rmtree(test_watcher_dir)
 
     def test_advance_plan_if_necessary2(self):
         """

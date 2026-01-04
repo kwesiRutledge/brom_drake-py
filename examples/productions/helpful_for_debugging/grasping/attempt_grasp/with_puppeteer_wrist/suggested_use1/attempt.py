@@ -46,8 +46,8 @@ def main():
     # Create the following poses (transforms):
     # - The Grasp Pose (i.e. the target pose of the gripper wrist when grasping the object)
     X_ObjectTarget = RigidTransform(
-        p=np.array([-0.08, 0.05, 0.2]),
-        rpy=RollPitchYaw(0.0, np.pi/2.0, 0.0),
+        p=np.array([-0.08, 0.05, 0.15]),
+        rpy=RollPitchYaw(0.1, (11.0/20.0)*np.pi, 0.1),
     )
 
     # - The Pre-Grasp Pose (i.e. the pose of the gripper wrist just before reaching to grasp the object)
@@ -63,7 +63,7 @@ def main():
         path_to_object=str(drakeified_flask_urdf),
         gripper_choice=GripperType.Robotiq_2f_85,
         grasp_joint_positions=np.array([0.7]),
-        X_WorldGripper_trajectory=[X_WorldPreGrasp, X_ObjectTarget],
+        X_ObjectGripper_trajectory=[X_WorldPreGrasp, X_ObjectTarget],
         meshcat_port_number=7001, # Use None for CI
     )
 

@@ -33,32 +33,5 @@ class PortWatcherRawDataOptions(NamedTuple):
     file_format: str = "npy"
 
 class PortWatcherOptions(NamedTuple):
-    base_directory: str = DEFAULT_WATCHER_DIR
     plotting: PortWatcherPlottingOptions = PortWatcherPlottingOptions()
     raw_data: PortWatcherRawDataOptions = PortWatcherRawDataOptions()
-
-    def plot_dir(self) -> str:
-        """
-        Description
-        -----------
-        This function returns the directory where the plots will be saved.
-
-        Returns
-        -------
-        str
-            The directory where the plots will be saved.
-        """
-        return self.base_directory + "/plots"
-
-    def raw_data_dir(self):
-        """
-        Description
-        -----------
-        This function returns the directory where the raw data will be saved.
-
-        Returns
-        -------
-        str
-            The directory where the raw data will be saved.
-        """
-        return self.base_directory + "/raw_data"

@@ -126,6 +126,7 @@ def main(t_final: float = 15.0):
     pose_converter_system, _ = puppetmaker0.add_puppet_controller_for(
         cube_signature,
         builder,
+        Kp=np.array([150.0, 150.0, 150.0, 1e1, 1e1, 3e0]),
     )
 
     # Connect a trajectory source system to this
