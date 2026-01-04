@@ -43,7 +43,7 @@ class TestAttemptGraspWithPuppeteerWristProduction(unittest.TestCase):
             path_to_object=str(self.manipuland_file),
             gripper_choice=GripperType.Robotiq_2f_85,
             grasp_joint_positions=np.array([0.7]),
-            X_WorldGripper_trajectory=[RigidTransform(), RigidTransform()],
+            X_ObjectGripper_trajectory=[RigidTransform(), RigidTransform()],
         )
 
         # Get suggested roles
@@ -65,7 +65,7 @@ class TestAttemptGraspWithPuppeteerWristProduction(unittest.TestCase):
             path_to_object=str(self.manipuland_file),
             gripper_choice=GripperType.Robotiq_2f_85,
             grasp_joint_positions=np.array([0.7]),
-            X_WorldGripper_trajectory=[RigidTransform(), RigidTransform()],
+            X_ObjectGripper_trajectory=[RigidTransform(), RigidTransform()],
         )
 
         # Verify the id
@@ -93,7 +93,7 @@ class TestAttemptGraspWithPuppeteerWristProduction(unittest.TestCase):
             path_to_object=str(self.manipuland_file),
             gripper_choice=GripperType.Robotiq_2f_85,
             grasp_joint_positions=np.array([0.7]),
-            X_WorldGripper_trajectory=[WorldGripper_far, WorldGripper_far],
+            X_ObjectGripper_trajectory=[WorldGripper_far, WorldGripper_far],
             meshcat_port_number=None, # Use None for CI
         )
 
