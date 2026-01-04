@@ -5,13 +5,11 @@ import os
 from pathlib import Path
 from pydrake.all import (
     Context,
-    LeafSystem,
     OutputPort,
     PortDataType,
     MultibodyPlant,
-    RigidTransform,
 )
-from pydrake.systems.primitives import LogVectorOutput, VectorLogSink
+from pydrake.systems.primitives import VectorLogSink
 from typing import List, Tuple
 
 
