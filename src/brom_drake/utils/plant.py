@@ -1,5 +1,5 @@
 from pydrake.multibody.plant import MultibodyPlant
-from pydrake.multibody.tree import ModelInstanceIndex, RigidBody, BodyIndex
+from pydrake.multibody.tree import ModelInstanceIndex, BodyIndex
 from typing import List
 
 def get_all_associated_body_indices_in_plant(
