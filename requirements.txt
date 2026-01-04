@@ -1,7 +1,7 @@
 # requirements.txt
 
 # Drake
-drake
+drake==1.40.0
 manipulation
 
 # Visualization and Math
