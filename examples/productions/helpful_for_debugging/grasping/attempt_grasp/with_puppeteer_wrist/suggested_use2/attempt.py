@@ -1,5 +1,4 @@
 from importlib import resources as impresources
-import ipdb
 import numpy as np
 from pathlib import Path
 from pydrake.all import (
@@ -9,11 +8,10 @@ from pydrake.all import (
 )
 import subprocess
 import trimesh
-import typer
 
 # Internal Imports
 from brom_drake.PortWatcher.port_watcher_options import FigureNamingConvention
-from brom_drake.all import drakeify_my_urdf, GripperType, MeshReplacementStrategy
+from brom_drake.all import GripperType
 from brom_drake import robots
 from brom_drake.productions import AttemptGraspWithPuppeteerWrist, AttemptGraspWithPuppeteerWristConfiguration
 
