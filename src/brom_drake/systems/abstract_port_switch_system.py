@@ -1,7 +1,5 @@
 from pydrake.common.value import AbstractValue
-from pydrake.math import RigidTransform
 from pydrake.systems.framework import BasicVector, Context, InputPort, InputPortIndex, LeafSystem
-from typing import Union
 
 class AbstractPortSwitch(LeafSystem):
     """
