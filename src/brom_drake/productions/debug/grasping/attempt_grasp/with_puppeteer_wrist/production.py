@@ -232,8 +232,9 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         # TODO(kwesi): Figure out a better way to handle the initial joint positions
         # Create INITIAL joint position array
         n_gripper_positions = find_number_of_positions_in_welded_model(self.path_to_gripper)
-        # if initial_gripper_joint_positions is None:
-        #     initial_gripper_joint_positions = [0.0] * n_gripper_positions
+        assert n_gripper_positions == grasp_joint_positions.shape[0], \
+            f"Gripper joint positions size {grasp_joint_positions.shape[0]} does not match expected number of gripper positions {n_gripper_positions}!"
+        
         self.initial_gripper_joint_positions = np.zeros(grasp_joint_positions.shape)# initial_gripper_joint_positions
 
         # Save the trajectory of the gripper frame
@@ -1246,7 +1247,6 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         # Set the initial configuration of the gripper
         # - Set the gripper positions (i.e., initial positions of the joints)
         #   (Because of the puppeteer, this has an additional fixed joint at the base)
-        n_gripper_positions0 = find_number_of_positions_in_welded_model(self.path_to_gripper)
         n_gripper_positions1 = plant.num_positions(self.gripper_model_index)
 
         initial_gripper_configuration = np.zeros((n_gripper_positions1,))
