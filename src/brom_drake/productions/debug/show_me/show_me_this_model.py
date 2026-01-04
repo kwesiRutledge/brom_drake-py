@@ -1,6 +1,7 @@
 from typing import List, Tuple
 
 import numpy as np
+from pathlib import Path
 from pydrake.geometry import Meshcat, MeshcatVisualizer, MeshcatVisualizerParams
 from pydrake.geometry import Role as DrakeRole
 from pydrake.multibody.parsing import Parser
@@ -29,7 +30,7 @@ class ShowMeThisModel(BaseProduction):
     
     path_to_model: str
         The path to the model file to be visualized.
-        TODO: Add support for Path type.
+        TODO: Add support for Path type. Make sure to add tests!!
 
     with_these_joint_positions: List[float], optional
         A list of joint positions to set the model to when visualized.
@@ -110,7 +111,7 @@ class ShowMeThisModel(BaseProduction):
     """
     def __init__(
         self,
-        path_to_model: str,
+        path_to_model: str|Path,
         with_these_joint_positions: List[float] = None,
         base_link_name: str = None,
         time_step: float = 1e-3,
@@ -120,13 +121,20 @@ class ShowMeThisModel(BaseProduction):
     ):
         super().__init__(**kwargs)
 
-        # Add the model to the Production
+        # Copy all parameters into the production
+        if type(path_to_model) is str:
+            path_to_model = Path(path_to_model)
+
         self.path_to_model = path_to_model
         self.q_des = with_these_joint_positions
         self.base_link_name = base_link_name
         self.time_step = time_step
         self.meshcat_port_number = meshcat_port_number
         self.show_collision_geometries = show_collision_geometries
+
+        # Check that the model exists
+        if not self.path_to_model.exists():
+            raise ValueError(f"The path \"{self.path_to_model}\" does not exist! Can not show a model that does not exist!")
 
         # If the base link name is not provided,
         # then we will try to do a smart search for it.
@@ -158,7 +166,9 @@ class ShowMeThisModel(BaseProduction):
         # Setup
 
         # Add Model
-        model_idcs = Parser(plant=self.plant).AddModels(self.path_to_model)
+        model_idcs = Parser(plant=self.plant).AddModels(
+            str(self.path_to_model)
+        )
         assert len(model_idcs) == 1, \
             f"Only one model should be added in this production;" + \
             f" received {len(model_idcs)} in the file {self.path_to_model}."
@@ -323,7 +333,9 @@ class ShowMeThisModel(BaseProduction):
 
         # Create a shadow plant
         shadow_plant = MultibodyPlant(self.time_step)
-        model_idcs = Parser(plant=shadow_plant).AddModels(self.path_to_model)
+        model_idcs = Parser(plant=shadow_plant).AddModels(
+            str(self.path_to_model)
+        )
         shadow_model_idx = model_idcs[0]
 
         # Weld the base link to the world frame

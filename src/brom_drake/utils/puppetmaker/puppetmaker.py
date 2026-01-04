@@ -1,3 +1,4 @@
+from brom_drake.utils.angles import RollPitchYawAngle, rpy_equivalent_body_rotation_order
 from dataclasses import dataclass
 import numpy as np
 from pydrake.all import (
@@ -7,8 +8,6 @@ from pydrake.all import (
     DiagramBuilder,
     Frame,
     LeafSystem,
-    ModelInstanceIndex,
-    MultibodyPlant,
     Multiplexer,
     Parser,
     PassThrough,
@@ -18,8 +17,11 @@ from pydrake.all import (
     Joint,
     JointActuator,
 )
+from pydrake.multibody.plant import MultibodyPlant
+from pydrake.multibody.tree import ModelInstanceIndex
 from typing import List, Tuple
 
+from brom_drake.utils.leaf_systems.named_vector_selection_system import define_named_vector_selection_system
 from brom_drake.utils.model_instances import get_all_bodies_in
 
 # Internal Imports
@@ -34,14 +36,22 @@ from brom_drake.utils.leaf_systems.rigid_transform_to_vector_system import (
 
 class Puppetmaker:
     """
-    Description
-    -----------
+    *Description*
+    
+    This class turns a "free body" in Drake into a "puppet" whose pose and orientation
+    can be controlled using 6 actuated joints (3 prismatic and 3 revolute).
+
     This object is used to:
     - Add "invisible" actuators for moving a free body (i.e., `add_strings_for` or `add_actuators_for`), and
     - Control actuate a free body that has been added with the expected "puppet" actuators (i.e., `add_puppet_controller_for)
 
-    Notes
-    -----
+    .. important::
+        The 2 functions of the puppetmaker are designed to be used at different times.
+        The `add_strings_for` or `add_actuators_for` methods MUST be called BEFORE finalizing the plant.
+        The `add_puppet_controller_for` method MUST be called AFTER finalizing the plant.
+    
+    *Notes*
+    
     - The puppet is assumed to be a free body (i.e., it has no existing joints connecting it to the world).
       After adding the puppet actuators, the puppet will NO LONGER be a free body.
     - You must call add_strings_for or add_actuators_for BEFORE finalizing the plant.
@@ -75,26 +85,32 @@ class Puppetmaker:
         joint_name: str,
     ) -> Tuple[PrismaticJoint, JointActuator]:
         """
-        Description
-        -----------
+        *Description*
+        
         This method will add an prismatic joint in the direction `axis_dimension`
         between `previous_frame` and `next_frame`, along with an actuator to control it.
         
-        Arguments
-        ---------
-        :param axis_dimension: The axis to translate in (0 for X, 1 for Y, 2 for Z).
-        :type axis_dimension: int
-        :param previous_frame: The frame of the parent side of the joint.
-        :type previous_frame: Frame
-        :param next_frame: The frame of the child side of the joint.
-        :type next_frame: Frame
-        :param joint_name: The name of the joint we are creating.
-        :type joint_name: str
+        *Parameters*
+        
+        axis_dimension: int
+            The axis to translate in (0 for X, 1 for Y, 2 for Z).
 
-        Returns
-        -------
-        :return: The created prismatic joint and its actuator.
-        :rtype: Tuple[PrismaticJoint, JointActuator]
+        previous_frame: Frame
+            The frame of the parent side of the joint.
+
+        next_frame: Frame
+            The frame of the child side of the joint.
+
+        joint_name: str
+            The name of the joint we are creating.
+
+        *Returns*
+        
+        translation_joint_ii: PrismaticJoint
+            The created prismatic joint.
+
+        translation_actuator_ii: JointActuator
+            The created actuator for the prismatic joint.        
         """
         # Setup
         plant: MultibodyPlant = self.plant
@@ -122,17 +138,38 @@ class Puppetmaker:
 
     def add_actuated_revolute_joint(
         self,
-        axis_dimension: int,
+        angle_type: RollPitchYawAngle,
         previous_frame: Frame,
         next_frame: Frame,
         joint_name: str,
     ) -> Tuple[Joint, JointActuator]:
+        """
+        *Description*
+
+        This method will add a revolute joint in the direction `axis_dimension`
+        between `previous_frame` and `next_frame`, along with an actuator to control it.
+
+        *Parameters*
+
+        axis_dimension: int
+            The axis to rotate about 
+        """
         # Setup
         plant: MultibodyPlant = self.plant
 
         # Create the direction to rotate in
         axis_ii = [0, 0, 0]
-        axis_ii[axis_dimension] = 1.0
+        match angle_type:
+            case RollPitchYawAngle.kRoll:
+                axis_ii[0] = 1.0
+            case RollPitchYawAngle.kPitch:
+                axis_ii[1] = 1.0
+            case RollPitchYawAngle.kYaw:
+                axis_ii[2] = 1.0
+            case _:
+                raise ValueError(
+                    f"Invalid angle_type '{angle_type}'; must be one of {list(RollPitchYawAngle)}"
+                )
 
         # Create Joint
         rotation_joint_ii = plant.AddJoint(
@@ -204,11 +241,18 @@ class Puppetmaker:
         massless_sphere_indices: List[ModelInstanceIndex],
     ) -> List[PuppeteerJointSignature]:
         """
-        Description
-        -----------
+        *Description*
 
-        Notes
-        -----
+        This function creates the 3 actuated revolute joints needed to
+        control the orientation of the puppet.
+
+        Because the puppet's orientation is controlled using roll-pitch-yaw angles,
+        the order of the revolute joints will correspond to the standard body rotation
+        order for roll-pitch-yaw (note this is not roll first, then pitch, then yaw).
+        
+
+        *Notes*
+
         This function expects 3 massless sphere inputs.
         The first sphere in the list should be the one representing the last 
         translation sphere (i.e., the one we should connect the first revolute sphere to.)
@@ -228,8 +272,13 @@ class Puppetmaker:
         previous_frame = plant.get_body(sphere2_bodies[0]).body_frame()
 
         # Create The First 2 Rotation Joints
-        rotation_joint_names = self.rotation_joint_names(target_model)
-        for axis_dimension, joint_name_ii in enumerate(rotation_joint_names[:2]):
+        all_rpy_angles = rpy_equivalent_body_rotation_order()
+        for axis_dimension, rpy_angle in enumerate(all_rpy_angles[:2]):
+            joint_name_ii = self.rotation_joint_name(
+                target_model=target_model,
+                rpy_selection=rpy_angle,
+            )
+            
             # Compute the next frame to connect to from sphere_ii
             # It will be the only frame in the sphere model
             sphere_ii = massless_sphere_indices[axis_dimension+1]
@@ -237,7 +286,7 @@ class Puppetmaker:
             sphere_ii_frame = plant.get_body(sphere_ii_bodies[0]).body_frame()
 
             joint_ii, joint_actuator_ii = self.add_actuated_revolute_joint(
-                axis_dimension=axis_dimension,
+                angle_type=rpy_angle,
                 previous_frame=previous_frame,
                 next_frame=sphere_ii_frame,
                 joint_name=joint_name_ii,
@@ -252,11 +301,15 @@ class Puppetmaker:
 
         # Connect the last rotation joint to the puppet
         frame_on_puppet = self.find_frame_on_puppet(target_model)
+        final_joint_name = self.rotation_joint_name(
+            target_model=target_model,
+            rpy_selection=all_rpy_angles[2],
+        )
         joint_ii, joint_actuator_ii = self.add_actuated_revolute_joint(
-            axis_dimension=2,
+            angle_type=all_rpy_angles[2],
             previous_frame=previous_frame,
             next_frame=frame_on_puppet,
-            joint_name=rotation_joint_names[2],
+            joint_name=final_joint_name,
         )
 
         # Save new joints and actuators
@@ -275,7 +328,16 @@ class Puppetmaker:
         self,
         target_model: ModelInstanceIndex,
     ) -> PuppetSignature:
-        """Adds the necessary actuators for the puppet's joints."""
+        """
+        *Description*
+
+        Adds the necessary actuators for the puppet's joints.
+        
+        *Parameters*
+        
+        target_model: pydrake.multibody.tree.ModelInstanceIndex
+            The model instance index of the puppet to add actuators for.
+        """
         return self.add_actuators_for(target_model)
 
     def add_actuators_for(
@@ -283,15 +345,22 @@ class Puppetmaker:
         target_model: ModelInstanceIndex,
     ) -> PuppetSignature:
         """
-        Description
-        -----------
+        *Description*
+        
         Creates actuated joints on the object we want to be the "puppet" so that we can control
-        its entire pose. This will be 4 joints:
+        its entire pose. This will be 6 joints:
+
         1. Translation in X
         2. Translation In Y
         3. Translation In Z
-        4. Rotation (Roll-Pitch-Yaw) 
-        
+        4. Rotation (Roll)
+        5. Rotation (Pitch)
+        6. Rotation (Yaw)
+
+        *Parameters*
+
+        target_model: pydrake.multibody.tree.ModelInstanceIndex
+            The model instance index of the puppet to add actuators for.
         """
         # Setup
         config: PuppetmakerConfiguration = self.config
@@ -390,28 +459,32 @@ class Puppetmaker:
         Kd: np.ndarray = None,
     ) -> Tuple[RigidTransformToVectorSystem, PassThrough|None]:
         """
-        Description
-        -----------
+        *Description*
+        
         This method will create a simple PID controller to actuate the puppet
         to a desired pose.
 
-        Arguments
-        ---------
+        *Parameters*
+        
         signature : PuppetSignature
             The signature of the puppet to be controlled.
+
         builder : DiagramBuilder
             The diagram builder to add the controller to.
+
         Kp : np.ndarray, optional
             The proportional gain for the PID controller. If not provided, a default value will be used.
+            
         Kd : np.ndarray, optional
             The derivative gain for the PID controller. If not provided, a default value will be used.
 
-        Returns
-        -------
+        *Returns*
+        
         pose_to_vector_system : RigidTransformToVectorSystem
             The system that converts the desired pose to a vector format.
             This system is what provides the target to the PID controller.
             You can think of this as the "reference" signal for the controller.
+
         passthrough_system : PassThrough|None
             A passthrough system that can be used to provide inputs to the
             "puppet" if the Puppet contains actuated joints.
@@ -432,8 +505,8 @@ class Puppetmaker:
             for body_ii in bodies_in_puppet:
                 m += plant.get_body(body_ii).default_mass()
             Kp = np.zeros((n_actuators_for_puppet,))
-            Kp[:3] = np.array([1.0*m*gravity]*3)
-            Kp[3:] = np.array([0.1*m*gravity]*3)
+            Kp[:3] = np.array([1e2*m*gravity]*3)
+            Kp[3:] = np.array([1e0*m*gravity]*3)
 
         if Kd is None:
             Kd = np.sqrt(Kp)
@@ -477,8 +550,8 @@ class Puppetmaker:
             RigidTransformToVectorSystem(p2v_config)
         )
 
-        # Reference signal is a state which will be the
-        # target pose as well as the target twist
+        # Reference signal is a state which contains two pieces: a pose and a twist
+        # - Target Twist is zero
         zero_twist_source = builder.AddSystem(
             ConstantVectorSource(np.zeros((6,)))
         )
@@ -488,11 +561,29 @@ class Puppetmaker:
             system=Multiplexer(input_sizes=[6, 6]),
         )
 
-        # Connect mux inputs
+        # Connect target state mux inputs
+        # - Pose from pose_to_vector (transformed so that the order of its
+        #   output matches the expected input of the controller; controller
+        #   expects [x, y, z, yaw, pitch, roll])
+
+        rpy_ordering_selection_system = define_named_vector_selection_system(
+            all_element_names=["x", "y", "z", "roll", "pitch", "yaw"],
+            sequence_of_names_for_output=["x", "y", "z", "yaw", "pitch", "roll"],
+        )
+        builder.AddNamedSystem(
+            name=f"[{self.config.name}] RPY Ordering Selection for puppeteering \"{signature.name}\"",
+            system=rpy_ordering_selection_system,
+        )
+
         builder.Connect(
             pose_to_vector.get_output_port(0),
+            rpy_ordering_selection_system.get_input_port(0),
+        )
+        builder.Connect(
+            rpy_ordering_selection_system.get_output_port(0),
             target_state_mux.get_input_port(0),
         )
+        # - Twist from zero_twist_source
         builder.Connect(
             zero_twist_source.get_output_port(0),
             target_state_mux.get_input_port(1),
@@ -575,20 +666,27 @@ class Puppetmaker:
         signature: PuppetSignature,
     ) -> None:
         """
+        *Description*
+
         Connect the plant to the controller.
+
+
         """
-        # Setup
+        # Get some of the internal variables from the puppetmaker
         plant: MultibodyPlant = self.plant
 
-        # Create a massive multiplexer to combine all of the
-        # states (2 each) of the models (there should be 6) in the puppet
+        # Create a system that will share the state of the puppet with the controller
+        # This system will be a multiplexer that combines the position and velocity
+        # states of each of the models in the puppet.
+
+        # - Create a massive multiplexer to combine all of the states (2 each) of the models (there should be 6) in the puppet
         state_mux = builder.AddNamedSystem(
             name=f"[{self.config.name}] State Mux for puppeteering \"{signature.name}\"",
             system=Multiplexer(num_scalar_inputs=2*signature.n_models),
         )
 
-        # Create connections to the state of each model (in the puppet)
-        # to new demultiplexers
+        # - Create connections from the state of each puppet model (comes from the plant)
+        #   to new demultiplexers
         all_state_demuxes: List[Demultiplexer] = []
         for ii, model_ii in enumerate(signature.all_models):
             # Create demultiplexer for this model
@@ -606,7 +704,7 @@ class Puppetmaker:
 
             all_state_demuxes.append(state_demux_ii)
 
-        # Connect all demuxes to the state mux
+        # - Connect all demuxes to the overall state mux
         for ii, demux_ii in enumerate(all_state_demuxes):
             model_ii = signature.all_models[ii]
 
@@ -644,8 +742,8 @@ class Puppetmaker:
         builder: DiagramBuilder,
     ) -> Tuple[Demultiplexer, PassThrough|None]:
         """
-        Description
-        -----------
+        *Description*
+        
         This method creates a demultiplexer to split the actuator inputs
         to the puppet's various models.
         """
@@ -666,6 +764,7 @@ class Puppetmaker:
                 continue
 
             print(f"n_actuators for model {plant.GetModelInstanceName(model_ii)}: {plant.num_actuators(model_ii)}")
+            # print(f"Model #{ii}'s actuators: {plant.GetActuatorNames(model_ii)}")
 
             # for port_jj in plant.GetActuatorNames(model_ii):
             #     print(f"Actuator on model {plant.GetModelInstanceName(model_ii)}: {port_jj}")
@@ -705,11 +804,20 @@ class Puppetmaker:
         builder: DiagramBuilder,
     ) -> Tuple[PassThrough, PassThrough]:
         """
-        Description
-        -----------
+        *Description*
+        
         This method creates two passthrough systems:
         1. passes the "default" actuator inputs for the puppet's (default) actuated joints,
         2. passes the "puppet" actuator input for puppeteering.
+
+        *Returns*
+
+        default_actuator_inputs_passthrough : PassThrough
+            A passthrough system that passes the default actuator inputs for the puppet's (default)
+            actuated joints.
+
+        puppet_actuator_input : PassThrough
+            A passthrough system that passes the puppet actuator input for puppeteering.
         """
         # Setup
         plant: MultibodyPlant = self.plant
@@ -807,13 +915,16 @@ class Puppetmaker:
 
     def add_massless_sphere_to_plant_with_name(self, name: str, color: np.ndarray = None) -> ModelInstanceIndex:
         """
-        Description
-        -----------
+        *Description*
+        
         This method adds a sphere with:
-        - zero mass
+
+        - nearly zero mass
         - no collision geometry,
         - and an associated color
+        
         to the Puppeteer's plant. 
+        
         The sphere's name will be assigned by the input to the function.
         """
         # Setup
@@ -898,10 +1009,18 @@ class Puppetmaker:
         signature: PuppetSignature,
     ) -> int|None:
         """
-        Description
-        -----------
+        *Description*
+        
         This method finds the names of the "velocity" component for the
         state of the joint connected to model_instance_index.
+
+        *Parameters*
+
+        model_instance_index: pydrake.multibody.tree.ModelInstanceIndex
+            The model instance index of the model to search through.
+
+        signature: PuppetSignature
+            The signature of the puppet being controlled.
         """
         # Setup
         plant: MultibodyPlant = self.plant
@@ -923,19 +1042,28 @@ class Puppetmaker:
         # If none of the states contained a joint name, then return None
         return None
 
-    @property
-    def rotation_axis_names(self) -> List[str]:
-        return ["roll", "pitch", "yaw"]
-
-    def rotation_joint_names(
+    def rotation_joint_name(
         self,
         target_model: ModelInstanceIndex,
+        rpy_selection: RollPitchYawAngle,
         remove_puppeteer_prefix: bool = False,
-    ) -> List[str]:
+    ) -> str:
         """
-        Description
-        -----------
-        This method returns the names of all rotation joints created for the puppet.
+        *Description*
+        
+        This method returns the name of a specific rotation joint created for the puppet.
+
+        *Parameters*
+
+        target_model: pydrake.multibody.tree.ModelInstanceIndex
+            The model instance index of the puppet.
+
+        axis_dimension: int
+            The axis dimension (0, 1, or 2) corresponding to the rotation joint to get the name for.
+
+        remove_puppeteer_prefix: bool, optional
+            If True, the returned joint name will not include the puppeteer prefix.
+            Default is False.
         """
         # Setup
         config = self.config
@@ -945,9 +1073,36 @@ class Puppetmaker:
         target_model_name = plant.GetModelInstanceName(target_model)
         puppeteer_prefix = "" if remove_puppeteer_prefix else f"[{config.name}]"
 
+        return f"{puppeteer_prefix}{target_model_name}_rotation_joint_{str(rpy_selection)}"
+
+    def rotation_joint_names(
+        self,
+        target_model: ModelInstanceIndex,
+        remove_puppeteer_prefix: bool = False,
+    ) -> List[str]:
+        """
+        *Description*
+        
+        This method returns the names of all rotation joints created for the puppet.
+
+        *Parameters*
+
+        target_model: pydrake.multibody.tree.ModelInstanceIndex
+            The model instance index of the puppet.
+
+        remove_puppeteer_prefix: bool, optional
+            If True, the returned joint names will not include the puppeteer prefix.
+            Default is False.
+        """
+        # The rotation axis names will be ordered according to the
+        # standard body rotation order assigned to RPY (note this is not roll first, then pitch, then yaw)
         return [
-            f"{puppeteer_prefix}{target_model_name}_rotation_joint_{axis_name}"
-            for axis_name in self.rotation_axis_names
+            self.rotation_joint_name(
+                target_model=target_model,
+                rpy_selection=rpy_selection,
+                remove_puppeteer_prefix=remove_puppeteer_prefix,
+            )
+            for rpy_selection in rpy_equivalent_body_rotation_order()
         ]
 
     @property

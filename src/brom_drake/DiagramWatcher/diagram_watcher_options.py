@@ -81,7 +81,6 @@ class DiagramWatcherOptions:
             The PortWatcherOptions object.
         """
         return PortWatcherOptions(
-            base_directory=self.base_directory,
             plotting=self.plotting_options,
             raw_data=self.raw_data_options,
         )

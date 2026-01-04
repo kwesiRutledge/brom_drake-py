@@ -176,3 +176,7 @@ tests/file_manipulation/urdf/resources/test5_absolute.urdf
 # Docs
 # Files that are automatically generated during doc production process
 docs/source/generated/
+
+# 3D Models (Created as intermediate files during testing and examples)
+src/brom_drake/robots/models/michigan_block_m/*.obj
+src/brom_drake/robots/models/michigan_block_m/*.sdf

@@ -35,8 +35,8 @@ class InitialConditionManager:
 
     def set_all_initial_conditions(self, plant: MultibodyPlant, diagram_context: Context = None):
         """
-        Description
-        -----------
+        *Description*
+        
         Set all initial conditions (both the pose and configuration) 
         for the given plant.
         """

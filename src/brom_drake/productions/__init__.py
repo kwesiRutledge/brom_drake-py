@@ -3,6 +3,7 @@ from brom_drake.productions.debug.show_me import ShowMeThisModel
 from brom_drake.productions.debug.grasping.attempt_grasp.with_puppeteer_wrist import AttemptGraspWithPuppeteerWrist
 from brom_drake.productions.debug.grasping.attempt_grasp.with_puppeteer_wrist.config import Configuration as AttemptGraspWithPuppeteerWristConfiguration
 from brom_drake.productions.debug.grasping.attempt_grasp.with_puppeteer_wrist.script import Script as AttemptGraspWithPuppeteerWristScript
+from brom_drake.productions.debug.grasping.show_me_this_static_grasp.config import Configuration as ShowMeThisStaticGraspConfiguration
 from brom_drake.productions.motion_planning.offline.kinematic import (
     ShelfPlanning1,
     ChemLab1,
@@ -24,7 +25,6 @@ from brom_drake.productions.pick_and_place import (
 from brom_drake.productions.debug.grasping.show_me_this_static_grasp.production import (
     ShowMeThisStaticGrasp,
 )
-from brom_drake.productions.debug.grasping.show_me_this_static_grasp.config import Configuration as ShowMeThisStaticGraspConfiguration
 from brom_drake.productions.debug.grasping.attempt_grasp.with_static_wrist.production import AttemptGraspWithStaticWrist
 from brom_drake.productions.debug.grasping.attempt_grasp.with_static_wrist.config import Configuration as AttemptGraspWithStaticWristConfiguration
 

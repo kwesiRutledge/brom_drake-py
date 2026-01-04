@@ -315,7 +315,7 @@ class TestNetworkXFSM(unittest.TestCase):
         watcher_keys = list(watcher.port_watchers.keys())
         first_key = watcher_keys[0]
 
-        fsm_state_log = watcher.port_watchers[first_key]["fsm_state"].logger.FindLog(diagram_context)
+        fsm_state_log = watcher.port_watchers[first_key]["fsm_state"].get_vector_log_sink().FindLog(diagram_context)
         fsm_state_log_data = fsm_state_log.data().flatten()
 
         # Verify that the current state is now 1
@@ -323,8 +323,8 @@ class TestNetworkXFSM(unittest.TestCase):
 
     def test_CalcFSMState2(self):
         """
-        Description
-        -----------
+        *Description*
+        
         This test verifies that the CalcFSMState method correctly
         transitions from the start node to the next node on
         the correct conditions being met.
@@ -370,8 +370,8 @@ class TestNetworkXFSM(unittest.TestCase):
         # Get key needed to extract watcher data for fsm state
         watcher_keys = list(watcher.port_watchers.keys())
         first_key = watcher_keys[0]
-        fsm_state_logger = watcher.port_watchers[first_key]["fsm_state"].logger
-        output1_logger = watcher.port_watchers[first_key]["output1"].logger
+        fsm_state_logger = watcher.port_watchers[first_key]["fsm_state"].get_vector_log_sink()
+        output1_logger = watcher.port_watchers[first_key]["output1"].get_vector_log_sink()
 
         # Run for 0.25 seconds and check that:
         # - the current state is still 0
@@ -464,8 +464,8 @@ class TestNetworkXFSM(unittest.TestCase):
         # Collect data for the fsm state
         watcher_keys = list(watcher.port_watchers.keys())
         first_key = watcher_keys[0]
-        fsm_state_logger = watcher.port_watchers[first_key]["fsm_state"].logger
-        output1_logger = watcher.port_watchers[first_key]["output1"].logger
+        fsm_state_logger = watcher.port_watchers[first_key]["fsm_state"].get_vector_log_sink()
+        output1_logger = watcher.port_watchers[first_key]["output1"].get_vector_log_sink()
 
         # Run for 0.25 seconds and check that:
         # - the current state is still 0

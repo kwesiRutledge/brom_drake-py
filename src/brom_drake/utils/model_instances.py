@@ -46,8 +46,8 @@ def find_number_of_positions_in_welded_model(
 
 def get_first_body_in(plant: MultibodyPlant, model_instance: ModelInstanceIndex) -> RigidBody:
     """
-    Description
-    -----------
+    *Description*
+    
     This method returns the first body in the given model instance.
     """
     return get_all_bodies_in(plant, model_instance)[0]
@@ -57,8 +57,8 @@ def get_all_bodies_in(
     model_instance: ModelInstanceIndex,
 ) -> list[RigidBody]:
     """
-    Description
-    -----------
+    *Description*
+    
     This method returns all the bodies in the given model instance.
     """
     # Setup
@@ -78,8 +78,8 @@ def get_name_of_first_body_in_urdf(urdf_in: str) -> str:
 
 def get_name_of_all_bodies_in_urdf(urdf_in: str) -> list[str]:
     """
-    Description
-    -----------
+    *Description*
+    
     This method returns the name of the first body found in the 
     urdf given by urdf_in.
     """
