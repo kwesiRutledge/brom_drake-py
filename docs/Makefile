@@ -19,6 +19,10 @@ generate-and-build-docs:
 	python3 update_version_in_conf.py "$(BROM_VERSION)"
 	python3 generate_docs.py --output-dir "$(SOURCEDIR)"
 
+# Return the version in conf to the original state
+	python3 update_version_in_conf.py "v0.4.5-repoDefault"
+
+
 # Catch-all target: route all unknown targets to Sphinx using the new
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
 %: Makefile
