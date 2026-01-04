@@ -7,9 +7,8 @@ Description:
 """
 import logging
 from pathlib import Path
-from typing import Dict, List, Tuple, Union, NamedTuple
+from typing import Dict
 import numpy as np
-import matplotlib.pyplot as plt
 import os
 
 from pydrake.multibody.plant import MultibodyPlant
@@ -25,7 +24,6 @@ from .port_watcher_options import (
     PortWatcherOptions, FigureNamingConvention,
     PortWatcherPlottingOptions, PortWatcherRawDataOptions,
 )
-from .port_figure_arrangement import PortFigureArrangement
 from .plotter import PortWatcherPlotter
 from brom_drake.systems.abstract_list_selection_system import AbstractListSelectionSystem
 from brom_drake.utils import (
