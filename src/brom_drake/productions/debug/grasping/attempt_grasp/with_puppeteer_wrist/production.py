@@ -45,7 +45,6 @@ from brom_drake.productions.roles.role import Role
 from brom_drake.systems.abstract_list_selection_system import AbstractListSelectionSystem
 from brom_drake.systems.abstract_port_switch_system import AbstractPortSwitch
 from brom_drake.systems.pose_composition import PoseCompositionSystem
-from brom_drake.systems.pose_memory_system import PoseMemorySystem
 from brom_drake.utils import (
     Performer, collision_checking, NetworkXFSM, FlexiblePortSwitch, FSMTransitionCondition,
     FSMOutputDefinition, FSMTransitionConditionType, Puppetmaker, PuppetmakerConfiguration, PuppetSignature,
