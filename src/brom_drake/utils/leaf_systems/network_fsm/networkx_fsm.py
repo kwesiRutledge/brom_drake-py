@@ -307,65 +307,6 @@ class NetworkXFSM(LeafSystem):
 
         return logger
 
-    def universal_abstract_output_port_function(
-        self,
-        port_name: str,
-        context: Context,
-        output: AbstractValue
-    ):
-        """
-        *Description*
-        
-        This function is a universal output port function for abstract-valued
-        output ports.
-        """
-        # Setup
-
-        # Advance the FSM state if necessary
-        self.advance_state_if_necessary(context)
-
-        # Get Current State
-        s_t = context.get_discrete_state(self.current_state_index).GetAtIndex(0)
-
-        # Check to see if the state value has changed
-        update_map_ii = self.derive_output_update_map(port_name)
-        if s_t in update_map_ii:
-            # Update the output value
-            self.last_output_value[port_name] = update_map_ii[s_t]
-
-        # self.logger.debug(
-        #     f"Output value for port {port_name_ii} is {self.last_output_value[port_name_ii]} at time {context.get_time()}",
-        #     )
-        output.SetFrom(AbstractValue.Make(self.last_output_value[port_name]))
-
-    def universal_vector_output_port_function(
-        self,
-        port_name_ii: str,
-        context: Context,
-        output: BasicVector
-    ):
-        """
-        *Description*
-        
-        This function is a universal output port function for vector-valued
-        output ports.
-        """
-        # Setup
-
-        # Advance the FSM state if necessary
-        self.advance_state_if_necessary(context)
-
-        # Get Current State
-        s_t = context.get_discrete_state(self.current_state_index).GetAtIndex(0)
-
-        # Check to see if the state value has changed
-        update_map_ii = self.derive_output_update_map(port_name_ii)
-        if s_t in update_map_ii:
-            # Update the output value
-            self.last_output_value[port_name_ii] = update_map_ii[s_t]
-            
-        output.SetFrom(self.last_output_value[port_name_ii])
-
     def create_output_port_function(
         self,
         port_name_ii: str,
