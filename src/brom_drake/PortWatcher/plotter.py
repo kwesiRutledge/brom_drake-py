@@ -301,11 +301,6 @@ class PortWatcherPlotter:
             return # Do nothing
 
         # Save the figures
-        system_name = self.port.get_system().get_name()
-        port_size = self.port.size()
-        if port_component_name is not None:
-            port_size = vector_log_sink.get_input_port().size()
-
         figure_paths = self.file_manager.compute_path_for_each_figure(
             output_port=self.port,
             associated_log_sink=vector_log_sink,
