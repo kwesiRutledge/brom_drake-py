@@ -27,7 +27,7 @@ from pydrake.all import (
 )
 from pydrake.multibody.parsing import Parser
 from pydrake.multibody.plant import AddMultibodyPlantSceneGraph, MultibodyPlant
-from pydrake.systems.framework import DiagramBuilder, Diagram, Context, PortDataType
+from pydrake.systems.framework import DiagramBuilder
 from pydrake.systems.primitives import ConstantVectorSource, VectorLogSink
 
 # Internal Imports
