@@ -1,5 +1,5 @@
 from pydrake.common.value import AbstractValue
-from pydrake.systems.framework import BasicVector, Context, InputPort, InputPortIndex, LeafSystem
+from pydrake.systems.framework import Context, InputPort, InputPortIndex, LeafSystem
 
 class AbstractPortSwitch(LeafSystem):
     """
