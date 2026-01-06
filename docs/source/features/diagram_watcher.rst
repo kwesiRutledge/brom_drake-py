@@ -5,8 +5,9 @@ DiagramWatcher
     :alt: DiagramWatcher Animation
     :align: center
 
-*Easily "watch" all of the systems in your Drake simulation using the 
-    :py:class:`DiagramWatcher<brom_drake.DiagramWatcher.DiagramWatcher.DiagramWatcher>`!*
+*Easily "watch" all of the systems in your Drake simulation using the* 
+:py:class:`DiagramWatcher<brom_drake.DiagramWatcher.DiagramWatcher.DiagramWatcher>`
+*!*
 
 Summary
 -------
