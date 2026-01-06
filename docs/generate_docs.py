@@ -96,16 +96,6 @@ def generate_all_discoverable_docs(
         if ".py" in elt
     ]
 
-    # available_functions = identify_available_functions_in_package(
-    #     extended_package_name,
-    #     subpackage_names=submodule_names,
-    #     python_file_names=files_in_package_dir
-    # )
-    # available_classes = identify_available_classes_in_package(extended_package_name, subpackage_names=submodule_names)
-
-    # Organize modules alphabetically
-    # canonicalized_modules = sorted(canonicalized_modules, key=str.lower)
-
     for mod in submodule_names:
         print(f"Generating docs for module: {mod}")
         # typer.run(
@@ -135,49 +125,6 @@ def generate_all_discoverable_docs(
         classes=available_classes,
         variables=available_variables,
     )
-
-def identify_available_classes_in_package(
-    canonicalized_package_name: str,
-    subpackage_names: List[str],
-) -> List[str]:
-    # Announce the beginning of this function
-    print("Determining the functions (i.e., the things which are not subpackages) in:")
-    print(f"- Canonicalized package: {canonicalized_package_name}")
-    print(f"- Subpackages to avoid adding:")
-    for subpkg in subpackage_names:
-        print(f"  + {subpkg}")
-
-    # Collect all contents of package
-    pkg_contents = dir(import_module(canonicalized_package_name))
-    available_classes = []
-    for candidate in pkg_contents:
-        # Do not add to the list any functions that are built-in
-        # (i.e., those that start with double underscores)
-        if candidate[:2] == "__":
-            continue
-
-        # Do not add subpackages to the list of available functions
-        if candidate in subpackage_names:
-            continue
-
-        # Do not add files to the list of available functions
-        # candidate_as_python_file = candidate + ".py"
-        # if candidate_as_python_file in python_file_names:
-        #     continue
-
-        # Do not add to the list something that is detected as not a "class"
-        candidate_obj = eval(f"{canonicalized_package_name}.{candidate}")
-        if not inspect.isclass(candidate_obj):
-            continue
-
-        # If all other checks pass, then add the fcn to the available_functions list
-        available_classes.append(candidate)
-
-    print("- Available functions:")
-    for candidate in available_classes:
-        print(f"  + {candidate}")
-    
-    return available_classes
 
 def identify_available_functions_and_variables_in_file(
     target_file_path: Path,
@@ -265,51 +212,6 @@ def identify_available_functions_and_variables_in_file(
         print(f"  + {candidate}")
     
     return available_functions, available_variables, available_classes
-
-
-def identify_available_functions_in_package(
-    canonicalized_package_name: str,
-    subpackage_names: List[str],
-    python_file_names: List[str]
-) -> List[str]:
-    # Announce the beginning of this function
-    print("Determining the functions (i.e., the things which are not subpackages) in:")
-    print(f"- Canonicalized package: {canonicalized_package_name}")
-    print(f"- Subpackages to avoid adding:")
-    for subpkg in subpackage_names:
-        print(f"  + {subpkg}")
-
-    # Collect all contents of package
-    pkg_contents = dir(import_module(canonicalized_package_name))
-    available_functions = []
-    for candidate in pkg_contents:
-        # Do not add to the list any functions that are built-in
-        # (i.e., those that start with double underscores)
-        if candidate[:2] == "__":
-            continue
-
-        # Do not add subpackages to the list of available functions
-        if candidate in subpackage_names:
-            continue
-
-        # Do not add files to the list of available functions
-        # candidate_as_python_file = candidate + ".py"
-        # if candidate_as_python_file in python_file_names:
-        #     continue
-
-        # Do not add to the list something that is detected as a "module"
-        candidate_obj = eval(f"{canonicalized_package_name}.{candidate}")
-        if not inspect.isfunction(candidate_obj):
-            continue
-
-        # If all other checks pass, then add the fcn to the available_functions list
-        available_functions.append(candidate)
-
-    print("- Available functions:")
-    for candidate in available_functions:
-        print(f"  + {candidate}")
-    
-    return available_functions
 
 def get_canonicalized_function_name(
     output_dir: Path,
