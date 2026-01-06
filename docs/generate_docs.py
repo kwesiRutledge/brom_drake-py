@@ -194,6 +194,12 @@ def identify_available_functions_and_variables_in_file(
             print(f"  + Ignoring module: {name}")
             continue
         else:
+            obj_module = getattr(obj, "__module__", None)
+            if obj_module is not None and obj_module not in (module.__name__, "builtins"):
+                # Ignore variables that are imported from other modules
+                print(f"  + Ignoring imported variable: {name}")
+                continue
+
             available_variables.append(target_file_path.stem + "." + name)
 
     print("- Available functions:")
