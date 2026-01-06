@@ -159,7 +159,6 @@ def identify_available_functions_and_variables_in_file(
     ) # 1. Create a spec from the file path
     module = importlib.util.module_from_spec(spec) # 2. Create a new module based on the spec
     spec.loader.exec_module(module) # 3. Execute the module (this populates it with functions/classes)
-    pkg_contents = dir(module)
 
     # Collect all contents of package
     available_functions = []
