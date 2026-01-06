@@ -54,7 +54,7 @@ def generate_all_discoverable_docs(
 
             directories_found.append(child)
     
-    #TODO(Kwesi): Remove this later
+    #TODO(Kwesi): figure out an elegant way to replace this in the loop below
     submodule_names = [elt.name for elt in directories_found]
 
     # Iterate through all files in the package directory
