@@ -1,13 +1,15 @@
 from importlib import resources as impresources
 from importlib import import_module
+import importlib.util
 import inspect
 import os
 from pathlib import Path
 import pkgutil
 import shutil
 import subprocess
+import ipdb
 import typer
-from typing import List
+from typing import List, Tuple
 
 import brom_drake
 
@@ -16,7 +18,11 @@ def generate_all_discoverable_docs(
     package_dir: Path = Path("../src/brom_drake"),
 ):
     """
-    Docstring for generate_all_discoverable_docs
+    *Description*
+
+    Iterates through all submodules in the given package directory,
+    generating documentation files for each submodule, and finally
+    generating an index file for the entire package.
     
     :param output_dir: Place to create the doc file for Sphinx.
     :type output_dir: Path
@@ -25,33 +31,63 @@ def generate_all_discoverable_docs(
     """
 
     # Announce beginning of function
-    print(f"Generating docs for package in directory: {package_dir}")
+    print(f"- Generating docs for package in directory: {package_dir}")
 
+    # Identify the package name
     package_name = package_dir.name
 
-    extended_package_name = str(package_dir)
-    extended_package_name = extended_package_name[
-        extended_package_name.find("brom_drake-py/src/brom_drake") + len("brom_drake-py/src/"):
-    ]
-    extended_package_name = extended_package_name.replace("/", ".")
+    # Expand the package name to be canonicalized
+    extended_package_name = package_path_to_module_name(package_dir)
 
-    # Identify all submodules in this package
-    canonicalized_modules, submodule_names = [], []
-    for _, name, is_pkg in pkgutil.walk_packages([package_dir]):
-        # Only do the recursive call if it's a package
-        if not is_pkg:
+    # Identify the directories and files within this package's directory
+    files_found = []
+    directories_found = []
+    for child in package_dir.iterdir():
+        if child.is_file():
+            # Only consider .py files
+            if child.suffix == ".py":
+                files_found.append(child)
+            else:
+                print(f"- Ignoring non-.py file: {child.name}")
+
+        elif child.is_dir():
+            # Ignore __pycache__ directories
+            if child.name == "__pycache__":
+                print(f"- Ignoring __pycache__ directory ({child})")
+                continue
+
+            directories_found.append(child)
+    
+    #TODO(Kwesi): Remove this later
+    submodule_names = [elt.name for elt in directories_found]
+
+    # Iterate through all files in the package directory
+    # and retrieve all classes AND functions defined within each
+    available_functions = []
+    available_classes = []
+    available_variables = []
+    for file_path_i in files_found:
+        print(f"- Found file: {file_path_i.name}")
+
+        if file_path_i.name == "__init__.py":
+            # Ignore the __init__.py file
+            print("  + Ignoring __init__.py file")
             continue
 
-        # Create the module name as it would appear in imports (i.e., "parent.child.grandchild")
-        full_module_path = package_dir / name
-        full_module_name = str(full_module_path.relative_to(package_dir.parent)).replace("/", ".")
-        canonicalized_modules.append(full_module_name)
+        # Identify available functions in this file
+        temp_functions, temp_variables, temp_classes = identify_available_functions_and_variables_in_file(
+            target_file_path=file_path_i
+        )
 
-        # Also save the simple module name
-        submodule_names.append(name)
+        available_functions.extend(temp_functions)
+        available_variables.extend(temp_variables)
+        available_classes.extend(temp_classes)
 
-        print(f"Found submodule: {full_module_name}")
-    
+    # Make all lists unique
+    available_functions = list(set(available_functions))
+    available_variables = list(set(available_variables))
+    available_classes = list(set(available_classes))
+
     # Identify all functions in this package
     package_dir_contents = os.listdir(package_dir)
     files_in_package_dir = [
@@ -60,15 +96,15 @@ def generate_all_discoverable_docs(
         if ".py" in elt
     ]
 
-    available_functions = identify_available_functions_in_package(
-        extended_package_name,
-        subpackage_names=submodule_names,
-        python_file_names=files_in_package_dir
-    )
-    available_classes = identify_available_classes_in_package(extended_package_name, subpackage_names=submodule_names)
+    # available_functions = identify_available_functions_in_package(
+    #     extended_package_name,
+    #     subpackage_names=submodule_names,
+    #     python_file_names=files_in_package_dir
+    # )
+    # available_classes = identify_available_classes_in_package(extended_package_name, subpackage_names=submodule_names)
 
     # Organize modules alphabetically
-    canonicalized_modules = sorted(canonicalized_modules, key=str.lower)
+    # canonicalized_modules = sorted(canonicalized_modules, key=str.lower)
 
     for mod in submodule_names:
         print(f"Generating docs for module: {mod}")
@@ -96,7 +132,8 @@ def generate_all_discoverable_docs(
         output_dir=output_dir,
         submodules=submodule_names,
         functions=available_functions,
-        classes=available_classes
+        classes=available_classes,
+        variables=available_variables,
     )
 
 def identify_available_classes_in_package(
@@ -141,6 +178,94 @@ def identify_available_classes_in_package(
         print(f"  + {candidate}")
     
     return available_classes
+
+def identify_available_functions_and_variables_in_file(
+    target_file_path: Path,
+) -> Tuple[List[str], List[str], List[str]]:
+    """
+    *Description*
+
+    This method returns all of the:
+    1. functions,
+    2. variables, and
+    3. classes
+    defined within the given file.
+
+    *Returns*
+
+    available_functions: List[str]
+        A list of all functions defined within the given file.
+
+    available_variables: List[str]
+        A list of all variables defined within the given file.
+
+    available_classes: List[str]
+        A list of all classes defined within the given file.
+    """
+    # Announce the beginning of this function
+    print(f"Determining the functions in the following file: {target_file_path}")
+
+
+    canonicalized_file_name = package_path_to_module_name(target_file_path)
+    print(f"- Canonicalized file: {canonicalized_file_name}")
+
+    # Use importlib to import all contents of this file path
+    spec = importlib.util.spec_from_file_location(
+        canonicalized_file_name,
+        target_file_path
+    ) # 1. Create a spec from the file path
+    module = importlib.util.module_from_spec(spec) # 2. Create a new module based on the spec
+    spec.loader.exec_module(module) # 3. Execute the module (this populates it with functions/classes)
+    pkg_contents = dir(module)
+
+    # Collect all contents of package
+    available_functions = []
+    available_classes = []
+    available_variables = []
+    for name, obj in inspect.getmembers(module):
+        # Do not add to the list any functions that are built-in
+        # (i.e., those that start with double underscores)
+        if name[:2] == "__":
+            continue
+
+        # If all other checks pass, then add the fcn to the available_functions list
+        if inspect.isfunction(obj):
+
+            if obj.__module__ != module.__name__:
+                # Ignore functions that are imported from other modules
+                print(f"  + Ignoring imported function: {name}")
+                continue
+
+            available_functions.append(target_file_path.stem + "." + name)
+        elif inspect.isclass(obj):
+
+            if obj.__module__ != module.__name__:
+                # Ignore classes that are imported from other modules
+                print(f"  + Ignoring imported class: {name}")
+                continue
+
+            available_classes.append(target_file_path.stem + "." + name)
+        elif inspect.ismodule(obj):
+            # Ignore modules
+            print(f"  + Ignoring module: {name}")
+            continue
+        else:
+            available_variables.append(target_file_path.stem + "." + name)
+
+    print("- Available functions:")
+    for candidate in available_functions:
+        print(f"  + {candidate}")
+
+    print("- Available classes:")
+    for candidate in available_classes:
+        print(f"  + {candidate}")
+
+    print("- Available variables:")
+    for candidate in available_variables:
+        print(f"  + {candidate}")
+    
+    return available_functions, available_variables, available_classes
+
 
 def identify_available_functions_in_package(
     canonicalized_package_name: str,
@@ -201,12 +326,12 @@ def get_canonicalized_function_name(
     :rtype: str
     """
     # Create output string container
-    out = "brom_drake."
+    out = "brom_drake"
 
     # Extract the component of the output_dir that should
     # mirror the path in the canonical import
     # "source/generated/control/arms" -> "control/arms"
-    expected_prefix = "source/generated/"
+    expected_prefix = "source/generated"
     if expected_prefix not in str(output_dir):
         raise ValueError(f"`output_dir` does not contain the expected prefix: {expected_prefix}")
 
@@ -216,8 +341,37 @@ def get_canonicalized_function_name(
         str(output_dir)[str(output_dir).find(expected_prefix)+len(expected_prefix):]
     out = out.replace("/",".")
 
-    # Make sure to add the trailing period and then the function name
-    return out + "." + function_name
+    assert ".." not in out, f"Invalid canonicalized name generated: {out}"
+
+    if out[-1] != ".":
+        out += "."
+
+    return out + function_name
+
+def package_path_to_module_name(package_dir: Path) -> str:
+    """
+    *Description*
+
+    Converts a package directory path to its canonicalized
+    module name (i.e., the name used in imports).
+
+    :param package_dir: The package directory path.
+    :type package_dir: Path
+    :return: The canonicalized module name.
+    :rtype: str
+    """
+    # Convert the package directory to a string
+    trimmed_package_dir = package_dir.parent / package_dir.stem # Remove any trailing suffixes like ".py"
+    package_dir_str = str(trimmed_package_dir)
+
+    extended_package_name = package_dir_str[
+        package_dir_str.find("brom_drake-py/src/brom_drake") + len("brom_drake-py/src/"):
+    ]
+
+    # Replace slashes with dots to form the module name
+    module_name = extended_package_name.replace("/", ".")
+
+    return module_name
 
 def write_rst_file_for_package(
     package_name: str,
@@ -225,6 +379,7 @@ def write_rst_file_for_package(
     submodules: list[str],
     functions: list[str],
     classes: list[str],
+    variables: list[str],
 ):
     """
     Writes an .rst file that is compatible with
@@ -297,6 +452,18 @@ def write_rst_file_for_package(
                 rst_file.write(f".. autofunction:: {canonical_fcn_name}\n")
             rst_file.write("\n")
 
+        # Write the list of variables
+        rst_file.write("Variables\n")
+        rst_file.write("---------\n\n")
+
+        if len(variables) == 0:
+            rst_file.write("(None found)\n\n")
+        else:
+            for var in sorted(variables, key=str.lower):
+                canonical_var_name = get_canonicalized_function_name(output_dir, function_name=var)
+                rst_file.write(f".. autodata:: {canonical_var_name}\n")
+            rst_file.write("\n")
+
         # # Write autosummary table
         # rst_file.write(".. autosummary::\n")
         # rst_file.write("   :toctree: generated\n\n")
@@ -333,7 +500,7 @@ def main(
         ]
     )
 
-    print("Completed generating the documentation using sphinx.")
+    print("Completed generating the documentation using sphinx.\n")
 
     # Clean Up "temporary directory"
     if clean_up_afterward:
@@ -352,4 +519,5 @@ def main(
     # )
 
 if __name__ == "__main__":
-    typer.run(main)
+    with ipdb.launch_ipdb_on_exception():
+        typer.run(main)
