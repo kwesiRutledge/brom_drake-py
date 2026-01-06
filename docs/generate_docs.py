@@ -1,5 +1,4 @@
 from importlib import resources as impresources
-from importlib import import_module
 import importlib.util
 import inspect
 import os
