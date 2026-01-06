@@ -16,42 +16,15 @@ Submodules
 Classes
 -------
 
-.. autoclass:: brom_drake.productions.AttemptGraspWithPuppeteerWrist
-   :members:
-.. autoclass:: brom_drake.productions.AttemptGraspWithPuppeteerWristConfiguration
-   :members:
-.. autoclass:: brom_drake.productions.AttemptGraspWithPuppeteerWristScript
-   :members:
-.. autoclass:: brom_drake.productions.AttemptGraspWithStaticWrist
-   :members:
-.. autoclass:: brom_drake.productions.AttemptGraspWithStaticWristConfiguration
-   :members:
-.. autoclass:: brom_drake.productions.BaseProduction
-   :members:
-.. autoclass:: brom_drake.productions.ChemLab1
-   :members:
-.. autoclass:: brom_drake.productions.ChemLab2
-   :members:
-.. autoclass:: brom_drake.productions.ChemLab3
-   :members:
-.. autoclass:: brom_drake.productions.KinematicMotionPlanningProduction
-   :members:
-.. autoclass:: brom_drake.productions.MotionPlanningAndGraspingProduction
-   :members:
-.. autoclass:: brom_drake.productions.OfflineDynamicMotionPlanningProduction
-   :members:
-.. autoclass:: brom_drake.productions.ProductionID
-   :members:
-.. autoclass:: brom_drake.productions.ShelfPlanning1
-   :members:
-.. autoclass:: brom_drake.productions.ShowMeThisModel
-   :members:
-.. autoclass:: brom_drake.productions.ShowMeThisStaticGrasp
-   :members:
-.. autoclass:: brom_drake.productions.ShowMeThisStaticGraspConfiguration
+.. autoclass:: brom_drake.productions.ids.ProductionID
    :members:
 
 Functions
+---------
+
+(None found)
+
+Variables
 ---------
 
 (None found)

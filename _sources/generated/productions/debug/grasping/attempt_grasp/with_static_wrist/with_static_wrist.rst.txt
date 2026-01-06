@@ -11,12 +11,21 @@ Submodules
 Classes
 -------
 
-.. autoclass:: brom_drake.productions.debug.grasping.attempt_grasp.with_static_wrist.AttemptGraspWithStaticWristPhase
+.. autoclass:: brom_drake.productions.debug.grasping.attempt_grasp.with_static_wrist.config.Configuration
    :members:
-.. autoclass:: brom_drake.productions.debug.grasping.attempt_grasp.with_static_wrist.Configuration
+.. autoclass:: brom_drake.productions.debug.grasping.attempt_grasp.with_static_wrist.phases.AttemptGraspWithStaticWristPhase
+   :members:
+.. autoclass:: brom_drake.productions.debug.grasping.attempt_grasp.with_static_wrist.production.AttemptGraspWithStaticWrist
+   :members:
+.. autoclass:: brom_drake.productions.debug.grasping.attempt_grasp.with_static_wrist.script.Script
    :members:
 
 Functions
+---------
+
+(None found)
+
+Variables
 ---------
 
 (None found)

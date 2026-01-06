@@ -11,24 +11,33 @@ Submodules
 Classes
 -------
 
-.. autoclass:: brom_drake.motion_planning.algorithms.rrt.BaseRRTPlanner
+.. autoclass:: brom_drake.motion_planning.algorithms.rrt.base.BaseRRTPlanner
    :members:
-.. autoclass:: brom_drake.motion_planning.algorithms.rrt.BaseRRTPlannerConfig
+.. autoclass:: brom_drake.motion_planning.algorithms.rrt.base.BaseRRTPlannerConfig
    :members:
-.. autoclass:: brom_drake.motion_planning.algorithms.rrt.BidirectionalRRTConnectPlanner
+.. autoclass:: brom_drake.motion_planning.algorithms.rrt.bidirectional.BidirectionalRRTPlanner
    :members:
-.. autoclass:: brom_drake.motion_planning.algorithms.rrt.BidirectionalRRTConnectPlannerConfig
+.. autoclass:: brom_drake.motion_planning.algorithms.rrt.bidirectional.BidirectionalRRTPlannerConfig
    :members:
-.. autoclass:: brom_drake.motion_planning.algorithms.rrt.BidirectionalRRTPlanner
+.. autoclass:: brom_drake.motion_planning.algorithms.rrt.bidirectional.BiRRTSamplingProbabilities
    :members:
-.. autoclass:: brom_drake.motion_planning.algorithms.rrt.BidirectionalRRTPlannerConfig
+.. autoclass:: brom_drake.motion_planning.algorithms.rrt.bidirectional_connect.BidirectionalRRTConnectPlanner
    :members:
-.. autoclass:: brom_drake.motion_planning.algorithms.rrt.RRTConnectPlanner
+.. autoclass:: brom_drake.motion_planning.algorithms.rrt.bidirectional_connect.BidirectionalRRTConnectPlannerConfig
    :members:
-.. autoclass:: brom_drake.motion_planning.algorithms.rrt.RRTConnectPlannerConfig
+.. autoclass:: brom_drake.motion_planning.algorithms.rrt.bidirectional_connect.BiRRTConnectSamplingProbabilities
+   :members:
+.. autoclass:: brom_drake.motion_planning.algorithms.rrt.connect.RRTConnectPlanner
+   :members:
+.. autoclass:: brom_drake.motion_planning.algorithms.rrt.connect.RRTConnectPlannerConfig
    :members:
 
 Functions
+---------
+
+(None found)
+
+Variables
 ---------
 
 (None found)

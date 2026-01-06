@@ -16,44 +16,32 @@ Submodules
 Classes
 -------
 
-.. autoclass:: brom_drake.utils.BoolToVectorSystem
+.. autoclass:: brom_drake.utils.angles.RollPitchYawAngle
    :members:
-.. autoclass:: brom_drake.utils.EndEffectorWrenchCalculator
-   :members:
-.. autoclass:: brom_drake.utils.FlexiblePortSwitch
-   :members:
-.. autoclass:: brom_drake.utils.FSMEdgeDefinition
-   :members:
-.. autoclass:: brom_drake.utils.FSMOutputDefinition
-   :members:
-.. autoclass:: brom_drake.utils.FSMTransitionCondition
-   :members:
-.. autoclass:: brom_drake.utils.FSMTransitionConditionType
-   :members:
-.. autoclass:: brom_drake.utils.GroundShape
-   :members:
-.. autoclass:: brom_drake.utils.NetworkXFSM
-   :members:
-.. autoclass:: brom_drake.utils.PickAndPlacePhase
-   :members:
-.. autoclass:: brom_drake.utils.PickAndPlaceTargetDescription
-   :members:
-.. autoclass:: brom_drake.utils.Puppetmaker
-   :members:
-.. autoclass:: brom_drake.utils.PuppetmakerConfiguration
-   :members:
-.. autoclass:: brom_drake.utils.PuppetSignature
-   :members:
-.. autoclass:: brom_drake.utils.RigidTransformToVectorSystem
+.. autoclass:: brom_drake.utils.ground.GroundShape
    :members:
 
 Functions
 ---------
 
-.. autofunction:: brom_drake.utils.AddGround
-.. autofunction:: brom_drake.utils.AddMultibodyTriad
-.. autofunction:: brom_drake.utils.AddTriad
-.. autofunction:: brom_drake.utils.find_all_systems_with_input_port
-.. autofunction:: brom_drake.utils.find_all_systems_with_output_port
-.. autofunction:: brom_drake.utils.using_point_pair_penetration
+.. autofunction:: brom_drake.utils.angles.rpy_equivalent_body_rotation_order
+.. autofunction:: brom_drake.utils.collision_checking.using_point_pair_penetration
+.. autofunction:: brom_drake.utils.ground.AddGround
+.. autofunction:: brom_drake.utils.model_instances.find_number_of_positions_in_welded_model
+.. autofunction:: brom_drake.utils.model_instances.get_all_bodies_in
+.. autofunction:: brom_drake.utils.model_instances.get_first_body_in
+.. autofunction:: brom_drake.utils.model_instances.get_name_of_all_bodies_in_urdf
+.. autofunction:: brom_drake.utils.model_instances.get_name_of_first_body_in_urdf
+.. autofunction:: brom_drake.utils.plant.get_all_associated_body_indices_in_plant
+.. autofunction:: brom_drake.utils.search.find_all_systems_with_input_port
+.. autofunction:: brom_drake.utils.search.find_all_systems_with_name
+.. autofunction:: brom_drake.utils.search.find_all_systems_with_output_port
+.. autofunction:: brom_drake.utils.triads.AddMultibodyTriad
+.. autofunction:: brom_drake.utils.triads.AddTriad
+.. autofunction:: brom_drake.utils.type_checking.is_rigid_transform
+
+Variables
+---------
+
+(None found)
 

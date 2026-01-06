@@ -11,10 +11,15 @@ Submodules
 Classes
 -------
 
-.. autoclass:: brom_drake.DiagramTarget.DiagramTarget
+.. autoclass:: brom_drake.DiagramTarget.DiagramTarget.DiagramTarget
    :members:
 
 Functions
+---------
+
+(None found)
+
+Variables
 ---------
 
 (None found)

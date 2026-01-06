@@ -11,20 +11,25 @@ Submodules
 Classes
 -------
 
-.. autoclass:: brom_drake.control.arms.ArmControlMode
+.. autoclass:: brom_drake.control.arms.arm_control_mode.ArmControlMode
    :members:
-.. autoclass:: brom_drake.control.arms.BaseArmController
+.. autoclass:: brom_drake.control.arms.base_arm_controller.BaseArmController
    :members:
-.. autoclass:: brom_drake.control.arms.CartesianArmController
+.. autoclass:: brom_drake.control.arms.cartesian_arm_controller.CartesianArmController
    :members:
-.. autoclass:: brom_drake.control.arms.EndEffectorTarget
+.. autoclass:: brom_drake.control.arms.end_effector_target.EndEffectorTarget
    :members:
-.. autoclass:: brom_drake.control.arms.JointArmController
+.. autoclass:: brom_drake.control.arms.joint_arm_controller.JointArmController
    :members:
-.. autoclass:: brom_drake.control.arms.JointTarget
+.. autoclass:: brom_drake.control.arms.joint_target.JointTarget
    :members:
 
 Functions
+---------
+
+(None found)
+
+Variables
 ---------
 
 (None found)

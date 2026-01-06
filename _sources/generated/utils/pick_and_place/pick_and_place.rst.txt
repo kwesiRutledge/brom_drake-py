@@ -11,12 +11,17 @@ Submodules
 Classes
 -------
 
-.. autoclass:: brom_drake.utils.pick_and_place.PickAndPlacePhase
+.. autoclass:: brom_drake.utils.pick_and_place.phase.PickAndPlacePhase
    :members:
-.. autoclass:: brom_drake.utils.pick_and_place.PickAndPlaceTargetDescription
+.. autoclass:: brom_drake.utils.pick_and_place.target_description.PickAndPlaceTargetDescription
    :members:
 
 Functions
+---------
+
+(None found)
+
+Variables
 ---------
 
 (None found)

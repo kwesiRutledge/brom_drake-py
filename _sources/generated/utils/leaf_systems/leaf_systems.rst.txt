@@ -13,27 +13,20 @@ Submodules
 Classes
 -------
 
-.. autoclass:: brom_drake.utils.leaf_systems.BoolToVectorSystem
+.. autoclass:: brom_drake.utils.leaf_systems.bool_to_vec_system.BoolToVectorSystem
    :members:
-.. autoclass:: brom_drake.utils.leaf_systems.EndEffectorWrenchCalculator
+.. autoclass:: brom_drake.utils.leaf_systems.end_effector_wrench_calculator.EndEffectorWrenchCalculator
    :members:
-.. autoclass:: brom_drake.utils.leaf_systems.FlexiblePortSwitch
-   :members:
-.. autoclass:: brom_drake.utils.leaf_systems.FSMEdgeDefinition
-   :members:
-.. autoclass:: brom_drake.utils.leaf_systems.FSMOutputDefinition
-   :members:
-.. autoclass:: brom_drake.utils.leaf_systems.FSMTransitionCondition
-   :members:
-.. autoclass:: brom_drake.utils.leaf_systems.FSMTransitionConditionType
-   :members:
-.. autoclass:: brom_drake.utils.leaf_systems.NetworkXFSM
-   :members:
-.. autoclass:: brom_drake.utils.leaf_systems.RigidTransformToVectorSystem
+.. autoclass:: brom_drake.utils.leaf_systems.flexible_port_switch.FlexiblePortSwitch
    :members:
 
 Functions
 ---------
 
-.. autofunction:: brom_drake.utils.leaf_systems.define_named_vector_selection_system
+.. autofunction:: brom_drake.utils.leaf_systems.named_vector_selection_system.define_named_vector_selection_system
+
+Variables
+---------
+
+(None found)
 

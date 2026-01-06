@@ -11,12 +11,17 @@ Submodules
 Classes
 -------
 
-.. autoclass:: brom_drake.productions.types.base.BaseProduction
+.. autoclass:: brom_drake.productions.types.base.base.BaseProduction
    :members:
-.. autoclass:: brom_drake.productions.types.base.Configuration
+.. autoclass:: brom_drake.productions.types.base.configuration.Configuration
    :members:
 
 Functions
+---------
+
+(None found)
+
+Variables
 ---------
 
 (None found)

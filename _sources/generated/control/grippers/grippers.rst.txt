@@ -11,13 +11,18 @@ Submodules
 Classes
 -------
 
-.. autoclass:: brom_drake.control.grippers.GripperController
+.. autoclass:: brom_drake.control.grippers.gripper_controller.GripperController
    :members:
-.. autoclass:: brom_drake.control.grippers.GripperTarget
+.. autoclass:: brom_drake.control.grippers.gripper_target.GripperTarget
    :members:
 
 Functions
 ---------
 
 (None found)
+
+Variables
+---------
+
+.. autodata:: brom_drake.control.grippers.gripper_controller.package_dir
 

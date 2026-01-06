@@ -11,15 +11,25 @@ Submodules
 Classes
 -------
 
-.. autoclass:: brom_drake.DiagramWatcher.DiagramWatcher
+.. autoclass:: brom_drake.DiagramWatcher.diagram_watcher_options.DiagramWatcherOptions
    :members:
-.. autoclass:: brom_drake.DiagramWatcher.DiagramWatcherOptions
+.. autoclass:: brom_drake.DiagramWatcher.diagram_watcher_options.SuppressDiagramWatcherRules
    :members:
-.. autoclass:: brom_drake.DiagramWatcher.UnrecognizedTargetError
+.. autoclass:: brom_drake.DiagramWatcher.DiagramWatcher.DiagramWatcher
+   :members:
+.. autoclass:: brom_drake.DiagramWatcher.errors.UnrecognizedTargetError
    :members:
 
 Functions
 ---------
 
 (None found)
+
+Variables
+---------
+
+.. autodata:: brom_drake.DiagramWatcher.constants.INELIGIBLE_SYSTEM_TYPES
+.. autodata:: brom_drake.DiagramWatcher.diagram_watcher_options.DEFAULT_WATCHER_DIR
+.. autodata:: brom_drake.DiagramWatcher.DiagramWatcher.INELIGIBLE_SYSTEM_TYPES
+.. autodata:: brom_drake.DiagramWatcher.errors.INELIGIBLE_SYSTEM_TYPES
 

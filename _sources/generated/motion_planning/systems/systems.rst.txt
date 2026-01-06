@@ -13,16 +13,19 @@ Submodules
 Classes
 -------
 
-.. autoclass:: brom_drake.motion_planning.systems.OpenLoopPlanDispenser
+.. autoclass:: brom_drake.motion_planning.systems.prototypical_planner.PrototypicalPlannerSystem
    :members:
-.. autoclass:: brom_drake.motion_planning.systems.OpenLoopPosePlanDispenser
+.. autoclass:: brom_drake.motion_planning.systems.rrt_plan_generator.RRTPlanGenerator
    :members:
-.. autoclass:: brom_drake.motion_planning.systems.PrototypicalPlannerSystem
-   :members:
-.. autoclass:: brom_drake.motion_planning.systems.StateOfPlanInMemory
+.. autoclass:: brom_drake.motion_planning.systems.state_of_plan_in_memory.StateOfPlanInMemory
    :members:
 
 Functions
+---------
+
+(None found)
+
+Variables
 ---------
 
 (None found)

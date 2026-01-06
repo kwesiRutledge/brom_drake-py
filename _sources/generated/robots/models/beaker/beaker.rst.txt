@@ -1,0 +1,25 @@
+beaker
+======
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+
+Classes
+-------
+
+(None found)
+
+Functions
+---------
+
+(None found)
+
+Variables
+---------
+
+(None found)
+

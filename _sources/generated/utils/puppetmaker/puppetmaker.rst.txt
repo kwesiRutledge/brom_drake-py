@@ -11,14 +11,23 @@ Submodules
 Classes
 -------
 
-.. autoclass:: brom_drake.utils.puppetmaker.Puppetmaker
+.. autoclass:: brom_drake.utils.puppetmaker.configuration.Configuration
    :members:
-.. autoclass:: brom_drake.utils.puppetmaker.PuppetmakerConfiguration
+.. autoclass:: brom_drake.utils.puppetmaker.puppet_signature.AllJointSignatures
    :members:
-.. autoclass:: brom_drake.utils.puppetmaker.PuppetSignature
+.. autoclass:: brom_drake.utils.puppetmaker.puppet_signature.PuppeteerJointSignature
+   :members:
+.. autoclass:: brom_drake.utils.puppetmaker.puppet_signature.PuppetSignature
+   :members:
+.. autoclass:: brom_drake.utils.puppetmaker.puppetmaker.Puppetmaker
    :members:
 
 Functions
+---------
+
+(None found)
+
+Variables
 ---------
 
 (None found)

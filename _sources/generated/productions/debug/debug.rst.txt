@@ -13,10 +13,14 @@ Submodules
 Classes
 -------
 
-.. autoclass:: brom_drake.productions.debug.ShowMeThisModel
-   :members:
+(None found)
 
 Functions
+---------
+
+(None found)
+
+Variables
 ---------
 
 (None found)

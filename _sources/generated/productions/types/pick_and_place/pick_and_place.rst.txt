@@ -11,12 +11,17 @@ Submodules
 Classes
 -------
 
-.. autoclass:: brom_drake.productions.types.pick_and_place.MotionPlanningAndGraspingProduction
+.. autoclass:: brom_drake.productions.types.pick_and_place.mp_and_grasping.MotionPlanningAndGraspingProduction
    :members:
-.. autoclass:: brom_drake.productions.types.pick_and_place.MotionPlanningAndGraspingProductionScript
+.. autoclass:: brom_drake.productions.types.pick_and_place.script.Script
    :members:
 
 Functions
+---------
+
+(None found)
+
+Variables
 ---------
 
 (None found)

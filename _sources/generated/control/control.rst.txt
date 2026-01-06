@@ -13,18 +13,15 @@ Submodules
 Classes
 -------
 
-.. autoclass:: brom_drake.control.CartesianArmController
-   :members:
-.. autoclass:: brom_drake.control.EndEffectorTarget
-   :members:
-.. autoclass:: brom_drake.control.GripperController
-   :members:
-.. autoclass:: brom_drake.control.GripperTarget
-   :members:
-.. autoclass:: brom_drake.control.IdealJointPositionController
+.. autoclass:: brom_drake.control.ideal_joint_position_controller.IdealJointPositionController
    :members:
 
 Functions
+---------
+
+(None found)
+
+Variables
 ---------
 
 (None found)

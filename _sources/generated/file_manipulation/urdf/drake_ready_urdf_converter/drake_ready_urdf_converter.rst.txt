@@ -11,17 +11,36 @@ Submodules
 Classes
 -------
 
-.. autoclass:: brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.DrakeReadyURDFConverter
+.. autoclass:: brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.config.DrakeReadyURDFConverterConfig
    :members:
-.. autoclass:: brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.DrakeReadyURDFConverterConfig
+.. autoclass:: brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.config.MeshReplacementStrategies
    :members:
-.. autoclass:: brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.MeshReplacementStrategy
+.. autoclass:: brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.config.MeshReplacementStrategy
+   :members:
+.. autoclass:: brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.converter.DrakeReadyURDFConverter
+   :members:
+.. autoclass:: brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.file_manager.DrakeReadyURDFConverterFileManager
+   :members:
+.. autoclass:: brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.mesh_file_converter.MeshFileConverter
    :members:
 
 Functions
 ---------
 
-.. autofunction:: brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.create_transmission_element_for_joint
-.. autofunction:: brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.find_mesh_file_path_in
-.. autofunction:: brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.tree_contains_transmission_for_joint
+.. autofunction:: brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.util.create_transmission_element_for_joint
+.. autofunction:: brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.util.does_drake_parser_support
+.. autofunction:: brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.util.find_mesh_file_path_in
+.. autofunction:: brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.util.get_mesh_element_in
+.. autofunction:: brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.util.tree_contains_transmission_for_joint
+
+Variables
+---------
+
+.. autodata:: brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.converter.DEFAULT_BROM_MODELS_DIR
+.. autodata:: brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.converter.URDF_CONVERSION_LEVEL
+.. autodata:: brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.converter.URDF_CONVERSION_LOG_LEVEL_NAME
+.. autodata:: brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.file_manager.DEFAULT_BROM_MODELS_DIR
+.. autodata:: brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.mesh_file_converter.URDF_CONVERSION_LOG_LEVEL_NAME
+.. autodata:: brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.util.URDF_CONVERSION_LEVEL
+.. autodata:: brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.util.URDF_CONVERSION_LOG_LEVEL_NAME
 

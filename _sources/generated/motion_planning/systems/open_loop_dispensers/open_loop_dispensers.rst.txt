@@ -11,12 +11,19 @@ Submodules
 Classes
 -------
 
-.. autoclass:: brom_drake.motion_planning.systems.open_loop_dispensers.OpenLoopPlanDispenser
+.. autoclass:: brom_drake.motion_planning.systems.open_loop_dispensers.open_loop_plan_dispenser.OpenLoopPlanDispenser
    :members:
-.. autoclass:: brom_drake.motion_planning.systems.open_loop_dispensers.OpenLoopPosePlanDispenser
+.. autoclass:: brom_drake.motion_planning.systems.open_loop_dispensers.pose.OpenLoopPosePlanDispenser
+   :members:
+.. autoclass:: brom_drake.motion_planning.systems.open_loop_dispensers.pose_trajectory_source.PoseTrajectorySource
    :members:
 
 Functions
+---------
+
+(None found)
+
+Variables
 ---------
 
 (None found)

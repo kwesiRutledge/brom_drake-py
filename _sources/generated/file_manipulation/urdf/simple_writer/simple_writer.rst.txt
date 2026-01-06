@@ -11,13 +11,20 @@ Submodules
 Classes
 -------
 
-.. autoclass:: brom_drake.file_manipulation.urdf.simple_writer.InertiaDefinition
+.. autoclass:: brom_drake.file_manipulation.urdf.simple_writer.inertia_definition.InertiaDefinition
    :members:
-.. autoclass:: brom_drake.file_manipulation.urdf.simple_writer.SimpleShapeURDFDefinition
+.. autoclass:: brom_drake.file_manipulation.urdf.simple_writer.urdf_definition.SimpleShapeURDFDefinition
+   :members:
+.. autoclass:: brom_drake.file_manipulation.urdf.simple_writer.urdf_element_creator.URDFElementCreator
    :members:
 
 Functions
 ---------
 
 (None found)
+
+Variables
+---------
+
+.. autodata:: brom_drake.file_manipulation.urdf.simple_writer.urdf_definition.DEFAULT_BROM_MODELS_DIR
 

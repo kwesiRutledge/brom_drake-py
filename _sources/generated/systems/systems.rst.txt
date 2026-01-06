@@ -11,9 +11,19 @@ Submodules
 Classes
 -------
 
-(None found)
+.. autoclass:: brom_drake.systems.abstract_list_selection_system.AbstractListSelectionSystem
+   :members:
+.. autoclass:: brom_drake.systems.abstract_port_switch_system.AbstractPortSwitch
+   :members:
+.. autoclass:: brom_drake.systems.pose_composition.PoseCompositionSystem
+   :members:
 
 Functions
+---------
+
+(None found)
+
+Variables
 ---------
 
 (None found)

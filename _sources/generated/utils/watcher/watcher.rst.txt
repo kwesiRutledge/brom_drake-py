@@ -16,7 +16,14 @@ Classes
 Functions
 ---------
 
-.. autofunction:: brom_drake.utils.watcher.add_watcher
-.. autofunction:: brom_drake.utils.watcher.add_watcher_and_build
-.. autofunction:: brom_drake.utils.watcher.parse_list_of_simplified_targets
+.. autofunction:: brom_drake.utils.watcher.add_watcher.add_watcher
+.. autofunction:: brom_drake.utils.watcher.add_watcher.add_watcher_and_build
+.. autofunction:: brom_drake.utils.watcher.add_watcher.parse_list_of_simplified_targets
+
+Variables
+---------
+
+.. autodata:: brom_drake.utils.watcher.add_watcher.DEFAULT_PLOT_DIR
+.. autodata:: brom_drake.utils.watcher.add_watcher.DEFAULT_RAW_DATA_DIR
+.. autodata:: brom_drake.utils.watcher.add_watcher.DEFAULT_WATCHER_DIR
 

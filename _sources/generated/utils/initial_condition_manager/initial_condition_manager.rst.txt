@@ -11,12 +11,17 @@ Submodules
 Classes
 -------
 
-.. autoclass:: brom_drake.utils.initial_condition_manager.InitialCondition
+.. autoclass:: brom_drake.utils.initial_condition_manager.initial_condition.InitialCondition
    :members:
-.. autoclass:: brom_drake.utils.initial_condition_manager.InitialConditionManager
+.. autoclass:: brom_drake.utils.initial_condition_manager.manager.InitialConditionManager
    :members:
 
 Functions
+---------
+
+(None found)
+
+Variables
 ---------
 
 (None found)

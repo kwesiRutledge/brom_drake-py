@@ -12,10 +12,14 @@ Submodules
 Classes
 -------
 
-.. autoclass:: brom_drake.productions.types.motion_planning.KinematicMotionPlanningProduction
-   :members:
+(None found)
 
 Functions
+---------
+
+(None found)
+
+Variables
 ---------
 
 (None found)

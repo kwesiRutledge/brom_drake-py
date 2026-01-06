@@ -11,16 +11,21 @@ Submodules
 Classes
 -------
 
-.. autoclass:: brom_drake.motion_planning.systems.proximity_pose_plan_dispenser.DispenserInternalState
+.. autoclass:: brom_drake.motion_planning.systems.proximity_pose_plan_dispenser.config.ProximityPosePlanDispenserConfig
    :members:
-.. autoclass:: brom_drake.motion_planning.systems.proximity_pose_plan_dispenser.DispenserTransitionRequest
+.. autoclass:: brom_drake.motion_planning.systems.proximity_pose_plan_dispenser.dispenser_internal_state.DispenserInternalState
    :members:
-.. autoclass:: brom_drake.motion_planning.systems.proximity_pose_plan_dispenser.ProximityPosePlanDispenser
+.. autoclass:: brom_drake.motion_planning.systems.proximity_pose_plan_dispenser.dispenser_internal_state.DispenserTransitionRequest
    :members:
-.. autoclass:: brom_drake.motion_planning.systems.proximity_pose_plan_dispenser.ProximityPosePlanDispenserConfig
+.. autoclass:: brom_drake.motion_planning.systems.proximity_pose_plan_dispenser.proximity_pose_plan_dispenser.ProximityPosePlanDispenser
    :members:
 
 Functions
+---------
+
+(None found)
+
+Variables
 ---------
 
 (None found)

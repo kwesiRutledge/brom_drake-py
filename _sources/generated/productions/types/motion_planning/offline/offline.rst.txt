@@ -11,12 +11,17 @@ Submodules
 Classes
 -------
 
-.. autoclass:: brom_drake.productions.types.motion_planning.offline.KinematicMotionPlanningProduction
+.. autoclass:: brom_drake.productions.types.motion_planning.offline.dynamic.OfflineDynamicMotionPlanningProduction
    :members:
-.. autoclass:: brom_drake.productions.types.motion_planning.offline.OfflineDynamicMotionPlanningProduction
+.. autoclass:: brom_drake.productions.types.motion_planning.offline.kinematic.KinematicMotionPlanningProduction
    :members:
 
 Functions
+---------
+
+(None found)
+
+Variables
 ---------
 
 (None found)

@@ -11,12 +11,17 @@ Submodules
 Classes
 -------
 
-.. autoclass:: brom_drake.utils.leaf_systems.rigid_transform_to_vector_system.RigidTransformToVectorSystem
+.. autoclass:: brom_drake.utils.leaf_systems.rigid_transform_to_vector_system.configuration.Configuration
    :members:
-.. autoclass:: brom_drake.utils.leaf_systems.rigid_transform_to_vector_system.RigidTransformToVectorSystemConfiguration
+.. autoclass:: brom_drake.utils.leaf_systems.rigid_transform_to_vector_system.system.RigidTransformToVectorSystem
    :members:
 
 Functions
+---------
+
+(None found)
+
+Variables
 ---------
 
 (None found)

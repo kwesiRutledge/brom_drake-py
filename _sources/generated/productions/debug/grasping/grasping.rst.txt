@@ -13,16 +13,14 @@ Submodules
 Classes
 -------
 
-.. autoclass:: brom_drake.productions.debug.grasping.AttemptGraspWithStaticWrist
-   :members:
-.. autoclass:: brom_drake.productions.debug.grasping.AttemptGraspWithStaticWristConfiguration
-   :members:
-.. autoclass:: brom_drake.productions.debug.grasping.ShowMeThisStaticGrasp
-   :members:
-.. autoclass:: brom_drake.productions.debug.grasping.ShowMeThisStaticGraspConfiguration
-   :members:
+(None found)
 
 Functions
+---------
+
+(None found)
+
+Variables
 ---------
 
 (None found)

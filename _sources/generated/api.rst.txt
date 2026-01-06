@@ -32,3 +32,13 @@ Functions
 
 (None found)
 
+Variables
+---------
+
+.. autodata:: brom_drake.directories.DEFAULT_BROM_DIR
+.. autodata:: brom_drake.directories.DEFAULT_BROM_MODELS_DIR
+.. autodata:: brom_drake.directories.DEFAULT_NETWORKX_FSM_DIR
+.. autodata:: brom_drake.directories.DEFAULT_PLOT_DIR
+.. autodata:: brom_drake.directories.DEFAULT_RAW_DATA_DIR
+.. autodata:: brom_drake.directories.DEFAULT_WATCHER_DIR
+

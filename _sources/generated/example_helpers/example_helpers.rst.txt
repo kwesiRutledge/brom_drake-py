@@ -7,14 +7,20 @@ Submodules
 .. toctree::
    :maxdepth: 1
 
+   models/models
 
 Classes
 -------
 
-.. autoclass:: brom_drake.example_helpers.BlockHandlerSystem
+.. autoclass:: brom_drake.example_helpers.block_handler_system.BlockHandlerSystem
    :members:
 
 Functions
+---------
+
+(None found)
+
+Variables
 ---------
 
 (None found)

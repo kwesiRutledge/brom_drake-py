@@ -13,14 +13,14 @@ Submodules
 Classes
 -------
 
-.. autoclass:: brom_drake.productions.motion_planning.offline.ChemLab1
-   :members:
-.. autoclass:: brom_drake.productions.motion_planning.offline.ChemLab2
-   :members:
-.. autoclass:: brom_drake.productions.motion_planning.offline.ShelfPlanning1
-   :members:
+(None found)
 
 Functions
+---------
+
+(None found)
+
+Variables
 ---------
 
 (None found)

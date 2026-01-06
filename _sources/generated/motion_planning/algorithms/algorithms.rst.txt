@@ -12,10 +12,15 @@ Submodules
 Classes
 -------
 
-.. autoclass:: brom_drake.motion_planning.algorithms.MotionPlanner
+.. autoclass:: brom_drake.motion_planning.algorithms.motion_planner.MotionPlanner
    :members:
 
 Functions
+---------
+
+(None found)
+
+Variables
 ---------
 
 (None found)

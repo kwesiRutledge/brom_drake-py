@@ -1,0 +1,27 @@
+ur10
+====
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   collision/collision
+   visual/visual
+
+Classes
+-------
+
+(None found)
+
+Functions
+---------
+
+(None found)
+
+Variables
+---------
+
+(None found)
+

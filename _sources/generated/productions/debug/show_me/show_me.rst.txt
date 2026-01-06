@@ -11,12 +11,17 @@ Submodules
 Classes
 -------
 
-.. autoclass:: brom_drake.productions.debug.show_me.ShowMeSystem
+.. autoclass:: brom_drake.productions.debug.show_me.show_me_system.ShowMeSystem
    :members:
-.. autoclass:: brom_drake.productions.debug.show_me.ShowMeThisModel
+.. autoclass:: brom_drake.productions.debug.show_me.show_me_this_model.ShowMeThisModel
    :members:
 
 Functions
+---------
+
+(None found)
+
+Variables
 ---------
 
 (None found)

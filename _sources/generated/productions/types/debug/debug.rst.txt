@@ -11,10 +11,15 @@ Submodules
 Classes
 -------
 
-.. autoclass:: brom_drake.productions.types.debug.BasicGraspingDebuggingProduction
+.. autoclass:: brom_drake.productions.types.debug.basic_grasping.BasicGraspingDebuggingProduction
    :members:
 
 Functions
+---------
+
+(None found)
+
+Variables
 ---------
 
 (None found)

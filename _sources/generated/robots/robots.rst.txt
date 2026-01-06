@@ -7,16 +7,24 @@ Submodules
 .. toctree::
    :maxdepth: 1
 
+   models/models
 
 Classes
 -------
 
-.. autoclass:: brom_drake.robots.GripperType
+.. autoclass:: brom_drake.robots.gripper_type.GripperType
+   :members:
+.. autoclass:: brom_drake.robots.utils.BaseLinkSearchApproach
    :members:
 
 Functions
 ---------
 
-.. autofunction:: brom_drake.robots.find_all_link_names
-.. autofunction:: brom_drake.robots.find_base_link_name_in
+.. autofunction:: brom_drake.robots.utils.find_all_link_names
+.. autofunction:: brom_drake.robots.utils.find_base_link_name_in
+
+Variables
+---------
+
+(None found)
 

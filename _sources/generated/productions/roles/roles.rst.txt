@@ -12,12 +12,19 @@ Submodules
 Classes
 -------
 
-.. autoclass:: brom_drake.productions.roles.Role
+.. autoclass:: brom_drake.productions.roles.role.Role
    :members:
-.. autoclass:: brom_drake.productions.roles.RolePortAssignment
+.. autoclass:: brom_drake.productions.roles.role_port_assignment.PairingType
+   :members:
+.. autoclass:: brom_drake.productions.roles.role_port_assignment.RolePortAssignment
    :members:
 
 Functions
+---------
+
+(None found)
+
+Variables
 ---------
 
 (None found)

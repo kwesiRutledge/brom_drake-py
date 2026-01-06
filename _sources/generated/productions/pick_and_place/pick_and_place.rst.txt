@@ -11,11 +11,16 @@ Submodules
 Classes
 -------
 
-.. autoclass:: brom_drake.productions.pick_and_place.ChemLab3
+.. autoclass:: brom_drake.productions.pick_and_place.chem_lab3.ChemLab3
    :members:
 
 Functions
 ---------
 
 (None found)
+
+Variables
+---------
+
+.. autodata:: brom_drake.productions.pick_and_place.chem_lab3.DEFAULT_BROM_MODELS_DIR
 

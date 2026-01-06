@@ -11,13 +11,18 @@ Submodules
 Classes
 -------
 
-.. autoclass:: brom_drake.productions.motion_planning.offline.kinematic.ChemLab1
+.. autoclass:: brom_drake.productions.motion_planning.offline.kinematic.chem_lab1.ChemLab1
    :members:
-.. autoclass:: brom_drake.productions.motion_planning.offline.kinematic.ShelfPlanning1
+.. autoclass:: brom_drake.productions.motion_planning.offline.kinematic.shelf.ShelfPlanning1
    :members:
 
 Functions
 ---------
 
 (None found)
+
+Variables
+---------
+
+.. autodata:: brom_drake.productions.motion_planning.offline.kinematic.chem_lab1.DEFAULT_BROM_MODELS_DIR
 

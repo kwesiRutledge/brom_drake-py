@@ -11,12 +11,17 @@ Submodules
 Classes
 -------
 
-.. autoclass:: brom_drake.productions.debug.grasping.show_me_this_static_grasp.Configuration
+.. autoclass:: brom_drake.productions.debug.grasping.show_me_this_static_grasp.config.Configuration
    :members:
-.. autoclass:: brom_drake.productions.debug.grasping.show_me_this_static_grasp.ShowMeThisStaticGrasp
+.. autoclass:: brom_drake.productions.debug.grasping.show_me_this_static_grasp.production.ShowMeThisStaticGrasp
    :members:
 
 Functions
+---------
+
+(None found)
+
+Variables
 ---------
 
 (None found)

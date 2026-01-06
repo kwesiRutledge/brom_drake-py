@@ -11,18 +11,23 @@ Submodules
 Classes
 -------
 
-.. autoclass:: brom_drake.file_manipulation.urdf.shapes.BoxDefinition
+.. autoclass:: brom_drake.file_manipulation.urdf.shapes.box.BoxDefinition
    :members:
-.. autoclass:: brom_drake.file_manipulation.urdf.shapes.CylinderDefinition
+.. autoclass:: brom_drake.file_manipulation.urdf.shapes.cylinder.CylinderDefinition
    :members:
-.. autoclass:: brom_drake.file_manipulation.urdf.shapes.ShapeDefinition
+.. autoclass:: brom_drake.file_manipulation.urdf.shapes.shape_definition.ShapeDefinition
    :members:
-.. autoclass:: brom_drake.file_manipulation.urdf.shapes.ShapeEnum
+.. autoclass:: brom_drake.file_manipulation.urdf.shapes.shape_definition.ShapeEnum
    :members:
-.. autoclass:: brom_drake.file_manipulation.urdf.shapes.SphereDefinition
+.. autoclass:: brom_drake.file_manipulation.urdf.shapes.sphere.SphereDefinition
    :members:
 
 Functions
+---------
+
+(None found)
+
+Variables
 ---------
 
 (None found)

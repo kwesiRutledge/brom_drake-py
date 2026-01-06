@@ -15,16 +15,14 @@ Submodules
 Classes
 -------
 
-.. autoclass:: brom_drake.productions.types.BaseProduction
-   :members:
-.. autoclass:: brom_drake.productions.types.KinematicMotionPlanningProduction
-   :members:
-.. autoclass:: brom_drake.productions.types.MotionPlanningAndGraspingProduction
-   :members:
-.. autoclass:: brom_drake.productions.types.OfflineDynamicMotionPlanningProduction
-   :members:
+(None found)
 
 Functions
+---------
+
+(None found)
+
+Variables
 ---------
 
 (None found)

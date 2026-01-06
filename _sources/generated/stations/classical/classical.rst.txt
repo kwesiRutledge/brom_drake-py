@@ -11,10 +11,15 @@ Submodules
 Classes
 -------
 
-.. autoclass:: brom_drake.stations.classical.UR10eStation
+.. autoclass:: brom_drake.stations.classical.ur10e.UR10eStation
    :members:
 
 Functions
+---------
+
+(None found)
+
+Variables
 ---------
 
 (None found)
