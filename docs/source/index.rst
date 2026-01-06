@@ -42,5 +42,6 @@ documentation for details.
    :caption: Contents:
    :glob:
 
+   features/index
    generated/api
 

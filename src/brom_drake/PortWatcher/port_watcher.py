@@ -39,7 +39,7 @@ class PortWatcher:
     """
     *Description*
 
-    The real workhorse of the **DiagramWatcher** class (TODO(kwesi): make this a proper link in Sphinx).
+    The real workhorse of the :py:class:`DiagramWatcher<brom_drake.DiagramWatcher.DiagramWatcher.DiagramWatcher>` class.
     This class adds the elements to the drake diagram that will monitor a given
     system's output port (**output_port**), if possible.
     """
