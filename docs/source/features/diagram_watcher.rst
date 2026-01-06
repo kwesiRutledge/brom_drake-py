@@ -47,7 +47,7 @@ That's it! Whenever the program ends, the DiagramWatcher will:
 
 The DiagramWatcher will only log signals in the diagram that:
 
-- Come from :code:`VectorValue` output ports,
+- Come from :code:`kVectorValued` output ports,
 - Come from :code:`AbstractValue` output ports whose underlying type is
   + :code:`RigidTransform`,
   + :code:`bool`, or
