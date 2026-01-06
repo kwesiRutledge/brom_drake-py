@@ -263,16 +263,22 @@ def package_path_to_module_name(package_dir: Path) -> str:
     :return: The canonicalized module name.
     :rtype: str
     """
-    # Convert the package directory to a string
-    trimmed_package_dir = package_dir.parent / package_dir.stem # Remove any trailing suffixes like ".py"
-    package_dir_str = str(trimmed_package_dir)
-
-    extended_package_name = package_dir_str[
-        package_dir_str.find("brom_drake-py/src/brom_drake") + len("brom_drake-py/src/"):
-    ]
-
-    # Replace slashes with dots to form the module name
-    module_name = extended_package_name.replace("/", ".")
+    # Normalize the package directory and remove any trailing suffixes like ".py"
+    trimmed_package_dir = (package_dir.parent / package_dir.stem).resolve()
+    # Determine the installed brom_drake package root (e.g., ".../src/brom_drake")
+    package_root = Path(brom_drake.__file__).resolve().parent
+    base_dir = package_root.parent  # e.g., ".../src"
+    try:
+        # Compute path relative to the base directory so that the first component
+        # is the top-level package name ("brom_drake")
+        relative_path = trimmed_package_dir.relative_to(base_dir)
+    except ValueError as exc:
+        raise ValueError(
+            f"Cannot determine module name from package_dir={package_dir!r}; "
+            f"expected it to be under base directory {base_dir!r}."
+        ) from exc
+    # Join the relative path components with dots to form the module name
+    module_name = ".".join(relative_path.parts)
 
     return module_name
 
