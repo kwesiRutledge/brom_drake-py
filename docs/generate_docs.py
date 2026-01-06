@@ -7,7 +7,6 @@ from pathlib import Path
 import pkgutil
 import shutil
 import subprocess
-import ipdb
 import typer
 from typing import List, Tuple
 
@@ -424,5 +423,4 @@ def main(
     # )
 
 if __name__ == "__main__":
-    with ipdb.launch_ipdb_on_exception():
-        typer.run(main)
+    typer.run(main)
