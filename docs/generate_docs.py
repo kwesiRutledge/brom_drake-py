@@ -249,7 +249,7 @@ def get_canonicalized_function_name(
 
     assert ".." not in out, f"Invalid canonicalized name generated: {out}"
 
-    if out[-1] != ".":
+    if not out.endswith("."):
         out += "."
 
     return out + function_name
