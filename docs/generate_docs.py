@@ -36,9 +36,6 @@ def generate_all_discoverable_docs(
     # Identify the package name
     package_name = package_dir.name
 
-    # Expand the package name to be canonicalized
-    extended_package_name = package_path_to_module_name(package_dir)
-
     # Identify the directories and files within this package's directory
     files_found = []
     directories_found = []
