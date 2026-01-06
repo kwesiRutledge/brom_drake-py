@@ -156,6 +156,10 @@ def identify_available_functions_and_variables_in_file(
         canonicalized_file_name,
         target_file_path
     ) # 1. Create a spec from the file path
+    if spec is None or spec.loader is None:
+        print(f"  + Unable to load module from path: {target_file_path}")
+        return [], [], []
+    
     module = importlib.util.module_from_spec(spec) # 2. Create a new module based on the spec
     spec.loader.exec_module(module) # 3. Execute the module (this populates it with functions/classes)
 
