@@ -97,7 +97,7 @@ What will happen whenever you use this function is that:
     - It will search through all systems that the :code:`DiagramBuilder` has added.
     - For each system, the watcher will add a :code:`VectorLogger` to each output port that is a :code:`kVectorValued` port.
     - The :py:class:`DiagramWatcher<brom_drake.DiagramWatcher.DiagramWatcher.DiagramWatcher>` will connect all loggers to all targeted ports (in the above case, we will target all available output ports).
-- After the simulation is run and the script completes, the watcher will save all data traces for each port in .png files. These plots will be in a new :code:`.brom` directory.
+- After the simulation is run and the script completes, the watcher will save all data traces for each port in .png files. These plots will be in a new :code:`brom` directory.
 
 Watching Specific systems
 ^^^^^^^^^^^^^^^^^^^^^^^^^
