@@ -99,7 +99,7 @@ What will happen whenever you use this function is that:
     - The :py:class:`DiagramWatcher<brom_drake.DiagramWatcher.DiagramWatcher.DiagramWatcher>` will connect all loggers to all targeted ports (in the above case, we will target all available output ports).
 - After the simulation is run and the script completes, the watcher will save all data traces for each port in .png files. These plots will be in a new :code:`brom` directory.
 
-Watching Specific systems
+Watching Specific Systems
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 If you only want to watch a specific system, then you can do so by passing in information to the "targets" argument:
