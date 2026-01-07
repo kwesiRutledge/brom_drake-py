@@ -1,10 +1,7 @@
 """
-add_watcher.py
-Description:
-
-    This function defines a couple of convenience functions for adding in the watcher
-    to a target diagram builder. These functions should be useful for 99% of the
-    users of the DiagramWatcher class.
+This file defines a couple of convenience functions for adding in the watcher
+to a target diagram builder. These functions should be useful for 99% of the
+users of the DiagramWatcher class.
 """
 from typing import List, Tuple, Union
 
@@ -14,7 +11,7 @@ from pydrake.systems.framework import Context
 
 from brom_drake.DiagramTarget import DiagramTarget
 from brom_drake.DiagramWatcher import DiagramWatcher, DiagramWatcherOptions
-from brom_drake.directories import DEFAULT_PLOT_DIR, DEFAULT_RAW_DATA_DIR, DEFAULT_WATCHER_DIR
+from brom_drake import directories
 from brom_drake.PortWatcher.port_watcher_options import (
     PortFigureArrangement,
     PortWatcherPlottingOptions,
@@ -39,30 +36,69 @@ PotentialTargetTypes = List[
 def add_watcher(
     builder: DiagramBuilder,
     targets: PotentialTargetTypes = None,
-    watcher_dir: str = DEFAULT_WATCHER_DIR,
+    watcher_dir: str = directories.DEFAULT_WATCHER_DIR,
     plot_arrangement: PortFigureArrangement = PortFigureArrangement.OnePlotPerPort,
     figure_naming_convention: FigureNamingConvention = FigureNamingConvention.kFlat,
     file_format: str = "png",
 ) -> DiagramWatcher:
     """
-    Description:
+    **Description**
 
-        This function adds a DiagramWatcher to a DiagramBuilder.
+    This function adds a :py:class:`~brom_drake.DiagramWatcher.DiagramWatcher.DiagramWatcher` to a Drake Diagram.
+    The diagram is not finalized yet and so it is accessible via the `builder` argument.
+    The watcher will insert LogVectorSink systems to log the output ports of the systems specified in the `targets` argument.
 
-    Example Usage:
+    Importantly, this function does NOT build the diagram.
+
+    **Parameters**
+
+    builder : DiagramBuilder
+        The diagram builder to which we want to add the watcher.
+
+    targets : List[Tuple[Union[str, int]]]
+        The targets that we want to watch.
+
+    watcher_dir : str, optional
+        The directory in which we will store the data collected by the DiagramWatcher.
+        By default, :py:const:`~brom_drake.directories.directories.DEFAULT_WATCHER_DIR`.
+
+    plot_arrangement : PortFigureArrangement, optional
+        The arrangement of the plots.
+        By default, PortFigureArrangement.OnePlotPerPort.
+
+    figure_naming_convention : FigureNamingConvention, optional
+        The naming convention for the figures.
+        By default, FigureNamingConvention.kFlat.
+
+    file_format : str, optional
+        The file format for the figures.
+        By default, "png".
+
+    **Example Usage**
+
+    The simplest way to use this function is to just pass in the diagram builder:
+
+    .. code-block:: python
 
         watcher = add_watcher(builder)
 
+    You can also specify which systems and ports to watch by passing in a list of targets.
+    Each target can be specified as either:
+
+    - A string representing the name of the system to watch (all ports will be watched), or
+    - A tuple of (system_name: str, port_index: int) to watch a specific port of a system, or
+    - A tuple of (system_index: int, port_index: int) to watch a specific port of a system by its index.
+
+    Here are some examples of how to specify targets:
+
+    .. code-block:: python
+
         watcher = add_watcher(builder, [("plant", 0), ("controller", 0)])
 
-    :param builder: DiagramBuilder. The diagram builder to which we want to add the watcher.
-    :param targets: List[Tuple[Union[str, int]]]. The targets that we want to watch.
-    :param data_dir: str. The directory in which we will store the data collected by the DiagramWatcher.
-    :param plot_arrangement: PortFigureArrangement. The arrangement of the plots.
-        (Can be PortFigureArrangement.OnePlotPerPort OR PortFigureArrangement.OnePlotPerDim)
-    :param figure_naming_convention: FigureNamingConvention. The naming convention for the figures.
-        (Can be FigureNamingConvention.kFlat OR FigureNamingConvention.kHierarchical)
-    :return: DiagramWatcher. The watcher that we have added to the diagram builder.
+    **Returns**
+        
+    watcher : DiagramWatcher
+        The watcher that we have added to the diagram builder.
     """
     # Input Processing
     if not isinstance(plot_arrangement, PortFigureArrangement):
@@ -96,44 +132,77 @@ def add_watcher(
 def add_watcher_and_build(
     builder: DiagramBuilder,
     targets: PotentialTargetTypes = None,
-    watcher_dir: str = DEFAULT_WATCHER_DIR,
+    watcher_dir: str = directories.DEFAULT_WATCHER_DIR,
     plot_arrangement: PortFigureArrangement = PortFigureArrangement.OnePlotPerPort,
     figure_naming_convention: FigureNamingConvention = FigureNamingConvention.kFlat,
     file_format: str = "png",
 ) -> Tuple[DiagramWatcher, Diagram, Context]:
     """
-    add_watcher_and_build
-    Description:
+    **Description**
 
-        This function adds a DiagramWatcher to a DiagramBuilder and then builds the diagram.
+    This function adds a :py:class:`~brom_drake.DiagramWatcher.DiagramWatcher.DiagramWatcher` to a Drake Diagram.
+    The diagram is not finalized yet and so it is accessible via the `builder` argument.
+    The watcher will insert LogVectorSink systems to log the output ports of the systems specified in the `targets` argument.
+
+    Once all of the LogVectorSink systems have been added, the diagram is built and a reference to the built diagram
+    and its default context is added to the DiagramWatcher object.
 
     Example Usage:
 
+    .. code-block:: python
+
         watcher = add_watcher(builder)
+
+    In addition, one can specify which systems to watch:
+
+    .. code-block:: python
 
         watcher = add_watcher(builder, [("plant",)])
 
+    The DiagramWatcher will then watch all supported ports of the "plant" system
+    that it can find.
+
+    Furthermore, to specify which systems and specific ports to watch:
+
+    .. code-block:: python
+
         watcher = add_watcher(builder, [("plant", 0), ("controller", 0)])
 
-    Arguments
-    ---------
+    This will watch output port 0 of both the "plant" and "controller" systems, if possible.
+
+    **Parameters**
+    
     builder: DiagramBuilder
         The diagram builder to which we want to add the watcher.
+
     targets: List[Tuple[Union[str, int]]]
         The targets that we want to watch.
+
     data_dir: str
         The directory in which we will store the data collected by the DiagramWatcher.
+
     plot_arrangement: PortFigureArrangement
         The arrangement of the plots.
         (Can be PortFigureArrangement.OnePlotPerPort OR PortFigureArrangement.OnePlotPerDim)
+
     figure_naming_convention: FigureNamingConvention
         The naming convention for the figures.
         (Can be FigureNamingConvention.kFlat OR FigureNamingConvention.kHierarchical)
+
     file_format: str
         The file format for the figures.
     
-    Returns
-    -------
+    **Returns**
+
+    watcher: DiagramWatcher
+        The watcher that we have added to the diagram builder.
+
+    diagram: Diagram
+        The built diagram.
+
+    diagram_context: Context
+        The default context for the built diagram.
+    
     :return: DiagramWatcher. The watcher that we have added to the diagram builder.
     """
     watcher = add_watcher(
@@ -159,25 +228,28 @@ def parse_list_of_simplified_targets(
     targets: PotentialTargetTypes,
 ) -> List[DiagramTarget]:
     """
-    Description
-    -----------
+    **Description**
+    
     This function takes a list of simplified targets and converts them to the full form.
 
-    Example Usage
-    -------------
-    targets = [("plant", 0), ("controller", 0)]
-    parsed_targets = parse_list_of_simplified_targets(targets)
+    **Example Usage**
+    
+    .. code-block:: python
 
-    Arguments
-    ---------
+        targets = [("plant", 0), ("controller", 0)]
+        parsed_targets = parse_list_of_simplified_targets(targets)
+
+    **Parameters**
+    
     builder : DiagramBuilder
         The diagram builder to which we want to add the watcher.
+
     targets : List[Tuple[Union[str, int]]
         The list of simplified targets.
 
-    Returns
-    -------
-    List[DiagramTarget]
+    **Returns**
+    
+    parsed_targets: List[DiagramTarget]
         A list of all the targets that we want to watch.
     """
     # Setup

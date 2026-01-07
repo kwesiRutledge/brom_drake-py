@@ -37,5 +37,5 @@ class DiagramTarget(NamedTuple):
         target_specific_ports = DiagramTarget(name="another_system", ports=[0, 2, 4])
 
     """
-    name: str 
-    ports: Union[None, List[int]] = None
+    name: str #: Name of the LeafSystem to monitor
+    ports: Union[None, List[int]] = None #: List of port indices to monitor. If None, all ports are monitored
