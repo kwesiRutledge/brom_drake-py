@@ -151,13 +151,13 @@ def add_watcher_and_build(
 
     .. code-block:: python
 
-        watcher = add_watcher(builder)
+        watcher = add_watcher_and_build(builder)
 
     In addition, one can specify which systems to watch:
 
     .. code-block:: python
 
-        watcher = add_watcher(builder, [("plant",)])
+        watcher = add_watcher_and_build(builder, targets=[("plant",)])
 
     The DiagramWatcher will then watch all supported ports of the "plant" system
     that it can find.
@@ -166,7 +166,7 @@ def add_watcher_and_build(
 
     .. code-block:: python
 
-        watcher = add_watcher(builder, [("plant", 0), ("controller", 0)])
+        watcher = add_watcher_and_build(builder, targets=[("plant", 0), ("controller", 0)])
 
     This will watch output port 0 of both the "plant" and "controller" systems, if possible.
 
