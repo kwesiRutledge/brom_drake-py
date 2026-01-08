@@ -202,8 +202,6 @@ def add_watcher_and_build(
 
     diagram_context: Context
         The default context for the built diagram.
-    
-    :return: DiagramWatcher. The watcher that we have added to the diagram builder.
     """
     watcher = add_watcher(
         builder,
