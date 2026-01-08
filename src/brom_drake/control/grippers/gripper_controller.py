@@ -240,18 +240,19 @@ class GripperController(LeafSystem):
 
     def ComputeVelocity(self, state: np.ndarray) -> np.ndarray:
         """
-        *Description*
+        **Description**
 
         Compute the gripper velocity from state data.
         This is especially useful for the 2F-85 gripper, since the
         state does not map neatly to the finger positions.
 
-        *Parameters*
+        **Parameters**
 
         state: np.ndarray
             The state vector of the gripper.
 
-        *Returns*
+        **Returns**
+
         finger_velocity: np.ndarray of shape (2,)
             The velocities of the gripper fingers.
         """

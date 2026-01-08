@@ -85,12 +85,12 @@ class Puppetmaker:
         joint_name: str,
     ) -> Tuple[PrismaticJoint, JointActuator]:
         """
-        *Description*
+        **Description**
         
         This method will add an prismatic joint in the direction `axis_dimension`
         between `previous_frame` and `next_frame`, along with an actuator to control it.
         
-        *Parameters*
+        **Parameters**
         
         axis_dimension: int
             The axis to translate in (0 for X, 1 for Y, 2 for Z).
@@ -104,7 +104,7 @@ class Puppetmaker:
         joint_name: str
             The name of the joint we are creating.
 
-        *Returns*
+        **Returns**
         
         translation_joint_ii: PrismaticJoint
             The created prismatic joint.

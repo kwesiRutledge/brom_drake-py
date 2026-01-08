@@ -20,13 +20,13 @@ from .show_me_system import ShowMeSystem
 
 class ShowMeThisModel(BaseProduction):
     """
-    *Description*
+    **Description**
     
     A production which allows the user to visualize a specified model
     in Meshcat, with the ability to set desired joint positions, if the model is
     a robot/articulated.
     
-    *Parameters*
+    **Parameters**
     
     path_to_model: str
         The path to the model file to be visualized.
@@ -57,7 +57,7 @@ class ShowMeThisModel(BaseProduction):
         INSTEAD of the visual geometries.
         Default is False.
 
-    *Usage*
+    **Usage**
 
     The production can be used to show both simple models (e.g., single objects)
     or articulated models (e.g., robots). 
@@ -154,7 +154,7 @@ class ShowMeThisModel(BaseProduction):
 
     def add_supporting_cast(self):
         """
-        *Description*
+        **Description**
         
         This method updates the production's
         - MultibodyPlant with the user's model
@@ -240,18 +240,18 @@ class ShowMeThisModel(BaseProduction):
         cast: Tuple[Role, Performer] = [],
     ) -> Tuple[Diagram, Context]:
         """
-        *Description*
+        **Description**
         
         This method builds the production's diagram and context,
         and assigns the plant context to the internal ShowMeSystem.
         
-        *Parameters*
+        **Parameters**
         
         cast: Tuple[Role, Performer], optional
             The cast to be added to the production.
             Default is an empty tuple.
             
-        *Returns*
+        **Returns**
 
         diagram: Diagram
             The built Diagram of the production.
@@ -270,7 +270,7 @@ class ShowMeThisModel(BaseProduction):
 
     def add_multibody_triads(self):
         """
-        *Description*
+        **Description**
         
         This method will add triads to the world frame
         and any other relevant frames.
@@ -286,12 +286,12 @@ class ShowMeThisModel(BaseProduction):
 
     def create_and_connect_source_of_joint_positions(self):
         """
-        *Description*
+        **Description**
         
         This method will create and connect a source of joint positions
         to the ShowMeSystem.
 
-        *Assumptions*
+        **Assumptions**
 
         - ``self.show_me_system`` is not None
         - ``self.q_des`` is not None
@@ -319,12 +319,12 @@ class ShowMeThisModel(BaseProduction):
         self,
     ) -> int:
         """
-        *Description*
+        **Description**
         
         This method will return the number of positions in the model
         as defined by the user (through the path_to_model).
 
-        *Returns*
+        **Returns**
         
         n_positions: int
             The number of positions in the model.
@@ -352,14 +352,14 @@ class ShowMeThisModel(BaseProduction):
     @property
     def id(self) -> ProductionID:
         """
-        *Description*
+        **Description**
         
         This property returns the unique identifier for this production.
         (i.e., ProductionID.kShowMeThisModel)
 
         This is required to be implemented by all children of the BaseProduction class.
 
-        *Returns*
+        **Returns**
         
         id: ProductionID
             The unique identifier for this production.
@@ -369,14 +369,14 @@ class ShowMeThisModel(BaseProduction):
     @property
     def suggested_roles(self) -> List[Role]:
         """
-        *Description*
+        **Description**
 
         This property returns an empty list, because there are no suggested
         roles for this production.
 
         This is required to be implemented by all children of the BaseProduction class.
 
-        *Returns*
+        **Returns**
 
         roles: List[Role]
             A list of suggested roles for this production.

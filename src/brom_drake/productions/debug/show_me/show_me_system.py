@@ -1,17 +1,41 @@
 import numpy as np
 from pydrake.multibody.plant import MultibodyPlant
 from pydrake.multibody.tree import ModelInstanceIndex
-from pydrake.systems.framework import LeafSystem, BasicVector
+from pydrake.systems.framework import LeafSystem, BasicVector, Context
 
 from brom_drake.utils import AddMultibodyTriad
 
 class ShowMeSystem(LeafSystem):
     """
-    Description
-    -----------
-    This function will create a system that will show the user's model.
-    :param LeafSystem:
-    :return:
+    *Description*
+    
+    This class defines a LeafSystem that will force a specific model
+    (model_index) in a MultibodyPlant to hold the joint positions
+    provided to it as input. 
+    
+    The object may or may not be welded to the world frame.
+
+    *Block Diagram*
+
+    The ShowMeSystem block diagram is as follows: ::
+
+                                    |---------------|
+                                    |               |
+        desired_joint_positions --->| ShowMeSystem  |---> measured_joint_positions
+                                    |               |
+                                    |---------------|
+                                    
+    *Parameters*
+
+    plant : MultibodyPlant
+        The MultibodyPlant containing the model to be shown.
+
+    model_index : ModelInstanceIndex
+        The ModelInstanceIndex of the model to be shown.
+
+    desired_joint_positions : np.ndarray
+        The desired joint positions for the model, if any.
+
     """
     def __init__(
         self,
@@ -48,14 +72,19 @@ class ShowMeSystem(LeafSystem):
         # Define the name of the system
         self.set_name(f"ShowMeSystem_for_{plant.GetModelInstanceName(model_index)}")
 
-    def SetModelJointPositions(self, context, output):
+    def SetModelJointPositions(self, context: Context, output: BasicVector):
         """
-        Description
-        -----------
+        *Description*
+        
         This method will set the joint positions of the model to the desired joint positions.
-        :param context:
-        :param output:
-        :return:
+        
+        *Parameters*
+
+        context: Context
+            The context of the LeafSystem at the time that this callback is triggered.
+
+        output: BasicVector
+            The output vector to be populated with the current joint positions.
         """
         # Setup
 

@@ -25,6 +25,7 @@ def find_base_link_name_in(path_to_robot_model: str|Path, search_method: BaseLin
         The path to the robot model.
     
     *Returns*
+
     base_link_name: str
         The name of the link that we believe is the base.
     """
@@ -65,16 +66,16 @@ def find_base_link_name_in(path_to_robot_model: str|Path, search_method: BaseLin
 
 def find_all_link_names(xml_tree: ET.ElementTree) -> List[str]:
     """
-    *Description*
+    **Description**
     
     This method will find all the link names in the xml tree ``xml_tree``.
 
-    *Parameters*
-
+    **Parameters**
+    
     xml_tree: xml.etree.ElementTree.ElementTree
         The xml tree that we would like to investigate.
 
-    *Returns*
+    **Returns**
 
     link_names: List[str]
         A list of all the names of <link> tags in the model.
