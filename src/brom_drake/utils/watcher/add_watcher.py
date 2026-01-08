@@ -178,7 +178,7 @@ def add_watcher_and_build(
     targets: List[Tuple[Union[str, int]]]
         The targets that we want to watch.
 
-    data_dir: str
+    watcher_dir: str
         The directory in which we will store the data collected by the DiagramWatcher.
 
     plot_arrangement: PortFigureArrangement
