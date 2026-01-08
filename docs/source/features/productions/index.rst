@@ -18,7 +18,7 @@ What is a Production?
 The short answer
 ^^^^^^^^^^^^^^^^
 
-A Production is a partially built Drake diagram that is waiting for your code (aka the "star,"" or the "lead actor") to start the show.
+A Production is a partially built Drake diagram that is waiting for your code (aka the "star", or the "lead actor") to start the show.
 
 We use the term Production to evoke the language of the theatre. You can add a cast to your production (most cast members will not need to be specified). The only cast member you need to add is **the algorithm you want to test**.
 
