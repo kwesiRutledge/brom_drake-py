@@ -7,11 +7,21 @@ class ProductionID(Enum):
 
     A unique ID assigned to each production type.
     """
-    kNotDefined = "NotDefined" #: Undefined Production ID (Used to Detect Errors in Production Construction)
-    kShowMeThisModel = "ShowMeThisModel" #: Show Me This Model Production
-    kShelfPlanning1 = "ShelfPlanning1" #: Shelf Planning 1 Production, a simple kinematic motion planning task
-    kChemLab1 = "ChemLab-Planning1" #: Chem Lab Planning 1 Production, a simple kinematic motion planning task
-    kChemLab2 = "ChemLab-Planning2" #: Chem Lab Planning 2 Production, a more complex dynamic motion planning task
+
+    #: Undefined Production ID (Used to Detect Errors in Production Construction)
+    kNotDefined = "NotDefined" 
+
+    #: Show Me This Model Production
+    kShowMeThisModel = "ShowMeThisModel" 
+
+    #: Shelf Planning 1 Production, a simple kinematic motion planning task
+    kShelfPlanning1 = "ShelfPlanning1" 
+    
+    #: Chem Lab Planning 1 Production, a simple kinematic motion planning task
+    kChemLab1 = "ChemLab-Planning1" 
+
+    #: Chem Lab Planning 2 Production, a more complex dynamic motion planning task
+    kChemLab2 = "ChemLab-Planning2" 
     
     """
     Chem Lab 3, a Pick and Place task in the Chem Lab environment
