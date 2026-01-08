@@ -1,0 +1,1562 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../../../../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html">
+
+    <!-- Generated with Sphinx 8.2.3 and Furo 2025.12.19 -->
+        <title>brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.converter - brom_drake-py 0.4.7-2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=acfd86a5" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../../../index.html"><div class="brand">brom_drake-py 0.4.7-2 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../index.html">
+  
+  <span class="sidebar-brand-text">brom_drake-py 0.4.7-2 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../../../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../features/index.html">Features</a><input aria-label="Toggle navigation of Features" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../features/diagram_watcher.html">DiagramWatcher</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../features/productions/index.html">Productions</a><input aria-label="Toggle navigation of Productions" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../features/productions/show_me_this_model.html">Show Me This Model</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../generated/api.html">API</a><input aria-label="Toggle navigation of API" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../generated/all/all.html">all</a><input aria-label="Toggle navigation of all" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../generated/control/control.html">control</a><input aria-label="Toggle navigation of control" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../../generated/control/arms/arms.html">arms</a><input aria-label="Toggle navigation of arms" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../../generated/control/grippers/grippers.html">grippers</a><input aria-label="Toggle navigation of grippers" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../generated/DiagramTarget/DiagramTarget.html">DiagramTarget</a><input aria-label="Toggle navigation of DiagramTarget" class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../generated/DiagramWatcher/DiagramWatcher.html">DiagramWatcher</a><input aria-label="Toggle navigation of DiagramWatcher" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../generated/example_helpers/example_helpers.html">example_helpers</a><input aria-label="Toggle navigation of example_helpers" class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../../generated/example_helpers/models/models.html">models</a><input aria-label="Toggle navigation of models" class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../generated/file_manipulation/file_manipulation.html">file_manipulation</a><input aria-label="Toggle navigation of file_manipulation" class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../../generated/file_manipulation/urdf/urdf.html">urdf</a><input aria-label="Toggle navigation of urdf" class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../generated/file_manipulation/urdf/drake_ready_urdf_converter/drake_ready_urdf_converter.html">drake_ready_urdf_converter</a><input aria-label="Toggle navigation of drake_ready_urdf_converter" class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../generated/file_manipulation/urdf/shapes/shapes.html">shapes</a><input aria-label="Toggle navigation of shapes" class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../generated/file_manipulation/urdf/simple_writer/simple_writer.html">simple_writer</a><input aria-label="Toggle navigation of simple_writer" class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../generated/leaf_systems/leaf_systems.html">leaf_systems</a><input aria-label="Toggle navigation of leaf_systems" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../generated/motion_planning/motion_planning.html">motion_planning</a><input aria-label="Toggle navigation of motion_planning" class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../../generated/motion_planning/algorithms/algorithms.html">algorithms</a><input aria-label="Toggle navigation of algorithms" class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../generated/motion_planning/algorithms/rrt/rrt.html">rrt</a><input aria-label="Toggle navigation of rrt" class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../../generated/motion_planning/systems/systems.html">systems</a><input aria-label="Toggle navigation of systems" class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../generated/motion_planning/systems/open_loop_dispensers/open_loop_dispensers.html">open_loop_dispensers</a><input aria-label="Toggle navigation of open_loop_dispensers" class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../generated/motion_planning/systems/proximity_pose_plan_dispenser/proximity_pose_plan_dispenser.html">proximity_pose_plan_dispenser</a><input aria-label="Toggle navigation of proximity_pose_plan_dispenser" class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" role="switch" type="checkbox"/><label for="toctree-checkbox-23"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../generated/PortWatcher/PortWatcher.html">PortWatcher</a><input aria-label="Toggle navigation of PortWatcher" class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../generated/productions/productions.html">productions</a><input aria-label="Toggle navigation of productions" class="toctree-checkbox" id="toctree-checkbox-25" name="toctree-checkbox-25" role="switch" type="checkbox"/><label for="toctree-checkbox-25"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../../generated/productions/debug/debug.html">debug</a><input aria-label="Toggle navigation of debug" class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" role="switch" type="checkbox"/><label for="toctree-checkbox-26"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../generated/productions/debug/grasping/grasping.html">grasping</a><input aria-label="Toggle navigation of grasping" class="toctree-checkbox" id="toctree-checkbox-27" name="toctree-checkbox-27" role="switch" type="checkbox"/><label for="toctree-checkbox-27"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../../../../generated/productions/debug/grasping/attempt_grasp/attempt_grasp.html">attempt_grasp</a><input aria-label="Toggle navigation of attempt_grasp" class="toctree-checkbox" id="toctree-checkbox-28" name="toctree-checkbox-28" role="switch" type="checkbox"/><label for="toctree-checkbox-28"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l6 has-children"><a class="reference internal" href="../../../../../generated/productions/debug/grasping/attempt_grasp/with_puppeteer_wrist/with_puppeteer_wrist.html">with_puppeteer_wrist</a><input aria-label="Toggle navigation of with_puppeteer_wrist" class="toctree-checkbox" id="toctree-checkbox-29" name="toctree-checkbox-29" role="switch" type="checkbox"/><label for="toctree-checkbox-29"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l6 has-children"><a class="reference internal" href="../../../../../generated/productions/debug/grasping/attempt_grasp/with_static_wrist/with_static_wrist.html">with_static_wrist</a><input aria-label="Toggle navigation of with_static_wrist" class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" role="switch" type="checkbox"/><label for="toctree-checkbox-30"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../../../../generated/productions/debug/grasping/show_me_this_static_grasp/show_me_this_static_grasp.html">show_me_this_static_grasp</a><input aria-label="Toggle navigation of show_me_this_static_grasp" class="toctree-checkbox" id="toctree-checkbox-31" name="toctree-checkbox-31" role="switch" type="checkbox"/><label for="toctree-checkbox-31"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../generated/productions/debug/show_me/show_me.html">show_me</a><input aria-label="Toggle navigation of show_me" class="toctree-checkbox" id="toctree-checkbox-32" name="toctree-checkbox-32" role="switch" type="checkbox"/><label for="toctree-checkbox-32"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../../generated/productions/motion_planning/motion_planning.html">motion_planning</a><input aria-label="Toggle navigation of motion_planning" class="toctree-checkbox" id="toctree-checkbox-33" name="toctree-checkbox-33" role="switch" type="checkbox"/><label for="toctree-checkbox-33"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../generated/productions/motion_planning/offline/offline.html">offline</a><input aria-label="Toggle navigation of offline" class="toctree-checkbox" id="toctree-checkbox-34" name="toctree-checkbox-34" role="switch" type="checkbox"/><label for="toctree-checkbox-34"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../../../../generated/productions/motion_planning/offline/dynamic/dynamic.html">dynamic</a><input aria-label="Toggle navigation of dynamic" class="toctree-checkbox" id="toctree-checkbox-35" name="toctree-checkbox-35" role="switch" type="checkbox"/><label for="toctree-checkbox-35"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../../../../generated/productions/motion_planning/offline/kinematic/kinematic.html">kinematic</a><input aria-label="Toggle navigation of kinematic" class="toctree-checkbox" id="toctree-checkbox-36" name="toctree-checkbox-36" role="switch" type="checkbox"/><label for="toctree-checkbox-36"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../../generated/productions/pick_and_place/pick_and_place.html">pick_and_place</a><input aria-label="Toggle navigation of pick_and_place" class="toctree-checkbox" id="toctree-checkbox-37" name="toctree-checkbox-37" role="switch" type="checkbox"/><label for="toctree-checkbox-37"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../../generated/productions/roles/roles.html">roles</a><input aria-label="Toggle navigation of roles" class="toctree-checkbox" id="toctree-checkbox-38" name="toctree-checkbox-38" role="switch" type="checkbox"/><label for="toctree-checkbox-38"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../generated/productions/roles/motion_planners/motion_planners.html">motion_planners</a><input aria-label="Toggle navigation of motion_planners" class="toctree-checkbox" id="toctree-checkbox-39" name="toctree-checkbox-39" role="switch" type="checkbox"/><label for="toctree-checkbox-39"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../../generated/productions/types/types.html">types</a><input aria-label="Toggle navigation of types" class="toctree-checkbox" id="toctree-checkbox-40" name="toctree-checkbox-40" role="switch" type="checkbox"/><label for="toctree-checkbox-40"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../generated/productions/types/base/base.html">base</a><input aria-label="Toggle navigation of base" class="toctree-checkbox" id="toctree-checkbox-41" name="toctree-checkbox-41" role="switch" type="checkbox"/><label for="toctree-checkbox-41"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../generated/productions/types/debug/debug.html">debug</a><input aria-label="Toggle navigation of debug" class="toctree-checkbox" id="toctree-checkbox-42" name="toctree-checkbox-42" role="switch" type="checkbox"/><label for="toctree-checkbox-42"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../generated/productions/types/motion_planning/motion_planning.html">motion_planning</a><input aria-label="Toggle navigation of motion_planning" class="toctree-checkbox" id="toctree-checkbox-43" name="toctree-checkbox-43" role="switch" type="checkbox"/><label for="toctree-checkbox-43"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../../../../generated/productions/types/motion_planning/offline/offline.html">offline</a><input aria-label="Toggle navigation of offline" class="toctree-checkbox" id="toctree-checkbox-44" name="toctree-checkbox-44" role="switch" type="checkbox"/><label for="toctree-checkbox-44"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../generated/productions/types/pick_and_place/pick_and_place.html">pick_and_place</a><input aria-label="Toggle navigation of pick_and_place" class="toctree-checkbox" id="toctree-checkbox-45" name="toctree-checkbox-45" role="switch" type="checkbox"/><label for="toctree-checkbox-45"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../generated/robots/robots.html">robots</a><input aria-label="Toggle navigation of robots" class="toctree-checkbox" id="toctree-checkbox-46" name="toctree-checkbox-46" role="switch" type="checkbox"/><label for="toctree-checkbox-46"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../../generated/robots/models/models.html">models</a><input aria-label="Toggle navigation of models" class="toctree-checkbox" id="toctree-checkbox-47" name="toctree-checkbox-47" role="switch" type="checkbox"/><label for="toctree-checkbox-47"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../generated/robots/models/beaker/beaker.html">beaker</a><input aria-label="Toggle navigation of beaker" class="toctree-checkbox" id="toctree-checkbox-48" name="toctree-checkbox-48" role="switch" type="checkbox"/><label for="toctree-checkbox-48"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../generated/robots/models/bookshelf/bookshelf.html">bookshelf</a><input aria-label="Toggle navigation of bookshelf" class="toctree-checkbox" id="toctree-checkbox-49" name="toctree-checkbox-49" role="switch" type="checkbox"/><label for="toctree-checkbox-49"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../generated/robots/models/centrifuge/centrifuge.html">centrifuge</a><input aria-label="Toggle navigation of centrifuge" class="toctree-checkbox" id="toctree-checkbox-50" name="toctree-checkbox-50" role="switch" type="checkbox"/><label for="toctree-checkbox-50"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../../../../generated/robots/models/centrifuge/meshes/meshes.html">meshes</a><input aria-label="Toggle navigation of meshes" class="toctree-checkbox" id="toctree-checkbox-51" name="toctree-checkbox-51" role="switch" type="checkbox"/><label for="toctree-checkbox-51"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../generated/robots/models/cupboard/cupboard.html">cupboard</a><input aria-label="Toggle navigation of cupboard" class="toctree-checkbox" id="toctree-checkbox-52" name="toctree-checkbox-52" role="switch" type="checkbox"/><label for="toctree-checkbox-52"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../generated/robots/models/erlenmeyer_flask/erlenmeyer_flask.html">erlenmeyer_flask</a><input aria-label="Toggle navigation of erlenmeyer_flask" class="toctree-checkbox" id="toctree-checkbox-53" name="toctree-checkbox-53" role="switch" type="checkbox"/><label for="toctree-checkbox-53"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../generated/robots/models/michigan_block_m/michigan_block_m.html">michigan_block_m</a><input aria-label="Toggle navigation of michigan_block_m" class="toctree-checkbox" id="toctree-checkbox-54" name="toctree-checkbox-54" role="switch" type="checkbox"/><label for="toctree-checkbox-54"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../generated/robots/models/robotiq/robotiq.html">robotiq</a><input aria-label="Toggle navigation of robotiq" class="toctree-checkbox" id="toctree-checkbox-55" name="toctree-checkbox-55" role="switch" type="checkbox"/><label for="toctree-checkbox-55"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../../../../generated/robots/models/robotiq/2f_85_gripper/2f_85_gripper.html">2f_85_gripper</a><input aria-label="Toggle navigation of 2f_85_gripper" class="toctree-checkbox" id="toctree-checkbox-56" name="toctree-checkbox-56" role="switch" type="checkbox"/><label for="toctree-checkbox-56"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l6 has-children"><a class="reference internal" href="../../../../../generated/robots/models/robotiq/2f_85_gripper/meshes/meshes.html">meshes</a><input aria-label="Toggle navigation of meshes" class="toctree-checkbox" id="toctree-checkbox-57" name="toctree-checkbox-57" role="switch" type="checkbox"/><label for="toctree-checkbox-57"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../../../../../generated/robots/models/robotiq/2f_85_gripper/meshes/collision/collision.html">collision</a><input aria-label="Toggle navigation of collision" class="toctree-checkbox" id="toctree-checkbox-58" name="toctree-checkbox-58" role="switch" type="checkbox"/><label for="toctree-checkbox-58"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../../../../../generated/robots/models/robotiq/2f_85_gripper/meshes/visual/visual.html">visual</a><input aria-label="Toggle navigation of visual" class="toctree-checkbox" id="toctree-checkbox-59" name="toctree-checkbox-59" role="switch" type="checkbox"/><label for="toctree-checkbox-59"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l6 has-children"><a class="reference internal" href="../../../../../generated/robots/models/robotiq/2f_85_gripper/urdf/urdf.html">urdf</a><input aria-label="Toggle navigation of urdf" class="toctree-checkbox" id="toctree-checkbox-60" name="toctree-checkbox-60" role="switch" type="checkbox"/><label for="toctree-checkbox-60"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../../../../generated/robots/models/robotiq/2f_85_gripper-no-mimic/2f_85_gripper-no-mimic.html">2f_85_gripper-no-mimic</a><input aria-label="Toggle navigation of 2f_85_gripper-no-mimic" class="toctree-checkbox" id="toctree-checkbox-61" name="toctree-checkbox-61" role="switch" type="checkbox"/><label for="toctree-checkbox-61"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l6 has-children"><a class="reference internal" href="../../../../../generated/robots/models/robotiq/2f_85_gripper-no-mimic/meshes/meshes.html">meshes</a><input aria-label="Toggle navigation of meshes" class="toctree-checkbox" id="toctree-checkbox-62" name="toctree-checkbox-62" role="switch" type="checkbox"/><label for="toctree-checkbox-62"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../../../../../generated/robots/models/robotiq/2f_85_gripper-no-mimic/meshes/collision/collision.html">collision</a><input aria-label="Toggle navigation of collision" class="toctree-checkbox" id="toctree-checkbox-63" name="toctree-checkbox-63" role="switch" type="checkbox"/><label for="toctree-checkbox-63"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../../../../../generated/robots/models/robotiq/2f_85_gripper-no-mimic/meshes/visual/visual.html">visual</a><input aria-label="Toggle navigation of visual" class="toctree-checkbox" id="toctree-checkbox-64" name="toctree-checkbox-64" role="switch" type="checkbox"/><label for="toctree-checkbox-64"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l6 has-children"><a class="reference internal" href="../../../../../generated/robots/models/robotiq/2f_85_gripper-no-mimic/urdf/urdf.html">urdf</a><input aria-label="Toggle navigation of urdf" class="toctree-checkbox" id="toctree-checkbox-65" name="toctree-checkbox-65" role="switch" type="checkbox"/><label for="toctree-checkbox-65"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../generated/robots/models/test_tube_holder/test_tube_holder.html">test_tube_holder</a><input aria-label="Toggle navigation of test_tube_holder" class="toctree-checkbox" id="toctree-checkbox-66" name="toctree-checkbox-66" role="switch" type="checkbox"/><label for="toctree-checkbox-66"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../generated/robots/models/ur/ur.html">ur</a><input aria-label="Toggle navigation of ur" class="toctree-checkbox" id="toctree-checkbox-67" name="toctree-checkbox-67" role="switch" type="checkbox"/><label for="toctree-checkbox-67"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../../../../generated/robots/models/ur/meshes/meshes.html">meshes</a><input aria-label="Toggle navigation of meshes" class="toctree-checkbox" id="toctree-checkbox-68" name="toctree-checkbox-68" role="switch" type="checkbox"/><label for="toctree-checkbox-68"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l6 has-children"><a class="reference internal" href="../../../../../generated/robots/models/ur/meshes/ur10/ur10.html">ur10</a><input aria-label="Toggle navigation of ur10" class="toctree-checkbox" id="toctree-checkbox-69" name="toctree-checkbox-69" role="switch" type="checkbox"/><label for="toctree-checkbox-69"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../../../../../generated/robots/models/ur/meshes/ur10/collision/collision.html">collision</a><input aria-label="Toggle navigation of collision" class="toctree-checkbox" id="toctree-checkbox-70" name="toctree-checkbox-70" role="switch" type="checkbox"/><label for="toctree-checkbox-70"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../../../../../generated/robots/models/ur/meshes/ur10/visual/visual.html">visual</a><input aria-label="Toggle navigation of visual" class="toctree-checkbox" id="toctree-checkbox-71" name="toctree-checkbox-71" role="switch" type="checkbox"/><label for="toctree-checkbox-71"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l6 has-children"><a class="reference internal" href="../../../../../generated/robots/models/ur/meshes/ur10e/ur10e.html">ur10e</a><input aria-label="Toggle navigation of ur10e" class="toctree-checkbox" id="toctree-checkbox-72" name="toctree-checkbox-72" role="switch" type="checkbox"/><label for="toctree-checkbox-72"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../../../../../generated/robots/models/ur/meshes/ur10e/collision/collision.html">collision</a><input aria-label="Toggle navigation of collision" class="toctree-checkbox" id="toctree-checkbox-73" name="toctree-checkbox-73" role="switch" type="checkbox"/><label for="toctree-checkbox-73"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../../../../../generated/robots/models/ur/meshes/ur10e/visual/visual.html">visual</a><input aria-label="Toggle navigation of visual" class="toctree-checkbox" id="toctree-checkbox-74" name="toctree-checkbox-74" role="switch" type="checkbox"/><label for="toctree-checkbox-74"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l6 has-children"><a class="reference internal" href="../../../../../generated/robots/models/ur/meshes/ur16e/ur16e.html">ur16e</a><input aria-label="Toggle navigation of ur16e" class="toctree-checkbox" id="toctree-checkbox-75" name="toctree-checkbox-75" role="switch" type="checkbox"/><label for="toctree-checkbox-75"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../../../../../generated/robots/models/ur/meshes/ur16e/collision/collision.html">collision</a><input aria-label="Toggle navigation of collision" class="toctree-checkbox" id="toctree-checkbox-76" name="toctree-checkbox-76" role="switch" type="checkbox"/><label for="toctree-checkbox-76"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../../../../../generated/robots/models/ur/meshes/ur16e/visual/visual.html">visual</a><input aria-label="Toggle navigation of visual" class="toctree-checkbox" id="toctree-checkbox-77" name="toctree-checkbox-77" role="switch" type="checkbox"/><label for="toctree-checkbox-77"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l6 has-children"><a class="reference internal" href="../../../../../generated/robots/models/ur/meshes/ur20/ur20.html">ur20</a><input aria-label="Toggle navigation of ur20" class="toctree-checkbox" id="toctree-checkbox-78" name="toctree-checkbox-78" role="switch" type="checkbox"/><label for="toctree-checkbox-78"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../../../../../generated/robots/models/ur/meshes/ur20/collision/collision.html">collision</a><input aria-label="Toggle navigation of collision" class="toctree-checkbox" id="toctree-checkbox-79" name="toctree-checkbox-79" role="switch" type="checkbox"/><label for="toctree-checkbox-79"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../../../../../generated/robots/models/ur/meshes/ur20/visual/visual.html">visual</a><input aria-label="Toggle navigation of visual" class="toctree-checkbox" id="toctree-checkbox-80" name="toctree-checkbox-80" role="switch" type="checkbox"/><label for="toctree-checkbox-80"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l6 has-children"><a class="reference internal" href="../../../../../generated/robots/models/ur/meshes/ur3/ur3.html">ur3</a><input aria-label="Toggle navigation of ur3" class="toctree-checkbox" id="toctree-checkbox-81" name="toctree-checkbox-81" role="switch" type="checkbox"/><label for="toctree-checkbox-81"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../../../../../generated/robots/models/ur/meshes/ur3/collision/collision.html">collision</a><input aria-label="Toggle navigation of collision" class="toctree-checkbox" id="toctree-checkbox-82" name="toctree-checkbox-82" role="switch" type="checkbox"/><label for="toctree-checkbox-82"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../../../../../generated/robots/models/ur/meshes/ur3/visual/visual.html">visual</a><input aria-label="Toggle navigation of visual" class="toctree-checkbox" id="toctree-checkbox-83" name="toctree-checkbox-83" role="switch" type="checkbox"/><label for="toctree-checkbox-83"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l6 has-children"><a class="reference internal" href="../../../../../generated/robots/models/ur/meshes/ur30/ur30.html">ur30</a><input aria-label="Toggle navigation of ur30" class="toctree-checkbox" id="toctree-checkbox-84" name="toctree-checkbox-84" role="switch" type="checkbox"/><label for="toctree-checkbox-84"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../../../../../generated/robots/models/ur/meshes/ur30/collision/collision.html">collision</a><input aria-label="Toggle navigation of collision" class="toctree-checkbox" id="toctree-checkbox-85" name="toctree-checkbox-85" role="switch" type="checkbox"/><label for="toctree-checkbox-85"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../../../../../generated/robots/models/ur/meshes/ur30/visual/visual.html">visual</a><input aria-label="Toggle navigation of visual" class="toctree-checkbox" id="toctree-checkbox-86" name="toctree-checkbox-86" role="switch" type="checkbox"/><label for="toctree-checkbox-86"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l6 has-children"><a class="reference internal" href="../../../../../generated/robots/models/ur/meshes/ur3e/ur3e.html">ur3e</a><input aria-label="Toggle navigation of ur3e" class="toctree-checkbox" id="toctree-checkbox-87" name="toctree-checkbox-87" role="switch" type="checkbox"/><label for="toctree-checkbox-87"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../../../../../generated/robots/models/ur/meshes/ur3e/collision/collision.html">collision</a><input aria-label="Toggle navigation of collision" class="toctree-checkbox" id="toctree-checkbox-88" name="toctree-checkbox-88" role="switch" type="checkbox"/><label for="toctree-checkbox-88"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../../../../../generated/robots/models/ur/meshes/ur3e/visual/visual.html">visual</a><input aria-label="Toggle navigation of visual" class="toctree-checkbox" id="toctree-checkbox-89" name="toctree-checkbox-89" role="switch" type="checkbox"/><label for="toctree-checkbox-89"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l6 has-children"><a class="reference internal" href="../../../../../generated/robots/models/ur/meshes/ur5/ur5.html">ur5</a><input aria-label="Toggle navigation of ur5" class="toctree-checkbox" id="toctree-checkbox-90" name="toctree-checkbox-90" role="switch" type="checkbox"/><label for="toctree-checkbox-90"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../../../../../generated/robots/models/ur/meshes/ur5/collision/collision.html">collision</a><input aria-label="Toggle navigation of collision" class="toctree-checkbox" id="toctree-checkbox-91" name="toctree-checkbox-91" role="switch" type="checkbox"/><label for="toctree-checkbox-91"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../../../../../generated/robots/models/ur/meshes/ur5/visual/visual.html">visual</a><input aria-label="Toggle navigation of visual" class="toctree-checkbox" id="toctree-checkbox-92" name="toctree-checkbox-92" role="switch" type="checkbox"/><label for="toctree-checkbox-92"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l6 has-children"><a class="reference internal" href="../../../../../generated/robots/models/ur/meshes/ur5e/ur5e.html">ur5e</a><input aria-label="Toggle navigation of ur5e" class="toctree-checkbox" id="toctree-checkbox-93" name="toctree-checkbox-93" role="switch" type="checkbox"/><label for="toctree-checkbox-93"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../../../../../generated/robots/models/ur/meshes/ur5e/collision/collision.html">collision</a><input aria-label="Toggle navigation of collision" class="toctree-checkbox" id="toctree-checkbox-94" name="toctree-checkbox-94" role="switch" type="checkbox"/><label for="toctree-checkbox-94"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../../../../../generated/robots/models/ur/meshes/ur5e/visual/visual.html">visual</a><input aria-label="Toggle navigation of visual" class="toctree-checkbox" id="toctree-checkbox-95" name="toctree-checkbox-95" role="switch" type="checkbox"/><label for="toctree-checkbox-95"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../generated/robots/models/wrenches/wrenches.html">wrenches</a><input aria-label="Toggle navigation of wrenches" class="toctree-checkbox" id="toctree-checkbox-96" name="toctree-checkbox-96" role="switch" type="checkbox"/><label for="toctree-checkbox-96"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../../../../generated/robots/models/wrenches/wrench1/wrench1.html">wrench1</a><input aria-label="Toggle navigation of wrench1" class="toctree-checkbox" id="toctree-checkbox-97" name="toctree-checkbox-97" role="switch" type="checkbox"/><label for="toctree-checkbox-97"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../generated/stations/stations.html">stations</a><input aria-label="Toggle navigation of stations" class="toctree-checkbox" id="toctree-checkbox-98" name="toctree-checkbox-98" role="switch" type="checkbox"/><label for="toctree-checkbox-98"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../../generated/stations/classical/classical.html">classical</a><input aria-label="Toggle navigation of classical" class="toctree-checkbox" id="toctree-checkbox-99" name="toctree-checkbox-99" role="switch" type="checkbox"/><label for="toctree-checkbox-99"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../../generated/stations/kinematic/kinematic.html">kinematic</a><input aria-label="Toggle navigation of kinematic" class="toctree-checkbox" id="toctree-checkbox-100" name="toctree-checkbox-100" role="switch" type="checkbox"/><label for="toctree-checkbox-100"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../generated/systems/systems.html">systems</a><input aria-label="Toggle navigation of systems" class="toctree-checkbox" id="toctree-checkbox-101" name="toctree-checkbox-101" role="switch" type="checkbox"/><label for="toctree-checkbox-101"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../generated/utils/utils.html">utils</a><input aria-label="Toggle navigation of utils" class="toctree-checkbox" id="toctree-checkbox-102" name="toctree-checkbox-102" role="switch" type="checkbox"/><label for="toctree-checkbox-102"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../../generated/utils/initial_condition_manager/initial_condition_manager.html">initial_condition_manager</a><input aria-label="Toggle navigation of initial_condition_manager" class="toctree-checkbox" id="toctree-checkbox-103" name="toctree-checkbox-103" role="switch" type="checkbox"/><label for="toctree-checkbox-103"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../../generated/utils/leaf_systems/leaf_systems.html">leaf_systems</a><input aria-label="Toggle navigation of leaf_systems" class="toctree-checkbox" id="toctree-checkbox-104" name="toctree-checkbox-104" role="switch" type="checkbox"/><label for="toctree-checkbox-104"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../generated/utils/leaf_systems/network_fsm/network_fsm.html">network_fsm</a><input aria-label="Toggle navigation of network_fsm" class="toctree-checkbox" id="toctree-checkbox-105" name="toctree-checkbox-105" role="switch" type="checkbox"/><label for="toctree-checkbox-105"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../generated/utils/leaf_systems/rigid_transform_to_vector_system/rigid_transform_to_vector_system.html">rigid_transform_to_vector_system</a><input aria-label="Toggle navigation of rigid_transform_to_vector_system" class="toctree-checkbox" id="toctree-checkbox-106" name="toctree-checkbox-106" role="switch" type="checkbox"/><label for="toctree-checkbox-106"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../../generated/utils/pick_and_place/pick_and_place.html">pick_and_place</a><input aria-label="Toggle navigation of pick_and_place" class="toctree-checkbox" id="toctree-checkbox-107" name="toctree-checkbox-107" role="switch" type="checkbox"/><label for="toctree-checkbox-107"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../../generated/utils/puppetmaker/puppetmaker.html">puppetmaker</a><input aria-label="Toggle navigation of puppetmaker" class="toctree-checkbox" id="toctree-checkbox-108" name="toctree-checkbox-108" role="switch" type="checkbox"/><label for="toctree-checkbox-108"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../../generated/utils/watcher/watcher.html">watcher</a><input aria-label="Toggle navigation of watcher" class="toctree-checkbox" id="toctree-checkbox-109" name="toctree-checkbox-109" role="switch" type="checkbox"/><label for="toctree-checkbox-109"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <h1>Source code for brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.converter</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Description</span>
+<span class="sd">-----------</span>
+<span class="sd">This file contains the URDF converter for transforming</span>
+<span class="sd">arbitrary URDFs into URDFs that the Drake toolbox can</span>
+<span class="sd">support.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">coacd</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span><span class="p">,</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">doctest</span> <span class="kn">import</span> <span class="n">UnexpectedException</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">IntEnum</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">trimesh</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">pydrake.all</span> <span class="kn">import</span> <span class="n">RigidTransform</span><span class="p">,</span> <span class="n">RotationMatrix</span><span class="p">,</span> <span class="n">RollPitchYaw</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">xml.etree.ElementTree</span> <span class="k">as</span> <span class="nn">ET</span>
+
+<span class="c1"># Internal Imports</span>
+<span class="kn">from</span> <span class="nn">brom_drake.directories</span> <span class="kn">import</span> <span class="n">DEFAULT_BROM_MODELS_DIR</span>
+<span class="kn">from</span> <span class="nn">.config</span> <span class="kn">import</span> <span class="n">DrakeReadyURDFConverterConfig</span><span class="p">,</span> <span class="n">MeshReplacementStrategy</span>
+<span class="kn">from</span> <span class="nn">.file_manager</span> <span class="kn">import</span> <span class="n">DrakeReadyURDFConverterFileManager</span>
+<span class="kn">from</span> <span class="nn">.mesh_file_converter</span> <span class="kn">import</span> <span class="n">MeshFileConverter</span>
+<span class="kn">from</span> <span class="nn">.util</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">does_drake_parser_support</span><span class="p">,</span>
+    <span class="n">find_mesh_file_path_in</span><span class="p">,</span>
+    <span class="n">get_mesh_element_in</span><span class="p">,</span>
+    <span class="n">URDF_CONVERSION_LOG_LEVEL_NAME</span><span class="p">,</span> <span class="n">URDF_CONVERSION_LEVEL</span><span class="p">,</span>
+    <span class="n">tree_contains_transmission_for_joint</span><span class="p">,</span>
+    <span class="n">create_transmission_element_for_joint</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">brom_drake.file_manipulation.urdf.shapes.cylinder</span> <span class="kn">import</span> <span class="n">CylinderDefinition</span>
+<span class="kn">from</span> <span class="nn">brom_drake.file_manipulation.urdf.simple_writer.urdf_element_creator</span> <span class="kn">import</span> <span class="n">URDFElementCreator</span>
+
+<div class="viewcode-block" id="DrakeReadyURDFConverter">
+<a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/drake_ready_urdf_converter/drake_ready_urdf_converter.html#brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.converter.DrakeReadyURDFConverter">[docs]</a>
+<span class="k">class</span> <span class="nc">DrakeReadyURDFConverter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    *Description*</span>
+<span class="sd">    </span>
+<span class="sd">    This class is used to convert a URDF file into a Drake-compatible URDF file.</span>
+<span class="sd">    It makes the following considerations when parsing a URDF file:</span>
+
+<span class="sd">    - If a mesh file is not supported by the Drake parser,</span>
+<span class="sd">      then it will convert it into a .obj file (which is supported).</span>
+<span class="sd">    - If a joint in the URDF file is not &quot;fixed&quot; (i.e., it is actuated)</span>
+<span class="sd">      and the parser finds no transmission element for it, then it will add</span>
+<span class="sd">      a transmission element to the URDF file.</span>
+
+<span class="sd">    *Parameters*</span>
+<span class="sd">        </span>
+<span class="sd">    original_urdf_filename: str</span>
+<span class="sd">        The path to the original URDF file.</span>
+<span class="sd">    </span>
+<span class="sd">    config: DrakeReadyURDFConverterConfig (optional)</span>
+<span class="sd">        The configuration for the URDF converter.</span>
+<span class="sd">        This controls:</span>
+
+<span class="sd">        - whether or not to convert unsupported mesh files</span>
+<span class="sd">        - whether or not to add missing transmissions</span>
+<span class="sd">        - etc.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">original_urdf_filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">config</span><span class="p">:</span> <span class="n">DrakeReadyURDFConverterConfig</span> <span class="o">=</span> <span class="n">DrakeReadyURDFConverterConfig</span><span class="p">(),</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *Description*</span>
+<span class="sd">        </span>
+<span class="sd">        This method initializes the DrakeReadyURDFConverter.</span>
+
+<span class="sd">        *Parameters*</span>
+<span class="sd">        </span>
+<span class="sd">        original_urdf_filename: str</span>
+<span class="sd">            The path to the original URDF file.</span>
+
+<span class="sd">        config: DrakeReadyURDFConverterConfig (optional)</span>
+<span class="sd">            The configuration for the URDF converter.</span>
+<span class="sd">            This controls:</span>
+<span class="sd">            - whether or not to convert unsupported mesh files</span>
+<span class="sd">            - whether or not to add missing transmissions</span>
+<span class="sd">            - etc.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">original_urdf_filename</span> <span class="o">=</span> <span class="n">original_urdf_filename</span>
+
+        <span class="c1"># Define the file manager which handles the tricky file paths that</span>
+        <span class="c1"># we encounter during the conversion process.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_manager</span> <span class="p">:</span> <span class="n">DrakeReadyURDFConverterFileManager</span> <span class="o">=</span> <span class="n">DrakeReadyURDFConverterFileManager</span><span class="p">(</span>
+            <span class="n">original_urdf_path</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">original_urdf_filename</span><span class="p">),</span>
+            <span class="n">models_directory</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="n">DEFAULT_BROM_MODELS_DIR</span><span class="p">),</span>
+            <span class="n">log_file_name</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">log_file_name</span><span class="p">,</span>
+            <span class="n">_output_urdf_path</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">output_urdf_file_path</span><span class="p">,</span>
+        <span class="p">)</span> 
+
+        <span class="c1"># Define conversion data directory in brom</span>
+        <span class="c1"># (If it already exists, then we will overwrite it with the proper flag set)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_manager</span><span class="o">.</span><span class="n">models_directory</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">DEFAULT_BROM_MODELS_DIR</span><span class="p">)</span>
+        
+        <span class="n">overwrite_old_models</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">overwrite_old_models</span>
+
+        <span class="k">if</span> <span class="n">overwrite_old_models</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">file_manager</span><span class="o">.</span><span class="n">clean_up_models_dir</span><span class="p">()</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_manager</span><span class="o">.</span><span class="n">models_directory</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Input Processing</span>
+        <span class="n">original_urdf_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">original_urdf_filename</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">original_urdf_path</span><span class="o">.</span><span class="n">exists</span><span class="p">(),</span> <span class="sa">f</span><span class="s2">&quot;URDF file </span><span class="si">{</span><span class="n">original_urdf_path</span><span class="si">}</span><span class="s2"> does not exist!&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="s2">&quot;.urdf&quot;</span> <span class="ow">in</span> <span class="n">original_urdf_path</span><span class="o">.</span><span class="n">name</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Original URDF file must have a .urdf extension!&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Set Up logger</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_logger</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Created a new DrakeReadyURDFConverter for file </span><span class="se">\&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">original_urdf_filename</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">.&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Configure coacd, just in case</span>
+        <span class="n">coacd</span><span class="o">.</span><span class="n">set_log_level</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">coacd_log_level</span><span class="p">)</span>
+
+        <span class="c1"># Keep Track of the Joints In The Diagram</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actuated_joint_names</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="DrakeReadyURDFConverter.create_logger">
+<a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/drake_ready_urdf_converter/drake_ready_urdf_converter.html#brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.converter.DrakeReadyURDFConverter.create_logger">[docs]</a>
+    <span class="k">def</span> <span class="nf">create_logger</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">logging</span><span class="o">.</span><span class="n">Logger</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *Description*</span>
+<span class="sd">        </span>
+<span class="sd">        This method configures the `logging` logger for the URDF conversion.</span>
+<span class="sd">        </span>
+<span class="sd">        *Returns*</span>
+
+<span class="sd">        logging.Logger</span>
+<span class="sd">            The configured logger.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">log_file_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">log_file_name</span>
+        <span class="n">target_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_urdf_filename</span>
+
+        <span class="c1"># Check if the log level exists in the logging module</span>
+        <span class="n">overwrite_old_logs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">overwrite_old_logs</span>
+        <span class="k">if</span> <span class="n">overwrite_old_logs</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_manager</span><span class="o">.</span><span class="n">output_file_directory</span><span class="p">()</span> <span class="o">/</span> <span class="n">log_file_name</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_manager</span><span class="o">.</span><span class="n">output_file_directory</span><span class="p">()</span> <span class="o">/</span> <span class="n">log_file_name</span><span class="p">)</span>
+
+        <span class="c1"># Create (or collect) a logger for the given file</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;DrakeReadyURDFConverter (</span><span class="si">{target_file}</span><span class="s2">)&quot;</span> <span class="p">)</span>
+
+        <span class="c1"># Create the file handler</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_manager</span><span class="o">.</span><span class="n">output_file_directory</span><span class="p">()</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="c1"># Create the parent directory if it does not exist</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">file_manager</span><span class="o">.</span><span class="n">output_file_directory</span><span class="p">()</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">file_handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">file_manager</span><span class="o">.</span><span class="n">output_file_directory</span><span class="p">()</span> <span class="o">/</span> <span class="n">log_file_name</span><span class="p">,</span>
+            <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span>
+        <span class="p">)</span>
+        <span class="n">file_handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+
+        <span class="c1"># Create a formatter and set it for the file handler</span>
+        <span class="n">formatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span>
+            <span class="s1">&#39;</span><span class="si">%(asctime)s</span><span class="s1"> - </span><span class="si">%(name)s</span><span class="s1"> - </span><span class="si">%(levelname)s</span><span class="s1"> - </span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="n">datefmt</span><span class="o">=</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span>
+        <span class="p">)</span>
+        <span class="n">file_handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">)</span>
+
+        <span class="c1"># Add the file handler to the logger</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">file_handler</span><span class="p">)</span>
+
+        <span class="c1"># Avoid duplicate logs</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">propagate</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># Make sure the logger responds to all messages of level DEBUG and above</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>  <span class="c1"># Set to DEBUG to capture all messages</span>
+
+        <span class="k">return</span> <span class="n">logger</span></div>
+
+
+<div class="viewcode-block" id="DrakeReadyURDFConverter.convert_collision_element">
+<a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/drake_ready_urdf_converter/drake_ready_urdf_converter.html#brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.converter.DrakeReadyURDFConverter.convert_collision_element">[docs]</a>
+    <span class="k">def</span> <span class="nf">convert_collision_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">collision_elt</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *Description*</span>
+<span class="sd">        </span>
+<span class="sd">        This method will convert the collision element in the URDF file.</span>
+
+<span class="sd">        *Parameters*</span>
+<span class="sd">        </span>
+<span class="sd">        collision_elt: xml.etree.ElementTree.Element</span>
+<span class="sd">            The collision element that we want to convert.</span>
+<span class="sd">        </span>
+<span class="sd">        *Returns*</span>
+<span class="sd">        </span>
+<span class="sd">        List[xml.etree.ElementTree.Element]</span>
+<span class="sd">            The collision elements that will replace the original collision element.</span>
+<span class="sd">            Usually, this is a list of length 1, but in some cases (e.g., convex decomposition)</span>
+<span class="sd">            it may be longer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">replacement_strategy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">mesh_replacement_strategies</span><span class="o">.</span><span class="n">collision_meshes</span>
+
+        <span class="n">supported_strategies</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">MeshReplacementStrategy</span><span class="o">.</span><span class="n">kWithObj</span><span class="p">,</span>
+            <span class="n">MeshReplacementStrategy</span><span class="o">.</span><span class="n">kWithMinimalEnclosingCylinder</span><span class="p">,</span>
+            <span class="n">MeshReplacementStrategy</span><span class="o">.</span><span class="n">kWithConvexDecomposition</span><span class="p">,</span>
+        <span class="p">]</span>
+
+        <span class="c1"># Input Processing</span>
+        <span class="k">if</span> <span class="n">replacement_strategy</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">supported_strategies</span><span class="p">:</span>
+            <span class="n">error_message</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Replacement strategy </span><span class="si">{</span><span class="n">replacement_strategy</span><span class="si">}</span><span class="s2"> is not supported for collision elements. &quot;</span>
+                <span class="o">+</span> <span class="s2">&quot;Supported strategies are: &quot;</span>
+                <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">strategy</span><span class="p">)</span> <span class="k">for</span> <span class="n">strategy</span> <span class="ow">in</span> <span class="n">supported_strategies</span><span class="p">])</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+
+        <span class="c1"># Announce algorithm start</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Converting element with tag </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">collision_elt</span><span class="o">.</span><span class="n">tag</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2"> using strategy </span><span class="si">{</span><span class="n">replacement_strategy</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+        <span class="n">n_replacements_made</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">new_elts</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># If the strategy is kWithMinimalEnclosingCylinder,</span>
+        <span class="c1"># then we can replace the entire collision element and don&#39;t need to iterate through the children.</span>
+        <span class="k">if</span> <span class="n">replacement_strategy</span> <span class="o">==</span> <span class="n">MeshReplacementStrategy</span><span class="o">.</span><span class="n">kWithMinimalEnclosingCylinder</span><span class="p">:</span>
+            <span class="n">n_replacements_made</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">new_elts</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">replace_element_with_enclosing_cylinder</span><span class="p">(</span>
+                <span class="n">deepcopy</span><span class="p">(</span><span class="n">collision_elt</span><span class="p">)</span>
+            <span class="p">)]</span>
+
+        <span class="k">elif</span> <span class="n">replacement_strategy</span> <span class="o">==</span> <span class="n">MeshReplacementStrategy</span><span class="o">.</span><span class="n">kWithObj</span><span class="p">:</span>
+            <span class="c1"># Otherwise, let&#39;s slowly build the new element</span>
+            <span class="c1"># by iterating through the children of the collision element.</span>
+            <span class="n">new_elt</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="n">collision_elt</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">collision_elt</span><span class="o">.</span><span class="n">attrib</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">child_ii</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">collision_elt</span><span class="p">):</span>
+                <span class="c1"># Check to see if the child is a geometry element</span>
+                <span class="k">if</span> <span class="n">child_ii</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;geometry&quot;</span><span class="p">:</span>
+                    <span class="n">new_geometry_elt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">convert_geometry_element</span><span class="p">(</span><span class="n">child_ii</span><span class="p">,</span> <span class="n">replacement_strategy</span><span class="p">)</span>
+                    <span class="n">new_elt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_geometry_elt</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># If the child is not a geometry element, then we will just copy it over</span>
+                    <span class="n">new_elt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">child_ii</span><span class="p">))</span>
+
+
+            <span class="c1"># Add the new element to the list of new elements</span>
+            <span class="n">new_elts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_elt</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">replacement_strategy</span> <span class="o">==</span> <span class="n">MeshReplacementStrategy</span><span class="o">.</span><span class="n">kWithConvexDecomposition</span><span class="p">:</span>
+            <span class="c1"># Determine if the collision element has a mesh element within it</span>
+            <span class="n">original_mesh_path</span> <span class="o">=</span> <span class="n">find_mesh_file_path_in</span><span class="p">(</span><span class="n">collision_elt</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">original_mesh_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+                    <span class="s2">&quot;The collision element does not contain a mesh file. Cannot replace with convex decomposition.&quot;</span>
+                <span class="p">)</span>
+                <span class="n">new_elts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">collision_elt</span><span class="p">))</span>
+                <span class="k">return</span> <span class="n">new_elts</span>
+            
+            <span class="c1"># If the collision element has a mesh element within it, then we will perform convex decomposition</span>
+            <span class="n">original_mesh_elt</span> <span class="o">=</span> <span class="n">get_mesh_element_in</span><span class="p">(</span><span class="n">collision_elt</span><span class="p">)</span>
+            <span class="n">scale_as_str</span> <span class="o">=</span> <span class="n">original_mesh_elt</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;scale&quot;</span><span class="p">,</span> <span class="s2">&quot;1 1 1&quot;</span><span class="p">)</span>
+            <span class="n">original_mesh_scale</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">scale_as_str</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Load the mesh file and perform convex decomposition</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Found a mesh file at </span><span class="si">{</span><span class="n">original_mesh_path</span><span class="si">}</span><span class="s2">. Performing convex decomposition.&quot;</span>
+            <span class="p">)</span>
+            <span class="c1"># Load the mesh file</span>
+            <span class="n">mesh</span><span class="p">:</span> <span class="n">trimesh</span><span class="o">.</span><span class="n">Trimesh</span> <span class="o">=</span> <span class="n">trimesh</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">file_manager</span><span class="o">.</span><span class="n">file_path_in_context_of_urdf_dir</span><span class="p">(</span><span class="n">original_mesh_path</span><span class="p">),</span>
+                <span class="n">force</span><span class="o">=</span><span class="s2">&quot;mesh&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">mesh</span> <span class="o">=</span> <span class="n">coacd</span><span class="o">.</span><span class="n">Mesh</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">vertices</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">faces</span><span class="p">)</span>
+            <span class="n">parts</span> <span class="o">=</span> <span class="n">coacd</span><span class="o">.</span><span class="n">run_coacd</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span> <span class="c1"># a list of convex hulls</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;coacd created </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span><span class="si">}</span><span class="s2"> convex parts from the mesh file </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">original_mesh_path</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">part_ii</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parts</span><span class="p">):</span>
+                <span class="c1"># print(part_ii)</span>
+                <span class="c1"># print(type(part_ii))</span>
+                <span class="c1"># print(len(part_ii))</span>
+
+                <span class="c1"># Construct new mesh and choose the path to export it to</span>
+                <span class="n">mesh_ii</span> <span class="o">=</span> <span class="n">trimesh</span><span class="o">.</span><span class="n">Trimesh</span><span class="p">(</span>
+                    <span class="n">vertices</span><span class="o">=</span><span class="n">part_ii</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">faces</span><span class="o">=</span><span class="n">part_ii</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="p">)</span>
+                <span class="n">mesh_file_name_ii</span> <span class="o">=</span> <span class="n">original_mesh_path</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="n">original_mesh_path</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)]</span>
+                <span class="n">mesh_ii_file_relative_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;meshes/</span><span class="si">{</span><span class="n">mesh_file_name_ii</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">mesh_file_name_ii</span><span class="si">}</span><span class="s2">_part_</span><span class="si">{</span><span class="n">ii</span><span class="si">}</span><span class="s2">.obj&quot;</span>
+                <span class="n">mesh_ii_file_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_manager</span><span class="o">.</span><span class="n">output_file_directory</span><span class="p">()</span> <span class="o">/</span> <span class="n">mesh_ii_file_relative_path</span>
+                
+                <span class="c1"># Export after checking that the parent directory exists</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">mesh_ii_file_path</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">mesh_ii</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="n">mesh_ii_file_path</span><span class="p">)</span>
+
+                <span class="c1"># Create a new collision element for each part</span>
+                <span class="n">collision_element_ii</span> <span class="o">=</span> <span class="n">URDFElementCreator</span><span class="o">.</span><span class="n">create_collision_element</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">collision_elt</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;collision&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">_part_</span><span class="si">{</span><span class="n">ii</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="n">mesh_file_path</span><span class="o">=</span><span class="s2">&quot;./&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mesh_ii_file_relative_path</span><span class="p">),</span>
+                    <span class="n">mesh_scale</span><span class="o">=</span><span class="n">original_mesh_scale</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">new_elts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">collision_element_ii</span><span class="p">)</span>
+
+                <span class="n">n_replacements_made</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># Check to see if the collision element has a mesh element within it</span>
+        
+        <span class="c1"># # Iterate through every element of the collision element</span>
+        <span class="c1"># for ii, child_ii in enumerate(collision_elt):</span>
+        <span class="c1">#     if child_ii.tag == &quot;geometry&quot;: </span>
+        <span class="c1">#         # If the child is a geometry element, then we will check if replacement is needed.</span>
+        <span class="c1">#         geometry_elt = child_ii</span>
+                
+        <span class="c1">#         # Iterate through every element of the geometry element</span>
+        <span class="c1">#         for jj, child_jj in enumerate(geometry_elt):</span>
+        <span class="c1">#             if child_jj.tag == &quot;mesh&quot;:</span>
+        <span class="c1">#                 # If the child is a mesh element, then we will check if replacement is needed.</span>
+        <span class="c1">#                 mesh_elt = child_jj</span>
+                        
+        <span class="c1">#                 # Replace!</span>
+        <span class="c1">#                 if replacement_strategy == MeshReplacementStrategy.kWithObj:</span>
+        <span class="c1">#                     new_mesh_elt = self.convert_mesh_element(mesh_elt)</span>
+        <span class="c1">#                     new_elt[ii][jj] = new_mesh_elt</span>
+        <span class="c1">#                 elif replacement_strategy == MeshReplacementStrategy.kWithMinimalEnclosingCylinder:</span>
+        <span class="c1">#                     new_elt = self.replace_element_with_enclosing_cylinder(new_elt)</span>
+        <span class="c1">#                 # elif replacement_strategy == MeshReplacementStrategy.kWithConvexDecomposition:</span>
+                            
+        <span class="c1">#                 else:</span>
+        <span class="c1">#                     raise ValueError(</span>
+        <span class="c1">#                         f&quot;Invalid mesh replacement strategy: {replacement_strategy}&quot;</span>
+        <span class="c1">#                     )    </span>
+
+        <span class="c1">#                 n_replacements_made += 1       </span>
+
+        <span class="c1"># Announce the number of replacements made in the logger.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Made </span><span class="si">{</span><span class="n">n_replacements_made</span><span class="si">}</span><span class="s2"> replacements in the collision element.&quot;</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">new_elts</span></div>
+
+    
+<div class="viewcode-block" id="DrakeReadyURDFConverter.convert_geometry_element">
+<a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/drake_ready_urdf_converter/drake_ready_urdf_converter.html#brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.converter.DrakeReadyURDFConverter.convert_geometry_element">[docs]</a>
+    <span class="k">def</span> <span class="nf">convert_geometry_element</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">geometry_elt</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">,</span>
+        <span class="n">replacement_strategy</span><span class="p">:</span> <span class="n">MeshReplacementStrategy</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *Description*</span>
+<span class="sd">        </span>
+<span class="sd">        This method will convert the geometry element in the URDF (i.e., an XML) file</span>
+<span class="sd">        according to the conversion strategy provided as input.</span>
+<span class="sd">        </span>
+<span class="sd">        *Parameters*</span>
+<span class="sd">        </span>
+<span class="sd">        geometry_elt: xml.etree.ElementTree.Element</span>
+<span class="sd">            The geometry element that we want to convert.</span>
+
+<span class="sd">        replacement_strategy: MeshReplacementStrategy</span>
+<span class="sd">            The strategy to use for replacing mesh files.</span>
+<span class="sd">        </span>
+<span class="sd">        *Returns*</span>
+<span class="sd">        </span>
+<span class="sd">        xml.etree.ElementTree.Element</span>
+<span class="sd">            The new geometry element.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">new_elt</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="n">geometry_elt</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">geometry_elt</span><span class="o">.</span><span class="n">attrib</span><span class="p">)</span>
+
+        <span class="c1"># Algorithm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Converting geometry element with strategy </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">replacement_strategy</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Iterate through every element of the geometry element</span>
+        <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">child_ii</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">geometry_elt</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">child_ii</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;mesh&quot;</span><span class="p">:</span>
+                <span class="c1"># If the child is a mesh element, then we will check if replacement is needed.</span>
+                <span class="n">mesh_elt</span> <span class="o">=</span> <span class="n">child_ii</span>
+
+                <span class="c1"># Replace!</span>
+                <span class="n">new_mesh_elt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">convert_mesh_element</span><span class="p">(</span><span class="n">mesh_elt</span><span class="p">)</span>
+                <span class="n">new_elt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_mesh_elt</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># If the child is not a mesh element, then we will just copy it over</span>
+                <span class="n">new_elt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">child_ii</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">new_elt</span></div>
+
+    
+<div class="viewcode-block" id="DrakeReadyURDFConverter.convert_visual_element">
+<a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/drake_ready_urdf_converter/drake_ready_urdf_converter.html#brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.converter.DrakeReadyURDFConverter.convert_visual_element">[docs]</a>
+    <span class="k">def</span> <span class="nf">convert_visual_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visual_elt</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *Description*</span>
+<span class="sd">        </span>
+<span class="sd">        This method will convert the collision element in the URDF file.</span>
+
+<span class="sd">        For now, this is very similar to the collision element handling, but it may</span>
+<span class="sd">        change in the future.</span>
+
+<span class="sd">        *Parameters*</span>
+<span class="sd">        </span>
+<span class="sd">        visual_elt: xml.etree.ElementTree.Element</span>
+<span class="sd">            The visual element that we want to convert.</span>
+
+<span class="sd">        *Returns*</span>
+<span class="sd">        </span>
+<span class="sd">        xml.etree.ElementTree.Element</span>
+<span class="sd">            The new visual element.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">new_elt</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">visual_elt</span><span class="p">)</span>
+        <span class="n">replacement_strategy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">mesh_replacement_strategies</span><span class="o">.</span><span class="n">visual_meshes</span>
+
+        <span class="c1"># Algorithm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Converting element with tag </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">visual_elt</span><span class="o">.</span><span class="n">tag</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2"> using the </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">replacement_strategy</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2"> strategy.&quot;</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Search through all children of the visual element</span>
+        <span class="n">n_replacements_made</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">added_material</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">child_ii</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">visual_elt</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">child_ii</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;geometry&quot;</span><span class="p">:</span>
+                <span class="c1"># If the child is a geometry element, then we will check if replacement is needed.</span>
+                <span class="n">geometry_elt</span> <span class="o">=</span> <span class="n">child_ii</span>
+
+                <span class="c1"># Iterate through every element of the geometry element</span>
+                <span class="k">for</span> <span class="n">jj</span><span class="p">,</span> <span class="n">child_jj</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">geometry_elt</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">child_jj</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;mesh&quot;</span><span class="p">:</span>
+                        <span class="c1"># If the child is a mesh element, then we will check if replacement is needed.</span>
+                        <span class="n">mesh_elt</span> <span class="o">=</span> <span class="n">child_jj</span>
+
+                        <span class="c1"># Replace!</span>
+                        <span class="k">if</span> <span class="n">replacement_strategy</span> <span class="o">==</span> <span class="n">MeshReplacementStrategy</span><span class="o">.</span><span class="n">kWithObj</span><span class="p">:</span>
+                            <span class="n">new_mesh_elt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">convert_mesh_element</span><span class="p">(</span><span class="n">mesh_elt</span><span class="p">)</span>
+                            <span class="n">new_elt</span><span class="p">[</span><span class="n">ii</span><span class="p">][</span><span class="n">jj</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_mesh_elt</span>
+                        <span class="c1"># TODO: Implement this</span>
+                        <span class="c1"># elif replacement_strategy == MeshReplacementStrategy.kDoNotReplace:</span>
+                        <span class="c1">#     # Copy the associated file into the models directory</span>
+                        <span class="c1">#     old_mesh_file = mesh_elt.attrib[&quot;filename&quot;]</span>
+
+                        <span class="c1">#     temp_mfc = MeshFileConverter(</span>
+                        <span class="c1">#         mesh_file_path=old_mesh_file,</span>
+                        <span class="c1">#         urdf_dir=original_urdf_dir,</span>
+                        <span class="c1">#         new_urdf_dir=self.file_manager.output_file_directory(),</span>
+                        <span class="c1">#     )</span>
+
+                        <span class="c1">#     true_old_mesh_file = temp_mfc.true_mesh_file_path()</span>
+                        <span class="c1">#     new_mesh_full_path = temp_mfc.define_output_path()</span>
+
+                        <span class="c1">#     print(f&quot;Copying {true_old_mesh_file} to {new_mesh_full_path}&quot;)</span>
+
+                        <span class="c1">#     # Copy!</span>
+                        <span class="c1">#     shutil.copy(true_old_mesh_file, new_mesh_full_path)</span>
+                            
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                                <span class="sa">f</span><span class="s2">&quot;Invalid mesh replacement strategy: </span><span class="si">{</span><span class="n">replacement_strategy</span><span class="si">}</span><span class="s2">&quot;</span>
+                            <span class="p">)</span>
+
+                        <span class="n">n_replacements_made</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="k">elif</span> <span class="n">child_ii</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;material&quot;</span><span class="p">:</span>
+                <span class="n">new_material_elt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_new_material_element</span><span class="p">(</span><span class="n">child_ii</span><span class="p">)</span>
+
+                <span class="c1"># replace the material element in new_elt with this one</span>
+                <span class="n">new_elt</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_material_elt</span>
+                <span class="n">added_material</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">replace_colors_with</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Replaced the color of the material element with RGBA values </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">replace_colors_with</span><span class="si">}</span><span class="s2">.&quot;</span>
+                    <span class="p">)</span>
+
+        <span class="c1"># If material did not exist in the visual element, then we will add it.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">added_material</span><span class="p">:</span>
+            <span class="c1"># Create a new material element</span>
+            <span class="n">new_material_elt</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s2">&quot;material&quot;</span><span class="p">)</span>
+            <span class="n">new_elt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_material_elt</span><span class="p">)</span>
+
+            <span class="n">transformed_material_elt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_new_material_element</span><span class="p">(</span><span class="n">new_material_elt</span><span class="p">)</span>
+            <span class="n">new_elt</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">transformed_material_elt</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Added a new material element to the visual element with RGBA values </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">replace_colors_with</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+            <span class="n">n_replacements_made</span> <span class="o">+=</span> <span class="mi">1</span>
+
+
+
+            <span class="n">added_material</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">return</span> <span class="n">new_elt</span></div>
+
+
+<div class="viewcode-block" id="DrakeReadyURDFConverter.convert_urdf">
+<a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/drake_ready_urdf_converter/drake_ready_urdf_converter.html#brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.converter.DrakeReadyURDFConverter.convert_urdf">[docs]</a>
+    <span class="k">def</span> <span class="nf">convert_urdf</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *Description*</span>
+<span class="sd">        </span>
+<span class="sd">        Converts the original URDF file into a Drake-compatible URDF file.</span>
+
+<span class="sd">        *Returns*</span>
+<span class="sd">        </span>
+<span class="sd">        Path</span>
+<span class="sd">            The path to the new URDF file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">original_urdf_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">original_urdf_filename</span><span class="p">)</span>
+        <span class="n">original_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">ElementTree</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">original_urdf_path</span><span class="p">)</span>
+
+        <span class="n">add_missing_actuators</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">add_missing_actuators</span>
+
+        <span class="c1"># Use recursive function to convert the tree</span>
+        <span class="n">new_trees</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">convert_tree</span><span class="p">(</span><span class="n">original_xml</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_trees</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> \
+            <span class="sa">f</span><span class="s2">&quot;Expected to get exactly one new tree after conversion, but got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">new_trees</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="n">new_tree</span> <span class="o">=</span> <span class="n">new_trees</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Add transmissions, if needed</span>
+        <span class="k">if</span> <span class="n">add_missing_actuators</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">joint_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">actuated_joint_names</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">tree_contains_transmission_for_joint</span><span class="p">(</span><span class="n">new_tree</span><span class="p">,</span> <span class="n">joint_name</span><span class="p">):</span>
+                    <span class="k">continue</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># If transmission doesn&#39;t exist in URDF, then add it!</span>
+                    <span class="n">transmission_element</span> <span class="o">=</span> <span class="n">create_transmission_element_for_joint</span><span class="p">(</span><span class="n">joint_name</span><span class="p">)</span>
+                    <span class="n">ET</span><span class="o">.</span><span class="n">indent</span><span class="p">(</span><span class="n">transmission_element</span><span class="p">,</span> <span class="n">space</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                    <span class="n">new_tree</span><span class="o">.</span><span class="n">getroot</span><span class="p">()</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">transmission_element</span><span class="p">)</span>
+
+        <span class="c1"># Output the new tree to a file</span>
+        <span class="n">output_urdf_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_manager</span><span class="o">.</span><span class="n">output_urdf_path</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">output_urdf_path</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">new_tree</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">output_urdf_path</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Converted URDF file to Drake-compatible URDF file at </span><span class="si">{</span><span class="n">output_urdf_path</span><span class="si">}</span><span class="s2">.</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">output_urdf_path</span></div>
+
+
+<div class="viewcode-block" id="DrakeReadyURDFConverter.convert_mesh_element">
+<a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/drake_ready_urdf_converter/drake_ready_urdf_converter.html#brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.converter.DrakeReadyURDFConverter.convert_mesh_element">[docs]</a>
+    <span class="k">def</span> <span class="nf">convert_mesh_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mesh_elt_in</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *Description*</span>
+
+<span class="sd">        This method will convert the mesh element in the URDF file</span>
+<span class="sd">        into a Drake-compatible mesh element.</span>
+
+<span class="sd">        *Parameters*</span>
+
+<span class="sd">        mesh_elt_in: xml.etree.ElementTree.Element</span>
+<span class="sd">            The mesh element that we want to convert.</span>
+
+<span class="sd">        *Returns*</span>
+
+<span class="sd">        xml.etree.ElementTree.Element</span>
+<span class="sd">            The new mesh element.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">new_elt</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">mesh_elt_in</span><span class="p">)</span>
+
+        <span class="c1"># Algorithm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Found a mesh element with filename </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">mesh_elt_in</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">]</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Check the value of the filename</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="s2">&quot;filename&quot;</span> <span class="ow">in</span> <span class="n">new_elt</span><span class="o">.</span><span class="n">attrib</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Found a mesh element that does not contain the </span><span class="se">\&quot;</span><span class="s2">filename</span><span class="se">\&quot;</span><span class="s2"> attribute.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="o">+</span> <span class="s2">&quot;Brom doesn&#39;t know how to handle this!&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Filename exists; Let&#39;s check to see if it&#39;s obj or not</span>
+        <span class="k">if</span> <span class="n">does_drake_parser_support</span><span class="p">(</span><span class="n">new_elt</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">]):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\&quot;</span><span class="si">{</span><span class="n">new_elt</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">]</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2"> is already supported by the Drake parser. Let&#39;s copy it into the right place.&quot;</span>
+            <span class="p">)</span>
+            <span class="c1"># Let&#39;s try to copy the old file into the new directory</span>
+            <span class="n">old_filename</span> <span class="o">=</span> <span class="n">new_elt</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">]</span>
+            <span class="n">new_filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_obj_to_replace_mesh_file</span><span class="p">(</span><span class="n">old_filename</span><span class="p">)</span>
+            <span class="n">new_elt</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+                <span class="s2">&quot;filename&quot;</span><span class="p">,</span> <span class="n">new_filename</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Copied the Drake-compatible mesh file </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">old_filename</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2"> to </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">new_filename</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># If parser does not support the given filename,</span>
+            <span class="c1"># then let&#39;s try to create one</span>
+            <span class="n">old_filename</span> <span class="o">=</span> <span class="n">new_elt</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">]</span>
+            <span class="n">new_filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_obj_to_replace_mesh_file</span><span class="p">(</span><span class="n">old_filename</span><span class="p">)</span>
+            <span class="n">new_elt</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+                <span class="s2">&quot;filename&quot;</span><span class="p">,</span> <span class="n">new_filename</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Replaced the mesh file </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">old_filename</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2"> with a Drake-compatible .obj file at </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">new_filename</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">new_elt</span></div>
+
+
+<div class="viewcode-block" id="DrakeReadyURDFConverter.convert_tree">
+<a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/drake_ready_urdf_converter/drake_ready_urdf_converter.html#brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.converter.DrakeReadyURDFConverter.convert_tree">[docs]</a>
+    <span class="k">def</span> <span class="nf">convert_tree</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">current_tree</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">ElementTree</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ET</span><span class="o">.</span><span class="n">ElementTree</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *Description*</span>
+<span class="sd">        </span>
+<span class="sd">        This recursive method is used to parse each element of the</span>
+<span class="sd">        xml element tree and replace the components that are not</span>
+<span class="sd">        supported by the Drake URDF parser.</span>
+
+<span class="sd">        *Parameters*</span>
+<span class="sd">        </span>
+<span class="sd">        current_tree: xml.etree.ElementTree.ElementTree</span>
+<span class="sd">            The current tree that we are parsing.</span>
+<span class="sd">        </span>
+<span class="sd">        *Returns*</span>
+<span class="sd">        </span>
+<span class="sd">        List[xml.etree.ElementTree.ElementTree]</span>
+<span class="sd">            The new trees that has been converted.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">root</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">current_tree</span><span class="o">.</span><span class="n">getroot</span><span class="p">())</span>
+
+        <span class="c1"># Modify root, if necessary</span>
+        <span class="n">new_elements</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">convert_tree_element</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">element_ii</span> <span class="ow">in</span> <span class="n">new_elements</span><span class="p">:</span>
+            <span class="c1"># Modify Children of the root</span>
+            <span class="n">initial_children</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">element_ii</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">initial_children</span><span class="p">:</span>
+                <span class="n">new_children</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">convert_tree</span><span class="p">(</span>
+                    <span class="n">ET</span><span class="o">.</span><span class="n">ElementTree</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="n">element_ii</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+
+                <span class="c1"># Add new children to new root</span>
+                <span class="k">for</span> <span class="n">new_child</span> <span class="ow">in</span> <span class="n">new_children</span><span class="p">:</span>
+                    <span class="c1"># Convert the new child element</span>
+                    <span class="n">element_ii</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_child</span><span class="o">.</span><span class="n">getroot</span><span class="p">())</span>
+
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="n">ET</span><span class="o">.</span><span class="n">ElementTree</span><span class="p">(</span><span class="n">element_ii</span><span class="p">)</span> <span class="k">for</span> <span class="n">element_ii</span> <span class="ow">in</span> <span class="n">new_elements</span>
+        <span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="DrakeReadyURDFConverter.convert_tree_element">
+<a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/drake_ready_urdf_converter/drake_ready_urdf_converter.html#brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.converter.DrakeReadyURDFConverter.convert_tree_element">[docs]</a>
+    <span class="k">def</span> <span class="nf">convert_tree_element</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">elt</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *Description*</span>
+<span class="sd">        </span>
+<span class="sd">        This method is used to transform one element in the XML tree into an eleemnt</span>
+<span class="sd">        that that Drake URDF parser can handle. If necessary, it will create a new</span>
+<span class="sd">        3d model file and place it into the right directory.</span>
+
+<span class="sd">        *Parameters*</span>
+<span class="sd">        </span>
+<span class="sd">        elt: xml.etree.ElementTree.Element</span>
+<span class="sd">            An element in the ElementTree that we would like to convert</span>
+<span class="sd">            into a Drake-ready element.</span>
+<span class="sd">        </span>
+<span class="sd">        *Returns*</span>
+<span class="sd">        </span>
+<span class="sd">        List[xml.etree.ElementTree.Element]</span>
+<span class="sd">            The new elements that has been converted.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">new_elts</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Convert file paths for mesh elements if necessary</span>
+        <span class="k">if</span> <span class="n">elt</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;collision&quot;</span><span class="p">:</span>
+            <span class="n">new_elts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">convert_collision_element</span><span class="p">(</span><span class="n">elt</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">elt</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;visual&quot;</span><span class="p">:</span>
+            <span class="n">new_elts</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">convert_visual_element</span><span class="p">(</span><span class="n">elt</span><span class="p">)]</span>
+        <span class="k">elif</span> <span class="n">elt</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;transmission&quot;</span><span class="p">:</span>
+            <span class="c1"># Ignore transmission elements during the conversion</span>
+            <span class="n">new_elts</span> <span class="o">=</span> <span class="p">[</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">elt</span><span class="p">)]</span>
+        <span class="k">elif</span> <span class="n">elt</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;joint&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">handle_joint_element</span><span class="p">(</span><span class="n">elt</span><span class="p">)</span>
+            <span class="n">new_elts</span> <span class="o">=</span> <span class="p">[</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">elt</span><span class="p">)]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># If the element is not a mesh element, then we will just return a copy of it.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Found an element with tag </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">elt</span><span class="o">.</span><span class="n">tag</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2"> that does not require handling. No modification needed...&quot;</span>
+            <span class="p">)</span>
+            <span class="n">new_elts</span> <span class="o">=</span> <span class="p">[</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">elt</span><span class="p">)]</span>
+
+        <span class="c1"># Otherwise, just return a copy of the previous element.</span>
+        <span class="k">return</span> <span class="n">new_elts</span></div>
+
+
+<div class="viewcode-block" id="DrakeReadyURDFConverter.create_obj_to_replace_mesh_file">
+<a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/drake_ready_urdf_converter/drake_ready_urdf_converter.html#brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.converter.DrakeReadyURDFConverter.create_obj_to_replace_mesh_file">[docs]</a>
+    <span class="k">def</span> <span class="nf">create_obj_to_replace_mesh_file</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">mesh_file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *Description*</span>
+<span class="sd">        </span>
+<span class="sd">        This function will create an .obj file to replace the</span>
+<span class="sd">        .stl or .dae file that is given in mesh file &quot;mesh_file_name&quot;.</span>
+
+<span class="sd">        *Parameters*</span>
+<span class="sd">        </span>
+<span class="sd">        mesh_file_name: str</span>
+<span class="sd">            The name of the mesh file that we want to convert.</span>
+<span class="sd">        </span>
+<span class="sd">        *Returns*</span>
+<span class="sd">        </span>
+<span class="sd">        str</span>
+<span class="sd">            The name of the new .obj file that has been created.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">original_urdf_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">original_urdf_filename</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span>
+
+        <span class="c1"># Convert the file</span>
+        <span class="n">converter</span> <span class="o">=</span> <span class="n">MeshFileConverter</span><span class="p">(</span>
+            <span class="n">mesh_file_path</span><span class="o">=</span><span class="n">mesh_file_name</span><span class="p">,</span>
+            <span class="n">urdf_dir</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="n">original_urdf_dir</span><span class="p">),</span>
+            <span class="n">new_urdf_dir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">file_manager</span><span class="o">.</span><span class="n">output_file_directory</span><span class="p">(),</span>
+            <span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">new_mesh_path</span> <span class="o">=</span> <span class="n">converter</span><span class="o">.</span><span class="n">convert</span><span class="p">()</span>
+
+        <span class="c1"># Clip off all parts of path that include the exported output</span>
+        <span class="n">new_mesh_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_mesh_path</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_manager</span><span class="o">.</span><span class="n">output_file_directory</span><span class="p">()),</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_mesh_path</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="DrakeReadyURDFConverter.handle_joint_element">
+<a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/drake_ready_urdf_converter/drake_ready_urdf_converter.html#brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.converter.DrakeReadyURDFConverter.handle_joint_element">[docs]</a>
+    <span class="k">def</span> <span class="nf">handle_joint_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">joint_elt</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *Description*</span>
+<span class="sd">        </span>
+<span class="sd">        This method will handle the joint element in the URDF file.</span>
+<span class="sd">        Specifically, it will check to see if the joint is actuated</span>
+<span class="sd">        and (if it is) add it to the list of actuated joints.</span>
+
+<span class="sd">        This is useful when attempting to add transmissions to the URDF file</span>
+<span class="sd">        later on.</span>
+<span class="sd">        </span>
+<span class="sd">        *Parameters*</span>
+<span class="sd">        </span>
+<span class="sd">        joint_elt: xml.etree.ElementTree.Element</span>
+<span class="sd">            The joint element that we want to handle.</span>
+<span class="sd">        </span>
+<span class="sd">        *Returns*</span>
+<span class="sd">        </span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+
+        <span class="c1"># Keep track of all FREE joint names</span>
+
+        <span class="c1"># If the joint does not have a &quot;type&quot; attribute, then we will assume it is fixed</span>
+        <span class="c1"># and won&#39;t add it.</span>
+        <span class="k">if</span> <span class="s2">&quot;type&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">joint_elt</span><span class="o">.</span><span class="n">attrib</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="c1"># If joint is &quot;fixed&quot;, then don&#39;t add it to the list of actuated joints</span>
+        <span class="n">joint_is_fixed</span> <span class="o">=</span> <span class="n">joint_elt</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;fixed&quot;</span>
+        <span class="k">if</span> <span class="n">joint_is_fixed</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="n">joint_name</span> <span class="o">=</span> <span class="n">joint_elt</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actuated_joint_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">joint_name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DrakeReadyURDFConverter.create_new_material_element">
+<a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/drake_ready_urdf_converter/drake_ready_urdf_converter.html#brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.converter.DrakeReadyURDFConverter.create_new_material_element">[docs]</a>
+    <span class="k">def</span> <span class="nf">create_new_material_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">material_elt</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *Description*</span>
+<span class="sd">        </span>
+<span class="sd">        This method will handle the material element in the URDF file.</span>
+<span class="sd">        Specifically, it will check to see if the user wants us to assign a color to the </span>
+<span class="sd">        material element. If so, then we will assign the color to the material element.</span>
+
+<span class="sd">        This is useful when attempting to add transmissions to the URDF file</span>
+<span class="sd">        later on.</span>
+<span class="sd">        </span>
+<span class="sd">        *Parameters*</span>
+<span class="sd">    </span>
+<span class="sd">        material_elt: xml.etree.ElementTree.Element</span>
+<span class="sd">            The material element that we want to handle.</span>
+<span class="sd">        </span>
+<span class="sd">        *Returns*</span>
+<span class="sd">        </span>
+<span class="sd">        None, but modifies the material element.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">replace_colors_with</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">replace_colors_with</span>
+        <span class="n">material_elt</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">material_elt</span><span class="p">)</span>
+
+        <span class="c1"># Input Processing (Abort, if no color replacement is needed)</span>
+        <span class="k">if</span> <span class="n">replace_colors_with</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">material_elt</span>
+        
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">replace_colors_with</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;The color replacement list must have exactly 4 elements (RGBA).&quot;</span>
+            <span class="p">)</span>
+        
+        <span class="c1"># Algorithm</span>
+        <span class="c1"># Check to see if the material element has a color element</span>
+        <span class="n">color_elt</span> <span class="o">=</span> <span class="n">material_elt</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;color&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">color_elt</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># If no color element exists, then we will create one</span>
+            <span class="n">color_elt</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s2">&quot;color&quot;</span><span class="p">)</span>
+            <span class="n">material_elt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">color_elt</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># If a color element exists, then we will modify it</span>
+            <span class="n">material_elt</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">color_elt</span><span class="p">)</span>
+            <span class="n">color_elt</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s2">&quot;color&quot;</span><span class="p">)</span>
+            <span class="n">material_elt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">color_elt</span><span class="p">)</span>
+
+        <span class="c1"># Set the color of the material element</span>
+        <span class="n">color_elt</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+            <span class="s2">&quot;rgba&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">replace_colors_with</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">replace_colors_with</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">replace_colors_with</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">replace_colors_with</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">material_elt</span></div>
+
+
+<div class="viewcode-block" id="DrakeReadyURDFConverter.log">
+<a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/drake_ready_urdf_converter/drake_ready_urdf_converter.html#brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.converter.DrakeReadyURDFConverter.log">[docs]</a>
+    <span class="k">def</span> <span class="nf">log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *Description*</span>
+<span class="sd">        </span>
+<span class="sd">        Logs a message to the logging.logger.</span>
+
+<span class="sd">        *Parameters*</span>
+<span class="sd">        </span>
+<span class="sd">        message: str</span>
+<span class="sd">            The message that we want to log.</span>
+<span class="sd">        </span>
+<span class="sd">        *Returns*</span>
+<span class="sd">        </span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DrakeReadyURDFConverter.replace_element_with_enclosing_cylinder">
+<a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/drake_ready_urdf_converter/drake_ready_urdf_converter.html#brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.converter.DrakeReadyURDFConverter.replace_element_with_enclosing_cylinder">[docs]</a>
+    <span class="k">def</span> <span class="nf">replace_element_with_enclosing_cylinder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">collision_elt</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *Description*</span>
+<span class="sd">        </span>
+<span class="sd">        This method will replace the geometry element with an enclosing cylinder.</span>
+
+<span class="sd">        *Parameters*</span>
+<span class="sd">        </span>
+<span class="sd">        collision_elt: xml.etree.ElementTree.Element</span>
+<span class="sd">            The collision element that we want to replace.</span>
+
+<span class="sd">        *Returns*</span>
+<span class="sd">        </span>
+<span class="sd">        xml.etree.ElementTree.Element</span>
+<span class="sd">            The new collision element with the enclosing cylinder.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">new_elt</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">collision_elt</span><span class="p">)</span>
+        <span class="n">original_urdf_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">original_urdf_filename</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span>
+
+        <span class="c1"># Save the initial pose of the element</span>
+        <span class="n">origin_elt</span> <span class="o">=</span> <span class="n">new_elt</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;origin&quot;</span><span class="p">)</span>
+        <span class="n">pose0</span> <span class="o">=</span> <span class="n">RigidTransform</span><span class="p">(</span>
+            <span class="n">R</span><span class="o">=</span><span class="n">RollPitchYaw</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">elt</span><span class="p">)</span> <span class="k">for</span> <span class="n">elt</span> <span class="ow">in</span> <span class="n">origin_elt</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">&quot;rpy&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)]</span>
+            <span class="p">))</span><span class="o">.</span><span class="n">ToRotationMatrix</span><span class="p">(),</span>
+            <span class="n">p</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">elt</span><span class="p">)</span> <span class="k">for</span> <span class="n">elt</span> <span class="ow">in</span> <span class="n">origin_elt</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">&quot;xyz&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)],</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Extract the mesh element and the filename that it references</span>
+        <span class="n">mesh_elt</span> <span class="o">=</span> <span class="n">new_elt</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;geometry/mesh&quot;</span><span class="p">)</span>
+        <span class="n">mesh_file_name</span> <span class="o">=</span> <span class="n">mesh_elt</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">]</span>
+
+        <span class="c1"># Load the mesh from the mesh element</span>
+        <span class="n">converter</span> <span class="o">=</span> <span class="n">MeshFileConverter</span><span class="p">(</span>
+            <span class="n">mesh_file_path</span><span class="o">=</span><span class="n">mesh_file_name</span><span class="p">,</span>
+            <span class="n">urdf_dir</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="n">original_urdf_dir</span><span class="p">),</span>
+            <span class="n">new_urdf_dir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">file_manager</span><span class="o">.</span><span class="n">output_file_directory</span><span class="p">(),</span>
+            <span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">mesh</span> <span class="o">=</span> <span class="n">trimesh</span><span class="o">.</span><span class="n">load_mesh</span><span class="p">(</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">converter</span><span class="o">.</span><span class="n">urdf_dir</span> <span class="o">/</span> <span class="n">converter</span><span class="o">.</span><span class="n">true_mesh_file_path</span><span class="p">())</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Create the enclosing cylinder</span>
+        <span class="n">cylinder_result</span> <span class="o">=</span> <span class="n">trimesh</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">minimum_cylinder</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">sample_count</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+        <span class="n">cylinder_shape</span> <span class="o">=</span> <span class="n">CylinderDefinition</span><span class="p">(</span>
+            <span class="n">radius</span><span class="o">=</span><span class="n">cylinder_result</span><span class="p">[</span><span class="s1">&#39;radius&#39;</span><span class="p">],</span>
+            <span class="n">length</span><span class="o">=</span><span class="n">cylinder_result</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">],</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Remove the mesh element and pose element from the collision element, if they exist</span>
+        <span class="n">geometry_elt</span> <span class="o">=</span> <span class="n">new_elt</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;geometry&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mesh_elt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">new_elt</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">geometry_elt</span><span class="p">)</span>
+
+        <span class="n">origin_elt</span> <span class="o">=</span> <span class="n">new_elt</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;origin&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">origin_elt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">new_elt</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">origin_elt</span><span class="p">)</span>
+
+        <span class="c1"># Add the origin element to the collision element</span>
+        <span class="n">transform</span> <span class="o">=</span> <span class="n">cylinder_result</span><span class="p">[</span><span class="s1">&#39;transform&#39;</span><span class="p">]</span>
+        <span class="n">transform_as_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">transform</span><span class="p">)</span>
+        <span class="n">transform_as_rt</span> <span class="o">=</span> <span class="n">RigidTransform</span><span class="p">(</span>
+            <span class="n">RotationMatrix</span><span class="p">(</span><span class="n">transform_as_matrix</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]),</span>
+            <span class="n">transform_as_matrix</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+        <span class="p">)</span>
+
+        <span class="n">pose_as_rt</span> <span class="o">=</span> <span class="n">pose0</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">transform_as_rt</span><span class="p">)</span>
+
+        <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span>
+            <span class="n">new_elt</span><span class="p">,</span>
+            <span class="s2">&quot;origin&quot;</span><span class="p">,</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;xyz&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pose_as_rt</span><span class="o">.</span><span class="n">translation</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">pose_as_rt</span><span class="o">.</span><span class="n">translation</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">pose_as_rt</span><span class="o">.</span><span class="n">translation</span><span class="p">()[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;rpy&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pose_as_rt</span><span class="o">.</span><span class="n">rotation</span><span class="p">()</span><span class="o">.</span><span class="n">ToRollPitchYaw</span><span class="p">()</span><span class="o">.</span><span class="n">roll_angle</span><span class="p">()</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">pose_as_rt</span><span class="o">.</span><span class="n">rotation</span><span class="p">()</span><span class="o">.</span><span class="n">ToRollPitchYaw</span><span class="p">()</span><span class="o">.</span><span class="n">pitch_angle</span><span class="p">()</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">pose_as_rt</span><span class="o">.</span><span class="n">rotation</span><span class="p">()</span><span class="o">.</span><span class="n">ToRollPitchYaw</span><span class="p">()</span><span class="o">.</span><span class="n">yaw_angle</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Create a new geometry element and add the cylinder element to it</span>
+        <span class="n">new_elt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s2">&quot;geometry&quot;</span><span class="p">))</span>
+        <span class="n">cylinder_shape</span><span class="o">.</span><span class="n">add_geometry_to_element</span><span class="p">(</span><span class="n">new_elt</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;geometry&quot;</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">new_elt</span></div>
+</div>
+
+</pre></div>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2025, Kwesi Rutledge, Wrench Robotics
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script src="../../../../../_static/documentation_options.js?v=c954fba5"></script>
+    <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>
+    <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../../_static/copybutton.js?v=f281be69"></script>
+    </body>
+</html>

@@ -23,7 +23,5 @@ Functions
 Variables
 ---------
 
-.. autodata:: brom_drake.utils.watcher.add_watcher.DEFAULT_PLOT_DIR
-.. autodata:: brom_drake.utils.watcher.add_watcher.DEFAULT_RAW_DATA_DIR
-.. autodata:: brom_drake.utils.watcher.add_watcher.DEFAULT_WATCHER_DIR
+(None found)
 

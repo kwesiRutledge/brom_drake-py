@@ -41,9 +41,9 @@ A full example is shown in the :code:`examples/watcher` directory of the reposit
 That's it! Whenever the program ends, the DiagramWatcher will:
 
 - Save the raw data of the signals produced by your simulation over time in the DiagramWatcher's :code:`raw_data` directory, and
-- Plot the signal data in figures, for all of the signals that the DiagramWatcher can find*.
+- Plot the signal data in figures, for all of the signals that the DiagramWatcher can find\*.
 
-*By "all of the signals that the DiagramWatcher can find", we do not mean all of the signals in your simulation. 
+\*By "all of the signals that the DiagramWatcher can find", we do not mean all of the signals in your simulation. 
 
 The DiagramWatcher will only log signals in the diagram that:
 
@@ -61,7 +61,7 @@ To learn more about this type, read about the `PortDataType`_ and `OutputPort`_ 
 Easily Log Your Diagram's Signals
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-It is recommended that you use the convenience function :py:function:`add_watcher_and_build<brom_drake.utils.watcher.add_watcher.add_watcher_and_build>` to add a
+It is recommended that you use the convenience function :py:func:`~brom_drake.utils.watcher.add_watcher.add_watcher_and_build` to add a
 :py:class:`DiagramWatcher<brom_drake.DiagramWatcher.DiagramWatcher.DiagramWatcher>` to your diagram.
 
 .. code-block:: python

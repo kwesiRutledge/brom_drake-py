@@ -1,0 +1,1559 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../../../../../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../../search.html">
+
+    <!-- Generated with Sphinx 8.2.3 and Furo 2025.12.19 -->
+        <title>brom_drake.productions.motion_planning.offline.dynamic.chem_lab2 - brom_drake-py 0.4.7-2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=acfd86a5" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../../../../index.html"><div class="brand">brom_drake-py 0.4.7-2 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../../index.html">
+  
+  <span class="sidebar-brand-text">brom_drake-py 0.4.7-2 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../../../../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../../features/index.html">Features</a><input aria-label="Toggle navigation of Features" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../features/diagram_watcher.html">DiagramWatcher</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../../features/productions/index.html">Productions</a><input aria-label="Toggle navigation of Productions" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../../features/productions/show_me_this_model.html">Show Me This Model</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../../generated/api.html">API</a><input aria-label="Toggle navigation of API" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../../generated/all/all.html">all</a><input aria-label="Toggle navigation of all" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../../generated/control/control.html">control</a><input aria-label="Toggle navigation of control" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../../../generated/control/arms/arms.html">arms</a><input aria-label="Toggle navigation of arms" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../../../generated/control/grippers/grippers.html">grippers</a><input aria-label="Toggle navigation of grippers" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../../generated/DiagramTarget/DiagramTarget.html">DiagramTarget</a><input aria-label="Toggle navigation of DiagramTarget" class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../../generated/DiagramWatcher/DiagramWatcher.html">DiagramWatcher</a><input aria-label="Toggle navigation of DiagramWatcher" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../../generated/example_helpers/example_helpers.html">example_helpers</a><input aria-label="Toggle navigation of example_helpers" class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../../../generated/example_helpers/models/models.html">models</a><input aria-label="Toggle navigation of models" class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../../generated/file_manipulation/file_manipulation.html">file_manipulation</a><input aria-label="Toggle navigation of file_manipulation" class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../../../generated/file_manipulation/urdf/urdf.html">urdf</a><input aria-label="Toggle navigation of urdf" class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../../generated/file_manipulation/urdf/drake_ready_urdf_converter/drake_ready_urdf_converter.html">drake_ready_urdf_converter</a><input aria-label="Toggle navigation of drake_ready_urdf_converter" class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../../generated/file_manipulation/urdf/shapes/shapes.html">shapes</a><input aria-label="Toggle navigation of shapes" class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../../generated/file_manipulation/urdf/simple_writer/simple_writer.html">simple_writer</a><input aria-label="Toggle navigation of simple_writer" class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../../generated/leaf_systems/leaf_systems.html">leaf_systems</a><input aria-label="Toggle navigation of leaf_systems" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../../generated/motion_planning/motion_planning.html">motion_planning</a><input aria-label="Toggle navigation of motion_planning" class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../../../generated/motion_planning/algorithms/algorithms.html">algorithms</a><input aria-label="Toggle navigation of algorithms" class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../../generated/motion_planning/algorithms/rrt/rrt.html">rrt</a><input aria-label="Toggle navigation of rrt" class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../../../generated/motion_planning/systems/systems.html">systems</a><input aria-label="Toggle navigation of systems" class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../../generated/motion_planning/systems/open_loop_dispensers/open_loop_dispensers.html">open_loop_dispensers</a><input aria-label="Toggle navigation of open_loop_dispensers" class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../../generated/motion_planning/systems/proximity_pose_plan_dispenser/proximity_pose_plan_dispenser.html">proximity_pose_plan_dispenser</a><input aria-label="Toggle navigation of proximity_pose_plan_dispenser" class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" role="switch" type="checkbox"/><label for="toctree-checkbox-23"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../../generated/PortWatcher/PortWatcher.html">PortWatcher</a><input aria-label="Toggle navigation of PortWatcher" class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../../generated/productions/productions.html">productions</a><input aria-label="Toggle navigation of productions" class="toctree-checkbox" id="toctree-checkbox-25" name="toctree-checkbox-25" role="switch" type="checkbox"/><label for="toctree-checkbox-25"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../../../generated/productions/debug/debug.html">debug</a><input aria-label="Toggle navigation of debug" class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" role="switch" type="checkbox"/><label for="toctree-checkbox-26"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../../generated/productions/debug/grasping/grasping.html">grasping</a><input aria-label="Toggle navigation of grasping" class="toctree-checkbox" id="toctree-checkbox-27" name="toctree-checkbox-27" role="switch" type="checkbox"/><label for="toctree-checkbox-27"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../../../../../generated/productions/debug/grasping/attempt_grasp/attempt_grasp.html">attempt_grasp</a><input aria-label="Toggle navigation of attempt_grasp" class="toctree-checkbox" id="toctree-checkbox-28" name="toctree-checkbox-28" role="switch" type="checkbox"/><label for="toctree-checkbox-28"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l6 has-children"><a class="reference internal" href="../../../../../../generated/productions/debug/grasping/attempt_grasp/with_puppeteer_wrist/with_puppeteer_wrist.html">with_puppeteer_wrist</a><input aria-label="Toggle navigation of with_puppeteer_wrist" class="toctree-checkbox" id="toctree-checkbox-29" name="toctree-checkbox-29" role="switch" type="checkbox"/><label for="toctree-checkbox-29"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l6 has-children"><a class="reference internal" href="../../../../../../generated/productions/debug/grasping/attempt_grasp/with_static_wrist/with_static_wrist.html">with_static_wrist</a><input aria-label="Toggle navigation of with_static_wrist" class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" role="switch" type="checkbox"/><label for="toctree-checkbox-30"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../../../../../generated/productions/debug/grasping/show_me_this_static_grasp/show_me_this_static_grasp.html">show_me_this_static_grasp</a><input aria-label="Toggle navigation of show_me_this_static_grasp" class="toctree-checkbox" id="toctree-checkbox-31" name="toctree-checkbox-31" role="switch" type="checkbox"/><label for="toctree-checkbox-31"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../../generated/productions/debug/show_me/show_me.html">show_me</a><input aria-label="Toggle navigation of show_me" class="toctree-checkbox" id="toctree-checkbox-32" name="toctree-checkbox-32" role="switch" type="checkbox"/><label for="toctree-checkbox-32"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../../../generated/productions/motion_planning/motion_planning.html">motion_planning</a><input aria-label="Toggle navigation of motion_planning" class="toctree-checkbox" id="toctree-checkbox-33" name="toctree-checkbox-33" role="switch" type="checkbox"/><label for="toctree-checkbox-33"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../../generated/productions/motion_planning/offline/offline.html">offline</a><input aria-label="Toggle navigation of offline" class="toctree-checkbox" id="toctree-checkbox-34" name="toctree-checkbox-34" role="switch" type="checkbox"/><label for="toctree-checkbox-34"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../../../../../generated/productions/motion_planning/offline/dynamic/dynamic.html">dynamic</a><input aria-label="Toggle navigation of dynamic" class="toctree-checkbox" id="toctree-checkbox-35" name="toctree-checkbox-35" role="switch" type="checkbox"/><label for="toctree-checkbox-35"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../../../../../generated/productions/motion_planning/offline/kinematic/kinematic.html">kinematic</a><input aria-label="Toggle navigation of kinematic" class="toctree-checkbox" id="toctree-checkbox-36" name="toctree-checkbox-36" role="switch" type="checkbox"/><label for="toctree-checkbox-36"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../../../generated/productions/pick_and_place/pick_and_place.html">pick_and_place</a><input aria-label="Toggle navigation of pick_and_place" class="toctree-checkbox" id="toctree-checkbox-37" name="toctree-checkbox-37" role="switch" type="checkbox"/><label for="toctree-checkbox-37"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../../../generated/productions/roles/roles.html">roles</a><input aria-label="Toggle navigation of roles" class="toctree-checkbox" id="toctree-checkbox-38" name="toctree-checkbox-38" role="switch" type="checkbox"/><label for="toctree-checkbox-38"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../../generated/productions/roles/motion_planners/motion_planners.html">motion_planners</a><input aria-label="Toggle navigation of motion_planners" class="toctree-checkbox" id="toctree-checkbox-39" name="toctree-checkbox-39" role="switch" type="checkbox"/><label for="toctree-checkbox-39"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../../../generated/productions/types/types.html">types</a><input aria-label="Toggle navigation of types" class="toctree-checkbox" id="toctree-checkbox-40" name="toctree-checkbox-40" role="switch" type="checkbox"/><label for="toctree-checkbox-40"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../../generated/productions/types/base/base.html">base</a><input aria-label="Toggle navigation of base" class="toctree-checkbox" id="toctree-checkbox-41" name="toctree-checkbox-41" role="switch" type="checkbox"/><label for="toctree-checkbox-41"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../../generated/productions/types/debug/debug.html">debug</a><input aria-label="Toggle navigation of debug" class="toctree-checkbox" id="toctree-checkbox-42" name="toctree-checkbox-42" role="switch" type="checkbox"/><label for="toctree-checkbox-42"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../../generated/productions/types/motion_planning/motion_planning.html">motion_planning</a><input aria-label="Toggle navigation of motion_planning" class="toctree-checkbox" id="toctree-checkbox-43" name="toctree-checkbox-43" role="switch" type="checkbox"/><label for="toctree-checkbox-43"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../../../../../generated/productions/types/motion_planning/offline/offline.html">offline</a><input aria-label="Toggle navigation of offline" class="toctree-checkbox" id="toctree-checkbox-44" name="toctree-checkbox-44" role="switch" type="checkbox"/><label for="toctree-checkbox-44"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../../generated/productions/types/pick_and_place/pick_and_place.html">pick_and_place</a><input aria-label="Toggle navigation of pick_and_place" class="toctree-checkbox" id="toctree-checkbox-45" name="toctree-checkbox-45" role="switch" type="checkbox"/><label for="toctree-checkbox-45"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../../generated/robots/robots.html">robots</a><input aria-label="Toggle navigation of robots" class="toctree-checkbox" id="toctree-checkbox-46" name="toctree-checkbox-46" role="switch" type="checkbox"/><label for="toctree-checkbox-46"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/models.html">models</a><input aria-label="Toggle navigation of models" class="toctree-checkbox" id="toctree-checkbox-47" name="toctree-checkbox-47" role="switch" type="checkbox"/><label for="toctree-checkbox-47"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/beaker/beaker.html">beaker</a><input aria-label="Toggle navigation of beaker" class="toctree-checkbox" id="toctree-checkbox-48" name="toctree-checkbox-48" role="switch" type="checkbox"/><label for="toctree-checkbox-48"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/bookshelf/bookshelf.html">bookshelf</a><input aria-label="Toggle navigation of bookshelf" class="toctree-checkbox" id="toctree-checkbox-49" name="toctree-checkbox-49" role="switch" type="checkbox"/><label for="toctree-checkbox-49"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/centrifuge/centrifuge.html">centrifuge</a><input aria-label="Toggle navigation of centrifuge" class="toctree-checkbox" id="toctree-checkbox-50" name="toctree-checkbox-50" role="switch" type="checkbox"/><label for="toctree-checkbox-50"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/centrifuge/meshes/meshes.html">meshes</a><input aria-label="Toggle navigation of meshes" class="toctree-checkbox" id="toctree-checkbox-51" name="toctree-checkbox-51" role="switch" type="checkbox"/><label for="toctree-checkbox-51"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/cupboard/cupboard.html">cupboard</a><input aria-label="Toggle navigation of cupboard" class="toctree-checkbox" id="toctree-checkbox-52" name="toctree-checkbox-52" role="switch" type="checkbox"/><label for="toctree-checkbox-52"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/erlenmeyer_flask/erlenmeyer_flask.html">erlenmeyer_flask</a><input aria-label="Toggle navigation of erlenmeyer_flask" class="toctree-checkbox" id="toctree-checkbox-53" name="toctree-checkbox-53" role="switch" type="checkbox"/><label for="toctree-checkbox-53"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/michigan_block_m/michigan_block_m.html">michigan_block_m</a><input aria-label="Toggle navigation of michigan_block_m" class="toctree-checkbox" id="toctree-checkbox-54" name="toctree-checkbox-54" role="switch" type="checkbox"/><label for="toctree-checkbox-54"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/robotiq/robotiq.html">robotiq</a><input aria-label="Toggle navigation of robotiq" class="toctree-checkbox" id="toctree-checkbox-55" name="toctree-checkbox-55" role="switch" type="checkbox"/><label for="toctree-checkbox-55"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/robotiq/2f_85_gripper/2f_85_gripper.html">2f_85_gripper</a><input aria-label="Toggle navigation of 2f_85_gripper" class="toctree-checkbox" id="toctree-checkbox-56" name="toctree-checkbox-56" role="switch" type="checkbox"/><label for="toctree-checkbox-56"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l6 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/robotiq/2f_85_gripper/meshes/meshes.html">meshes</a><input aria-label="Toggle navigation of meshes" class="toctree-checkbox" id="toctree-checkbox-57" name="toctree-checkbox-57" role="switch" type="checkbox"/><label for="toctree-checkbox-57"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/robotiq/2f_85_gripper/meshes/collision/collision.html">collision</a><input aria-label="Toggle navigation of collision" class="toctree-checkbox" id="toctree-checkbox-58" name="toctree-checkbox-58" role="switch" type="checkbox"/><label for="toctree-checkbox-58"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/robotiq/2f_85_gripper/meshes/visual/visual.html">visual</a><input aria-label="Toggle navigation of visual" class="toctree-checkbox" id="toctree-checkbox-59" name="toctree-checkbox-59" role="switch" type="checkbox"/><label for="toctree-checkbox-59"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l6 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/robotiq/2f_85_gripper/urdf/urdf.html">urdf</a><input aria-label="Toggle navigation of urdf" class="toctree-checkbox" id="toctree-checkbox-60" name="toctree-checkbox-60" role="switch" type="checkbox"/><label for="toctree-checkbox-60"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/robotiq/2f_85_gripper-no-mimic/2f_85_gripper-no-mimic.html">2f_85_gripper-no-mimic</a><input aria-label="Toggle navigation of 2f_85_gripper-no-mimic" class="toctree-checkbox" id="toctree-checkbox-61" name="toctree-checkbox-61" role="switch" type="checkbox"/><label for="toctree-checkbox-61"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l6 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/robotiq/2f_85_gripper-no-mimic/meshes/meshes.html">meshes</a><input aria-label="Toggle navigation of meshes" class="toctree-checkbox" id="toctree-checkbox-62" name="toctree-checkbox-62" role="switch" type="checkbox"/><label for="toctree-checkbox-62"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/robotiq/2f_85_gripper-no-mimic/meshes/collision/collision.html">collision</a><input aria-label="Toggle navigation of collision" class="toctree-checkbox" id="toctree-checkbox-63" name="toctree-checkbox-63" role="switch" type="checkbox"/><label for="toctree-checkbox-63"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/robotiq/2f_85_gripper-no-mimic/meshes/visual/visual.html">visual</a><input aria-label="Toggle navigation of visual" class="toctree-checkbox" id="toctree-checkbox-64" name="toctree-checkbox-64" role="switch" type="checkbox"/><label for="toctree-checkbox-64"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l6 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/robotiq/2f_85_gripper-no-mimic/urdf/urdf.html">urdf</a><input aria-label="Toggle navigation of urdf" class="toctree-checkbox" id="toctree-checkbox-65" name="toctree-checkbox-65" role="switch" type="checkbox"/><label for="toctree-checkbox-65"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/test_tube_holder/test_tube_holder.html">test_tube_holder</a><input aria-label="Toggle navigation of test_tube_holder" class="toctree-checkbox" id="toctree-checkbox-66" name="toctree-checkbox-66" role="switch" type="checkbox"/><label for="toctree-checkbox-66"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/ur/ur.html">ur</a><input aria-label="Toggle navigation of ur" class="toctree-checkbox" id="toctree-checkbox-67" name="toctree-checkbox-67" role="switch" type="checkbox"/><label for="toctree-checkbox-67"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/ur/meshes/meshes.html">meshes</a><input aria-label="Toggle navigation of meshes" class="toctree-checkbox" id="toctree-checkbox-68" name="toctree-checkbox-68" role="switch" type="checkbox"/><label for="toctree-checkbox-68"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l6 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/ur/meshes/ur10/ur10.html">ur10</a><input aria-label="Toggle navigation of ur10" class="toctree-checkbox" id="toctree-checkbox-69" name="toctree-checkbox-69" role="switch" type="checkbox"/><label for="toctree-checkbox-69"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/ur/meshes/ur10/collision/collision.html">collision</a><input aria-label="Toggle navigation of collision" class="toctree-checkbox" id="toctree-checkbox-70" name="toctree-checkbox-70" role="switch" type="checkbox"/><label for="toctree-checkbox-70"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/ur/meshes/ur10/visual/visual.html">visual</a><input aria-label="Toggle navigation of visual" class="toctree-checkbox" id="toctree-checkbox-71" name="toctree-checkbox-71" role="switch" type="checkbox"/><label for="toctree-checkbox-71"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l6 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/ur/meshes/ur10e/ur10e.html">ur10e</a><input aria-label="Toggle navigation of ur10e" class="toctree-checkbox" id="toctree-checkbox-72" name="toctree-checkbox-72" role="switch" type="checkbox"/><label for="toctree-checkbox-72"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/ur/meshes/ur10e/collision/collision.html">collision</a><input aria-label="Toggle navigation of collision" class="toctree-checkbox" id="toctree-checkbox-73" name="toctree-checkbox-73" role="switch" type="checkbox"/><label for="toctree-checkbox-73"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/ur/meshes/ur10e/visual/visual.html">visual</a><input aria-label="Toggle navigation of visual" class="toctree-checkbox" id="toctree-checkbox-74" name="toctree-checkbox-74" role="switch" type="checkbox"/><label for="toctree-checkbox-74"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l6 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/ur/meshes/ur16e/ur16e.html">ur16e</a><input aria-label="Toggle navigation of ur16e" class="toctree-checkbox" id="toctree-checkbox-75" name="toctree-checkbox-75" role="switch" type="checkbox"/><label for="toctree-checkbox-75"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/ur/meshes/ur16e/collision/collision.html">collision</a><input aria-label="Toggle navigation of collision" class="toctree-checkbox" id="toctree-checkbox-76" name="toctree-checkbox-76" role="switch" type="checkbox"/><label for="toctree-checkbox-76"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/ur/meshes/ur16e/visual/visual.html">visual</a><input aria-label="Toggle navigation of visual" class="toctree-checkbox" id="toctree-checkbox-77" name="toctree-checkbox-77" role="switch" type="checkbox"/><label for="toctree-checkbox-77"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l6 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/ur/meshes/ur20/ur20.html">ur20</a><input aria-label="Toggle navigation of ur20" class="toctree-checkbox" id="toctree-checkbox-78" name="toctree-checkbox-78" role="switch" type="checkbox"/><label for="toctree-checkbox-78"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/ur/meshes/ur20/collision/collision.html">collision</a><input aria-label="Toggle navigation of collision" class="toctree-checkbox" id="toctree-checkbox-79" name="toctree-checkbox-79" role="switch" type="checkbox"/><label for="toctree-checkbox-79"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/ur/meshes/ur20/visual/visual.html">visual</a><input aria-label="Toggle navigation of visual" class="toctree-checkbox" id="toctree-checkbox-80" name="toctree-checkbox-80" role="switch" type="checkbox"/><label for="toctree-checkbox-80"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l6 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/ur/meshes/ur3/ur3.html">ur3</a><input aria-label="Toggle navigation of ur3" class="toctree-checkbox" id="toctree-checkbox-81" name="toctree-checkbox-81" role="switch" type="checkbox"/><label for="toctree-checkbox-81"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/ur/meshes/ur3/collision/collision.html">collision</a><input aria-label="Toggle navigation of collision" class="toctree-checkbox" id="toctree-checkbox-82" name="toctree-checkbox-82" role="switch" type="checkbox"/><label for="toctree-checkbox-82"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/ur/meshes/ur3/visual/visual.html">visual</a><input aria-label="Toggle navigation of visual" class="toctree-checkbox" id="toctree-checkbox-83" name="toctree-checkbox-83" role="switch" type="checkbox"/><label for="toctree-checkbox-83"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l6 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/ur/meshes/ur30/ur30.html">ur30</a><input aria-label="Toggle navigation of ur30" class="toctree-checkbox" id="toctree-checkbox-84" name="toctree-checkbox-84" role="switch" type="checkbox"/><label for="toctree-checkbox-84"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/ur/meshes/ur30/collision/collision.html">collision</a><input aria-label="Toggle navigation of collision" class="toctree-checkbox" id="toctree-checkbox-85" name="toctree-checkbox-85" role="switch" type="checkbox"/><label for="toctree-checkbox-85"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/ur/meshes/ur30/visual/visual.html">visual</a><input aria-label="Toggle navigation of visual" class="toctree-checkbox" id="toctree-checkbox-86" name="toctree-checkbox-86" role="switch" type="checkbox"/><label for="toctree-checkbox-86"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l6 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/ur/meshes/ur3e/ur3e.html">ur3e</a><input aria-label="Toggle navigation of ur3e" class="toctree-checkbox" id="toctree-checkbox-87" name="toctree-checkbox-87" role="switch" type="checkbox"/><label for="toctree-checkbox-87"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/ur/meshes/ur3e/collision/collision.html">collision</a><input aria-label="Toggle navigation of collision" class="toctree-checkbox" id="toctree-checkbox-88" name="toctree-checkbox-88" role="switch" type="checkbox"/><label for="toctree-checkbox-88"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/ur/meshes/ur3e/visual/visual.html">visual</a><input aria-label="Toggle navigation of visual" class="toctree-checkbox" id="toctree-checkbox-89" name="toctree-checkbox-89" role="switch" type="checkbox"/><label for="toctree-checkbox-89"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l6 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/ur/meshes/ur5/ur5.html">ur5</a><input aria-label="Toggle navigation of ur5" class="toctree-checkbox" id="toctree-checkbox-90" name="toctree-checkbox-90" role="switch" type="checkbox"/><label for="toctree-checkbox-90"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/ur/meshes/ur5/collision/collision.html">collision</a><input aria-label="Toggle navigation of collision" class="toctree-checkbox" id="toctree-checkbox-91" name="toctree-checkbox-91" role="switch" type="checkbox"/><label for="toctree-checkbox-91"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/ur/meshes/ur5/visual/visual.html">visual</a><input aria-label="Toggle navigation of visual" class="toctree-checkbox" id="toctree-checkbox-92" name="toctree-checkbox-92" role="switch" type="checkbox"/><label for="toctree-checkbox-92"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l6 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/ur/meshes/ur5e/ur5e.html">ur5e</a><input aria-label="Toggle navigation of ur5e" class="toctree-checkbox" id="toctree-checkbox-93" name="toctree-checkbox-93" role="switch" type="checkbox"/><label for="toctree-checkbox-93"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/ur/meshes/ur5e/collision/collision.html">collision</a><input aria-label="Toggle navigation of collision" class="toctree-checkbox" id="toctree-checkbox-94" name="toctree-checkbox-94" role="switch" type="checkbox"/><label for="toctree-checkbox-94"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l7 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/ur/meshes/ur5e/visual/visual.html">visual</a><input aria-label="Toggle navigation of visual" class="toctree-checkbox" id="toctree-checkbox-95" name="toctree-checkbox-95" role="switch" type="checkbox"/><label for="toctree-checkbox-95"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/wrenches/wrenches.html">wrenches</a><input aria-label="Toggle navigation of wrenches" class="toctree-checkbox" id="toctree-checkbox-96" name="toctree-checkbox-96" role="switch" type="checkbox"/><label for="toctree-checkbox-96"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../../../../../generated/robots/models/wrenches/wrench1/wrench1.html">wrench1</a><input aria-label="Toggle navigation of wrench1" class="toctree-checkbox" id="toctree-checkbox-97" name="toctree-checkbox-97" role="switch" type="checkbox"/><label for="toctree-checkbox-97"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../../generated/stations/stations.html">stations</a><input aria-label="Toggle navigation of stations" class="toctree-checkbox" id="toctree-checkbox-98" name="toctree-checkbox-98" role="switch" type="checkbox"/><label for="toctree-checkbox-98"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../../../generated/stations/classical/classical.html">classical</a><input aria-label="Toggle navigation of classical" class="toctree-checkbox" id="toctree-checkbox-99" name="toctree-checkbox-99" role="switch" type="checkbox"/><label for="toctree-checkbox-99"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../../../generated/stations/kinematic/kinematic.html">kinematic</a><input aria-label="Toggle navigation of kinematic" class="toctree-checkbox" id="toctree-checkbox-100" name="toctree-checkbox-100" role="switch" type="checkbox"/><label for="toctree-checkbox-100"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../../generated/systems/systems.html">systems</a><input aria-label="Toggle navigation of systems" class="toctree-checkbox" id="toctree-checkbox-101" name="toctree-checkbox-101" role="switch" type="checkbox"/><label for="toctree-checkbox-101"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../../generated/utils/utils.html">utils</a><input aria-label="Toggle navigation of utils" class="toctree-checkbox" id="toctree-checkbox-102" name="toctree-checkbox-102" role="switch" type="checkbox"/><label for="toctree-checkbox-102"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../../../generated/utils/initial_condition_manager/initial_condition_manager.html">initial_condition_manager</a><input aria-label="Toggle navigation of initial_condition_manager" class="toctree-checkbox" id="toctree-checkbox-103" name="toctree-checkbox-103" role="switch" type="checkbox"/><label for="toctree-checkbox-103"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../../../generated/utils/leaf_systems/leaf_systems.html">leaf_systems</a><input aria-label="Toggle navigation of leaf_systems" class="toctree-checkbox" id="toctree-checkbox-104" name="toctree-checkbox-104" role="switch" type="checkbox"/><label for="toctree-checkbox-104"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../../generated/utils/leaf_systems/network_fsm/network_fsm.html">network_fsm</a><input aria-label="Toggle navigation of network_fsm" class="toctree-checkbox" id="toctree-checkbox-105" name="toctree-checkbox-105" role="switch" type="checkbox"/><label for="toctree-checkbox-105"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../../generated/utils/leaf_systems/rigid_transform_to_vector_system/rigid_transform_to_vector_system.html">rigid_transform_to_vector_system</a><input aria-label="Toggle navigation of rigid_transform_to_vector_system" class="toctree-checkbox" id="toctree-checkbox-106" name="toctree-checkbox-106" role="switch" type="checkbox"/><label for="toctree-checkbox-106"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../../../generated/utils/pick_and_place/pick_and_place.html">pick_and_place</a><input aria-label="Toggle navigation of pick_and_place" class="toctree-checkbox" id="toctree-checkbox-107" name="toctree-checkbox-107" role="switch" type="checkbox"/><label for="toctree-checkbox-107"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../../../generated/utils/puppetmaker/puppetmaker.html">puppetmaker</a><input aria-label="Toggle navigation of puppetmaker" class="toctree-checkbox" id="toctree-checkbox-108" name="toctree-checkbox-108" role="switch" type="checkbox"/><label for="toctree-checkbox-108"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../../../generated/utils/watcher/watcher.html">watcher</a><input aria-label="Toggle navigation of watcher" class="toctree-checkbox" id="toctree-checkbox-109" name="toctree-checkbox-109" role="switch" type="checkbox"/><label for="toctree-checkbox-109"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <h1>Source code for brom_drake.productions.motion_planning.offline.dynamic.chem_lab2</h1><div class="highlight"><pre>
+<span></span>
+<span class="kn">from</span> <span class="nn">importlib</span> <span class="kn">import</span> <span class="n">resources</span> <span class="k">as</span> <span class="n">impresources</span>
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">pydrake.all</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">AbstractValue</span><span class="p">,</span>
+    <span class="n">CollisionFilterDeclaration</span><span class="p">,</span>
+    <span class="n">ConstantValueSource</span><span class="p">,</span>
+    <span class="n">ConstantVectorSource</span><span class="p">,</span>
+    <span class="n">Context</span><span class="p">,</span>
+    <span class="n">Diagram</span><span class="p">,</span>
+    <span class="n">GeometrySet</span><span class="p">,</span>
+    <span class="n">InverseKinematics</span><span class="p">,</span>
+    <span class="n">MultibodyPlant</span><span class="p">,</span>
+    <span class="n">Parser</span><span class="p">,</span>
+    <span class="n">Quaternion</span><span class="p">,</span>
+    <span class="n">RigidTransform</span><span class="p">,</span>
+    <span class="n">RotationMatrix</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">pydrake.math</span> <span class="kn">import</span> <span class="n">RollPitchYaw</span><span class="p">,</span> <span class="n">RigidTransform</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="c1"># Internal Imports</span>
+<span class="kn">from</span> <span class="nn">brom_drake.directories</span> <span class="kn">import</span> <span class="n">DEFAULT_BROM_MODELS_DIR</span>
+<span class="kn">from</span> <span class="nn">brom_drake.control</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">GripperTarget</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">brom_drake.file_manipulation.urdf</span> <span class="kn">import</span> <span class="n">drakeify_my_urdf</span>
+<span class="kn">from</span> <span class="nn">brom_drake.file_manipulation.urdf.shapes.box</span> <span class="kn">import</span> <span class="n">BoxDefinition</span>
+<span class="kn">from</span> <span class="nn">brom_drake.file_manipulation.urdf.simple_writer.urdf_definition</span> <span class="kn">import</span> <span class="n">SimpleShapeURDFDefinition</span><span class="p">,</span> \
+    <span class="n">InertiaDefinition</span>
+<span class="kn">from</span> <span class="nn">brom_drake.motion_planning.systems.open_loop_dispensers.open_loop_plan_dispenser</span> <span class="kn">import</span> <span class="n">OpenLoopPlanDispenser</span>
+<span class="kn">import</span> <span class="nn">brom_drake.robots</span> <span class="k">as</span> <span class="nn">robots</span>
+<span class="kn">from</span> <span class="nn">brom_drake.robots.gripper_type</span> <span class="kn">import</span> <span class="n">GripperType</span>
+<span class="kn">from</span> <span class="nn">brom_drake.stations.classical</span> <span class="kn">import</span> <span class="n">UR10eStation</span>
+<span class="kn">from</span> <span class="nn">brom_drake.productions</span> <span class="kn">import</span> <span class="n">ProductionID</span>
+<span class="kn">from</span> <span class="nn">brom_drake.productions.roles</span> <span class="kn">import</span> <span class="n">Role</span>
+<span class="kn">from</span> <span class="nn">brom_drake.productions.types</span> <span class="kn">import</span> <span class="n">OfflineDynamicMotionPlanningProduction</span>
+<span class="kn">from</span> <span class="nn">brom_drake.utils</span> <span class="kn">import</span> <span class="n">Performer</span><span class="p">,</span> <span class="n">AddGround</span><span class="p">,</span> <span class="n">MotionPlan</span>
+
+
+<div class="viewcode-block" id="ChemLab2">
+<a class="viewcode-back" href="../../../../../../generated/productions/motion_planning/offline/dynamic/dynamic.html#brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2">[docs]</a>
+<span class="k">class</span> <span class="nc">ChemLab2</span><span class="p">(</span><span class="n">OfflineDynamicMotionPlanningProduction</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    *Description*</span>
+
+<span class="sd">    This production is the second in the chemistry lab series.</span>
+<span class="sd">    It is used to test the motion planning capabilities of the robot</span>
+<span class="sd">    in a chemistry lab setting with minimal constraints, but with full</span>
+<span class="sd">    dynamics of the robot included in the simulation.</span>
+
+<span class="sd">    The earlier chemistry lab production (ChemLab1) ignored the physics of the</span>
+<span class="sd">    arm and objects in order to simplify some calculations.</span>
+
+<span class="sd">    *Parameters*</span>
+
+<span class="sd">    time_step: float, optional</span>
+<span class="sd">        The time step for the production, by default 1e-3.</span>
+
+<span class="sd">    meshcat_port_number: int, optional</span>
+<span class="sd">        The port number for meshcat visualization, by default 7001.</span>
+
+<span class="sd">    plan_execution_speed: float, optional</span>
+<span class="sd">        The speed at which to execute the motion plan, by default 0.2.</span>
+
+<span class="sd">    pose_WorldBeaker: RigidTransform, optional</span>
+<span class="sd">        The pose of the beaker in the world frame, by default None.</span>
+
+<span class="sd">    table_length: float, optional</span>
+<span class="sd">        The length of the table, by default 0.6.</span>
+
+<span class="sd">    table_width: float, optional</span>
+<span class="sd">        The width of the table, by default 2.0.</span>
+
+<span class="sd">    table_height: float, optional</span>
+<span class="sd">        The height of the table, by default 0.1.</span>
+
+<span class="sd">    shelf_pose: RigidTransform, optional</span>
+<span class="sd">        The pose of the shelf in the world frame, by default None.</span>
+
+<span class="sd">    gripper_type: GripperType, optional</span>
+<span class="sd">        The type of gripper to use, by default GripperType.Robotiq_2f_85.</span>
+
+<span class="sd">    *Usage*</span>
+
+<span class="sd">    To use this production, create an instance of the ChemLab2 class,</span>
+<span class="sd">    provide it with a motion planning function, and then build it. ::</span>
+
+<span class="sd">        from brom_drake.motion_planning.algorithms.rrt.bidirectional_connect import (</span>
+<span class="sd">            BidirectionalRRTConnectPlanner,</span>
+<span class="sd">            BidirectionalRRTConnectPlannerConfig,</span>
+<span class="sd">        )</span>
+<span class="sd">        from brom_drake.productions import ChemLab2</span>
+<span class="sd">    </span>
+<span class="sd">        # Create the production</span>
+<span class="sd">        production = ChemLab2()</span>
+
+<span class="sd">        # Create a planner object which will be used to plan the motion</span>
+<span class="sd">        config = BidirectionalRRTConnectPlannerConfig(</span>
+<span class="sd">            steering_step_size=0.2,</span>
+<span class="sd">        )</span>
+<span class="sd">        planner2 = BidirectionalRRTConnectPlanner(</span>
+<span class="sd">            production.arm,</span>
+<span class="sd">            production.plant,</span>
+<span class="sd">            production.scene_graph,</span>
+<span class="sd">            config=config,</span>
+<span class="sd">        )</span>
+
+<span class="sd">        # To build the production, we only need to provide a planning function</span>
+<span class="sd">        # (can come from anywhere, not just a BaseRRTPlanner object)</span>
+<span class="sd">        diagram, diagram_context = production.easy_cast_and_build(</span>
+<span class="sd">            planner2.plan,</span>
+<span class="sd">            with_watcher=True,</span>
+<span class="sd">        )</span>
+
+<span class="sd">        print(&quot;Simulating...&quot;)</span>
+
+<span class="sd">        # Simulate the diagram</span>
+<span class="sd">        simulator = Simulator(diagram, diagram_context)</span>
+<span class="sd">        simulator.set_target_realtime_rate(2.0)</span>
+
+<span class="sd">        # Run simulation</span>
+<span class="sd">        simulator.Initialize()</span>
+<span class="sd">        simulator.AdvanceTo(0.05)</span>
+<span class="sd">        planned_trajectory = production.plan_dispenser.planned_trajectory</span>
+
+<span class="sd">        print(f&quot;Expected end time of trajectory: {planned_trajectory.end_time()}&quot;)</span>
+<span class="sd">        simulator.AdvanceTo(planned_trajectory.end_time()+2.0)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">time_step</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-3</span><span class="p">,</span>
+        <span class="n">meshcat_port_number</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">7001</span><span class="p">,</span>
+        <span class="n">plan_execution_speed</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span>
+        <span class="n">pose_WorldBeaker</span><span class="p">:</span> <span class="n">RigidTransform</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">table_length</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.6</span><span class="p">,</span>
+        <span class="n">table_width</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
+        <span class="n">table_height</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+        <span class="n">shelf_pose</span><span class="p">:</span> <span class="n">RigidTransform</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">gripper_type</span><span class="p">:</span> <span class="n">GripperType</span> <span class="o">=</span> <span class="n">GripperType</span><span class="o">.</span><span class="n">Robotiq_2f_85</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *Description*</span>
+<span class="sd">            </span>
+<span class="sd">        Constructor for the ChemLab2 Production.</span>
+
+<span class="sd">        *Parameters*</span>
+
+<span class="sd">        time_step: float, optional</span>
+<span class="sd">            The time step for the production, by default 1e-3.</span>
+
+<span class="sd">        meshcat_port_number: int, optional</span>
+<span class="sd">            The port number for meshcat visualization, by default 7001.</span>
+
+<span class="sd">        plan_execution_speed: float, optional</span>
+<span class="sd">            The speed at which to execute the motion plan, by default 0.2.</span>
+
+<span class="sd">        pose_WorldBeaker: RigidTransform, optional</span>
+<span class="sd">            The pose of the beaker in the world frame, by default None.</span>
+
+<span class="sd">        table_length: float, optional</span>
+<span class="sd">            The length of the table, by default 0.6.</span>
+
+<span class="sd">        table_width: float, optional</span>
+<span class="sd">            The width of the table, by default 2.0.</span>
+
+<span class="sd">        table_height: float, optional</span>
+<span class="sd">            The height of the table, by default 0.1.</span>
+
+<span class="sd">        shelf_pose: RigidTransform, optional</span>
+<span class="sd">            The pose of the shelf in the world frame, by default None.</span>
+
+<span class="sd">        gripper_type: GripperType, optional</span>
+<span class="sd">            The type of gripper to use, by default GripperType.Robotiq_2f_85.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Superclass constructor</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Input Processing</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_step</span> <span class="o">=</span> <span class="n">time_step</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">meshcat_port_number</span> <span class="o">=</span> <span class="n">meshcat_port_number</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plan_execution_speed</span> <span class="o">=</span> <span class="n">plan_execution_speed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table_height</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_width</span> <span class="o">=</span> <span class="n">table_height</span><span class="p">,</span> <span class="n">table_width</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table_length</span> <span class="o">=</span> <span class="n">table_length</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gripper_type</span> <span class="o">=</span> <span class="n">gripper_type</span>
+
+        <span class="c1"># Initialize pose data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shelf_pose</span> <span class="o">=</span> <span class="n">shelf_pose</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pose_WorldBeaker</span> <span class="o">=</span> <span class="n">pose_WorldBeaker</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pose_BeakerGoal</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initialize_pose_data</span><span class="p">()</span>
+
+        <span class="c1"># Set station</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">station</span> <span class="o">=</span> <span class="n">UR10eStation</span><span class="p">(</span>
+            <span class="n">time_step</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">time_step</span><span class="p">,</span>
+            <span class="n">meshcat_port_number</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">meshcat_port_number</span><span class="p">,</span>
+            <span class="n">gripper_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">gripper_type</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">station</span><span class="o">.</span><span class="n">arm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">robot_model_idx_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">arm</span>
+
+        <span class="c1"># self.gripper = self.station.gripper</span>
+
+        <span class="c1"># Set Names of Plant and scene graph</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plant</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">station</span><span class="o">.</span><span class="n">plant</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scene_graph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">station</span><span class="o">.</span><span class="n">scene_graph</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">set_name</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ChemLab2_Production_Plant&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scene_graph</span><span class="o">.</span><span class="n">set_name</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ChemLab2_Production_SceneGraph&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Define placeholder variables for models</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">test_tube_holder1</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="ChemLab2.add_supporting_cast">
+<a class="viewcode-back" href="../../../../../../generated/productions/motion_planning/offline/dynamic/dynamic.html#brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2.add_supporting_cast">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_supporting_cast</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *Description*</span>
+<span class="sd">        </span>
+<span class="sd">        This method adds all secondary cast members to the builder.</span>
+<span class="sd">        The secondary cast members in the production are the:</span>
+
+<span class="sd">        - Table, where the robot exists</span>
+<span class="sd">        - Test Tube Holders</span>
+<span class="sd">        - Component which share&#39;s the robot model reference</span>
+<span class="sd">        - Motion Planning components (e.g., dispensers, etc.)</span>
+<span class="sd">        - Start and Goal sources</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Call the superclass method</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">add_supporting_cast</span><span class="p">()</span>
+
+        <span class="c1"># Setup</span>
+
+        <span class="c1"># Create the table and the items on it</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_table</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_test_tube_holders</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_beaker</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_shelf</span><span class="p">()</span>
+        <span class="n">AddGround</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="p">)</span>
+
+        <span class="c1"># Add the station</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">AddSystem</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">station</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">station</span><span class="o">.</span><span class="n">Finalize</span><span class="p">()</span>
+
+        <span class="c1"># Add the motion planning components</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_robot_source_system</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_motion_planning_components</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_start_and_goal_sources_to_builder</span><span class="p">()</span>
+
+        <span class="c1"># Add initial conditions for the arm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initial_condition_manager</span><span class="o">.</span><span class="n">add_initial_configuration</span><span class="p">(</span>
+            <span class="n">model_instance_index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">arm</span><span class="p">,</span>
+            <span class="n">configuration</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">start_configuration</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="c1"># The initial condition will be set for the plant when we build the production.</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Completed adding supporting cast members.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ChemLab2.add_beaker">
+<a class="viewcode-back" href="../../../../../../generated/productions/motion_planning/offline/dynamic/dynamic.html#brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2.add_beaker">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_beaker</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *Description*</span>
+<span class="sd">        </span>
+<span class="sd">        This method adds the beaker URDF to the production&#39;s plant.</span>
+<span class="sd">        The beaker&#39;s URDF comes from the brom_drake `robots` directories.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">plant</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span>
+        <span class="n">urdf_file_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span>
+            <span class="n">impresources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="n">robots</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;models/beaker/beaker.urdf&quot;</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Use Drakeify my urdf to create the beaker</span>
+        <span class="n">new_beaker_urdf</span> <span class="o">=</span> <span class="n">drakeify_my_urdf</span><span class="p">(</span><span class="n">urdf_file_path</span><span class="p">)</span>
+
+        <span class="c1"># Add the beaker to the plant</span>
+        <span class="n">model_idcs</span> <span class="o">=</span> <span class="n">Parser</span><span class="p">(</span><span class="n">plant</span><span class="o">=</span><span class="n">plant</span><span class="p">)</span><span class="o">.</span><span class="n">AddModels</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">new_beaker_urdf</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beaker_model_index</span> <span class="o">=</span> <span class="n">model_idcs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Add object to the list we use for initialization</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">models_in_supporting_cast</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">beaker_model_index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pose_WorldBeaker</span><span class="p">),</span>
+        <span class="p">)</span></div>
+
+
+        <span class="c1"># # Weld the beaker to the world frame</span>
+        <span class="c1"># plant.WeldFrames(</span>
+        <span class="c1">#     plant.world_frame(),</span>
+        <span class="c1">#     plant.GetFrameByName(&quot;beaker_base_link&quot;, self.beaker_model_index),</span>
+        <span class="c1">#     self.pose_WorldBeaker,</span>
+        <span class="c1"># )</span>
+
+<div class="viewcode-block" id="ChemLab2.add_motion_planning_components">
+<a class="viewcode-back" href="../../../../../../generated/productions/motion_planning/offline/dynamic/dynamic.html#brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2.add_motion_planning_components">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_motion_planning_components</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *Description*</span>
+
+<span class="sd">        Add the following components to the production&#39;s</span>
+<span class="sd">        ``builder`` in order to help with motion planning:</span>
+
+<span class="sd">        - `plan_dispenser`: An OpenLoopPlanDispenser which will describe the reference robot trajectory.</span>
+<span class="sd">        - Connections between reference trajectory and UR10e station.</span>
+<span class="sd">        - Gripper control components (type of control and an &quot;open&quot; command)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">arm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">arm</span>
+        <span class="n">n_actuated_dof</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">num_actuated_dofs</span><span class="p">(</span><span class="n">arm</span><span class="p">)</span> <span class="c1"># Number of actuated DOF in arm</span>
+
+        <span class="c1"># Add the Plan Dispenser and connect it to the station</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plan_dispenser</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">AddSystem</span><span class="p">(</span>
+            <span class="n">OpenLoopPlanDispenser</span><span class="p">(</span><span class="n">n_actuated_dof</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">plan_execution_speed</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">Connect</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plan_dispenser</span><span class="o">.</span><span class="n">GetOutputPort</span><span class="p">(</span><span class="s2">&quot;point_in_plan&quot;</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">station</span><span class="o">.</span><span class="n">GetInputPort</span><span class="p">(</span><span class="s2">&quot;desired_joint_positions&quot;</span><span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gripper_type</span> <span class="o">!=</span> <span class="n">GripperType</span><span class="o">.</span><span class="n">NoGripper</span><span class="p">:</span>
+            <span class="c1"># Add components for the gripper&#39;s control, including:</span>
+            <span class="c1"># - Gripper Target Type</span>
+            <span class="c1"># - Gripper Target</span>
+            <span class="c1"># Both should be static.</span>
+            
+            <span class="c1"># Add the gripper target to the builder</span>
+            <span class="n">gripper_target_type_source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">AddSystem</span><span class="p">(</span>
+                <span class="n">ConstantValueSource</span><span class="p">(</span>
+                    <span class="n">AbstractValue</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="n">GripperTarget</span><span class="o">.</span><span class="n">kPosition</span><span class="p">),</span>
+                <span class="p">),</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Connect the gripper target type to the station</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">Connect</span><span class="p">(</span>
+                <span class="n">gripper_target_type_source</span><span class="o">.</span><span class="n">get_output_port</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">station</span><span class="o">.</span><span class="n">GetInputPort</span><span class="p">(</span><span class="s2">&quot;gripper_target_type&quot;</span><span class="p">),</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Add the gripper target to the builder</span>
+            <span class="n">gripper_target_source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">AddSystem</span><span class="p">(</span>
+                <span class="n">ConstantVectorSource</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">])),</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Connect the gripper target to the station</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">Connect</span><span class="p">(</span>
+                <span class="n">gripper_target_source</span><span class="o">.</span><span class="n">get_output_port</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">station</span><span class="o">.</span><span class="n">GetInputPort</span><span class="p">(</span><span class="s2">&quot;gripper_target&quot;</span><span class="p">),</span>
+            <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ChemLab2.add_shelf">
+<a class="viewcode-back" href="../../../../../../generated/productions/motion_planning/offline/dynamic/dynamic.html#brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2.add_shelf">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_shelf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *Description*</span>
+
+<span class="sd">        Add the shelf to the production&#39;s plant.</span>
+<span class="sd">        Welds the shelf to the world frame.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">plant</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span>
+        <span class="n">urdf_file_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span>
+            <span class="n">impresources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="n">robots</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;models/cupboard/cupboard.sdf&quot;</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Add the shelf to the plant</span>
+        <span class="n">model_idcs</span> <span class="o">=</span> <span class="n">Parser</span><span class="p">(</span><span class="n">plant</span><span class="o">=</span><span class="n">plant</span><span class="p">)</span><span class="o">.</span><span class="n">AddModels</span><span class="p">(</span><span class="n">urdf_file_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shelf_model_index</span> <span class="o">=</span> <span class="n">model_idcs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Weld the bookshelf to the world frame</span>
+        <span class="n">plant</span><span class="o">.</span><span class="n">WeldFrames</span><span class="p">(</span>
+            <span class="n">plant</span><span class="o">.</span><span class="n">world_frame</span><span class="p">(),</span>
+            <span class="n">plant</span><span class="o">.</span><span class="n">GetFrameByName</span><span class="p">(</span><span class="s2">&quot;cupboard_body&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shelf_model_index</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pose_WorldShelf</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ChemLab2.add_table">
+<a class="viewcode-back" href="../../../../../../generated/productions/motion_planning/offline/dynamic/dynamic.html#brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2.add_table">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *Description*</span>
+<span class="sd">        </span>
+<span class="sd">        This method adds the table to the production&#39;s plant.</span>
+<span class="sd">        Welds the table to the world frame.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+
+        <span class="c1"># Create a new shape urdf</span>
+        <span class="n">table_defn</span> <span class="o">=</span> <span class="n">SimpleShapeURDFDefinition</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;table&quot;</span><span class="p">,</span>
+            <span class="n">shape</span><span class="o">=</span><span class="n">BoxDefinition</span><span class="p">(</span>
+                <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table_width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_length</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_height</span><span class="p">),</span>
+            <span class="p">),</span>
+            <span class="n">mass</span><span class="o">=</span><span class="mf">100.0</span><span class="p">,</span> <span class="c1"># kg</span>
+            <span class="n">inertia</span><span class="o">=</span><span class="n">InertiaDefinition</span><span class="p">(</span>
+                <span class="n">ixx</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
+                <span class="n">iyy</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
+                <span class="n">izz</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">color</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]),</span>
+        <span class="p">)</span>
+        <span class="n">table_urdf_path</span> <span class="o">=</span> <span class="n">DEFAULT_BROM_MODELS_DIR</span> <span class="o">+</span> <span class="s2">&quot;/table/table.urdf&quot;</span>
+        <span class="n">table_defn</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="n">table_urdf_path</span><span class="p">)</span>
+
+        <span class="c1"># Add the table to the production</span>
+        <span class="n">table_model_index</span> <span class="o">=</span> <span class="n">Parser</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="p">)</span><span class="o">.</span><span class="n">AddModels</span><span class="p">(</span><span class="n">table_urdf_path</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Weld the table to the world frame</span>
+        <span class="n">table_pose</span> <span class="o">=</span> <span class="n">RigidTransform</span><span class="p">(</span>
+            <span class="n">RollPitchYaw</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span><span class="o">.</span><span class="n">ToQuaternion</span><span class="p">(),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">WeldFrames</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">world_frame</span><span class="p">(),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetFrameByName</span><span class="p">(</span><span class="s2">&quot;table_base_link&quot;</span><span class="p">,</span> <span class="n">table_model_index</span><span class="p">),</span>
+            <span class="n">table_pose</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ChemLab2.add_test_tube_holders">
+<a class="viewcode-back" href="../../../../../../generated/productions/motion_planning/offline/dynamic/dynamic.html#brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2.add_test_tube_holders">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_test_tube_holders</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *Description*</span>
+<span class="sd">        </span>
+<span class="sd">        This method adds the test tube holders to the production&#39;s plant.</span>
+<span class="sd">        Welds the test tube holders to the world frame with using</span>
+<span class="sd">        predefined poses.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">test_tube_urdf1</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span>
+            <span class="n">impresources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="n">robots</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;models/test_tube_holder/test_tube_holder.urdf&quot;</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Use Drakeify my urdf to create the test tube holders</span>
+        <span class="n">new_test_tube_holder_urdf1</span> <span class="o">=</span> <span class="n">drakeify_my_urdf</span><span class="p">(</span><span class="n">test_tube_urdf1</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">test_tube_holder1</span> <span class="o">=</span> <span class="n">Parser</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="p">)</span><span class="o">.</span><span class="n">AddModels</span><span class="p">(</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">new_test_tube_holder_urdf1</span><span class="p">)</span>
+        <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Add object to the list we use for initialization</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">models_in_supporting_cast</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test_tube_holder1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pose_WorldHolder</span><span class="p">),</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ChemLab2.add_cast_and_build">
+<a class="viewcode-back" href="../../../../../../generated/productions/motion_planning/offline/dynamic/dynamic.html#brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2.add_cast_and_build">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_cast_and_build</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">cast</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Role</span><span class="p">,</span> <span class="n">Performer</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[],</span>
+        <span class="n">with_watcher</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Diagram</span><span class="p">,</span> <span class="n">Context</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *Description*</span>
+<span class="sd">        </span>
+<span class="sd">        Modifies the normal add_cast_and_build, so that</span>
+<span class="sd">        we share the context of the plant with the appropriate</span>
+<span class="sd">        parts of the system.</span>
+
+<span class="sd">        TODO(kwesi): Consider making this a standard part of the</span>
+<span class="sd">        OfflineDynamicMotionPlanningProduction class.</span>
+
+<span class="sd">        *Parameters*</span>
+
+<span class="sd">        cast: List[Tuple[Role, Performer]], optional</span>
+<span class="sd">            The cast to add to the production, by default [].</span>
+
+<span class="sd">        with_watcher: bool, optional</span>
+<span class="sd">            A Boolean that determines whether to add a watcher to the diagram, by default False.</span>
+
+<span class="sd">        *Returns*</span>
+
+<span class="sd">        diagram: Diagram</span>
+<span class="sd">            The built diagram.</span>
+
+<span class="sd">        diagram_context: Context</span>
+<span class="sd">            The context for the built diagram.</span>
+<span class="sd">            This context will be used to initialize the watcher.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">diagram</span><span class="p">,</span> <span class="n">diagram_context</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">add_cast_and_build</span><span class="p">(</span>
+            <span class="n">main_cast_members</span><span class="o">=</span><span class="n">cast</span><span class="p">,</span>
+            <span class="n">with_watcher</span><span class="o">=</span><span class="n">with_watcher</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Configure the scene graph for collision detection</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">configure_collision_filter</span><span class="p">(</span>
+            <span class="n">diagram</span><span class="o">.</span><span class="n">GetSubsystemContext</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">scene_graph</span><span class="p">,</span> <span class="n">diagram_context</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Connect arm controller to the appropriate plant_context</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">station</span><span class="o">.</span><span class="n">arm_controller</span><span class="o">.</span><span class="n">plant_context</span> <span class="o">=</span> <span class="n">diagram</span><span class="o">.</span><span class="n">GetSubsystemContext</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">station</span><span class="o">.</span><span class="n">arm_controller</span><span class="o">.</span><span class="n">plant</span><span class="p">,</span> <span class="n">diagram_context</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">role_ii</span><span class="p">,</span> <span class="n">performer_ii</span> <span class="ow">in</span> <span class="n">cast</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">role_ii</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;OfflineMotionPlanner&quot;</span><span class="p">:</span>
+                <span class="n">performer_ii</span><span class="o">.</span><span class="n">set_internal_root_context</span><span class="p">(</span>
+                    <span class="n">diagram_context</span>
+                <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">diagram</span><span class="p">,</span> <span class="n">diagram_context</span></div>
+
+    
+<div class="viewcode-block" id="ChemLab2.configure_collision_filter">
+<a class="viewcode-back" href="../../../../../../generated/productions/motion_planning/offline/dynamic/dynamic.html#brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2.configure_collision_filter">[docs]</a>
+    <span class="k">def</span> <span class="nf">configure_collision_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scene_graph_context</span><span class="p">:</span> <span class="n">Context</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *Description*</span>
+<span class="sd">        </span>
+<span class="sd">        This method configures the collision filter in the scene graph so that we ignore:</span>
+<span class="sd">        - Self collisions of the shelf</span>
+<span class="sd">        - Collisions between adjacent robot links (TODO)</span>
+
+<span class="sd">        *Parameters*</span>
+
+<span class="sd">        scene_graph_context: Context</span>
+<span class="sd">            The context for the scene graph.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">scene_graph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scene_graph</span>
+        <span class="n">shelf_model_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shelf_model_index</span>
+
+        <span class="c1"># Ignore self collisions of the shelf, by:</span>
+        <span class="c1"># - Getting the model instance index of the shelf</span>
+        <span class="c1"># - Collecting the Geometry IDs of all the geometries in the shelf</span>
+        <span class="n">shelf_geometry_ids</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">body_index</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetBodyIndices</span><span class="p">(</span><span class="n">shelf_model_index</span><span class="p">):</span>
+            <span class="c1"># Get the geometry IDs</span>
+            <span class="n">shelf_geometry_ids</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetCollisionGeometriesForBody</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">get_body</span><span class="p">(</span><span class="n">body_index</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="c1"># print(self.plant.get_body(body_index))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">shelf_geometry_ids</span> <span class="o">=</span> <span class="n">shelf_geometry_ids</span>
+
+        <span class="c1"># Apply the collision filter</span>
+        <span class="n">scene_graph</span><span class="o">.</span><span class="n">collision_filter_manager</span><span class="p">(</span><span class="n">scene_graph_context</span><span class="p">)</span><span class="o">.</span><span class="n">Apply</span><span class="p">(</span>
+            <span class="n">CollisionFilterDeclaration</span><span class="p">()</span><span class="o">.</span><span class="n">ExcludeWithin</span><span class="p">(</span>
+                <span class="n">GeometrySet</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shelf_geometry_ids</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="p">)</span></div>
+
+
+        <span class="c1"># # Ignore collisions between the robot links</span>
+        <span class="c1"># # TODO: Actually implement this for adjacent links? Or is this not necessary?</span>
+        <span class="c1"># arm_geometry_ids = []</span>
+        <span class="c1"># for body_index in self.plant.GetBodyIndices(self.arm):</span>
+        <span class="c1">#     arm_geometry_ids.extend(</span>
+        <span class="c1">#         self.plant.GetCollisionGeometriesForBody(</span>
+        <span class="c1">#             self.plant.get_body(body_index)</span>
+        <span class="c1">#         )</span>
+        <span class="c1">#     )</span>
+
+        <span class="c1"># self.arm_geometry_ids = arm_geometry_ids</span>
+
+        <span class="c1"># # Apply the collision filter</span>
+        <span class="c1"># scene_graph.collision_filter_manager(scene_graph_context).Apply(</span>
+        <span class="c1">#     CollisionFilterDeclaration().ExcludeWithin(</span>
+        <span class="c1">#         GeometrySet(self.arm_geometry_ids)</span>
+        <span class="c1">#     )</span>
+        <span class="c1"># )</span>
+    
+<div class="viewcode-block" id="ChemLab2.define_pose_ik_problem">
+<a class="viewcode-back" href="../../../../../../generated/productions/motion_planning/offline/dynamic/dynamic.html#brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2.define_pose_ik_problem">[docs]</a>
+    <span class="k">def</span> <span class="nf">define_pose_ik_problem</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">pose_WorldTarget</span><span class="p">:</span> <span class="n">RigidTransform</span><span class="p">,</span>
+        <span class="n">target_frame_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">eps0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.5e-2</span><span class="p">,</span>
+        <span class="n">orientation_cost_scaling</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.25</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">InverseKinematics</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *Description*</span>
+<span class="sd">        </span>
+<span class="sd">        Sets up the inverse kinematics problem for the start pose</span>
+<span class="sd">        input to theis function.</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">scene_graph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scene_graph</span>
+        <span class="n">sg_inspector</span> <span class="o">=</span> <span class="n">scene_graph</span><span class="o">.</span><span class="n">model_inspector</span><span class="p">()</span>
+
+        <span class="c1"># Create IK Problem</span>
+        <span class="n">ik_problem</span> <span class="o">=</span> <span class="n">InverseKinematics</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="p">)</span>
+
+        <span class="c1"># Add Pose Target</span>
+        <span class="n">ik_problem</span><span class="o">.</span><span class="n">AddPositionConstraint</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">world_frame</span><span class="p">(),</span>
+            <span class="n">pose_WorldTarget</span><span class="o">.</span><span class="n">translation</span><span class="p">(),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetFrameByName</span><span class="p">(</span><span class="n">target_frame_name</span><span class="p">),</span>
+            <span class="p">(</span><span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,))</span> <span class="o">*</span> <span class="n">eps0</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+            <span class="p">(</span><span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,))</span> <span class="o">*</span> <span class="n">eps0</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+        <span class="p">)</span>
+
+        <span class="c1"># TODO(kwesi): Add OrientationCosntraint</span>
+        <span class="c1"># ik_problem.AddOrientationConstraint(</span>
+        <span class="c1">#     self.plant.world_frame(),</span>
+        <span class="c1">#     RotationMatrix(Quaternion(input_pose_vec[3:]).rotation()),</span>
+        <span class="c1">#     self.plant.GetFrameByName(&quot;ft_frame&quot;),</span>
+        <span class="c1">#     RotationMatrix.Identity(),</span>
+        <span class="c1">#     0.25,</span>
+        <span class="c1"># )</span>
+
+        <span class="n">ik_problem</span><span class="o">.</span><span class="n">AddOrientationConstraint</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">world_frame</span><span class="p">(),</span>
+            <span class="n">pose_WorldTarget</span><span class="o">.</span><span class="n">rotation</span><span class="p">(),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetFrameByName</span><span class="p">(</span><span class="n">target_frame_name</span><span class="p">),</span>
+            <span class="n">RotationMatrix</span><span class="o">.</span><span class="n">Identity</span><span class="p">(),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">8.0</span>
+        <span class="p">)</span>
+
+        <span class="c1"># ik_problem.AddOrientationCost(</span>
+        <span class="c1">#     self.plant.world_frame(),</span>
+        <span class="c1">#     pose_WorldTarget.rotation(),</span>
+        <span class="c1">#     self.plant.GetFrameByName(target_frame_name),</span>
+        <span class="c1">#     RotationMatrix.Identity(),</span>
+        <span class="c1">#     orientation_cost_scaling,</span>
+        <span class="c1"># )</span>
+
+        <span class="k">return</span> <span class="n">ik_problem</span></div>
+
+
+<div class="viewcode-block" id="ChemLab2.easy_cast_and_build">
+<a class="viewcode-back" href="../../../../../../generated/productions/motion_planning/offline/dynamic/dynamic.html#brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2.easy_cast_and_build">[docs]</a>
+    <span class="k">def</span> <span class="nf">easy_cast_and_build</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">planning_algorithm</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span>
+            <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]],</span>
+            <span class="n">Tuple</span><span class="p">[</span><span class="n">MotionPlan</span><span class="p">,</span> <span class="nb">bool</span><span class="p">],</span>
+        <span class="p">],</span>
+        <span class="n">with_watcher</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Diagram</span><span class="p">,</span> <span class="n">Context</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *Description*</span>
+<span class="sd">        </span>
+<span class="sd">        This function is used to easily cast and build the production.</span>
+
+<span class="sd">        *Parameters*</span>
+
+<span class="sd">        planning_algorithm: Callable[[np.ndarray, np.ndarray, Callable[[np.ndarray], bool]],Tuple[MotionPlan, bool]]</span>
+<span class="sd">            The algorithm that we will use to plan the motion.</span>
+
+<span class="sd">        with_watcher: A Boolean that determines whether to add a watcher to the diagram.</span>
+<span class="sd">            by default False.</span>
+
+<span class="sd">        *Returns*</span>
+
+<span class="sd">        diagram: Diagram</span>
+<span class="sd">            The built diagram.</span>
+
+<span class="sd">        diagram_context: Context</span>
+<span class="sd">            The context for the built diagram.</span>
+<span class="sd">            If with_watcher is True, this context will be used to initialize the watcher.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+
+        <span class="c1"># Use Base class implementation to start</span>
+        <span class="n">diagram</span><span class="p">,</span> <span class="n">diagram_context</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">easy_cast_and_build</span><span class="p">(</span>
+            <span class="n">planning_algorithm</span><span class="p">,</span>
+            <span class="n">with_watcher</span><span class="o">=</span><span class="n">with_watcher</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># print(&quot;completed cast and build.&quot;)</span>
+
+        <span class="c1"># Configure the scene graph for collision detection</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">configure_collision_filter</span><span class="p">(</span>
+            <span class="n">diagram</span><span class="o">.</span><span class="n">GetSubsystemContext</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">scene_graph</span><span class="p">,</span> <span class="n">diagram_context</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Connect arm controller to the appropriate plant_context</span>
+        <span class="c1"># self.station.arm_controller.plant_context = diagram.GetSubsystemContext(</span>
+        <span class="c1">#     self.station.arm_controller.plant, diagram_context,</span>
+        <span class="c1"># )</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">performers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_internal_root_context</span><span class="p">(</span>
+            <span class="n">diagram_context</span>
+        <span class="p">)</span>
+
+        <span class="c1"># # Set the start configuration of the robot</span>
+        <span class="c1"># arm = self.station.arm</span>
+        <span class="c1"># self.station.plant.SetDefaultPositions(</span>
+        <span class="c1">#     # self.station.plant.GetMyMutableContextFromRoot(diagram_context),</span>
+        <span class="c1">#     arm,</span>
+        <span class="c1">#     self.start_configuration,</span>
+        <span class="c1"># )</span>
+
+        <span class="c1"># # Set the positions of the gripper</span>
+        <span class="c1"># gripper = self.station.gripper</span>
+        <span class="c1"># n_gripper_positions = self.station.plant.num_positions(gripper)</span>
+        <span class="c1"># self.station.plant.SetPositions(</span>
+        <span class="c1">#     self.station.plant.GetMyMutableContextFromRoot(diagram_context),</span>
+        <span class="c1">#     gripper,</span>
+        <span class="c1">#     np.zeros((n_gripper_positions,)),</span>
+        <span class="c1"># )</span>
+
+        <span class="k">return</span> <span class="n">diagram</span><span class="p">,</span> <span class="n">diagram_context</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">goal_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *Description*</span>
+
+<span class="sd">        Get the goal pose.</span>
+<span class="sd">        </span>
+<span class="sd">        *Returns*</span>
+
+<span class="sd">        q_goal: np.ndarray</span>
+<span class="sd">            The goal configuration of the robot.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">hardcoded_robot_joint_names</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s1">&#39;ur10e-test_shoulder_pan_joint_q&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;ur10e-test_shoulder_lift_joint_q&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;ur10e-test_elbow_joint_q&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;ur10e-test_wrist_1_joint_q&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;ur10e-test_wrist_2_joint_q&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;ur10e-test_wrist_3_joint_q&#39;</span><span class="p">,</span>
+        <span class="p">]</span>
+
+        <span class="c1"># Retrieve goal_configuraiton value</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_goal_config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">pose_WorldGoal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pose_WorldBeaker</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pose_BeakerGoal</span><span class="p">)</span>
+
+            <span class="c1"># Use Inverse Kinematics to get the goal configuration of the robot</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_goal_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">solve_pose_ik_problem</span><span class="p">(</span>
+                <span class="n">pose_WorldGoal</span><span class="p">,</span>
+                <span class="n">robot_joint_names</span><span class="o">=</span><span class="n">hardcoded_robot_joint_names</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_goal_config</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_goal_config</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">goal_pose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RigidTransform</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *Description*</span>
+<span class="sd">        </span>
+<span class="sd">        Get the goal pose of the end effector frame.</span>
+
+<span class="sd">        *Returns*</span>
+
+<span class="sd">        pose_WorldGoal: RigidTransform</span>
+<span class="sd">            The goal pose of the end effector frame.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+
+        <span class="c1"># Algorithm</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_goal_pose</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_goal_pose</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_goal_pose</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_goal_config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="n">pose_WorldGoal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pose_WorldBeaker</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pose_BeakerGoal</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_goal_pose</span> <span class="o">=</span> <span class="n">pose_WorldGoal</span>
+
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_goal_pose</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_goal_pose</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_goal_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="c1"># If the goal configuration is given,</span>
+            <span class="c1"># use the forward kinematics solver to get the goal pose</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_goal_pose</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">solve_forward_kinematics_problem_for_arm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_goal_config</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_goal_pose</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;It appears that the starting configuration is set, but the starting pose is not. This is unexpected behavior!&quot;</span>
+            <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ProductionID</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *Description*</span>
+
+<span class="sd">        Always returns the ProductionID for ChemLab2.</span>
+
+<span class="sd">        *Returns*</span>
+
+<span class="sd">        ProductionID.kChemLab2: ProductionID</span>
+<span class="sd">            The ProductionID for ChemLab2.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">ProductionID</span><span class="o">.</span><span class="n">kChemLab2</span>
+        
+<div class="viewcode-block" id="ChemLab2.initialize_pose_data">
+<a class="viewcode-back" href="../../../../../../generated/productions/motion_planning/offline/dynamic/dynamic.html#brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2.initialize_pose_data">[docs]</a>
+    <span class="k">def</span> <span class="nf">initialize_pose_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *Description*</span>
+
+<span class="sd">        Initialize the following poses if they are not already set:</span>
+
+<span class="sd">        - pose_WorldShelf</span>
+<span class="sd">        - pose_WorldBeaker</span>
+<span class="sd">        - pose_WorldHolder</span>
+<span class="sd">        - pose_BeakerGoal</span>
+<span class="sd">        - pose_HolderStart</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Set shelf pose</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">shelf_pose</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pose_WorldShelf</span> <span class="o">=</span> <span class="n">RigidTransform</span><span class="p">(</span>
+                <span class="n">RollPitchYaw</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">2.0</span><span class="p">)</span><span class="o">.</span><span class="n">ToQuaternion</span><span class="p">(),</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.66</span><span class="p">]),</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Set Beaker Pose default</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pose_WorldBeaker</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pose_WorldBeaker</span> <span class="o">=</span> <span class="n">RigidTransform</span><span class="p">(</span>
+                <span class="n">RollPitchYaw</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span><span class="o">.</span><span class="n">ToQuaternion</span><span class="p">(),</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.45</span><span class="p">,</span> <span class="mf">0.175</span><span class="p">]),</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Set Holder Pose</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pose_WorldHolder</span> <span class="o">=</span> <span class="n">RigidTransform</span><span class="p">(</span>
+            <span class="n">RollPitchYaw</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span><span class="o">.</span><span class="n">ToQuaternion</span><span class="p">(),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">table_width</span><span class="o">*</span><span class="mf">0.5</span><span class="o">*</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.6</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">table_length</span><span class="o">/</span><span class="mf">4.</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_height</span><span class="o">+</span><span class="mf">0.015</span><span class="p">]),</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Define pose of the goal</span>
+        <span class="n">beaker_to_goal_translation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">+</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span> 
+        <span class="n">beaker_to_goal_orientation</span> <span class="o">=</span> <span class="n">RollPitchYaw</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span><span class="o">.</span><span class="n">ToQuaternion</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pose_BeakerGoal</span> <span class="o">=</span> <span class="n">RigidTransform</span><span class="p">(</span>  
+            <span class="n">beaker_to_goal_orientation</span><span class="p">,</span>
+            <span class="n">beaker_to_goal_translation</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Define pose of start wrt holder</span>
+        <span class="n">holder_to_start_translation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">+</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.025</span><span class="p">])</span>
+        <span class="n">holder_to_start_orientation</span> <span class="o">=</span> <span class="n">RollPitchYaw</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span><span class="o">.</span><span class="n">ToQuaternion</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pose_HolderStart</span> <span class="o">=</span> <span class="n">RigidTransform</span><span class="p">(</span>
+            <span class="n">holder_to_start_orientation</span><span class="p">,</span>
+            <span class="n">holder_to_start_translation</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ChemLab2.solve_forward_kinematics_problem_for_arm">
+<a class="viewcode-back" href="../../../../../../generated/productions/motion_planning/offline/dynamic/dynamic.html#brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2.solve_forward_kinematics_problem_for_arm">[docs]</a>
+    <span class="k">def</span> <span class="nf">solve_forward_kinematics_problem_for_arm</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">robot_joint_positions</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RigidTransform</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *Description*</span>
+<span class="sd">        </span>
+<span class="sd">        This method solves the forward kinematics problem for the UR10e arm</span>
+<span class="sd">        by itself.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">target_frame_name</span> <span class="o">=</span> <span class="s2">&quot;tool0&quot;</span>
+
+        <span class="c1"># Create shadow plant and populate it with the UR10e arm</span>
+        <span class="n">shadow_station</span> <span class="o">=</span> <span class="n">UR10eStation</span><span class="p">(</span>
+            <span class="n">time_step</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">time_step</span><span class="p">,</span>
+            <span class="n">meshcat_port_number</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">gripper_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">gripper_type</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">shadow_station</span><span class="o">.</span><span class="n">Finalize</span><span class="p">()</span>
+
+        <span class="c1"># Use station&#39;s plant to solve the forward kinematics problem</span>
+        <span class="n">shadow_plant</span> <span class="o">=</span> <span class="n">shadow_station</span><span class="o">.</span><span class="n">plant</span>
+        
+        <span class="c1"># Set the arm&#39;s joint positions</span>
+        <span class="n">temp_context</span> <span class="o">=</span> <span class="n">shadow_plant</span><span class="o">.</span><span class="n">CreateDefaultContext</span><span class="p">()</span>
+        <span class="n">shadow_plant</span><span class="o">.</span><span class="n">SetPositions</span><span class="p">(</span>
+            <span class="n">temp_context</span><span class="p">,</span>
+            <span class="n">shadow_station</span><span class="o">.</span><span class="n">arm</span><span class="p">,</span>
+            <span class="n">robot_joint_positions</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Get the pose of the end effector</span>
+        <span class="n">end_effector_pose</span> <span class="o">=</span> <span class="n">shadow_plant</span><span class="o">.</span><span class="n">EvalBodyPoseInWorld</span><span class="p">(</span>
+            <span class="n">temp_context</span><span class="p">,</span>
+            <span class="n">shadow_plant</span><span class="o">.</span><span class="n">GetBodyByName</span><span class="p">(</span><span class="n">target_frame_name</span><span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">end_effector_pose</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">start_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *Description*</span>
+
+<span class="sd">        Get the start configuration of the robot in the production.</span>
+
+<span class="sd">        *Returns*</span>
+
+<span class="sd">        q_start: np.ndarray</span>
+<span class="sd">            The start configuration of the robot.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+        <span class="n">hardcoded_robot_joint_names</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s1">&#39;ur10e-test_shoulder_pan_joint_q&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;ur10e-test_shoulder_lift_joint_q&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;ur10e-test_elbow_joint_q&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;ur10e-test_wrist_1_joint_q&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;ur10e-test_wrist_2_joint_q&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;ur10e-test_wrist_3_joint_q&#39;</span><span class="p">,</span>
+        <span class="p">]</span>
+
+        <span class="c1"># Algorithm</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_config</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_pose</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Use the start pose to get the start configuration</span>
+            <span class="c1"># Using the IK solver (potentially buggy because default ik problem ignores obstacles)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">solve_pose_ik_problem</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_start_pose</span><span class="p">,</span>
+                <span class="n">robot_joint_names</span><span class="o">=</span><span class="n">hardcoded_robot_joint_names</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                <span class="s2">&quot;This function should be implemented by the subclass.&quot;</span>
+            <span class="p">)</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">start_pose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RigidTransform</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *Description*</span>
+
+<span class="sd">        Get the start pose. This should be defined by the subclass.</span>
+
+<span class="sd">        *Returns*</span>
+
+<span class="sd">        pose_WorldStart: RigidTransform</span>
+<span class="sd">            The start pose of the end effector frame.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup</span>
+
+        <span class="c1"># Algorithm</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start_pose</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_pose</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start_pose</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start_config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="c1"># Define Start Pose</span>
+            <span class="n">pose_WorldStart</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pose_WorldHolder</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pose_HolderStart</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_start_pose</span> <span class="o">=</span> <span class="n">pose_WorldStart</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_pose</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start_pose</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="c1"># Use the start configuration to get the starting pose</span>
+            <span class="c1"># Using a &quot;forward kinematics solver&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_start_pose</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">solve_forward_kinematics_problem_for_arm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start_config</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_pose</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Unexpected behavior. This should never happen.&quot;</span>
+            <span class="p">)</span></div>
+
+</pre></div>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2025, Kwesi Rutledge, Wrench Robotics
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script src="../../../../../../_static/documentation_options.js?v=c954fba5"></script>
+    <script src="../../../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../../_static/scripts/furo.js?v=46bd48cc"></script>
+    <script src="../../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../../../_static/copybutton.js?v=f281be69"></script>
+    </body>
+</html>
