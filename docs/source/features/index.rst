@@ -12,4 +12,5 @@ Where possible, we will link to detailed documentation for each feature in the A
     :maxdepth: 1
     
     diagram_watcher
+    drakeify_my_urdf
     productions/index
