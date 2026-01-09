@@ -2,7 +2,7 @@ Show Me This Model
 ==================
 
 .. image:: ../../_static/images/productions/debug/show_me_this_model/show_me1.png
-    :alt: A UR10e robot arm in an empty simulated environment, in a "bent-elbom" configuration.
+    :alt: A UR10e robot arm in an empty simulated environment, in a "bent-elbow" configuration.
     :align: center
 
 *Easily show a specific model (robot or object) in a Drake simulation using the*
@@ -77,7 +77,7 @@ In the following section, we will also include one example to demonstrate how to
 The result of this script will be the following simulation:
 
 .. image:: ../../_static/images/productions/debug/show_me_this_model/show_me1.png
-    :alt: A UR10e robot arm in an empty simulated environment, in a "bent-elbom" configuration.
+    :alt: A UR10e robot arm in an empty simulated environment, in a "bent-elbow" configuration.
     :align: center
 
 How it works?
