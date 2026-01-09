@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html"><link rel="next" title="API" href="../../generated/api.html"><link rel="prev" title="Productions" href="index.html">
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2025.12.19 -->
-        <title>Show Me This Model - brom_drake-py 0.4.7-2 documentation</title>
+        <title>Show Me This Model - brom_drake-py 0.4.7-3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -162,7 +162,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">brom_drake-py 0.4.7-2 documentation</div></a>
+      <a href="../../index.html"><div class="brand">brom_drake-py 0.4.7-3 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -173,7 +173,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
       </label>
     </div>
@@ -183,7 +183,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.4.7-2 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 0.4.7-3 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -195,6 +195,7 @@
 <ul class="current">
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../index.html">Features</a><input aria-label="Toggle navigation of Features" checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../diagram_watcher.html">DiagramWatcher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../drakeify_my_urdf.html">“Drakeify”-My-URDF</a></li>
 <li class="toctree-l2 current has-children"><a class="reference internal" href="index.html">Productions</a><input aria-label="Toggle navigation of Productions" checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l3 current current-page"><a class="current reference internal" href="#">Show Me This Model</a></li>
 </ul>
@@ -555,14 +556,111 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
           </label>
         </div>
         <article role="main" id="furo-main-content">
           <section id="show-me-this-model">
 <h1>Show Me This Model<a class="headerlink" href="#show-me-this-model" title="Link to this heading">¶</a></h1>
-<p>Coming soon…</p>
+<img alt="A UR10e robot arm in an empty simulated environment, in a &quot;bent-elbow&quot; configuration." class="align-center" src="../../_images/show_me1.png" />
+<p><em>Easily show a specific model (robot or object) in a Drake simulation using the</em>
+<a class="reference internal" href="../../generated/productions/debug/show_me/show_me.html#brom_drake.productions.debug.show_me.show_me_this_model.ShowMeThisModel" title="brom_drake.productions.debug.show_me.show_me_this_model.ShowMeThisModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShowMeThisModel</span></code></a>
+<em>!</em></p>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">¶</a></h2>
+<p>Picture this: You’ve just started to use Drake and want to show how your favorite URDF looks inside of the Drake simulator at a certain joint configuration. How do you do this?</p>
+<p>The answer is often: “It’s complicated.”</p>
+<p>That’s why we created <a class="reference internal" href="../../generated/productions/debug/show_me/show_me.html#brom_drake.productions.debug.show_me.show_me_this_model.ShowMeThisModel" title="brom_drake.productions.debug.show_me.show_me_this_model.ShowMeThisModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShowMeThisModel</span></code></a>.
+You can share your robot model and (optionally) a desired joint configuration with this object and it will make it super simple to accomplish your mission!</p>
+<p>You might find it helpful when debugging new robot models.</p>
+</section>
+<section id="example-usage">
+<h2>Example Usage<a class="headerlink" href="#example-usage" title="Link to this heading">¶</a></h2>
+<p>You can view multiple examples for this <code class="code docutils literal notranslate"><span class="pre">Production</span></code> object in our <code class="docutils literal notranslate"><span class="pre">examples/productions/helpful_for_debugging/show_me_this_model</span></code> directory.
+In the following section, we will also include one example to demonstrate how to use ShowMeThisModel.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">importlib</span> <span class="kn">import</span> <span class="n">resources</span> <span class="k">as</span> <span class="n">impresources</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">pydrake.systems.analysis</span> <span class="kn">import</span> <span class="n">Simulator</span>
+
+<span class="c1">#Internal imports</span>
+<span class="kn">from</span> <span class="nn">brom_drake</span> <span class="kn">import</span> <span class="n">robots</span>
+<span class="kn">from</span> <span class="nn">brom_drake.all</span> <span class="kn">import</span> <span class="n">drakeify_my_urdf</span>
+<span class="kn">from</span> <span class="nn">brom_drake.scenes</span> <span class="kn">import</span> <span class="n">ShowMeThisModel</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="c1"># Setup</span>
+    <span class="n">urdf_file_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span>
+        <span class="n">impresources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="n">robots</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;models/ur/ur10e.urdf&quot;</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Convert the URDF into a format that Drake likes</span>
+    <span class="n">new_urdf_path</span> <span class="o">=</span> <span class="n">drakeify_my_urdf</span><span class="p">(</span>
+        <span class="n">urdf_file_path</span><span class="p">,</span>
+        <span class="n">overwrite_old_logs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">log_file_name</span><span class="o">=</span><span class="s2">&quot;drakeify-my-urdf1.log&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Visualize the URDF using the &quot;show-me-this-model&quot; feature</span>
+    <span class="n">time_step</span> <span class="o">=</span> <span class="mf">1e-3</span>
+    <span class="n">production</span> <span class="o">=</span> <span class="n">ShowMeThisModel</span><span class="p">(</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">new_urdf_path</span><span class="p">),</span>
+        <span class="n">with_these_joint_positions</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+        <span class="n">time_step</span><span class="o">=</span><span class="n">time_step</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Build Diagram</span>
+    <span class="n">diagram</span><span class="p">,</span> <span class="n">diagram_context</span> <span class="o">=</span> <span class="n">production</span><span class="o">.</span><span class="n">add_cast_and_build</span><span class="p">()</span>
+
+    <span class="c1"># Set up simulation</span>
+    <span class="n">simulator</span> <span class="o">=</span> <span class="n">Simulator</span><span class="p">(</span><span class="n">diagram</span><span class="p">,</span> <span class="n">diagram_context</span><span class="p">)</span>
+    <span class="n">simulator</span><span class="o">.</span><span class="n">set_target_realtime_rate</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">simulator</span><span class="o">.</span><span class="n">set_publish_every_time_step</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># Run simulation</span>
+    <span class="n">simulator</span><span class="o">.</span><span class="n">Initialize</span><span class="p">()</span>
+    <span class="n">simulator</span><span class="o">.</span><span class="n">AdvanceTo</span><span class="p">(</span><span class="mf">15.0</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The result of this script will be the following simulation:</p>
+<img alt="A UR10e robot arm in an empty simulated environment, in a &quot;bent-elbow&quot; configuration." class="align-center" src="../../_images/show_me1.png" />
+<section id="how-it-works">
+<h3>How it works<a class="headerlink" href="#how-it-works" title="Link to this heading">¶</a></h3>
+<p>In the above snippet, we see a couple of things:</p>
+<ul class="simple">
+<li><p>The inputs to the Production are:
+- path_to_model: (Required) A string describing the location of the URDF (or other model) that you want to visualize.
+- with_these_joint_positions: (Optional) A list describing what position you want each joint to be in.
+- time_step: (Optional) The time step to use in the MultibodyPlant created internally in this Production.</p></li>
+<li><p>Once the production is created we can use the normal workflow (i.e., build the Production and then use the resulting Diagram object in your simulation) to view the robot in the desired joint configuration.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>(For advanced users of Drake) You can add other elements to the scene besides the robot specified by <code class="code docutils literal notranslate"><span class="pre">path_to_model</span></code>.
+After creating the ShowMeThisModel object, you will be able to add additional items to its MultibodyPlant (it is saved in production.plant) and those additional items will appear in the simulation as well. This can be especially helpful if you’re trying to observe whether or not a robot is in collision with an object when it is in the configuration with_these_joint_positions.</p>
+</div>
+</section>
+</section>
+<section id="showing-collision-geometries">
+<h2>Showing Collision Geometries<a class="headerlink" href="#showing-collision-geometries" title="Link to this heading">¶</a></h2>
+<p>Another helpful feature of ShowMeThisModel is the ability to show the collision geometry of the URDF that you’re interested in.</p>
+<p>This can be especially helpful if you have over-approximating cylinders or pill shapes that are meant to act as your collision geometries.
+If the collision geometry is very different from the visual geometry, then you may want to use this feature to double-check what the collision geometry looks like in a given configuration.</p>
+<p>You can enable this feature by setting the <code class="code docutils literal notranslate"><span class="pre">show_collision_geometries</span></code> argument to <code class="code docutils literal notranslate"><span class="pre">True</span></code> when creating the ShowMeThisModel object:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">production</span> <span class="o">=</span> <span class="n">ShowMeThisModel</span><span class="p">(</span>
+    <span class="nb">str</span><span class="p">(</span><span class="n">new_urdf_path</span><span class="p">),</span>
+    <span class="n">with_these_joint_positions</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+    <span class="n">time_step</span><span class="o">=</span><span class="n">time_step</span><span class="p">,</span>
+    <span class="n">show_collision_geometries</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Which will produce the following simulation result for the UR10e robot:</p>
+<img alt="A UR10e robot arm in an empty simulated environment, in a &quot;bent-elbow&quot; configuration, showing the collision geometries instead of the visual geometries. The collision geometries are a set of odd cylinders around each link." class="align-center" src="../../_images/collision_geometries1.png" />
+</section>
 </section>
 
         </article>
@@ -608,13 +706,37 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Show Me This Model</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#example-usage">Example Usage</a><ul>
+<li><a class="reference internal" href="#how-it-works">How it works</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#showing-collision-geometries">Showing Collision Geometries</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=c954fba5"></script>
+</div><script src="../../_static/documentation_options.js?v=6d2c7fbc"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>

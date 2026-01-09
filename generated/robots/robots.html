@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html"><link rel="next" title="models" href="models/models.html"><link rel="prev" title="pick_and_place" href="../productions/types/pick_and_place/pick_and_place.html">
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2025.12.19 -->
-        <title>robots - brom_drake-py 0.4.7-2 documentation</title>
+        <title>robots - brom_drake-py 0.4.7-3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -162,7 +162,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">brom_drake-py 0.4.7-2 documentation</div></a>
+      <a href="../../index.html"><div class="brand">brom_drake-py 0.4.7-3 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +183,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.4.7-2 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 0.4.7-3 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -195,6 +195,7 @@
 <ul class="current">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../features/index.html">Features</a><input aria-label="Toggle navigation of Features" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../features/diagram_watcher.html">DiagramWatcher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../features/drakeify_my_urdf.html">“Drakeify”-My-URDF</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../features/productions/index.html">Productions</a><input aria-label="Toggle navigation of Productions" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../features/productions/show_me_this_model.html">Show Me This Model</a></li>
 </ul>
@@ -592,14 +593,14 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="brom_drake.robots.utils.find_all_link_names">
 <span class="sig-prename descclassname"><span class="pre">brom_drake.robots.utils.</span></span><span class="sig-name descname"><span class="pre">find_all_link_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xml_tree</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ElementTree</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/brom_drake/robots/utils.html#find_all_link_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.robots.utils.find_all_link_names" title="Link to this definition">¶</a></dt>
-<dd><p><em>Description</em></p>
+<dd><p><strong>Description</strong></p>
 <p>This method will find all the link names in the xml tree <code class="docutils literal notranslate"><span class="pre">xml_tree</span></code>.</p>
-<p><em>Parameters</em></p>
+<p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt>xml_tree: xml.etree.ElementTree.ElementTree</dt><dd><p>The xml tree that we would like to investigate.</p>
 </dd>
 </dl>
-<p><em>Returns</em></p>
+<p><strong>Returns</strong></p>
 <dl class="simple">
 <dt>link_names: List[str]</dt><dd><p>A list of all the names of &lt;link&gt; tags in the model.</p>
 </dd>
@@ -616,11 +617,11 @@
 <dt>path_to_robot_model: str|Path</dt><dd><p>The path to the robot model.</p>
 </dd>
 </dl>
-<p><em>Returns</em>
-base_link_name: str</p>
-<blockquote>
-<div><p>The name of the link that we believe is the base.</p>
-</div></blockquote>
+<p><em>Returns</em></p>
+<dl class="simple">
+<dt>base_link_name: str</dt><dd><p>The name of the link that we believe is the base.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -709,7 +710,7 @@ base_link_name: str</p>
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=c954fba5"></script>
+</div><script src="../../_static/documentation_options.js?v=6d2c7fbc"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>

@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html"><link rel="next" title="motion_planning" href="../../motion_planning/motion_planning.html"><link rel="prev" title="show_me_this_static_grasp" href="../grasping/show_me_this_static_grasp/show_me_this_static_grasp.html">
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2025.12.19 -->
-        <title>show_me - brom_drake-py 0.4.7-2 documentation</title>
+        <title>show_me - brom_drake-py 0.4.7-3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -162,7 +162,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">brom_drake-py 0.4.7-2 documentation</div></a>
+      <a href="../../../../index.html"><div class="brand">brom_drake-py 0.4.7-3 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +183,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.4.7-2 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 0.4.7-3 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -195,6 +195,7 @@
 <ul class="current">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../features/index.html">Features</a><input aria-label="Toggle navigation of Features" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../features/diagram_watcher.html">DiagramWatcher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../features/drakeify_my_urdf.html">“Drakeify”-My-URDF</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../../features/productions/index.html">Productions</a><input aria-label="Toggle navigation of Productions" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../../../features/productions/show_me_this_model.html">Show Me This Model</a></li>
 </ul>
@@ -572,34 +573,53 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="brom_drake.productions.debug.show_me.show_me_system.ShowMeSystem">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brom_drake.productions.debug.show_me.show_me_system.</span></span><span class="sig-name descname"><span class="pre">ShowMeSystem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plant</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MultibodyPlant</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ModelInstanceIndex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desired_joint_positions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/brom_drake/productions/debug/show_me/show_me_system.html#ShowMeSystem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.debug.show_me.show_me_system.ShowMeSystem" title="Link to this definition">¶</a></dt>
-<dd><section id="description">
-<h3>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h3>
-<p>This function will create a system that will show the user’s model.
-:param LeafSystem:
-:return:</p>
+<dd><p><strong>Description</strong></p>
+<p>This class defines a LeafSystem that will force a specific model
+(model_index) in a MultibodyPlant to hold the joint positions
+provided to it as input.</p>
+<p>The object may or may not be welded to the world frame.</p>
+<p><strong>Block Diagram</strong></p>
+<p>The ShowMeSystem block diagram is as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>                            <span class="o">|---------------|</span>
+                            <span class="o">|</span>               <span class="o">|</span>
+<span class="n">desired_joint_positions</span> <span class="o">---&gt;|</span> <span class="n">ShowMeSystem</span>  <span class="o">|---&gt;</span> <span class="n">measured_joint_positions</span>
+                            <span class="o">|</span>               <span class="o">|</span>
+                            <span class="o">|---------------|</span>
+</pre></div>
+</div>
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt>plant<span class="classifier">MultibodyPlant</span></dt><dd><p>The MultibodyPlant containing the model to be shown.</p>
+</dd>
+<dt>model_index<span class="classifier">ModelInstanceIndex</span></dt><dd><p>The ModelInstanceIndex of the model to be shown.</p>
+</dd>
+<dt>desired_joint_positions<span class="classifier">np.ndarray</span></dt><dd><p>The desired joint positions for the model, if any.</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.debug.show_me.show_me_system.ShowMeSystem.SetModelJointPositions">
-<span class="sig-name descname"><span class="pre">SetModelJointPositions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/brom_drake/productions/debug/show_me/show_me_system.html#ShowMeSystem.SetModelJointPositions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.debug.show_me.show_me_system.ShowMeSystem.SetModelJointPositions" title="Link to this definition">¶</a></dt>
-<dd><section id="id1">
-<h4>Description<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h4>
-<p>This method will set the joint positions of the model to the desired joint positions.
-:param context:
-:param output:
-:return:</p>
-</section>
+<span class="sig-name descname"><span class="pre">SetModelJointPositions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BasicVector</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/brom_drake/productions/debug/show_me/show_me_system.html#ShowMeSystem.SetModelJointPositions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.debug.show_me.show_me_system.ShowMeSystem.SetModelJointPositions" title="Link to this definition">¶</a></dt>
+<dd><p><strong>Description</strong></p>
+<p>This method will set the joint positions of the model to the desired joint positions.</p>
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt>context: Context</dt><dd><p>The context of the LeafSystem at the time that this callback is triggered.</p>
+</dd>
+<dt>output: BasicVector</dt><dd><p>The output vector to be populated with the current joint positions.</p>
+</dd>
+</dl>
 </dd></dl>
 
-</section>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="brom_drake.productions.debug.show_me.show_me_this_model.ShowMeThisModel">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brom_drake.productions.debug.show_me.show_me_this_model.</span></span><span class="sig-name descname"><span class="pre">ShowMeThisModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_to_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_these_joint_positions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_link_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meshcat_port_number</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">7001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_collision_geometries</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/brom_drake/productions/debug/show_me/show_me_this_model.html#ShowMeThisModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.debug.show_me.show_me_this_model.ShowMeThisModel" title="Link to this definition">¶</a></dt>
-<dd><p><em>Description</em></p>
+<dd><p><strong>Description</strong></p>
 <p>A production which allows the user to visualize a specified model
 in Meshcat, with the ability to set desired joint positions, if the model is
 a robot/articulated.</p>
-<p><em>Parameters</em></p>
+<p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt>path_to_model: str</dt><dd><p>The path to the model file to be visualized.
 TODO: Add support for Path type. Make sure to add tests!!</p>
@@ -625,7 +645,7 @@ INSTEAD of the visual geometries.
 Default is False.</p>
 </dd>
 </dl>
-<p><em>Usage</em></p>
+<p><strong>Usage</strong></p>
 <p>The production can be used to show both simple models (e.g., single objects)
 or articulated models (e.g., robots).</p>
 <p>To show a simple model, simply provide the path to the model file.</p>
@@ -677,16 +697,16 @@ or articulated models (e.g., robots).</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.debug.show_me.show_me_this_model.ShowMeThisModel.add_cast_and_build">
 <span class="sig-name descname"><span class="pre">add_cast_and_build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cast</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../roles/roles.html#brom_drake.productions.roles.role.Role" title="brom_drake.productions.roles.role.Role"><span class="pre">Role</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">LeafSystem</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Diagram</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Diagram</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Context</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../_modules/brom_drake/productions/debug/show_me/show_me_this_model.html#ShowMeThisModel.add_cast_and_build"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.debug.show_me.show_me_this_model.ShowMeThisModel.add_cast_and_build" title="Link to this definition">¶</a></dt>
-<dd><p><em>Description</em></p>
+<dd><p><strong>Description</strong></p>
 <p>This method builds the production’s diagram and context,
 and assigns the plant context to the internal ShowMeSystem.</p>
-<p><em>Parameters</em></p>
+<p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt>cast: Tuple[Role, Performer], optional</dt><dd><p>The cast to be added to the production.
 Default is an empty tuple.</p>
 </dd>
 </dl>
-<p><em>Returns</em></p>
+<p><strong>Returns</strong></p>
 <dl class="simple">
 <dt>diagram: Diagram</dt><dd><p>The built Diagram of the production.</p>
 </dd>
@@ -698,7 +718,7 @@ Default is an empty tuple.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.debug.show_me.show_me_this_model.ShowMeThisModel.add_multibody_triads">
 <span class="sig-name descname"><span class="pre">add_multibody_triads</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/brom_drake/productions/debug/show_me/show_me_this_model.html#ShowMeThisModel.add_multibody_triads"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.debug.show_me.show_me_this_model.ShowMeThisModel.add_multibody_triads" title="Link to this definition">¶</a></dt>
-<dd><p><em>Description</em></p>
+<dd><p><strong>Description</strong></p>
 <p>This method will add triads to the world frame
 and any other relevant frames.</p>
 </dd></dl>
@@ -706,7 +726,7 @@ and any other relevant frames.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.debug.show_me.show_me_this_model.ShowMeThisModel.add_supporting_cast">
 <span class="sig-name descname"><span class="pre">add_supporting_cast</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/brom_drake/productions/debug/show_me/show_me_this_model.html#ShowMeThisModel.add_supporting_cast"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.debug.show_me.show_me_this_model.ShowMeThisModel.add_supporting_cast" title="Link to this definition">¶</a></dt>
-<dd><p><em>Description</em></p>
+<dd><p><strong>Description</strong></p>
 <p>This method updates the production’s
 - MultibodyPlant with the user’s model
 - Using the ShowMeSystem to freeze the model in place
@@ -717,10 +737,10 @@ and any other relevant frames.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.debug.show_me.show_me_this_model.ShowMeThisModel.create_and_connect_source_of_joint_positions">
 <span class="sig-name descname"><span class="pre">create_and_connect_source_of_joint_positions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/brom_drake/productions/debug/show_me/show_me_this_model.html#ShowMeThisModel.create_and_connect_source_of_joint_positions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.debug.show_me.show_me_this_model.ShowMeThisModel.create_and_connect_source_of_joint_positions" title="Link to this definition">¶</a></dt>
-<dd><p><em>Description</em></p>
+<dd><p><strong>Description</strong></p>
 <p>This method will create and connect a source of joint positions
 to the ShowMeSystem.</p>
-<p><em>Assumptions</em></p>
+<p><strong>Assumptions</strong></p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">self.show_me_system</span></code> is not None</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">self.q_des</span></code> is not None</p></li>
@@ -730,10 +750,10 @@ to the ShowMeSystem.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.debug.show_me.show_me_this_model.ShowMeThisModel.find_number_of_positions_in_model">
 <span class="sig-name descname"><span class="pre">find_number_of_positions_in_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../../../../_modules/brom_drake/productions/debug/show_me/show_me_this_model.html#ShowMeThisModel.find_number_of_positions_in_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.debug.show_me.show_me_this_model.ShowMeThisModel.find_number_of_positions_in_model" title="Link to this definition">¶</a></dt>
-<dd><p><em>Description</em></p>
+<dd><p><strong>Description</strong></p>
 <p>This method will return the number of positions in the model
 as defined by the user (through the path_to_model).</p>
-<p><em>Returns</em></p>
+<p><strong>Returns</strong></p>
 <dl class="simple">
 <dt>n_positions: int</dt><dd><p>The number of positions in the model.</p>
 </dd>
@@ -743,11 +763,11 @@ as defined by the user (through the path_to_model).</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="brom_drake.productions.debug.show_me.show_me_this_model.ShowMeThisModel.id">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../../productions.html#brom_drake.productions.ids.ProductionID" title="brom_drake.productions.ids.ProductionID"><span class="pre">ProductionID</span></a></em><a class="headerlink" href="#brom_drake.productions.debug.show_me.show_me_this_model.ShowMeThisModel.id" title="Link to this definition">¶</a></dt>
-<dd><p><em>Description</em></p>
+<dd><p><strong>Description</strong></p>
 <p>This property returns the unique identifier for this production.
 (i.e., ProductionID.kShowMeThisModel)</p>
 <p>This is required to be implemented by all children of the BaseProduction class.</p>
-<p><em>Returns</em></p>
+<p><strong>Returns</strong></p>
 <dl class="simple">
 <dt>id: ProductionID</dt><dd><p>The unique identifier for this production.</p>
 </dd>
@@ -757,11 +777,11 @@ as defined by the user (through the path_to_model).</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="brom_drake.productions.debug.show_me.show_me_this_model.ShowMeThisModel.suggested_roles">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">suggested_roles</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../roles/roles.html#brom_drake.productions.roles.role.Role" title="brom_drake.productions.roles.role.Role"><span class="pre">Role</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#brom_drake.productions.debug.show_me.show_me_this_model.ShowMeThisModel.suggested_roles" title="Link to this definition">¶</a></dt>
-<dd><p><em>Description</em></p>
+<dd><p><strong>Description</strong></p>
 <p>This property returns an empty list, because there are no suggested
 roles for this production.</p>
 <p>This is required to be implemented by all children of the BaseProduction class.</p>
-<p><em>Returns</em></p>
+<p><strong>Returns</strong></p>
 <dl class="simple">
 <dt>roles: List[Role]</dt><dd><p>A list of suggested roles for this production.</p>
 </dd>
@@ -868,7 +888,7 @@ roles for this production.</p>
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=c954fba5"></script>
+</div><script src="../../../../_static/documentation_options.js?v=6d2c7fbc"></script>
     <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>

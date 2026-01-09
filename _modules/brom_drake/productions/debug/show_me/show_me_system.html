@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html">
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2025.12.19 -->
-        <title>brom_drake.productions.debug.show_me.show_me_system - brom_drake-py 0.4.7-2 documentation</title>
+        <title>brom_drake.productions.debug.show_me.show_me_system - brom_drake-py 0.4.7-3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../index.html"><div class="brand">brom_drake-py 0.4.7-2 documentation</div></a>
+      <a href="../../../../../index.html"><div class="brand">brom_drake-py 0.4.7-3 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.4.7-2 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 0.4.7-3 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -194,6 +194,7 @@
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../features/index.html">Features</a><input aria-label="Toggle navigation of Features" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../../features/diagram_watcher.html">DiagramWatcher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../features/drakeify_my_urdf.html">“Drakeify”-My-URDF</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../features/productions/index.html">Productions</a><input aria-label="Toggle navigation of Productions" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../../../../features/productions/show_me_this_model.html">Show Me This Model</a></li>
 </ul>
@@ -557,7 +558,7 @@
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">pydrake.multibody.plant</span> <span class="kn">import</span> <span class="n">MultibodyPlant</span>
 <span class="kn">from</span> <span class="nn">pydrake.multibody.tree</span> <span class="kn">import</span> <span class="n">ModelInstanceIndex</span>
-<span class="kn">from</span> <span class="nn">pydrake.systems.framework</span> <span class="kn">import</span> <span class="n">LeafSystem</span><span class="p">,</span> <span class="n">BasicVector</span>
+<span class="kn">from</span> <span class="nn">pydrake.systems.framework</span> <span class="kn">import</span> <span class="n">LeafSystem</span><span class="p">,</span> <span class="n">BasicVector</span><span class="p">,</span> <span class="n">Context</span>
 
 <span class="kn">from</span> <span class="nn">brom_drake.utils</span> <span class="kn">import</span> <span class="n">AddMultibodyTriad</span>
 
@@ -565,11 +566,35 @@
 <a class="viewcode-back" href="../../../../../generated/productions/debug/show_me/show_me.html#brom_drake.productions.debug.show_me.show_me_system.ShowMeSystem">[docs]</a>
 <span class="k">class</span> <span class="nc">ShowMeSystem</span><span class="p">(</span><span class="n">LeafSystem</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Description</span>
-<span class="sd">    -----------</span>
-<span class="sd">    This function will create a system that will show the user&#39;s model.</span>
-<span class="sd">    :param LeafSystem:</span>
-<span class="sd">    :return:</span>
+<span class="sd">    **Description**</span>
+<span class="sd">    </span>
+<span class="sd">    This class defines a LeafSystem that will force a specific model</span>
+<span class="sd">    (model_index) in a MultibodyPlant to hold the joint positions</span>
+<span class="sd">    provided to it as input. </span>
+<span class="sd">    </span>
+<span class="sd">    The object may or may not be welded to the world frame.</span>
+
+<span class="sd">    **Block Diagram**</span>
+
+<span class="sd">    The ShowMeSystem block diagram is as follows: ::</span>
+
+<span class="sd">                                    |---------------|</span>
+<span class="sd">                                    |               |</span>
+<span class="sd">        desired_joint_positions ---&gt;| ShowMeSystem  |---&gt; measured_joint_positions</span>
+<span class="sd">                                    |               |</span>
+<span class="sd">                                    |---------------|</span>
+
+<span class="sd">    **Parameters**</span>
+
+<span class="sd">    plant : MultibodyPlant</span>
+<span class="sd">        The MultibodyPlant containing the model to be shown.</span>
+
+<span class="sd">    model_index : ModelInstanceIndex</span>
+<span class="sd">        The ModelInstanceIndex of the model to be shown.</span>
+
+<span class="sd">    desired_joint_positions : np.ndarray</span>
+<span class="sd">        The desired joint positions for the model, if any.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -608,14 +633,19 @@
 
 <div class="viewcode-block" id="ShowMeSystem.SetModelJointPositions">
 <a class="viewcode-back" href="../../../../../generated/productions/debug/show_me/show_me.html#brom_drake.productions.debug.show_me.show_me_system.ShowMeSystem.SetModelJointPositions">[docs]</a>
-    <span class="k">def</span> <span class="nf">SetModelJointPositions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">SetModelJointPositions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="n">BasicVector</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Description</span>
-<span class="sd">        -----------</span>
+<span class="sd">        **Description**</span>
+<span class="sd">        </span>
 <span class="sd">        This method will set the joint positions of the model to the desired joint positions.</span>
-<span class="sd">        :param context:</span>
-<span class="sd">        :param output:</span>
-<span class="sd">        :return:</span>
+<span class="sd">        </span>
+<span class="sd">        **Parameters**</span>
+<span class="sd">        </span>
+<span class="sd">        context: Context</span>
+<span class="sd">            The context of the LeafSystem at the time that this callback is triggered.</span>
+
+<span class="sd">        output: BasicVector</span>
+<span class="sd">            The output vector to be populated with the current joint positions.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Setup</span>
 
@@ -679,7 +709,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../_static/documentation_options.js?v=c954fba5"></script>
+</div><script src="../../../../../_static/documentation_options.js?v=6d2c7fbc"></script>
     <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

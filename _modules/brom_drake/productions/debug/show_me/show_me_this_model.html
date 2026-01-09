@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html">
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2025.12.19 -->
-        <title>brom_drake.productions.debug.show_me.show_me_this_model - brom_drake-py 0.4.7-2 documentation</title>
+        <title>brom_drake.productions.debug.show_me.show_me_this_model - brom_drake-py 0.4.7-3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../index.html"><div class="brand">brom_drake-py 0.4.7-2 documentation</div></a>
+      <a href="../../../../../index.html"><div class="brand">brom_drake-py 0.4.7-3 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.4.7-2 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 0.4.7-3 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -194,6 +194,7 @@
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../features/index.html">Features</a><input aria-label="Toggle navigation of Features" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../../features/diagram_watcher.html">DiagramWatcher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../features/drakeify_my_urdf.html">“Drakeify”-My-URDF</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../features/productions/index.html">Productions</a><input aria-label="Toggle navigation of Productions" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../../../../features/productions/show_me_this_model.html">Show Me This Model</a></li>
 </ul>
@@ -578,13 +579,13 @@
 <a class="viewcode-back" href="../../../../../generated/productions/debug/show_me/show_me.html#brom_drake.productions.debug.show_me.show_me_this_model.ShowMeThisModel">[docs]</a>
 <span class="k">class</span> <span class="nc">ShowMeThisModel</span><span class="p">(</span><span class="n">BaseProduction</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    *Description*</span>
+<span class="sd">    **Description**</span>
 <span class="sd">    </span>
 <span class="sd">    A production which allows the user to visualize a specified model</span>
 <span class="sd">    in Meshcat, with the ability to set desired joint positions, if the model is</span>
 <span class="sd">    a robot/articulated.</span>
 <span class="sd">    </span>
-<span class="sd">    *Parameters*</span>
+<span class="sd">    **Parameters**</span>
 <span class="sd">    </span>
 <span class="sd">    path_to_model: str</span>
 <span class="sd">        The path to the model file to be visualized.</span>
@@ -615,7 +616,7 @@
 <span class="sd">        INSTEAD of the visual geometries.</span>
 <span class="sd">        Default is False.</span>
 
-<span class="sd">    *Usage*</span>
+<span class="sd">    **Usage**</span>
 
 <span class="sd">    The production can be used to show both simple models (e.g., single objects)</span>
 <span class="sd">    or articulated models (e.g., robots). </span>
@@ -714,7 +715,7 @@
 <a class="viewcode-back" href="../../../../../generated/productions/debug/show_me/show_me.html#brom_drake.productions.debug.show_me.show_me_this_model.ShowMeThisModel.add_supporting_cast">[docs]</a>
     <span class="k">def</span> <span class="nf">add_supporting_cast</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        *Description*</span>
+<span class="sd">        **Description**</span>
 <span class="sd">        </span>
 <span class="sd">        This method updates the production&#39;s</span>
 <span class="sd">        - MultibodyPlant with the user&#39;s model</span>
@@ -803,18 +804,18 @@
         <span class="n">cast</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Role</span><span class="p">,</span> <span class="n">Performer</span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Diagram</span><span class="p">,</span> <span class="n">Context</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        *Description*</span>
+<span class="sd">        **Description**</span>
 <span class="sd">        </span>
 <span class="sd">        This method builds the production&#39;s diagram and context,</span>
 <span class="sd">        and assigns the plant context to the internal ShowMeSystem.</span>
 <span class="sd">        </span>
-<span class="sd">        *Parameters*</span>
+<span class="sd">        **Parameters**</span>
 <span class="sd">        </span>
 <span class="sd">        cast: Tuple[Role, Performer], optional</span>
 <span class="sd">            The cast to be added to the production.</span>
 <span class="sd">            Default is an empty tuple.</span>
 <span class="sd">            </span>
-<span class="sd">        *Returns*</span>
+<span class="sd">        **Returns**</span>
 
 <span class="sd">        diagram: Diagram</span>
 <span class="sd">            The built Diagram of the production.</span>
@@ -836,7 +837,7 @@
 <a class="viewcode-back" href="../../../../../generated/productions/debug/show_me/show_me.html#brom_drake.productions.debug.show_me.show_me_this_model.ShowMeThisModel.add_multibody_triads">[docs]</a>
     <span class="k">def</span> <span class="nf">add_multibody_triads</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        *Description*</span>
+<span class="sd">        **Description**</span>
 <span class="sd">        </span>
 <span class="sd">        This method will add triads to the world frame</span>
 <span class="sd">        and any other relevant frames.</span>
@@ -855,12 +856,12 @@
 <a class="viewcode-back" href="../../../../../generated/productions/debug/show_me/show_me.html#brom_drake.productions.debug.show_me.show_me_this_model.ShowMeThisModel.create_and_connect_source_of_joint_positions">[docs]</a>
     <span class="k">def</span> <span class="nf">create_and_connect_source_of_joint_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        *Description*</span>
+<span class="sd">        **Description**</span>
 <span class="sd">        </span>
 <span class="sd">        This method will create and connect a source of joint positions</span>
 <span class="sd">        to the ShowMeSystem.</span>
 
-<span class="sd">        *Assumptions*</span>
+<span class="sd">        **Assumptions**</span>
 
 <span class="sd">        - ``self.show_me_system`` is not None</span>
 <span class="sd">        - ``self.q_des`` is not None</span>
@@ -891,12 +892,12 @@
         <span class="bp">self</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        *Description*</span>
+<span class="sd">        **Description**</span>
 <span class="sd">        </span>
 <span class="sd">        This method will return the number of positions in the model</span>
 <span class="sd">        as defined by the user (through the path_to_model).</span>
 
-<span class="sd">        *Returns*</span>
+<span class="sd">        **Returns**</span>
 <span class="sd">        </span>
 <span class="sd">        n_positions: int</span>
 <span class="sd">            The number of positions in the model.</span>
@@ -925,14 +926,14 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ProductionID</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        *Description*</span>
+<span class="sd">        **Description**</span>
 <span class="sd">        </span>
 <span class="sd">        This property returns the unique identifier for this production.</span>
 <span class="sd">        (i.e., ProductionID.kShowMeThisModel)</span>
 
 <span class="sd">        This is required to be implemented by all children of the BaseProduction class.</span>
 
-<span class="sd">        *Returns*</span>
+<span class="sd">        **Returns**</span>
 <span class="sd">        </span>
 <span class="sd">        id: ProductionID</span>
 <span class="sd">            The unique identifier for this production.</span>
@@ -942,14 +943,14 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">suggested_roles</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Role</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        *Description*</span>
+<span class="sd">        **Description**</span>
 
 <span class="sd">        This property returns an empty list, because there are no suggested</span>
 <span class="sd">        roles for this production.</span>
 
 <span class="sd">        This is required to be implemented by all children of the BaseProduction class.</span>
 
-<span class="sd">        *Returns*</span>
+<span class="sd">        **Returns**</span>
 
 <span class="sd">        roles: List[Role]</span>
 <span class="sd">            A list of suggested roles for this production.</span>
@@ -988,7 +989,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../_static/documentation_options.js?v=c954fba5"></script>
+</div><script src="../../../../../_static/documentation_options.js?v=6d2c7fbc"></script>
     <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>
