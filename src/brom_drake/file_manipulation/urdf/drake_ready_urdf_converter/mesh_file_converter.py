@@ -10,6 +10,27 @@ import trimesh
 from brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.util import URDF_CONVERSION_LOG_LEVEL_NAME
 
 class MeshFileConverter:
+    """
+    **Description**
+
+    This class will convert a mesh file to a different format using
+    the trimesh library.
+
+    **Parameters**
+
+    mesh_file_path: str
+        The path to the mesh file that we want to convert.
+        This path should be given RELATIVE to the URDF that we are converting.
+
+    urdf_dir: Path
+        The directory where the URDF file is located.
+
+    new_urdf_dir: Path
+        The directory where the new URDF file will be saved.
+
+    logger: logging.Logger
+        The logger to use for logging messages.
+    """
     def __init__(
         self,
         mesh_file_path: str,
@@ -18,19 +39,24 @@ class MeshFileConverter:
         logger: logging.Logger,
     ):
         """
-        Description
-        -----------
+        **Description**
+        
         This class will convert a mesh file to a different format.
         
-        Arguments
-        ---------
+        **Parameters**
+
         mesh_file_path: str
             The path to the mesh file that we want to convert.
             This path should be given RELATIVE to the URDF that we are converting.
+
         urdf_dir: Path
             The directory where the URDF file is located.
+
         new_urdf_dir: Path
             The directory where the new URDF file will be saved.
+
+        logger: logging.Logger
+            The logger to use for logging messages.
         """
         # Input Processing
 
@@ -71,10 +97,14 @@ class MeshFileConverter:
 
     def define_output_path(self, output_mesh_file: Path = None) -> Path:
         """
-        Description:
-            This function will define the output path for the mesh file.
-        :param output_mesh_file:
-        :return:
+        **Description**
+        
+        This function will define the output path for the mesh file.
+
+        **Returns**
+
+        output_mesh_file: Path
+            The output path for the mesh file.
         """
         # Input Processing
         if output_mesh_file is not None:

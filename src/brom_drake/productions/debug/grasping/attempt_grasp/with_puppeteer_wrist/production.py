@@ -1266,13 +1266,14 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
     @property
     def suggested_roles(self) -> List[Role]:
         """
-        *Description*
+        **Description**
         
         This property suggests the roles that are relevant for this production.
 
         No roles are necessary here, so this method returns an empty list.
         
-        *Returns*
+        **Returns**
+        
         suggested_roles: List[Role]
             A list of Role enums that are relevant for this production.
         """

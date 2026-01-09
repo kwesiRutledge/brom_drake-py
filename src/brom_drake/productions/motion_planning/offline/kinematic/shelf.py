@@ -183,16 +183,17 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
 
     def add_supporting_cast(self):
         """
-        *Description*
+        **Description**
 
         Modifies the plant and the builder by:
+
         - Adding UR10e station to the plant
         - Adding shelf to the plant
         - Adding a "ground" to the plant
         - Adding features required by the KinematicMotionPlanningProductionFeatures
-          + Robot's ModelInstanceIndex Source
-          + Motion Planning Components
-          + Start and Goal Pose sources
+            - Robot's ModelInstanceIndex Source
+            - Motion Planning Components
+            - Start and Goal Pose sources
         - Setting initial configuration of the arm for the plant
         
         """
