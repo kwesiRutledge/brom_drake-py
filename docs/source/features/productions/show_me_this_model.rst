@@ -118,5 +118,5 @@ You can enable this feature by setting the :code:`show_collision_geometries` arg
 Which will produce the following simulation result for the UR10e robot:
 
 .. image:: ../../_static/images/productions/debug/show_me_this_model/collision_geometries1.png
-    :alt: A UR10e robot arm in an empty simulated environment, in a "bent-elbom" configuration, showing the collision geometries instead of the visual geometries. The collision geometries are a set of odd cylinders around each link.
+    :alt: A UR10e robot arm in an empty simulated environment, in a "bent-elbow" configuration, showing the collision geometries instead of the visual geometries. The collision geometries are a set of odd cylinders around each link.
     :align: center
