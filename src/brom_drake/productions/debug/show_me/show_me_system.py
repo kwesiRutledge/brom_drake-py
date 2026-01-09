@@ -7,7 +7,7 @@ from brom_drake.utils import AddMultibodyTriad
 
 class ShowMeSystem(LeafSystem):
     """
-    *Description*
+    **Description**
     
     This class defines a LeafSystem that will force a specific model
     (model_index) in a MultibodyPlant to hold the joint positions
@@ -15,7 +15,7 @@ class ShowMeSystem(LeafSystem):
     
     The object may or may not be welded to the world frame.
 
-    *Block Diagram*
+    **Block Diagram**
 
     The ShowMeSystem block diagram is as follows: ::
 
@@ -24,8 +24,8 @@ class ShowMeSystem(LeafSystem):
         desired_joint_positions --->| ShowMeSystem  |---> measured_joint_positions
                                     |               |
                                     |---------------|
-                                    
-    *Parameters*
+
+    **Parameters**
 
     plant : MultibodyPlant
         The MultibodyPlant containing the model to be shown.
@@ -74,12 +74,12 @@ class ShowMeSystem(LeafSystem):
 
     def SetModelJointPositions(self, context: Context, output: BasicVector):
         """
-        *Description*
+        **Description**
         
         This method will set the joint positions of the model to the desired joint positions.
         
-        *Parameters*
-
+        **Parameters**
+        
         context: Context
             The context of the LeafSystem at the time that this callback is triggered.
 
