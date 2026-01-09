@@ -80,8 +80,8 @@ The result of this script will be the following simulation:
     :alt: A UR10e robot arm in an empty simulated environment, in a "bent-elbow" configuration.
     :align: center
 
-How it works?
-^^^^^^^^^^^^^
+How it works
+^^^^^^^^^^^^
 
 In the above snippet, we see a couple of things:
 
