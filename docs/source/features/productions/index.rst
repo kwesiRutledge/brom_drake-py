@@ -12,6 +12,7 @@ In case you want to "dive right in" to using Productions, we'll list a few here 
 
    debug/show_me_this_model
    kinematic_motion_planning
+   debug/show_me_this_static_grasp
 
 What is a Production?
 ---------------------
