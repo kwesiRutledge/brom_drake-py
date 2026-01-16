@@ -8,7 +8,7 @@ Kinematic Motion Planning
 Summary
 -------
 
-Brom contains several :code:`KinematicMotionPlanning` Productions. 
+Brom contains several :py:class:`~brom_drake.productions.types.motion_planning.offline.kinematic.KinematicMotionPlanningProduction` Productions. 
 For each of these Productions, you can provide your favorite motion planning algorithm and the scene will automatically include your algorithm into the Production and simulate how that algorithm would perform in the scenario.
 
 Example Usage
@@ -58,9 +58,9 @@ Consider the following example:
     simulator.AdvanceTo(planned_trajectory.end_time()+1.0)
 
 This is all that is needed to build and then run our motion planning algorithm (that is :code:`planner2.plan`)
- in the scene depicted in the .gif above. For the most part, you can swap in ANY of the :code:`Production`s that are built on top of the 
-:code:`OfflineKinematicMotionPlanning` class in this way. 
-Feel free to play around with more examples in the `examples/motion_planning/offline/chem_lab1` directory to get a better sense of how they work!
+in the scene depicted in the .gif above. For the most part, you can swap in ANY of the :code:`Production` s that are built on top of the 
+:py:class:`~brom_drake.productions.types.motion_planning.offline.kinematic.KinematicMotionPlanningProduction` class in this way. 
+Feel free to play around with more examples in the :code:`examples/motion_planning/offline/chem_lab1` directory to get a better sense of how they work!
 
 How It Works
 ------------
