@@ -1,7 +1,7 @@
 Show Me This Model
 ==================
 
-.. image:: ../../_static/images/productions/debug/show_me_this_model/show_me1.png
+.. image:: ../../../_static/images/productions/debug/show_me_this_model/show_me1.png
     :alt: A UR10e robot arm in an empty simulated environment, in a "bent-elbow" configuration.
     :align: center
 
@@ -76,7 +76,7 @@ In the following section, we will also include one example to demonstrate how to
 
 The result of this script will be the following simulation:
 
-.. image:: ../../_static/images/productions/debug/show_me_this_model/show_me1.png
+.. image:: ../../../_static/images/productions/debug/show_me_this_model/show_me1.png
     :alt: A UR10e robot arm in an empty simulated environment, in a "bent-elbow" configuration.
     :align: center
 
@@ -117,6 +117,6 @@ You can enable this feature by setting the :code:`show_collision_geometries` arg
 
 Which will produce the following simulation result for the UR10e robot:
 
-.. image:: ../../_static/images/productions/debug/show_me_this_model/collision_geometries1.png
+.. image:: ../../../_static/images/productions/debug/show_me_this_model/collision_geometries1.png
     :alt: A UR10e robot arm in an empty simulated environment, in a "bent-elbow" configuration, showing the collision geometries instead of the visual geometries. The collision geometries are a set of odd cylinders around each link.
     :align: center
