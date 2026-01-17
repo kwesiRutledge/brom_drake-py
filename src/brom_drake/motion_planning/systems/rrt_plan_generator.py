@@ -273,7 +273,7 @@ class RRTPlanGenerator(LeafSystem):
         **Description**
         
         This method uses the plant and the robot model idx
-        to identify the numer of degrees of freedom we have for control.
+        to identify the number of degrees of freedom we have for control.
         :return:
         """
         return self.plant.num_actuated_dofs()
