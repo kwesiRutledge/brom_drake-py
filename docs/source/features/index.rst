@@ -10,6 +10,7 @@ Where possible, we will link to detailed documentation for each feature in the A
 
 .. toctree::
     :maxdepth: 1
+    :glob:
     
     diagram_watcher
     drakeify_my_urdf

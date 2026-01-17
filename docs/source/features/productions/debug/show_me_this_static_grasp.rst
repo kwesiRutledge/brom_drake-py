@@ -3,6 +3,7 @@ Show Me This Static Grasp
 
 .. image:: ../../../_static/images/productions/debug/grasping/show_me_this_static_grasp/static1.png
     :alt: A Robotiq 2f85 gripper in a simulated environment, attempting to grasp an erlenmeyer flask.
+    :width: 60%
     :align: center
 
 *Want to see what a grasp would look like when "frozen" in time?*
@@ -130,3 +131,4 @@ The result of this script will be the following simulation:
 .. image:: ../../../_static/images/productions/debug/grasping/show_me_this_static_grasp/static2_green.png
     :alt: A Robotiq 2f85 gripper in a simulated environment, attempting to grasp an erlenmeyer flask, with the visual geometries changed to be green and transparent. The collision geometries are a set of odd cylinders around each link.
     :align: center
+    :width: 60%

@@ -3,6 +3,7 @@ Kinematic Motion Planning
 
 .. image:: ../../_static/images/productions/motion_planning/kinematic/Chem-Lab-Demo.gif
     :alt: A robot arm moving in a simulated chemistry lab environment, avoiding obstacles while reaching for a target object.
+    :width: 60%
     :align: center
 
 Summary
