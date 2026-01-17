@@ -5,8 +5,8 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html"><link rel="next" title="puppetmaker" href="../puppetmaker/puppetmaker.html"><link rel="prev" title="rigid_transform_to_vector_system" href="../leaf_systems/rigid_transform_to_vector_system/rigid_transform_to_vector_system.html">
 
-    <!-- Generated with Sphinx 8.2.3 and Furo 2025.12.19 -->
-        <title>pick_and_place - brom_drake-py 0.4.7-3 documentation</title>
+    <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
+        <title>pick_and_place - brom_drake-py 0.4.7-4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -162,7 +162,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">brom_drake-py 0.4.7-3 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">brom_drake-py 0.4.7-4 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +183,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.4.7-3 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 0.4.7-4 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -197,7 +197,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../features/diagram_watcher.html">DiagramWatcher</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../features/drakeify_my_urdf.html">“Drakeify”-My-URDF</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../features/productions/index.html">Productions</a><input aria-label="Toggle navigation of Productions" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../features/productions/show_me_this_model.html">Show Me This Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../features/productions/debug/show_me_this_model.html">Show Me This Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../features/productions/kinematic_motion_planning.html">Kinematic Motion Planning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../features/productions/debug/show_me_this_static_grasp.html">Show Me This Static Grasp</a></li>
 </ul>
 </li>
 </ul>
@@ -572,12 +574,12 @@
 <h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="brom_drake.utils.pick_and_place.phase.PickAndPlacePhase">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brom_drake.utils.pick_and_place.phase.</span></span><span class="sig-name descname"><span class="pre">PickAndPlacePhase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/brom_drake/utils/pick_and_place/phase.html#PickAndPlacePhase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.utils.pick_and_place.phase.PickAndPlacePhase" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brom_drake.utils.pick_and_place.phase.</span></span><span class="sig-name descname"><span class="pre">PickAndPlacePhase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/brom_drake/utils/pick_and_place/phase.html#PickAndPlacePhase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.utils.pick_and_place.phase.PickAndPlacePhase" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="brom_drake.utils.pick_and_place.target_description.PickAndPlaceTargetDescription">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brom_drake.utils.pick_and_place.target_description.</span></span><span class="sig-name descname"><span class="pre">PickAndPlaceTargetDescription</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">goal_region</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pydrake.geometry.optimization.HPolyhedron</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_instance_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pydrake.multibody.tree.ModelInstanceIndex</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/brom_drake/utils/pick_and_place/target_description.html#PickAndPlaceTargetDescription"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.utils.pick_and_place.target_description.PickAndPlaceTargetDescription" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brom_drake.utils.pick_and_place.target_description.</span></span><span class="sig-name descname"><span class="pre">PickAndPlaceTargetDescription</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">goal_region</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pydrake.geometry.optimization.HPolyhedron</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_instance_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pydrake.multibody.tree.ModelInstanceIndex</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/brom_drake/utils/pick_and_place/target_description.html#PickAndPlaceTargetDescription"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.utils.pick_and_place.target_description.PickAndPlaceTargetDescription" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </section>
@@ -666,9 +668,9 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=6d2c7fbc"></script>
-    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+</div><script src="../../../_static/documentation_options.js?v=a6a5ef71"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../_static/copybutton.js?v=f281be69"></script>

@@ -10,7 +10,9 @@ In case you want to "dive right in" to using Productions, we'll list a few here 
    :maxdepth: 1
    :glob:
 
-   show_me_this_model
+   debug/show_me_this_model
+   kinematic_motion_planning
+   debug/show_me_this_static_grasp
 
 What is a Production?
 ---------------------

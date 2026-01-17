@@ -5,8 +5,8 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html"><link rel="next" title="kinematic" href="../kinematic/kinematic.html"><link rel="prev" title="offline" href="../offline.html">
 
-    <!-- Generated with Sphinx 8.2.3 and Furo 2025.12.19 -->
-        <title>dynamic - brom_drake-py 0.4.7-3 documentation</title>
+    <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
+        <title>dynamic - brom_drake-py 0.4.7-4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
@@ -162,7 +162,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../index.html"><div class="brand">brom_drake-py 0.4.7-3 documentation</div></a>
+      <a href="../../../../../index.html"><div class="brand">brom_drake-py 0.4.7-4 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +183,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.4.7-3 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 0.4.7-4 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -197,7 +197,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../../../features/diagram_watcher.html">DiagramWatcher</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../../features/drakeify_my_urdf.html">“Drakeify”-My-URDF</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../features/productions/index.html">Productions</a><input aria-label="Toggle navigation of Productions" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../../../features/productions/show_me_this_model.html">Show Me This Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../features/productions/debug/show_me_this_model.html">Show Me This Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../features/productions/kinematic_motion_planning.html">Kinematic Motion Planning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../features/productions/debug/show_me_this_static_grasp.html">Show Me This Static Grasp</a></li>
 </ul>
 </li>
 </ul>
@@ -572,7 +574,7 @@
 <h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.</span></span><span class="sig-name descname"><span class="pre">ChemLab2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meshcat_port_number</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">7001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plan_execution_speed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pose_WorldBeaker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">RigidTransform</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_height</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shelf_pose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">RigidTransform</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gripper_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../../../robots/robots.html#brom_drake.robots.gripper_type.GripperType" title="brom_drake.robots.gripper_type.GripperType"><span class="pre">GripperType</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">GripperType.Robotiq_2f_85</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/brom_drake/productions/motion_planning/offline/dynamic/chem_lab2.html#ChemLab2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.</span></span><span class="sig-name descname"><span class="pre">ChemLab2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meshcat_port_number</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">7001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plan_execution_speed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pose_WorldBeaker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">RigidTransform</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_height</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shelf_pose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">RigidTransform</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gripper_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../../../robots/robots.html#brom_drake.robots.gripper_type.GripperType" title="brom_drake.robots.gripper_type.GripperType"><span class="pre">GripperType</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">GripperType.Robotiq_2f_85</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/brom_drake/productions/motion_planning/offline/dynamic/chem_lab2.html#ChemLab2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2" title="Link to this definition">¶</a></dt>
 <dd><p><em>Description</em></p>
 <p>This production is the second in the chemistry lab series.
 It is used to test the motion planning capabilities of the robot
@@ -780,7 +782,7 @@ If with_watcher is True, this context will be used to initialize the watcher.</p
 
 <dl class="py property">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2.goal_configuration">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">goal_configuration</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2.goal_configuration" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">goal_configuration</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></span><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2.goal_configuration" title="Link to this definition">¶</a></dt>
 <dd><p><em>Description</em></p>
 <p>Get the goal pose.</p>
 <p><em>Returns</em></p>
@@ -792,7 +794,7 @@ If with_watcher is True, this context will be used to initialize the watcher.</p
 
 <dl class="py property">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2.goal_pose">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">goal_pose</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">RigidTransform</span></em><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2.goal_pose" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">goal_pose</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">RigidTransform</span></span><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2.goal_pose" title="Link to this definition">¶</a></dt>
 <dd><p><em>Description</em></p>
 <p>Get the goal pose of the end effector frame.</p>
 <p><em>Returns</em></p>
@@ -804,7 +806,7 @@ If with_watcher is True, this context will be used to initialize the watcher.</p
 
 <dl class="py property">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2.id">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../../../productions.html#brom_drake.productions.ids.ProductionID" title="brom_drake.productions.ids.ProductionID"><span class="pre">ProductionID</span></a></em><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2.id" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../../../productions.html#brom_drake.productions.ids.ProductionID" title="brom_drake.productions.ids.ProductionID"><span class="pre">ProductionID</span></a></span><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2.id" title="Link to this definition">¶</a></dt>
 <dd><p><em>Description</em></p>
 <p>Always returns the ProductionID for ChemLab2.</p>
 <p><em>Returns</em></p>
@@ -838,7 +840,7 @@ by itself.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2.start_configuration">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">start_configuration</span></span><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2.start_configuration" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">start_configuration</span></span><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2.start_configuration" title="Link to this definition">¶</a></dt>
 <dd><p><em>Description</em></p>
 <p>Get the start configuration of the robot in the production.</p>
 <p><em>Returns</em></p>
@@ -850,7 +852,7 @@ by itself.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2.start_pose">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">start_pose</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">RigidTransform</span></em><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2.start_pose" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">start_pose</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">RigidTransform</span></span><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2.start_pose" title="Link to this definition">¶</a></dt>
 <dd><p><em>Description</em></p>
 <p>Get the start pose. This should be defined by the subclass.</p>
 <p><em>Returns</em></p>
@@ -871,7 +873,7 @@ by itself.</p>
 <h2>Variables<a class="headerlink" href="#variables" title="Link to this heading">¶</a></h2>
 <dl class="py data">
 <dt class="sig sig-object py" id="brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.DEFAULT_BROM_MODELS_DIR">
-<span class="sig-prename descclassname"><span class="pre">brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.</span></span><span class="sig-name descname"><span class="pre">DEFAULT_BROM_MODELS_DIR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'./brom/models'</span></em><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.DEFAULT_BROM_MODELS_DIR" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.</span></span><span class="sig-name descname"><span class="pre">DEFAULT_BROM_MODELS_DIR</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'./brom/models'</span></span><a class="headerlink" href="#brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.DEFAULT_BROM_MODELS_DIR" title="Link to this definition">¶</a></dt>
 <dd><p>str(object=’’) -&gt; str
 str(bytes_or_buffer[, encoding[, errors]]) -&gt; str</p>
 <p>Create a new string object from the given object. If encoding or
@@ -982,9 +984,9 @@ errors defaults to ‘strict’.</p>
       
     </aside>
   </div>
-</div><script src="../../../../../_static/documentation_options.js?v=6d2c7fbc"></script>
-    <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+</div><script src="../../../../../_static/documentation_options.js?v=a6a5ef71"></script>
+    <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>
     <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../../../_static/copybutton.js?v=f281be69"></script>

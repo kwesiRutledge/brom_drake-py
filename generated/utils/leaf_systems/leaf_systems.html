@@ -5,8 +5,8 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html"><link rel="next" title="network_fsm" href="network_fsm/network_fsm.html"><link rel="prev" title="initial_condition_manager" href="../initial_condition_manager/initial_condition_manager.html">
 
-    <!-- Generated with Sphinx 8.2.3 and Furo 2025.12.19 -->
-        <title>leaf_systems - brom_drake-py 0.4.7-3 documentation</title>
+    <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
+        <title>leaf_systems - brom_drake-py 0.4.7-4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -162,7 +162,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">brom_drake-py 0.4.7-3 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">brom_drake-py 0.4.7-4 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +183,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.4.7-3 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 0.4.7-4 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -197,7 +197,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../features/diagram_watcher.html">DiagramWatcher</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../features/drakeify_my_urdf.html">“Drakeify”-My-URDF</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../features/productions/index.html">Productions</a><input aria-label="Toggle navigation of Productions" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../features/productions/show_me_this_model.html">Show Me This Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../features/productions/debug/show_me_this_model.html">Show Me This Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../features/productions/kinematic_motion_planning.html">Kinematic Motion Planning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../features/productions/debug/show_me_this_static_grasp.html">Show Me This Static Grasp</a></li>
 </ul>
 </li>
 </ul>
@@ -576,7 +578,7 @@
 <h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="brom_drake.utils.leaf_systems.bool_to_vec_system.BoolToVectorSystem">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brom_drake.utils.leaf_systems.bool_to_vec_system.</span></span><span class="sig-name descname"><span class="pre">BoolToVectorSystem</span></span><a class="reference internal" href="../../../_modules/brom_drake/utils/leaf_systems/bool_to_vec_system.html#BoolToVectorSystem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.utils.leaf_systems.bool_to_vec_system.BoolToVectorSystem" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brom_drake.utils.leaf_systems.bool_to_vec_system.</span></span><span class="sig-name descname"><span class="pre">BoolToVectorSystem</span></span><a class="reference internal" href="../../../_modules/brom_drake/utils/leaf_systems/bool_to_vec_system.html#BoolToVectorSystem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.utils.leaf_systems.bool_to_vec_system.BoolToVectorSystem" title="Link to this definition">¶</a></dt>
 <dd><p><em>Description</em></p>
 <p>This LeafSystem receives boolean inputs (i.e., AbstractValue inputs
 containing bool values) and returns an output vector of size 1 (i.e., BasicVector) where the
@@ -603,7 +605,7 @@ This function takes in a bool and outputs a vector of size 1.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="brom_drake.utils.leaf_systems.end_effector_wrench_calculator.EndEffectorWrenchCalculator">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brom_drake.utils.leaf_systems.end_effector_wrench_calculator.</span></span><span class="sig-name descname"><span class="pre">EndEffectorWrenchCalculator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plant</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_effector_frame</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/brom_drake/utils/leaf_systems/end_effector_wrench_calculator.html#EndEffectorWrenchCalculator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.utils.leaf_systems.end_effector_wrench_calculator.EndEffectorWrenchCalculator" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brom_drake.utils.leaf_systems.end_effector_wrench_calculator.</span></span><span class="sig-name descname"><span class="pre">EndEffectorWrenchCalculator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plant</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_effector_frame</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/brom_drake/utils/leaf_systems/end_effector_wrench_calculator.html#EndEffectorWrenchCalculator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.utils.leaf_systems.end_effector_wrench_calculator.EndEffectorWrenchCalculator" title="Link to this definition">¶</a></dt>
 <dd><p><em>Description</em></p>
 <p>A simple system which takes as input joint torques and outputs the corresponding
 wrench applied to the end-effector.</p>
@@ -625,7 +627,7 @@ wrench applied to the end-effector.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="brom_drake.utils.leaf_systems.flexible_port_switch.FlexiblePortSwitch">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brom_drake.utils.leaf_systems.flexible_port_switch.</span></span><span class="sig-name descname"><span class="pre">FlexiblePortSwitch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim:</span> <span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selector_type_in:</span> <span class="pre">type</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'str'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/brom_drake/utils/leaf_systems/flexible_port_switch.html#FlexiblePortSwitch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.utils.leaf_systems.flexible_port_switch.FlexiblePortSwitch" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brom_drake.utils.leaf_systems.flexible_port_switch.</span></span><span class="sig-name descname"><span class="pre">FlexiblePortSwitch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selector_type_in</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../file_manipulation/urdf/shapes/shapes.html#brom_drake.file_manipulation.urdf.shapes.box.BoxDefinition.type" title="brom_drake.file_manipulation.urdf.shapes.box.BoxDefinition.type"><span class="pre">type</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;class</span> <span class="pre">'str'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/brom_drake/utils/leaf_systems/flexible_port_switch.html#FlexiblePortSwitch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.utils.leaf_systems.flexible_port_switch.FlexiblePortSwitch" title="Link to this definition">¶</a></dt>
 <dd><p><em>Description</em></p>
 <p>This system is a simplification of the PortSwitch system primitive
 that is built into Drake. It allows for you to command the switch
@@ -781,9 +783,9 @@ specified in <cite>desired_inputs</cite>.</p>
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=6d2c7fbc"></script>
-    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+</div><script src="../../../_static/documentation_options.js?v=a6a5ef71"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../_static/copybutton.js?v=f281be69"></script>

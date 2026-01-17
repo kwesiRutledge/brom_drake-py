@@ -5,8 +5,8 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html"><link rel="next" title="leaf_systems" href="../leaf_systems/leaf_systems.html"><link rel="prev" title="utils" href="../utils.html">
 
-    <!-- Generated with Sphinx 8.2.3 and Furo 2025.12.19 -->
-        <title>initial_condition_manager - brom_drake-py 0.4.7-3 documentation</title>
+    <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
+        <title>initial_condition_manager - brom_drake-py 0.4.7-4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -162,7 +162,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">brom_drake-py 0.4.7-3 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">brom_drake-py 0.4.7-4 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +183,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.4.7-3 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 0.4.7-4 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -197,7 +197,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../features/diagram_watcher.html">DiagramWatcher</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../features/drakeify_my_urdf.html">“Drakeify”-My-URDF</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../features/productions/index.html">Productions</a><input aria-label="Toggle navigation of Productions" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../features/productions/show_me_this_model.html">Show Me This Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../features/productions/debug/show_me_this_model.html">Show Me This Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../features/productions/kinematic_motion_planning.html">Kinematic Motion Planning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../features/productions/debug/show_me_this_static_grasp.html">Show Me This Static Grasp</a></li>
 </ul>
 </li>
 </ul>
@@ -572,7 +574,7 @@
 <h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="brom_drake.utils.initial_condition_manager.initial_condition.InitialCondition">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brom_drake.utils.initial_condition_manager.initial_condition.</span></span><span class="sig-name descname"><span class="pre">InitialCondition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_instance_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pydrake.multibody.tree.ModelInstanceIndex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pose_wrt_parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pydrake.math.RigidTransform</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">configuration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_body_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/brom_drake/utils/initial_condition_manager/initial_condition.html#InitialCondition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.utils.initial_condition_manager.initial_condition.InitialCondition" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brom_drake.utils.initial_condition_manager.initial_condition.</span></span><span class="sig-name descname"><span class="pre">InitialCondition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_instance_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pydrake.multibody.tree.ModelInstanceIndex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pose_wrt_parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pydrake.math.RigidTransform</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">configuration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_body_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/brom_drake/utils/initial_condition_manager/initial_condition.html#InitialCondition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.utils.initial_condition_manager.initial_condition.InitialCondition" title="Link to this definition">¶</a></dt>
 <dd><dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.utils.initial_condition_manager.initial_condition.InitialCondition.set_initial_configuration">
 <span class="sig-name descname"><span class="pre">set_initial_configuration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plant</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MultibodyPlant</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diagram_context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Context</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/brom_drake/utils/initial_condition_manager/initial_condition.html#InitialCondition.set_initial_configuration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.utils.initial_condition_manager.initial_condition.InitialCondition.set_initial_configuration" title="Link to this definition">¶</a></dt>
@@ -596,7 +598,7 @@ diagram context (if any).</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="brom_drake.utils.initial_condition_manager.manager.InitialConditionManager">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brom_drake.utils.initial_condition_manager.manager.</span></span><span class="sig-name descname"><span class="pre">InitialConditionManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_ic_tuples:</span> <span class="pre">List[brom_drake.utils.initial_condition_manager.initial_condition.InitialCondition]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/brom_drake/utils/initial_condition_manager/manager.html#InitialConditionManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.utils.initial_condition_manager.manager.InitialConditionManager" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brom_drake.utils.initial_condition_manager.manager.</span></span><span class="sig-name descname"><span class="pre">InitialConditionManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_ic_tuples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#brom_drake.utils.initial_condition_manager.initial_condition.InitialCondition" title="brom_drake.utils.initial_condition_manager.initial_condition.InitialCondition"><span class="pre">brom_drake.utils.initial_condition_manager.initial_condition.InitialCondition</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/brom_drake/utils/initial_condition_manager/manager.html#InitialConditionManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.utils.initial_condition_manager.manager.InitialConditionManager" title="Link to this definition">¶</a></dt>
 <dd><dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.utils.initial_condition_manager.manager.InitialConditionManager.set_all_initial_conditions">
 <span class="sig-name descname"><span class="pre">set_all_initial_conditions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plant</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MultibodyPlant</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diagram_context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Context</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/brom_drake/utils/initial_condition_manager/manager.html#InitialConditionManager.set_all_initial_conditions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.utils.initial_condition_manager.manager.InitialConditionManager.set_all_initial_conditions" title="Link to this definition">¶</a></dt>
@@ -714,9 +716,9 @@ for the given plant.</p>
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=6d2c7fbc"></script>
-    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+</div><script src="../../../_static/documentation_options.js?v=a6a5ef71"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../_static/copybutton.js?v=f281be69"></script>

@@ -5,8 +5,8 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html"><link rel="next" title="open_loop_dispensers" href="open_loop_dispensers/open_loop_dispensers.html"><link rel="prev" title="rrt" href="../algorithms/rrt/rrt.html">
 
-    <!-- Generated with Sphinx 8.2.3 and Furo 2025.12.19 -->
-        <title>systems - brom_drake-py 0.4.7-3 documentation</title>
+    <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
+        <title>systems - brom_drake-py 0.4.7-4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -162,7 +162,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">brom_drake-py 0.4.7-3 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">brom_drake-py 0.4.7-4 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +183,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.4.7-3 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 0.4.7-4 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -197,7 +197,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../features/diagram_watcher.html">DiagramWatcher</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../features/drakeify_my_urdf.html">“Drakeify”-My-URDF</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../features/productions/index.html">Productions</a><input aria-label="Toggle navigation of Productions" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../features/productions/show_me_this_model.html">Show Me This Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../features/productions/debug/show_me_this_model.html">Show Me This Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../features/productions/kinematic_motion_planning.html">Kinematic Motion Planning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../features/productions/debug/show_me_this_static_grasp.html">Show Me This Static Grasp</a></li>
 </ul>
 </li>
 </ul>
@@ -576,7 +578,7 @@
 <h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="brom_drake.motion_planning.systems.prototypical_planner.PrototypicalPlannerSystem">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brom_drake.motion_planning.systems.prototypical_planner.</span></span><span class="sig-name descname"><span class="pre">PrototypicalPlannerSystem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plant</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MultibodyPlant</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scene_graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SceneGraph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">planning_algorithm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">DiGraph</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">robot_model_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ModelInstanceIndex</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/brom_drake/motion_planning/systems/prototypical_planner.html#PrototypicalPlannerSystem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.motion_planning.systems.prototypical_planner.PrototypicalPlannerSystem" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brom_drake.motion_planning.systems.prototypical_planner.</span></span><span class="sig-name descname"><span class="pre">PrototypicalPlannerSystem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plant</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MultibodyPlant</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scene_graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SceneGraph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">planning_algorithm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">DiGraph</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">robot_model_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ModelInstanceIndex</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/brom_drake/motion_planning/systems/prototypical_planner.html#PrototypicalPlannerSystem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.motion_planning.systems.prototypical_planner.PrototypicalPlannerSystem" title="Link to this definition">¶</a></dt>
 <dd><section id="description">
 <h3>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h3>
 <p>This function is meant to be a prototypical planner system.
@@ -656,7 +658,7 @@ input to theis function.
 
 <dl class="py property">
 <dt class="sig sig-object py" id="brom_drake.motion_planning.systems.prototypical_planner.PrototypicalPlannerSystem.n_actuated_dof">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n_actuated_dof</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#brom_drake.motion_planning.systems.prototypical_planner.PrototypicalPlannerSystem.n_actuated_dof" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">n_actuated_dof</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#brom_drake.motion_planning.systems.prototypical_planner.PrototypicalPlannerSystem.n_actuated_dof" title="Link to this definition">¶</a></dt>
 <dd><section id="id5">
 <h4>Description<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h4>
 <p>This method uses the plant and the robot model idx
@@ -686,93 +688,105 @@ to identify the numer of degrees of freedom we have for control.
 
 <dl class="py class">
 <dt class="sig sig-object py" id="brom_drake.motion_planning.systems.rrt_plan_generator.RRTPlanGenerator">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brom_drake.motion_planning.systems.rrt_plan_generator.</span></span><span class="sig-name descname"><span class="pre">RRTPlanGenerator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plant</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MultibodyPlant</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scene_graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SceneGraph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">robot_model_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ModelInstanceIndex</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rrt_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../algorithms/rrt/rrt.html#brom_drake.motion_planning.algorithms.rrt.base.BaseRRTPlannerConfig" title="brom_drake.motion_planning.algorithms.rrt.base.BaseRRTPlannerConfig"><span class="pre">BaseRRTPlannerConfig</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/brom_drake/motion_planning/systems/rrt_plan_generator.html#RRTPlanGenerator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.motion_planning.systems.rrt_plan_generator.RRTPlanGenerator" title="Link to this definition">¶</a></dt>
-<dd><p>RRTPlanGenerator class
-Description:</p>
-<blockquote>
-<div><p>This class will call the RRT planning algorithm for
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brom_drake.motion_planning.systems.rrt_plan_generator.</span></span><span class="sig-name descname"><span class="pre">RRTPlanGenerator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plant</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MultibodyPlant</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scene_graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SceneGraph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">robot_model_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ModelInstanceIndex</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rrt_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../algorithms/rrt/rrt.html#brom_drake.motion_planning.algorithms.rrt.base.BaseRRTPlannerConfig" title="brom_drake.motion_planning.algorithms.rrt.base.BaseRRTPlannerConfig"><span class="pre">BaseRRTPlannerConfig</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/brom_drake/motion_planning/systems/rrt_plan_generator.html#RRTPlanGenerator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.motion_planning.systems.rrt_plan_generator.RRTPlanGenerator" title="Link to this definition">¶</a></dt>
+<dd><p><strong>Description</strong></p>
+<p>This class will call the RRT planning algorithm for
 and then share it in an output port.</p>
-</div></blockquote>
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt>plant: MultibodyPlant</dt><dd><p>The multibody plant containing the robot and environment.</p>
+</dd>
+<dt>scene_graph: SceneGraph</dt><dd><p>The scene graph associated with the multibody plant.</p>
+</dd>
+<dt>robot_model_idx: ModelInstanceIndex</dt><dd><p>The model instance index of the robot to be planned for.</p>
+</dd>
+<dt>rrt_config: BaseRRTPlannerConfig</dt><dd><p>The configuration for the RRT planner.</p>
+</dd>
+<dt>dim_config: int</dt><dd><p>The dimension of the configuration space.</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.motion_planning.systems.rrt_plan_generator.RRTPlanGenerator.GetPlanIsReady">
 <span class="sig-name descname"><span class="pre">GetPlanIsReady</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AbstractValue</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/brom_drake/motion_planning/systems/rrt_plan_generator.html#RRTPlanGenerator.GetPlanIsReady"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.motion_planning.systems.rrt_plan_generator.RRTPlanGenerator.GetPlanIsReady" title="Link to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>Description:</dt><dd><p>This function checks if the plan is ready.</p>
-</dd>
-</dl>
+<dd><p><strong>Description</strong></p>
+<p>This function checks if the plan is ready.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.motion_planning.systems.rrt_plan_generator.RRTPlanGenerator.compute_plan_if_not_available">
 <span class="sig-name descname"><span class="pre">compute_plan_if_not_available</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AbstractValue</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/brom_drake/motion_planning/systems/rrt_plan_generator.html#RRTPlanGenerator.compute_plan_if_not_available"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.motion_planning.systems.rrt_plan_generator.RRTPlanGenerator.compute_plan_if_not_available" title="Link to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>Description:</dt><dd><p>This function computes the plan if it is not available.</p>
-</dd>
-</dl>
+<dd><p><strong>Description</strong></p>
+<p>This function computes the plan if it is not available.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.motion_planning.systems.rrt_plan_generator.RRTPlanGenerator.create_input_ports">
 <span class="sig-name descname"><span class="pre">create_input_ports</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/brom_drake/motion_planning/systems/rrt_plan_generator.html#RRTPlanGenerator.create_input_ports"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.motion_planning.systems.rrt_plan_generator.RRTPlanGenerator.create_input_ports" title="Link to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>Description:</dt><dd><p>This function creates the input ports for the RRT planner.</p>
-</dd>
-</dl>
+<dd><p><strong>Description</strong></p>
+<p>This function creates the input ports for the RRT planner.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.motion_planning.systems.rrt_plan_generator.RRTPlanGenerator.create_output_ports">
 <span class="sig-name descname"><span class="pre">create_output_ports</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/brom_drake/motion_planning/systems/rrt_plan_generator.html#RRTPlanGenerator.create_output_ports"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.motion_planning.systems.rrt_plan_generator.RRTPlanGenerator.create_output_ports" title="Link to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>Description:</dt><dd><p>This function creates the output ports for the RRT planner.</p>
-</dd>
-</dl>
+<dd><p><strong>Description</strong></p>
+<p>This function creates the output ports for the RRT planner.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.motion_planning.systems.rrt_plan_generator.RRTPlanGenerator.define_pose_ik_problem">
 <span class="sig-name descname"><span class="pre">define_pose_ik_problem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_pose_vec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.025</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">InverseKinematics</span></span></span><a class="reference internal" href="../../../_modules/brom_drake/motion_planning/systems/rrt_plan_generator.html#RRTPlanGenerator.define_pose_ik_problem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.motion_planning.systems.rrt_plan_generator.RRTPlanGenerator.define_pose_ik_problem" title="Link to this definition">¶</a></dt>
-<dd><section id="id8">
-<h3>Description<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h3>
+<dd><p><strong>Description</strong></p>
 <p>Sets up the inverse kinematics problem for the start pose
-input to theis function.
-:return:</p>
-</section>
+input to this function.</p>
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt>input_pose_vec: np.ndarray</dt><dd><p>The desired end-effector pose as a 7D vector (x, y, z, qx, qy, qz, qw).</p>
+</dd>
+<dt>eps0: float, optional</dt><dd><p>The position tolerance for the IK problem.
+By default, this is set to 2.5 cm.</p>
+</dd>
+</dl>
+<p><strong>Returns</strong></p>
+<dl class="simple">
+<dt>ik_problem: InverseKinematics</dt><dd><p>The defined inverse kinematics problem.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="brom_drake.motion_planning.systems.rrt_plan_generator.RRTPlanGenerator.n_actuated_dof">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n_actuated_dof</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#brom_drake.motion_planning.systems.rrt_plan_generator.RRTPlanGenerator.n_actuated_dof" title="Link to this definition">¶</a></dt>
-<dd><section id="id9">
-<h3>Description<a class="headerlink" href="#id9" title="Link to this heading">¶</a></h3>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">n_actuated_dof</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#brom_drake.motion_planning.systems.rrt_plan_generator.RRTPlanGenerator.n_actuated_dof" title="Link to this definition">¶</a></dt>
+<dd><p><strong>Description</strong></p>
 <p>This method uses the plant and the robot model idx
-to identify the numer of degrees of freedom we have for control.
+to identify the number of degrees of freedom we have for control.
 :return:</p>
-</section>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.motion_planning.systems.rrt_plan_generator.RRTPlanGenerator.set_dimension">
 <span class="sig-name descname"><span class="pre">set_dimension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim_q</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/brom_drake/motion_planning/systems/rrt_plan_generator.html#RRTPlanGenerator.set_dimension"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.motion_planning.systems.rrt_plan_generator.RRTPlanGenerator.set_dimension" title="Link to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>Description:</dt><dd><p>This function sets the dimension of the configuration space.</p>
-</dd>
-</dl>
+<dd><p><strong>Description</strong></p>
+<p>This function sets the dimension of the configuration space.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.motion_planning.systems.rrt_plan_generator.RRTPlanGenerator.solve_pose_ik_problem">
 <span class="sig-name descname"><span class="pre">solve_pose_ik_problem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_pose_vec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../../../_modules/brom_drake/motion_planning/systems/rrt_plan_generator.html#RRTPlanGenerator.solve_pose_ik_problem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.motion_planning.systems.rrt_plan_generator.RRTPlanGenerator.solve_pose_ik_problem" title="Link to this definition">¶</a></dt>
-<dd><p>Description:
-:param input_pose_vec:
-:return:</p>
+<dd><p><strong>Description</strong></p>
+<p>This function solves the inverse kinematics problem for the given pose.</p>
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt>input_pose_vec: np.ndarray</dt><dd><p>The desired end-effector pose as a 7D vector (x, y, z, qx, qy, qz, qw).</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="brom_drake.motion_planning.systems.state_of_plan_in_memory.StateOfPlanInMemory">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brom_drake.motion_planning.systems.state_of_plan_in_memory.</span></span><span class="sig-name descname"><span class="pre">StateOfPlanInMemory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/brom_drake/motion_planning/systems/state_of_plan_in_memory.html#StateOfPlanInMemory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.motion_planning.systems.state_of_plan_in_memory.StateOfPlanInMemory" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brom_drake.motion_planning.systems.state_of_plan_in_memory.</span></span><span class="sig-name descname"><span class="pre">StateOfPlanInMemory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/brom_drake/motion_planning/systems/state_of_plan_in_memory.html#StateOfPlanInMemory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.motion_planning.systems.state_of_plan_in_memory.StateOfPlanInMemory" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </section>
@@ -882,9 +896,9 @@ to identify the numer of degrees of freedom we have for control.
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=6d2c7fbc"></script>
-    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+</div><script src="../../../_static/documentation_options.js?v=a6a5ef71"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../_static/copybutton.js?v=f281be69"></script>

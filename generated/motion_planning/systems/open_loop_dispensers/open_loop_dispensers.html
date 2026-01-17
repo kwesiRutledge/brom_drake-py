@@ -5,8 +5,8 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html"><link rel="next" title="proximity_pose_plan_dispenser" href="../proximity_pose_plan_dispenser/proximity_pose_plan_dispenser.html"><link rel="prev" title="systems" href="../systems.html">
 
-    <!-- Generated with Sphinx 8.2.3 and Furo 2025.12.19 -->
-        <title>open_loop_dispensers - brom_drake-py 0.4.7-3 documentation</title>
+    <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
+        <title>open_loop_dispensers - brom_drake-py 0.4.7-4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -162,7 +162,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">brom_drake-py 0.4.7-3 documentation</div></a>
+      <a href="../../../../index.html"><div class="brand">brom_drake-py 0.4.7-4 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +183,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.4.7-3 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 0.4.7-4 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -197,7 +197,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../../features/diagram_watcher.html">DiagramWatcher</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../features/drakeify_my_urdf.html">“Drakeify”-My-URDF</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../../features/productions/index.html">Productions</a><input aria-label="Toggle navigation of Productions" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../../features/productions/show_me_this_model.html">Show Me This Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../features/productions/debug/show_me_this_model.html">Show Me This Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../features/productions/kinematic_motion_planning.html">Kinematic Motion Planning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../features/productions/debug/show_me_this_static_grasp.html">Show Me This Static Grasp</a></li>
 </ul>
 </li>
 </ul>
@@ -572,31 +574,27 @@
 <h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="brom_drake.motion_planning.systems.open_loop_dispensers.open_loop_plan_dispenser.OpenLoopPlanDispenser">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brom_drake.motion_planning.systems.open_loop_dispensers.open_loop_plan_dispenser.</span></span><span class="sig-name descname"><span class="pre">OpenLoopPlanDispenser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_dof</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">speed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/brom_drake/motion_planning/systems/open_loop_dispensers/open_loop_plan_dispenser.html#OpenLoopPlanDispenser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.motion_planning.systems.open_loop_dispensers.open_loop_plan_dispenser.OpenLoopPlanDispenser" title="Link to this definition">¶</a></dt>
-<dd><section id="description">
-<h3>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h3>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brom_drake.motion_planning.systems.open_loop_dispensers.open_loop_plan_dispenser.</span></span><span class="sig-name descname"><span class="pre">OpenLoopPlanDispenser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_dof</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">speed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/brom_drake/motion_planning/systems/open_loop_dispensers/open_loop_plan_dispenser.html#OpenLoopPlanDispenser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.motion_planning.systems.open_loop_dispensers.open_loop_plan_dispenser.OpenLoopPlanDispenser" title="Link to this definition">¶</a></dt>
+<dd><p><strong>Description</strong></p>
 <p>This LeafSystem is meant to dispense a plan that the user has given to it 
 in an open-loop fashion. (i.e., it will proceed through the plan at a
 constant speed without checking the state of the robot at all).</p>
-</section>
-<section id="diagram">
-<h3>Diagram<a class="headerlink" href="#diagram" title="Link to this heading">¶</a></h3>
-<blockquote>
-<div><p><a href="#id6"><span class="problematic" id="id7">|---------------|</span></a>
-|   Open        |</p>
-</div></blockquote>
-<p>plan ——–&gt;      |   Loop        | ——–&gt; point_in_plan
-(np.ndarray[N,n])   |   Plan        |           (np.ndarray[n,])
-plan_ready ——–&gt;|   Dispenser   | ——–&gt; plan_is_set
-(bool)              <a href="#id8"><span class="problematic" id="id9">|---------------|</span></a>           (StateOfPlanInMemory)</p>
-<p>where:
-- N is the number of points in the plan
-- n is the number of degrees of freedom in the plan
-- plan is an AbstractValuePort whose value must be an Nxn matrix expressed</p>
-<blockquote>
-<div><p>as a numpy array.</p>
-</div></blockquote>
+<p><strong>Block Diagram</strong></p>
+<p>A block diagram of this system is shown below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>                    <span class="o">|---------------|</span>
+                    <span class="o">|</span>   <span class="n">Open</span>        <span class="o">|</span>
+<span class="n">plan</span> <span class="o">--------&gt;</span>      <span class="o">|</span>   <span class="n">Loop</span>        <span class="o">|</span> <span class="o">--------&gt;</span> <span class="n">point_in_plan</span>
+<span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="n">N</span><span class="p">,</span><span class="n">n</span><span class="p">])</span>   <span class="o">|</span>   <span class="n">Plan</span>        <span class="o">|</span>           <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="n">n</span><span class="p">,])</span>
+<span class="n">plan_ready</span> <span class="o">--------&gt;|</span>   <span class="n">Dispenser</span>   <span class="o">|</span> <span class="o">--------&gt;</span> <span class="n">plan_is_set</span>
+<span class="p">(</span><span class="nb">bool</span><span class="p">)</span>              <span class="o">|---------------|</span>           <span class="p">(</span><span class="n">StateOfPlanInMemory</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>where:</p>
 <ul class="simple">
+<li><p>N is the number of points in the plan</p></li>
+<li><p>n is the number of degrees of freedom in the plan</p></li>
+<li><p>plan is an AbstractValuePort whose value must be an Nxn matrix expressed
+as a numpy array.</p></li>
 <li><p>plan_ready is an AbstractValuePort whose value must be a boolean.</p></li>
 <li><dl class="simple">
 <dt>point_in_plan is a BasicVectorPort whose value is an n-dimensional vector</dt><dd><p>expressed as a numpy array.</p>
@@ -614,35 +612,32 @@ plan_ready ——–&gt;|   Dispenser   | ——–&gt; plan_is_set
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.motion_planning.systems.open_loop_dispensers.open_loop_plan_dispenser.OpenLoopPlanDispenser.find_time_between_two_points">
 <span class="sig-name descname"><span class="pre">find_time_between_two_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/brom_drake/motion_planning/systems/open_loop_dispensers/open_loop_plan_dispenser.html#OpenLoopPlanDispenser.find_time_between_two_points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.motion_planning.systems.open_loop_dispensers.open_loop_plan_dispenser.OpenLoopPlanDispenser.find_time_between_two_points" title="Link to this definition">¶</a></dt>
-<dd><section id="id1">
-<h4>Description<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h4>
+<dd><p><strong>Description</strong></p>
 <p>This method computes the time that it will take to move between two points.
 :return:</p>
-</section>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.motion_planning.systems.open_loop_dispensers.open_loop_plan_dispenser.OpenLoopPlanDispenser.initialize_system_for_new_plan">
 <span class="sig-name descname"><span class="pre">initialize_system_for_new_plan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Context</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/brom_drake/motion_planning/systems/open_loop_dispensers/open_loop_plan_dispenser.html#OpenLoopPlanDispenser.initialize_system_for_new_plan"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.motion_planning.systems.open_loop_dispensers.open_loop_plan_dispenser.OpenLoopPlanDispenser.initialize_system_for_new_plan" title="Link to this definition">¶</a></dt>
-<dd><section id="id2">
-<h4>Description<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h4>
+<dd><p><strong>Description</strong></p>
 <p>This function should lock a couple of things into memory for this object to handle future
 calls to get the plan.</p>
 <dl class="field-list simple">
-<dt class="field-odd">param context<span class="colon">:</span></dt>
-<dd class="field-odd"><p></p></dd>
-<dt class="field-even">return<span class="colon">:</span></dt>
-<dd class="field-even"><p></p></dd>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>context</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
 </dl>
-</section>
 </dd></dl>
 
-</section>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="brom_drake.motion_planning.systems.open_loop_dispensers.pose.OpenLoopPosePlanDispenser">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brom_drake.motion_planning.systems.open_loop_dispensers.pose.</span></span><span class="sig-name descname"><span class="pre">OpenLoopPosePlanDispenser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">speed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/brom_drake/motion_planning/systems/open_loop_dispensers/pose.html#OpenLoopPosePlanDispenser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.motion_planning.systems.open_loop_dispensers.pose.OpenLoopPosePlanDispenser" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brom_drake.motion_planning.systems.open_loop_dispensers.pose.</span></span><span class="sig-name descname"><span class="pre">OpenLoopPosePlanDispenser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">speed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/brom_drake/motion_planning/systems/open_loop_dispensers/pose.html#OpenLoopPosePlanDispenser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.motion_planning.systems.open_loop_dispensers.pose.OpenLoopPosePlanDispenser" title="Link to this definition">¶</a></dt>
 <dd><dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.motion_planning.systems.open_loop_dispensers.pose.OpenLoopPosePlanDispenser.GetStateOfPlanInMemory">
 <span class="sig-name descname"><span class="pre">GetStateOfPlanInMemory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AbstractValue</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/brom_drake/motion_planning/systems/open_loop_dispensers/pose.html#OpenLoopPosePlanDispenser.GetStateOfPlanInMemory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.motion_planning.systems.open_loop_dispensers.pose.OpenLoopPosePlanDispenser.GetStateOfPlanInMemory" title="Link to this definition">¶</a></dt>
@@ -652,8 +647,8 @@ calls to get the plan.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.motion_planning.systems.open_loop_dispensers.pose.OpenLoopPosePlanDispenser.define_output_ports">
 <span class="sig-name descname"><span class="pre">define_output_ports</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/brom_drake/motion_planning/systems/open_loop_dispensers/pose.html#OpenLoopPosePlanDispenser.define_output_ports"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.motion_planning.systems.open_loop_dispensers.pose.OpenLoopPosePlanDispenser.define_output_ports" title="Link to this definition">¶</a></dt>
-<dd><section id="id3">
-<h3>Description<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h3>
+<dd><section id="description">
+<h3>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h3>
 <p>This method defines the output ports for this system.</p>
 </section>
 </dd></dl>
@@ -661,8 +656,8 @@ calls to get the plan.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.motion_planning.systems.open_loop_dispensers.pose.OpenLoopPosePlanDispenser.find_time_between_two_points">
 <span class="sig-name descname"><span class="pre">find_time_between_two_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/brom_drake/motion_planning/systems/open_loop_dispensers/pose.html#OpenLoopPosePlanDispenser.find_time_between_two_points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.motion_planning.systems.open_loop_dispensers.pose.OpenLoopPosePlanDispenser.find_time_between_two_points" title="Link to this definition">¶</a></dt>
-<dd><section id="id4">
-<h3>Description<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h3>
+<dd><section id="id1">
+<h3>Description<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
 <p>This method computes the time that it will take to move between two points.
 :return:</p>
 </section>
@@ -671,8 +666,8 @@ calls to get the plan.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.motion_planning.systems.open_loop_dispensers.pose.OpenLoopPosePlanDispenser.initialize_system_for_new_plan">
 <span class="sig-name descname"><span class="pre">initialize_system_for_new_plan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Context</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/brom_drake/motion_planning/systems/open_loop_dispensers/pose.html#OpenLoopPosePlanDispenser.initialize_system_for_new_plan"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.motion_planning.systems.open_loop_dispensers.pose.OpenLoopPosePlanDispenser.initialize_system_for_new_plan" title="Link to this definition">¶</a></dt>
-<dd><section id="id5">
-<h3>Description<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
+<dd><section id="id2">
+<h3>Description<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h3>
 <p>This function should lock a couple of things into memory for this object to handle future
 calls to get the plan.</p>
 <dl class="field-list simple">
@@ -688,7 +683,7 @@ calls to get the plan.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="brom_drake.motion_planning.systems.open_loop_dispensers.pose_trajectory_source.PoseTrajectorySource">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brom_drake.motion_planning.systems.open_loop_dispensers.pose_trajectory_source.</span></span><span class="sig-name descname"><span class="pre">PoseTrajectorySource</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trajectory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PiecewisePose</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/brom_drake/motion_planning/systems/open_loop_dispensers/pose_trajectory_source.html#PoseTrajectorySource"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.motion_planning.systems.open_loop_dispensers.pose_trajectory_source.PoseTrajectorySource" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brom_drake.motion_planning.systems.open_loop_dispensers.pose_trajectory_source.</span></span><span class="sig-name descname"><span class="pre">PoseTrajectorySource</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trajectory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PiecewisePose</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/brom_drake/motion_planning/systems/open_loop_dispensers/pose_trajectory_source.html#PoseTrajectorySource"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.motion_planning.systems.open_loop_dispensers.pose_trajectory_source.PoseTrajectorySource" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </section>
@@ -789,9 +784,9 @@ calls to get the plan.</p>
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=6d2c7fbc"></script>
-    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+</div><script src="../../../../_static/documentation_options.js?v=a6a5ef71"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../../_static/copybutton.js?v=f281be69"></script>

@@ -4,8 +4,8 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html">
 
-    <!-- Generated with Sphinx 8.2.3 and Furo 2025.12.19 -->
-        <title>brom_drake.motion_planning.systems.rrt_plan_generator - brom_drake-py 0.4.7-3 documentation</title>
+    <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
+        <title>brom_drake.motion_planning.systems.rrt_plan_generator - brom_drake-py 0.4.7-4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">brom_drake-py 0.4.7-3 documentation</div></a>
+      <a href="../../../../index.html"><div class="brand">brom_drake-py 0.4.7-4 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.4.7-3 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 0.4.7-4 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -196,7 +196,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../../features/diagram_watcher.html">DiagramWatcher</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../features/drakeify_my_urdf.html">“Drakeify”-My-URDF</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../../features/productions/index.html">Productions</a><input aria-label="Toggle navigation of Productions" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../../features/productions/show_me_this_model.html">Show Me This Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../features/productions/debug/show_me_this_model.html">Show Me This Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../features/productions/kinematic_motion_planning.html">Kinematic Motion Planning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../features/productions/debug/show_me_this_static_grasp.html">Show Me This Static Grasp</a></li>
 </ul>
 </li>
 </ul>
@@ -580,10 +582,27 @@
 <a class="viewcode-back" href="../../../../generated/motion_planning/systems/systems.html#brom_drake.motion_planning.systems.rrt_plan_generator.RRTPlanGenerator">[docs]</a>
 <span class="k">class</span> <span class="nc">RRTPlanGenerator</span><span class="p">(</span><span class="n">LeafSystem</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    RRTPlanGenerator class</span>
-<span class="sd">    Description:</span>
-<span class="sd">        This class will call the RRT planning algorithm for</span>
-<span class="sd">        and then share it in an output port.</span>
+<span class="sd">    **Description**</span>
+<span class="sd">    </span>
+<span class="sd">    This class will call the RRT planning algorithm for</span>
+<span class="sd">    and then share it in an output port.</span>
+
+<span class="sd">    **Parameters**</span>
+
+<span class="sd">    plant: MultibodyPlant</span>
+<span class="sd">        The multibody plant containing the robot and environment.</span>
+
+<span class="sd">    scene_graph: SceneGraph</span>
+<span class="sd">        The scene graph associated with the multibody plant.</span>
+
+<span class="sd">    robot_model_idx: ModelInstanceIndex</span>
+<span class="sd">        The model instance index of the robot to be planned for.</span>
+
+<span class="sd">    rrt_config: BaseRRTPlannerConfig</span>
+<span class="sd">        The configuration for the RRT planner.</span>
+
+<span class="sd">    dim_config: int</span>
+<span class="sd">        The dimension of the configuration space.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -594,8 +613,9 @@
         <span class="n">dim_config</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Description:</span>
-<span class="sd">            This function initializes the RRT planner.</span>
+<span class="sd">        **Description**</span>
+<span class="sd">        </span>
+<span class="sd">        This function initializes the RRT planner.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="c1"># Setup</span>
@@ -618,8 +638,9 @@
 <a class="viewcode-back" href="../../../../generated/motion_planning/systems/systems.html#brom_drake.motion_planning.systems.rrt_plan_generator.RRTPlanGenerator.compute_plan_if_not_available">[docs]</a>
     <span class="k">def</span> <span class="nf">compute_plan_if_not_available</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="n">AbstractValue</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Description:</span>
-<span class="sd">            This function computes the plan if it is not available.</span>
+<span class="sd">        **Description**</span>
+<span class="sd">        </span>
+<span class="sd">        This function computes the plan if it is not available.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Print</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">plan</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -662,8 +683,9 @@
 <a class="viewcode-back" href="../../../../generated/motion_planning/systems/systems.html#brom_drake.motion_planning.systems.rrt_plan_generator.RRTPlanGenerator.create_input_ports">[docs]</a>
     <span class="k">def</span> <span class="nf">create_input_ports</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Description:</span>
-<span class="sd">            This function creates the input ports for the RRT planner.</span>
+<span class="sd">        **Description**</span>
+
+<span class="sd">        This function creates the input ports for the RRT planner.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">DeclareVectorInputPort</span><span class="p">(</span>
             <span class="s2">&quot;start_configuration&quot;</span><span class="p">,</span>
@@ -683,8 +705,9 @@
 <a class="viewcode-back" href="../../../../generated/motion_planning/systems/systems.html#brom_drake.motion_planning.systems.rrt_plan_generator.RRTPlanGenerator.create_output_ports">[docs]</a>
     <span class="k">def</span> <span class="nf">create_output_ports</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Description:</span>
-<span class="sd">            This function creates the output ports for the RRT planner.</span>
+<span class="sd">        **Description**</span>
+
+<span class="sd">        This function creates the output ports for the RRT planner.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Setup</span>
 
@@ -712,11 +735,24 @@
         <span class="n">eps0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.5e-2</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">InverseKinematics</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Description</span>
-<span class="sd">        -----------</span>
+<span class="sd">        **Description**</span>
+<span class="sd">        </span>
 <span class="sd">        Sets up the inverse kinematics problem for the start pose</span>
-<span class="sd">        input to theis function.</span>
-<span class="sd">        :return:</span>
+<span class="sd">        input to this function.</span>
+<span class="sd">        </span>
+<span class="sd">        **Parameters**</span>
+
+<span class="sd">        input_pose_vec: np.ndarray</span>
+<span class="sd">            The desired end-effector pose as a 7D vector (x, y, z, qx, qy, qz, qw).</span>
+
+<span class="sd">        eps0: float, optional</span>
+<span class="sd">            The position tolerance for the IK problem.</span>
+<span class="sd">            By default, this is set to 2.5 cm.</span>
+
+<span class="sd">        **Returns**</span>
+
+<span class="sd">        ik_problem: InverseKinematics</span>
+<span class="sd">            The defined inverse kinematics problem.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Setup</span>
         <span class="c1"># p_WStart = RigidTransform(</span>
@@ -763,9 +799,14 @@
         <span class="n">input_pose_vec</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Description:</span>
-<span class="sd">        :param input_pose_vec:</span>
-<span class="sd">        :return:</span>
+<span class="sd">        **Description**</span>
+
+<span class="sd">        This function solves the inverse kinematics problem for the given pose.</span>
+
+<span class="sd">        **Parameters**</span>
+
+<span class="sd">        input_pose_vec: np.ndarray</span>
+<span class="sd">            The desired end-effector pose as a 7D vector (x, y, z, qx, qy, qz, qw).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Setup</span>
 
@@ -798,8 +839,9 @@
 <a class="viewcode-back" href="../../../../generated/motion_planning/systems/systems.html#brom_drake.motion_planning.systems.rrt_plan_generator.RRTPlanGenerator.set_dimension">[docs]</a>
     <span class="k">def</span> <span class="nf">set_dimension</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim_q</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Description:</span>
-<span class="sd">            This function sets the dimension of the configuration space.</span>
+<span class="sd">        **Description**</span>
+
+<span class="sd">        This function sets the dimension of the configuration space.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dim_q</span> <span class="o">=</span> <span class="n">dim_q</span></div>
 
@@ -807,10 +849,10 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">n_actuated_dof</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Description</span>
-<span class="sd">        -----------</span>
+<span class="sd">        **Description**</span>
+<span class="sd">        </span>
 <span class="sd">        This method uses the plant and the robot model idx</span>
-<span class="sd">        to identify the numer of degrees of freedom we have for control.</span>
+<span class="sd">        to identify the number of degrees of freedom we have for control.</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">num_actuated_dofs</span><span class="p">()</span>
@@ -819,8 +861,9 @@
 <a class="viewcode-back" href="../../../../generated/motion_planning/systems/systems.html#brom_drake.motion_planning.systems.rrt_plan_generator.RRTPlanGenerator.GetPlanIsReady">[docs]</a>
     <span class="k">def</span> <span class="nf">GetPlanIsReady</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="n">AbstractValue</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Description:</span>
-<span class="sd">            This function checks if the plan is ready.</span>
+<span class="sd">        **Description**</span>
+<span class="sd">        </span>
+<span class="sd">        This function checks if the plan is ready.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">output</span><span class="o">.</span><span class="n">SetFrom</span><span class="p">(</span>
             <span class="n">AbstractValue</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plan</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
@@ -862,9 +905,9 @@
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=6d2c7fbc"></script>
-    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+</div><script src="../../../../_static/documentation_options.js?v=a6a5ef71"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../../_static/copybutton.js?v=f281be69"></script>

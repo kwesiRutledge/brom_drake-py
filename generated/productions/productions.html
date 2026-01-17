@@ -5,8 +5,8 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html"><link rel="next" title="debug" href="debug/debug.html"><link rel="prev" title="PortWatcher" href="../PortWatcher/PortWatcher.html">
 
-    <!-- Generated with Sphinx 8.2.3 and Furo 2025.12.19 -->
-        <title>productions - brom_drake-py 0.4.7-3 documentation</title>
+    <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
+        <title>productions - brom_drake-py 0.4.7-4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -162,7 +162,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">brom_drake-py 0.4.7-3 documentation</div></a>
+      <a href="../../index.html"><div class="brand">brom_drake-py 0.4.7-4 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +183,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.4.7-3 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 0.4.7-4 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -197,7 +197,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../../features/diagram_watcher.html">DiagramWatcher</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../features/drakeify_my_urdf.html">“Drakeify”-My-URDF</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../features/productions/index.html">Productions</a><input aria-label="Toggle navigation of Productions" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../features/productions/show_me_this_model.html">Show Me This Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../features/productions/debug/show_me_this_model.html">Show Me This Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../features/productions/kinematic_motion_planning.html">Kinematic Motion Planning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../features/productions/debug/show_me_this_static_grasp.html">Show Me This Static Grasp</a></li>
 </ul>
 </li>
 </ul>
@@ -579,32 +581,32 @@
 <h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="brom_drake.productions.ids.ProductionID">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brom_drake.productions.ids.</span></span><span class="sig-name descname"><span class="pre">ProductionID</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/brom_drake/productions/ids.html#ProductionID"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.ids.ProductionID" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brom_drake.productions.ids.</span></span><span class="sig-name descname"><span class="pre">ProductionID</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/brom_drake/productions/ids.html#ProductionID"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.ids.ProductionID" title="Link to this definition">¶</a></dt>
 <dd><p><strong>Description</strong></p>
 <p>A unique ID assigned to each production type.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="brom_drake.productions.ids.ProductionID.kAttemptGraspWithPuppeteer">
-<span class="sig-name descname"><span class="pre">kAttemptGraspWithPuppeteer</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Attempt-Grasp-WithPuppeteer'</span></em><a class="headerlink" href="#brom_drake.productions.ids.ProductionID.kAttemptGraspWithPuppeteer" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">kAttemptGraspWithPuppeteer</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Attempt-Grasp-WithPuppeteer'</span></span><a class="headerlink" href="#brom_drake.productions.ids.ProductionID.kAttemptGraspWithPuppeteer" title="Link to this definition">¶</a></dt>
 <dd><p>Attempt Grasp with Puppeteer, uses the Puppeteer system to attempt a grasp
 on a free object that is lying on a movable floor</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="brom_drake.productions.ids.ProductionID.kAttemptGraspWithStaticWrist">
-<span class="sig-name descname"><span class="pre">kAttemptGraspWithStaticWrist</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Attempt-Grasp-WithStaticWrist'</span></em><a class="headerlink" href="#brom_drake.productions.ids.ProductionID.kAttemptGraspWithStaticWrist" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">kAttemptGraspWithStaticWrist</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Attempt-Grasp-WithStaticWrist'</span></span><a class="headerlink" href="#brom_drake.productions.ids.ProductionID.kAttemptGraspWithStaticWrist" title="Link to this definition">¶</a></dt>
 <dd><p>Attempt Grasp with Static Wrist, attempts a grasp with a static wrist pose
 on a free object that is lying on a movable floor</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="brom_drake.productions.ids.ProductionID.kChemLab1">
-<span class="sig-name descname"><span class="pre">kChemLab1</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ChemLab-Planning1'</span></em><a class="headerlink" href="#brom_drake.productions.ids.ProductionID.kChemLab1" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">kChemLab1</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ChemLab-Planning1'</span></span><a class="headerlink" href="#brom_drake.productions.ids.ProductionID.kChemLab1" title="Link to this definition">¶</a></dt>
 <dd><p>Chem Lab Planning 1 Production, a simple kinematic motion planning task</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="brom_drake.productions.ids.ProductionID.kChemLab2">
-<span class="sig-name descname"><span class="pre">kChemLab2</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ChemLab-Planning2'</span></em><a class="headerlink" href="#brom_drake.productions.ids.ProductionID.kChemLab2" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">kChemLab2</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ChemLab-Planning2'</span></span><a class="headerlink" href="#brom_drake.productions.ids.ProductionID.kChemLab2" title="Link to this definition">¶</a></dt>
 <dd><p>Chem Lab 3, a Pick and Place task in the Chem Lab environment</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -614,26 +616,26 @@ on a free object that is lying on a movable floor</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="brom_drake.productions.ids.ProductionID.kDemonstrateStaticGrasp">
-<span class="sig-name descname"><span class="pre">kDemonstrateStaticGrasp</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Demonstrate-StaticGrasp'</span></em><a class="headerlink" href="#brom_drake.productions.ids.ProductionID.kDemonstrateStaticGrasp" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">kDemonstrateStaticGrasp</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Demonstrate-StaticGrasp'</span></span><a class="headerlink" href="#brom_drake.productions.ids.ProductionID.kDemonstrateStaticGrasp" title="Link to this definition">¶</a></dt>
 <dd><p>Demonstrate Static Grasp, visualizes a static scene of the gripper in a grasping pose with an object
 Useful for debugging grasp poses</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="brom_drake.productions.ids.ProductionID.kNotDefined">
-<span class="sig-name descname"><span class="pre">kNotDefined</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'NotDefined'</span></em><a class="headerlink" href="#brom_drake.productions.ids.ProductionID.kNotDefined" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">kNotDefined</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'NotDefined'</span></span><a class="headerlink" href="#brom_drake.productions.ids.ProductionID.kNotDefined" title="Link to this definition">¶</a></dt>
 <dd><p>Undefined Production ID (Used to Detect Errors in Production Construction)</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="brom_drake.productions.ids.ProductionID.kShelfPlanning1">
-<span class="sig-name descname"><span class="pre">kShelfPlanning1</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ShelfPlanning1'</span></em><a class="headerlink" href="#brom_drake.productions.ids.ProductionID.kShelfPlanning1" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">kShelfPlanning1</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ShelfPlanning1'</span></span><a class="headerlink" href="#brom_drake.productions.ids.ProductionID.kShelfPlanning1" title="Link to this definition">¶</a></dt>
 <dd><p>Shelf Planning 1 Production, a simple kinematic motion planning task</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="brom_drake.productions.ids.ProductionID.kShowMeThisModel">
-<span class="sig-name descname"><span class="pre">kShowMeThisModel</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ShowMeThisModel'</span></em><a class="headerlink" href="#brom_drake.productions.ids.ProductionID.kShowMeThisModel" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">kShowMeThisModel</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ShowMeThisModel'</span></span><a class="headerlink" href="#brom_drake.productions.ids.ProductionID.kShowMeThisModel" title="Link to this definition">¶</a></dt>
 <dd><p>Show Me This Model Production</p>
 </dd></dl>
 
@@ -734,9 +736,9 @@ Useful for debugging grasp poses</p>
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=6d2c7fbc"></script>
-    <script src="../../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+</div><script src="../../_static/documentation_options.js?v=a6a5ef71"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=f281be69"></script>

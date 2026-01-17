@@ -5,8 +5,8 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html"><link rel="next" title="pick_and_place" href="../../pick_and_place/pick_and_place.html"><link rel="prev" title="motion_planning" href="../motion_planning.html">
 
-    <!-- Generated with Sphinx 8.2.3 and Furo 2025.12.19 -->
-        <title>offline - brom_drake-py 0.4.7-3 documentation</title>
+    <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
+        <title>offline - brom_drake-py 0.4.7-4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
@@ -162,7 +162,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../index.html"><div class="brand">brom_drake-py 0.4.7-3 documentation</div></a>
+      <a href="../../../../../index.html"><div class="brand">brom_drake-py 0.4.7-4 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +183,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.4.7-3 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 0.4.7-4 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -197,7 +197,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../../../features/diagram_watcher.html">DiagramWatcher</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../../features/drakeify_my_urdf.html">“Drakeify”-My-URDF</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../features/productions/index.html">Productions</a><input aria-label="Toggle navigation of Productions" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../../../features/productions/show_me_this_model.html">Show Me This Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../features/productions/debug/show_me_this_model.html">Show Me This Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../features/productions/kinematic_motion_planning.html">Kinematic Motion Planning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../features/productions/debug/show_me_this_static_grasp.html">Show Me This Static Grasp</a></li>
 </ul>
 </li>
 </ul>
@@ -572,7 +574,7 @@
 <h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="brom_drake.productions.types.motion_planning.offline.dynamic.OfflineDynamicMotionPlanningProduction">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brom_drake.productions.types.motion_planning.offline.dynamic.</span></span><span class="sig-name descname"><span class="pre">OfflineDynamicMotionPlanningProduction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_configuration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_pose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">RigidTransform</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">goal_configuration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">goal_pose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">RigidTransform</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/brom_drake/productions/types/motion_planning/offline/dynamic.html#OfflineDynamicMotionPlanningProduction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.motion_planning.offline.dynamic.OfflineDynamicMotionPlanningProduction" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brom_drake.productions.types.motion_planning.offline.dynamic.</span></span><span class="sig-name descname"><span class="pre">OfflineDynamicMotionPlanningProduction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_configuration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_pose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">RigidTransform</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">goal_configuration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">goal_pose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">RigidTransform</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/brom_drake/productions/types/motion_planning/offline/dynamic.html#OfflineDynamicMotionPlanningProduction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.motion_planning.offline.dynamic.OfflineDynamicMotionPlanningProduction" title="Link to this definition">¶</a></dt>
 <dd><p><em>Description</em></p>
 <p>This base class is used for defining productions where we perform
 offline motion planning WITH dynamics taken into account.</p>
@@ -792,7 +794,7 @@ system to the role.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="brom_drake.productions.types.motion_planning.offline.dynamic.OfflineDynamicMotionPlanningProduction.goal_configuration">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">goal_configuration</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#brom_drake.productions.types.motion_planning.offline.dynamic.OfflineDynamicMotionPlanningProduction.goal_configuration" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">goal_configuration</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></span><a class="headerlink" href="#brom_drake.productions.types.motion_planning.offline.dynamic.OfflineDynamicMotionPlanningProduction.goal_configuration" title="Link to this definition">¶</a></dt>
 <dd><p><em>Description</em></p>
 <p>Get the goal pose. This should be defined by the subclass.</p>
 <p><em>Returns</em></p>
@@ -804,7 +806,7 @@ system to the role.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="brom_drake.productions.types.motion_planning.offline.dynamic.OfflineDynamicMotionPlanningProduction.goal_pose">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">goal_pose</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">RigidTransform</span></em><a class="headerlink" href="#brom_drake.productions.types.motion_planning.offline.dynamic.OfflineDynamicMotionPlanningProduction.goal_pose" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">goal_pose</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">RigidTransform</span></span><a class="headerlink" href="#brom_drake.productions.types.motion_planning.offline.dynamic.OfflineDynamicMotionPlanningProduction.goal_pose" title="Link to this definition">¶</a></dt>
 <dd><p><em>Description</em></p>
 <p>Get the goal pose. This should be defined by the subclass.</p>
 <p><em>Returns</em></p>
@@ -816,7 +818,7 @@ system to the role.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="brom_drake.productions.types.motion_planning.offline.dynamic.OfflineDynamicMotionPlanningProduction.robot_model_index">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">robot_model_index</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ModelInstanceIndex</span></em><a class="headerlink" href="#brom_drake.productions.types.motion_planning.offline.dynamic.OfflineDynamicMotionPlanningProduction.robot_model_index" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">robot_model_index</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ModelInstanceIndex</span></span><a class="headerlink" href="#brom_drake.productions.types.motion_planning.offline.dynamic.OfflineDynamicMotionPlanningProduction.robot_model_index" title="Link to this definition">¶</a></dt>
 <dd><p><em>Description</em></p>
 <p>Get the robot model index. This should be defined by the subclass.</p>
 <p><em>Returns</em></p>
@@ -851,7 +853,7 @@ If None, then all joints in the plant will be considered, by default None.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="brom_drake.productions.types.motion_planning.offline.dynamic.OfflineDynamicMotionPlanningProduction.start_configuration">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">start_configuration</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#brom_drake.productions.types.motion_planning.offline.dynamic.OfflineDynamicMotionPlanningProduction.start_configuration" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">start_configuration</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></span><a class="headerlink" href="#brom_drake.productions.types.motion_planning.offline.dynamic.OfflineDynamicMotionPlanningProduction.start_configuration" title="Link to this definition">¶</a></dt>
 <dd><p><em>Description</em></p>
 <p>This function returns the start and goal poses as a single array.</p>
 <p><em>Returns</em></p>
@@ -863,7 +865,7 @@ If None, then all joints in the plant will be considered, by default None.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="brom_drake.productions.types.motion_planning.offline.dynamic.OfflineDynamicMotionPlanningProduction.start_pose">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">start_pose</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">RigidTransform</span></em><a class="headerlink" href="#brom_drake.productions.types.motion_planning.offline.dynamic.OfflineDynamicMotionPlanningProduction.start_pose" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">start_pose</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">RigidTransform</span></span><a class="headerlink" href="#brom_drake.productions.types.motion_planning.offline.dynamic.OfflineDynamicMotionPlanningProduction.start_pose" title="Link to this definition">¶</a></dt>
 <dd><p><em>Description</em></p>
 <p>Get the start pose. This should be defined by the subclass.</p>
 <p><em>Returns</em></p>
@@ -890,7 +892,7 @@ in this production.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="brom_drake.productions.types.motion_planning.offline.kinematic.KinematicMotionPlanningProduction">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brom_drake.productions.types.motion_planning.offline.kinematic.</span></span><span class="sig-name descname"><span class="pre">KinematicMotionPlanningProduction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_configuration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_pose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">RigidTransform</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">goal_configuration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">goal_pose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">RigidTransform</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/brom_drake/productions/types/motion_planning/offline/kinematic.html#KinematicMotionPlanningProduction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.motion_planning.offline.kinematic.KinematicMotionPlanningProduction" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brom_drake.productions.types.motion_planning.offline.kinematic.</span></span><span class="sig-name descname"><span class="pre">KinematicMotionPlanningProduction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_configuration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_pose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">RigidTransform</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">goal_configuration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">goal_pose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">RigidTransform</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/brom_drake/productions/types/motion_planning/offline/kinematic.html#KinematicMotionPlanningProduction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.motion_planning.offline.kinematic.KinematicMotionPlanningProduction" title="Link to this definition">¶</a></dt>
 <dd><p><em>Description</em></p>
 <p>This class defines a basic kinematic motion planning production.</p>
 <p>It includes the ability to define start and goal configurations or poses,
@@ -1068,21 +1070,21 @@ plan the motion.
 
 <dl class="py property">
 <dt class="sig sig-object py" id="brom_drake.productions.types.motion_planning.offline.kinematic.KinematicMotionPlanningProduction.goal_configuration">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">goal_configuration</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#brom_drake.productions.types.motion_planning.offline.kinematic.KinematicMotionPlanningProduction.goal_configuration" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">goal_configuration</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></span><a class="headerlink" href="#brom_drake.productions.types.motion_planning.offline.kinematic.KinematicMotionPlanningProduction.goal_configuration" title="Link to this definition">¶</a></dt>
 <dd><p>Get the goal pose. This should be defined by the subclass.
 :return:</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="brom_drake.productions.types.motion_planning.offline.kinematic.KinematicMotionPlanningProduction.goal_pose">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">goal_pose</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">RigidTransform</span></em><a class="headerlink" href="#brom_drake.productions.types.motion_planning.offline.kinematic.KinematicMotionPlanningProduction.goal_pose" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">goal_pose</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">RigidTransform</span></span><a class="headerlink" href="#brom_drake.productions.types.motion_planning.offline.kinematic.KinematicMotionPlanningProduction.goal_pose" title="Link to this definition">¶</a></dt>
 <dd><p>Get the goal pose. This should be defined by the subclass.
 :return:</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="brom_drake.productions.types.motion_planning.offline.kinematic.KinematicMotionPlanningProduction.robot_model_index">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">robot_model_index</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ModelInstanceIndex</span></em><a class="headerlink" href="#brom_drake.productions.types.motion_planning.offline.kinematic.KinematicMotionPlanningProduction.robot_model_index" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">robot_model_index</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ModelInstanceIndex</span></span><a class="headerlink" href="#brom_drake.productions.types.motion_planning.offline.kinematic.KinematicMotionPlanningProduction.robot_model_index" title="Link to this definition">¶</a></dt>
 <dd><p>Get the robot model index. This should be defined by the subclass.
 :return:</p>
 </dd></dl>
@@ -1097,7 +1099,7 @@ plan the motion.
 
 <dl class="py property">
 <dt class="sig sig-object py" id="brom_drake.productions.types.motion_planning.offline.kinematic.KinematicMotionPlanningProduction.start_configuration">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">start_configuration</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#brom_drake.productions.types.motion_planning.offline.kinematic.KinematicMotionPlanningProduction.start_configuration" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">start_configuration</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></span><a class="headerlink" href="#brom_drake.productions.types.motion_planning.offline.kinematic.KinematicMotionPlanningProduction.start_configuration" title="Link to this definition">¶</a></dt>
 <dd><dl class="simple">
 <dt>Description:</dt><dd><p>This function returns the start and goal poses as a single array.</p>
 </dd>
@@ -1106,7 +1108,7 @@ plan the motion.
 
 <dl class="py property">
 <dt class="sig sig-object py" id="brom_drake.productions.types.motion_planning.offline.kinematic.KinematicMotionPlanningProduction.start_pose">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">start_pose</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">RigidTransform</span></em><a class="headerlink" href="#brom_drake.productions.types.motion_planning.offline.kinematic.KinematicMotionPlanningProduction.start_pose" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">start_pose</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">RigidTransform</span></span><a class="headerlink" href="#brom_drake.productions.types.motion_planning.offline.kinematic.KinematicMotionPlanningProduction.start_pose" title="Link to this definition">¶</a></dt>
 <dd><p>Get the start pose. This should be defined by the subclass.
 :return:</p>
 </dd></dl>
@@ -1252,9 +1254,9 @@ It should return a list of roles that are suggested for the production.</p>
       
     </aside>
   </div>
-</div><script src="../../../../../_static/documentation_options.js?v=6d2c7fbc"></script>
-    <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+</div><script src="../../../../../_static/documentation_options.js?v=a6a5ef71"></script>
+    <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>
     <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../../../_static/copybutton.js?v=f281be69"></script>
