@@ -36,21 +36,23 @@ from brom_drake.utils.leaf_systems.rigid_transform_to_vector_system import (
 
 class Puppetmaker:
     """
-    *Description*
+    **Description**
     
     This class turns a "free body" in Drake into a "puppet" whose pose and orientation
     can be controlled using 6 actuated joints (3 prismatic and 3 revolute).
 
     This object is used to:
+    
     - Add "invisible" actuators for moving a free body (i.e., `add_strings_for` or `add_actuators_for`), and
     - Control actuate a free body that has been added with the expected "puppet" actuators (i.e., `add_puppet_controller_for)
 
     .. important::
+
         The 2 functions of the puppetmaker are designed to be used at different times.
         The `add_strings_for` or `add_actuators_for` methods MUST be called BEFORE finalizing the plant.
         The `add_puppet_controller_for` method MUST be called AFTER finalizing the plant.
     
-    *Notes*
+    **Notes**
     
     - The puppet is assumed to be a free body (i.e., it has no existing joints connecting it to the world).
       After adding the puppet actuators, the puppet will NO LONGER be a free body.

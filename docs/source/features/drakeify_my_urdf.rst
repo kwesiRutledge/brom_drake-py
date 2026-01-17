@@ -5,7 +5,7 @@
     :alt: Drakeify My URDF Animation showing a URDF file being created for a target Drake model.
     :align: center
 
-*Automatically create a URDF file for any Drake model using the* 
+*Take a URDF file from the wild and convert it into something that Drake can use with the* 
 :py:class:`~brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.converter.DrakeReadyURDFConverter`
 *!*
 

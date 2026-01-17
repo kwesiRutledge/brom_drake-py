@@ -9,23 +9,25 @@ from brom_drake.motion_planning.systems.state_of_plan_in_memory import StateOfPl
 
 class OpenLoopPlanDispenser(LeafSystem):
     """
-    Description
-    -----------
+    **Description**
+    
     This LeafSystem is meant to dispense a plan that the user has given to it 
     in an open-loop fashion. (i.e., it will proceed through the plan at a
     constant speed without checking the state of the robot at all).
 
-    Diagram
-    -------
+    **Block Diagram**
+    
+    A block diagram of this system is shown below: ::
 
-                        |---------------|
-                        |   Open        |
-    plan -------->      |   Loop        | --------> point_in_plan
-    (np.ndarray[N,n])   |   Plan        |           (np.ndarray[n,])
-    plan_ready -------->|   Dispenser   | --------> plan_is_set
-    (bool)              |---------------|           (StateOfPlanInMemory)
+                            |---------------|
+                            |   Open        |
+        plan -------->      |   Loop        | --------> point_in_plan
+        (np.ndarray[N,n])   |   Plan        |           (np.ndarray[n,])
+        plan_ready -------->|   Dispenser   | --------> plan_is_set
+        (bool)              |---------------|           (StateOfPlanInMemory)
 
     where:
+
     - N is the number of points in the plan
     - n is the number of degrees of freedom in the plan
     - plan is an AbstractValuePort whose value must be an Nxn matrix expressed
@@ -133,8 +135,8 @@ class OpenLoopPlanDispenser(LeafSystem):
 
     def find_time_between_two_points(self, x1: np.ndarray, x2: np.ndarray)->float:
         """
-        Description
-        -----------
+        **Description**
+        
         This method computes the time that it will take to move between two points.
         :return:
         """
@@ -146,8 +148,8 @@ class OpenLoopPlanDispenser(LeafSystem):
 
     def initialize_system_for_new_plan(self, context: Context):
         """
-        Description
-        -----------
+        **Description**
+        
         This function should lock a couple of things into memory for this object to handle future
         calls to get the plan.
 

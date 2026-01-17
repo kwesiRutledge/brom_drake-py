@@ -21,10 +21,27 @@ from brom_drake.motion_planning.algorithms.rrt.base import BaseRRTPlanner, BaseR
 
 class RRTPlanGenerator(LeafSystem):
     """
-    RRTPlanGenerator class
-    Description:
-        This class will call the RRT planning algorithm for
-        and then share it in an output port.
+    **Description**
+    
+    This class will call the RRT planning algorithm for
+    and then share it in an output port.
+
+    **Parameters**
+
+    plant: MultibodyPlant
+        The multibody plant containing the robot and environment.
+
+    scene_graph: SceneGraph
+        The scene graph associated with the multibody plant.
+
+    robot_model_idx: ModelInstanceIndex
+        The model instance index of the robot to be planned for.
+
+    rrt_config: BaseRRTPlannerConfig
+        The configuration for the RRT planner.
+
+    dim_config: int
+        The dimension of the configuration space.
     """
     def __init__(
         self,
@@ -35,8 +52,9 @@ class RRTPlanGenerator(LeafSystem):
         dim_config: int = None,
     ):
         """
-        Description:
-            This function initializes the RRT planner.
+        **Description**
+        
+        This function initializes the RRT planner.
         """
         super().__init__()
         # Setup
@@ -57,8 +75,9 @@ class RRTPlanGenerator(LeafSystem):
 
     def compute_plan_if_not_available(self, context, output: AbstractValue):
         """
-        Description:
-            This function computes the plan if it is not available.
+        **Description**
+        
+        This function computes the plan if it is not available.
         """
         # Print
         if self.plan is None:
@@ -98,8 +117,9 @@ class RRTPlanGenerator(LeafSystem):
 
     def create_input_ports(self):
         """
-        Description:
-            This function creates the input ports for the RRT planner.
+        **Description**
+
+        This function creates the input ports for the RRT planner.
         """
         self.DeclareVectorInputPort(
             "start_configuration",
@@ -116,8 +136,9 @@ class RRTPlanGenerator(LeafSystem):
 
     def create_output_ports(self):
         """
-        Description:
-            This function creates the output ports for the RRT planner.
+        **Description**
+
+        This function creates the output ports for the RRT planner.
         """
         # Setup
 
@@ -142,11 +163,24 @@ class RRTPlanGenerator(LeafSystem):
         eps0: float = 2.5e-2,
     ) -> InverseKinematics:
         """
-        Description
-        -----------
+        **Description**
+        
         Sets up the inverse kinematics problem for the start pose
-        input to theis function.
-        :return:
+        input to this function.
+        
+        **Parameters**
+
+        input_pose_vec: np.ndarray
+            The desired end-effector pose as a 7D vector (x, y, z, qx, qy, qz, qw).
+
+        eps0: float, optional
+            The position tolerance for the IK problem.
+            By default, this is set to 2.5 cm.
+
+        **Returns**
+
+        ik_problem: InverseKinematics
+            The defined inverse kinematics problem.
         """
         # Setup
         # p_WStart = RigidTransform(
@@ -190,9 +224,14 @@ class RRTPlanGenerator(LeafSystem):
         input_pose_vec: np.ndarray
     ) -> np.ndarray:
         """
-        Description:
-        :param input_pose_vec:
-        :return:
+        **Description**
+
+        This function solves the inverse kinematics problem for the given pose.
+
+        **Parameters**
+
+        input_pose_vec: np.ndarray
+            The desired end-effector pose as a 7D vector (x, y, z, qx, qy, qz, qw).
         """
         # Setup
 
@@ -222,26 +261,28 @@ class RRTPlanGenerator(LeafSystem):
 
     def set_dimension(self, dim_q: int):
         """
-        Description:
-            This function sets the dimension of the configuration space.
+        **Description**
+
+        This function sets the dimension of the configuration space.
         """
         self.dim_q = dim_q
 
     @property
     def n_actuated_dof(self) -> int:
         """
-        Description
-        -----------
+        **Description**
+        
         This method uses the plant and the robot model idx
-        to identify the numer of degrees of freedom we have for control.
+        to identify the number of degrees of freedom we have for control.
         :return:
         """
         return self.plant.num_actuated_dofs()
 
     def GetPlanIsReady(self, context, output: AbstractValue):
         """
-        Description:
-            This function checks if the plan is ready.
+        **Description**
+        
+        This function checks if the plan is ready.
         """
         output.SetFrom(
             AbstractValue.Make(self.plan is not None)
