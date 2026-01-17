@@ -166,7 +166,7 @@ class RRTPlanGenerator(LeafSystem):
         **Description**
         
         Sets up the inverse kinematics problem for the start pose
-        input to theis function.
+        input to this function.
         
         **Parameters**
 
