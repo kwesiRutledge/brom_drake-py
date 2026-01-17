@@ -99,12 +99,18 @@ class MeshFileConverter:
         """
         **Description**
         
-        This function will define the output path for the mesh file.
+        This function will define the output path for the CONVERTED mesh file.
 
-        **Returns**
+        **Parameters**
 
         output_mesh_file: Path
             The output path for the mesh file.
+
+        **Returns**
+
+        converted_mesh_file_path: Path
+            The output path for the converted mesh file.
+            This should be the same as the input mesh file, if given.
         """
         # Input Processing
         if output_mesh_file is not None:
