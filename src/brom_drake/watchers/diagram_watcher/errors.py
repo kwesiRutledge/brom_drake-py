@@ -7,7 +7,7 @@ Description:
 from typing import List
 
 from .constants import INELIGIBLE_SYSTEM_TYPES
-from brom_drake import DiagramTarget
+from brom_drake.watchers.diagram_target import DiagramTarget
 
 
 class UnrecognizedTargetError(ValueError):

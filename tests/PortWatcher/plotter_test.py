@@ -20,13 +20,13 @@ from typing import Tuple
 import unittest
 
 # Internal Imports
-from brom_drake.PortWatcher.file_manager import PortWatcherFileManager
-from brom_drake.PortWatcher.plotter import PortWatcherPlotter
-from brom_drake.PortWatcher.port_watcher_options import (
+from brom_drake.watchers.port_watcher.file_manager import PortWatcherFileManager
+from brom_drake.watchers.port_watcher.plotter import PortWatcherPlotter
+from brom_drake.watchers.port_watcher.port_watcher_options import (
     PortWatcherPlottingOptions, PortFigureArrangement,
     FigureNamingConvention, PortWatcherOptions,
 )
-from brom_drake.PortWatcher.port_watcher import PortWatcher
+from brom_drake.watchers.port_watcher.port_watcher import PortWatcher
 import brom_drake.robots as robots
 from brom_drake.directories import DEFAULT_BROM_DIR
 

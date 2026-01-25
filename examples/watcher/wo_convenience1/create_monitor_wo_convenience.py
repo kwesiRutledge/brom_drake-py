@@ -19,7 +19,7 @@ from pydrake.all import (
     Meshcat, MeshcatVisualizer, Simulator,
 )
 
-from brom_drake.all import DiagramWatcher, DiagramWatcherOptions, PortWatcherPlottingOptions
+from brom_drake.all import diagram_watcher, DiagramWatcherOptions, PortWatcherPlottingOptions
 from brom_drake.example_helpers import BlockHandlerSystem
 
 #######################
@@ -69,7 +69,7 @@ def main():
 
     # Add Watcher Before
     print("adding watcher before building...")
-    watcher = DiagramWatcher(
+    watcher = diagram_watcher(
         builder,
         options=DiagramWatcherOptions(
             base_directory="brom",

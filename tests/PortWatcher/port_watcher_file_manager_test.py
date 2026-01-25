@@ -1,7 +1,7 @@
 from brom_drake import robots
-from brom_drake.PortWatcher.file_manager import PortWatcherFileManager
-from brom_drake.PortWatcher.port_watcher_options import PortWatcherPlottingOptions
-from brom_drake.PortWatcher.port_figure_arrangement import PortFigureArrangement
+from brom_drake.watchers.port_watcher.file_manager import PortWatcherFileManager
+from brom_drake.watchers.port_watcher.port_watcher_options import PortWatcherPlottingOptions
+from brom_drake.watchers.port_watcher.port_figure_arrangement import PortFigureArrangement
 import importlib.resources as impresources
 import os
 from pathlib import Path

@@ -14,9 +14,9 @@ from typing import List, Tuple
 
 
 # Internal Imports
-from brom_drake.PortWatcher.file_manager import PortWatcherFileManager
-from brom_drake.PortWatcher.port_figure_arrangement import PortFigureArrangement
-from brom_drake.PortWatcher.port_watcher_options import FigureNamingConvention, PortWatcherPlottingOptions
+from brom_drake.watchers.port_watcher.file_manager import PortWatcherFileManager
+from brom_drake.watchers.port_watcher.port_figure_arrangement import PortFigureArrangement
+from brom_drake.watchers.port_watcher.port_watcher_options import FigureNamingConvention, PortWatcherPlottingOptions
 from brom_drake.utils.constants import SupportedLogger
 from brom_drake.utils.type_checking import is_rigid_transform
 from brom_drake.directories import DEFAULT_PLOT_DIR

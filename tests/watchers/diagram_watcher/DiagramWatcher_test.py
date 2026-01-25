@@ -17,7 +17,7 @@ from pydrake.all import (
     Simulator,
 )
 
-from brom_drake.all import DiagramWatcher
+from brom_drake.all import diagram_watcher
 
 class TestDiagramWatcher(unittest.TestCase):
     def test_init1(self):
@@ -34,7 +34,7 @@ class TestDiagramWatcher(unittest.TestCase):
 
         # Try to create a DiagramWatcher with the system
         try:
-            watcher = DiagramWatcher(system)
+            watcher = diagram_watcher(system)
             self.fail("Should have raised an exception!")
         except ValueError as e:
             expectedError = ValueError("subject must be a DiagramBuilder!")

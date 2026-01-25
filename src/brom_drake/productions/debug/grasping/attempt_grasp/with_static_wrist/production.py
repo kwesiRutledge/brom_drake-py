@@ -27,7 +27,7 @@ from pydrake.systems.framework import DiagramBuilder, Diagram, Context
 from pydrake.systems.primitives import ConstantVectorSource, VectorLogSink
 
 # Internal Imports
-from brom_drake.PortWatcher.port_watcher_options import FigureNamingConvention
+from brom_drake.watchers.port_watcher.port_watcher_options import FigureNamingConvention
 from brom_drake.control.grippers import GripperController, GripperTarget
 from brom_drake.file_manipulation.urdf.drakeify import drakeify_my_urdf
 from brom_drake.file_manipulation.urdf.shapes.box import BoxDefinition

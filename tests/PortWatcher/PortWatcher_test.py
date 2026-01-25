@@ -24,8 +24,8 @@ from pydrake.all import (
 from pydrake.systems.framework import DiagramBuilder, PortDataType, Diagram, Context
 
 # Internal Imports
-from brom_drake.PortWatcher.port_watcher_options import PortWatcherOptions, PortWatcherPlottingOptions
-from brom_drake.PortWatcher.support_types import create_port_value_type_error
+from brom_drake.watchers.port_watcher.port_watcher_options import PortWatcherOptions, PortWatcherPlottingOptions
+from brom_drake.watchers.port_watcher.support_types import create_port_value_type_error
 from brom_drake.all import (
     PortWatcher,
 )

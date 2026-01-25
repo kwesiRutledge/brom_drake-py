@@ -1,4 +1,4 @@
-from brom_drake.PortWatcher.port_watcher_options import (
+from brom_drake.watchers.port_watcher.port_watcher_options import (
     PortFigureArrangement,
     FigureNamingConvention,
     PortWatcherPlottingOptions, 

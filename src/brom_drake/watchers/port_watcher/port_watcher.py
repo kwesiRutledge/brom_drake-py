@@ -19,7 +19,7 @@ from pydrake.systems.framework import Context
 # Internal Imports
 from brom_drake.directories import DEFAULT_BROM_DIR
 from .file_manager import PortWatcherFileManager
-from brom_drake.PortWatcher.support_types import assert_port_is_supported
+from brom_drake.watchers.port_watcher.support_types import assert_port_is_supported
 from .port_watcher_options import (
     PortWatcherOptions, FigureNamingConvention,
     PortWatcherPlottingOptions, PortWatcherRawDataOptions,

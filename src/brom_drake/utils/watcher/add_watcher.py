@@ -9,10 +9,10 @@ import numpy as np
 from pydrake.all import DiagramBuilder, Diagram
 from pydrake.systems.framework import Context
 
-from brom_drake.DiagramTarget import DiagramTarget
-from brom_drake.DiagramWatcher import DiagramWatcher, DiagramWatcherOptions
+from brom_drake.watchers.diagram_target import DiagramTarget
+from brom_drake.watchers.diagram_watcher import DiagramWatcher, DiagramWatcherOptions
 from brom_drake import directories
-from brom_drake.PortWatcher.port_watcher_options import (
+from brom_drake.watchers.port_watcher.port_watcher_options import (
     PortFigureArrangement,
     PortWatcherPlottingOptions,
     PortWatcherRawDataOptions,

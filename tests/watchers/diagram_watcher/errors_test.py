@@ -8,7 +8,7 @@ Description
 import unittest
 
 from brom_drake.all import DiagramTarget
-from brom_drake.DiagramWatcher import UnrecognizedTargetError
+from brom_drake.watchers.diagram_watcher.errors import UnrecognizedTargetError
 
 
 class TestErrors(unittest.TestCase):

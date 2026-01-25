@@ -1,5 +1,5 @@
 """
-DiagramTarget.py
+diagram_target.py
 Description:
 
     Creates a DiagramTarget class that can be used to monitor the state of a Diagram.

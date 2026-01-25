@@ -16,7 +16,7 @@ from typing import Tuple
 import unittest
 
 # Internal Imports
-from brom_drake.PortWatcher.port_watcher_options import FigureNamingConvention
+from brom_drake.watchers.port_watcher.port_watcher_options import FigureNamingConvention
 from brom_drake.all import (
     add_watcher_and_build,
 )

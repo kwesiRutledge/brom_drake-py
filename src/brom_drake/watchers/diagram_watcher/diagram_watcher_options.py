@@ -8,7 +8,7 @@ from dataclasses import dataclass
 
 # Internal Imports
 from brom_drake.directories import DEFAULT_WATCHER_DIR
-from brom_drake.PortWatcher.port_watcher_options import PortWatcherOptions, PortWatcherPlottingOptions, PortWatcherRawDataOptions
+from brom_drake.watchers.port_watcher.port_watcher_options import PortWatcherOptions, PortWatcherPlottingOptions, PortWatcherRawDataOptions
 
 @dataclass(frozen=True)
 class SuppressDiagramWatcherRules:

@@ -19,12 +19,12 @@ from pydrake.systems.primitives import (
 )
 
 # Internal Imports
-from brom_drake.DiagramTarget import DiagramTarget
-from brom_drake.PortWatcher.port_watcher import PortWatcher
-from brom_drake.PortWatcher.port_watcher_options import PortWatcherOptions, PortWatcherPlottingOptions, PortWatcherRawDataOptions
-from brom_drake.DiagramWatcher.diagram_watcher_options import DiagramWatcherOptions
-from brom_drake.DiagramWatcher.constants import INELIGIBLE_SYSTEM_TYPES
-from brom_drake.DiagramWatcher.errors import UnrecognizedTargetError
+from brom_drake.watchers.diagram_target import DiagramTarget
+from brom_drake.watchers.port_watcher.port_watcher import PortWatcher
+from brom_drake.watchers.port_watcher.port_watcher_options import PortWatcherOptions, PortWatcherPlottingOptions, PortWatcherRawDataOptions
+from brom_drake.watchers.diagram_watcher.diagram_watcher_options import DiagramWatcherOptions
+from brom_drake.watchers.diagram_watcher.constants import INELIGIBLE_SYSTEM_TYPES
+from brom_drake.watchers.diagram_watcher.errors import UnrecognizedTargetError
 
 
 class DiagramWatcher:
