@@ -12,3 +12,17 @@ from .support_types import (
     assert_port_is_supported, assert_abstract_value_ports_type_is_supported,
     create_port_value_type_error
 )
+
+__all__ = [
+    "assert_abstract_value_ports_type_is_supported",
+    "assert_port_is_supported",
+    "create_port_value_type_error",
+    "FigureNamingConvention",
+    "PortFigureArrangement",
+    "PortWatcher",
+    "PortWatcherFileManager",
+    "PortWatcherOptions",
+    "PortWatcherPlotter",
+    "PortWatcherPlottingOptions",
+    "PortWatcherRawDataOptions",
+]
