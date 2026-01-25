@@ -1,0 +1,2 @@
+from .config import Configuration as ShowMeThisStaticGraspConfiguration
+from .production import ShowMeThisStaticGrasp

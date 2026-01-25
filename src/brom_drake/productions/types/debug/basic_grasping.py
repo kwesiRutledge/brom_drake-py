@@ -23,8 +23,8 @@ from brom_drake.utils.triads import AddMultibodyTriad
 
 class BasicGraspingDebuggingProduction(BaseProduction):
     """
-    Description
-    -----------
+    **Description**
+    
     This base class is used to define several functions that are useful
     for any production that is used for basic grasping tasks.
     """
@@ -41,12 +41,12 @@ class BasicGraspingDebuggingProduction(BaseProduction):
         show_collision_geometries: bool = False,
     ):
         """
-        Description
-        -----------
+        **Description**
+
         Defines the following fields for the production:
         
-        Arguments
-        ----------
+        **Arguments**
+
         path_to_object: str
             A string representing the path to the object urdf file.
         path_to_gripper: str
@@ -113,8 +113,8 @@ class BasicGraspingDebuggingProduction(BaseProduction):
 
     def add_gripper_to_plant(self, and_weld_to: Frame = None, with_X_WorldGripper: RigidTransform = None):
         """
-        Description
-        -----------
+        **Description**
+
         This method will add the gripper to the plant
         and then weld it to the origin.
         """

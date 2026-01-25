@@ -34,10 +34,10 @@ from brom_drake.directories import DEFAULT_BROM_DIR
 class PortWatcherTest(unittest.TestCase):
     def setUp(self):
         """
-        Description:
+        Description
+        -----------
 
-            This method is used to setup each test.
-        :return:
+        This method is used to setup each test.
         """
         # Delete the .brom directory if it exists when the test is done.
         self.delete_test_brom_directory_on_teardown = True
