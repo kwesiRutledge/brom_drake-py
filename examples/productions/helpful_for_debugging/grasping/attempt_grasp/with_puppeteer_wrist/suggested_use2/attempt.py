@@ -10,10 +10,10 @@ import subprocess
 import trimesh
 
 # Internal Imports
-from brom_drake.PortWatcher.port_watcher_options import FigureNamingConvention
+from brom_drake.watchers.port_watcher.port_watcher_options import FigureNamingConvention
 from brom_drake.all import GripperType
 from brom_drake import robots
-from brom_drake.productions import AttemptGraspWithPuppeteerWrist, AttemptGraspWithPuppeteerWristConfiguration
+from brom_drake.productions.all import AttemptGraspWithPuppeteerWrist, AttemptGraspWithPuppeteerWristConfiguration
 
 def create_block_m_sdf(path_to_block_m_stl: Path, scaling_factor: float = 0.003, model_mass: float = 2e-3) -> Path:
     """

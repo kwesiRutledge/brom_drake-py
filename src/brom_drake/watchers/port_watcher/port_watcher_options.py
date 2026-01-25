@@ -14,8 +14,8 @@ from .port_figure_arrangement import PortFigureArrangement
 
 class FigureNamingConvention(IntEnum):
     """
-    Description
-    -----------
+    **Description**
+    
     This enum is used to define the naming convention for the figures.
     """
     kFlat = 0 # e.g. "plant_generalized_output_dim_0.png"
