@@ -26,7 +26,7 @@ from .port_watcher_options import (
 )
 from .plotter import PortWatcherPlotter
 from brom_drake.systems.abstract_list_selection_system import AbstractListSelectionSystem
-from brom_drake.utils import (
+from brom_drake.systems.conversion import (
     BoolToVectorSystem,
     RigidTransformToVectorSystem,
 )

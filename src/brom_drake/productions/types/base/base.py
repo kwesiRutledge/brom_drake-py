@@ -7,7 +7,7 @@ from brom_drake.watchers.port_watcher.plotter import FigureNamingConvention
 from brom_drake.productions.roles import Role
 from brom_drake.productions.ids import ProductionID
 from brom_drake.utils import Performer
-from brom_drake.watchers.add_watcher import add_watcher_and_build
+from brom_drake.watchers.diagram_watcher.add_watcher import add_watcher_and_build
 from brom_drake.utils.initial_condition_manager import InitialConditionManager
 
 class BaseProduction:

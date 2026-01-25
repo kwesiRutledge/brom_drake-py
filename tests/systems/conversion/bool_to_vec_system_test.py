@@ -15,7 +15,7 @@ from pydrake.all import (
 import unittest
 
 # Internal Imports
-from brom_drake.utils import BoolToVectorSystem
+from brom_drake.systems.conversion import BoolToVectorSystem
 
 class BoolToVecSystemTest(unittest.TestCase):
     def test_in_sim1(self):

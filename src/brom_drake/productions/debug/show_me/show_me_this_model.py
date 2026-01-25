@@ -13,7 +13,7 @@ from pydrake.systems.primitives import ConstantVectorSource, VectorLogSink
 # Internal Imports
 from brom_drake.robots import find_base_link_name_in
 from brom_drake.productions.types import BaseProduction
-from brom_drake.productions import ProductionID
+from brom_drake.productions.ids import ProductionID
 from brom_drake.productions.roles.role import Role
 from brom_drake.utils import Performer, AddMultibodyTriad
 from .show_me_system import ShowMeSystem

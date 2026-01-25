@@ -1,4 +1,4 @@
-from brom_drake.utils.leaf_systems.flexible_port_switch import FlexiblePortSwitch
+from brom_drake.systems.switches.flexible_port_switch import FlexiblePortSwitch
 import numpy as np
 from pydrake.all import (
     BasicVector,

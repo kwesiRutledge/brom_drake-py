@@ -3,7 +3,7 @@ import networkx as nx
 from typing import List
 
 # Internal Imports
-from brom_drake.utils.leaf_systems.network_fsm import (
+from brom_drake.systems.network_fsm import (
     NetworkXFSM, FSMOutputDefinition, FSMTransitionCondition, FSMTransitionConditionType
 )
 from brom_drake.utils.pick_and_place.phase import PickAndPlacePhase

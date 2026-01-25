@@ -5,7 +5,7 @@ import numpy as np
 from typing import List, Union
 
 # Internal Imports
-from brom_drake.utils.leaf_systems.network_fsm.fsm_transition_condition import FSMTransitionCondition
+from brom_drake.systems.network_fsm.fsm_transition_condition import FSMTransitionCondition
 
 class FSMEdgeDefinition:
     """

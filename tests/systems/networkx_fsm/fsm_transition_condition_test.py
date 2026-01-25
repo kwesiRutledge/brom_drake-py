@@ -1,7 +1,7 @@
 import numpy as np
 import unittest
 # Internal Imports
-from brom_drake.utils.leaf_systems.network_fsm.fsm_transition_condition import (
+from brom_drake.systems.network_fsm.fsm_transition_condition import (
     FSMTransitionConditionType, FSMTransitionCondition
 )
 

@@ -40,18 +40,18 @@ from brom_drake.robots import find_base_link_name_in, GripperType
 from brom_drake import robots
 from brom_drake.motion_planning.systems import OpenLoopPlanDispenser, OpenLoopPosePlanDispenser
 from brom_drake.productions.types.debug import BasicGraspingDebuggingProduction
-from brom_drake.productions import ProductionID
+from brom_drake.productions.ids import ProductionID
 from brom_drake.productions.roles.role import Role
 from brom_drake.systems.abstract_list_selection_system import AbstractListSelectionSystem
-from brom_drake.systems.abstract_port_switch_system import AbstractPortSwitch
+from brom_drake.systems.switches import AbstractPortSwitch, FlexiblePortSwitch
 from brom_drake.systems.pose_composition import PoseCompositionSystem
+from brom_drake.systems.network_fsm import NetworkXFSM
 from brom_drake.utils import (
-    Performer, collision_checking, NetworkXFSM, FlexiblePortSwitch, FSMTransitionCondition,
-    FSMOutputDefinition, FSMTransitionConditionType, Puppetmaker, PuppetmakerConfiguration, PuppetSignature,
+    Performer, collision_checking, Puppetmaker, PuppetmakerConfiguration, PuppetSignature,
 )
 from brom_drake.utils.initial_condition_manager import InitialConditionManager
-from brom_drake.utils.leaf_systems import RigidTransformToVectorSystem, define_named_vector_selection_system
-from brom_drake.utils.leaf_systems.rigid_transform_to_vector_system.configuration import Configuration as RigidTransformToVectorSystemConfiguration
+from brom_drake.systems.conversion import RigidTransformToVectorSystem, RigidTransformToVectorSystemConfiguration
+from brom_drake.systems.named_vector_selection_system import define_named_vector_selection_system
 from brom_drake.utils.model_instances import (
     get_name_of_first_body_in_urdf,
     find_number_of_positions_in_welded_model,

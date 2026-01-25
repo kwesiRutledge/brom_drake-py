@@ -9,7 +9,7 @@ import unittest
 
 # Internal Imports
 from brom_drake.all import add_watcher_and_build
-from brom_drake.utils.leaf_systems.network_fsm import (
+from brom_drake.systems.network_fsm import (
     NetworkXFSM,
     FSMTransitionCondition,
     FSMTransitionConditionType,

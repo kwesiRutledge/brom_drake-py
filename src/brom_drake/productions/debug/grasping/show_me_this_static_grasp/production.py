@@ -22,7 +22,7 @@ from pydrake.systems.primitives import ConstantVectorSource, VectorLogSink
 from brom_drake.file_manipulation.urdf.drakeify import drakeify_my_urdf
 from brom_drake.robots import find_base_link_name_in
 from brom_drake.productions.types.debug import BasicGraspingDebuggingProduction
-from brom_drake.productions import ProductionID
+from brom_drake.productions.ids import ProductionID
 from brom_drake.productions.roles.role import Role
 from brom_drake.utils import Performer, AddMultibodyTriad
 from brom_drake.utils.model_instances import (

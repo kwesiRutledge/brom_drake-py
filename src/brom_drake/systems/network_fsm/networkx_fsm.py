@@ -15,19 +15,19 @@ from pydrake.systems.framework import OutputPort
 from typing import Callable, Dict, List, Union
 
 # Internal Imports
-from brom_drake.utils.leaf_systems.network_fsm.fsm_output_definition import FSMOutputDefinition
-from brom_drake.utils.leaf_systems.network_fsm.fsm_transition_condition import (
+from brom_drake.systems.network_fsm.fsm_output_definition import FSMOutputDefinition
+from brom_drake.systems.network_fsm.fsm_transition_condition import (
     FSMTransitionCondition, FSMTransitionConditionType
 )
-from brom_drake.utils.leaf_systems.network_fsm.fsm_edge_definition import FSMEdgeDefinition
-from brom_drake.utils.leaf_systems.network_fsm.errors import (
+from brom_drake.systems.network_fsm.fsm_edge_definition import FSMEdgeDefinition
+from brom_drake.systems.network_fsm.errors import (
     EdgeContainsNoConditionsError,
     EdgeContainsNoLabelsError,
     MultipleConnectedComponentsError,
     NumberOfStartNodesError,
     OutputPortNotInitializedError,
 )
-from brom_drake.utils.leaf_systems.network_fsm.config import NetworkXFSMConfig
+from brom_drake.systems.network_fsm.config import NetworkXFSMConfig
 from brom_drake.directories import DEFAULT_NETWORKX_FSM_DIR
 
 class NetworkXFSM(LeafSystem):

@@ -27,21 +27,17 @@ from brom_drake.watchers.port_watcher.port_watcher_options import (
     PortWatcherPlottingOptions, PortWatcherRawDataOptions,
 )
 from brom_drake.watchers.port_watcher.port_figure_arrangement import PortFigureArrangement
-from brom_drake.productions.ids import ProductionID
-from brom_drake.productions.debug.grasping.attempt_grasp.with_puppeteer_wrist import Script as AttemptGraspWithPuppeteerWristScript
+from brom_drake.productions.all import *
 from brom_drake.example_helpers import BlockHandlerSystem
-from brom_drake.file_manipulation.urdf import DrakeReadyURDFConverter, drakeify_my_urdf
-from brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.config import MeshReplacementStrategy
+from brom_drake.file_manipulation.all import *
 from brom_drake.robots.gripper_type import GripperType
-from brom_drake.utils.leaf_systems import (
+from brom_drake.systems.conversion import (
     BoolToVectorSystem,
-    EndEffectorWrenchCalculator,
     RigidTransformToVectorSystem,
+    RigidTransformToVectorSystemConfiguration
 )
-from brom_drake.utils.leaf_systems.rigid_transform_to_vector_system.configuration import Configuration as RigidTransformToVectorSystemConfiguration
-from brom_drake.utils.puppetmaker.puppetmaker import Puppetmaker
-from brom_drake.utils.puppetmaker.configuration import Configuration as PuppetmakerConfiguration
-from brom_drake.utils.puppetmaker.puppet_signature import PuppeteerJointSignature, PuppetSignature
+from brom_drake.systems.end_effector_wrench_calculator import EndEffectorWrenchCalculator
+from brom_drake.utils.puppetmaker import *
 from brom_drake.watchers.all import *
 __all__ = [
     'add_watcher',
