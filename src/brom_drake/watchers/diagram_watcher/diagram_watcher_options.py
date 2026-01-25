@@ -7,7 +7,7 @@ Description
 from dataclasses import dataclass
 
 # Internal Imports
-from brom_drake.directories import DEFAULT_WATCHER_DIR
+from brom_drake import directories
 from brom_drake.watchers.port_watcher.port_watcher_options import PortWatcherOptions, PortWatcherPlottingOptions, PortWatcherRawDataOptions
 
 @dataclass(frozen=True)
@@ -60,7 +60,7 @@ class DiagramWatcherOptions:
         The rules that define which types of messages to suppress during the operation of the DiagramWatcher.
     """
     # The base directory where the watcher will save the data
-    base_directory: str = DEFAULT_WATCHER_DIR
+    base_directory: str = directories.DEFAULT_WATCHER_DIR
 
     # Options Used for Each PortWatcher
     plotting_options: PortWatcherPlottingOptions = PortWatcherPlottingOptions()

@@ -1,6 +1,6 @@
 from brom_drake import robots
 from brom_drake.all import (
-    diagram_watcher, drakeify_my_urdf,
+    drakeify_my_urdf,
     GripperType, 
     MeshReplacementStrategy,
     PortWatcher,

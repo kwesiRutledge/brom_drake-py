@@ -6,7 +6,7 @@ Description:
 """
 from typing import List
 
-from .constants import INELIGIBLE_SYSTEM_TYPES
+from brom_drake.watchers.diagram_watcher import constants
 from brom_drake.watchers.diagram_target import DiagramTarget
 
 
@@ -23,7 +23,7 @@ class UnrecognizedTargetError(ValueError):
             self.message += f"(Available systems are {system_names})\n"
 
         self.message += f"If system with name {target.name} does exist, it may be one of the ineligible types:\n "
-        self.message += f"\t{INELIGIBLE_SYSTEM_TYPES}.\n"
+        self.message += f"\t{constants.INELIGIBLE_SYSTEM_TYPES}.\n"
 
         super().__init__(self.message)
 

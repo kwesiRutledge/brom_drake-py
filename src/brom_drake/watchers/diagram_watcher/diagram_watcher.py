@@ -23,7 +23,7 @@ from brom_drake.watchers.diagram_target import DiagramTarget
 from brom_drake.watchers.port_watcher.port_watcher import PortWatcher
 from brom_drake.watchers.port_watcher.port_watcher_options import PortWatcherOptions, PortWatcherPlottingOptions, PortWatcherRawDataOptions
 from brom_drake.watchers.diagram_watcher.diagram_watcher_options import DiagramWatcherOptions
-from brom_drake.watchers.diagram_watcher.constants import INELIGIBLE_SYSTEM_TYPES
+from brom_drake.watchers.diagram_watcher import constants
 from brom_drake.watchers.diagram_watcher.errors import UnrecognizedTargetError
 
 
@@ -346,7 +346,7 @@ class DiagramWatcher:
 
         self.logger.info("Finding all eligible systems for logging...")
         for system in builder.GetSystems():
-            if type(system) in INELIGIBLE_SYSTEM_TYPES:
+            if type(system) in constants.INELIGIBLE_SYSTEM_TYPES:
                 self.logger.warning(
                     f"System {system.get_name()} (of type {type(system)}) is not eligible for logging! Skipping..."
                 )
