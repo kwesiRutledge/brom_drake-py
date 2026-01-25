@@ -10,10 +10,10 @@ from pydrake.all import (
 import typer
 
 # Internal Imports
-from brom_drake.PortWatcher.port_watcher_options import FigureNamingConvention
+from brom_drake.watchers.port_watcher.port_watcher_options import FigureNamingConvention
 from brom_drake.all import drakeify_my_urdf, GripperType, MeshReplacementStrategy
 from brom_drake import robots
-from brom_drake.productions import AttemptGraspWithPuppeteerWrist
+from brom_drake.productions.all import AttemptGraspWithPuppeteerWrist
 
 def main():
     """
