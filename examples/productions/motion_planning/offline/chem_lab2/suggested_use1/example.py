@@ -17,7 +17,7 @@ from brom_drake.motion_planning.algorithms.rrt.bidirectional_connect import (
     BidirectionalRRTConnectPlannerConfig,
     BiRRTConnectSamplingProbabilities,
 )
-from brom_drake.productions import ChemLab2
+from brom_drake.productions.all import ChemLab2
 
 def main(meshcat_port_number: int = 7001):
     # Setup
