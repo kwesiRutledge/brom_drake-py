@@ -11,7 +11,7 @@ import typer
 # Internal Imports
 from brom_drake.all import drakeify_my_urdf, GripperType, FigureNamingConvention
 from brom_drake import robots
-from brom_drake.productions import AttemptGraspWithStaticWrist, AttemptGraspWithStaticWristConfiguration
+from brom_drake.productions.all import AttemptGraspWithStaticWrist, AttemptGraspWithStaticWristConfiguration
 from brom_drake.productions.types.base.configuration import Configuration as BaseConfiguration
 
 def main():
