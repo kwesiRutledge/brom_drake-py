@@ -44,7 +44,7 @@ class Puppetmaker:
     This object is used to:
     
     - Add "invisible" actuators for moving a free body (i.e., `add_strings_for` or `add_actuators_for`), and
-    - Control actuate a free body that has been added with the expected "puppet" actuators (i.e., `add_puppet_controller_for)
+    - Control actuate a free body that has been added with the expected "puppet" actuators (i.e., `add_puppet_controller_for`).
 
     .. important::
 

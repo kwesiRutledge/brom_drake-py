@@ -16,7 +16,7 @@ def generate_all_discoverable_docs(
     package_dir: Path = Path("../src/brom_drake"),
 ):
     """
-    *Description*
+    **Description**
 
     Iterates through all submodules in the given package directory,
     generating documentation files for each submodule, and finally
