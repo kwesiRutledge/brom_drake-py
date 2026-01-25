@@ -5,3 +5,11 @@ from .puppet_signature import (
     PuppetSignature,
 )
 from .puppetmaker import Puppetmaker
+
+__all__ = [
+    "AllJointSignatures",
+    "PuppeteerJointSignature",
+    "Puppetmaker",
+    "PuppetmakerConfiguration",
+    "PuppetSignature",
+]
