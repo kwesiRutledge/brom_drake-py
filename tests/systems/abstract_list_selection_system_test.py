@@ -1,6 +1,6 @@
 from brom_drake.watchers.port_watcher.port_watcher import PortWatcher
 from brom_drake.systems.abstract_list_selection_system import AbstractListSelectionSystem
-from brom_drake.utils.watcher import add_watcher_and_build
+from brom_drake.watchers.add_watcher import add_watcher_and_build
 import numpy as np
 from pydrake.all import (
     AbstractValue,

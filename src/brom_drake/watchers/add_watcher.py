@@ -44,7 +44,7 @@ def add_watcher(
     """
     **Description**
 
-    This function adds a :py:class:`~brom_drake.DiagramWatcher.DiagramWatcher.DiagramWatcher` to a Drake Diagram.
+    This function adds a :py:class:`~brom_drake.watchers.diagram_watcher.diagram_watcher.DiagramWatcher` to a Drake Diagram.
     The diagram is not finalized yet and so it is accessible via the `builder` argument.
     The watcher will insert LogVectorSink systems to log the output ports of the systems specified in the `targets` argument.
 
@@ -140,7 +140,7 @@ def add_watcher_and_build(
     """
     **Description**
 
-    This function adds a :py:class:`~brom_drake.DiagramWatcher.DiagramWatcher.DiagramWatcher` to a Drake Diagram.
+    This function adds a :py:class:`~brom_drake.watchers.diagram_watcher.diagram_watcher.DiagramWatcher` to a Drake Diagram.
     The diagram is not finalized yet and so it is accessible via the `builder` argument.
     The watcher will insert LogVectorSink systems to log the output ports of the systems specified in the `targets` argument.
 

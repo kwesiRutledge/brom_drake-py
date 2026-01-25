@@ -39,7 +39,7 @@ class PortWatcher:
     """
     *Description*
 
-    The real workhorse of the :py:class:`DiagramWatcher<brom_drake.DiagramWatcher.DiagramWatcher.DiagramWatcher>` class.
+    The real workhorse of the :py:class:`DiagramWatcher<brom_drake.watchers.diagram_watcher.diagram_watcher.DiagramWatcher>` class.
     This class adds the elements to the drake diagram that will monitor a given
     system's output port (**output_port**), if possible.
     """

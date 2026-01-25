@@ -33,7 +33,6 @@ from brom_drake.example_helpers import BlockHandlerSystem
 from brom_drake.file_manipulation.urdf import DrakeReadyURDFConverter, drakeify_my_urdf
 from brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.config import MeshReplacementStrategy
 from brom_drake.robots.gripper_type import GripperType
-from brom_drake.utils.watcher import add_watcher, add_watcher_and_build, parse_list_of_simplified_targets
 from brom_drake.utils.leaf_systems import (
     BoolToVectorSystem,
     EndEffectorWrenchCalculator,
@@ -43,6 +42,7 @@ from brom_drake.utils.leaf_systems.rigid_transform_to_vector_system.configuratio
 from brom_drake.utils.puppetmaker.puppetmaker import Puppetmaker
 from brom_drake.utils.puppetmaker.configuration import Configuration as PuppetmakerConfiguration
 from brom_drake.utils.puppetmaker.puppet_signature import PuppeteerJointSignature, PuppetSignature
+from brom_drake.watchers.all import *
 __all__ = [
     'add_watcher',
     'add_watcher_and_build',
