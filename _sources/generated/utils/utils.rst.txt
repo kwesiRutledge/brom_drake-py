@@ -8,10 +8,8 @@ Submodules
    :maxdepth: 1
 
    initial_condition_manager/initial_condition_manager
-   leaf_systems/leaf_systems
    pick_and_place/pick_and_place
    puppetmaker/puppetmaker
-   watcher/watcher
 
 Classes
 -------

@@ -7,13 +7,16 @@ Submodules
 .. toctree::
    :maxdepth: 1
 
+   conversion/conversion
+   network_fsm/network_fsm
+   switches/switches
 
 Classes
 -------
 
 .. autoclass:: brom_drake.systems.abstract_list_selection_system.AbstractListSelectionSystem
    :members:
-.. autoclass:: brom_drake.systems.abstract_port_switch_system.AbstractPortSwitch
+.. autoclass:: brom_drake.systems.end_effector_wrench_calculator.EndEffectorWrenchCalculator
    :members:
 .. autoclass:: brom_drake.systems.pose_composition.PoseCompositionSystem
    :members:
@@ -21,7 +24,7 @@ Classes
 Functions
 ---------
 
-(None found)
+.. autofunction:: brom_drake.systems.named_vector_selection_system.define_named_vector_selection_system
 
 Variables
 ---------

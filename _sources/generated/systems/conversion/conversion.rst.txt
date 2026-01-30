@@ -1,0 +1,27 @@
+conversion
+==========
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   rigid_transform_to_vector_system/rigid_transform_to_vector_system
+
+Classes
+-------
+
+.. autoclass:: brom_drake.systems.conversion.bool_to_vec_system.BoolToVectorSystem
+   :members:
+
+Functions
+---------
+
+(None found)
+
+Variables
+---------
+
+(None found)
+

@@ -1,0 +1,28 @@
+watchers
+========
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   diagram_watcher/diagram_watcher
+   port_watcher/port_watcher
+
+Classes
+-------
+
+.. autoclass:: brom_drake.watchers.diagram_target.DiagramTarget
+   :members:
+
+Functions
+---------
+
+(None found)
+
+Variables
+---------
+
+.. autodata:: brom_drake.watchers.all.INELIGIBLE_SYSTEM_TYPES
+

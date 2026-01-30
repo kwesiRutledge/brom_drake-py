@@ -7,20 +7,16 @@ Submodules
 .. toctree::
    :maxdepth: 1
 
-   all/all
    control/control
-   DiagramTarget/DiagramTarget
-   DiagramWatcher/DiagramWatcher
    example_helpers/example_helpers
    file_manipulation/file_manipulation
-   leaf_systems/leaf_systems
    motion_planning/motion_planning
-   PortWatcher/PortWatcher
    productions/productions
    robots/robots
    stations/stations
    systems/systems
    utils/utils
+   watchers/watchers
 
 Classes
 -------
@@ -35,6 +31,9 @@ Functions
 Variables
 ---------
 
+.. autodata:: brom_drake.all.INELIGIBLE_SYSTEM_TYPES
+.. autodata:: brom_drake.all.URDF_CONVERSION_LEVEL
+.. autodata:: brom_drake.all.URDF_CONVERSION_LOG_LEVEL_NAME
 .. autodata:: brom_drake.directories.DEFAULT_BROM_DIR
 .. autodata:: brom_drake.directories.DEFAULT_BROM_MODELS_DIR
 .. autodata:: brom_drake.directories.DEFAULT_NETWORKX_FSM_DIR

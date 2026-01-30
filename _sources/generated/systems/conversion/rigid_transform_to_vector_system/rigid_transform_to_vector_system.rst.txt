@@ -1,0 +1,28 @@
+rigid_transform_to_vector_system
+================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+
+Classes
+-------
+
+.. autoclass:: brom_drake.systems.conversion.rigid_transform_to_vector_system.configuration.Configuration
+   :members:
+.. autoclass:: brom_drake.systems.conversion.rigid_transform_to_vector_system.system.RigidTransformToVectorSystem
+   :members:
+
+Functions
+---------
+
+(None found)
+
+Variables
+---------
+
+(None found)
+

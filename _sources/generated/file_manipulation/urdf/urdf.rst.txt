@@ -24,5 +24,6 @@ Functions
 Variables
 ---------
 
-(None found)
+.. autodata:: brom_drake.file_manipulation.urdf.all.URDF_CONVERSION_LEVEL
+.. autodata:: brom_drake.file_manipulation.urdf.all.URDF_CONVERSION_LOG_LEVEL_NAME
 

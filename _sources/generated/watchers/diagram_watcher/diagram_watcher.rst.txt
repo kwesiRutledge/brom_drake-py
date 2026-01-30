@@ -1,0 +1,35 @@
+diagram_watcher
+===============
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+
+Classes
+-------
+
+.. autoclass:: brom_drake.watchers.diagram_watcher.diagram_watcher.DiagramWatcher
+   :members:
+.. autoclass:: brom_drake.watchers.diagram_watcher.diagram_watcher_options.DiagramWatcherOptions
+   :members:
+.. autoclass:: brom_drake.watchers.diagram_watcher.diagram_watcher_options.SuppressDiagramWatcherRules
+   :members:
+.. autoclass:: brom_drake.watchers.diagram_watcher.errors.UnrecognizedTargetError
+   :members:
+
+Functions
+---------
+
+.. autofunction:: brom_drake.watchers.diagram_watcher.add_watcher.add_watcher
+.. autofunction:: brom_drake.watchers.diagram_watcher.add_watcher.add_watcher_and_build
+.. autofunction:: brom_drake.watchers.diagram_watcher.add_watcher.parse_list_of_simplified_targets
+
+Variables
+---------
+
+.. autodata:: brom_drake.watchers.diagram_watcher.all.INELIGIBLE_SYSTEM_TYPES
+.. autodata:: brom_drake.watchers.diagram_watcher.constants.INELIGIBLE_SYSTEM_TYPES
+
