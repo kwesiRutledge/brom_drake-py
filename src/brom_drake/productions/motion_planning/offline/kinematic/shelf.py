@@ -17,7 +17,7 @@ import brom_drake.robots as robots
 from brom_drake.motion_planning.systems.open_loop_dispensers.open_loop_plan_dispenser import OpenLoopPlanDispenser
 from brom_drake.stations.kinematic import UR10eStation as KinematicUR10eStation
 from brom_drake.productions.ids import ProductionID
-from brom_drake.productions.roles import Role
+from brom_drake.productions.roles.role import Role
 from brom_drake.productions.types.motion_planning import KinematicMotionPlanningProduction
 from brom_drake.utils import Performer, GroundShape, AddGround, MotionPlan
 

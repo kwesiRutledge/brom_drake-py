@@ -34,17 +34,18 @@ import brom_drake.robots as robots
 from brom_drake.robots.gripper_type import GripperType
 from brom_drake.stations.classical import UR10eStation
 from brom_drake.productions.ids import ProductionID
-from brom_drake.productions.roles import Role
+from brom_drake.productions.roles.role import Role
 from brom_drake.productions.types import MotionPlanningAndGraspingProduction
 from brom_drake.utils import Performer, AddGround, MotionPlan
 
 
 class ChemLab3(MotionPlanningAndGraspingProduction):
     """
-    Description:
-        This production is the first in the chemistry lab series.
-        It is used to test the motion planning capabilities of the robot
-        in a chemistry lab setting with minimal constraints.
+    **Description**
+
+    This production is the first in the chemistry lab series.
+    It is used to test the pick and place capabilities of the robot
+    in a chemistry lab setting with minimal constraints.
     """
     def __init__(
         self,
@@ -59,9 +60,10 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
         **kwargs,
     ):
         """
-        Description:
-            Constructor for the ChemLab3 Production.
-        :param meshcat_port_number:
+        **Description**
+
+        Constructor for the ChemLab3 Production.
+    
         """
         # Superclass constructor
         super().__init__(**kwargs)
@@ -105,15 +107,17 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
 
     def add_supporting_cast(self):
         """
-        Description
-        -----------
+        **Description**
+        
         This method adds all secondary cast members to the builder.
         The secondary cast members in the production are the:
+
         - Table, where the robot exists
         - Test Tube Holders
         - Component which share's the robot model reference
         - Motion Planning components (e.g., dispensers, etc.)
         - Start and Goal sources
+        
         :return:
         """
         # Call the superclass method
@@ -144,8 +148,8 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
 
     def add_dummy_gripper_components(self):
         """
-        Description
-        -----------
+        **Description**
+        
         Add more components to the production that are used
         to hold the gripper in place.
         """
@@ -174,8 +178,8 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
 
     def add_erlenmeyer_flask(self):
         """
-        Description
-        -----------
+        **Description**
+        
         Adds the 500ml Erlenmeyer flask to the production.
         """
         # Setup
@@ -270,8 +274,8 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
 
     def add_table(self):
         """
-        Description
-        -----------
+        **Description**
+        
         This method adds the table to the production.
         The table will be "L-shaped", and we will define it with 2 box
         shapes.
