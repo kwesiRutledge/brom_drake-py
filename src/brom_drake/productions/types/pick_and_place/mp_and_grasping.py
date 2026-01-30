@@ -21,11 +21,12 @@ from pydrake.systems.primitives import ConstantVectorSource, ConstantValueSource
 # Internal Imports
 from brom_drake.motion_planning.systems.prototypical_planner import PrototypicalPlannerSystem
 from brom_drake.productions.types import BaseProduction
-from brom_drake.productions.roles import kKinematicMotionPlanner, Role
+from brom_drake.productions.roles.role import Role
+from brom_drake.productions.roles.motion_planners.kinematic import kKinematicMotionPlanner
 from brom_drake.file_manipulation.urdf.shapes.sphere import SphereDefinition
 from brom_drake.file_manipulation.urdf.simple_writer.urdf_definition import SimpleShapeURDFDefinition
 from brom_drake.utils import Performer, MotionPlan
-from brom_drake.utils.leaf_systems.network_fsm import (
+from brom_drake.systems.network_fsm import (
     NetworkXFSM, FSMOutputDefinition
 )
 from brom_drake.utils.pick_and_place.phase import PickAndPlacePhase

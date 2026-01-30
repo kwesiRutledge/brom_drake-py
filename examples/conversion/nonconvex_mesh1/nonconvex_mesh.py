@@ -12,7 +12,7 @@ from pydrake.systems.analysis import Simulator
 # Internal imports
 from brom_drake import robots
 from brom_drake.all import drakeify_my_urdf, MeshReplacementStrategy
-from brom_drake.productions import ShowMeThisModel
+from brom_drake.productions.all import ShowMeThisModel
 
 def main():
     # Setup

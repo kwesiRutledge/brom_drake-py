@@ -27,7 +27,7 @@ from pydrake.systems.framework import DiagramBuilder, Diagram, Context
 from pydrake.systems.primitives import ConstantVectorSource, VectorLogSink
 
 # Internal Imports
-from brom_drake.PortWatcher.port_watcher_options import FigureNamingConvention
+from brom_drake.watchers.port_watcher.port_watcher_options import FigureNamingConvention
 from brom_drake.control.grippers import GripperController, GripperTarget
 from brom_drake.file_manipulation.urdf.drakeify import drakeify_my_urdf
 from brom_drake.file_manipulation.urdf.shapes.box import BoxDefinition
@@ -36,11 +36,13 @@ from brom_drake.robots import find_base_link_name_in, GripperType
 from brom_drake import robots
 from brom_drake.motion_planning.systems import OpenLoopPlanDispenser
 from brom_drake.productions.types.debug import BasicGraspingDebuggingProduction
-from brom_drake.productions import ProductionID
+from brom_drake.productions.ids import ProductionID
 from brom_drake.productions.roles.role import Role
+from brom_drake.systems.all import (
+    NetworkXFSM, FlexiblePortSwitch
+)
 from brom_drake.utils import (
-    Performer, collision_checking, NetworkXFSM, FlexiblePortSwitch, FSMTransitionCondition,
-    FSMOutputDefinition, FSMTransitionConditionType
+    Performer, collision_checking,
 )
 from brom_drake.utils.model_instances import (
     get_name_of_first_body_in_urdf,

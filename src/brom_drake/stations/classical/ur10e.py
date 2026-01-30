@@ -22,7 +22,7 @@ from typing import Tuple
 from brom_drake.robots.gripper_type import GripperType
 from brom_drake.control.grippers.gripper_controller import GripperController
 from brom_drake.file_manipulation.urdf import DrakeReadyURDFConverter
-from brom_drake.utils.leaf_systems import EndEffectorWrenchCalculator
+from brom_drake.systems.end_effector_wrench_calculator import EndEffectorWrenchCalculator
 
 from brom_drake import robots
 

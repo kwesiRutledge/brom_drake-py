@@ -1,8 +1,2 @@
-from brom_drake.productions.roles.role import Role, RolePortAssignment
-from brom_drake.productions.roles.motion_planners.kinematic import kKinematicMotionPlanner
-
-__all__ = [
-    "Role",
-    "kKinematicMotionPlanner",
-    "RolePortAssignment",
-]
+# Do not define this file; it is only used to indicate that this is a package.
+# The actual exports are defined in all.py

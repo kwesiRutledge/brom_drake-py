@@ -3,9 +3,9 @@ from pydrake.systems.analysis import Simulator
 from pydrake.systems.framework import DiagramBuilder
 import unittest
 
-from brom_drake.productions import ProductionID
+from brom_drake.productions.ids import ProductionID
 from brom_drake.productions.motion_planning.offline.kinematic.shelf import ShelfPlanning1
-from brom_drake.productions.roles import kKinematicMotionPlanner
+from brom_drake.productions.roles.all import kKinematicMotionPlanner
 
 
 class ShelfTest(unittest.TestCase):

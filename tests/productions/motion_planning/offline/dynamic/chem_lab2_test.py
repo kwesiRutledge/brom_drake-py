@@ -9,7 +9,7 @@ from brom_drake.motion_planning.algorithms.rrt.bidirectional_connect import (
     BiRRTConnectSamplingProbabilities,
 )
 from brom_drake.productions.motion_planning.offline.dynamic.chem_lab2 import ChemLab2
-from brom_drake.productions import ProductionID
+from brom_drake.productions.ids import ProductionID
 
 class ChemLab2Test(unittest.TestCase):
     def test_init1(self):

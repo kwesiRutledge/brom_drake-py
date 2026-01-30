@@ -15,7 +15,7 @@ from pydrake.geometry import SceneGraph
 from pydrake.multibody.plant import AddMultibodyPlantSceneGraph
 from pydrake.systems.primitives import ConstantValueSource
 
-from brom_drake.PortWatcher.port_watcher_options import FigureNamingConvention
+from brom_drake.watchers.port_watcher.port_watcher_options import FigureNamingConvention
 from brom_drake.all import add_watcher_and_build
 from brom_drake.motion_planning.algorithms.rrt.base import BaseRRTPlannerConfig
 # Internal Imports

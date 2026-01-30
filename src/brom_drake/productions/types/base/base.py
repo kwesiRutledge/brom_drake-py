@@ -3,11 +3,11 @@ from typing import Union, Tuple, List
 from pydrake.systems.framework import DiagramBuilder, LeafSystem, Diagram, Context
 
 # Internal Imports
-from brom_drake.PortWatcher.plotter import FigureNamingConvention
-from brom_drake.productions.roles import Role
+from brom_drake.watchers.port_watcher.plotter import FigureNamingConvention
+from brom_drake.productions.roles.role import Role
 from brom_drake.productions.ids import ProductionID
 from brom_drake.utils import Performer
-from brom_drake.utils.watcher import add_watcher_and_build
+from brom_drake.watchers.diagram_watcher.add_watcher import add_watcher_and_build
 from brom_drake.utils.initial_condition_manager import InitialConditionManager
 
 class BaseProduction:

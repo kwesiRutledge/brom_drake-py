@@ -10,7 +10,7 @@ import typer
 # Internal Imports
 from brom_drake.all import drakeify_my_urdf
 from brom_drake import robots
-from brom_drake.productions import (
+from brom_drake.productions.all import (
     ShowMeThisStaticGrasp, ShowMeThisStaticGraspConfiguration
 )
 

@@ -6,13 +6,13 @@ DiagramWatcher
     :align: center
 
 *Easily "watch" all of the systems in your Drake simulation using the* 
-:py:class:`DiagramWatcher<brom_drake.DiagramWatcher.DiagramWatcher.DiagramWatcher>`
+:py:class:`DiagramWatcher<brom_drake.watchers.diagram_watcher.diagram_watcher.DiagramWatcher>`
 *!*
 
 Summary
 -------
 
-The :py:class:`DiagramWatcher<brom_drake.DiagramWatcher.DiagramWatcher.DiagramWatcher>` is a class that can be used to easily log and plot data in a Drake simulation.
+The :py:class:`DiagramWatcher<brom_drake.watchers.diagram_watcher.diagram_watcher.DiagramWatcher>` is a class that can be used to easily log and plot data in a Drake simulation.
 
 Example Usage
 -------------
@@ -62,7 +62,7 @@ Easily Log Your Diagram's Signals
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 It is recommended that you use the convenience function :py:func:`~brom_drake.utils.watcher.add_watcher.add_watcher_and_build` to add a
-:py:class:`DiagramWatcher<brom_drake.DiagramWatcher.DiagramWatcher.DiagramWatcher>` to your diagram.
+:py:class:`DiagramWatcher<brom_drake.watchers.diagram_watcher.diagram_watcher.DiagramWatcher>` to your diagram.
 
 .. code-block:: python
 
@@ -93,10 +93,10 @@ It is recommended that you use the convenience function :py:func:`~brom_drake.ut
 
 What will happen whenever you use this function is that:
 
-- The :py:class:`DiagramWatcher<brom_drake.DiagramWatcher.DiagramWatcher.DiagramWatcher>` will be created.
+- The :py:class:`DiagramWatcher<brom_drake.watchers.diagram_watcher.diagram_watcher.DiagramWatcher>` will be created.
     - It will search through all systems that the :code:`DiagramBuilder` has added.
     - For each system, the watcher will add a :code:`VectorLogger` to each output port that is a :code:`kVectorValued` port.
-    - The :py:class:`DiagramWatcher<brom_drake.DiagramWatcher.DiagramWatcher.DiagramWatcher>` will connect all loggers to all targeted ports (in the above case, we will target all available output ports).
+    - The :py:class:`DiagramWatcher<brom_drake.watchers.diagram_watcher.diagram_watcher.DiagramWatcher>` will connect all loggers to all targeted ports (in the above case, we will target all available output ports).
 - After the simulation is run and the script completes, the watcher will save all data traces for each port in .png files. These plots will be in a new :code:`brom` directory.
 
 Watching Specific Systems

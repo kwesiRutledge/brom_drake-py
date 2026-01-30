@@ -5,7 +5,7 @@ from pydrake.all import RigidTransform, PiecewisePose
 from typing import List
 
 # Internal Imports
-from brom_drake.utils.leaf_systems.network_fsm import (
+from brom_drake.systems.network_fsm import (
     NetworkXFSM, FSMOutputDefinition, FSMTransitionCondition, FSMTransitionConditionType
 )
 from .phases import AttemptGraspWithPuppeteerWristPhase

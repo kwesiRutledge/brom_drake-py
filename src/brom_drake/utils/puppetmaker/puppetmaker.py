@@ -21,7 +21,7 @@ from pydrake.multibody.plant import MultibodyPlant
 from pydrake.multibody.tree import ModelInstanceIndex
 from typing import List, Tuple
 
-from brom_drake.utils.leaf_systems.named_vector_selection_system import define_named_vector_selection_system
+from brom_drake.systems.named_vector_selection_system import define_named_vector_selection_system
 from brom_drake.utils.model_instances import get_all_bodies_in
 
 # Internal Imports
@@ -29,7 +29,7 @@ from .configuration import Configuration as PuppetmakerConfiguration
 from .puppet_signature import PuppetSignature, PuppeteerJointSignature, AllJointSignatures
 from brom_drake.file_manipulation.urdf import SimpleShapeURDFDefinition
 from brom_drake.file_manipulation.urdf.shapes import SphereDefinition
-from brom_drake.utils.leaf_systems.rigid_transform_to_vector_system import (
+from brom_drake.systems.conversion.rigid_transform_to_vector_system import (
     RigidTransformToVectorSystem,
     RigidTransformToVectorSystemConfiguration,
 )
@@ -44,7 +44,7 @@ class Puppetmaker:
     This object is used to:
     
     - Add "invisible" actuators for moving a free body (i.e., `add_strings_for` or `add_actuators_for`), and
-    - Control actuate a free body that has been added with the expected "puppet" actuators (i.e., `add_puppet_controller_for)
+    - Control actuate a free body that has been added with the expected "puppet" actuators (i.e., `add_puppet_controller_for`).
 
     .. important::
 
