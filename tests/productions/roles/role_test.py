@@ -5,8 +5,7 @@ from pydrake.systems.framework import DiagramBuilder
 
 from brom_drake.example_helpers import BlockHandlerSystem
 from brom_drake.stations.kinematic import UR10eStation
-from brom_drake.productions.roles import Role, RolePortAssignment
-from brom_drake.productions.roles.role_port_assignment import PairingType
+from brom_drake.productions.roles.all import Role, RolePortAssignment, PairingType
 
 
 class RoleTest(unittest.TestCase):

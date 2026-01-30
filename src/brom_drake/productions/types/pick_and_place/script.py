@@ -12,13 +12,13 @@ from brom_drake.utils.pick_and_place.target_description import PickAndPlaceTarge
 @dataclass
 class Script:
     """
-    Description
-    -----------
+    **Description**
+    
     This class defines the "script" or the sequence of events that is meant to happen in the
     Pick and Place (or Motion Planning and Grasping) task.
     
-    Assumptions
-    -----------
+    **Assumptions**
+    
     We assume that the robot will try to grasp each of the targets in the order that they
     appear in the list below. (i.e., pick up target 0, then target 1, etc.)
     """
