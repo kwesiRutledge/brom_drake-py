@@ -19,7 +19,7 @@ from pydrake.all import (
     Meshcat, MeshcatVisualizer, Simulator,
 )
 
-from brom_drake.all import DiagramWatcherOptions, PortWatcherPlottingOptions, DiagramWatcher
+from brom_drake.all import DiagramWatcherOptions, DiagramWatcher
 from brom_drake.example_helpers import BlockHandlerSystem
 
 #######################
