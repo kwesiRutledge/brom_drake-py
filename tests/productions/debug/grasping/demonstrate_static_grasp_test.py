@@ -11,10 +11,10 @@ import unittest
 
 # Internal Imports
 from brom_drake.all import drakeify_my_urdf
-from brom_drake.productions.debug.grasping.show_me_this_static_grasp import (
+from brom_drake.productions.debug.grasping.show_me_this_static_grasp.production import (
     ShowMeThisStaticGrasp,
 )
-from brom_drake.productions.debug.grasping.show_me_this_static_grasp import Configuration as ShowMeThisStaticGraspConfiguration
+from brom_drake.productions.debug.grasping.show_me_this_static_grasp.config import Configuration as ShowMeThisStaticGraspConfiguration
 from brom_drake.productions.types.base import Configuration as BaseConfiguration
 from brom_drake.utils.model_instances import (
     get_name_of_first_body_in_urdf,
