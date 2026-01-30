@@ -4,7 +4,7 @@ from typing import List
 
 # Internal Imports
 from brom_drake.systems.network_fsm import (
-    NetworkXFSM, FSMOutputDefinition, FSMTransitionCondition, FSMTransitionConditionType
+    NetworkXFSM, FSMOutputDefinition,
 )
 from brom_drake.utils.pick_and_place.phase import PickAndPlacePhase
 from brom_drake.utils.pick_and_place.target_description import PickAndPlaceTargetDescription
