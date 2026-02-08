@@ -42,7 +42,7 @@ jobs:
         run: >-
           sed -i "s/{{VERSION_PLACEHOLDER}}/${{ needs.extract-tag.outputs.tag_name }}/g" setup.py
       - name: Install package
-        run: pip install .
+        run: pip install .[dev]
       - name: Sphinx build
         run: |
           cd docs && make generate-and-build-docs BROM_VERSION=${{ needs.extract-tag.outputs.tag_name }}
