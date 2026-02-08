@@ -1,4 +1,3 @@
-import ipdb
 import importlib.resources as impresources
 import numpy as np
 from pydrake.all import (
@@ -14,7 +13,6 @@ from pydrake.all import (
     DiagramBuilder,
     Simulator,
 )
-import typer
 
 # Internal imports
 from brom_drake import robots

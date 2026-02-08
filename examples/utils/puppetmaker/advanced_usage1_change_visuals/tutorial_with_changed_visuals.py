@@ -1,4 +1,3 @@
-import ipdb
 import numpy as np
 from pydrake.all import (
     AbstractValue,
@@ -13,7 +12,6 @@ from pydrake.all import (
     DiagramBuilder,
     Simulator,
 )
-import typer
 
 # Internal imports
 from brom_drake.file_manipulation.urdf.shapes import (
@@ -153,5 +151,4 @@ def main(t_final: float = 15.0):
 
 
 if __name__ == "__main__":
-    with ipdb.launch_ipdb_on_exception():
-        typer.run(main)
+    main()

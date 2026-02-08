@@ -5,7 +5,6 @@ Description:
     This file is a placeholder for a test that will be written in the future.
 """
 
-import ipdb
 import numpy as np
 from pydrake.all import Simulator, DiagramBuilder
 from pydrake.common.value import AbstractValue

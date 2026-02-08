@@ -7,9 +7,7 @@ Description:
     by an affine system.
 """
 
-import ipdb
 import numpy as np
-import typer
 
 # Drake imports
 from pydrake.all import (

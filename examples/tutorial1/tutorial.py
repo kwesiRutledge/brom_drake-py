@@ -1,9 +1,7 @@
 import sys
 
-import ipdb
 import numpy as np
 import matplotlib.pyplot as plt
-import typer
 
 # Drake imports
 from pydrake.all import (
@@ -300,5 +298,4 @@ def main(show_plots: bool = True):
 
 
 if __name__ == "__main__":
-    with ipdb.launch_ipdb_on_exception():
-        typer.run(main)
+    main()
