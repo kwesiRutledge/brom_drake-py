@@ -18,6 +18,7 @@ if __name__ == "__main__":
         long_description_content_type="text/markdown",
         long_description=long_description,
         # packages=find_packages(where='src/brom_drake'),
+        include_package_data=True,
         install_requires=[
             "drake",
             "meshcat",

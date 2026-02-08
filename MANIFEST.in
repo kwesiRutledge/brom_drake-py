@@ -1,0 +1,6 @@
+recursive-include brom_drake *.urdf
+recursive-include brom_drake *.xml
+recursive-include brom_drake *.sdf
+recursive-include src/brom_drake *.urdf
+recursive-include src/brom_drake *.xml
+recursive-include src/brom_drake *.sdf
