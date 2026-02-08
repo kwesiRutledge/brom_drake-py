@@ -38,13 +38,11 @@ jobs:
       - name: Install Sphinx dependencies
         run: |
           pip install sphinx sphinx_rtd_theme myst_parser sphinx_copybutton furo
-      - name: Install Brom dependencies
-        run: pip install -r requirements.txt
       - name: Update version in setup.py
         run: >-
           sed -i "s/{{VERSION_PLACEHOLDER}}/${{ needs.extract-tag.outputs.tag_name }}/g" setup.py
       - name: Install package
-        run: pip install -e .
+        run: pip install .
       - name: Sphinx build
         run: |
           cd docs && make generate-and-build-docs BROM_VERSION=${{ needs.extract-tag.outputs.tag_name }}
