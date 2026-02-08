@@ -7,10 +7,8 @@ For more info, refer to the README or the Wiki:
 https://github.com/kwesiRutledge/brom_drake-py/wiki/Productions-%E2%80%90-ShowMeThisModel
 """
 
-import ipdb
 from importlib import resources as impresources
 import numpy as np
-import typer
 from pydrake.systems.analysis import Simulator
 
 # Internal imports
