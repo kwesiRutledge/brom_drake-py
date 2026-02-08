@@ -25,8 +25,8 @@ jobs:
       - name: Update version in setup.py
         run: >-
           sed -i "s/{{VERSION_PLACEHOLDER}}/${{ steps.previous_tag.outputs.tag }}/g" setup.py
-      - name: Install package
-        run: pip install .
+      - name: Install package with the "test" extra dependencies
+        run: pip install .[test]
       - name: Run tests and collect coverage
         run: pytest --cov brom_drake
       - name: Upload coverage reports to Codecov

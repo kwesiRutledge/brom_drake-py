@@ -1,12 +1,10 @@
 from importlib import resources as impresources
-import ipdb
 import numpy as np
 from pydrake.all import (
     Simulator,
     RollPitchYaw,
     RigidTransform,
 )
-import typer
 
 # Internal Imports
 from brom_drake.all import drakeify_my_urdf

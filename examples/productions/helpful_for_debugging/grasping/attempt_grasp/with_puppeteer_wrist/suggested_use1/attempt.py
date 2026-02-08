@@ -1,5 +1,4 @@
 from importlib import resources as impresources
-import ipdb
 import numpy as np
 from pathlib import Path
 from pydrake.all import (
@@ -7,7 +6,6 @@ from pydrake.all import (
     RollPitchYaw,
     Simulator,
 )
-import typer
 
 # Internal Imports
 from brom_drake.watchers.port_watcher.port_watcher_options import FigureNamingConvention

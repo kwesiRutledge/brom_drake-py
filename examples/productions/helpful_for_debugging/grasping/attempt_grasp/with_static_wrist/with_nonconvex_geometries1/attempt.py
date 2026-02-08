@@ -1,13 +1,11 @@
 from importlib import resources as impresources
 from pathlib import Path
-import ipdb
 import numpy as np
 from pydrake.all import (
     RigidTransform,
     RollPitchYaw,
     Simulator,
 )
-import typer
 
 # Internal Imports
 from brom_drake.all import drakeify_my_urdf, GripperType, MeshReplacementStrategy

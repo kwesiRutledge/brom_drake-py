@@ -28,9 +28,11 @@ if __name__ == "__main__":
             "coacd",
         ],
         extras_require={
-            "dev": [
+            "test": [
                 "pytest",
                 "pytest-cov",
+            ],
+            "dev": [
                 "ipdb",
                 "typer",
                 "scipy",
