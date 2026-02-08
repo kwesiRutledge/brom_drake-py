@@ -7,10 +7,8 @@ Description:
     a Production.
 """
 
-import ipdb
 import numpy as np
 from pydrake.all import Simulator, RigidTransform, RollPitchYaw
-import typer
 
 # Internal imports
 from brom_drake.motion_planning.algorithms.rrt.bidirectional_connect import (

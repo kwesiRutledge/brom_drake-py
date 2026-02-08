@@ -7,10 +7,8 @@ Description:
     a Production.
 """
 
-import ipdb
 import numpy as np
 from pydrake.all import Simulator
-import typer
 
 # Internal imports
 from brom_drake.motion_planning.algorithms.rrt.connect import (

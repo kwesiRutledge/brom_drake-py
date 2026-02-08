@@ -5,10 +5,8 @@ This script contains an example of how to show
 a given urdf at the specified joint positions.
 """
 
-import ipdb
 from importlib import resources as impresources
 import numpy as np
-import typer
 from pydrake.systems.analysis import Simulator
 
 # Internal imports

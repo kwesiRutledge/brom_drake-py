@@ -11,7 +11,6 @@ from pydrake.all import (
     RollPitchYaw,
     Simulator,
 )
-import typer
 
 # Internal Imports
 from brom_drake.all import add_watcher_and_build
@@ -112,4 +111,4 @@ def main(t_final: float = 15.0):
 
 
 if __name__ == "__main__":
-    typer.run(main)
+    main()

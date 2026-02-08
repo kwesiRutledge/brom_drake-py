@@ -7,10 +7,8 @@ Description:
     a Production.
 """
 
-import ipdb
 import numpy as np
 from pydrake.all import Simulator, RigidTransform, RollPitchYaw
-import typer
 
 # Internal imports
 from brom_drake.motion_planning.algorithms.rrt.bidirectional_connect import (
@@ -70,5 +68,4 @@ def main(meshcat_port_number: int = 7001):
 
 
 if __name__ == "__main__":
-    with ipdb.launch_ipdb_on_exception():
-        typer.run(main)
+    main()
