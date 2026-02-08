@@ -4,6 +4,7 @@ Description:
 
     This file defines the RRT planner class, which is used to plan motion for a robot using the Rapidly-exploring Random Tree (RRT) algorithm.
 """
+
 import networkx as nx
 import numpy as np
 from pydrake.common.eigen_geometry import Quaternion
@@ -16,13 +17,16 @@ from pydrake.multibody.plant import MultibodyPlant
 from pydrake.multibody.tree import ModelInstanceIndex
 from pydrake.systems.framework import LeafSystem, BasicVector, Context
 
-from brom_drake.motion_planning.algorithms.rrt.base import BaseRRTPlanner, BaseRRTPlannerConfig
+from brom_drake.motion_planning.algorithms.rrt.base import (
+    BaseRRTPlanner,
+    BaseRRTPlannerConfig,
+)
 
 
 class RRTPlanGenerator(LeafSystem):
     """
     **Description**
-    
+
     This class will call the RRT planning algorithm for
     and then share it in an output port.
 
@@ -43,6 +47,7 @@ class RRTPlanGenerator(LeafSystem):
     dim_config: int
         The dimension of the configuration space.
     """
+
     def __init__(
         self,
         plant: MultibodyPlant,
@@ -53,7 +58,7 @@ class RRTPlanGenerator(LeafSystem):
     ):
         """
         **Description**
-        
+
         This function initializes the RRT planner.
         """
         super().__init__()
@@ -69,14 +74,16 @@ class RRTPlanGenerator(LeafSystem):
             self.set_dimension(dim_config)
 
         # Set Up Input and Output Ports
-        self.root_context = None # NOTE: This should be assigned by the user before calling!
+        self.root_context = (
+            None  # NOTE: This should be assigned by the user before calling!
+        )
         self.create_input_ports()
         self.create_output_ports()
 
     def compute_plan_if_not_available(self, context, output: AbstractValue):
         """
         **Description**
-        
+
         This function computes the plan if it is not available.
         """
         # Print
@@ -84,14 +91,18 @@ class RRTPlanGenerator(LeafSystem):
             # Compute plan
             q_start = self.GetInputPort("start_configuration").Eval(context)
             q_goal = self.GetInputPort("goal_configuration").Eval(context)
-            self.robot_model_idx = self.GetInputPort("robot_model_index").EvalAbstract(context).get_value()
+            self.robot_model_idx = (
+                self.GetInputPort("robot_model_index").EvalAbstract(context).get_value()
+            )
 
-            assert self.dim_q == self.n_actuated_dof, \
-                f"Dimension of configuration space ({self.dim_q}) does not match the number of actuated DOF ({self.n_actuated_dof})!"
+            assert (
+                self.dim_q == self.n_actuated_dof
+            ), f"Dimension of configuration space ({self.dim_q}) does not match the number of actuated DOF ({self.n_actuated_dof})!"
 
             base_rrt = BaseRRTPlanner(
                 self.robot_model_idx,
-                self.plant, self.scene_graph,
+                self.plant,
+                self.scene_graph,
                 config=self.rrt_config,
             )
 
@@ -102,18 +113,19 @@ class RRTPlanGenerator(LeafSystem):
 
             # Plan and extract path
             rrt, found_path = base_rrt.plan(
-                q_start, q_goal,
+                q_start,
+                q_goal,
             )
 
             if not found_path:
-                raise RuntimeError("No path found! Try increasing the number of iterations or checking your problem!")
+                raise RuntimeError(
+                    "No path found! Try increasing the number of iterations or checking your problem!"
+                )
 
-            path = nx.shortest_path(rrt, source=0, target=rrt.number_of_nodes()-1)
-            self.plan = np.array([rrt.nodes[node]['q'] for node in path])
+            path = nx.shortest_path(rrt, source=0, target=rrt.number_of_nodes() - 1)
+            self.plan = np.array([rrt.nodes[node]["q"] for node in path])
 
-        output.SetFrom(
-            AbstractValue.Make(self.plan)
-        )
+        output.SetFrom(AbstractValue.Make(self.plan))
 
     def create_input_ports(self):
         """
@@ -130,8 +142,7 @@ class RRTPlanGenerator(LeafSystem):
             BasicVector(np.zeros((self.dim_q,))),
         )
         self.DeclareAbstractInputPort(
-            "robot_model_index",
-            AbstractValue.Make(ModelInstanceIndex(-1))
+            "robot_model_index", AbstractValue.Make(ModelInstanceIndex(-1))
         )
 
     def create_output_ports(self):
@@ -147,7 +158,7 @@ class RRTPlanGenerator(LeafSystem):
         self.DeclareAbstractOutputPort(
             "motion_plan",
             lambda: AbstractValue.Make(sample_plan),
-            self.compute_plan_if_not_available
+            self.compute_plan_if_not_available,
         )
 
         # Create output for plan readiness
@@ -164,10 +175,10 @@ class RRTPlanGenerator(LeafSystem):
     ) -> InverseKinematics:
         """
         **Description**
-        
+
         Sets up the inverse kinematics problem for the start pose
         input to this function.
-        
+
         **Parameters**
 
         input_pose_vec: np.ndarray
@@ -196,8 +207,8 @@ class RRTPlanGenerator(LeafSystem):
             self.plant.world_frame(),
             input_pose_vec[:3],
             self.plant.GetFrameByName("ft_frame"),
-            (- np.ones((3,)) * eps0).reshape((-1, 1)),
-            (+ np.ones((3,)) * eps0).reshape((-1, 1)),
+            (-np.ones((3,)) * eps0).reshape((-1, 1)),
+            (+np.ones((3,)) * eps0).reshape((-1, 1)),
         )
 
         # TODO(kwesi): Add OrientationCosntraint
@@ -219,10 +230,7 @@ class RRTPlanGenerator(LeafSystem):
 
         return ik_problem
 
-    def solve_pose_ik_problem(
-        self,
-        input_pose_vec: np.ndarray
-    ) -> np.ndarray:
+    def solve_pose_ik_problem(self, input_pose_vec: np.ndarray) -> np.ndarray:
         """
         **Description**
 
@@ -242,13 +250,16 @@ class RRTPlanGenerator(LeafSystem):
         ik_program = ik_problem.prog()
         ik_result = Solve(ik_program)
 
-        assert ik_result.get_solution_result() == SolutionResult.kSolutionFound, \
-            f"Solution result was {ik_result.get_solution_result()}; need SolutionResult.kSolutionFound to make RRT Plan!"
+        assert (
+            ik_result.get_solution_result() == SolutionResult.kSolutionFound
+        ), f"Solution result was {ik_result.get_solution_result()}; need SolutionResult.kSolutionFound to make RRT Plan!"
 
         q_solution = ik_result.get_x_val()
 
         # Extract only the positions that correspond to our robot's joints
-        robot_joint_names = self.plant.GetPositionNames(self.robot_model_idx, add_model_instance_prefix=True)
+        robot_joint_names = self.plant.GetPositionNames(
+            self.robot_model_idx, add_model_instance_prefix=True
+        )
         print(f"Robot Joint Names: {robot_joint_names}")
         all_joint_names = self.plant.GetPositionNames()
         q_out_list = []
@@ -257,7 +268,6 @@ class RRTPlanGenerator(LeafSystem):
                 q_out_list.append(q_solution[ii])
 
         return np.array(q_out_list)
-
 
     def set_dimension(self, dim_q: int):
         """
@@ -271,7 +281,7 @@ class RRTPlanGenerator(LeafSystem):
     def n_actuated_dof(self) -> int:
         """
         **Description**
-        
+
         This method uses the plant and the robot model idx
         to identify the number of degrees of freedom we have for control.
         :return:
@@ -281,12 +291,10 @@ class RRTPlanGenerator(LeafSystem):
     def GetPlanIsReady(self, context, output: AbstractValue):
         """
         **Description**
-        
+
         This function checks if the plan is ready.
         """
-        output.SetFrom(
-            AbstractValue.Make(self.plan is not None)
-        )
+        output.SetFrom(AbstractValue.Make(self.plan is not None))
 
     def set_internal_root_context(self, root_context_in: Context):
         self.root_context = root_context_in

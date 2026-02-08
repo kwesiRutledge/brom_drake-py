@@ -19,9 +19,7 @@ class ShowMeThisModelTest(unittest.TestCase):
         :return:
         """
         # Setup
-        urdf_file_path = str(
-            impresources.files(robots) / "models/ur/ur10e.urdf"
-        )
+        urdf_file_path = str(impresources.files(robots) / "models/ur/ur10e.urdf")
 
         # Convert the URDF
         new_urdf_path = drakeify_my_urdf(
@@ -34,9 +32,9 @@ class ShowMeThisModelTest(unittest.TestCase):
         time_step = 1e-3
         production = ShowMeThisModel(
             str(new_urdf_path),
-            with_these_joint_positions=[0.0, 0.0, -np.pi/4.0, 0.0, 0.0, 0.0],
+            with_these_joint_positions=[0.0, 0.0, -np.pi / 4.0, 0.0, 0.0, 0.0],
             time_step=time_step,
-            meshcat_port_number=None, # Turn off for CI
+            meshcat_port_number=None,  # Turn off for CI
         )
         diagram, diagram_context = production.add_cast_and_build()
 
@@ -51,6 +49,7 @@ class ShowMeThisModelTest(unittest.TestCase):
 
         # Successfully Ran
         self.assertTrue(True)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -23,6 +23,7 @@ class PrototypicalPlannerSystem(LeafSystem):
     It will receive a planning algorithm and wrap that algorithm in a LeafSystem
     that works in Brom.
     """
+
     def __init__(
         self,
         plant: MultibodyPlant,
@@ -65,7 +66,9 @@ class PrototypicalPlannerSystem(LeafSystem):
         self.robot_model_idx = robot_model_idx
 
         # Define Input Ports
-        self.root_context = None  # NOTE: This should be assigned by the user before calling!
+        self.root_context = (
+            None  # NOTE: This should be assigned by the user before calling!
+        )
         self.plan = None
         self.create_input_ports()
 
@@ -95,18 +98,18 @@ class PrototypicalPlannerSystem(LeafSystem):
 
         # Setup
         plant_context = self.plant.GetMyMutableContextFromRoot(self.root_context)
-        scene_graph_context = self.scene_graph.GetMyMutableContextFromRoot(self.root_context)
+        scene_graph_context = self.scene_graph.GetMyMutableContextFromRoot(
+            self.root_context
+        )
         q_init = self.plant.GetPositions(plant_context, self.robot_model_idx)
 
         # Set the configuration
-        self.plant.SetPositions(
-            plant_context,
-            self.robot_model_idx,
-            q_model
-        )
+        self.plant.SetPositions(plant_context, self.robot_model_idx, q_model)
 
         # Check for collisions using the query object
-        query_object = self.scene_graph.get_query_output_port().Eval(scene_graph_context)
+        query_object = self.scene_graph.get_query_output_port().Eval(
+            scene_graph_context
+        )
         # return query_object.HasCollisions()
 
         # Alternative method to check for collisions
@@ -118,13 +121,9 @@ class PrototypicalPlannerSystem(LeafSystem):
             if pair_ii.depth > eps0:
                 collision_detected = True
                 break
-            
+
         # Otherwise return false (after resetting the configuration)
-        self.plant.SetPositions(
-            plant_context,
-            self.robot_model_idx,
-            q_init
-        )
+        self.plant.SetPositions(plant_context, self.robot_model_idx, q_init)
         return collision_detected
 
     def compute_plan_if_not_available(self, context: Context, output: AbstractValue):
@@ -146,7 +145,11 @@ class PrototypicalPlannerSystem(LeafSystem):
             q_start = self.GetInputPort("start_configuration").Eval(context)
             q_goal = self.GetInputPort("goal_configuration").Eval(context)
             if self.robot_model_idx is None:
-                self.robot_model_idx = self.GetInputPort("robot_model_index").EvalAbstract(context).get_value()
+                self.robot_model_idx = (
+                    self.GetInputPort("robot_model_index")
+                    .EvalAbstract(context)
+                    .get_value()
+                )
 
             if self.root_context is None:
                 raise ValueError("Plant context is not initialized yet!")
@@ -155,16 +158,12 @@ class PrototypicalPlannerSystem(LeafSystem):
 
             # Plan and extract path
             planning_result = self.planning_algorithm(
-                q_start,
-                q_goal,
-                self.check_collision_in_config
+                q_start, q_goal, self.check_collision_in_config
             )
 
             self.plan = self.planning_result_to_array(planning_result)
 
-        output.SetFrom(
-            AbstractValue.Make(self.plan)
-        )
+        output.SetFrom(AbstractValue.Make(self.plan))
 
     def create_input_ports(self):
         """
@@ -172,9 +171,7 @@ class PrototypicalPlannerSystem(LeafSystem):
             This function creates the input ports for the RRT planner.
         """
         # Setup
-        N = len(
-            self.plant.GetActuatedJointIndices(self.robot_model_idx)
-        )
+        N = len(self.plant.GetActuatedJointIndices(self.robot_model_idx))
 
         # Define outputs
         self.DeclareVectorInputPort(
@@ -186,8 +183,7 @@ class PrototypicalPlannerSystem(LeafSystem):
             BasicVector(np.zeros((N,))),
         )
         self.DeclareAbstractInputPort(
-            "robot_model_index",
-            AbstractValue.Make(ModelInstanceIndex(-1))
+            "robot_model_index", AbstractValue.Make(ModelInstanceIndex(-1))
         )
 
     def create_output_ports(self):
@@ -202,7 +198,7 @@ class PrototypicalPlannerSystem(LeafSystem):
         self.DeclareAbstractOutputPort(
             "motion_plan",
             lambda: AbstractValue.Make(sample_plan),
-            self.compute_plan_if_not_available
+            self.compute_plan_if_not_available,
         )
 
         # Create output for plan readiness
@@ -235,8 +231,8 @@ class PrototypicalPlannerSystem(LeafSystem):
             self.plant.world_frame(),
             input_pose_vec[:3],
             self.plant.GetFrameByName("ft_frame"),
-            (- np.ones((3,)) * eps0).reshape((-1, 1)),
-            (+ np.ones((3,)) * eps0).reshape((-1, 1)),
+            (-np.ones((3,)) * eps0).reshape((-1, 1)),
+            (+np.ones((3,)) * eps0).reshape((-1, 1)),
         )
 
         # Add Orientation Cost (not a hard constraint to help with feasibility)
@@ -266,11 +262,11 @@ class PrototypicalPlannerSystem(LeafSystem):
         Description:
             This function checks if the plan is ready.
         """
-        output.SetFrom(
-            AbstractValue.Make(self.plan is not None)
-        )
+        output.SetFrom(AbstractValue.Make(self.plan is not None))
 
-    def planning_result_to_array(self, planning_result: MotionPlanningResult) -> np.ndarray:
+    def planning_result_to_array(
+        self, planning_result: MotionPlanningResult
+    ) -> np.ndarray:
         """
         Description
         -----------
@@ -286,19 +282,27 @@ class PrototypicalPlannerSystem(LeafSystem):
             plan_in, goal_node_index = planning_result
 
             if goal_node_index == -1:
-                raise RuntimeError("No path found! Try increasing the number of iterations or checking your problem!")
+                raise RuntimeError(
+                    "No path found! Try increasing the number of iterations or checking your problem!"
+                )
 
         elif isinstance(planning_result, np.ndarray):
             plan_in = planning_result
-            goal_node_index = -1 # Assume that the last configuration is the one we're trying to get to!
+            goal_node_index = (
+                -1
+            )  # Assume that the last configuration is the one we're trying to get to!
 
         elif isinstance(planning_result, nx.DiGraph):
             plan_in = planning_result
             all_node_ids = [int(node) for node in plan_in.nodes]
-            goal_node_index = all_node_ids[-1] # Assume that the last configuration is the one we're trying to get to!
+            goal_node_index = all_node_ids[
+                -1
+            ]  # Assume that the last configuration is the one we're trying to get to!
 
         else:
-            raise ValueError(f"Unknown planning result type: \"{type(planning_result)}\"!")
+            raise ValueError(
+                f'Unknown planning result type: "{type(planning_result)}"!'
+            )
 
         # Setup
 
@@ -310,9 +314,9 @@ class PrototypicalPlannerSystem(LeafSystem):
                 source=0,
                 target=goal_node_index,
             )
-            return np.array([plan_in.nodes[node]['q'] for node in path])
+            return np.array([plan_in.nodes[node]["q"] for node in path])
         else:
-            raise ValueError(f"Unknown plan type: \"{type(plan_in)}\"!")
+            raise ValueError(f'Unknown plan type: "{type(plan_in)}"!')
 
     def set_internal_root_context(self, root_context_in: Context):
         self.root_context = root_context_in

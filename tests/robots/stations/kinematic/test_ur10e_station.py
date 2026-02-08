@@ -2,6 +2,7 @@
 Description:
     This file contains tests for the kinematic station of the ur10e robot.
 """
+
 # External Imports
 from importlib import resources as impresources
 import os
@@ -18,6 +19,7 @@ from pydrake.systems.primitives import AffineSystem, ConstantVectorSource
 from brom_drake import robots
 from brom_drake.all import add_watcher_and_build
 from brom_drake.stations.kinematic import UR10eStation as KinematicUR10eStation
+
 
 class TestKinematicUR10eStation(unittest.TestCase):
     def test_init1(self):
@@ -66,9 +68,7 @@ class TestKinematicUR10eStation(unittest.TestCase):
         D = np.zeros((6, 1))
         y0 = np.zeros((6, 1))
         x0 = np.array([0.0, 0.0, 0.0, 0.0, 0.2, 0.5])
-        target_source2 = builder.AddSystem(
-            AffineSystem(A, B, f0, C, D, y0)
-        )
+        target_source2 = builder.AddSystem(AffineSystem(A, B, f0, C, D, y0))
         target_source2.configure_default_state(x0)
 
         # Create a simple input for it (an affine system)
@@ -77,8 +77,7 @@ class TestKinematicUR10eStation(unittest.TestCase):
 
         # Connect input to affine system
         builder.Connect(
-            affine_system_input.get_output_port(),
-            target_source2.get_input_port()
+            affine_system_input.get_output_port(), target_source2.get_input_port()
         )
 
         return target_source2, affine_system_input
@@ -97,12 +96,13 @@ class TestKinematicUR10eStation(unittest.TestCase):
         # Create Diagram
         station = builder.AddSystem(KinematicUR10eStation())
         station.Finalize()
-        source1, input_to_source1 = TestKinematicUR10eStation.add_simple_affine_system1_to(builder)
+        source1, input_to_source1 = (
+            TestKinematicUR10eStation.add_simple_affine_system1_to(builder)
+        )
 
         # Connect source1 to station
         builder.Connect(
-            source1.get_output_port(),
-            station.GetInputPort("desired_joint_positions")
+            source1.get_output_port(), station.GetInputPort("desired_joint_positions")
         )
 
         # Add Watcher and Build
@@ -113,7 +113,8 @@ class TestKinematicUR10eStation(unittest.TestCase):
         simulator.set_target_realtime_rate(0.25)
 
         station.arm_controller.plant_context = diagram.GetSubsystemContext(
-            station.arm_controller.plant, diagram_context,
+            station.arm_controller.plant,
+            diagram_context,
         )
 
         # Run simulation
@@ -121,7 +122,6 @@ class TestKinematicUR10eStation(unittest.TestCase):
         simulator.AdvanceTo(T_sim1)
 
         self.assertTrue(True)
-
 
 
 if __name__ == "__main__":

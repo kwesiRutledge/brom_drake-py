@@ -18,11 +18,10 @@ from brom_drake import robots
 from brom_drake.all import drakeify_my_urdf
 from brom_drake.productions.all import ShowMeThisModel
 
+
 def main():
     # Setup
-    urdf_file_path = str(
-        impresources.files(robots) / "models/ur/ur10e.urdf"
-    )
+    urdf_file_path = str(impresources.files(robots) / "models/ur/ur10e.urdf")
 
     # Convert the URDF into a format that Drake likes
     new_urdf_path = drakeify_my_urdf(
@@ -35,7 +34,7 @@ def main():
     time_step = 1e-3
     production = ShowMeThisModel(
         str(new_urdf_path),
-        with_these_joint_positions=[0.0, 0.0, -np.pi/4.0, 0.0, 0.0, 0.0],
+        with_these_joint_positions=[0.0, 0.0, -np.pi / 4.0, 0.0, 0.0, 0.0],
         time_step=time_step,
     )
 

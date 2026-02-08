@@ -9,7 +9,7 @@ from pydrake.systems.framework import LeafSystem, BasicVector
 class BaseArmController(LeafSystem):
     """
     *Description*
-    
+
     A controller which provides the basic functionality for controlling
     a robotic arm.
 
@@ -27,12 +27,12 @@ class BaseArmController(LeafSystem):
                                     |                      |
                                     |                      |
                                     ------------------------
-    
+
     The type of target is determined by ee_target_type, and the options are defined in the
     end effector target.
 
     *Parameters*
-    
+
     plant: pydrake.multibody.plant.MultibodyPlant
         The multibody plant containing the arm to be controlled.
         This plant is assumed to be finalized.
@@ -41,6 +41,7 @@ class BaseArmController(LeafSystem):
     end_effector_frame_name: str, optional
         The name of the end-effector frame in the plant, by default "end_effector_frame".
     """
+
     def __init__(
         self,
         plant: MultibodyPlant,
@@ -71,10 +72,10 @@ class BaseArmController(LeafSystem):
     def define_input_ports_for_arm_state(self):
         """
         *Description*
-        
+
         Defines the input ports for the arm state. This is useful for
         connecting the arm state to the controller.
-        
+
         The input ports defined are:
             - arm_joint_position
             - arm_joint_velocity
@@ -91,10 +92,10 @@ class BaseArmController(LeafSystem):
     def define_output_measurement_ports(self):
         """
         *Description*
-        
+
         Defines the output ports for the controller that have to deal with
         the sensed state of the input arm.
-        
+
         The output ports defined are:
             - measured_ee_pose
             - measured_ee_twist
@@ -103,18 +104,19 @@ class BaseArmController(LeafSystem):
             "measured_ee_pose",
             BasicVector(6),
             self.CalcEndEffectorPose,
-            {self.time_ticket()}  # indicate that this doesn't depend on any inputs,
+            {self.time_ticket()},  # indicate that this doesn't depend on any inputs,
         )  # but should still be updated each timestep
         self.DeclareVectorOutputPort(
             "measured_ee_twist",
             BasicVector(6),
             self.CalcEndEffectorTwist,
-            {self.time_ticket()})
+            {self.time_ticket()},
+        )
 
     def CalcEndEffectorPose(self, context: Context, output: BasicVector):
         """
         *Description*
-        
+
         This method is called each timestep to determine the end-effector pose
         """
         q = self.arm_joint_position_port.Eval(context)
@@ -129,17 +131,16 @@ class BaseArmController(LeafSystem):
             self.ee_frame,
         )
 
-        ee_pose = np.hstack([
-            RollPitchYaw(X_ee.rotation()).vector(),
-            X_ee.translation()
-        ])
+        ee_pose = np.hstack(
+            [RollPitchYaw(X_ee.rotation()).vector(), X_ee.translation()]
+        )
 
         output.SetFromVector(ee_pose)
 
     def CalcEndEffectorTwist(self, context: Context, output: BasicVector):
         """
         *Description*
-        
+
         Callback for the `measured_ee_twist` output port.
         This method computes the end-effector twist based on the current
         joint positions and velocities.
@@ -168,13 +169,13 @@ class BaseArmController(LeafSystem):
     def GetJointLimits(self):
         """
         *Description*
-        
+
         Iterate through the associated plant to determine
         the joint limits (i.e., on position and velocity)
         of all joints associated with the arm.
-        
+
         *Notes*
-        
+
         Sets the following internal variables:
 
         - q_min
@@ -197,7 +198,9 @@ class BaseArmController(LeafSystem):
                 q_min.append(joint.position_lower_limit())
                 q_max.append(joint.position_upper_limit())
                 qd_min.append(joint.velocity_lower_limit())  # note that higher limits
-                qd_max.append(joint.velocity_upper_limit())  # are availible in cartesian mode
+                qd_max.append(
+                    joint.velocity_upper_limit()
+                )  # are availible in cartesian mode
 
         self.q_min = np.array(q_min)
         self.q_max = np.array(q_max)

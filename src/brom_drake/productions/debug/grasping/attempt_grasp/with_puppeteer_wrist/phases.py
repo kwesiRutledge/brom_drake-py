@@ -1,9 +1,10 @@
 from enum import IntEnum
 
+
 class AttemptGraspWithPuppeteerWristPhase(IntEnum):
     """
     *Description*
-    
+
     An enum describing the different phases of the attempt grasp
     with puppeteer wrist production.
 
@@ -25,6 +26,7 @@ class AttemptGraspWithPuppeteerWristPhase(IntEnum):
         # Selecting the gripper approach phase
         phase = AttemptGraspWithPuppeteerWristPhase.kGripperApproach
     """
+
     kObjectSettlingOnFloor = 1
     kGripperApproach = 2
     kGripperClosing = 3

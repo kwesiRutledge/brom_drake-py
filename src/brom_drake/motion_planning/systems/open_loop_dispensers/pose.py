@@ -3,15 +3,22 @@ import numpy as np
 from pydrake.all import RigidTransform
 from pydrake.common.value import AbstractValue
 from pydrake.systems.framework import LeafSystem, Context, BasicVector
-from pydrake.trajectories import PiecewisePose, PiecewisePolynomial, PiecewiseQuaternionSlerp
+from pydrake.trajectories import (
+    PiecewisePose,
+    PiecewisePolynomial,
+    PiecewiseQuaternionSlerp,
+)
 
 # Internal Imports
-from brom_drake.motion_planning.systems.state_of_plan_in_memory import StateOfPlanInMemory
+from brom_drake.motion_planning.systems.state_of_plan_in_memory import (
+    StateOfPlanInMemory,
+)
+
 
 class OpenLoopPosePlanDispenser(LeafSystem):
     def __init__(
         self,
-        speed: float = 0.5, # Speed at which to proceed through points.
+        speed: float = 0.5,  # Speed at which to proceed through points.
     ):
         LeafSystem.__init__(self)
 
@@ -61,7 +68,7 @@ class OpenLoopPosePlanDispenser(LeafSystem):
                     self.state_of_plan_in_memory_idx,
                 )
             },  # This output should only be updated when the
-                # discrete state state_of_plan_in_memory changes
+            # discrete state state_of_plan_in_memory changes
         )
 
     def GetCurrentPoseInPlan(self, context: Context, output_point: AbstractValue):
@@ -73,9 +80,7 @@ class OpenLoopPosePlanDispenser(LeafSystem):
 
         # If plan isn't ready, then skip the rest of the logic
         if not plan_is_ready:
-            output_point.SetFrom(
-                AbstractValue.Make(RigidTransform())
-            )
+            output_point.SetFrom(AbstractValue.Make(RigidTransform()))
             return
 
         # If this is the first time that plan_is_ready, then
@@ -88,9 +93,13 @@ class OpenLoopPosePlanDispenser(LeafSystem):
         t = context.get_time() - self.t0
 
         # Mark the plan as set
-        context.SetDiscreteState(np.array([
-            StateOfPlanInMemory.kSet,
-        ]))
+        context.SetDiscreteState(
+            np.array(
+                [
+                    StateOfPlanInMemory.kSet,
+                ]
+            )
+        )
 
         # Output The Current Point
         if t < 0.0:
@@ -102,11 +111,9 @@ class OpenLoopPosePlanDispenser(LeafSystem):
                 AbstractValue.Make(self.planned_trajectory.GetPose(self.t_final))
             )
         else:
-            output_point.SetFrom(
-                AbstractValue.Make(self.planned_trajectory.GetPose(t))
-            )
+            output_point.SetFrom(AbstractValue.Make(self.planned_trajectory.GetPose(t)))
 
-    def find_time_between_two_points(self, x1: np.ndarray, x2: np.ndarray)->float:
+    def find_time_between_two_points(self, x1: np.ndarray, x2: np.ndarray) -> float:
         """
         Description
         -----------
@@ -133,9 +140,7 @@ class OpenLoopPosePlanDispenser(LeafSystem):
 
         # Get time to start executing the plan
         self.t0 = context.get_time()
-        context.SetDiscreteState(
-            np.array([StateOfPlanInMemory.kSet])
-        )
+        context.SetDiscreteState(np.array([StateOfPlanInMemory.kSet]))
 
         # Get times where we should reach each point in the plan and save it into a new map
         self.plan = self.plan_port.Eval(context)
@@ -143,35 +148,30 @@ class OpenLoopPosePlanDispenser(LeafSystem):
         n_points_in_plan = len(self.plan)
         t_ii = 0.0
         times = [t_ii]
-        temp_position_plan = np.array([
-            self.plan[ii].translation() for ii in range(n_points_in_plan)
-        ])
-        temp_quaternion_plan = np.array([
-            self.plan[ii].rotation().matrix() for ii in range(n_points_in_plan)
-        ])
-        for ii in range(n_points_in_plan-1):
+        temp_position_plan = np.array(
+            [self.plan[ii].translation() for ii in range(n_points_in_plan)]
+        )
+        temp_quaternion_plan = np.array(
+            [self.plan[ii].rotation().matrix() for ii in range(n_points_in_plan)]
+        )
+        for ii in range(n_points_in_plan - 1):
             # Compute the time it should take to travel between two positions in the plan
             t_ii += self.find_time_between_two_points(
-                temp_position_plan[ii,:],
-                temp_position_plan[ii+1, :],
-                )
+                temp_position_plan[ii, :],
+                temp_position_plan[ii + 1, :],
+            )
             times += [t_ii]
 
         self.t_final = t_ii
-        position_trajectory = PiecewisePolynomial.FirstOrderHold(times, temp_position_plan.T)
+        position_trajectory = PiecewisePolynomial.FirstOrderHold(
+            times, temp_position_plan.T
+        )
         orientation_trajectory = PiecewiseQuaternionSlerp(times, temp_quaternion_plan)
         self.planned_trajectory = PiecewisePose(
             position_trajectory,
             orientation_trajectory,
         )
 
-
-
-
-
     def GetStateOfPlanInMemory(self, context: Context, output: AbstractValue):
-        """Plan is set if and only if the internal variable is not None. """
-        output.SetFrom(
-            context.get_abstract_state(self.state_of_plan_in_memory_idx)[0]
-        )
-
+        """Plan is set if and only if the internal variable is not None."""
+        output.SetFrom(context.get_abstract_state(self.state_of_plan_in_memory_idx)[0])

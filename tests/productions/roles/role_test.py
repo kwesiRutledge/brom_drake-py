@@ -41,10 +41,7 @@ class RoleTest(unittest.TestCase):
             bad_role.connect_performer_ports_to(builder, performer)
             self.assertTrue(False)
         except Exception as e:
-            self.assertIn(
-                str(e),
-                str(rpa1.create_assignment_port_unavailable_error())
-            )
+            self.assertIn(str(e), str(rpa1.create_assignment_port_unavailable_error()))
 
     def test_connect_performer_to_system2(self):
         """
@@ -93,7 +90,7 @@ class RoleTest(unittest.TestCase):
         # Setup
         builder = DiagramBuilder()
         ur10e_station = UR10eStation(
-            meshcat_port_number=None, # Use None for CI
+            meshcat_port_number=None,  # Use None for CI
         )
         ur10e_station.Finalize()
         performer = ur10e_station
@@ -101,9 +98,7 @@ class RoleTest(unittest.TestCase):
         # Add a system to the builder
         plant, scene_graph = AddMultibodyPlantSceneGraph(builder, time_step=0.0)
         plant.set_name("plant2")
-        block_handler = builder.AddSystem(
-            BlockHandlerSystem(plant, scene_graph)
-        )
+        block_handler = builder.AddSystem(BlockHandlerSystem(plant, scene_graph))
 
         # Define a bad role
         rpa3 = RolePortAssignment(
@@ -126,6 +121,7 @@ class RoleTest(unittest.TestCase):
                 str(e),
                 str(rpa3.create_no_target_found_error()),
             )
+
 
 if __name__ == "__main__":
     unittest.main()

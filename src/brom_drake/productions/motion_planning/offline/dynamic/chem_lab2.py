@@ -1,4 +1,3 @@
-
 from importlib import resources as impresources
 import networkx as nx
 import numpy as np
@@ -27,9 +26,13 @@ from brom_drake.control import (
 )
 from brom_drake.file_manipulation.urdf import drakeify_my_urdf
 from brom_drake.file_manipulation.urdf.shapes.box import BoxDefinition
-from brom_drake.file_manipulation.urdf.simple_writer.urdf_definition import SimpleShapeURDFDefinition, \
-    InertiaDefinition
-from brom_drake.motion_planning.systems.open_loop_dispensers.open_loop_plan_dispenser import OpenLoopPlanDispenser
+from brom_drake.file_manipulation.urdf.simple_writer.urdf_definition import (
+    SimpleShapeURDFDefinition,
+    InertiaDefinition,
+)
+from brom_drake.motion_planning.systems.open_loop_dispensers.open_loop_plan_dispenser import (
+    OpenLoopPlanDispenser,
+)
 import brom_drake.robots as robots
 from brom_drake.robots.gripper_type import GripperType
 from brom_drake.stations.classical import UR10eStation
@@ -90,7 +93,7 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
             BidirectionalRRTConnectPlannerConfig,
         )
         from brom_drake.productions import ChemLab2
-    
+
         # Create the production
         production = ChemLab2()
 
@@ -127,6 +130,7 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         simulator.AdvanceTo(planned_trajectory.end_time()+2.0)
 
     """
+
     def __init__(
         self,
         time_step: float = 1e-3,
@@ -142,7 +146,7 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
     ):
         """
         *Description*
-            
+
         Constructor for the ChemLab2 Production.
 
         *Parameters*
@@ -173,7 +177,7 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
 
         gripper_type: GripperType, optional
             The type of gripper to use, by default GripperType.Robotiq_2f_85.
-        
+
         """
         # Superclass constructor
         super().__init__(**kwargs)
@@ -216,7 +220,7 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
     def add_supporting_cast(self):
         """
         *Description*
-        
+
         This method adds all secondary cast members to the builder.
         The secondary cast members in the production are the:
 
@@ -262,15 +266,13 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
     def add_beaker(self):
         """
         *Description*
-        
+
         This method adds the beaker URDF to the production's plant.
         The beaker's URDF comes from the brom_drake `robots` directories.
         """
         # Setup
         plant = self.plant
-        urdf_file_path = str(
-            impresources.files(robots) / "models/beaker/beaker.urdf"
-        )
+        urdf_file_path = str(impresources.files(robots) / "models/beaker/beaker.urdf")
 
         # Use Drakeify my urdf to create the beaker
         new_beaker_urdf = drakeify_my_urdf(urdf_file_path)
@@ -304,7 +306,9 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         """
         # Setup
         arm = self.arm
-        n_actuated_dof = self.plant.num_actuated_dofs(arm) # Number of actuated DOF in arm
+        n_actuated_dof = self.plant.num_actuated_dofs(
+            arm
+        )  # Number of actuated DOF in arm
 
         # Add the Plan Dispenser and connect it to the station
         self.plan_dispenser = self.builder.AddSystem(
@@ -321,7 +325,7 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
             # - Gripper Target Type
             # - Gripper Target
             # Both should be static.
-            
+
             # Add the gripper target to the builder
             gripper_target_type_source = self.builder.AddSystem(
                 ConstantValueSource(
@@ -345,7 +349,6 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
                 gripper_target_source.get_output_port(),
                 self.station.GetInputPort("gripper_target"),
             )
-
 
     def add_shelf(self):
         """
@@ -374,7 +377,7 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
     def add_table(self):
         """
         *Description*
-        
+
         This method adds the table to the production's plant.
         Welds the table to the world frame.
         """
@@ -386,7 +389,7 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
             shape=BoxDefinition(
                 size=(self.table_width, self.table_length, self.table_height),
             ),
-            mass=100.0, # kg
+            mass=100.0,  # kg
             inertia=InertiaDefinition(
                 ixx=10.0,
                 iyy=10.0,
@@ -414,7 +417,7 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
     def add_test_tube_holders(self):
         """
         *Description*
-        
+
         This method adds the test tube holders to the production's plant.
         Welds the test tube holders to the world frame with using
         predefined poses.
@@ -443,7 +446,7 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
     ) -> Tuple[Diagram, Context]:
         """
         *Description*
-        
+
         Modifies the normal add_cast_and_build, so that
         we share the context of the plant with the appropriate
         parts of the system.
@@ -476,27 +479,27 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         # Configure the scene graph for collision detection
         self.configure_collision_filter(
             diagram.GetSubsystemContext(
-                self.scene_graph, diagram_context,
+                self.scene_graph,
+                diagram_context,
             )
         )
 
         # Connect arm controller to the appropriate plant_context
         self.station.arm_controller.plant_context = diagram.GetSubsystemContext(
-            self.station.arm_controller.plant, diagram_context,
+            self.station.arm_controller.plant,
+            diagram_context,
         )
 
         for role_ii, performer_ii in cast:
             if role_ii.name == "OfflineMotionPlanner":
-                performer_ii.set_internal_root_context(
-                    diagram_context
-                )
+                performer_ii.set_internal_root_context(diagram_context)
 
         return diagram, diagram_context
-    
+
     def configure_collision_filter(self, scene_graph_context: Context):
         """
         *Description*
-        
+
         This method configures the collision filter in the scene graph so that we ignore:
         - Self collisions of the shelf
         - Collisions between adjacent robot links (TODO)
@@ -550,7 +553,7 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         #         GeometrySet(self.arm_geometry_ids)
         #     )
         # )
-    
+
     def define_pose_ik_problem(
         self,
         pose_WorldTarget: RigidTransform,
@@ -560,7 +563,7 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
     ) -> InverseKinematics:
         """
         *Description*
-        
+
         Sets up the inverse kinematics problem for the start pose
         input to theis function.
         :return:
@@ -577,8 +580,8 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
             self.plant.world_frame(),
             pose_WorldTarget.translation(),
             self.plant.GetFrameByName(target_frame_name),
-            (- np.ones((3,)) * eps0).reshape((-1, 1)),
-            (+ np.ones((3,)) * eps0).reshape((-1, 1)),
+            (-np.ones((3,)) * eps0).reshape((-1, 1)),
+            (+np.ones((3,)) * eps0).reshape((-1, 1)),
         )
 
         # TODO(kwesi): Add OrientationCosntraint
@@ -595,7 +598,7 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
             pose_WorldTarget.rotation(),
             self.plant.GetFrameByName(target_frame_name),
             RotationMatrix.Identity(),
-            np.pi/8.0
+            np.pi / 8.0,
         )
 
         # ik_problem.AddOrientationCost(
@@ -618,7 +621,7 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
     ) -> Tuple[Diagram, Context]:
         """
         *Description*
-        
+
         This function is used to easily cast and build the production.
 
         *Parameters*
@@ -651,7 +654,8 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         # Configure the scene graph for collision detection
         self.configure_collision_filter(
             diagram.GetSubsystemContext(
-                self.scene_graph, diagram_context,
+                self.scene_graph,
+                diagram_context,
             )
         )
 
@@ -660,9 +664,7 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         #     self.station.arm_controller.plant, diagram_context,
         # )
 
-        self.performers[0].set_internal_root_context(
-            diagram_context
-        )
+        self.performers[0].set_internal_root_context(diagram_context)
 
         # # Set the start configuration of the robot
         # arm = self.station.arm
@@ -689,7 +691,7 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         *Description*
 
         Get the goal pose.
-        
+
         *Returns*
 
         q_goal: np.ndarray
@@ -697,12 +699,12 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         """
         # Setup
         hardcoded_robot_joint_names = [
-            'ur10e-test_shoulder_pan_joint_q',
-            'ur10e-test_shoulder_lift_joint_q',
-            'ur10e-test_elbow_joint_q',
-            'ur10e-test_wrist_1_joint_q',
-            'ur10e-test_wrist_2_joint_q',
-            'ur10e-test_wrist_3_joint_q',
+            "ur10e-test_shoulder_pan_joint_q",
+            "ur10e-test_shoulder_lift_joint_q",
+            "ur10e-test_elbow_joint_q",
+            "ur10e-test_wrist_1_joint_q",
+            "ur10e-test_wrist_2_joint_q",
+            "ur10e-test_wrist_3_joint_q",
         ]
 
         # Retrieve goal_configuraiton value
@@ -723,7 +725,7 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
     def goal_pose(self) -> RigidTransform:
         """
         *Description*
-        
+
         Get the goal pose of the end effector frame.
 
         *Returns*
@@ -744,7 +746,9 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         elif (self._goal_pose is None) and (self._goal_config is not None):
             # If the goal configuration is given,
             # use the forward kinematics solver to get the goal pose
-            self._goal_pose = self.solve_forward_kinematics_problem_for_arm(self._goal_config)
+            self._goal_pose = self.solve_forward_kinematics_problem_for_arm(
+                self._goal_config
+            )
             return self._goal_pose
         else:
             raise ValueError(
@@ -764,7 +768,7 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
             The ProductionID for ChemLab2.
         """
         return ProductionID.kChemLab2
-        
+
     def initialize_pose_data(self):
         """
         *Description*
@@ -780,27 +784,33 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         # Set shelf pose
         if self.shelf_pose is None:
             self.pose_WorldShelf = RigidTransform(
-                RollPitchYaw(0.0, 0.0, -np.pi/2.0).ToQuaternion(),
+                RollPitchYaw(0.0, 0.0, -np.pi / 2.0).ToQuaternion(),
                 np.array([0.0, 0.75, 0.66]),
             )
 
         # Set Beaker Pose default
         if self.pose_WorldBeaker is None:
             self.pose_WorldBeaker = RigidTransform(
-                RollPitchYaw(np.pi/2.0, 0.0, 0.0).ToQuaternion(),
+                RollPitchYaw(np.pi / 2.0, 0.0, 0.0).ToQuaternion(),
                 np.array([-0.6, 0.45, 0.175]),
             )
 
         # Set Holder Pose
         self.pose_WorldHolder = RigidTransform(
-            RollPitchYaw(np.pi/2.0, 0.0, 0.0).ToQuaternion(),
-            np.array([self.table_width*0.5*0.7, 0.6+self.table_length/4., self.table_height+0.015]),
+            RollPitchYaw(np.pi / 2.0, 0.0, 0.0).ToQuaternion(),
+            np.array(
+                [
+                    self.table_width * 0.5 * 0.7,
+                    0.6 + self.table_length / 4.0,
+                    self.table_height + 0.015,
+                ]
+            ),
         )
 
         # Define pose of the goal
-        beaker_to_goal_translation = np.array([+0.0, 0.2, 0.0]) 
+        beaker_to_goal_translation = np.array([+0.0, 0.2, 0.0])
         beaker_to_goal_orientation = RollPitchYaw(np.pi, np.pi, 0.0).ToQuaternion()
-        self.pose_BeakerGoal = RigidTransform(  
+        self.pose_BeakerGoal = RigidTransform(
             beaker_to_goal_orientation,
             beaker_to_goal_translation,
         )
@@ -819,7 +829,7 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
     ) -> RigidTransform:
         """
         *Description*
-        
+
         This method solves the forward kinematics problem for the UR10e arm
         by itself.
         """
@@ -836,7 +846,7 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
 
         # Use station's plant to solve the forward kinematics problem
         shadow_plant = shadow_station.plant
-        
+
         # Set the arm's joint positions
         temp_context = shadow_plant.CreateDefaultContext()
         shadow_plant.SetPositions(
@@ -867,12 +877,12 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         """
         # Setup
         hardcoded_robot_joint_names = [
-            'ur10e-test_shoulder_pan_joint_q',
-            'ur10e-test_shoulder_lift_joint_q',
-            'ur10e-test_elbow_joint_q',
-            'ur10e-test_wrist_1_joint_q',
-            'ur10e-test_wrist_2_joint_q',
-            'ur10e-test_wrist_3_joint_q',
+            "ur10e-test_shoulder_pan_joint_q",
+            "ur10e-test_shoulder_lift_joint_q",
+            "ur10e-test_elbow_joint_q",
+            "ur10e-test_wrist_1_joint_q",
+            "ur10e-test_wrist_2_joint_q",
+            "ur10e-test_wrist_3_joint_q",
         ]
 
         # Algorithm
@@ -889,7 +899,6 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
             raise NotImplementedError(
                 "This function should be implemented by the subclass."
             )
-
 
     @property
     def start_pose(self) -> RigidTransform:
@@ -916,9 +925,9 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         elif (self._start_pose is None) and (self._start_config is not None):
             # Use the start configuration to get the starting pose
             # Using a "forward kinematics solver"
-            self._start_pose = self.solve_forward_kinematics_problem_for_arm(self._start_config)
+            self._start_pose = self.solve_forward_kinematics_problem_for_arm(
+                self._start_config
+            )
             return self._start_pose
         else:
-            raise ValueError(
-                f"Unexpected behavior. This should never happen."
-            )
+            raise ValueError(f"Unexpected behavior. This should never happen.")

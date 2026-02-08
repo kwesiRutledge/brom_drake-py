@@ -5,7 +5,8 @@ import networkx as nx
 import numpy as np
 from pydrake.all import (
     AddMultibodyPlantSceneGraph,
-    Parser, DiagramBuilder,
+    Parser,
+    DiagramBuilder,
 )
 import unittest
 
@@ -14,6 +15,7 @@ from brom_drake.motion_planning.algorithms.rrt.connect import (
     RRTConnectPlannerConfig,
     RRTConnectPlanner,
 )
+
 
 class TestRRTConnect(unittest.TestCase):
     def setUp(self) -> None:
@@ -34,7 +36,7 @@ class TestRRTConnect(unittest.TestCase):
             time_step=1e-3,
         )
 
-        # Collect an arm model 
+        # Collect an arm model
         original_arm_urdf_path = str(
             impresources.files(robots) / "models/ur/ur10e.urdf",
         )
@@ -122,7 +124,9 @@ class TestRRTConnect(unittest.TestCase):
         # Check that
         # 1. The new configuration is closer to the target than the current configuration
         # 2. The new configuration is not the target configuration
-        self.assertLess(np.linalg.norm(q_new - q_target), np.linalg.norm(q_current - q_target))
+        self.assertLess(
+            np.linalg.norm(q_new - q_target), np.linalg.norm(q_current - q_target)
+        )
         self.assertFalse(np.isclose(q_new, q_target).all())
 
     def test_plan1(self):
@@ -169,5 +173,6 @@ class TestRRTConnect(unittest.TestCase):
         self.assertTrue(success)
         self.assertTrue(len(rrt.edges) > 0)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

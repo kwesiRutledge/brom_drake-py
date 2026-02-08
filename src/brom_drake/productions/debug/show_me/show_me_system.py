@@ -5,14 +5,15 @@ from pydrake.systems.framework import LeafSystem, BasicVector, Context
 
 from brom_drake.utils import AddMultibodyTriad
 
+
 class ShowMeSystem(LeafSystem):
     """
     **Description**
-    
+
     This class defines a LeafSystem that will force a specific model
     (model_index) in a MultibodyPlant to hold the joint positions
-    provided to it as input. 
-    
+    provided to it as input.
+
     The object may or may not be welded to the world frame.
 
     **Block Diagram**
@@ -37,6 +38,7 @@ class ShowMeSystem(LeafSystem):
         The desired joint positions for the model, if any.
 
     """
+
     def __init__(
         self,
         plant: MultibodyPlant,
@@ -63,8 +65,8 @@ class ShowMeSystem(LeafSystem):
             "measured_joint_positions",
             BasicVector(n),
             self.SetModelJointPositions,
-            {self.time_ticket()}    # indicate that this doesn't depend on any inputs,
-        )                           # but should still be updated each timestep
+            {self.time_ticket()},  # indicate that this doesn't depend on any inputs,
+        )  # but should still be updated each timestep
 
         # Create plant context
         self.mutable_plant_context = None
@@ -75,11 +77,11 @@ class ShowMeSystem(LeafSystem):
     def SetModelJointPositions(self, context: Context, output: BasicVector):
         """
         **Description**
-        
+
         This method will set the joint positions of the model to the desired joint positions.
-        
+
         **Parameters**
-        
+
         context: Context
             The context of the LeafSystem at the time that this callback is triggered.
 
@@ -101,9 +103,9 @@ class ShowMeSystem(LeafSystem):
         except Exception as e:
             print(e)
             raise ValueError(
-                f"Could not set the joint positions; this is most likely a mismatch between:\n" + \
-                f"- Number of joint positions in command: {len(pose_as_vec)}\n" + \
-                f"- Number of joint positions in model: {self.plant.num_positions(self.model_index)}."
+                f"Could not set the joint positions; this is most likely a mismatch between:\n"
+                + f"- Number of joint positions in command: {len(pose_as_vec)}\n"
+                + f"- Number of joint positions in model: {self.plant.num_positions(self.model_index)}."
             )
 
         self.plant.SetVelocities(
@@ -113,4 +115,3 @@ class ShowMeSystem(LeafSystem):
         )
 
         output.SetFromVector(pose_as_vec)
-

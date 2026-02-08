@@ -20,12 +20,8 @@ class UtilTest(unittest.TestCase):
         Set up for all of the tests.
         :return:
         """
-        self.test_urdf1_filename = str(
-            impresources.files(resources_dir) / "test1.urdf"
-        )
-        self.test_urdf2_filename = str(
-            impresources.files(resources_dir) / "test2.urdf"
-        )
+        self.test_urdf1_filename = str(impresources.files(resources_dir) / "test1.urdf")
+        self.test_urdf2_filename = str(impresources.files(resources_dir) / "test2.urdf")
         self.test_urdf7_filename = str(
             impresources.files(resources_dir) / "test7_no_mesh_in_collision.urdf"
         )
@@ -45,10 +41,7 @@ class UtilTest(unittest.TestCase):
 
         # Run the function
         self.assertFalse(
-            tree_contains_transmission_for_joint(
-                test_tree,
-                "joint1"
-            ),
+            tree_contains_transmission_for_joint(test_tree, "joint1"),
         )
 
     def test_tree_contains_transmission_for_joint2(self):
@@ -66,10 +59,7 @@ class UtilTest(unittest.TestCase):
 
         # Run the function
         self.assertFalse(
-            tree_contains_transmission_for_joint(
-                test_tree,
-                "wrist_2_joint"
-            ),
+            tree_contains_transmission_for_joint(test_tree, "wrist_2_joint"),
         )
 
     def test_tree_contains_transmission_for_joint3(self):
@@ -87,10 +77,7 @@ class UtilTest(unittest.TestCase):
 
         # Run the function
         self.assertTrue(
-            tree_contains_transmission_for_joint(
-                test_tree,
-                "wrist_3_joint"
-            ),
+            tree_contains_transmission_for_joint(test_tree, "wrist_3_joint"),
         )
 
     def test_create_transmission_element_for_joint1(self):
@@ -110,26 +97,23 @@ class UtilTest(unittest.TestCase):
         actuated_joint_name = "joint1"
 
         # Run the function
-        transmission_element = create_transmission_element_for_joint(actuated_joint_name)
+        transmission_element = create_transmission_element_for_joint(
+            actuated_joint_name
+        )
 
         # Check the transmission element
         for child in transmission_element:
             if child.tag == "type":
                 self.assertEqual(
-                    child.text,
-                    "transmission_interface/SimpleTransmission"
+                    child.text, "transmission_interface/SimpleTransmission"
                 )
 
             if child.tag == "joint":
-                self.assertEqual(
-                    child.attrib["name"],
-                    actuated_joint_name
-                )
+                self.assertEqual(child.attrib["name"], actuated_joint_name)
 
             if child.tag == "actuator":
                 self.assertEqual(
-                    child.attrib["name"],
-                    f"{actuated_joint_name}_actuator"
+                    child.attrib["name"], f"{actuated_joint_name}_actuator"
                 )
 
     def test_find_mesh_filename_in1(self):
@@ -141,14 +125,16 @@ class UtilTest(unittest.TestCase):
         :return:
         """
         # Setup
-        
-        # Load the test URDF file into an xml tree        
+
+        # Load the test URDF file into an xml tree
         test_urdf1 = self.test_urdf1_filename
         test_tree = ElementTree(file=test_urdf1)
 
         # Select a collision element that contains a mesh file
         collision_element = test_tree.find(".//collision")
-        self.assertIsNotNone(collision_element, "Collision element not found in test URDF")
+        self.assertIsNotNone(
+            collision_element, "Collision element not found in test URDF"
+        )
 
         # Run the function
         mesh_file_path = find_mesh_file_path_in(collision_element)
@@ -156,7 +142,7 @@ class UtilTest(unittest.TestCase):
         self.assertIn(
             "base.stl",
             mesh_file_path.name,
-            f"Mesh file path should contain 'base.stl'; received {mesh_file_path.name}"
+            f"Mesh file path should contain 'base.stl'; received {mesh_file_path.name}",
         )
 
     def test_find_mesh_filename_in2(self):
@@ -169,18 +155,21 @@ class UtilTest(unittest.TestCase):
         :return:
         """
         # Setup
-        
-        # Load the test URDF file into an xml tree        
+
+        # Load the test URDF file into an xml tree
         test_urdf7 = self.test_urdf7_filename
         test_tree = ElementTree(file=test_urdf7)
 
         # Select a collision element that contains a mesh file
         collision_element = test_tree.find(".//collision")
-        self.assertIsNotNone(collision_element, "Collision element not found in test URDF")
+        self.assertIsNotNone(
+            collision_element, "Collision element not found in test URDF"
+        )
 
         # Run the function
         mesh_file_path = find_mesh_file_path_in(collision_element)
         self.assertIsNone(mesh_file_path, "Mesh file path should be None")
+
 
 if __name__ == "__main__":
     unittest.main()

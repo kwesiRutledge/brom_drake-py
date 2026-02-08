@@ -19,6 +19,7 @@ from pydrake.all import (
 
 from brom_drake.watchers.diagram_watcher.diagram_watcher import DiagramWatcher
 
+
 class TestDiagramWatcher(unittest.TestCase):
     def test_init1(self):
         """

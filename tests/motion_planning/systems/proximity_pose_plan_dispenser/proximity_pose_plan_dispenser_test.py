@@ -1,14 +1,18 @@
 """
 proximity_pose_plan_dispenser_test.py: Tests for the proximity_pose_plan_dispenser module.
 """
+
 import numpy as np
 from pydrake.all import (
     AbstractValue,
-    Diagram, DiagramBuilder,
-    ConstantVectorSource, ConstantValueSource,
+    Diagram,
+    DiagramBuilder,
+    ConstantVectorSource,
+    ConstantValueSource,
     MultibodyPlant,
     RigidTransform,
-    RollPitchYaw, RotationMatrix,
+    RollPitchYaw,
+    RotationMatrix,
     Simulator,
 )
 import shutil
@@ -20,7 +24,9 @@ from brom_drake.watchers.port_watcher.port_watcher_options import FigureNamingCo
 from brom_drake.all import (
     add_watcher_and_build,
 )
-from brom_drake.motion_planning.systems.open_loop_dispensers.open_loop_plan_dispenser import OpenLoopPlanDispenser
+from brom_drake.motion_planning.systems.open_loop_dispensers.open_loop_plan_dispenser import (
+    OpenLoopPlanDispenser,
+)
 from brom_drake.motion_planning.systems.open_loop_dispensers.pose import (
     OpenLoopPosePlanDispenser,
 )
@@ -29,6 +35,7 @@ from brom_drake.motion_planning.systems.proximity_pose_plan_dispenser import (
     DispenserTransitionRequest,
     DispenserInternalState,
 )
+
 
 class TestProximityPosePlanDispenser(unittest.TestCase):
     def test_init1(self):
@@ -40,8 +47,8 @@ class TestProximityPosePlanDispenser(unittest.TestCase):
         dispenser = ProximityPosePlanDispenser()
 
         self.assertTrue(True)
-        
-    def create_scenario1(self)->Tuple[
+
+    def create_scenario1(self) -> Tuple[
         ProximityPosePlanDispenser,
         Diagram,
     ]:
@@ -55,9 +62,9 @@ class TestProximityPosePlanDispenser(unittest.TestCase):
         # Create a plan composed of 4 RigidTransforms
         plan = [
             RigidTransform(),
-            RigidTransform(RollPitchYaw(0.0, 0.0, np.pi/2), [1.0, 0.0, 0.0]),
+            RigidTransform(RollPitchYaw(0.0, 0.0, np.pi / 2), [1.0, 0.0, 0.0]),
             RigidTransform(RollPitchYaw(0.0, 0.0, np.pi), [1.0, 1.0, 0.0]),
-            RigidTransform(RollPitchYaw(0.0, 0.0, 3*np.pi/2), [0.0, 1.0, 0.0]),
+            RigidTransform(RollPitchYaw(0.0, 0.0, 3 * np.pi / 2), [0.0, 1.0, 0.0]),
         ]
 
         # Create a source to share the plan
@@ -68,9 +75,11 @@ class TestProximityPosePlanDispenser(unittest.TestCase):
 
         # Create a source to share the plan_ready signal
         dispenser_request_source = builder.AddSystem(
-            ConstantVectorSource(np.array(
-                [DispenserTransitionRequest.kNone],
-            ))
+            ConstantVectorSource(
+                np.array(
+                    [DispenserTransitionRequest.kNone],
+                )
+            )
         )
 
         # Create a ProximityPosePlanDispenser object
@@ -80,7 +89,10 @@ class TestProximityPosePlanDispenser(unittest.TestCase):
         # - plan_source to plan_port
         # - plan_ready_source to plan_ready_port
         builder.Connect(plan_source.get_output_port(0), dispenser.GetInputPort("plan"))
-        builder.Connect(dispenser_request_source.get_output_port(0), dispenser.GetInputPort("request"))
+        builder.Connect(
+            dispenser_request_source.get_output_port(0),
+            dispenser.GetInputPort("request"),
+        )
 
         return builder, dispenser, plan
 
@@ -89,7 +101,7 @@ class TestProximityPosePlanDispenser(unittest.TestCase):
         *Description*
 
         This test verifies that the advance_plan_if_necessary function works as expected.
-        We will check that the plan index is advanced when the current pose is within the 
+        We will check that the plan index is advanced when the current pose is within the
         proximity limit of the plan.
         """
         # Setup
@@ -103,7 +115,10 @@ class TestProximityPosePlanDispenser(unittest.TestCase):
         current_pose_source.set_name("current_pose_source")
 
         # Connect the current pose source to the dispenser
-        builder.Connect(current_pose_source.get_output_port(0), dispenser.GetInputPort("current_pose"))
+        builder.Connect(
+            current_pose_source.get_output_port(0),
+            dispenser.GetInputPort("current_pose"),
+        )
 
         # Build the diagram
         test_watcher_dir = ".brom/proximity_necessary1"
@@ -116,10 +131,10 @@ class TestProximityPosePlanDispenser(unittest.TestCase):
         self.assertEqual(dispenser.dispenser_plan_index, 0)
 
         # Set the plan in the dispenser and change internal state to planset
-        dispenser_context = diagram.GetMutableSubsystemContext(dispenser, diagram_context)
-        dispenser_context.SetDiscreteState(
-            np.array([DispenserInternalState.kPlanSet])
+        dispenser_context = diagram.GetMutableSubsystemContext(
+            dispenser, diagram_context
         )
+        dispenser_context.SetDiscreteState(np.array([DispenserInternalState.kPlanSet]))
         dispenser.plan = plan
 
         # Call advance_plan_if_necessary
@@ -137,7 +152,7 @@ class TestProximityPosePlanDispenser(unittest.TestCase):
         """
         Description:
             This test verifies that the advance_plan_if_necessary function works as expected.
-            We will check that the plan index is NOT advanced when the current pose is within the 
+            We will check that the plan index is NOT advanced when the current pose is within the
             proximity limit of the plan.
         """
         # Setup
@@ -145,14 +160,17 @@ class TestProximityPosePlanDispenser(unittest.TestCase):
 
         # Create the current pose source
         further_pose_to_plan_pose0 = RigidTransform(
-            RollPitchYaw(0.0, 0.0, np.pi/2), [1.0, 0.0, 0.0]
+            RollPitchYaw(0.0, 0.0, np.pi / 2), [1.0, 0.0, 0.0]
         )
         current_pose_source = builder.AddSystem(
             ConstantValueSource(AbstractValue.Make(further_pose_to_plan_pose0))
         )
 
         # Connect the current pose source to the dispenser
-        builder.Connect(current_pose_source.get_output_port(0), dispenser.GetInputPort("current_pose"))
+        builder.Connect(
+            current_pose_source.get_output_port(0),
+            dispenser.GetInputPort("current_pose"),
+        )
 
         # Build the diagram
         diagram = builder.Build()
@@ -162,10 +180,10 @@ class TestProximityPosePlanDispenser(unittest.TestCase):
         self.assertEqual(dispenser.dispenser_plan_index, 0)
 
         # Set the plan in the dispenser and change internal state to planset
-        dispenser_context = diagram.GetMutableSubsystemContext(dispenser, diagram_context)
-        dispenser_context.SetDiscreteState(
-            np.array([DispenserInternalState.kPlanSet])
+        dispenser_context = diagram.GetMutableSubsystemContext(
+            dispenser, diagram_context
         )
+        dispenser_context.SetDiscreteState(np.array([DispenserInternalState.kPlanSet]))
         dispenser.plan = plan
 
         # Call advance_plan_if_necessary
@@ -179,7 +197,7 @@ class TestProximityPosePlanDispenser(unittest.TestCase):
     def create_scenario2(
         self,
         request: DispenserTransitionRequest = DispenserTransitionRequest.kNone,
-    )->Tuple[ProximityPosePlanDispenser,Diagram]:
+    ) -> Tuple[ProximityPosePlanDispenser, Diagram]:
         """
         Description:
             This function creates a scenario for testing the ProximityPosePlanDispenser class.
@@ -189,21 +207,21 @@ class TestProximityPosePlanDispenser(unittest.TestCase):
 
         # Create a plan composed of 4 RigidTransforms
         plan = [
-            RigidTransform(RollPitchYaw(0.0, np.pi/2., 0.0), [0.0, 0.0, 0.2]),
-            RigidTransform(RollPitchYaw(0.0, 0.0, np.pi/2), [1.0, 0.0, 0.0]),
+            RigidTransform(RollPitchYaw(0.0, np.pi / 2.0, 0.0), [0.0, 0.0, 0.2]),
+            RigidTransform(RollPitchYaw(0.0, 0.0, np.pi / 2), [1.0, 0.0, 0.0]),
             RigidTransform(RollPitchYaw(0.0, 0.0, np.pi), [1.0, 1.0, 0.0]),
-            RigidTransform(RollPitchYaw(0.0, 0.0, 3*np.pi/2), [0.0, 1.0, 0.0]),
+            RigidTransform(RollPitchYaw(0.0, 0.0, 3 * np.pi / 2), [0.0, 1.0, 0.0]),
         ]
 
         # Create a source to share the plan
-        plan_source = builder.AddSystem(
-            ConstantValueSource(AbstractValue.Make(plan))
-        )
+        plan_source = builder.AddSystem(ConstantValueSource(AbstractValue.Make(plan)))
 
         dispenser_request_source = builder.AddSystem(
-            ConstantVectorSource(np.array(
-                [request],
-            ))
+            ConstantVectorSource(
+                np.array(
+                    [request],
+                )
+            )
         )
 
         # Create a ProximityPosePlanDispenser object
@@ -213,7 +231,10 @@ class TestProximityPosePlanDispenser(unittest.TestCase):
         # - plan_source to plan_port
         # - plan_ready_source to plan_ready_port
         builder.Connect(plan_source.get_output_port(0), dispenser.GetInputPort("plan"))
-        builder.Connect(dispenser_request_source.get_output_port(0), dispenser.GetInputPort("request"))
+        builder.Connect(
+            dispenser_request_source.get_output_port(0),
+            dispenser.GetInputPort("request"),
+        )
 
         return builder, dispenser, plan
 
@@ -228,25 +249,26 @@ class TestProximityPosePlanDispenser(unittest.TestCase):
         builder, dispenser, plan = self.create_scenario2()
 
         # Create the current pose source
-        far_pose0 = RigidTransform(
-            RollPitchYaw(0.0, 0.0, np.pi/2), [1.0, 0.0, 0.0]
-        )
+        far_pose0 = RigidTransform(RollPitchYaw(0.0, 0.0, np.pi / 2), [1.0, 0.0, 0.0])
         current_pose_source = builder.AddSystem(
             ConstantValueSource(AbstractValue.Make(far_pose0))
         )
 
         # Connect the current pose source to the dispenser
-        builder.Connect(current_pose_source.get_output_port(0), dispenser.GetInputPort("current_pose"))
+        builder.Connect(
+            current_pose_source.get_output_port(0),
+            dispenser.GetInputPort("current_pose"),
+        )
 
         # Build the diagram
         diagram = builder.Build()
         diagram_context = diagram.CreateDefaultContext()
 
         # Set the plan in the dispenser and change internal state to planset
-        dispenser_context = diagram.GetMutableSubsystemContext(dispenser, diagram_context)
-        dispenser_context.SetDiscreteState(
-            np.array([DispenserInternalState.kPlanSet])
+        dispenser_context = diagram.GetMutableSubsystemContext(
+            dispenser, diagram_context
         )
+        dispenser_context.SetDiscreteState(np.array([DispenserInternalState.kPlanSet]))
         dispenser.plan = plan
 
         # Call GetCurrentPoseInPlan
@@ -270,22 +292,25 @@ class TestProximityPosePlanDispenser(unittest.TestCase):
         builder, dispenser, plan = self.create_scenario2()
 
         # Create the current pose source
-        far_pose0 = RigidTransform(
-            RollPitchYaw(0.0, 0.0, np.pi/2), [1.0, 0.0, 0.0]
-        )
+        far_pose0 = RigidTransform(RollPitchYaw(0.0, 0.0, np.pi / 2), [1.0, 0.0, 0.0])
         current_pose_source = builder.AddSystem(
             ConstantValueSource(AbstractValue.Make(far_pose0))
         )
 
         # Connect the current pose source to the dispenser
-        builder.Connect(current_pose_source.get_output_port(0), dispenser.GetInputPort("current_pose"))
+        builder.Connect(
+            current_pose_source.get_output_port(0),
+            dispenser.GetInputPort("current_pose"),
+        )
 
         # Build the diagram
         diagram = builder.Build()
         diagram_context = diagram.CreateDefaultContext()
 
         # Set the plan in the dispenser and change internal state to planset
-        dispenser_context = diagram.GetMutableSubsystemContext(dispenser, diagram_context)
+        dispenser_context = diagram.GetMutableSubsystemContext(
+            dispenser, diagram_context
+        )
         dispenser.plan = plan
 
         # Call GetCurrentPoseInPlan
@@ -309,7 +334,7 @@ class TestProximityPosePlanDispenser(unittest.TestCase):
         """
         # TODO(kwesi): Implement this test when we have a way to work through a full plan
         # (Maybe using open loop dispenser?).
-        
+
         # Setup
         builder = DiagramBuilder()
 
@@ -319,18 +344,16 @@ class TestProximityPosePlanDispenser(unittest.TestCase):
 
         # Create the plan
         plan = [
-            RigidTransform(RollPitchYaw(0.0, 0.0, np.pi/2), [1.0, 0.0, 0.0]),
+            RigidTransform(RollPitchYaw(0.0, 0.0, np.pi / 2), [1.0, 0.0, 0.0]),
             RigidTransform(RollPitchYaw(0.0, 0.0, np.pi), [1.0, 1.0, 0.0]),
-            RigidTransform(RollPitchYaw(0.0, 0.0, 3*np.pi/2), [0.0, 1.0, 0.0]),
+            RigidTransform(RollPitchYaw(0.0, 0.0, 3 * np.pi / 2), [0.0, 1.0, 0.0]),
         ]
 
         # Create a ProximityPlanDispenser object
         dispenser = builder.AddSystem(ProximityPosePlanDispenser())
 
         # Create a source for the plan and connect it to the dispenser
-        plan_source = builder.AddSystem(
-            ConstantValueSource(AbstractValue.Make(plan))
-        )
+        plan_source = builder.AddSystem(ConstantValueSource(AbstractValue.Make(plan)))
         builder.Connect(
             plan_source.get_output_port(0),
             dispenser.GetInputPort("plan"),
@@ -338,7 +361,9 @@ class TestProximityPosePlanDispenser(unittest.TestCase):
 
         # Create a source for the request and connect it to the dispenser
         request_source = builder.AddSystem(
-            ConstantVectorSource(np.array([DispenserTransitionRequest.kRequestSavePlan]))
+            ConstantVectorSource(
+                np.array([DispenserTransitionRequest.kRequestSavePlan])
+            )
         )
         builder.Connect(
             request_source.get_output_port(0),
@@ -347,7 +372,7 @@ class TestProximityPosePlanDispenser(unittest.TestCase):
 
         # Create a mock trajectory source (an open loop pose plan dispenser)
         plan2 = [
-            RigidTransform(RollPitchYaw(0.0, 0.0, np.pi/2), [-1.0, 0.0, 0.0]),
+            RigidTransform(RollPitchYaw(0.0, 0.0, np.pi / 2), [-1.0, 0.0, 0.0]),
         ]
         plan2 += plan.copy()
 
@@ -355,9 +380,7 @@ class TestProximityPosePlanDispenser(unittest.TestCase):
         mock_trajectory.set_name("mock_trajectory")
 
         # Create a source to share the plan
-        plan2_source = builder.AddSystem(
-            ConstantValueSource(AbstractValue.Make(plan2))
-        )
+        plan2_source = builder.AddSystem(ConstantValueSource(AbstractValue.Make(plan2)))
         plan2_source.set_name("plan2_source")
         builder.Connect(
             plan2_source.get_output_port(0),
@@ -373,7 +396,6 @@ class TestProximityPosePlanDispenser(unittest.TestCase):
             mock_trajectory.GetInputPort("plan_ready"),
         )
 
-
         # Connect "mock_trajectory" to "dispenser" as the current pose input
         builder.Connect(
             mock_trajectory.GetOutputPort("pose_in_plan"),
@@ -384,12 +406,14 @@ class TestProximityPosePlanDispenser(unittest.TestCase):
         watcher, diagram, diagram_context = add_watcher_and_build(
             builder,
             figure_naming_convention=FigureNamingConvention.kHierarchical,
-            )
+        )
         # diagram = builder.Build()
         # diagram_context = diagram.CreateDefaultContext()
 
         # Set the plan in the dispenser and change internal state to planset
-        dispenser_context = diagram.GetMutableSubsystemContext(dispenser, diagram_context)
+        dispenser_context = diagram.GetMutableSubsystemContext(
+            dispenser, diagram_context
+        )
         # dispenser_context.SetDiscreteState(
         #     np.array([DispenserInternalState.kPlanSet])
         # )
@@ -417,17 +441,19 @@ class TestProximityPosePlanDispenser(unittest.TestCase):
         will be transitioned to kPlanSet.
         """
         # Setup
-        builder, dispenser, plan = self.create_scenario2(request=DispenserTransitionRequest.kRequestSavePlan)
+        builder, dispenser, plan = self.create_scenario2(
+            request=DispenserTransitionRequest.kRequestSavePlan
+        )
 
         # Build the diagram
         diagram = builder.Build()
         diagram_context = diagram.CreateDefaultContext()
 
         # Set the internal state to kReady
-        dispenser_context = diagram.GetMutableSubsystemContext(dispenser, diagram_context)
-        dispenser_context.SetDiscreteState(
-            np.array([DispenserInternalState.kReady])
+        dispenser_context = diagram.GetMutableSubsystemContext(
+            dispenser, diagram_context
         )
+        dispenser_context.SetDiscreteState(np.array([DispenserInternalState.kReady]))
 
         # Set the plan in the dispenser
         dispenser.plan = plan
@@ -439,8 +465,8 @@ class TestProximityPosePlanDispenser(unittest.TestCase):
         self.assertEqual(
             dispenser_context.get_discrete_state(dispenser.dispenser_state)[0],
             DispenserInternalState.kPlanSet,
-            )
-        
+        )
+
     def test_transition_internal_state2(self):
         """
         Description
@@ -449,17 +475,19 @@ class TestProximityPosePlanDispenser(unittest.TestCase):
         and the dispenser is in the kPlanSet state, the internal state will be transitioned to kReady.
         """
         # Setup
-        builder, dispenser, plan = self.create_scenario2(request=DispenserTransitionRequest.kRequestReset)
+        builder, dispenser, plan = self.create_scenario2(
+            request=DispenserTransitionRequest.kRequestReset
+        )
 
         # Build the diagram
         diagram = builder.Build()
         diagram_context = diagram.CreateDefaultContext()
 
         # Set the internal state to kPlanSet
-        dispenser_context = diagram.GetMutableSubsystemContext(dispenser, diagram_context)
-        dispenser_context.SetDiscreteState(
-            np.array([DispenserInternalState.kPlanSet])
+        dispenser_context = diagram.GetMutableSubsystemContext(
+            dispenser, diagram_context
         )
+        dispenser_context.SetDiscreteState(np.array([DispenserInternalState.kPlanSet]))
 
         # Set the plan in the dispenser
         dispenser.plan = plan
@@ -481,17 +509,19 @@ class TestProximityPosePlanDispenser(unittest.TestCase):
         and the dispenser is in the kPlanSet state, the internal state will NOT be transitioned.
         """
         # Setup
-        builder, dispenser, plan = self.create_scenario2(request=DispenserTransitionRequest.kRequestSavePlan)
+        builder, dispenser, plan = self.create_scenario2(
+            request=DispenserTransitionRequest.kRequestSavePlan
+        )
 
         # Build the diagram
         diagram = builder.Build()
         diagram_context = diagram.CreateDefaultContext()
 
         # Set the internal state to kPlanSet
-        dispenser_context = diagram.GetMutableSubsystemContext(dispenser, diagram_context)
-        dispenser_context.SetDiscreteState(
-            np.array([DispenserInternalState.kPlanSet])
+        dispenser_context = diagram.GetMutableSubsystemContext(
+            dispenser, diagram_context
         )
+        dispenser_context.SetDiscreteState(np.array([DispenserInternalState.kPlanSet]))
 
         # Set the plan in the dispenser
         dispenser.plan = plan
@@ -504,6 +534,7 @@ class TestProximityPosePlanDispenser(unittest.TestCase):
             dispenser_context.get_discrete_state(dispenser.dispenser_state)[0],
             DispenserInternalState.kPlanSet,
         )
+
 
 if __name__ == "__main__":
     unittest.main()

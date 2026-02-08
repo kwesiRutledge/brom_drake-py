@@ -1,5 +1,6 @@
 from enum import IntEnum
 
+
 class RollPitchYawAngle(IntEnum):
     kRoll = 0
     kPitch = 1
@@ -8,7 +9,7 @@ class RollPitchYawAngle(IntEnum):
     def __str__(self) -> str:
         """
         *Description*
-        
+
         This method returns a string representation of the RollPitchYawAngle enum.
         """
         if self == RollPitchYawAngle.kRoll:
@@ -20,10 +21,11 @@ class RollPitchYawAngle(IntEnum):
         else:
             raise ValueError(f"Invalid RollPitchYawAngle value: {self}")
 
+
 def rpy_equivalent_body_rotation_order() -> list[RollPitchYawAngle]:
     """
     *Description*
-    
+
     This method returns the equivalent body rotation order for Roll-Pitch-Yaw angles.
     """
     return [

@@ -8,13 +8,18 @@ from dataclasses import dataclass
 
 # Internal Imports
 from brom_drake import directories
-from brom_drake.watchers.port_watcher.port_watcher_options import PortWatcherOptions, PortWatcherPlottingOptions, PortWatcherRawDataOptions
+from brom_drake.watchers.port_watcher.port_watcher_options import (
+    PortWatcherOptions,
+    PortWatcherPlottingOptions,
+    PortWatcherRawDataOptions,
+)
+
 
 @dataclass(frozen=True)
 class SuppressDiagramWatcherRules:
     """
     *Description*
-    
+
     A signal that defines which types of messages to suppress when
     using the DiagramWatcher.
 
@@ -24,14 +29,16 @@ class SuppressDiagramWatcherRules:
         If True, suppress log messages that occur during the connection
         of PortWatchers to the DiagramWatcher.
     """
+
     # The list of rules to suppress the DiagramWatcher
     during_port_watcher_connection: bool = False
+
 
 @dataclass
 class DiagramWatcherOptions:
     """
     *Description*
-    
+
     This class contains the options that configure the following properties of the DiagramWatcher:
     - Where it saves its data (plots, raw data, etc.)
     - the format that it uses to save its data/plots
@@ -59,6 +66,7 @@ class DiagramWatcherOptions:
     hide_messages: SuppressDiagramWatcherRules, optional
         The rules that define which types of messages to suppress during the operation of the DiagramWatcher.
     """
+
     # The base directory where the watcher will save the data
     base_directory: str = directories.DEFAULT_WATCHER_DIR
 
@@ -72,11 +80,11 @@ class DiagramWatcherOptions:
     def to_port_watcher_options(self) -> PortWatcherOptions:
         """
         *Description*
-        
+
         This function converts the DiagramWatcherOptions to a PortWatcherOptions object.
 
         *Returns*
-        
+
         PortWatcherOptions
             The PortWatcherOptions object.
         """
@@ -84,4 +92,3 @@ class DiagramWatcherOptions:
             plotting=self.plotting_options,
             raw_data=self.raw_data_options,
         )
-    

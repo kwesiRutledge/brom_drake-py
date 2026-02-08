@@ -3,6 +3,7 @@ This file defines a couple of convenience functions for adding in the watcher
 to a target diagram builder. These functions should be useful for 99% of the
 users of the DiagramWatcher class.
 """
+
 from typing import List, Tuple, Union
 
 import numpy as np
@@ -96,15 +97,15 @@ def add_watcher(
         watcher = add_watcher(builder, [("plant", 0), ("controller", 0)])
 
     **Returns**
-        
+
     watcher : DiagramWatcher
         The watcher that we have added to the diagram builder.
     """
     # Input Processing
     if not isinstance(plot_arrangement, PortFigureArrangement):
         raise ValueError(
-            f"plot_arrangement must be of type PortFigureArrangement; received {plot_arrangement} of type" +
-            f" {type(plot_arrangement)}."
+            f"plot_arrangement must be of type PortFigureArrangement; received {plot_arrangement} of type"
+            + f" {type(plot_arrangement)}."
         )
 
     # Parse targets list if it exists
@@ -124,7 +125,7 @@ def add_watcher(
             raw_data_options=PortWatcherRawDataOptions(
                 save_to_file=True,
             ),
-        )
+        ),
     )
     return watcher
 
@@ -171,7 +172,7 @@ def add_watcher_and_build(
     This will watch output port 0 of both the "plant" and "controller" systems, if possible.
 
     **Parameters**
-    
+
     builder: DiagramBuilder
         The diagram builder to which we want to add the watcher.
 
@@ -191,7 +192,7 @@ def add_watcher_and_build(
 
     file_format: str
         The file format for the figures.
-    
+
     **Returns**
 
     watcher: DiagramWatcher
@@ -227,18 +228,18 @@ def parse_list_of_simplified_targets(
 ) -> List[DiagramTarget]:
     """
     **Description**
-    
+
     This function takes a list of simplified targets and converts them to the full form.
 
     **Example Usage**
-    
+
     .. code-block:: python
 
         targets = [("plant", 0), ("controller", 0)]
         parsed_targets = parse_list_of_simplified_targets(targets)
 
     **Parameters**
-    
+
     builder : DiagramBuilder
         The diagram builder to which we want to add the watcher.
 
@@ -246,7 +247,7 @@ def parse_list_of_simplified_targets(
         The list of simplified targets.
 
     **Returns**
-    
+
     parsed_targets: List[DiagramTarget]
         A list of all the targets that we want to watch.
     """
@@ -256,12 +257,12 @@ def parse_list_of_simplified_targets(
 
     # If input is not a list, then raise an error
     if not isinstance(targets, list):
-        raise ValueError("the input \"targets\" must be a list.")
+        raise ValueError('the input "targets" must be a list.')
 
     if len(targets) == 0:
         raise ValueError(
-            "the input \"targets\" must be a non-empty list containing tuples or strings.\n" +
-            "If you want to watch the entire diagram, then pass in None as the value of targets."
+            'the input "targets" must be a non-empty list containing tuples or strings.\n'
+            + "If you want to watch the entire diagram, then pass in None as the value of targets."
         )
 
     # Parse each element in targets
@@ -313,7 +314,6 @@ def parse_list_of_simplified_targets(
                         f"the system {target_name} does not have an output port named {port_name}."
                     )
 
-
             elif isinstance(target[1], list):
                 ports_list = []
                 for ii, elt_ii in enumerate(target[1]):
@@ -329,7 +329,9 @@ def parse_list_of_simplified_targets(
                                 break
 
                         if system.HasOutputPort(port_name):
-                            ports_list += [int(system.GetOutputPort(port_name).get_index())]
+                            ports_list += [
+                                int(system.GetOutputPort(port_name).get_index())
+                            ]
                         else:
                             raise ValueError(
                                 f"the system {target_name} does not have an output port named {port_name}."
@@ -337,18 +339,18 @@ def parse_list_of_simplified_targets(
 
                     else:
                         raise ValueError(
-                            f"the target_list[{ii}] of the tuple is not an integer or a string! " +
-                            f"Received {elt_ii} of type {type(elt_ii)}."
+                            f"the target_list[{ii}] of the tuple is not an integer or a string! "
+                            + f"Received {elt_ii} of type {type(elt_ii)}."
                         )
             else:
                 raise ValueError(
-                    "the second element of the tuple must be either a: \n" +
-                    "- an integer\n" +
-                    "- a list of integers\n" +
-                    "- a string\n" +
-                    "- a list of strings\n" +
-                    "- None.\n" +
-                    f"Received type {type(target[1])}"
+                    "the second element of the tuple must be either a: \n"
+                    + "- an integer\n"
+                    + "- a list of integers\n"
+                    + "- a string\n"
+                    + "- a list of strings\n"
+                    + "- None.\n"
+                    + f"Received type {type(target[1])}"
                 )
 
         # Create the diagram target object

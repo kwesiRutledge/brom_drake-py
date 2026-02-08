@@ -17,15 +17,14 @@ import unittest
 # Internal Imports
 from brom_drake.systems.conversion import BoolToVectorSystem
 
+
 class BoolToVecSystemTest(unittest.TestCase):
     def test_in_sim1(self):
         # Setup
         builder = DiagramBuilder()
 
         # Create a system that outputs True always
-        true_source = builder.AddSystem(
-            ConstantValueSource(AbstractValue.Make(True))
-        )
+        true_source = builder.AddSystem(ConstantValueSource(AbstractValue.Make(True)))
 
         # Attempt to connect a Boolean AbstractValue system to the BoolToVectorSystem
         b2vec_sys = builder.AddSystem(BoolToVectorSystem())
@@ -49,10 +48,7 @@ class BoolToVecSystemTest(unittest.TestCase):
         log_data = vector_log.data()
         self.assertEqual(log_data.shape, (1, 2))
 
-        self.assertTrue(
-            np.all(log_data == 1)
-        )
-
+        self.assertTrue(np.all(log_data == 1))
 
 
 if __name__ == "__main__":

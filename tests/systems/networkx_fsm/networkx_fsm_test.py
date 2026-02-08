@@ -16,12 +16,17 @@ from brom_drake.systems.network_fsm import (
     FSMOutputDefinition,
 )
 
+
 class TestNetworkXFSM(unittest.TestCase):
     def setUp(self):
         # Create simple Digraphs for testing
         self.disconnectedDigraph = self.createDisconnectedDigraph()
-        self.connectedDigraphWithMultipleRoots = self.createConnectedDigraphWithMultipleRoots()
-        self.completelyLabeledButNoConditionedDigraph = self.createFullyLabeledButNoConditionedDigraph()
+        self.connectedDigraphWithMultipleRoots = (
+            self.createConnectedDigraphWithMultipleRoots()
+        )
+        self.completelyLabeledButNoConditionedDigraph = (
+            self.createFullyLabeledButNoConditionedDigraph()
+        )
 
     def createDisconnectedDigraph(self) -> nx.DiGraph:
         # Setup
@@ -36,7 +41,7 @@ class TestNetworkXFSM(unittest.TestCase):
         graph.add_edge(0, 1)
 
         return graph
-    
+
     def createConnectedDigraphWithMultipleRoots(self) -> nx.DiGraph:
         # Setup
         graph = nx.DiGraph()
@@ -51,7 +56,7 @@ class TestNetworkXFSM(unittest.TestCase):
         graph.add_edge(2, 1)
 
         return graph
-    
+
     def createPartiallyLabeledDigraph(self) -> nx.DiGraph:
         """
         Description
@@ -74,7 +79,7 @@ class TestNetworkXFSM(unittest.TestCase):
         graph.add_edge(2, 3)
 
         return graph
-    
+
     def createFullyLabeledButNoConditionedDigraph(self) -> nx.DiGraph:
         """
         Description
@@ -97,7 +102,7 @@ class TestNetworkXFSM(unittest.TestCase):
         graph.add_edge(2, 3, conditions=[])
 
         return graph
-    
+
     def createSimpleTwoNodeFSM(self) -> nx.DiGraph:
         # Setup
         graph = nx.DiGraph()
@@ -107,21 +112,25 @@ class TestNetworkXFSM(unittest.TestCase):
             0,
             outputs=[
                 FSMOutputDefinition("output1", True),
-            ]
+            ],
         )
         graph.add_node(1)
 
         # connect 0 -> 1
-        graph.add_edge(0, 1, conditions=[
-            FSMTransitionCondition(
-                input_port_name="signal",
-                condition_type=FSMTransitionConditionType.kEqual,
-                condition_value=True
-            )
-        ])
+        graph.add_edge(
+            0,
+            1,
+            conditions=[
+                FSMTransitionCondition(
+                    input_port_name="signal",
+                    condition_type=FSMTransitionConditionType.kEqual,
+                    condition_value=True,
+                )
+            ],
+        )
 
         return graph
-    
+
     def createTwoNodeFSMWithUninitializedOutput(self) -> nx.DiGraph:
         # Setup
         graph = nx.DiGraph()
@@ -131,24 +140,28 @@ class TestNetworkXFSM(unittest.TestCase):
             0,
             outputs=[
                 FSMOutputDefinition("output1", True),
-            ]
+            ],
         )
         graph.add_node(
             1,
             outputs=[
                 FSMOutputDefinition("output1", False),
                 FSMOutputDefinition("output2", False),
-            ]
+            ],
         )
 
         # connect 0 -> 1
-        graph.add_edge(0, 1, conditions=[
-            FSMTransitionCondition(
-                input_port_name="signal",
-                condition_type=FSMTransitionConditionType.kEqual,
-                condition_value=True
-            )
-        ])
+        graph.add_edge(
+            0,
+            1,
+            conditions=[
+                FSMTransitionCondition(
+                    input_port_name="signal",
+                    condition_type=FSMTransitionConditionType.kEqual,
+                    condition_value=True,
+                )
+            ],
+        )
 
         return graph
 
@@ -171,7 +184,7 @@ class TestNetworkXFSM(unittest.TestCase):
         """
         Description
         -----------
-        This test verifies that we can check if a connected Digraph with multiple roots 
+        This test verifies that we can check if a connected Digraph with multiple roots
         is a valid FSM (it should not be).
         """
         # Setup
@@ -214,7 +227,6 @@ class TestNetworkXFSM(unittest.TestCase):
 
         # Verify
         self.assertIsNotNone(result)
-
 
     def test_supports_this_digraph5(self):
         """
@@ -286,22 +298,12 @@ class TestNetworkXFSM(unittest.TestCase):
         builder = DiagramBuilder()
 
         # Create a simple diagram
-        fsm = builder.AddSystem(
-            NetworkXFSM(fsm_graph)
-        )
+        fsm = builder.AddSystem(NetworkXFSM(fsm_graph))
 
-        signal_source = builder.AddSystem(
-            ConstantValueSource(
-                AbstractValue.Make(True)
-            )
-        )
+        signal_source = builder.AddSystem(ConstantValueSource(AbstractValue.Make(True)))
 
         # Connect the signal source to the FSM
-        builder.Connect(
-            signal_source.get_output_port(),
-            fsm.GetInputPort("signal")
-        )
-
+        builder.Connect(signal_source.get_output_port(), fsm.GetInputPort("signal"))
 
         # Build Diagram and advance it for 1 second
         watcher, diagram, diagram_context = add_watcher_and_build(builder)
@@ -315,7 +317,11 @@ class TestNetworkXFSM(unittest.TestCase):
         watcher_keys = list(watcher.port_watchers.keys())
         first_key = watcher_keys[0]
 
-        fsm_state_log = watcher.port_watchers[first_key]["fsm_state"].get_vector_log_sink().FindLog(diagram_context)
+        fsm_state_log = (
+            watcher.port_watchers[first_key]["fsm_state"]
+            .get_vector_log_sink()
+            .FindLog(diagram_context)
+        )
         fsm_state_log_data = fsm_state_log.data().flatten()
 
         # Verify that the current state is now 1
@@ -324,7 +330,7 @@ class TestNetworkXFSM(unittest.TestCase):
     def test_CalcFSMState2(self):
         """
         *Description*
-        
+
         This test verifies that the CalcFSMState method correctly
         transitions from the start node to the next node on
         the correct conditions being met.
@@ -340,28 +346,27 @@ class TestNetworkXFSM(unittest.TestCase):
             0,
             outputs=[
                 FSMOutputDefinition("output1", True),
-            ]
+            ],
         )
         fsm_graph.add_node(
             1,
             outputs=[
                 FSMOutputDefinition("output1", False),
-            ]
+            ],
         )
         fsm_graph.add_edge(
-            0, 1,
+            0,
+            1,
             conditions=[
                 FSMTransitionCondition(
                     condition_type=FSMTransitionConditionType.kAfterThisManySeconds,
                     condition_value=0.75,
                 )
-            ]
+            ],
         )
 
         # Create a simple diagram
-        fsm = builder.AddSystem(
-            NetworkXFSM(fsm_graph)
-        )
+        fsm = builder.AddSystem(NetworkXFSM(fsm_graph))
 
         # Build Diagram and advance it for 1 second
         watcher, diagram, diagram_context = add_watcher_and_build(builder)
@@ -370,8 +375,12 @@ class TestNetworkXFSM(unittest.TestCase):
         # Get key needed to extract watcher data for fsm state
         watcher_keys = list(watcher.port_watchers.keys())
         first_key = watcher_keys[0]
-        fsm_state_logger = watcher.port_watchers[first_key]["fsm_state"].get_vector_log_sink()
-        output1_logger = watcher.port_watchers[first_key]["output1"].get_vector_log_sink()
+        fsm_state_logger = watcher.port_watchers[first_key][
+            "fsm_state"
+        ].get_vector_log_sink()
+        output1_logger = watcher.port_watchers[first_key][
+            "output1"
+        ].get_vector_log_sink()
 
         # Run for 0.25 seconds and check that:
         # - the current state is still 0
@@ -381,7 +390,7 @@ class TestNetworkXFSM(unittest.TestCase):
         fsm_state_log = fsm_state_logger.FindLog(diagram_context)
         fsm_state_log_data = fsm_state_log.data().flatten()
         self.assertEqual(int(fsm_state_log_data[-1]), 0)
-        
+
         output1_log = output1_logger.FindLog(diagram_context)
         output1_log_data = output1_log.data().flatten()
         self.assertEqual(int(output1_log_data[-1]), 1)
@@ -419,43 +428,43 @@ class TestNetworkXFSM(unittest.TestCase):
             0,
             outputs=[
                 FSMOutputDefinition("output1", True),
-            ]
+            ],
         )
         fsm_graph.add_node(
             1,
             outputs=[
                 FSMOutputDefinition("output1", False),
-            ]
+            ],
         )
         fsm_graph.add_node(
             2,
             outputs=[
                 FSMOutputDefinition("output1", True),
-            ]
+            ],
         )
         fsm_graph.add_edge(
-            0, 1,
+            0,
+            1,
             conditions=[
                 FSMTransitionCondition(
                     condition_type=FSMTransitionConditionType.kAfterThisManySeconds,
                     condition_value=0.75,
                 )
-            ]
+            ],
         )
         fsm_graph.add_edge(
-            1, 2,
+            1,
+            2,
             conditions=[
                 FSMTransitionCondition(
                     condition_type=FSMTransitionConditionType.kAfterThisManySeconds,
                     condition_value=0.75,
                 )
-            ]
+            ],
         )
 
         # Create a simple diagram
-        fsm = builder.AddSystem(
-            NetworkXFSM(fsm_graph)
-        )
+        fsm = builder.AddSystem(NetworkXFSM(fsm_graph))
 
         # Build Diagram and advance it for 1 second
         watcher, diagram, diagram_context = add_watcher_and_build(builder)
@@ -464,8 +473,12 @@ class TestNetworkXFSM(unittest.TestCase):
         # Collect data for the fsm state
         watcher_keys = list(watcher.port_watchers.keys())
         first_key = watcher_keys[0]
-        fsm_state_logger = watcher.port_watchers[first_key]["fsm_state"].get_vector_log_sink()
-        output1_logger = watcher.port_watchers[first_key]["output1"].get_vector_log_sink()
+        fsm_state_logger = watcher.port_watchers[first_key][
+            "fsm_state"
+        ].get_vector_log_sink()
+        output1_logger = watcher.port_watchers[first_key][
+            "output1"
+        ].get_vector_log_sink()
 
         # Run for 0.25 seconds and check that:
         # - the current state is still 0
@@ -508,7 +521,7 @@ class TestNetworkXFSM(unittest.TestCase):
 
         # Run until 1.75 seconds and check that the current state is now 2
         simulator.AdvanceTo(1.75)
-        
+
         fsm_state_log = fsm_state_logger.FindLog(diagram_context)
         fsm_state_log_data = fsm_state_log.data().flatten()
         self.assertEqual(int(fsm_state_log_data[-1]), 2)
@@ -516,6 +529,7 @@ class TestNetworkXFSM(unittest.TestCase):
         output1_log = output1_logger.FindLog(diagram_context)
         output1_log_data = output1_log.data().flatten()
         self.assertEqual(int(output1_log_data[-1]), 1)
+
 
 if __name__ == "__main__":
     unittest.main()

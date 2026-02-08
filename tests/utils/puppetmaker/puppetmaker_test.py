@@ -6,7 +6,7 @@ from pydrake.all import (
     MultibodyPlant,
     MultibodyPlantConfig,
     Parser,
-    SceneGraph
+    SceneGraph,
 )
 import unittest
 
@@ -16,6 +16,7 @@ from brom_drake.all import drakeify_my_urdf
 from brom_drake.file_manipulation.urdf.shapes import SphereDefinition
 from brom_drake.file_manipulation.urdf import SimpleShapeURDFDefinition
 from brom_drake.utils import Puppetmaker
+
 
 class PuppetmakerTest(unittest.TestCase):
     def setUp(self):
@@ -61,7 +62,6 @@ class PuppetmakerTest(unittest.TestCase):
 
         self.assertTrue(puppetmaker_port_exists)
 
-
     def test_init2_fails_if_plant_already_finalized(self):
         # Setup
         builder = DiagramBuilder()
@@ -90,14 +90,10 @@ class PuppetmakerTest(unittest.TestCase):
             puppetmaker0 = Puppetmaker(plant)
             puppetmaker0.add_strings_for(sphere_model_idcs[0])
             self.assertTrue(
-                False,
-                "The puppetmaker constructor should fail before reaching here!"
+                False, "The puppetmaker constructor should fail before reaching here!"
             )
         except Exception as e:
-            self.assertIn(
-                "finalize",
-                str(e)
-            )
+            self.assertIn("finalize", str(e))
 
     def test_add_actuators_for1(self):
         """
@@ -179,7 +175,9 @@ class PuppetmakerTest(unittest.TestCase):
         plant.Finalize()
 
         # Call the method
-        input_converter, _ = puppetmaker0.add_puppet_controller_for(puppet_signature1, builder)
+        input_converter, _ = puppetmaker0.add_puppet_controller_for(
+            puppet_signature1, builder
+        )
 
         self.assertEqual(
             input_converter.get_output_port().size(),
@@ -221,7 +219,9 @@ class PuppetmakerTest(unittest.TestCase):
         plant.Finalize()
 
         # Call the method
-        demux, potential_passthrough = puppetmaker0.create_actuator_demux(puppet_signature1, builder)
+        demux, potential_passthrough = puppetmaker0.create_actuator_demux(
+            puppet_signature1, builder
+        )
 
         # Check the demux output size
         for ii in range(6):
@@ -247,9 +247,7 @@ class PuppetmakerTest(unittest.TestCase):
         # Setup
         builder = DiagramBuilder()
 
-        urdf_file_path = str(
-            impresources.files(robots) / "models/ur/ur10e.urdf"
-        )
+        urdf_file_path = str(impresources.files(robots) / "models/ur/ur10e.urdf")
 
         # Create plant with the single object
         plant_sg_pair = AddMultibodyPlant(MultibodyPlantConfig(), builder)
@@ -273,7 +271,9 @@ class PuppetmakerTest(unittest.TestCase):
         plant.Finalize()
 
         # Call the method
-        demux, potential_passthrough = puppetmaker0.create_actuator_demux(puppet_signature1, builder)
+        demux, potential_passthrough = puppetmaker0.create_actuator_demux(
+            puppet_signature1, builder
+        )
 
         # Check the demux output size
         for ii in range(6):
@@ -286,8 +286,9 @@ class PuppetmakerTest(unittest.TestCase):
         self.assertIsNotNone(potential_passthrough)
         self.assertEqual(
             potential_passthrough.get_output_port().size(),
-            6, # Number of dof in UR10es
+            6,  # Number of dof in UR10es
         )
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

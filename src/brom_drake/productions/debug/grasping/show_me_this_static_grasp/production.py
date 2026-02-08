@@ -32,6 +32,7 @@ from brom_drake.utils.model_instances import (
 from brom_drake.productions.debug.show_me.show_me_system import ShowMeSystem
 from .config import Configuration as ShowMeThisStaticGraspConfiguration
 
+
 class ShowMeThisStaticGrasp(BasicGraspingDebuggingProduction):
     def __init__(
         self,
@@ -68,7 +69,9 @@ class ShowMeThisStaticGrasp(BasicGraspingDebuggingProduction):
 
         # Create joint position array
         if gripper_joint_positions is None:
-            gripper_joint_positions = [0.0] * find_number_of_positions_in_welded_model(self.path_to_gripper)
+            gripper_joint_positions = [0.0] * find_number_of_positions_in_welded_model(
+                self.path_to_gripper
+            )
         self.gripper_joint_positions = gripper_joint_positions
 
         # Add Name to plantPlant and Scene Graph for easy simulation
@@ -86,8 +89,10 @@ class ShowMeThisStaticGrasp(BasicGraspingDebuggingProduction):
         super().add_cast_and_build(cast, with_watcher=True)
 
         # Assign the diagram context to the internal show_me_system
-        self.show_me_system.mutable_plant_context = self.plant.GetMyMutableContextFromRoot(
-            self.diagram_context,
+        self.show_me_system.mutable_plant_context = (
+            self.plant.GetMyMutableContextFromRoot(
+                self.diagram_context,
+            )
         )
 
         return self.diagram, self.diagram_context
@@ -167,9 +172,11 @@ class ShowMeThisStaticGrasp(BasicGraspingDebuggingProduction):
         shadow_plant = MultibodyPlant(self.time_step)
         model_idcs = Parser(plant=shadow_plant).AddModels(self.path_to_gripper)
         shadow_model_idx = model_idcs[0]
-        
+
         # Get the first body on the gripper
-        name_of_first_body_in_gripper = get_name_of_first_body_in_urdf(self.path_to_gripper)
+        name_of_first_body_in_gripper = get_name_of_first_body_in_urdf(
+            self.path_to_gripper
+        )
 
         # Weld the base link to the world frame
         shadow_plant.WeldFrames(
@@ -199,7 +206,7 @@ class ShowMeThisStaticGrasp(BasicGraspingDebuggingProduction):
         )
 
         X_Object_GripperTarget = X_ObjectGripper
-        X_WorldObject = RigidTransform.Identity() # Identity
+        X_WorldObject = RigidTransform.Identity()  # Identity
 
         X_Object_GripperBase = X_Object_GripperTarget.multiply(
             X_GripperBase_GripperTarget.inverse()

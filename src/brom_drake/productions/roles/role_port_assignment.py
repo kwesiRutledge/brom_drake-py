@@ -7,7 +7,9 @@ from typing import Union, List
 from pydrake.systems.framework import DiagramBuilder, LeafSystem
 
 from brom_drake.utils import (
-    Performer, find_all_systems_with_output_port, find_all_systems_with_input_port,
+    Performer,
+    find_all_systems_with_output_port,
+    find_all_systems_with_input_port,
 )
 from brom_drake.utils.search import find_all_systems_with_name
 
@@ -26,8 +28,10 @@ class PairingType(IntEnum):
 
     kOutput => Connection is between an external target and a performer's OUTPUT port.
     """
+
     kInput = 1
     kOutput = 2
+
 
 @dataclass
 class RolePortAssignment:
@@ -38,7 +42,7 @@ class RolePortAssignment:
     and the rest of the diagram. Some connections are required, but they need not be.
 
     TODO(Kwesi): Refactor this class to use the ``DiagramTarget`` object.
-    
+
     *Parameters*
 
     external_target_name: TargetName
@@ -54,6 +58,7 @@ class RolePortAssignment:
     is_required: bool, optional
         Default is True.
     """
+
     external_target_name: TargetName  # The name of the port (or system) that we want to connect this port to
     performer_port_name: PortName
     pairing_type: PairingType
@@ -66,7 +71,7 @@ class RolePortAssignment:
     ):
         """
         *Description*
-        
+
         Creates the connection between the performer and the appropriate
         port in the incomplete Drake diagram specified by `builder`.
 
@@ -91,9 +96,7 @@ class RolePortAssignment:
                 performer=performer,
             )
         else:
-            raise ValueError(
-                f"Unknown pairing type: {self.pairing_type}"
-            )
+            raise ValueError(f"Unknown pairing type: {self.pairing_type}")
 
     def create_input_port_connections_in(
         self,
@@ -121,24 +124,24 @@ class RolePortAssignment:
         # Setup
 
         # Check to see if the performer has the given input port
-        performer_has_input_port = performer.HasInputPort(
-            self.performer_port_name
-        )
+        performer_has_input_port = performer.HasInputPort(self.performer_port_name)
         if (not performer_has_input_port) and self.is_required:
             raise self.create_assignment_port_unavailable_error()
         elif (not performer_has_input_port) and (not self.is_required):
             print(
-                f"Performer {performer.get_name()} does not have OPTIONAL input port named {self.performer_port_name}." +
-                "\nWill skip its connection."
+                f"Performer {performer.get_name()} does not have OPTIONAL input port named {self.performer_port_name}."
+                + "\nWill skip its connection."
             )
-            return # Do not do anything if the port does not exist
+            return  # Do not do anything if the port does not exist
 
         # Otherwise, port exists.
         performer_port = performer.GetInputPort(self.performer_port_name)
 
         # Get the external system that has the output port with the correct name
         systems_list = self.find_any_matching_output_targets(builder)
-        assert len(systems_list) == 1, self.create_not_enough_systems_error(systems_list)
+        assert len(systems_list) == 1, self.create_not_enough_systems_error(
+            systems_list
+        )
 
         # Connect system
         system_is_target = systems_list[0].get_name() == self.external_target_name
@@ -159,13 +162,13 @@ class RolePortAssignment:
     ) -> List[LeafSystem]:
         """
         *Description*
-        
+
         This function attempts to find all targets that match the output
         target definition, i.e.:
-        
+
         - A system with the output port with given name
         - A system with the given name.
-        
+
         *Parameters*
 
         builder: DiagramBuilder
@@ -181,7 +184,8 @@ class RolePortAssignment:
 
         # Retrieve all systems that have that output port name external_target_name
         systems_list = find_all_systems_with_output_port(
-            builder, external_target_name,
+            builder,
+            external_target_name,
         )
 
         if len(systems_list) > 0:
@@ -195,7 +199,6 @@ class RolePortAssignment:
 
         # Otherwise, raise an error
         raise self.create_no_target_found_error()
-
 
     def create_output_port_connections_in(
         self,
@@ -223,15 +226,13 @@ class RolePortAssignment:
         # Setup
 
         # Check to see if the performer has the given input port
-        performer_has_output_port = performer.HasOutputPort(
-            self.performer_port_name
-        )
+        performer_has_output_port = performer.HasOutputPort(self.performer_port_name)
         if (not performer_has_output_port) and self.is_required:
             raise self.create_assignment_port_unavailable_error()
         elif (not performer_has_output_port) and (not self.is_required):
             print(
-                f"Performer {performer.get_name()} does not have OPTIONAL output port named {self.performer_port_name}." +
-                "\nWill skip its connection."
+                f"Performer {performer.get_name()} does not have OPTIONAL output port named {self.performer_port_name}."
+                + "\nWill skip its connection."
             )
             return  # Do not do anything if the port does not exist
 
@@ -240,7 +241,9 @@ class RolePortAssignment:
 
         # Get the external system that has the input port with the correct name
         systems_list = self.find_any_matching_input_targets(builder)
-        assert len(systems_list) == 1, self.create_not_enough_systems_error(systems_list)
+        assert len(systems_list) == 1, self.create_not_enough_systems_error(
+            systems_list
+        )
 
         # TODO(kwesi): Create if-else statement to handle the cases of when systems_list
         # contains either:
@@ -257,13 +260,13 @@ class RolePortAssignment:
     ) -> List[LeafSystem]:
         """
         *Description*
-        
+
         This function attempts to find all targets that match the input
         target definition, i.e.:
 
         - A system with the input port with given name
         - A system with the given name.
-        
+
         TODO(Kwesi): Compress this method and the output targets method?
 
         builder: DiagramBuilder
@@ -279,7 +282,8 @@ class RolePortAssignment:
 
         # Retrieve all systems that have that output port name external_target_name
         systems_list = find_all_systems_with_input_port(
-            builder, external_target_name,
+            builder,
+            external_target_name,
         )
 
         if len(systems_list) > 0:
@@ -311,7 +315,7 @@ class RolePortAssignment:
 
         # Create the error message
         return ValueError(
-            f"Performer does not have required {port_type_str} port \"{self.performer_port_name}\""
+            f'Performer does not have required {port_type_str} port "{self.performer_port_name}"'
         )
 
     def create_not_enough_systems_error(self, systems_list: List[LeafSystem]) -> str:
@@ -323,8 +327,10 @@ class RolePortAssignment:
             port_type_str = "OUTPUT"
 
         # Create message depending on the pairing type
-        return f"Expected 1 system to have {port_type_str} port \"{self.external_target_name}\"," + \
-            f" but found {len(systems_list)} systems with that {port_type_str} port."
+        return (
+            f'Expected 1 system to have {port_type_str} port "{self.external_target_name}",'
+            + f" but found {len(systems_list)} systems with that {port_type_str} port."
+        )
 
     def create_no_target_found_error(self):
         # Setup
@@ -339,7 +345,7 @@ class RolePortAssignment:
 
         # Create error
         return ValueError(
-            f"Failed to find an external system with the name \"{external_target_name}\"" +
-            f" or an external system with {external_target_type} port name \"{external_target_name}\"." +
-            f"\nCheck your RolePortAssignment definition."
+            f'Failed to find an external system with the name "{external_target_name}"'
+            + f' or an external system with {external_target_type} port name "{external_target_name}".'
+            + f"\nCheck your RolePortAssignment definition."
         )

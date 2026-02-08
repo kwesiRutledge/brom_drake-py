@@ -14,7 +14,7 @@ class JointArmController(BaseArmController):
     """
     *Description*
 
-    A controller which imitates the joint control mode of the Kinova gen3 arm. 
+    A controller which imitates the joint control mode of the Kinova gen3 arm.
     This is designed to work with any arm.
 
     The controller is an extension of the pydrake.systems.framework.LeafSystem.
@@ -37,6 +37,7 @@ class JointArmController(BaseArmController):
     The type of target is determined by ee_target_type, and the options are defined in the
     end effector target.
     """
+
     def __init__(
         self,
         plant: MultibodyPlant,
@@ -45,7 +46,9 @@ class JointArmController(BaseArmController):
         joint_target_type: JointTarget = JointTarget.kPosition,
     ):
         BaseArmController.__init__(
-            self, plant, arm_model,
+            self,
+            plant,
+            arm_model,
             end_effector_frame_name=end_effector_frame_name,
         )
 
@@ -57,15 +60,15 @@ class JointArmController(BaseArmController):
         self.DeclareVectorOutputPort(
             "applied_arm_torque",
             BasicVector(self.plant.num_actuators()),
-            self.CalcArmTorques
+            self.CalcArmTorques,
         )
 
     def define_joint_target_input_ports(self, joint_target_type: JointTarget):
         """
         *Description*
-        
+
         Define the input ports for the JointArmController system
-        
+
         *Parameters*
 
         joint_target_type: JointTarget
@@ -83,9 +86,9 @@ class JointArmController(BaseArmController):
     def CalcArmTorques(self, context: Context, output: BasicVector):
         """
         *Description*
-        
+
         Calculate the arm torques based on the joint target and the current state of the arm.
-        
+
         *Parameters*
 
         context: pydrake.systems.framework.Context
@@ -113,7 +116,7 @@ class JointArmController(BaseArmController):
             q_err = q_des - q
             qd_des = 0 * q_err
             kp = 3e3
-            kd = 2*np.sqrt(3e3)
+            kd = 2 * np.sqrt(3e3)
             tau = kp * q_err + kd * (qd_des - qd) + tau_g
 
         else:

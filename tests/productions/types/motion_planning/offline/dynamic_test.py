@@ -4,6 +4,7 @@ import unittest
 # Internal Imports
 from brom_drake.productions.motion_planning.offline.dynamic import ChemLab2
 
+
 class KinemticTest(unittest.TestCase):
     def test_start_pose1(self):
         """
@@ -30,6 +31,5 @@ class KinemticTest(unittest.TestCase):
         self.assertTrue(True)
 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

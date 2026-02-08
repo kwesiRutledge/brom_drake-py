@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+
 @dataclass
 class Configuration:
     meshcat_port_number: int = 7001

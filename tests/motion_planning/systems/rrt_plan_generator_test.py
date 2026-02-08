@@ -4,11 +4,15 @@ import unittest
 
 import numpy as np
 from pydrake.all import (
-    RigidTransform, Quaternion,
-    MultibodyPlant, Parser, LeafSystem,
-    Simulator, DiagramBuilder,
+    RigidTransform,
+    Quaternion,
+    MultibodyPlant,
+    Parser,
+    LeafSystem,
+    Simulator,
+    DiagramBuilder,
     ModelInstanceIndex,
-    ConstantVectorSource
+    ConstantVectorSource,
 )
 from pydrake.common.value import AbstractValue
 from pydrake.geometry import SceneGraph
@@ -18,8 +22,11 @@ from pydrake.systems.primitives import ConstantValueSource
 from brom_drake.watchers.port_watcher.port_watcher_options import FigureNamingConvention
 from brom_drake.all import add_watcher_and_build
 from brom_drake.motion_planning.algorithms.rrt.base import BaseRRTPlannerConfig
+
 # Internal Imports
-from brom_drake.motion_planning.systems.open_loop_dispensers.open_loop_plan_dispenser import OpenLoopPlanDispenser
+from brom_drake.motion_planning.systems.open_loop_dispensers.open_loop_plan_dispenser import (
+    OpenLoopPlanDispenser,
+)
 from brom_drake.motion_planning.systems.rrt_plan_generator import RRTPlanGenerator
 import brom_drake.robots as robots
 from brom_drake.file_manipulation.urdf import drakeify_my_urdf
@@ -35,7 +42,7 @@ class RRTPlanGeneratorTest(unittest.TestCase):
         LeafSystem,
         LeafSystem,
         LeafSystem,
-        LeafSystem
+        LeafSystem,
     ]:
         """
         Description:
@@ -48,8 +55,8 @@ class RRTPlanGeneratorTest(unittest.TestCase):
 
         # Create start and goal configurations
         start_configuration = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
-        goal_configuration = np.array([0.0, 0.0, -np.pi/4.0, 0.0, 0.0, 0.0])
-        
+        goal_configuration = np.array([0.0, 0.0, -np.pi / 4.0, 0.0, 0.0, 0.0])
+
         # Create a MultibodyPlant
         plant, scene_graph = AddMultibodyPlantSceneGraph(
             builder,
@@ -57,9 +64,7 @@ class RRTPlanGeneratorTest(unittest.TestCase):
         )
 
         # Add the UR10e
-        urdf_file_path = str(
-            impresources.files(robots) / "models/ur/ur10e.urdf"
-        )
+        urdf_file_path = str(impresources.files(robots) / "models/ur/ur10e.urdf")
 
         new_urdf_path = drakeify_my_urdf(
             urdf_file_path,
@@ -83,9 +88,7 @@ class RRTPlanGeneratorTest(unittest.TestCase):
 
         # Also create a source which tells the planner what the model index
         # is of the of the robot is
-        robot_model_source = ConstantValueSource(
-            AbstractValue.Make(ur_model_idcs[0])
-        )
+        robot_model_source = ConstantValueSource(AbstractValue.Make(ur_model_idcs[0]))
         builder.AddSystem(robot_model_source)
 
         # Also create a plan dispenser, so that we can easily plot the outputs
@@ -95,7 +98,16 @@ class RRTPlanGeneratorTest(unittest.TestCase):
         )
         builder.AddSystem(dispenser)
 
-        return builder, plant, scene_graph, ur_model_idcs, start_source, goal_source, dispenser, robot_model_source
+        return (
+            builder,
+            plant,
+            scene_graph,
+            ur_model_idcs,
+            start_source,
+            goal_source,
+            dispenser,
+            robot_model_source,
+        )
 
     def test_plan1(self):
         """
@@ -105,14 +117,19 @@ class RRTPlanGeneratorTest(unittest.TestCase):
         :return:
         """
         # Setup
-        (builder, plant, scene_graph,
-         model_idcs, start_source, goal_source,
-         dispenser, robot_model_idx_source) = self.create_example_scene1()
+        (
+            builder,
+            plant,
+            scene_graph,
+            model_idcs,
+            start_source,
+            goal_source,
+            dispenser,
+            robot_model_idx_source,
+        ) = self.create_example_scene1()
 
         # Create an RRTPlanGenerator system
-        rrt_config = BaseRRTPlannerConfig(
-            max_iterations=1000
-        )
+        rrt_config = BaseRRTPlannerConfig(max_iterations=1000)
         plan_generator = RRTPlanGenerator(
             plant,
             scene_graph,
@@ -141,12 +158,11 @@ class RRTPlanGeneratorTest(unittest.TestCase):
         # Connect the planner's outputs to the dispenser
         builder.Connect(
             plan_generator.GetOutputPort("plan_is_ready"),
-            dispenser.GetInputPort("plan_ready")
+            dispenser.GetInputPort("plan_ready"),
         )
 
         builder.Connect(
-            plan_generator.GetOutputPort("motion_plan"),
-            dispenser.GetInputPort("plan")
+            plan_generator.GetOutputPort("motion_plan"), dispenser.GetInputPort("plan")
         )
 
         # Can we successfully build this?
@@ -165,8 +181,8 @@ class RRTPlanGeneratorTest(unittest.TestCase):
         for ii in np.linspace(0, T_sim, N_steps):
             simulator.AdvanceTo(ii)
 
-
         self.assertTrue(True)
+
 
 if __name__ == "__main__":
     unittest.main()

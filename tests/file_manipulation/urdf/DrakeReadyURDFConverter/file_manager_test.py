@@ -2,11 +2,12 @@ import unittest
 
 # Brom Imports
 from brom_drake.file_manipulation.urdf import (
-    DrakeReadyURDFConverter, 
+    DrakeReadyURDFConverter,
     DrakeReadyURDFConverterConfig,
     MeshReplacementStrategies,
-    MeshReplacementStrategy, 
+    MeshReplacementStrategy,
 )
+
 
 class DrakeReadyURDFConverterFileManagerTest(unittest.TestCase):
     def setUp(self):
@@ -24,6 +25,7 @@ class DrakeReadyURDFConverterFileManagerTest(unittest.TestCase):
             str(impresources.files(resources_dir) / "test2.urdf"),
             str(impresources.files(resources_dir) / "test7_no_mesh_in_collision.urdf"),
         ]
+
     def test_output_file_name1(self):
         """
         Description

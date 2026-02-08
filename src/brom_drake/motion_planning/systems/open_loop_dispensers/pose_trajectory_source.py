@@ -1,4 +1,11 @@
-from pydrake.all import AbstractValue, Context, LeafSystem, PiecewisePose, RigidTransform
+from pydrake.all import (
+    AbstractValue,
+    Context,
+    LeafSystem,
+    PiecewisePose,
+    RigidTransform,
+)
+
 
 class PoseTrajectorySource(LeafSystem):
     def __init__(self, trajectory: PiecewisePose):

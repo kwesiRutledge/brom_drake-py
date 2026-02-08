@@ -4,6 +4,7 @@ import xml.etree.ElementTree as ET
 # Internal Import
 from .shape_definition import ShapeDefinition, ShapeEnum
 
+
 @dataclass
 class SphereDefinition(ShapeDefinition):
     """
@@ -16,14 +17,15 @@ class SphereDefinition(ShapeDefinition):
     radius: float
         The radius of the sphere.
     """
+
     radius: float
 
     def add_geometry_to_element(self, target_element: ET.Element) -> ET.Element:
         """
         *Description*
-        
+
         Adds the sphere geometry as a sub-element to the given target element.
-        
+
         This method is an implementation of the abstract method defined in the
         ShapeDefinition base class.
 
@@ -47,7 +49,7 @@ class SphereDefinition(ShapeDefinition):
     def type(self) -> ShapeEnum:
         """
         *Description*
-        
+
         Returns the ShapeEnum type corresponding to a sphere.
 
         This method is an implementation of the abstract method defined in the

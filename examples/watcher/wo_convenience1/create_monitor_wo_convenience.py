@@ -14,9 +14,13 @@ import typer
 
 # Drake imports
 from pydrake.all import (
-    AddMultibodyPlantSceneGraph, DiagramBuilder,
-    AffineSystem, ConstantVectorSource,
-    Meshcat, MeshcatVisualizer, Simulator,
+    AddMultibodyPlantSceneGraph,
+    DiagramBuilder,
+    AffineSystem,
+    ConstantVectorSource,
+    Meshcat,
+    MeshcatVisualizer,
+    Simulator,
 )
 
 from brom_drake.all import DiagramWatcherOptions, DiagramWatcher
@@ -25,6 +29,7 @@ from brom_drake.example_helpers import BlockHandlerSystem
 #######################
 ## Class Definitions ##
 #######################
+
 
 def main():
 
@@ -42,24 +47,22 @@ def main():
     B = np.zeros((6, 1))
     f0 = np.array([0.0, 0.1, 0.1, 0.0, 0.0, 0.0])
     C = np.eye(6)
-    D = np.zeros((6,1))
-    y0 = np.zeros((6,1))
-    x0 = np.array([0.0,0.0,0.0,0.0,0.2,0.5])
-    target_source2 = builder.AddSystem(
-        AffineSystem(A, B, f0, C, D, y0)
-        )
+    D = np.zeros((6, 1))
+    y0 = np.zeros((6, 1))
+    x0 = np.array([0.0, 0.0, 0.0, 0.0, 0.2, 0.5])
+    target_source2 = builder.AddSystem(AffineSystem(A, B, f0, C, D, y0))
     target_source2.configure_default_state(x0)
 
     # Connect the state of the block to the output of a slowly changing system.
     builder.Connect(
         target_source2.get_output_port(),
-        block_handler_system.GetInputPort("desired_pose"))
+        block_handler_system.GetInputPort("desired_pose"),
+    )
 
     u0 = np.array([0.2])
     affine_system_input = builder.AddSystem(ConstantVectorSource(u0))
     builder.Connect(
-        affine_system_input.get_output_port(),
-        target_source2.get_input_port()
+        affine_system_input.get_output_port(), target_source2.get_input_port()
     )
 
     # Connect to Meshcat
@@ -89,7 +92,9 @@ def main():
 
     # Set up simulation
     simulator = Simulator(diagram, diagram_context)
-    block_handler_system.context = block_handler_system.plant.GetMyMutableContextFromRoot(diagram_context)
+    block_handler_system.context = (
+        block_handler_system.plant.GetMyMutableContextFromRoot(diagram_context)
+    )
     simulator.set_target_realtime_rate(1.0)
     simulator.set_publish_every_time_step(False)
 
@@ -98,5 +103,5 @@ def main():
     simulator.AdvanceTo(15.0)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

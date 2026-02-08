@@ -7,6 +7,7 @@ Description:
 
 from enum import Enum
 
+
 class EndEffectorTarget(Enum):
     """
     *Description*
@@ -15,7 +16,7 @@ class EndEffectorTarget(Enum):
     *Usage*
 
     .. code-block:: python
-    
+
         from brom_drake.control.arms.end_effector_target import EndEffectorTarget
         # or
         # from brom_drake.all import EndEffectorTarget
@@ -23,7 +24,8 @@ class EndEffectorTarget(Enum):
         # Selecting the pose target type
         ee_target_type = EndEffectorTarget.kPose
     """
-    kPose = 1   # Pose (position and orientation) expressed as a 7-element vector
-                # of the End Effector w.r.t. the base of the arm.
+
+    kPose = 1  # Pose (position and orientation) expressed as a 7-element vector
+    # of the End Effector w.r.t. the base of the arm.
     kTwist = 2
     kWrench = 3

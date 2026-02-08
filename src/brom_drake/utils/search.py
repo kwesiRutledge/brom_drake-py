@@ -4,6 +4,7 @@ from typing import List
 # Internal Imports
 from .constants import Performer
 
+
 def find_all_systems_with_output_port(
     builder: DiagramBuilder,
     target_port_name: str,
@@ -30,6 +31,7 @@ def find_all_systems_with_output_port(
 
     return potential_performers
 
+
 def find_all_systems_with_input_port(
     builder: DiagramBuilder,
     target_port_name: str,
@@ -55,6 +57,7 @@ def find_all_systems_with_input_port(
             continue
 
     return potential_performers
+
 
 def find_all_systems_with_name(
     builder: DiagramBuilder,

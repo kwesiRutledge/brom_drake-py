@@ -5,9 +5,14 @@ from typing import List, Tuple, Callable
 import networkx as nx
 import numpy as np
 from pydrake.all import (
-    RotationMatrix, Quaternion, RollPitchYaw,
-    Solve, SolutionResult, SpatialVelocity,
-    InverseKinematics, ModelInstanceIndex,
+    RotationMatrix,
+    Quaternion,
+    RollPitchYaw,
+    Solve,
+    SolutionResult,
+    SpatialVelocity,
+    InverseKinematics,
+    ModelInstanceIndex,
 )
 from pydrake.common.value import AbstractValue
 from pydrake.math import RigidTransform
@@ -17,12 +22,18 @@ from pydrake.systems.framework import Diagram, Context
 from pydrake.systems.primitives import ConstantVectorSource, ConstantValueSource
 
 # Internal Imports
-from brom_drake.motion_planning.systems.prototypical_planner import PrototypicalPlannerSystem
+from brom_drake.motion_planning.systems.prototypical_planner import (
+    PrototypicalPlannerSystem,
+)
 from brom_drake.productions.types import BaseProduction
 from brom_drake.productions.roles.role import Role
-from brom_drake.productions.roles.motion_planners.kinematic import kKinematicMotionPlanner
+from brom_drake.productions.roles.motion_planners.kinematic import (
+    kKinematicMotionPlanner,
+)
 from brom_drake.file_manipulation.urdf.shapes.sphere import SphereDefinition
-from brom_drake.file_manipulation.urdf.simple_writer.urdf_definition import SimpleShapeURDFDefinition
+from brom_drake.file_manipulation.urdf.simple_writer.urdf_definition import (
+    SimpleShapeURDFDefinition,
+)
 from brom_drake.utils import Performer, MotionPlan
 
 
@@ -76,9 +87,10 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
                 self.add_start_and_goal_to_plant(self.plant)
 
                 # Your custom code to add the supporting cast
-            
+
 
     """
+
     def __init__(
         self,
         start_configuration: np.ndarray = None,
@@ -117,7 +129,7 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
     def add_supporting_cast(self):
         """
         *Description*
-        
+
         This method will add the start and goal poses to the builder.
         """
         # Add visual elements for the start and goal poses
@@ -126,7 +138,7 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
     def add_robot_source_system(self):
         """
         *Description*
-        
+
         This method adds a source for providing the motion planner
         with the model index for the robot that we are trying to control.
         """
@@ -143,7 +155,7 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
     def add_start_and_goal_to_plant(self, plant: MultibodyPlant):
         """
         *Description*
-        
+
         Add the start and goal to this plant.
 
         .. note::
@@ -152,7 +164,7 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
             or if you want to add more than just spheres, etc.
 
         *Parameters*
-        
+
         plant: pydrake.multibody.plant.MultibodyPlant
             The plant to add the start and goal to.
         """
@@ -170,7 +182,9 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
         start_sphere_defn.write_to_file(start_sphere_urdf_location)
 
         # Load the start sphere into the plant and rigidly attach it at the start_pose
-        start_sphere_model_idx = Parser(plant).AddModels(str(start_sphere_urdf_location))[0]
+        start_sphere_model_idx = Parser(plant).AddModels(
+            str(start_sphere_urdf_location)
+        )[0]
         plant.WeldFrames(
             plant.world_frame(),
             plant.GetFrameByName("start_sphere_base_link", start_sphere_model_idx),
@@ -190,17 +204,21 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
         goal_sphere_defn.write_to_file(goal_sphere_urdf_location)
 
         # Load the start sphere into the plant and rigidly attach it at the start_pose
-        goal_sphere_model_idx = Parser(plant).AddModels(str(goal_sphere_urdf_location))[0]
+        goal_sphere_model_idx = Parser(plant).AddModels(str(goal_sphere_urdf_location))[
+            0
+        ]
         plant.WeldFrames(
             plant.world_frame(),
-            plant.GetFrameByName(f"{goal_sphere_defn.name}_base_link", goal_sphere_model_idx),
+            plant.GetFrameByName(
+                f"{goal_sphere_defn.name}_base_link", goal_sphere_model_idx
+            ),
             self.goal_pose,
         )
 
     def add_start_and_goal_sources_to_builder(self):
         """
         *Description*
-        
+
         This method will add the start and goal sources to the builder.
 
         .. warning::
@@ -208,7 +226,9 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
             This method should only be called AFTER the plant has been finalized.
         """
         # Input Processing
-        assert self.plant.is_finalized(), "Plant must be finalized before adding start and goal sources."
+        assert (
+            self.plant.is_finalized()
+        ), "Plant must be finalized before adding start and goal sources."
 
         # Add the start and goal poses to the builder
         self.add_start_source_system()
@@ -246,10 +266,10 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
     ):
         """
         *Description*
-        
+
         This small modification to the normal add_main_cast()
         function includes a call to create the optional inputs if needed.
-        
+
         TODO(kwesi): Consider moving this to the base class? Don't we only need to fill one role? (Motion Planner?)
 
         *Parameters*
@@ -265,9 +285,7 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
 
         # Create optional outputs, if needed
         for role_ii, performer_ii in cast:
-            self.create_optional_outputs_if_necessary(
-                role_ii, performer_ii
-            )
+            self.create_optional_outputs_if_necessary(role_ii, performer_ii)
 
     def build_production(
         self,
@@ -275,12 +293,12 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
     ) -> Tuple[Diagram, Context]:
         """
         *Description*
-        
+
         This method builds the production.
         It assumes that all components have been added to the builder.
 
         *Parameters*
-        
+
         with_watcher: bool, optional
             A Boolean that determines whether to add a watcher to the diagram.
             Default is True.
@@ -317,19 +335,19 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
 
     def create_optional_outputs_if_necessary(
         self,
-        role: Role, # This role will always be the Motion Planner, won't it?
+        role: Role,  # This role will always be the Motion Planner, won't it?
         performer: Performer,
     ):
         """
         *Description*
-        
+
         This method checks to see if all optional outputs were connected
         for the given role. If all of them were, then we do nothing.
         If any of the optional outputs were NOT connected,
         then we add a dummy value to replace it.
 
         .. important::
-        
+
             This method should only be called after the full production has
             been built. Otherwise, this may have unexpected behavior.
 
@@ -362,31 +380,32 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
         # TODO(kwesi): Maybe move above, general code to somewhere else?
         if role.name != "OfflineMotionPlanner":
             raise ValueError(
-                f"Expected role for OfflineMotionPlanning Production to be \"OfflineMotionPlanner\";" +
-                f"received {role.name}"
+                f'Expected role for OfflineMotionPlanning Production to be "OfflineMotionPlanner";'
+                + f"received {role.name}"
             )
 
         # Check to see if performer has the LAST assignment in the motion planning role
         last_assignment = role.port_assignments[-1]
         if last_assignment.performer_port_name != "plan_is_ready":
             raise ValueError(
-                f"Expected last port assignment to be \"plan_is_ready\" assignment, but" +
-                f"received an assignment with performer_port_name \"{last_assignment.performer_port_name}\""
+                f'Expected last port assignment to be "plan_is_ready" assignment, but'
+                + f'received an assignment with performer_port_name "{last_assignment.performer_port_name}"'
             )
 
         if performer.HasOutputPort(last_assignment.performer_port_name):
-            return # Do nothing; performer should already be connected
+            return  # Do nothing; performer should already be connected
 
         # Find system we want to connect it to
         systems_list = last_assignment.find_any_matching_input_targets(self.builder)
-        assert len(systems_list) == 1, \
-            f"Expected 1 system to have port \"{last_assignment.external_target_name}\"," + \
-            f" but found {len(systems_list)} systems with that output port."
+        assert len(systems_list) == 1, (
+            f'Expected 1 system to have port "{last_assignment.external_target_name}",'
+            + f" but found {len(systems_list)} systems with that output port."
+        )
         # TODO(kwesi): Perhaps move more of these error assertions to a separate file?
 
         self.builder.Connect(
             self.plan_ready_source.get_output_port(),
-            systems_list[0].GetInputPort(last_assignment.external_target_name)
+            systems_list[0].GetInputPort(last_assignment.external_target_name),
         )
 
     def define_pose_ik_problem(
@@ -398,10 +417,10 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
     ) -> InverseKinematics:
         """
         *Description*
-        
+
         Sets up the inverse kinematics problem for the start pose
         input to this function.
-        
+
         *Parameters*
 
         pose_WorldTarget: RigidTransform
@@ -431,8 +450,8 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
             self.plant.world_frame(),
             pose_WorldTarget.translation(),
             self.plant.GetFrameByName(target_frame_name),
-            (- np.ones((3,)) * eps0).reshape((-1, 1)),
-            (+ np.ones((3,)) * eps0).reshape((-1, 1)),
+            (-np.ones((3,)) * eps0).reshape((-1, 1)),
+            (+np.ones((3,)) * eps0).reshape((-1, 1)),
         )
 
         # TODO(kwesi): Add OrientationCosntraint
@@ -453,7 +472,7 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
         )
 
         return ik_problem
-    
+
     def easy_cast_and_build(
         self,
         planning_algorithm: Callable[
@@ -464,7 +483,7 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
     ) -> Tuple[Diagram, Context]:
         """
         *Description*
-        
+
         This function is used to easily cast and build the production.
 
         *Parameters*
@@ -492,7 +511,8 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
 
         # Create a planner from the algorithm
         prototypical_planner = PrototypicalPlannerSystem(
-            self.plant, self.scene_graph,
+            self.plant,
+            self.scene_graph,
             planning_algorithm,
             robot_model_idx=self.robot_model_index,
             controller_plant=self.station.controller_plant,
@@ -505,9 +525,7 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
         self.fill_role(planner_role, prototypical_planner)
         print("filled role")
 
-        self.create_optional_outputs_if_necessary(
-            planner_role, prototypical_planner
-        )
+        self.create_optional_outputs_if_necessary(planner_role, prototypical_planner)
 
         # Build
         diagram, diagram_context = self.build_production(with_watcher=with_watcher)
@@ -524,7 +542,7 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
     ):
         """
         *Description*
-        
+
         This method should be implemented by the subclass. It should add the
         system to the role.
 
@@ -555,7 +573,7 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
         # builder.Connect(
         #     system.GetOutputPort("motion_plan"),
         #     initialize_robots_system.GetInputPort("plan"),
-        # )        
+        # )
 
         # self.builder.Connect(
         #     self.plan_ready_source.get_output_port(),
@@ -569,7 +587,7 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
     def goal_configuration(self) -> np.ndarray:
         """
         *Description*
-        
+
         Get the goal pose. This should be defined by the subclass.
 
         *Returns*
@@ -606,13 +624,13 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
             # The user would need to define a forward kinematics function,
             # to convert the goal configuration to a goal pose.
             raise NotImplementedError(
-                "It looks like you are trying to get the goal pose from the goal configuration.\n" +
-                "This is not implemented (yet!) because it would require solving the forward kinematics" +
-                "problem for your specific scene.\n" +
-                "Please implement your own goal_pose() function with a custom forward kinamtics function" +
-                " (see ChemLab2's forward kinematics function) to convert the goal configuration to a goal pose."
+                "It looks like you are trying to get the goal pose from the goal configuration.\n"
+                + "This is not implemented (yet!) because it would require solving the forward kinematics"
+                + "problem for your specific scene.\n"
+                + "Please implement your own goal_pose() function with a custom forward kinamtics function"
+                + " (see ChemLab2's forward kinematics function) to convert the goal configuration to a goal pose."
             )
-            #TODO(kwesi): Is there a way to do this without knowing about the user's robot?
+            # TODO(kwesi): Is there a way to do this without knowing about the user's robot?
         else:
             raise NotImplementedError(
                 "This function should be implemented by the subclass."
@@ -632,7 +650,7 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
         """
         if self.robot_model_idx_ is not None:
             return self.robot_model_idx_
-        else:        
+        else:
             raise NotImplementedError(
                 "This function should be implemented by the subclass."
             )
@@ -659,7 +677,7 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
             raise NotImplementedError(
                 "This function should be implemented by the subclass."
             )
-    
+
     @property
     def start_pose(self) -> RigidTransform:
         """
@@ -678,13 +696,13 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
             # The user would need to define a forward kinematics function,
             # to convert the start configuration to a start pose.
             raise NotImplementedError(
-                "It looks like you are trying to get the start pose from the start configuration.\n" +
-                "This is not implemented (yet!) because it would require solving the forward kinematics" +
-                "problem for your specific scene.\n" +
-                "Please implement your own start_pose() function with a custom forward kinamtics function" +
-                " (see ChemLab2's forward kinematics function) to convert the start configuration to a start pose."
+                "It looks like you are trying to get the start pose from the start configuration.\n"
+                + "This is not implemented (yet!) because it would require solving the forward kinematics"
+                + "problem for your specific scene.\n"
+                + "Please implement your own start_pose() function with a custom forward kinamtics function"
+                + " (see ChemLab2's forward kinematics function) to convert the start configuration to a start pose."
             )
-            #TODO(kwesi): Is there a way to do this without knowing about the user's robot?
+            # TODO(kwesi): Is there a way to do this without knowing about the user's robot?
         else:
             raise NotImplementedError(
                 "This function should be implemented by the subclass."
@@ -693,12 +711,12 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
     def suggested_roles(self) -> List[Role]:
         """
         *Description*
-        
+
         This method suggests the roles that should be filled
         in this production.
-        
+
         *Returns*
-        
+
         roles: List[Role]
             The list of roles that should be filled in this production.
         """
@@ -717,7 +735,7 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
         for the given target pose.
 
         *Parameters*
-        
+
         pose_WorldTarget: RigidTransform
             The desired target pose of the end effector in the world frame.
 
@@ -734,7 +752,9 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
             The joint configuration that achieves the desired pose.
         """
         # Input Processing
-        assert self.plant is not None, "Plant must be defined before solving IK problem!"
+        assert (
+            self.plant is not None
+        ), "Plant must be defined before solving IK problem!"
 
         # Setup
 
@@ -748,16 +768,19 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
         ik_program = ik_problem.prog()
         ik_result = Solve(ik_program)
 
-        assert ik_result.get_solution_result() == SolutionResult.kSolutionFound, \
-            f"Solution result was {ik_result.get_solution_result()}; need SolutionResult.kSolutionFound to make RRT Plan!"
+        assert (
+            ik_result.get_solution_result() == SolutionResult.kSolutionFound
+        ), f"Solution result was {ik_result.get_solution_result()}; need SolutionResult.kSolutionFound to make RRT Plan!"
 
         q_solution = ik_result.get_x_val()
         # print(f"solved ik problem: {q_solution}")
 
         # Extract only the positions that correspond to our robot's joints
         if robot_joint_names is None:
-            robot_joint_names = self.plant.GetPositionNames(self.robot_model_index, add_model_instance_prefix=True)
-        
+            robot_joint_names = self.plant.GetPositionNames(
+                self.robot_model_index, add_model_instance_prefix=True
+            )
+
         all_joint_names = self.plant.GetPositionNames()
         q_out_list = []
         for ii, joint_name in enumerate(all_joint_names):

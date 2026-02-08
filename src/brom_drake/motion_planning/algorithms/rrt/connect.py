@@ -1,6 +1,7 @@
 """
 connect.py
 """
+
 from dataclasses import dataclass
 from typing import Tuple, Callable
 
@@ -9,8 +10,10 @@ import numpy as np
 from pydrake.geometry import SceneGraph
 from pydrake.multibody.plant import MultibodyPlant
 from pydrake.multibody.tree import ModelInstanceIndex
+
 # Internal Imports
 from brom_drake.motion_planning.algorithms.motion_planner import MotionPlanner
+
 
 @dataclass
 class RRTConnectPlannerConfig:
@@ -20,7 +23,7 @@ class RRTConnectPlannerConfig:
     random_seed: int = 23
     steering_step_size: float = 0.025
     debug_flag: bool = False
-    
+
 
 class RRTConnectPlanner(MotionPlanner):
     def __init__(
@@ -43,7 +46,9 @@ class RRTConnectPlanner(MotionPlanner):
 
         # Use the parent class constructor
         super().__init__(
-            robot_model_idx, plant, scene_graph, 
+            robot_model_idx,
+            plant,
+            scene_graph,
             random_seed=self.config.random_seed,
         )
 
@@ -63,7 +68,7 @@ class RRTConnectPlanner(MotionPlanner):
         debug_flag = self.config.debug_flag
 
         # Steer from nearest node to random configuration
-        q_current = nearest_node['q']
+        q_current = nearest_node["q"]
         last_node_idx = nearest_node_idx
 
         n_loops = 0
@@ -79,10 +84,10 @@ class RRTConnectPlanner(MotionPlanner):
 
             # If the next point is collision free, then add new node to the tree
             rrt.add_node(rrt.number_of_nodes(), q=q_new)
-            rrt.add_edge(last_node_idx, rrt.number_of_nodes()-1)
+            rrt.add_edge(last_node_idx, rrt.number_of_nodes() - 1)
 
             # Prepare for next iteration
-            last_node_idx = rrt.number_of_nodes()-1
+            last_node_idx = rrt.number_of_nodes() - 1
             q_current = q_new
 
             n_loops += 1
@@ -91,22 +96,20 @@ class RRTConnectPlanner(MotionPlanner):
             print(f"Number of loops in connection: {n_loops}")
             print(f"RRT Size: {rrt.number_of_nodes()}")
 
-        return q_current # Return the last configuration we visited
+        return q_current  # Return the last configuration we visited
 
     def find_nearest_node(
-        self,
-        rrt: nx.DiGraph,
-        q_random: np.ndarray
+        self, rrt: nx.DiGraph, q_random: np.ndarray
     ) -> Tuple[nx.classes.reportviews.NodeView, int]:
         """
         Description:
             This function finds the nearest node in the RRT to the random configuration.
         """
         nearest_node = None
-        min_distance = float('inf')
+        min_distance = float("inf")
 
         for node in rrt.nodes:
-            distance = np.linalg.norm(rrt.nodes[node]['q'] - q_random)
+            distance = np.linalg.norm(rrt.nodes[node]["q"] - q_random)
             if distance < min_distance:
                 min_distance = distance
                 nearest_node_idx = node
@@ -129,16 +132,16 @@ class RRTConnectPlanner(MotionPlanner):
         q_goal = q_goal.flatten()
         if q_start.shape[0] != self.dim_q or q_goal.shape[0] != self.dim_q:
             raise ValueError(
-                f"Start configuration shape ({q_start.shape}) and goal configuration " +
-                f"shape ({q_goal.shape}) must match the dimension of the robot ({self.dim_q})."
+                f"Start configuration shape ({q_start.shape}) and goal configuration "
+                + f"shape ({q_goal.shape}) must match the dimension of the robot ({self.dim_q})."
             )
 
         if collision_check_fcn is None:
-            collision_check_fcn =  self.check_collision_in_config
+            collision_check_fcn = self.check_collision_in_config
 
         # Setup
         rrt = nx.DiGraph()
-        rrt.add_node(0, q=q_start) # Make this graph contain all configurations
+        rrt.add_node(0, q=q_start)  # Make this graph contain all configurations
         prob_sample_goal = self.config.prob_sample_goal
 
         # RRT Planner
@@ -163,18 +166,14 @@ class RRTConnectPlanner(MotionPlanner):
                 #     collision_check_value = collision_check_fcn(rrt.nodes[node]['q'])
                 #     if collision_check_value:
                 #         print(f"Collision check node: {collision_check_fcn(rrt.nodes[node]['q'])}")
-                return rrt, rrt.number_of_nodes()-1
+                return rrt, rrt.number_of_nodes() - 1
 
         # If we exit the loop without finding a path to the goal,
         # return the RRT and indicate failure
         print("Max iterations reached without finding a path to the goal.")
         return rrt, -1
 
-    def steer(
-        self,
-        nearest_node,
-        q_random: np.ndarray
-    ) -> np.ndarray:
+    def steer(self, nearest_node, q_random: np.ndarray) -> np.ndarray:
         """
         Description:
             This function steers from the nearest node towards the random configuration.

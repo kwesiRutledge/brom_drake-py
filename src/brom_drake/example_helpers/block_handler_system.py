@@ -4,13 +4,20 @@ from pydrake.math import RollPitchYaw, RigidTransform, RotationMatrix
 from pydrake.multibody.math import SpatialVelocity
 from pydrake.multibody.parsing import Parser
 from pydrake.multibody.plant import MultibodyPlant, CoulombFriction
-from pydrake.systems.framework import Diagram, DiagramBuilder, LeafSystem, PortDataType, BasicVector
+from pydrake.systems.framework import (
+    Diagram,
+    DiagramBuilder,
+    LeafSystem,
+    PortDataType,
+    BasicVector,
+)
 
 import numpy as np
 
 # Internal Imports
 from brom_drake import example_helpers as eh
 from brom_drake.utils import AddGround, AddMultibodyTriad
+
 
 class BlockHandlerSystem(LeafSystem):
     def __init__(
@@ -37,7 +44,7 @@ class BlockHandlerSystem(LeafSystem):
         self.block_model_name = self.plant.GetModelInstanceName(self.block_model_idx)
         self.block_body_name = "block"
 
-        AddGround(self.plant) #Add ground to plant
+        AddGround(self.plant)  # Add ground to plant
 
         # Add the Triad
         self.scene_graph = scene_graph
@@ -57,8 +64,8 @@ class BlockHandlerSystem(LeafSystem):
             "measured_block_pose",
             BasicVector(6),
             self.SetBlockPose,
-            {self.time_ticket()}    # indicate that this doesn't depend on any inputs,
-        )                           # but should still be updated each timestep
+            {self.time_ticket()},  # indicate that this doesn't depend on any inputs,
+        )  # but should still be updated each timestep
 
     def SetBlockPose(self, context, output):
         """
@@ -73,7 +80,7 @@ class BlockHandlerSystem(LeafSystem):
         self.plant.SetFreeBodyPose(
             plant_context,
             self.plant.GetBodyByName(self.block_body_name),
-            RigidTransform(RollPitchYaw(pose_as_vec[:3]),pose_as_vec[3:])
+            RigidTransform(RollPitchYaw(pose_as_vec[:3]), pose_as_vec[3:]),
         )
 
         # self.plant.SetFreeBodySpatialVelocity(
@@ -83,16 +90,17 @@ class BlockHandlerSystem(LeafSystem):
         # )
 
         X_WBlock = self.plant.GetFreeBodyPose(
-            plant_context,
-            self.plant.GetBodyByName(self.block_body_name)
+            plant_context, self.plant.GetBodyByName(self.block_body_name)
         )
 
-        pose_as_vector = np.hstack([RollPitchYaw(X_WBlock.rotation()).vector(), X_WBlock.translation()])
+        pose_as_vector = np.hstack(
+            [RollPitchYaw(X_WBlock.rotation()).vector(), X_WBlock.translation()]
+        )
 
         # Create Output
         output.SetFromVector(pose_as_vector)
 
-    def SetInitialBlockState(self,diagram_context):
+    def SetInitialBlockState(self, diagram_context):
         """
         Description:
             Sets the initial position to be slightly above the ground (small, positive z value)
@@ -101,15 +109,19 @@ class BlockHandlerSystem(LeafSystem):
 
         # Set Pose
         p_WBlock = [0.0, 0.0, 0.2]
-        R_WBlock = RotationMatrix.MakeXRotation(np.pi/2.0) # RotationMatrix.MakeXRotation(-np.pi/2.0)
+        R_WBlock = RotationMatrix.MakeXRotation(
+            np.pi / 2.0
+        )  # RotationMatrix.MakeXRotation(-np.pi/2.0)
         X_WBlock = RigidTransform(R_WBlock, p_WBlock)
         self.plant.SetFreeBodyPose(
             self.plant.GetMyContextFromRoot(diagram_context),
             self.plant.GetBodyByName(self.block_body_name),
-            X_WBlock)
+            X_WBlock,
+        )
 
         # Set Velocities
         self.plant.SetFreeBodySpatialVelocity(
             self.plant.GetBodyByName(self.block_body_name),
-            SpatialVelocity(np.zeros(3),np.array([0.0,0.0,0.0])),
-            self.plant.GetMyContextFromRoot(diagram_context))
+            SpatialVelocity(np.zeros(3), np.array([0.0, 0.0, 0.0])),
+            self.plant.GetMyContextFromRoot(diagram_context),
+        )

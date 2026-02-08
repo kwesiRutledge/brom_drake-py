@@ -4,21 +4,27 @@ Description
 This file defines a test class that is used to test the prototypical planner
 system that I've defined in the motion_planning/systems/prototypical_planner.py file.
 """
+
 from importlib import resources as impresources
 import networkx as nx
 import numpy as np
 from pydrake.all import (
-    Parser, DiagramBuilder,
+    Parser,
+    DiagramBuilder,
     AddMultibodyPlantSceneGraph,
-    RigidTransform, RollPitchYaw,
+    RigidTransform,
+    RollPitchYaw,
     Simulator,
 )
 import unittest
 
 from brom_drake.file_manipulation.urdf import drakeify_my_urdf
+
 # Internal Imports
 from brom_drake.motion_planning.algorithms.rrt.base import BaseRRTPlanner
-from brom_drake.motion_planning.systems.prototypical_planner import PrototypicalPlannerSystem
+from brom_drake.motion_planning.systems.prototypical_planner import (
+    PrototypicalPlannerSystem,
+)
 import brom_drake.robots as robots
 from brom_drake.productions.motion_planning.offline import ShelfPlanning1
 
@@ -37,9 +43,7 @@ class TestPrototypicalPlannerSystem(unittest.TestCase):
             time_step=1e-3,
         )
 
-        urdf_file_path = str(
-            impresources.files(robots) / "models/ur/ur10e.urdf"
-        )
+        urdf_file_path = str(impresources.files(robots) / "models/ur/ur10e.urdf")
 
         # Convert the URDF
         new_urdf_path = drakeify_my_urdf(
@@ -61,10 +65,10 @@ class TestPrototypicalPlannerSystem(unittest.TestCase):
         the shelf placed in the way.
         """
         # Setup
-        q_collision = np.array([0.0, 0.0, -np.pi/4.0, 0.0, 0.0, 0.0])
+        q_collision = np.array([0.0, 0.0, -np.pi / 4.0, 0.0, 0.0, 0.0])
 
         bad_shelf_position = np.array([0.5, 0.0, 0.0])
-        bad_shelf_orientation = RollPitchYaw(np.pi/2.0, 0.0, 0.0)
+        bad_shelf_orientation = RollPitchYaw(np.pi / 2.0, 0.0, 0.0)
         bad_shelf_pose = RigidTransform(bad_shelf_orientation, bad_shelf_position)
 
         # Create the Production
@@ -95,7 +99,7 @@ class TestPrototypicalPlannerSystem(unittest.TestCase):
         # Build production
         production1.fill_role(production1.suggested_roles()[0], system1)
         diagram, diagram_context = production1.build_production()
-        
+
         system1.set_internal_root_context(diagram_context)
 
         # Check collision
@@ -116,7 +120,8 @@ class TestPrototypicalPlannerSystem(unittest.TestCase):
         # Create the System
         self.plant.Finalize()
         prototypical_planner = PrototypicalPlannerSystem(
-            self.plant, self.scene_graph,
+            self.plant,
+            self.scene_graph,
             planner1,
             robot_model_idx=self.arm,
         )
@@ -132,8 +137,8 @@ class TestPrototypicalPlannerSystem(unittest.TestCase):
         :return:
         """
         # Setup
-        q_easy_start = np.array([0.0, 0.0, -np.pi/4.0, 0.0, 0.0, 0.0])
-        q_easy_goal = np.array([0.0, 0.0, -np.pi/8.0, 0.0, 0.0, 0.0])
+        q_easy_start = np.array([0.0, 0.0, -np.pi / 4.0, 0.0, 0.0, 0.0])
+        q_easy_goal = np.array([0.0, 0.0, -np.pi / 8.0, 0.0, 0.0, 0.0])
         production1 = ShelfPlanning1(
             meshcat_port_number=None,
             start_config=q_easy_start,
@@ -165,18 +170,16 @@ class TestPrototypicalPlannerSystem(unittest.TestCase):
         diagram, diagram_context = production1.build_production()
 
         # Add the connections that we need for the performer
-        prototypical_planner.set_internal_root_context(
-            diagram_context
-        )
+        prototypical_planner.set_internal_root_context(diagram_context)
 
         # Create simulator
         # simulator = Simulator(diagram, diagram_context)
         # simulator.set_target_realtime_rate(1.0)
         # simulator.Initialize()
-        
-        self.assertTrue(True) # Production built successfully, which is good.
 
-        #TODO(kwesi): Test that the simulation works for some simple case...
+        self.assertTrue(True)  # Production built successfully, which is good.
+
+        # TODO(kwesi): Test that the simulation works for some simple case...
 
     def test_planning_result_to_array1(self):
         """
@@ -187,8 +190,8 @@ class TestPrototypicalPlannerSystem(unittest.TestCase):
         function.
         """
         # Setup
-        q_easy_start = np.array([0.0, 0.0, -np.pi/4.0, 0.0, 0.0, 0.0])
-        q_easy_goal = np.array([0.0, 0.0, -np.pi/8.0, 0.0, 0.0, 0.0])
+        q_easy_start = np.array([0.0, 0.0, -np.pi / 4.0, 0.0, 0.0, 0.0])
+        q_easy_goal = np.array([0.0, 0.0, -np.pi / 8.0, 0.0, 0.0, 0.0])
         production1 = ShelfPlanning1(
             meshcat_port_number=None,
             start_config=q_easy_start,
@@ -239,8 +242,8 @@ class TestPrototypicalPlannerSystem(unittest.TestCase):
         function.
         """
         # Setup
-        q_easy_start = np.array([0.0, 0.0, -np.pi/4.0, 0.0, 0.0, 0.0])
-        q_easy_goal = np.array([0.0, 0.0, -np.pi/8.0, 0.0, 0.0, 0.0])
+        q_easy_start = np.array([0.0, 0.0, -np.pi / 4.0, 0.0, 0.0, 0.0])
+        q_easy_goal = np.array([0.0, 0.0, -np.pi / 8.0, 0.0, 0.0, 0.0])
         production1 = ShelfPlanning1(
             meshcat_port_number=None,
             start_config=q_easy_start,
@@ -266,10 +269,7 @@ class TestPrototypicalPlannerSystem(unittest.TestCase):
         )
 
         # Create a dummy array object
-        plan_array = np.array([
-            q_easy_start,
-            q_easy_goal
-        ])
+        plan_array = np.array([q_easy_start, q_easy_goal])
 
         # Call the planning_result_to_array method
         trajectory = prototypical_planner.planning_result_to_array(plan_array)
@@ -282,5 +282,6 @@ class TestPrototypicalPlannerSystem(unittest.TestCase):
         np.testing.assert_array_equal(trajectory[0], q_easy_start)
         np.testing.assert_array_equal(trajectory[1], q_easy_goal)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

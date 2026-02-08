@@ -8,14 +8,13 @@ Description:
 
 from importlib import resources as impresources
 import unittest
-from pydrake.all import (
-    DiagramBuilder, AddMultibodyPlantSceneGraph
-)
+from pydrake.all import DiagramBuilder, AddMultibodyPlantSceneGraph
 
 # Internal Imports
 from brom_drake.example_helpers import BlockHandlerSystem
 import brom_drake.example_helpers as eh
 from brom_drake.utils import AddGround
+
 
 class TestBlockHandlerSystem(unittest.TestCase):
     def test_init1(self):
@@ -27,7 +26,9 @@ class TestBlockHandlerSystem(unittest.TestCase):
         """
         # Setup
         time_step = 1e-3
-        urdf_path = impresources.files(eh) / "models/slider-block.urdf"  # TODO(Kwesi): Create a directory to hold all models
+        urdf_path = (
+            impresources.files(eh) / "models/slider-block.urdf"
+        )  # TODO(Kwesi): Create a directory to hold all models
         builder = DiagramBuilder()
 
         # Create Plant and the "Block + Ground system"
@@ -59,4 +60,3 @@ class TestBlockHandlerSystem(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

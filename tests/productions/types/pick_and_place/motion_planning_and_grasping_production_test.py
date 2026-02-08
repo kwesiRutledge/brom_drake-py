@@ -5,11 +5,14 @@ import unittest
 
 # Internal Imports
 from brom_drake.utils.pick_and_place.phase import PickAndPlacePhase
-from brom_drake.utils.pick_and_place.target_description import PickAndPlaceTargetDescription
+from brom_drake.utils.pick_and_place.target_description import (
+    PickAndPlaceTargetDescription,
+)
 from brom_drake.productions.types.pick_and_place import (
     MotionPlanningAndGraspingProduction,
-    MotionPlanningAndGraspingProductionScript
+    MotionPlanningAndGraspingProductionScript,
 )
+
 
 class MotionPlanningAndGraspingProductionTest(unittest.TestCase):
     def test_to_networkx_graph1(self):
@@ -53,19 +56,24 @@ class MotionPlanningAndGraspingProductionTest(unittest.TestCase):
 
         # Check to see if each of the targets contains a state for EACH pick and place phases
         pick_and_place_phases = [
-            PickAndPlacePhase.kPreGrasp, PickAndPlacePhase.kGrasp, PickAndPlacePhase.kPostGrasp,
-            PickAndPlacePhase.kPrePlace, PickAndPlacePhase.kPlace, PickAndPlacePhase.kPostPlace
+            PickAndPlacePhase.kPreGrasp,
+            PickAndPlacePhase.kGrasp,
+            PickAndPlacePhase.kPostGrasp,
+            PickAndPlacePhase.kPrePlace,
+            PickAndPlacePhase.kPlace,
+            PickAndPlacePhase.kPostPlace,
         ]
         for phase_jj in pick_and_place_phases:
             self.assertIn(
                 my_target0.name_for_pick_and_place_phase(phase_jj),
-                [node for node in graph_out.nodes()]
+                [node for node in graph_out.nodes()],
             )
 
             self.assertIn(
                 my_target1.name_for_pick_and_place_phase(phase_jj),
-                [node for node in graph_out.nodes()]
+                [node for node in graph_out.nodes()],
             )
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

@@ -5,6 +5,7 @@ Description:
     This file defines the PortWatcher class. This class is used to watch the ports of a
     diagram.
 """
+
 import logging
 from pathlib import Path
 from typing import Dict
@@ -12,7 +13,12 @@ import numpy as np
 import os
 
 from pydrake.multibody.plant import MultibodyPlant
-from pydrake.systems.framework import OutputPort, PortDataType, DiagramBuilder, LeafSystem
+from pydrake.systems.framework import (
+    OutputPort,
+    PortDataType,
+    DiagramBuilder,
+    LeafSystem,
+)
 from pydrake.systems.primitives import LogVectorOutput, VectorLogSink
 from pydrake.systems.framework import Context
 
@@ -21,11 +27,15 @@ from brom_drake.directories import DEFAULT_BROM_DIR
 from .file_manager import PortWatcherFileManager
 from brom_drake.watchers.port_watcher.support_types import assert_port_is_supported
 from .port_watcher_options import (
-    PortWatcherOptions, FigureNamingConvention,
-    PortWatcherPlottingOptions, PortWatcherRawDataOptions,
+    PortWatcherOptions,
+    FigureNamingConvention,
+    PortWatcherPlottingOptions,
+    PortWatcherRawDataOptions,
 )
 from .plotter import PortWatcherPlotter
-from brom_drake.systems.abstract_list_selection_system import AbstractListSelectionSystem
+from brom_drake.systems.abstract_list_selection_system import (
+    AbstractListSelectionSystem,
+)
 from brom_drake.systems.conversion import (
     BoolToVectorSystem,
     RigidTransformToVectorSystem,
@@ -35,6 +45,7 @@ from brom_drake.utils.type_checking import is_rigid_transform
 
 OutputPortNameLike = str
 
+
 class PortWatcher:
     """
     *Description*
@@ -43,6 +54,7 @@ class PortWatcher:
     This class adds the elements to the drake diagram that will monitor a given
     system's output port (**output_port**), if possible.
     """
+
     def __init__(
         self,
         output_port: OutputPort,
@@ -50,15 +62,15 @@ class PortWatcher:
         python_logger: logging.Logger,
         logger_name: str = None,
         options: PortWatcherOptions = PortWatcherOptions(),
-        base_watcher_dir: str = DEFAULT_BROM_DIR
+        base_watcher_dir: str = DEFAULT_BROM_DIR,
     ):
         """
         *Description*
-        
+
         This class is used to watch a single port of a system.
 
         *Parameters*
-        
+
         output_port: OutputPort
             The output port that will be watched.
 
@@ -111,7 +123,9 @@ class PortWatcher:
                 file_manager=self.file_manager,
             )
 
-    def get_vector_log_sink(self, with_index: int = None, with_output_port_name: str = None) -> VectorLogSink:
+    def get_vector_log_sink(
+        self, with_index: int = None, with_output_port_name: str = None
+    ) -> VectorLogSink:
         """
         *Description*
 
@@ -119,7 +133,7 @@ class PortWatcher:
         By default, this returns the first VectorLogSink in the internal dictionary.
 
         *Parameters*
-        
+
         with_index: int, optional
             The index of the VectorLogSink to return.
             By default, None.
@@ -127,9 +141,9 @@ class PortWatcher:
         with_output_port_name: str, optional
             The name of the output port of the VectorLogSink to return.
             By default, None.
-            
+
         *Returns*
-        
+
         vector_log_sink: VectorLogSink
             The VectorLogSink corresponding to the given index or output port name.
         """
@@ -163,7 +177,7 @@ class PortWatcher:
         original_output_port = self.port
         system = original_output_port.get_system()
 
-        # Name the VectorLogSink        
+        # Name the VectorLogSink
         name = f"PortWatcher_{system.get_name()}_{original_output_port.get_name()}"
         if current_output_port.get_name() != original_output_port.get_name():
             name += f"_{current_output_port.get_name()}"
@@ -182,7 +196,7 @@ class PortWatcher:
         value coming from the **PortWatcher**'s target output port.
 
         *Parameters*
-        
+
         builder: DiagramBuilder
             The diagram builder that is used to create the VectorLogSink.
         """
@@ -204,12 +218,11 @@ class PortWatcher:
         )
 
         # Then connect the output of the converter to a VectorLogSink
-        self._drake_vector_logs[current_output_port.get_name()] = \
-            LogVectorOutput(
-                converter_system.get_output_port(),
-                builder,
-            )
-        
+        self._drake_vector_logs[current_output_port.get_name()] = LogVectorOutput(
+            converter_system.get_output_port(),
+            builder,
+        )
+
         # And finally, name the vector log sink (must have unique names to compile the diagram)
         self.name_vector_log_sink(current_output_port=current_output_port)
 
@@ -238,8 +251,9 @@ class PortWatcher:
         # Address the case of list type inputs first
         if type(example_value) is list:
             # A list input should NEVER have zero length
-            assert len(example_value) > 0, \
-                f"All list output ports should contain at least 1 example allocation value; received 0 from port {current_output_port.get_name()}"
+            assert (
+                len(example_value) > 0
+            ), f"All list output ports should contain at least 1 example allocation value; received 0 from port {current_output_port.get_name()}"
 
             # If the value is a list, then we will use
             # a special system to select each element of the list
@@ -253,30 +267,35 @@ class PortWatcher:
                 if current_output_port.get_name() == "body_poses":
                     # TODO(Kwesi): Include test to see if
                     # this system is a multibody plant
-                    system_is_multibody_plant = type(current_output_port.get_system()) is MultibodyPlant
+                    system_is_multibody_plant = (
+                        type(current_output_port.get_system()) is MultibodyPlant
+                    )
                     if system_is_multibody_plant:
                         # Extract all body names
-                        system_as_multibody_plant: MultibodyPlant = current_output_port.get_system()
-                        body_indices = get_all_associated_body_indices_in_plant(system_as_multibody_plant)
-                        current_body_name = system_as_multibody_plant.get_body(body_index=body_indices[idx]).name()
+                        system_as_multibody_plant: MultibodyPlant = (
+                            current_output_port.get_system()
+                        )
+                        body_indices = get_all_associated_body_indices_in_plant(
+                            system_as_multibody_plant
+                        )
+                        current_body_name = system_as_multibody_plant.get_body(
+                            body_index=body_indices[idx]
+                        ).name()
 
                         output_port_name = f"{current_body_name}"
 
                 # Create selection system for this iteration
                 selection_i = builder.AddNamedSystem(
-                    system = AbstractListSelectionSystem(
+                    system=AbstractListSelectionSystem(
                         idx,
                         output_type=type(example_value[0]),
-                        output_port_name=output_port_name
+                        output_port_name=output_port_name,
                     ),
-                    name = f"System {system.get_name()}'s Port \"{current_output_port.get_name()}\" Element #{idx}"
+                    name=f'System {system.get_name()}\'s Port "{current_output_port.get_name()}" Element #{idx}',
                 )
 
                 # Connect selection system to target port
-                builder.Connect(
-                    current_output_port,
-                    selection_i.get_input_port()
-                )
+                builder.Connect(current_output_port, selection_i.get_input_port())
 
                 # Use recursion to assign the proper logger to the output of selection_i
                 self.prepare_vector_log_for_abstract_valued_port(
@@ -290,7 +309,8 @@ class PortWatcher:
         # Non-list types
         if is_rigid_transform(example_value):
             self.prepare_vector_log_for_rigid_transform_port(
-                current_output_port, builder,
+                current_output_port,
+                builder,
             )
             self.name_vector_log_sink(current_output_port=current_output_port)
 
@@ -298,9 +318,7 @@ class PortWatcher:
             # If the value is a boolean,
             # then we must create an intermediate BoolToVectorSystem
             # that will convert the boolean to a vector.
-            converter_system = builder.AddSystem(
-                BoolToVectorSystem()
-            )
+            converter_system = builder.AddSystem(BoolToVectorSystem())
 
             # Connect the system to the port
             builder.Connect(
@@ -314,7 +332,7 @@ class PortWatcher:
                 builder,
             )
             self.name_vector_log_sink(current_output_port=current_output_port)
-        
+
         else:
             raise NotImplementedError(
                 f"PortWatcher does not support the type of data ({type(example_value)}) contained in the port."
@@ -323,20 +341,22 @@ class PortWatcher:
     def prepare_vector_logs(self, builder: DiagramBuilder):
         """
         *Description*
-        
+
         Prepares any VectorLogSink's needed to measure the current port.
         In most cases, only one VectorLogSink is needed.
-        
+
         *Parameters*
-        
+
         builder: DiagramBuilder
             The diagram builder that is used to create the logger.
-        
+
         """
         # Create ALL of the VectorLogSink's needed
         # for each type of data in the port
         if self.port.get_data_type() == PortDataType.kVectorValued:
-            self._drake_vector_logs[self.port.get_name()] = LogVectorOutput(self.port, builder)
+            self._drake_vector_logs[self.port.get_name()] = LogVectorOutput(
+                self.port, builder
+            )
             self.name_vector_log_sink(current_output_port=self.port)
         else:
             # Port must be abstract valued
@@ -346,19 +366,19 @@ class PortWatcher:
         # with the logger
         for target_port_name, log_sink in self._drake_vector_logs.items():
             self.python_logger.info(
-                f"PortWatcher prepared VectorLogSink for system \"{self.port.get_system().get_name()}\"'s "
-                f"port \"{target_port_name}\".\n" + \
-                f" - It's name is \"{log_sink.get_name()}\"."
+                f'PortWatcher prepared VectorLogSink for system "{self.port.get_system().get_name()}"\'s '
+                f'port "{target_port_name}".\n'
+                + f' - It\'s name is "{log_sink.get_name()}".'
             )
-    
+
     def safe_system_name(self, system: LeafSystem = None) -> str:
         """
         *Description*
-        
+
         Returns a safe name for the system.
 
         *Returns*
-        
+
         name: str
             System's name
         """
@@ -371,7 +391,9 @@ class PortWatcher:
         # First, let's check to see how many "/" exist in the name
         slash_occurences = [i for i, letter in enumerate(out) if letter == "/"]
         if len(slash_occurences) > 0:
-            out = out[slash_occurences[-1] + 1:]  # truncrate string based on the last slash
+            out = out[
+                slash_occurences[-1] + 1 :
+            ]  # truncrate string based on the last slash
 
         # Second, replace all spaces with underscores
         out = out.replace(" ", "_")
@@ -387,13 +409,14 @@ class PortWatcher:
         or just one figure for the entire port.
 
         *Parameters*
-        
+
         diagram_context: Context
             The context of the diagram.
         """
         # Test to see if we have a plotter
-        assert self.plotter is not None, \
-            "Cannot save figures because no plotter was created for this PortWatcher."
+        assert (
+            self.plotter is not None
+        ), "Cannot save figures because no plotter was created for this PortWatcher."
 
         # For each vector log, save one figure
         for output_port_name, log_sink in self._drake_vector_logs.items():
@@ -402,9 +425,11 @@ class PortWatcher:
             port_component_name = None
             if output_port_name != self.port.get_name():
                 port_component_name = output_port_name
-            
+
             # Call the plotter to save the figure
-            self.plotter.save_figures(log_sink, diagram_context, port_component_name=port_component_name)
+            self.plotter.save_figures(
+                log_sink, diagram_context, port_component_name=port_component_name
+            )
 
     def save_raw_data(self, diagram_context: Context):
         """
@@ -413,7 +438,7 @@ class PortWatcher:
         Saves the raw data to a file.
 
         *Arguments*
-        
+
         diagram_context: Context
             The context of the diagram.
         """
@@ -431,8 +456,7 @@ class PortWatcher:
             # Write the data to file
             # - time data
             time_data_file_name = self.file_manager.time_data_file_path(
-                system_name=system_containing_port.get_name(),
-                port_name=port.get_name()
+                system_name=system_containing_port.get_name(), port_name=port.get_name()
             )
 
             log_times = log.sample_times()
@@ -444,7 +468,7 @@ class PortWatcher:
             if n_vector_logs == 1:
                 raw_data_file = self.file_manager.raw_data_file_path(
                     system_name=system_containing_port.get_name(),
-                    port_name=port.get_name()
+                    port_name=port.get_name(),
                 )
             else:
                 raw_data_file = self.file_manager.raw_data_file_path(
@@ -460,4 +484,3 @@ class PortWatcher:
             np.save(raw_data_file, log_data)
 
             # Announce the saving of the raw data
-        

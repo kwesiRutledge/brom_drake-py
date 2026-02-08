@@ -4,6 +4,7 @@ Description:
     This script includes a set of tests for the conversion of URDF
     files into a new URDF.
 """
+
 from importlib import resources as impresources
 import numpy as np
 from pathlib import Path
@@ -19,10 +20,10 @@ import brom_drake
 from brom_drake import robots
 from brom_drake.all import drakeify_my_urdf
 from brom_drake.file_manipulation.urdf import (
-    DrakeReadyURDFConverter, 
+    DrakeReadyURDFConverter,
     DrakeReadyURDFConverterConfig,
     MeshReplacementStrategies,
-    MeshReplacementStrategy, 
+    MeshReplacementStrategy,
 )
 import resources as resources_dir
 from brom_drake.productions.debug import ShowMeThisModel
@@ -36,9 +37,7 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         Set up for all of the tests.
         :return:
         """
-        self.test_urdf1_filename = str(
-            impresources.files(resources_dir) / "test1.urdf"
-        )
+        self.test_urdf1_filename = str(impresources.files(resources_dir) / "test1.urdf")
         self.test_urdf2_filename = str(
             impresources.files(brom_drake) / "robots/models/ur/ur10e.urdf"
         )
@@ -60,7 +59,8 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         )
 
         self.test_urdf7_filename = str(
-            impresources.files(resources_dir) / "test6_multiple_collision_geometries.urdf"
+            impresources.files(resources_dir)
+            / "test6_multiple_collision_geometries.urdf"
         )
 
         self.test_urdfs = [
@@ -70,8 +70,9 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
             impresources.files(resources_dir) / "test3_relative.urdf",
             impresources.files(resources_dir) / "test4_relative.urdf",
             impresources.files(resources_dir) / "test5_absolute.urdf",
-            impresources.files(resources_dir) / "test6_multiple_collision_geometries.urdf",
-            impresources.files(resources_dir) / "test8_beaker.urdf"
+            impresources.files(resources_dir)
+            / "test6_multiple_collision_geometries.urdf",
+            impresources.files(resources_dir) / "test8_beaker.urdf",
         ]
 
     def test_convert_tree1(self):
@@ -127,11 +128,7 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
             config=config,
         )
         new_elts = converter.convert_tree_element(test_tree.getroot())
-        self.assertEqual(
-            len(new_elts),
-            1,
-            f"Expected 1 element, got {len(new_elts)}"
-        )
+        self.assertEqual(len(new_elts), 1, f"Expected 1 element, got {len(new_elts)}")
         new_root = new_elts[0]
 
         # Root of tree should not be modified
@@ -177,13 +174,10 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         # Compare the filenames of the mesh and the new obj file
         self.assertNotEqual(
             target_visual_elt.find("geometry/mesh").attrib["filename"],
-            new_visual_elt.find("geometry/mesh").attrib["filename"]
+            new_visual_elt.find("geometry/mesh").attrib["filename"],
         )
 
-        self.assertIn(
-            ".obj",
-            new_visual_elt.find("geometry/mesh").attrib["filename"]
-        )
+        self.assertIn(".obj", new_visual_elt.find("geometry/mesh").attrib["filename"])
 
     def test_create_obj_to_replace_mesh_file1(self):
         """
@@ -198,9 +192,7 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         test_tree = ElementTree(file=test_urdf1)
 
         # Get the tree with the dae file
-        dae_tree = test_tree.find(
-            ".//mesh[@filename='./meshes/ur10e/visual/base.dae']"
-        )
+        dae_tree = test_tree.find(".//mesh[@filename='./meshes/ur10e/visual/base.dae']")
 
         # Define configuration for the converter
         config = DrakeReadyURDFConverterConfig(
@@ -216,9 +208,15 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         new_elt = converter.create_obj_to_replace_mesh_file(dae_tree.attrib["filename"])
 
         # Check that the file was created
-        directory_for_transformed_file = converter.file_manager.output_file_directory() / Path(dae_tree.attrib["filename"]).parent
+        directory_for_transformed_file = (
+            converter.file_manager.output_file_directory()
+            / Path(dae_tree.attrib["filename"]).parent
+        )
         self.assertTrue(
-            (directory_for_transformed_file / Path(dae_tree.attrib["filename"]).name.replace(".dae", ".obj")).exists()
+            (
+                directory_for_transformed_file
+                / Path(dae_tree.attrib["filename"]).name.replace(".dae", ".obj")
+            ).exists()
         )
 
         self.assertTrue(True)
@@ -248,17 +246,12 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         new_urdf_path = converter.convert_urdf()
 
         # Verify that the new file exists
-        self.assertTrue(
-            new_urdf_path.exists()
-        )
+        self.assertTrue(new_urdf_path.exists())
 
         # Verify that the new file contains only obj files
         new_tree = ElementTree(file=new_urdf_path)
         for mesh_elt in new_tree.iter("mesh"):
-            self.assertIn(
-                ".obj",
-                mesh_elt.attrib["filename"]
-            )
+            self.assertIn(".obj", mesh_elt.attrib["filename"])
 
     def test_convert_urdf2(self):
         """
@@ -285,22 +278,16 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         new_urdf_path = converter.convert_urdf()
 
         # Verify that the new file exists
-        self.assertTrue(
-            new_urdf_path.exists()
-        )
+        self.assertTrue(new_urdf_path.exists())
 
         # Verify that the new file contains only obj files
         new_tree = ElementTree(file=new_urdf_path)
         for mesh_elt in new_tree.iter("mesh"):
-            self.assertIn(
-                ".obj",
-                mesh_elt.attrib["filename"]
-            )
+            self.assertIn(".obj", mesh_elt.attrib["filename"])
 
         # Verify that the new file contains transmission elements
         transmissions_found = new_tree.findall(".//transmission")
         self.assertGreater(len(transmissions_found), 0)
-
 
     def test_convert_urdf3(self):
         """
@@ -327,17 +314,12 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         new_urdf_path = converter.convert_urdf()
 
         # Verify that the new file exists
-        self.assertTrue(
-            new_urdf_path.exists()
-        )
+        self.assertTrue(new_urdf_path.exists())
 
         # Verify that the new file contains only obj files
         new_tree = ElementTree(file=new_urdf_path)
         for mesh_elt in new_tree.iter("mesh"):
-            self.assertIn(
-                ".obj",
-                mesh_elt.attrib["filename"]
-            )
+            self.assertIn(".obj", mesh_elt.attrib["filename"])
 
     def test_convert_urdf4(self):
         """
@@ -364,21 +346,19 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         new_urdf_path = converter.convert_urdf()
 
         # Verify that the new file exists
-        self.assertTrue(
-            new_urdf_path.exists()
-        )
+        self.assertTrue(new_urdf_path.exists())
 
         # Verify that the new file contains only obj files
         new_tree = ElementTree(file=new_urdf_path)
         for mesh_elt in new_tree.iter("mesh"):
-            self.assertIn(
-                ".obj",
-                mesh_elt.attrib["filename"]
-            )
+            self.assertIn(".obj", mesh_elt.attrib["filename"])
 
             # Verify that the new mesh files exist
             self.assertTrue(
-                (converter.file_manager.output_file_directory() / Path(mesh_elt.attrib["filename"])).exists()
+                (
+                    converter.file_manager.output_file_directory()
+                    / Path(mesh_elt.attrib["filename"])
+                ).exists()
             )
 
     def test_convert_urdf5(self):
@@ -407,21 +387,19 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         new_urdf_path = converter.convert_urdf()
 
         # Verify that the new file exists
-        self.assertTrue(
-            new_urdf_path.exists()
-        )
+        self.assertTrue(new_urdf_path.exists())
 
         # Verify that the new file contains only obj files
         new_tree = ElementTree(file=new_urdf_path)
         for mesh_elt in new_tree.iter("mesh"):
-            self.assertIn(
-                ".obj",
-                mesh_elt.attrib["filename"]
-            )
+            self.assertIn(".obj", mesh_elt.attrib["filename"])
 
             # Verify that the new mesh files exist
             self.assertTrue(
-                (converter.file_manager.output_file_directory() / Path(mesh_elt.attrib["filename"])).exists()
+                (
+                    converter.file_manager.output_file_directory()
+                    / Path(mesh_elt.attrib["filename"])
+                ).exists()
             )
 
     def test_convert_urdf6(self):
@@ -445,7 +423,9 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         # Create a copy of the xml in test_urdf5 but with absolute paths
         urdf6_tree = ElementTree(file=test_urdf5)
         for mesh_elt in urdf6_tree.iter("mesh"):
-            mesh_elt.attrib["filename"] = f"file://{str(test_dir)}/resources/meshes/ur10e/collision/base.stl"
+            mesh_elt.attrib["filename"] = (
+                f"file://{str(test_dir)}/resources/meshes/ur10e/collision/base.stl"
+            )
 
         urdf6_tree.write(
             test_urdf6,
@@ -471,14 +451,14 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         # Verify that the new file contains only obj files
         new_tree = ElementTree(file=new_urdf_path)
         for mesh_elt in new_tree.iter("mesh"):
-            self.assertIn(
-                ".obj",
-                mesh_elt.attrib["filename"]
-            )
+            self.assertIn(".obj", mesh_elt.attrib["filename"])
 
             # Verify that the new mesh files exist
             self.assertTrue(
-                (converter.file_manager.output_file_directory() / Path(mesh_elt.attrib["filename"])).exists()
+                (
+                    converter.file_manager.output_file_directory()
+                    / Path(mesh_elt.attrib["filename"])
+                ).exists()
             )
 
         # Make sure that this can be added to a plant
@@ -524,15 +504,12 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         # Verify that the new file's collision elements DO NOT contain mesh elements
         new_tree = ElementTree(file=new_urdf_path)
         all_mesh_elts = list(new_tree.iter("mesh"))
-        self.assertTrue(
-            len(all_mesh_elts) == 1
-        )
+        self.assertTrue(len(all_mesh_elts) == 1)
 
         # Search through all the collision elements and make sure they are cylinders
         for collision_elt in new_tree.iter("collision"):
             self.assertEqual(
-                collision_elt.find("geometry").find("cylinder").tag,
-                "cylinder"
+                collision_elt.find("geometry").find("cylinder").tag, "cylinder"
             )
 
         # Make sure that this can be added to a plant
@@ -569,22 +546,17 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         new_urdf_path = converter.convert_urdf()
 
         # Verify that the new file exists
-        self.assertTrue(
-            new_urdf_path.exists()
-        )
+        self.assertTrue(new_urdf_path.exists())
 
         # Verify that the new file contains only obj files
         new_tree = ElementTree(file=new_urdf_path)
         for mesh_elt in new_tree.iter("mesh"):
-            self.assertIn(
-                ".obj",
-                mesh_elt.attrib["filename"]
-            )
+            self.assertIn(".obj", mesh_elt.attrib["filename"])
 
         # Verify that the new file contains multiple collision geometries
         collision_elt = new_tree.find(".//link/collision")
         self.assertTrue(collision_elt is not None)
-        
+
         self.assertEqual(
             len(list(collision_elt.iter("geometry"))),
             2,
@@ -627,17 +599,12 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         new_urdf_path = converter.convert_urdf()
 
         # Verify that the new file exists
-        self.assertTrue(
-            new_urdf_path.exists()
-        )
+        self.assertTrue(new_urdf_path.exists())
 
         # Verify that the new file contains only obj files
         new_tree = ElementTree(file=new_urdf_path)
         for mesh_elt in new_tree.iter("mesh"):
-            self.assertIn(
-                ".obj",
-                mesh_elt.attrib["filename"]
-            )
+            self.assertIn(".obj", mesh_elt.attrib["filename"])
 
         # Verify that the new file contains transmission elements
         transmissions_found = new_tree.findall(".//transmission")
@@ -647,7 +614,7 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         """
         Description
         -----------
-        In this test, we verify that the converter can properly convert a 
+        In this test, we verify that the converter can properly convert a
         URDF file composed of all mesh files that are supported by Drake.
         We do this by running a URDF through the converter twice.
         """
@@ -679,14 +646,10 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         second_urdf_path = converter2.convert_urdf()
 
         # Verify that the first new file exists
-        self.assertTrue(
-            new_urdf_path.exists()
-        )
+        self.assertTrue(new_urdf_path.exists())
 
         # Verify that the second new file exists
-        self.assertTrue(
-            second_urdf_path.exists()
-        )
+        self.assertTrue(second_urdf_path.exists())
 
     def test_convert_urdf11(self):
         """
@@ -714,7 +677,8 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
             new_urdf_path = converter.convert_urdf()
 
         self.assertTrue(
-            "The color replacement list must have exactly 4 elements (RGBA)." in str(context.exception)
+            "The color replacement list must have exactly 4 elements (RGBA)."
+            in str(context.exception)
         )
 
     def test_convert_urdf12(self):
@@ -747,8 +711,7 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
 
         for material_elt in new_tree.iter("material"):
             self.assertEqual(
-                material_elt.find("color").attrib["rgba"],
-                "1.0 0.5 0.2 0.1"
+                material_elt.find("color").attrib["rgba"], "1.0 0.5 0.2 0.1"
             )
 
     def test_convert_urdf13(self):
@@ -792,10 +755,7 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         # Verify that the new file contains only obj files
         new_tree = ElementTree(file=new_urdf_path)
         for mesh_elt in new_tree.iter("mesh"):
-            self.assertIn(
-                ".obj",
-                mesh_elt.attrib["filename"]
-            )
+            self.assertIn(".obj", mesh_elt.attrib["filename"])
 
         # Verify that the new file contains multiple collision geometries
         collision_elts = new_tree.findall(".//link/collision")
@@ -809,8 +769,7 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         temp_plant = MultibodyPlant(time_step=1e-3)
         added_models = Parser(temp_plant).AddModels(str(new_urdf_path))
         self.assertTrue(
-            len(added_models) > 0,
-            "The URDF could not be added to the MultibodyPlant."
+            len(added_models) > 0, "The URDF could not be added to the MultibodyPlant."
         )
 
     # TODO: Fix this test
@@ -884,7 +843,7 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
     #                     print(new_mesh_elt.attrib["filename"].replace("package://baxter_description/", ""))
     #                     self.assertTrue(
     #                         (
-    #                             converter.file_manager.output_file_directory() / 
+    #                             converter.file_manager.output_file_directory() /
     #                             Path(new_mesh_elt.attrib["filename"].replace("package://baxter_description/", ""))
     #                         ).exists()
     #                     )
@@ -896,13 +855,11 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
     #             ".obj",
     #             collision_geometry_elt.find("mesh").attrib["filename"]
     #         )
-    
+
     def test_vis1(self):
 
         # Setup
-        urdf_file_path = str(
-            impresources.files(robots) / "models/ur/ur10e.urdf"
-        )
+        urdf_file_path = str(impresources.files(robots) / "models/ur/ur10e.urdf")
 
         # Convert the URDF
         new_urdf_path = drakeify_my_urdf(
@@ -916,7 +873,7 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         time_step = 1e-3
         production = ShowMeThisModel(
             str(new_urdf_path),
-            with_these_joint_positions=[0.0, 0.0, -np.pi/4.0, 0.0, 0.0, 0.0],
+            with_these_joint_positions=[0.0, 0.0, -np.pi / 4.0, 0.0, 0.0, 0.0],
             time_step=time_step,
             meshcat_port_number=7003,
         )
@@ -966,13 +923,13 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
         new_collision_elts = converter.convert_collision_element(
             test_tree.getroot().find("link/collision")
         )
-        
+
         self.assertGreater(
             len(new_collision_elts),
             1,
-            "Expected more than one collision element after conversion."
+            "Expected more than one collision element after conversion.",
         )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

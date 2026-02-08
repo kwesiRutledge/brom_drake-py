@@ -9,6 +9,7 @@ from pydrake.all import (
     SceneGraph,
 )
 
+
 def AddTriad(
     source_id,
     frame_id,
@@ -17,7 +18,7 @@ def AddTriad(
     radius: float = 0.01,
     opacity: float = 1.0,
     X_FT: RigidTransform = RigidTransform(),
-    name: str= "frame",
+    name: str = "frame",
 ):
     """
     Adds illustration geometry representing the coordinate frame, with the
@@ -70,7 +71,7 @@ def AddMultibodyTriad(
     scene_graph: SceneGraph,
     length: float = 0.25,
     radius: float = 0.01,
-    opacity: float = 1.0
+    opacity: float = 1.0,
 ):
     plant = frame.GetParentPlant()
     AddTriad(

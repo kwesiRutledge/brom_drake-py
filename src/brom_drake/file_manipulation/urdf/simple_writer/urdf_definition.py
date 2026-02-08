@@ -3,6 +3,7 @@ Description:
     This file will contain utilities for quickly creating simple URDF files
     to be used in debugging and testing.
 """
+
 # External Imports
 from dataclasses import dataclass
 from enum import IntEnum
@@ -14,9 +15,15 @@ from pathlib import Path
 from pydrake.math import RigidTransform
 
 # Internal Imports
-from brom_drake.file_manipulation.urdf.shapes.shape_definition import ShapeEnum, ShapeDefinition
-from brom_drake.file_manipulation.urdf.simple_writer.inertia_definition import InertiaDefinition
+from brom_drake.file_manipulation.urdf.shapes.shape_definition import (
+    ShapeEnum,
+    ShapeDefinition,
+)
+from brom_drake.file_manipulation.urdf.simple_writer.inertia_definition import (
+    InertiaDefinition,
+)
 from brom_drake.directories import DEFAULT_BROM_MODELS_DIR
+
 
 @dataclass
 class SimpleShapeURDFDefinition:
@@ -27,7 +34,7 @@ class SimpleShapeURDFDefinition:
     specifiy it in a URDF.
 
     *Attributes*
-    
+
     name: str
         The name of the shape.
 
@@ -64,16 +71,19 @@ class SimpleShapeURDFDefinition:
         Whether to use hydroelastic collision for the shape.
         Defaults to True.
     """
+
     name: str
     shape: ShapeDefinition
     color: np.ndarray = None
-    create_collision: bool = True # Whether to create the collision elements of the urdf
+    create_collision: bool = (
+        True  # Whether to create the collision elements of the urdf
+    )
     mass: float = 1.0
     inertia: InertiaDefinition = None
     pose: RigidTransform = RigidTransform()
     mu_static: float = 0.7
     mu_dynamic: float = 0.4
-    is_hydroelastic: bool = True # Whether to use hydroelastic collision for the shape
+    is_hydroelastic: bool = True  # Whether to use hydroelastic collision for the shape
 
     def as_urdf(self) -> ET.Element:
         """
@@ -92,7 +102,7 @@ class SimpleShapeURDFDefinition:
             {
                 "name": self.name + "_robot",
                 "xmlns:drake": "http://drake.mit.edu",
-            }
+            },
         )
         link = ET.SubElement(root, "link", {"name": self.base_link_name})
 
@@ -113,7 +123,7 @@ class SimpleShapeURDFDefinition:
         *Description*
 
         Add the inertial elements to the link element.
-        
+
         *Parameters*
 
         link_elt: xml.etree.ElementTree.Element
@@ -146,7 +156,7 @@ class SimpleShapeURDFDefinition:
         *Description*
 
         Add the visual elements to the link element.
-        
+
         *Parameters*
 
         link_elt: xml.etree.ElementTree.Element
@@ -221,21 +231,17 @@ class SimpleShapeURDFDefinition:
         """
         # Setup
         proximity_properties = ET.SubElement(collision_elt, "proximity_properties")
-        
+
         # Create mu_static element
-        mu_static= ET.SubElement(
-            proximity_properties,
-            "drake:mu_static",
-            {"value": f"{self.mu_static}"}
-            )
+        mu_static = ET.SubElement(
+            proximity_properties, "drake:mu_static", {"value": f"{self.mu_static}"}
+        )
 
         # Create mu_dynamic element
         mu_dynamic = ET.SubElement(
-            proximity_properties,
-            "drake:mu_dynamic",
-            {"value": f"{self.mu_dynamic}"}
-            )
-        
+            proximity_properties, "drake:mu_dynamic", {"value": f"{self.mu_dynamic}"}
+        )
+
         # Create is_hydroelastic element
         hydroelastic = ET.SubElement(
             proximity_properties,
@@ -247,7 +253,7 @@ class SimpleShapeURDFDefinition:
         *Description*
 
         Add the origin element to the target element.
-        
+
         *Parameters*
 
         target_element: xml.etree.ElementTree.Element
@@ -292,9 +298,9 @@ class SimpleShapeURDFDefinition:
 
         file_path: str
             The path to the file where the URDF will be written.
-        
+
         *Returns*
-        
+
         str
             The path to the file where the URDF was written.
         """
@@ -315,5 +321,3 @@ class SimpleShapeURDFDefinition:
         tree.write(file_path, xml_declaration=True)
 
         return file_path
-
-

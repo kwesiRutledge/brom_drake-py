@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+
 @dataclass
 class InertiaDefinition:
     """
@@ -29,6 +30,7 @@ class InertiaDefinition:
     izz: float
         The zz component of the inertia tensor.
     """
+
     ixx: float = 1.0
     ixy: float = 0.0
     ixz: float = 0.0

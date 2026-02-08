@@ -8,10 +8,11 @@ from pydrake.all import (
 )
 from typing import Union
 
+
 class FlexiblePortSwitch(LeafSystem):
     """
     *Description*
-    
+
     This system is a simplification of the PortSwitch system primitive
     that is built into Drake. It allows for you to command the switch
     with a simple input (i.e., a string or an int) instead of
@@ -20,7 +21,7 @@ class FlexiblePortSwitch(LeafSystem):
 
     def __init__(self, dim: int, selector_type_in: type = str):
         LeafSystem.__init__(self)
-        
+
         # Setup
         self.dim = dim
         self.selector_type_in = selector_type_in
@@ -39,7 +40,9 @@ class FlexiblePortSwitch(LeafSystem):
             self.DoCalcValue,
         )
 
-    def declare_port_selector_input_port(self, name: str, type_in: type = str) -> InputPort:
+    def declare_port_selector_input_port(
+        self, name: str, type_in: type = str
+    ) -> InputPort:
         # Setup
 
         # Conditional based on type_in
@@ -89,9 +92,9 @@ class FlexiblePortSwitch(LeafSystem):
             raise NotImplementedError(
                 f"Type {selector_type_in} is not supported. Please use str, int, or InputPortIndex."
             )
-        
+
         return input_port
-    
+
     def get_port_selector_input_port(self) -> InputPort:
         """
         Description
@@ -99,7 +102,7 @@ class FlexiblePortSwitch(LeafSystem):
         This method will return the port selector input port.
         """
         return self.port_selector_port
-    
+
     def DoCalcValue(self, context: Context, output: BasicVector):
         """
         Description
@@ -115,10 +118,12 @@ class FlexiblePortSwitch(LeafSystem):
             port_selection = int(port_selection[0])
 
         # Vet the port selector value
-        assert isinstance(port_selection, self.selector_type_in), \
-            f"Expected {self.selector_type_in}; received {type(port_selection)}"
-        assert len(self._input_ports) > 0, \
-            "No input ports have been declared. Please declare at least one input port."
+        assert isinstance(
+            port_selection, self.selector_type_in
+        ), f"Expected {self.selector_type_in}; received {type(port_selection)}"
+        assert (
+            len(self._input_ports) > 0
+        ), "No input ports have been declared. Please declare at least one input port."
 
         # Get the input port
         input_port = self._input_ports[port_selection]

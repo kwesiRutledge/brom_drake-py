@@ -1,9 +1,12 @@
 import numpy as np
 import unittest
+
 # Internal Imports
 from brom_drake.systems.network_fsm.fsm_transition_condition import (
-    FSMTransitionConditionType, FSMTransitionCondition
+    FSMTransitionConditionType,
+    FSMTransitionCondition,
 )
+
 
 class FSMTransitionConditionTest(unittest.TestCase):
     def test_init1(self):
@@ -12,7 +15,7 @@ class FSMTransitionConditionTest(unittest.TestCase):
         -----------
         This test verifies that the constructor throws an error if
         we provide:
-        - NO INPUT PORT NAME 
+        - NO INPUT PORT NAME
         - the condition_type is kGreaterThanEqual
         - the condition_value is a float
         """
@@ -110,6 +113,7 @@ class FSMTransitionConditionTest(unittest.TestCase):
         # Evaluate the comparison
         result = condition.evaluate_comparison(np.array([1, 2, 4]))
         self.assertFalse(result)
+
 
 if __name__ == "__main__":
     unittest.main()

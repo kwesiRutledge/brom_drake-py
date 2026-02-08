@@ -1,15 +1,13 @@
 from dataclasses import dataclass
-from pydrake.all import (
-    ModelInstanceIndex,
-    Joint,
-    JointActuator
-)
+from pydrake.all import ModelInstanceIndex, Joint, JointActuator
 from typing import List
+
 
 @dataclass
 class PuppeteerJointSignature:
     joint: Joint
     joint_actuator: JointActuator
+
 
 @dataclass
 class AllJointSignatures:
@@ -19,6 +17,7 @@ class AllJointSignatures:
     @property
     def n_joints(self) -> int:
         return len(self.prismatic) + len(self.revolute)
+
 
 @dataclass
 class PuppetSignature:
@@ -30,16 +29,22 @@ class PuppetSignature:
 
     @property
     def all_joint_actuators(self) -> List[JointActuator]:
-        return [sig.joint_actuator for sig in self.joints.prismatic + self.joints.revolute]
+        return [
+            sig.joint_actuator for sig in self.joints.prismatic + self.joints.revolute
+        ]
 
     @property
     def all_models(self) -> List[ModelInstanceIndex]:
-        return self.prismatic_ghost_bodies + self.revolute_ghost_bodies + [self.model_instance_index]
+        return (
+            self.prismatic_ghost_bodies
+            + self.revolute_ghost_bodies
+            + [self.model_instance_index]
+        )
 
     @property
     def n_joints(self) -> int:
         return self.joints.n_joints
-    
+
     @property
     def n_models(self) -> int:
         return len(self.all_models)

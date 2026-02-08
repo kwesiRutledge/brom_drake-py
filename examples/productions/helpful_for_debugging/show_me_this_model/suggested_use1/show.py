@@ -18,11 +18,10 @@ from brom_drake import robots
 from brom_drake.all import drakeify_my_urdf
 from brom_drake.productions.all import ShowMeThisModel
 
+
 def main():
     # Setup
-    urdf_file_path = str(
-        impresources.files(robots) / "models/ur/ur10e.urdf"
-    )
+    urdf_file_path = str(impresources.files(robots) / "models/ur/ur10e.urdf")
 
     # Convert the URDF into a format that Drake likes
     new_urdf_path = drakeify_my_urdf(

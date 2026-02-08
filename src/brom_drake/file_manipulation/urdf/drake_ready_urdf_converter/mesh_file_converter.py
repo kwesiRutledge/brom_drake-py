@@ -7,7 +7,10 @@ import xml.etree.ElementTree as ET
 import trimesh
 
 # Internal imports
-from brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.util import URDF_CONVERSION_LOG_LEVEL_NAME
+from brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.util import (
+    URDF_CONVERSION_LOG_LEVEL_NAME,
+)
+
 
 class MeshFileConverter:
     """
@@ -31,6 +34,7 @@ class MeshFileConverter:
     logger: logging.Logger
         The logger to use for logging messages.
     """
+
     def __init__(
         self,
         mesh_file_path: str,
@@ -40,9 +44,9 @@ class MeshFileConverter:
     ):
         """
         **Description**
-        
+
         This class will convert a mesh file to a different format.
-        
+
         **Parameters**
 
         mesh_file_path: str
@@ -80,9 +84,7 @@ class MeshFileConverter:
         # print(
         #     str(self.urdf_dir / self.true_mesh_file_path())
         # )
-        mesh = trimesh.load_mesh(
-            str(self.urdf_dir / self.true_mesh_file_path())
-        )
+        mesh = trimesh.load_mesh(str(self.urdf_dir / self.true_mesh_file_path()))
 
         os.makedirs(self.define_output_path(output_file_path).parent, exist_ok=True)
         mesh.export(self.define_output_path(output_file_path))
@@ -98,7 +100,7 @@ class MeshFileConverter:
     def define_output_path(self, output_mesh_file: Path = None) -> Path:
         """
         **Description**
-        
+
         This function will define the output path for the CONVERTED mesh file.
 
         **Parameters**
@@ -128,9 +130,11 @@ class MeshFileConverter:
                 # - "./"
                 clean_mesh_file_name = str(mesh_file_name)
                 if "package://" in clean_mesh_file_name:
-                    clean_mesh_file_name = clean_mesh_file_name.replace("package://", "")
+                    clean_mesh_file_name = clean_mesh_file_name.replace(
+                        "package://", ""
+                    )
                     clean_mesh_file_name = clean_mesh_file_name[
-                        clean_mesh_file_name.find("/") + 1:
+                        clean_mesh_file_name.find("/") + 1 :
                     ]
                 elif "file://" in clean_mesh_file_name:
                     clean_mesh_file_name = clean_mesh_file_name.replace("file://", "")
@@ -139,9 +143,8 @@ class MeshFileConverter:
                         clean_mesh_file_name = Path(clean_mesh_file_name).name
                     else:
                         clean_mesh_file_name = clean_mesh_file_name[
-                            clean_mesh_file_name.find("/") + 1:
+                            clean_mesh_file_name.find("/") + 1 :
                         ]
-
 
                 clean_mesh_file_name = clean_mesh_file_name.replace("../", "")
                 clean_mesh_file_name = clean_mesh_file_name.replace("./", "")
@@ -155,8 +158,8 @@ class MeshFileConverter:
 
         # If we pass this point, then we know that the file type is not supported
         raise ValueError(
-            f"File type {mesh_file_name} is not supported by this function!\n" +
-            f"Make sure that the file type is one of the following: {self.supported_suffixes}"
+            f"File type {mesh_file_name} is not supported by this function!\n"
+            + f"Make sure that the file type is one of the following: {self.supported_suffixes}"
         )
 
     def find_file_path_in_package(
@@ -176,10 +179,14 @@ class MeshFileConverter:
         mesh_file_name = self.mesh_file
 
         # Extract the package name and the package directory from mesh file name
-        package_dir, package_name = self.find_package_directory_including_mesh(max_depth=max_depth)
+        package_dir, package_name = self.find_package_directory_including_mesh(
+            max_depth=max_depth
+        )
 
         # Create the output file path from what we now know
-        return package_dir / Path(mesh_file_name.replace(f"package://{package_name}/", ""))
+        return package_dir / Path(
+            mesh_file_name.replace(f"package://{package_name}/", "")
+        )
 
     def find_package_directory_including_mesh(
         self,
@@ -194,10 +201,12 @@ class MeshFileConverter:
         search_depth = 1
         while not package_found:
             # print(f"candidate_path: {candidate_path}")
-            
+
             # Check to see if "package.xml" exists in the directory
             if (candidate_path / "package.xml").exists():
-                self.logger.info(f"[MeshFileConverter] Found package path at {candidate_path}.")
+                self.logger.info(
+                    f"[MeshFileConverter] Found package path at {candidate_path}."
+                )
                 package_found = True
             else:
                 candidate_path = candidate_path.parent
@@ -269,7 +278,7 @@ class MeshFileConverter:
             return Path(self.mesh_file.replace("file://", ""))
         else:
             raise ValueError(
-                f"Mesh file path {self.mesh_file} is not supported by this function!\n" +
-                "Make sure that the \"filename\" attribute contains a relative path (e.g., starts with \"./\")\n"
-                " or a package path (i.e., starts with \"package:\")."
+                f"Mesh file path {self.mesh_file} is not supported by this function!\n"
+                + 'Make sure that the "filename" attribute contains a relative path (e.g., starts with "./")\n'
+                ' or a package path (i.e., starts with "package:").'
             )

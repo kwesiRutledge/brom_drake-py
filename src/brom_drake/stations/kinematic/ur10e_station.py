@@ -7,7 +7,12 @@ from pydrake.all import (
     Frame,
     ModelInstanceIndex,
 )
-from pydrake.geometry import SceneGraph, Meshcat, MeshcatVisualizer, MeshcatVisualizerParams
+from pydrake.geometry import (
+    SceneGraph,
+    Meshcat,
+    MeshcatVisualizer,
+    MeshcatVisualizerParams,
+)
 from pydrake.geometry import Role as DrakeRole
 from pydrake.math import RollPitchYaw, RigidTransform, RotationMatrix
 from pydrake.multibody.parsing import Parser
@@ -22,13 +27,14 @@ from brom_drake.robots.gripper_type import GripperType
 from brom_drake.control import IdealJointPositionController
 from brom_drake.control.grippers.gripper_controller import GripperController
 from brom_drake.file_manipulation.urdf import (
-    DrakeReadyURDFConverter, 
+    DrakeReadyURDFConverter,
     DrakeReadyURDFConverterConfig,
     MeshReplacementStrategy,
     MeshReplacementStrategies,
 )
 
 from brom_drake import robots
+
 
 class UR10eStation(Diagram):
     """
@@ -37,8 +43,9 @@ class UR10eStation(Diagram):
     A template system diagram for controlling a UR10e robot in a simulated environment.
 
     *Diagram*
-    
+
     """
+
     def __init__(
         self,
         time_step: float = 0.002,
@@ -78,7 +85,7 @@ class UR10eStation(Diagram):
 
         # Whether we have a camera in the simulation
         # self.has_camera = False
-        self.arm = None # Assign the Arm's Model Index later
+        self.arm = None  # Assign the Arm's Model Index later
         self.AddArm()
 
         # Which sort of gripper we're using (if any)
@@ -101,11 +108,11 @@ class UR10eStation(Diagram):
     ) -> Tuple[ModelInstanceIndex, Frame]:
         """
         *Description*
-        
+
         This function adds the "arm" object at the arm_urdf_path location to the plant.
 
         *Parameters*
-        
+
         arm_urdf_path : str
             The path to the URDF file for the arm.
 
@@ -158,14 +165,13 @@ class UR10eStation(Diagram):
 
         # Add a gripper with actuation to the full simulated plant
         gripper_urdf_path = str(
-            impresources.files(robots) / "models/robotiq/2f_85_gripper/urdf/robotiq_2f_85.urdf"
+            impresources.files(robots)
+            / "models/robotiq/2f_85_gripper/urdf/robotiq_2f_85.urdf"
         )
         self.gripper = Parser(plant=self.plant).AddModels(gripper_urdf_path)[0]
 
         X_grip = RigidTransform()
-        X_grip.set_rotation(
-            RotationMatrix(RollPitchYaw([0.0, 0.0, np.pi / 2]))
-        )
+        X_grip.set_rotation(RotationMatrix(RollPitchYaw([0.0, 0.0, np.pi / 2])))
         self.plant.WeldFrames(
             self.plant.GetFrameByName("tool0", self.arm),
             self.plant.GetFrameByName("robotiq_arg2f_base_link", self.gripper),
@@ -174,7 +180,8 @@ class UR10eStation(Diagram):
 
         # Add a gripper without actuation to the controller plant
         gripper_static_urdf = str(
-            impresources.files(robots) / "models/robotiq/2f_85_gripper/urdf/robotiq_2f_85_static.urdf"
+            impresources.files(robots)
+            / "models/robotiq/2f_85_gripper/urdf/robotiq_2f_85_static.urdf"
         )
         static_gripper = Parser(plant=self.controller_plant).AddModels(
             gripper_static_urdf
@@ -182,7 +189,9 @@ class UR10eStation(Diagram):
 
         self.controller_plant.WeldFrames(
             self.controller_plant.GetFrameByName("tool0", self.controller_arm),
-            self.controller_plant.GetFrameByName("robotiq_arg2f_base_link", static_gripper),
+            self.controller_plant.GetFrameByName(
+                "robotiq_arg2f_base_link", static_gripper
+            ),
             X_grip,
         )
 
@@ -217,14 +226,16 @@ class UR10eStation(Diagram):
 
         # Convert the arm urdf if necessary
         arm_urdf = None
-        if (not expected_arm_urdf_path.exists()) or self.force_conversion_of_original_urdf:
+        if (
+            not expected_arm_urdf_path.exists()
+        ) or self.force_conversion_of_original_urdf:
             # If drake-compatible URDF does not exist, then we need to convert
             # the original URDF to a drake-compatible URDF.
             config = DrakeReadyURDFConverterConfig(
                 overwrite_old_logs=True,
                 mesh_replacement_strategies=MeshReplacementStrategies(
                     collision_meshes=MeshReplacementStrategy.kWithObj,
-                )
+                ),
             )
             arm_urdf = DrakeReadyURDFConverter(
                 original_arm_urdf_path,
@@ -237,23 +248,27 @@ class UR10eStation(Diagram):
 
         # Add the arm to the plant using our convenience function
         self.arm, self.arm_ee_frame = self.add_arm_to_plant_with_ee_frame(
-            arm_urdf, self.plant,
+            arm_urdf,
+            self.plant,
             X_ee=self.X_ee,
         )
 
         # Add the arm to the controller plant using our convenience function
-        self.controller_arm, self.controller_arm_ee_frame = self.add_arm_to_plant_with_ee_frame(
-            arm_urdf, self.controller_plant,
-            X_ee=self.X_ee,
+        self.controller_arm, self.controller_arm_ee_frame = (
+            self.add_arm_to_plant_with_ee_frame(
+                arm_urdf,
+                self.controller_plant,
+                X_ee=self.X_ee,
+            )
         )
 
     def connect_gripper_controller(self):
         """
         *Description*
-        
+
         Connects the gripper controller to:
         - The Gripper Actuators (done via the plant of the station)
-        
+
         and exports some of the gripper controller's inputs and outputs
         (so that they become the inputs and outputs of the station).
         """
@@ -267,7 +282,8 @@ class UR10eStation(Diagram):
         )
         self.builder.ExportInput(
             gripper_controller.GetInputPort("gripper_target_type"),
-            "gripper_target_type")
+            "gripper_target_type",
+        )
 
         # Connect gripper controller to the plant
         self.builder.Connect(
@@ -282,13 +298,14 @@ class UR10eStation(Diagram):
         # Send gripper position and velocity as an output
         self.builder.ExportOutput(
             gripper_controller.GetOutputPort("measured_gripper_position"),
-            "measured_gripper_position")
+            "measured_gripper_position",
+        )
         self.builder.ExportOutput(
             gripper_controller.GetOutputPort("measured_gripper_velocity"),
             "measured_gripper_velocity",
         )
 
-    def ConnectToMeshcatVisualizer(self, port: int=None):
+    def ConnectToMeshcatVisualizer(self, port: int = None):
         """
         *Description*
 
@@ -303,18 +320,23 @@ class UR10eStation(Diagram):
         self.meshcat = Meshcat(port)
         m = MeshcatVisualizer(self.meshcat)
         m.AddToBuilder(
-            self.builder, self.scene_graph, self.meshcat,
+            self.builder,
+            self.scene_graph,
+            self.meshcat,
             # params=MeshcatVisualizerParams(
             #         role=DrakeRole.kProximity,
             #     ),
         )
 
-        print("Open %s in a browser to view the meshcat visualizer." % self.meshcat.web_url())
+        print(
+            "Open %s in a browser to view the meshcat visualizer."
+            % self.meshcat.web_url()
+        )
 
     def create_plants_and_scene_graph(self):
         """
         *Description*
-        
+
         This function creates the plant for the UR10e station, if needed.
         """
         # Setup
@@ -346,7 +368,7 @@ class UR10eStation(Diagram):
     def Finalize(self):
         """
         *Description*
-        
+
         This finalizes the diagram by:
         - Finalizing all plants in the diagram
         - Setting up the scene graph connections
@@ -397,7 +419,7 @@ class UR10eStation(Diagram):
     ):
         """
         *Description*
-        
+
         This function creates a Cartesian arm controller and connects it to the rest of the system.
         :return:
         """
@@ -408,7 +430,10 @@ class UR10eStation(Diagram):
 
         # Output measured arm position and velocity
         demux = self.builder.AddSystem(
-            Demultiplexer(self.plant.num_multibody_states(self.arm), self.plant.num_positions(self.arm)),
+            Demultiplexer(
+                self.plant.num_multibody_states(self.arm),
+                self.plant.num_positions(self.arm),
+            ),
         )
         demux.set_name(f"{self.get_name()}_Demux")
 
@@ -427,12 +452,12 @@ class UR10eStation(Diagram):
 
     def CreateJointArmControllerAndExportIO(
         self,
-    )-> IdealJointPositionController:
+    ) -> IdealJointPositionController:
         """
         *Description*
-        
+
         Creates an ideal joint position controller and exports the necessary inputs + outputs.
-        
+
         *Returns*
 
         joint_controller: IdealJointPositionController
@@ -472,7 +497,7 @@ class UR10eStation(Diagram):
             True if Meshcat visualization is being used, False otherwise.
         """
         return self.meshcat_port_number is not None
-    
+
     def UpdateInternalContexts(self, context: Context):
         """
         *Description*
