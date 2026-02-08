@@ -25,6 +25,7 @@ if __name__ == "__main__":
             "matplotlib",
             "networkx",
             "numpy",
+            "pycollada",
             "trimesh",
             "coacd",
         ],
