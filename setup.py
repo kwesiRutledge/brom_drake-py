@@ -23,7 +23,6 @@ if __name__ == "__main__":
             "meshcat",
             "matplotlib",
             "numpy",
-            "pycollada",
             "trimesh",
             "coacd",
         ],

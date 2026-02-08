@@ -40,8 +40,6 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: 3.11
-      - name: Install dependencies
-        run: pip install -r requirements.txt
       - name: Get Previous Tag
         id: previous_tag
         uses: "WyriHaximus/github-action-get-previous-tag@v1"
@@ -52,6 +50,6 @@ jobs:
         run: >-
           sed -i "s/{{VERSION_PLACEHOLDER}}/${{ steps.previous_tag.outputs.tag }}/g" setup.py
       - name: Install package
-        run: pip install -e .
+        run: pip install .
       - name: Run the current example
         run: python3 ${{ matrix.example_location }}
