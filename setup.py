@@ -22,6 +22,7 @@ if __name__ == "__main__":
             "drake",
             "meshcat",
             "matplotlib",
+            "networkx",
             "numpy",
             "trimesh",
             "coacd",
