@@ -32,12 +32,7 @@ if __name__ == "__main__":
                 "pytest",
                 "pytest-cov",
             ],
-            "dev": [
-                "ipdb",
-                "typer",
-                "scipy",
-                "black"
-            ],
+            "dev": ["ipdb", "typer", "scipy", "black"],
         },
         keywords=["drake", "robotics", "testing", "logging"],
         classifiers=[

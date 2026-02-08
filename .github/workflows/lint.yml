@@ -9,4 +9,4 @@ jobs:
       - uses: psf/black@stable
         with:
           options: "--check --verbose --diff"
-          src: "examples src tests"
+          src: "examples setup.py src tests"
