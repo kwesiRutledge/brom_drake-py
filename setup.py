@@ -27,6 +27,15 @@ if __name__ == "__main__":
             "trimesh",
             "coacd",
         ],
+        extras_require={
+            "dev": [
+                "pytest",
+                "pytest-cov",
+                "ipdb",
+                "typer",
+                "scipy",
+            ],
+        },
         keywords=["drake", "robotics", "testing", "logging"],
         classifiers=[
             "Programming Language :: Python :: 3",
