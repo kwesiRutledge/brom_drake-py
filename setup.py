@@ -36,6 +36,7 @@ if __name__ == "__main__":
                 "ipdb",
                 "typer",
                 "scipy",
+                "black"
             ],
         },
         keywords=["drake", "robotics", "testing", "logging"],

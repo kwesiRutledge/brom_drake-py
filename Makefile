@@ -3,7 +3,7 @@ install-as-editable:
 # Update the version of the package in setup.py
 	sed -i '' "s/{{VERSION_PLACEHOLDER}}/0.0.0+localDevelopment/g" setup.py
 # Install the package in editable mode
-	pip install -e .[dev]
+	pip install -e .[dev,test]
 # Restore the placeholder
 	sed -i '' "s/0.0.0+localDevelopment/{{VERSION_PLACEHOLDER}}/g" setup.py
 
