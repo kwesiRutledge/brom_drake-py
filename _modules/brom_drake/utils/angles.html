@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.utils.angles - brom_drake-py 0.5.0 documentation</title>
+        <title>brom_drake.utils.angles - brom_drake-py v0.0.0+githubActionDefault documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">brom_drake-py 0.5.0 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.0 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -553,6 +553,7 @@
           <h1>Source code for brom_drake.utils.angles</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">IntEnum</span>
 
+
 <div class="viewcode-block" id="RollPitchYawAngle">
 <a class="viewcode-back" href="../../../generated/utils/utils.html#brom_drake.utils.angles.RollPitchYawAngle">[docs]</a>
 <span class="k">class</span> <span class="nc">RollPitchYawAngle</span><span class="p">(</span><span class="n">IntEnum</span><span class="p">):</span>
@@ -563,7 +564,7 @@
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This method returns a string representation of the RollPitchYawAngle enum.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">RollPitchYawAngle</span><span class="o">.</span><span class="n">kRoll</span><span class="p">:</span>
@@ -576,12 +577,13 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid RollPitchYawAngle value: </span><span class="si">{</span><span class="bp">self</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 
+
 <div class="viewcode-block" id="rpy_equivalent_body_rotation_order">
 <a class="viewcode-back" href="../../../generated/utils/utils.html#brom_drake.utils.angles.rpy_equivalent_body_rotation_order">[docs]</a>
 <span class="k">def</span> <span class="nf">rpy_equivalent_body_rotation_order</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">RollPitchYawAngle</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    *Description*</span>
-<span class="sd">    </span>
+
 <span class="sd">    This method returns the equivalent body rotation order for Roll-Pitch-Yaw angles.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">[</span>
@@ -622,7 +624,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=1dd76d02"></script>
+</div><script src="../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>

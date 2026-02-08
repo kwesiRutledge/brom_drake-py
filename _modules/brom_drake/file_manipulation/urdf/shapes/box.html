@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.file_manipulation.urdf.shapes.box - brom_drake-py 0.5.0 documentation</title>
+        <title>brom_drake.file_manipulation.urdf.shapes.box - brom_drake-py v0.0.0+githubActionDefault documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../index.html"><div class="brand">brom_drake-py 0.5.0 documentation</div></a>
+      <a href="../../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.0 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -559,6 +559,7 @@
 <span class="c1"># Internal Import</span>
 <span class="kn">from</span> <span class="nn">.shape_definition</span> <span class="kn">import</span> <span class="n">ShapeDefinition</span><span class="p">,</span> <span class="n">ShapeEnum</span>
 
+
 <div class="viewcode-block" id="BoxDefinition">
 <a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/shapes/shapes.html#brom_drake.file_manipulation.urdf.shapes.box.BoxDefinition">[docs]</a>
 <span class="nd">@dataclass</span>
@@ -574,6 +575,7 @@
 <span class="sd">        The size of the box along the x, y, and z axes.</span>
 <span class="sd">        If this is a float, it is assumed to be a cube with equal sides.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">size</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
 
 <div class="viewcode-block" id="BoxDefinition.add_geometry_to_element">
@@ -605,7 +607,9 @@
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Size </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="si">}</span><span class="s2"> (type </span><span class="se">\&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">)</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">) not supported.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Size </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="si">}</span><span class="s1"> (type &quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">)</span><span class="si">}</span><span class="s1">&quot;) not supported.&#39;</span>
+            <span class="p">)</span>
 
         <span class="c1"># Return the element</span>
         <span class="k">return</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span>
@@ -664,7 +668,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../_static/documentation_options.js?v=1dd76d02"></script>
+</div><script src="../../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.productions.debug.show_me.show_me_system - brom_drake-py 0.5.0 documentation</title>
+        <title>brom_drake.productions.debug.show_me.show_me_system - brom_drake-py v0.0.0+githubActionDefault documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../index.html"><div class="brand">brom_drake-py 0.5.0 documentation</div></a>
+      <a href="../../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.0 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -558,16 +558,17 @@
 
 <span class="kn">from</span> <span class="nn">brom_drake.utils</span> <span class="kn">import</span> <span class="n">AddMultibodyTriad</span>
 
+
 <div class="viewcode-block" id="ShowMeSystem">
 <a class="viewcode-back" href="../../../../../generated/productions/debug/show_me/show_me.html#brom_drake.productions.debug.show_me.show_me_system.ShowMeSystem">[docs]</a>
 <span class="k">class</span> <span class="nc">ShowMeSystem</span><span class="p">(</span><span class="n">LeafSystem</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    **Description**</span>
-<span class="sd">    </span>
+
 <span class="sd">    This class defines a LeafSystem that will force a specific model</span>
 <span class="sd">    (model_index) in a MultibodyPlant to hold the joint positions</span>
-<span class="sd">    provided to it as input. </span>
-<span class="sd">    </span>
+<span class="sd">    provided to it as input.</span>
+
 <span class="sd">    The object may or may not be welded to the world frame.</span>
 
 <span class="sd">    **Block Diagram**</span>
@@ -592,6 +593,7 @@
 <span class="sd">        The desired joint positions for the model, if any.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">plant</span><span class="p">:</span> <span class="n">MultibodyPlant</span><span class="p">,</span>
@@ -618,8 +620,8 @@
             <span class="s2">&quot;measured_joint_positions&quot;</span><span class="p">,</span>
             <span class="n">BasicVector</span><span class="p">(</span><span class="n">n</span><span class="p">),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">SetModelJointPositions</span><span class="p">,</span>
-            <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">time_ticket</span><span class="p">()}</span>    <span class="c1"># indicate that this doesn&#39;t depend on any inputs,</span>
-        <span class="p">)</span>                           <span class="c1"># but should still be updated each timestep</span>
+            <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">time_ticket</span><span class="p">()},</span>  <span class="c1"># indicate that this doesn&#39;t depend on any inputs,</span>
+        <span class="p">)</span>  <span class="c1"># but should still be updated each timestep</span>
 
         <span class="c1"># Create plant context</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mutable_plant_context</span> <span class="o">=</span> <span class="kc">None</span>
@@ -632,11 +634,11 @@
     <span class="k">def</span> <span class="nf">SetModelJointPositions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="n">BasicVector</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        **Description**</span>
-<span class="sd">        </span>
+
 <span class="sd">        This method will set the joint positions of the model to the desired joint positions.</span>
-<span class="sd">        </span>
+
 <span class="sd">        **Parameters**</span>
-<span class="sd">        </span>
+
 <span class="sd">        context: Context</span>
 <span class="sd">            The context of the LeafSystem at the time that this callback is triggered.</span>
 
@@ -658,9 +660,9 @@
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Could not set the joint positions; this is most likely a mismatch between:</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> \
-                <span class="sa">f</span><span class="s2">&quot;- Number of joint positions in command: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">pose_as_vec</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> \
-                <span class="sa">f</span><span class="s2">&quot;- Number of joint positions in model: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">num_positions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_index</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Could not set the joint positions; this is most likely a mismatch between:</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;- Number of joint positions in command: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">pose_as_vec</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;- Number of joint positions in model: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">num_positions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_index</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
             <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">SetVelocities</span><span class="p">(</span>
@@ -671,7 +673,6 @@
 
         <span class="n">output</span><span class="o">.</span><span class="n">SetFromVector</span><span class="p">(</span><span class="n">pose_as_vec</span><span class="p">)</span></div>
 </div>
-
 
 </pre></div>
         </article>
@@ -705,7 +706,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../_static/documentation_options.js?v=1dd76d02"></script>
+</div><script src="../../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.utils.pick_and_place.target_description - brom_drake-py 0.5.0 documentation</title>
+        <title>brom_drake.utils.pick_and_place.target_description - brom_drake-py v0.0.0+githubActionDefault documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">brom_drake-py 0.5.0 documentation</div></a>
+      <a href="../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.0 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -559,6 +559,7 @@
 <span class="c1"># Internal Imports</span>
 <span class="kn">from</span> <span class="nn">brom_drake.utils.pick_and_place.phase</span> <span class="kn">import</span> <span class="n">PickAndPlacePhase</span>
 
+
 <div class="viewcode-block" id="PickAndPlaceTargetDescription">
 <a class="viewcode-back" href="../../../../generated/utils/pick_and_place/pick_and_place.html#brom_drake.utils.pick_and_place.target_description.PickAndPlaceTargetDescription">[docs]</a>
 <span class="nd">@dataclass</span>
@@ -573,11 +574,11 @@
         <span class="c1"># If a name was provided, then provide that instead.</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
-        
+
         <span class="c1"># If a name was not provided, then extract a name from the file_path.</span>
         <span class="n">file_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_path</span><span class="o">.</span><span class="n">name</span>
-        <span class="k">return</span> <span class="n">file_name</span><span class="p">[:</span><span class="n">file_name</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)]</span>
-        
+        <span class="k">return</span> <span class="n">file_name</span><span class="p">[:</span> <span class="n">file_name</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)]</span>
+
     <span class="k">def</span> <span class="nf">name_for_pick_and_place_phase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phase</span><span class="p">:</span> <span class="n">PickAndPlacePhase</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">phase</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span></div>
 
@@ -613,7 +614,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=1dd76d02"></script>
+</div><script src="../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>

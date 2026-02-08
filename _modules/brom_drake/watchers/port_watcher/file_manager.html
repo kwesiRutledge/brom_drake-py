@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.watchers.port_watcher.file_manager - brom_drake-py 0.5.0 documentation</title>
+        <title>brom_drake.watchers.port_watcher.file_manager - brom_drake-py v0.0.0+githubActionDefault documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">brom_drake-py 0.5.0 documentation</div></a>
+      <a href="../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.0 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -554,7 +554,7 @@
 <span></span><span class="kn">from</span> <span class="nn">brom_drake.watchers.port_watcher.port_watcher_options</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">PortFigureArrangement</span><span class="p">,</span>
     <span class="n">FigureNamingConvention</span><span class="p">,</span>
-    <span class="n">PortWatcherPlottingOptions</span><span class="p">,</span> 
+    <span class="n">PortWatcherPlottingOptions</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
@@ -563,16 +563,18 @@
 <span class="kn">from</span> <span class="nn">pydrake.systems.primitives</span> <span class="kn">import</span> <span class="n">VectorLogSink</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
 
+
 <div class="viewcode-block" id="PortWatcherFileManager">
 <a class="viewcode-back" href="../../../../generated/watchers/port_watcher/port_watcher.html#brom_drake.watchers.port_watcher.file_manager.PortWatcherFileManager">[docs]</a>
 <span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">PortWatcherFileManager</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    *Description*</span>
-<span class="sd">    </span>
+
 <span class="sd">    This class manages file paths and directories for saving data</span>
 <span class="sd">    collected by the PortWatcher system.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">base_directory</span><span class="p">:</span> <span class="n">Path</span>
     <span class="n">plotting_options</span><span class="p">:</span> <span class="n">PortWatcherPlottingOptions</span>
     <span class="n">raw_data_file_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;npy&quot;</span>
@@ -583,7 +585,7 @@
     <span class="k">def</span> <span class="nf">compute_safe_system_name</span><span class="p">(</span><span class="n">system_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This function returns a filesystem-safe version of the system name.</span>
 
 <span class="sd">        *Returns*</span>
@@ -594,8 +596,10 @@
         <span class="c1"># First, let&#39;s check to see how many &quot;/&quot; exist in the name</span>
         <span class="n">slash_occurences</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">letter</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">system_name</span><span class="p">)</span> <span class="k">if</span> <span class="n">letter</span> <span class="o">==</span> <span class="s2">&quot;/&quot;</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">slash_occurences</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">system_name</span> <span class="o">=</span> <span class="n">system_name</span><span class="p">[</span><span class="n">slash_occurences</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>  <span class="c1"># truncrate string based on the last slash</span>
-        
+            <span class="n">system_name</span> <span class="o">=</span> <span class="n">system_name</span><span class="p">[</span>
+                <span class="n">slash_occurences</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:</span>
+            <span class="p">]</span>  <span class="c1"># truncrate string based on the last slash</span>
+
         <span class="c1"># Second, replace all spaces with underscores</span>
         <span class="n">system_name</span> <span class="o">=</span> <span class="n">system_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
 
@@ -608,16 +612,16 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">output_port</span><span class="p">:</span> <span class="n">OutputPort</span><span class="p">,</span>
         <span class="n">associated_log_sink</span><span class="p">:</span> <span class="n">VectorLogSink</span><span class="p">,</span>
-        <span class="n">port_component_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">port_component_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        Computes the names of all of the figures that will be produced for</span>
 
 
 <span class="sd">        *Returns*</span>
-<span class="sd">        </span>
+
 <span class="sd">        figure_paths_out: List[Path]</span>
 <span class="sd">            The paths of all of the figures that will be produced by</span>
 <span class="sd">            this PortWatcherPlotter object.</span>
@@ -629,16 +633,19 @@
         <span class="c1"># PortWatcherPlotter.</span>
         <span class="k">match</span> <span class="n">plotting_options</span><span class="o">.</span><span class="n">figure_naming_convention</span><span class="p">:</span>
             <span class="k">case</span> <span class="n">FigureNamingConvention</span><span class="o">.</span><span class="n">kFlat</span><span class="p">:</span>
-                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">figure_names_under_flat_convention</span><span class="p">(</span><span class="n">output_port</span><span class="p">,</span> <span class="n">associated_log_sink</span><span class="p">,</span> <span class="n">port_component_name</span><span class="p">)</span>
-            
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">figure_names_under_flat_convention</span><span class="p">(</span>
+                    <span class="n">output_port</span><span class="p">,</span> <span class="n">associated_log_sink</span><span class="p">,</span> <span class="n">port_component_name</span>
+                <span class="p">)</span>
+
             <span class="k">case</span> <span class="n">FigureNamingConvention</span><span class="o">.</span><span class="n">kHierarchical</span><span class="p">:</span>
-                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">figure_names_under_hierarchical_convention</span><span class="p">(</span><span class="n">output_port</span><span class="p">,</span> <span class="n">associated_log_sink</span><span class="p">,</span> <span class="n">port_component_name</span><span class="p">)</span>
-            
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">figure_names_under_hierarchical_convention</span><span class="p">(</span>
+                    <span class="n">output_port</span><span class="p">,</span> <span class="n">associated_log_sink</span><span class="p">,</span> <span class="n">port_component_name</span>
+                <span class="p">)</span>
+
             <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;Invalid figure naming convention for figure_names(): </span><span class="si">{</span><span class="n">plotting_options</span><span class="o">.</span><span class="n">figure_naming_convention</span><span class="si">}</span><span class="s2">.&quot;</span>
                 <span class="p">)</span></div>
-
 
 
 <div class="viewcode-block" id="PortWatcherFileManager.figure_names_under_flat_convention">
@@ -647,11 +654,11 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">output_port</span><span class="p">:</span> <span class="n">OutputPort</span><span class="p">,</span>
         <span class="n">associated_log_sink</span><span class="p">:</span> <span class="n">VectorLogSink</span><span class="p">,</span>
-        <span class="n">port_component_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">port_component_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        Returns the names associated with each figure that this port will</span>
 <span class="sd">        generate assuming we are under the kFlat convention.</span>
 
@@ -660,13 +667,13 @@
 <span class="sd">        output_port: OutputPort</span>
 <span class="sd">            The output port for which we are generating figure names.</span>
 <span class="sd">            We can extract the system name, port name, and port size from this.</span>
-<span class="sd">            </span>
+
 <span class="sd">        port_component_name: str</span>
 <span class="sd">            A &quot;sub-component&quot; of the port that we wish to give a unique name in the</span>
 <span class="sd">            figures.</span>
-<span class="sd">        </span>
+
 <span class="sd">        *Returns*</span>
-<span class="sd">        </span>
+
 <span class="sd">        figure_names: List[Path]</span>
 <span class="sd">            List of paths where each path is a file name for an associated figure.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -690,13 +697,16 @@
                     <span class="c1"># If there is no sub-component name, then we just</span>
                     <span class="c1"># create the file in the main plot directory</span>
                     <span class="k">return</span> <span class="p">[</span>
-                        <span class="n">plot_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;system_</span><span class="si">{</span><span class="n">safe_system_name</span><span class="si">}</span><span class="s2">_port_</span><span class="si">{</span><span class="n">port_name</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="n">plot_dir</span>
+                        <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;system_</span><span class="si">{</span><span class="n">safe_system_name</span><span class="si">}</span><span class="s2">_port_</span><span class="si">{</span><span class="n">port_name</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2">&quot;</span>
                     <span class="p">]</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="c1"># If there is a sub-component name, then we will</span>
                     <span class="c1"># create a sub-directory for it</span>
                     <span class="k">return</span> <span class="p">[</span>
-                        <span class="n">plot_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;system_</span><span class="si">{</span><span class="n">safe_system_name</span><span class="si">}</span><span class="s2">_port_</span><span class="si">{</span><span class="n">port_name</span><span class="si">}</span><span class="s2">&quot;</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">port_component_name</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="n">plot_dir</span>
+                        <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;system_</span><span class="si">{</span><span class="n">safe_system_name</span><span class="si">}</span><span class="s2">_port_</span><span class="si">{</span><span class="n">port_name</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">port_component_name</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2">&quot;</span>
                     <span class="p">]</span>
 
             <span class="k">case</span> <span class="n">PortFigureArrangement</span><span class="o">.</span><span class="n">OnePlotPerDim</span><span class="p">:</span>
@@ -705,14 +715,17 @@
                     <span class="c1"># If there is no sub-component name, then we just</span>
                     <span class="c1"># create the files in the main plot directory</span>
                     <span class="k">return</span> <span class="p">[</span>
-                        <span class="n">plot_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;system_</span><span class="si">{</span><span class="n">safe_system_name</span><span class="si">}</span><span class="s2">_port_</span><span class="si">{</span><span class="n">port_name</span><span class="si">}</span><span class="s2">_dim</span><span class="si">{</span><span class="n">ii</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="n">plot_dir</span>
+                        <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;system_</span><span class="si">{</span><span class="n">safe_system_name</span><span class="si">}</span><span class="s2">_port_</span><span class="si">{</span><span class="n">port_name</span><span class="si">}</span><span class="s2">_dim</span><span class="si">{</span><span class="n">ii</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2">&quot;</span>
                         <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">log_sink_size</span><span class="p">)</span>
                     <span class="p">]</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="c1"># If there is a sub-component name, then we will</span>
                     <span class="c1"># create a sub-directory for it</span>
                     <span class="k">return</span> <span class="p">[</span>
-                        <span class="n">plot_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;system_</span><span class="si">{</span><span class="n">safe_system_name</span><span class="si">}</span><span class="s2">_port_</span><span class="si">{</span><span class="n">port_name</span><span class="si">}</span><span class="s2">&quot;</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">port_component_name</span><span class="si">}</span><span class="s2">_dim</span><span class="si">{</span><span class="n">ii</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="n">plot_dir</span>
+                        <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;system_</span><span class="si">{</span><span class="n">safe_system_name</span><span class="si">}</span><span class="s2">_port_</span><span class="si">{</span><span class="n">port_name</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">port_component_name</span><span class="si">}</span><span class="s2">_dim</span><span class="si">{</span><span class="n">ii</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2">&quot;</span>
                         <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">log_sink_size</span><span class="p">)</span>
                     <span class="p">]</span>
             <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
@@ -731,12 +744,12 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        Returns the names associated with each figure that this port will</span>
 <span class="sd">        generate assuming we are under the kHierarchical convention.</span>
-<span class="sd">        </span>
+
 <span class="sd">        *Parameters*</span>
-<span class="sd">        </span>
+
 <span class="sd">        output_port: OutputPort</span>
 <span class="sd">            The output port for which we are generating figure names.</span>
 <span class="sd">            We can extract the system name, port name, and port size from this.</span>
@@ -745,7 +758,7 @@
 <span class="sd">            A &quot;sub-component&quot; of the port that we wish to give a unique name in the figures.</span>
 
 <span class="sd">        *Returns*</span>
-<span class="sd">        </span>
+
 <span class="sd">        paths_out: List[Path]</span>
 <span class="sd">            Each path in this list is a file path for an associated figure.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -760,7 +773,7 @@
         <span class="n">safe_system_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_safe_system_name</span><span class="p">(</span><span class="n">system_name</span><span class="p">)</span>
 
         <span class="n">port_name</span> <span class="o">=</span> <span class="n">output_port</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
-        
+
         <span class="n">log_sink_size</span> <span class="o">=</span> <span class="n">associated_log_sink</span><span class="o">.</span><span class="n">get_input_port</span><span class="p">()</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">plotting_options</span><span class="o">.</span><span class="n">plot_arrangement</span> <span class="o">==</span> <span class="n">PortFigureArrangement</span><span class="o">.</span><span class="n">OnePlotPerPort</span><span class="p">:</span>
@@ -768,13 +781,15 @@
                 <span class="c1"># If there is no sub-component name, then we just</span>
                 <span class="c1"># create the file in the main plot directory</span>
                 <span class="k">return</span> <span class="p">[</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">plot_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;system_</span><span class="si">{</span><span class="n">safe_system_name</span><span class="si">}</span><span class="s2">/port_</span><span class="si">{</span><span class="n">port_name</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">plot_dir</span>
+                    <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;system_</span><span class="si">{</span><span class="n">safe_system_name</span><span class="si">}</span><span class="s2">/port_</span><span class="si">{</span><span class="n">port_name</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># If there is a sub-component name, then we will</span>
                 <span class="c1"># create a sub-directory for it</span>
                 <span class="k">return</span> <span class="p">[</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">plot_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;system_</span><span class="si">{</span><span class="n">safe_system_name</span><span class="si">}</span><span class="s2">/port_</span><span class="si">{</span><span class="n">port_name</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">port_component_name</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">plot_dir</span>
+                    <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;system_</span><span class="si">{</span><span class="n">safe_system_name</span><span class="si">}</span><span class="s2">/port_</span><span class="si">{</span><span class="n">port_name</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">port_component_name</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="p">]</span>
 
         <span class="k">elif</span> <span class="n">plotting_options</span><span class="o">.</span><span class="n">plot_arrangement</span> <span class="o">==</span> <span class="n">PortFigureArrangement</span><span class="o">.</span><span class="n">OnePlotPerDim</span><span class="p">:</span>
@@ -782,14 +797,16 @@
                 <span class="c1"># If there is no sub-component name, then we just</span>
                 <span class="c1"># create the files in the main plot directory</span>
                 <span class="k">return</span> <span class="p">[</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">plot_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;system_</span><span class="si">{</span><span class="n">safe_system_name</span><span class="si">}</span><span class="s2">/port_</span><span class="si">{</span><span class="n">port_name</span><span class="si">}</span><span class="s2">/dim_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name_of_data_at_index</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="w"> </span><span class="n">output_port</span><span class="p">,</span><span class="w"> </span><span class="n">associated_log_sink</span><span class="p">,</span><span class="w"> </span><span class="n">remove_spaces</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">plot_dir</span>
+                    <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;system_</span><span class="si">{</span><span class="n">safe_system_name</span><span class="si">}</span><span class="s2">/port_</span><span class="si">{</span><span class="n">port_name</span><span class="si">}</span><span class="s2">/dim_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name_of_data_at_index</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="w"> </span><span class="n">output_port</span><span class="p">,</span><span class="w"> </span><span class="n">associated_log_sink</span><span class="p">,</span><span class="w"> </span><span class="n">remove_spaces</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2">&quot;</span>
                     <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">log_sink_size</span><span class="p">)</span>
                 <span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># If there is a sub-component name, then we will</span>
                 <span class="c1"># create a sub-directory for it</span>
                 <span class="k">return</span> <span class="p">[</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">plot_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;system_</span><span class="si">{</span><span class="n">safe_system_name</span><span class="si">}</span><span class="s2">/port_</span><span class="si">{</span><span class="n">port_name</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">port_component_name</span><span class="si">}</span><span class="s2">/dim_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name_of_data_at_index</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="w"> </span><span class="n">output_port</span><span class="p">,</span><span class="w"> </span><span class="n">associated_log_sink</span><span class="p">,</span><span class="w"> </span><span class="n">remove_spaces</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">plot_dir</span>
+                    <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;system_</span><span class="si">{</span><span class="n">safe_system_name</span><span class="si">}</span><span class="s2">/port_</span><span class="si">{</span><span class="n">port_name</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">port_component_name</span><span class="si">}</span><span class="s2">/dim_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name_of_data_at_index</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="w"> </span><span class="n">output_port</span><span class="p">,</span><span class="w"> </span><span class="n">associated_log_sink</span><span class="p">,</span><span class="w"> </span><span class="n">remove_spaces</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2">&quot;</span>
                     <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">log_sink_size</span><span class="p">)</span>
                 <span class="p">]</span>
 
@@ -810,24 +827,24 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        Returns the name of the data which is in index dim_index</span>
 <span class="sd">        of this vector-valued port.</span>
 
 <span class="sd">        TODO(kwesi): Consider moving this to its own utility file, outside of</span>
 <span class="sd">        the file manager.</span>
-<span class="sd">        </span>
+
 <span class="sd">        *Parameters*</span>
-<span class="sd">        </span>
+
 <span class="sd">        self : PortWatcherPlotter</span>
 <span class="sd">            The PortWatcherPlotter object.</span>
 <span class="sd">        dim_index : int</span>
 <span class="sd">            The index of the data in the port.</span>
 <span class="sd">        remove_spaces : bool</span>
 <span class="sd">            Whether to remove spaces from the name.</span>
-<span class="sd">        </span>
+
 <span class="sd">        *Returns*</span>
-<span class="sd">        </span>
+
 <span class="sd">        name_of_data: str</span>
 <span class="sd">            The name of the data at index dim_index.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -859,7 +876,7 @@
                 <span class="c1"># We can get the names of the state</span>
                 <span class="n">state_names</span> <span class="o">=</span> <span class="n">system</span><span class="o">.</span><span class="n">GetStateNames</span><span class="p">()</span>
                 <span class="n">name</span> <span class="o">=</span> <span class="n">state_names</span><span class="p">[</span><span class="n">dim_index</span><span class="p">]</span>
-        
+
         <span class="c1"># Filter our spaces, if requested</span>
         <span class="k">if</span> <span class="n">remove_spaces</span><span class="p">:</span>
             <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
@@ -872,11 +889,11 @@
     <span class="k">def</span> <span class="nf">plot_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This function returns the directory where the plots will be saved.</span>
 
 <span class="sd">        *Returns*</span>
-<span class="sd">        </span>
+
 <span class="sd">        plot_dir: Path</span>
 <span class="sd">            The directory where the plots will be saved.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -886,11 +903,11 @@
     <span class="k">def</span> <span class="nf">raw_data_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This function returns the directory where the raw data will be saved.</span>
 
 <span class="sd">        *Returns*</span>
-<span class="sd">        </span>
+
 <span class="sd">        raw_data_dir: Path</span>
 <span class="sd">            The directory where the raw data will be saved.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -899,14 +916,11 @@
 <div class="viewcode-block" id="PortWatcherFileManager.raw_data_file_path">
 <a class="viewcode-back" href="../../../../generated/watchers/port_watcher/port_watcher.html#brom_drake.watchers.port_watcher.file_manager.PortWatcherFileManager.raw_data_file_path">[docs]</a>
     <span class="k">def</span> <span class="nf">raw_data_file_path</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">system_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">port_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">port_component_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">system_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">port_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">port_component_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This function returns the file name for saving raw data.</span>
 
 <span class="sd">        *Parameters*</span>
@@ -921,10 +935,17 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">safe_system_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_safe_system_name</span><span class="p">(</span><span class="n">system_name</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">port_component_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>    
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_data_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;system_</span><span class="si">{</span><span class="n">safe_system_name</span><span class="si">}</span><span class="s2">_port_</span><span class="si">{</span><span class="n">port_name</span><span class="si">}</span><span class="s2">_data.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">raw_data_file_format</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="n">port_component_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">raw_data_dir</span>
+                <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;system_</span><span class="si">{</span><span class="n">safe_system_name</span><span class="si">}</span><span class="s2">_port_</span><span class="si">{</span><span class="n">port_name</span><span class="si">}</span><span class="s2">_data.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">raw_data_file_format</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_data_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;system_</span><span class="si">{</span><span class="n">safe_system_name</span><span class="si">}</span><span class="s2">_port_</span><span class="si">{</span><span class="n">port_name</span><span class="si">}</span><span class="s2">&quot;</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">port_component_name</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">raw_data_file_format</span><span class="si">}</span><span class="s2">&quot;</span></div>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">raw_data_dir</span>
+                <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;system_</span><span class="si">{</span><span class="n">safe_system_name</span><span class="si">}</span><span class="s2">_port_</span><span class="si">{</span><span class="n">port_name</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">port_component_name</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">raw_data_file_format</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="PortWatcherFileManager.time_data_file_path">
@@ -932,7 +953,7 @@
     <span class="k">def</span> <span class="nf">time_data_file_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">system_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">port_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This function returns the file name for saving time data.</span>
 
 <span class="sd">        *Returns*</span>
@@ -941,10 +962,12 @@
 <span class="sd">            The file name for saving time data.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">safe_system_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_safe_system_name</span><span class="p">(</span><span class="n">system_name</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_data_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;system_</span><span class="si">{</span><span class="n">safe_system_name</span><span class="si">}</span><span class="s2">_port_</span><span class="si">{</span><span class="n">port_name</span><span class="si">}</span><span class="s2">_times.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">raw_data_file_format</span><span class="si">}</span><span class="s2">&quot;</span></div>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">raw_data_dir</span>
+            <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;system_</span><span class="si">{</span><span class="n">safe_system_name</span><span class="si">}</span><span class="s2">_port_</span><span class="si">{</span><span class="n">port_name</span><span class="si">}</span><span class="s2">_times.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">raw_data_file_format</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span></div>
 </div>
 
-    
 </pre></div>
         </article>
       </div>
@@ -977,7 +1000,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=1dd76d02"></script>
+</div><script src="../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>

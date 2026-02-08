@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.productions.debug.grasping.attempt_grasp.with_puppeteer_wrist.script - brom_drake-py 0.5.0 documentation</title>
+        <title>brom_drake.productions.debug.grasping.attempt_grasp.with_puppeteer_wrist.script - brom_drake-py v0.0.0+githubActionDefault documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../../../index.html"><div class="brand">brom_drake-py 0.5.0 documentation</div></a>
+      <a href="../../../../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.0 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -559,9 +559,13 @@
 
 <span class="c1"># Internal Imports</span>
 <span class="kn">from</span> <span class="nn">brom_drake.systems.network_fsm</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">NetworkXFSM</span><span class="p">,</span> <span class="n">FSMOutputDefinition</span><span class="p">,</span> <span class="n">FSMTransitionCondition</span><span class="p">,</span> <span class="n">FSMTransitionConditionType</span>
+    <span class="n">NetworkXFSM</span><span class="p">,</span>
+    <span class="n">FSMOutputDefinition</span><span class="p">,</span>
+    <span class="n">FSMTransitionCondition</span><span class="p">,</span>
+    <span class="n">FSMTransitionConditionType</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">.phases</span> <span class="kn">import</span> <span class="n">AttemptGraspWithPuppeteerWristPhase</span>
+
 
 <span class="c1"># Define some internal classes/enums</span>
 <div class="viewcode-block" id="Script">
@@ -570,7 +574,7 @@
 <span class="k">class</span> <span class="nc">Script</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    *Description*</span>
-<span class="sd">    </span>
+
 <span class="sd">    This class defines the &quot;script&quot; or the sequence of events that is meant to happen in the</span>
 <span class="sd">    AttemptGrasp production.</span>
 
@@ -596,6 +600,7 @@
 <span class="sd">        The time (in seconds) to let the object fall after releasing the grasp.</span>
 <span class="sd">        Default is 10.0 seconds.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">settling_time_on_floor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10.0</span>
     <span class="n">gripper_approach_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span>
     <span class="n">grasp_closing_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span>
@@ -607,9 +612,9 @@
     <span class="k">def</span> <span class="nf">add_all_states_to_networkx_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This method adds all the states to the provided NetworkX graph.</span>
-<span class="sd">        </span>
+
 <span class="sd">        .. note::</span>
 <span class="sd">            :collapsible:</span>
 
@@ -618,7 +623,7 @@
 <span class="sd">            of NetworkX where nodes can be created implicitly when edges are added.)</span>
 
 <span class="sd">        *Parameters*</span>
-<span class="sd">        </span>
+
 <span class="sd">        graph: nx.DiGraph</span>
 <span class="sd">            A blank NetworkX directed graph to which the states will be added.</span>
 
@@ -630,29 +635,37 @@
             <span class="n">AttemptGraspWithPuppeteerWristPhase</span><span class="o">.</span><span class="n">kObjectSettlingOnFloor</span><span class="p">,</span>
             <span class="n">outputs</span><span class="o">=</span><span class="p">[</span>
                 <span class="n">FSMOutputDefinition</span><span class="p">(</span><span class="s2">&quot;start_floor&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>  <span class="c1"># Floor trigger</span>
-                <span class="n">FSMOutputDefinition</span><span class="p">(</span><span class="s2">&quot;enable_gripper_approach&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>  <span class="c1"># Make gripper move towards object</span>
+                <span class="n">FSMOutputDefinition</span><span class="p">(</span>
+                    <span class="s2">&quot;enable_gripper_approach&quot;</span><span class="p">,</span> <span class="kc">True</span>
+                <span class="p">),</span>  <span class="c1"># Make gripper move towards object</span>
                 <span class="n">FSMOutputDefinition</span><span class="p">(</span><span class="s2">&quot;close_gripper&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>  <span class="c1"># Gripper trigger</span>
-                <span class="n">FSMOutputDefinition</span><span class="p">(</span><span class="s2">&quot;switch_to_memory&quot;</span><span class="p">,</span> <span class="s2">&quot;trajectory1&quot;</span><span class="p">),</span>  <span class="c1"># Switch to memory system for gripper pose</span>
-            <span class="p">]</span>
+                <span class="n">FSMOutputDefinition</span><span class="p">(</span>
+                    <span class="s2">&quot;switch_to_memory&quot;</span><span class="p">,</span> <span class="s2">&quot;trajectory1&quot;</span>
+                <span class="p">),</span>  <span class="c1"># Switch to memory system for gripper pose</span>
+            <span class="p">],</span>
         <span class="p">)</span>
 
         <span class="c1"># Second State: Gripper approach</span>
         <span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span>
             <span class="n">AttemptGraspWithPuppeteerWristPhase</span><span class="o">.</span><span class="n">kGripperApproach</span><span class="p">,</span>
             <span class="n">outputs</span><span class="o">=</span><span class="p">[</span>
-                <span class="n">FSMOutputDefinition</span><span class="p">(</span><span class="s2">&quot;enable_gripper_approach&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>  <span class="c1"># Make gripper move towards object</span>
+                <span class="n">FSMOutputDefinition</span><span class="p">(</span>
+                    <span class="s2">&quot;enable_gripper_approach&quot;</span><span class="p">,</span> <span class="kc">True</span>
+                <span class="p">),</span>  <span class="c1"># Make gripper move towards object</span>
                 <span class="n">FSMOutputDefinition</span><span class="p">(</span><span class="s2">&quot;start_floor&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>  <span class="c1"># Floor trigger</span>
                 <span class="n">FSMOutputDefinition</span><span class="p">(</span><span class="s2">&quot;close_gripper&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>  <span class="c1"># Gripper trigger</span>
-            <span class="p">]</span>
+            <span class="p">],</span>
         <span class="p">)</span>
 
         <span class="c1"># Third State: Close gripper</span>
         <span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span>
             <span class="n">AttemptGraspWithPuppeteerWristPhase</span><span class="o">.</span><span class="n">kGripperClosing</span><span class="p">,</span>
             <span class="n">outputs</span><span class="o">=</span><span class="p">[</span>
-                <span class="n">FSMOutputDefinition</span><span class="p">(</span><span class="s2">&quot;enable_gripper_approach&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>  <span class="c1"># Stop gripper movement</span>
+                <span class="n">FSMOutputDefinition</span><span class="p">(</span>
+                    <span class="s2">&quot;enable_gripper_approach&quot;</span><span class="p">,</span> <span class="kc">True</span>
+                <span class="p">),</span>  <span class="c1"># Stop gripper movement</span>
                 <span class="n">FSMOutputDefinition</span><span class="p">(</span><span class="s2">&quot;close_gripper&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
-            <span class="p">]</span>
+            <span class="p">],</span>
         <span class="p">)</span>
 
         <span class="c1"># Fourth State: Drop the floor</span>
@@ -660,17 +673,21 @@
             <span class="n">AttemptGraspWithPuppeteerWristPhase</span><span class="o">.</span><span class="n">kFloorDrop</span><span class="p">,</span>
             <span class="n">outputs</span><span class="o">=</span><span class="p">[</span>
                 <span class="n">FSMOutputDefinition</span><span class="p">(</span><span class="s2">&quot;start_floor&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
-                <span class="n">FSMOutputDefinition</span><span class="p">(</span><span class="s2">&quot;switch_to_memory&quot;</span><span class="p">,</span> <span class="s2">&quot;memory2&quot;</span><span class="p">),</span>  <span class="c1"># Switch to memory system for gripper pose</span>
-            <span class="p">]</span>
+                <span class="n">FSMOutputDefinition</span><span class="p">(</span>
+                    <span class="s2">&quot;switch_to_memory&quot;</span><span class="p">,</span> <span class="s2">&quot;memory2&quot;</span>
+                <span class="p">),</span>  <span class="c1"># Switch to memory system for gripper pose</span>
+            <span class="p">],</span>
         <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Script.build_gripper_approach_trajectory_from_waypoints">
 <a class="viewcode-back" href="../../../../../../../generated/productions/debug/grasping/attempt_grasp/with_puppeteer_wrist/with_puppeteer_wrist.html#brom_drake.productions.debug.grasping.attempt_grasp.with_puppeteer_wrist.script.Script.build_gripper_approach_trajectory_from_waypoints">[docs]</a>
-    <span class="k">def</span> <span class="nf">build_gripper_approach_trajectory_from_waypoints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">waypoints_X_WorldGripper</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">RigidTransform</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">PiecewisePose</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">build_gripper_approach_trajectory_from_waypoints</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">waypoints_X_WorldGripper</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">RigidTransform</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PiecewisePose</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        Returns a PiecewisePose trajectory for the gripper base to follow during the</span>
 <span class="sd">        attempted grasp.</span>
 
@@ -681,7 +698,7 @@
 
 <span class="sd">        waypoints_X_WorldGripper: List[RigidTransform]</span>
 <span class="sd">            The waypoints that the script will create a Pose trajectory for.</span>
-<span class="sd">            This trajectory will start at the initial waypoint and </span>
+<span class="sd">            This trajectory will start at the initial waypoint and</span>
 
 <span class="sd">        *Returns*</span>
 
@@ -699,7 +716,7 @@
         <span class="c1"># For each event in the script, create (i) a time and (ii) a pose</span>
         <span class="n">times</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">poses</span> <span class="o">=</span> <span class="p">[]</span>
-        
+
         <span class="c1"># - Create initial pose</span>
         <span class="n">times</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
         <span class="n">poses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pose_WorldGripper_initial</span><span class="p">)</span>
@@ -713,7 +730,9 @@
             <span class="n">phase</span><span class="o">=</span><span class="n">AttemptGraspWithPuppeteerWristPhase</span><span class="o">.</span><span class="n">kGripperClosing</span>
         <span class="p">)</span>
 
-        <span class="n">times_during_interpolation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">t_pre_grasp</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="n">t_gripper_closing</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="n">n_waypoints</span><span class="p">)</span>
+        <span class="n">times_during_interpolation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span>
+            <span class="n">start</span><span class="o">=</span><span class="n">t_pre_grasp</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="n">t_gripper_closing</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="n">n_waypoints</span>
+        <span class="p">)</span>
         <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">time_i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">times_during_interpolation</span><span class="p">):</span>
             <span class="n">times</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">time_i</span><span class="p">)</span>
             <span class="n">poses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">waypoints_X_WorldGripper</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
@@ -731,16 +750,16 @@
     <span class="k">def</span> <span class="nf">start_time_of_phase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phase</span><span class="p">:</span> <span class="n">AttemptGraspWithPuppeteerWristPhase</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This method returns the start time of the given phase.</span>
-<span class="sd">        </span>
+
 <span class="sd">        *Parameters*</span>
-<span class="sd">        </span>
+
 <span class="sd">        phase: AttemptGraspWithPuppeteerWristPhase</span>
 <span class="sd">            The phase for which to get the start time.</span>
-<span class="sd">            </span>
+
 <span class="sd">        *Returns*</span>
-<span class="sd">        </span>
+
 <span class="sd">        start_time: float</span>
 <span class="sd">            The start time of the given phase in seconds.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -752,9 +771,18 @@
             <span class="k">case</span> <span class="n">AttemptGraspWithPuppeteerWristPhase</span><span class="o">.</span><span class="n">kGripperClosing</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">settling_time_on_floor</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">gripper_approach_time</span>
             <span class="k">case</span> <span class="n">AttemptGraspWithPuppeteerWristPhase</span><span class="o">.</span><span class="n">kObjectSettlingInGrasp</span><span class="p">:</span>
-                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">settling_time_on_floor</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">gripper_approach_time</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">grasp_closing_time</span>
+                <span class="k">return</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">settling_time_on_floor</span>
+                    <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">gripper_approach_time</span>
+                    <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">grasp_closing_time</span>
+                <span class="p">)</span>
             <span class="k">case</span> <span class="n">AttemptGraspWithPuppeteerWristPhase</span><span class="o">.</span><span class="n">kFloorDrop</span><span class="p">:</span>
-                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">settling_time_on_floor</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">gripper_approach_time</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">grasp_closing_time</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_grasp_settling_time</span>
+                <span class="k">return</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">settling_time_on_floor</span>
+                    <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">gripper_approach_time</span>
+                    <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">grasp_closing_time</span>
+                    <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_grasp_settling_time</span>
+                <span class="p">)</span>
             <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unrecognized phase </span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">)</span></div>
 
@@ -780,11 +808,11 @@
     <span class="k">def</span> <span class="nf">to_networkx_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This method converts the script to a NetworkX directed graph.</span>
 
 <span class="sd">        *Returns*</span>
-<span class="sd">        </span>
+
 <span class="sd">        graph: nx.DiGraph</span>
 <span class="sd">            The NetworkX directed graph representing the FSM of the script.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -797,25 +825,25 @@
         <span class="c1"># Create time from init -&gt; Let object settle</span>
         <span class="n">graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span>
             <span class="n">AttemptGraspWithPuppeteerWristPhase</span><span class="o">.</span><span class="n">kObjectSettlingOnFloor</span><span class="p">,</span>
-            <span class="n">AttemptGraspWithPuppeteerWristPhase</span><span class="o">.</span><span class="n">kGripperApproach</span><span class="p">,</span> 
+            <span class="n">AttemptGraspWithPuppeteerWristPhase</span><span class="o">.</span><span class="n">kGripperApproach</span><span class="p">,</span>
             <span class="n">conditions</span><span class="o">=</span><span class="p">[</span>
                 <span class="n">FSMTransitionCondition</span><span class="p">(</span>
                     <span class="n">condition_type</span><span class="o">=</span><span class="n">FSMTransitionConditionType</span><span class="o">.</span><span class="n">kAfterThisManySeconds</span><span class="p">,</span>
                     <span class="n">condition_value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">settling_time_on_floor</span><span class="p">,</span>
                 <span class="p">)</span>
-            <span class="p">]</span>
+            <span class="p">],</span>
         <span class="p">)</span>
 
         <span class="c1"># Create time between gripper approach and start og grasp closing</span>
         <span class="n">graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span>
             <span class="n">AttemptGraspWithPuppeteerWristPhase</span><span class="o">.</span><span class="n">kGripperApproach</span><span class="p">,</span>
-            <span class="n">AttemptGraspWithPuppeteerWristPhase</span><span class="o">.</span><span class="n">kGripperClosing</span><span class="p">,</span> 
+            <span class="n">AttemptGraspWithPuppeteerWristPhase</span><span class="o">.</span><span class="n">kGripperClosing</span><span class="p">,</span>
             <span class="n">conditions</span><span class="o">=</span><span class="p">[</span>
                 <span class="n">FSMTransitionCondition</span><span class="p">(</span>
                     <span class="n">condition_type</span><span class="o">=</span><span class="n">FSMTransitionConditionType</span><span class="o">.</span><span class="n">kAfterThisManySeconds</span><span class="p">,</span>
                     <span class="n">condition_value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">gripper_approach_time</span><span class="p">,</span>
                 <span class="p">)</span>
-            <span class="p">]</span>
+            <span class="p">],</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_grasp_settling_time</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
@@ -828,7 +856,7 @@
                         <span class="n">condition_type</span><span class="o">=</span><span class="n">FSMTransitionConditionType</span><span class="o">.</span><span class="n">kAfterThisManySeconds</span><span class="p">,</span>
                         <span class="n">condition_value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grasp_closing_time</span><span class="p">,</span>
                     <span class="p">)</span>
-                <span class="p">]</span>
+                <span class="p">],</span>
             <span class="p">)</span>
 
             <span class="c1"># Create time from end of grasp closing to floor drop start</span>
@@ -840,7 +868,7 @@
                         <span class="n">condition_type</span><span class="o">=</span><span class="n">FSMTransitionConditionType</span><span class="o">.</span><span class="n">kAfterThisManySeconds</span><span class="p">,</span>
                         <span class="n">condition_value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">post_grasp_settling_time</span><span class="p">,</span>
                     <span class="p">)</span>
-                <span class="p">]</span>
+                <span class="p">],</span>
             <span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
@@ -853,7 +881,7 @@
                         <span class="n">condition_type</span><span class="o">=</span><span class="n">FSMTransitionConditionType</span><span class="o">.</span><span class="n">kAfterThisManySeconds</span><span class="p">,</span>
                         <span class="n">condition_value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grasp_closing_time</span><span class="p">,</span>
                     <span class="p">)</span>
-                <span class="p">]</span>
+                <span class="p">],</span>
             <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">graph</span></div>
@@ -872,10 +900,15 @@
 <span class="sd">        total_time: float</span>
 <span class="sd">            The total time of the script in seconds.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">settling_time_on_floor</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">gripper_approach_time</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">grasp_closing_time</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_grasp_settling_time</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">drop_time</span></div>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">settling_time_on_floor</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">gripper_approach_time</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">grasp_closing_time</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_grasp_settling_time</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">drop_time</span>
+        <span class="p">)</span></div>
 </div>
 
-    
 </pre></div>
         </article>
       </div>
@@ -908,7 +941,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../../../_static/documentation_options.js?v=1dd76d02"></script>
+</div><script src="../../../../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

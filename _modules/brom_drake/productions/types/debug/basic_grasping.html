@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.productions.types.debug.basic_grasping - brom_drake-py 0.5.0 documentation</title>
+        <title>brom_drake.productions.types.debug.basic_grasping - brom_drake-py v0.0.0+githubActionDefault documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../index.html"><div class="brand">brom_drake-py 0.5.0 documentation</div></a>
+      <a href="../../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.0 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -560,7 +560,7 @@
     <span class="n">MeshcatVisualizerParams</span><span class="p">,</span>
     <span class="n">MultibodyPlant</span><span class="p">,</span>
     <span class="n">Parser</span><span class="p">,</span>
-    <span class="n">RigidTransform</span>
+    <span class="n">RigidTransform</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">pydrake.all</span> <span class="kn">import</span> <span class="n">Role</span> <span class="k">as</span> <span class="n">DrakeRole</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
@@ -574,17 +574,19 @@
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">brom_drake.utils.triads</span> <span class="kn">import</span> <span class="n">AddMultibodyTriad</span>
 
+
 <div class="viewcode-block" id="BasicGraspingDebuggingProduction">
 <a class="viewcode-back" href="../../../../../generated/productions/types/debug/debug.html#brom_drake.productions.types.debug.basic_grasping.BasicGraspingDebuggingProduction">[docs]</a>
 <span class="k">class</span> <span class="nc">BasicGraspingDebuggingProduction</span><span class="p">(</span><span class="n">BaseProduction</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    **Description**</span>
-<span class="sd">    </span>
+
 <span class="sd">    This base class is used to define several functions that are useful</span>
 <span class="sd">    for any production that is used for basic grasping tasks.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> 
+        <span class="bp">self</span><span class="p">,</span>
         <span class="n">path_to_object</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">path_to_gripper</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">X_ObjectGrasp</span><span class="p">:</span> <span class="n">RigidTransform</span><span class="p">,</span>
@@ -599,7 +601,7 @@
 <span class="sd">        **Description**</span>
 
 <span class="sd">        Defines the following fields for the production:</span>
-<span class="sd">        </span>
+
 <span class="sd">        **Arguments**</span>
 
 <span class="sd">        path_to_object: str</span>
@@ -637,21 +639,23 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">time_step</span> <span class="o">=</span> <span class="n">time_step</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gripper_color</span> <span class="o">=</span> <span class="n">gripper_color</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">show_gripper_base_frame</span> <span class="o">=</span> <span class="n">show_gripper_base_frame</span>
-        
+
         <span class="k">if</span> <span class="n">X_ObjectGrasp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">X_ObjectGrasp</span> <span class="o">=</span> <span class="n">RigidTransform</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">X_ObjectGripper</span> <span class="o">=</span> <span class="n">X_ObjectGrasp</span>
-        
+
         <span class="bp">self</span><span class="o">.</span><span class="n">meshcat_port_number</span> <span class="o">=</span> <span class="n">meshcat_port_number</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">show_collision_geometries</span> <span class="o">=</span> <span class="n">show_collision_geometries</span>
 
         <span class="c1"># Assign the target frame on the gripper to the variable</span>
         <span class="k">if</span> <span class="n">target_body_on_gripper</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">target_body_on_gripper</span> <span class="o">=</span> <span class="n">get_name_of_first_body_in_urdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path_to_gripper</span><span class="p">)</span>
+            <span class="n">target_body_on_gripper</span> <span class="o">=</span> <span class="n">get_name_of_first_body_in_urdf</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">path_to_gripper</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="n">target_body_on_gripper</span> <span class="ow">in</span> <span class="n">get_name_of_all_bodies_in_urdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path_to_gripper</span><span class="p">),</span> \
-                <span class="sa">f</span><span class="s2">&quot;Target body </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">target_body_on_gripper</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2"> not found in gripper model; Valid body names are: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_all_body_names_in_gripper</span><span class="p">()</span><span class="si">}</span><span class="s2">.&quot;</span>
-
+            <span class="k">assert</span> <span class="n">target_body_on_gripper</span> <span class="ow">in</span> <span class="n">get_name_of_all_bodies_in_urdf</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">path_to_gripper</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;Target body &quot;</span><span class="si">{</span><span class="n">target_body_on_gripper</span><span class="si">}</span><span class="s1">&quot; not found in gripper model; Valid body names are: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_all_body_names_in_gripper</span><span class="p">()</span><span class="si">}</span><span class="s1">.&#39;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">target_body_name_on_gripper</span> <span class="o">=</span> <span class="n">target_body_on_gripper</span>
 
@@ -668,7 +672,9 @@
 
 <div class="viewcode-block" id="BasicGraspingDebuggingProduction.add_gripper_to_plant">
 <a class="viewcode-back" href="../../../../../generated/productions/types/debug/debug.html#brom_drake.productions.types.debug.basic_grasping.BasicGraspingDebuggingProduction.add_gripper_to_plant">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_gripper_to_plant</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">and_weld_to</span><span class="p">:</span> <span class="n">Frame</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">with_X_WorldGripper</span><span class="p">:</span> <span class="n">RigidTransform</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">add_gripper_to_plant</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">and_weld_to</span><span class="p">:</span> <span class="n">Frame</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">with_X_WorldGripper</span><span class="p">:</span> <span class="n">RigidTransform</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        **Description**</span>
 
@@ -676,16 +682,16 @@
 <span class="sd">        and then weld it to the origin.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Setup</span>
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">gripper_model_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> \
-            <span class="s2">&quot;The gripper model index is already set. Please DO NOT add the gripper to the plant before this function.&quot;</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gripper_model_index</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="p">),</span> <span class="s2">&quot;The gripper model index is already set. Please DO NOT add the gripper to the plant before this function.&quot;</span>
 
-        <span class="n">plant</span> <span class="p">:</span> <span class="n">MultibodyPlant</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span>
+        <span class="n">plant</span><span class="p">:</span> <span class="n">MultibodyPlant</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span>
         <span class="n">gripper_color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gripper_color</span>
 
         <span class="n">show_gripper_base_frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">show_gripper_base_frame</span>
         <span class="k">if</span> <span class="n">with_X_WorldGripper</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">with_X_WorldGripper</span> <span class="o">=</span> <span class="n">RigidTransform</span><span class="p">()</span>
-        
 
         <span class="c1"># Input Processing</span>
         <span class="k">if</span> <span class="n">gripper_color</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -702,9 +708,13 @@
         <span class="n">temp_idcs</span> <span class="o">=</span> <span class="n">Parser</span><span class="p">(</span><span class="n">plant</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="p">)</span><span class="o">.</span><span class="n">AddModels</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">path_to_gripper</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">temp_idcs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Only one model should be added; received </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">temp_idcs</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">temp_idcs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Only one model should be added; received </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">temp_idcs</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gripper_model_index</span> <span class="o">=</span> <span class="n">temp_idcs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">gripper_model_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetModelInstanceName</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gripper_model_index</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gripper_model_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetModelInstanceName</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gripper_model_index</span>
+        <span class="p">)</span>
 
         <span class="c1"># Draw the MultibodyTriad for the</span>
         <span class="c1"># - Target Frame on the Gripper</span>
@@ -721,14 +731,15 @@
         <span class="p">)</span>
 
         <span class="c1"># Add the gripper triad to the builder</span>
-        <span class="n">target_is_different_from_gripper_base</span> <span class="o">=</span> <span class="n">target_frame</span><span class="o">.</span><span class="n">body</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="p">()</span> <span class="o">!=</span> <span class="n">gripper_base_frame</span><span class="o">.</span><span class="n">body</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="p">()</span>
+        <span class="n">target_is_different_from_gripper_base</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">target_frame</span><span class="o">.</span><span class="n">body</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="p">()</span> <span class="o">!=</span> <span class="n">gripper_base_frame</span><span class="o">.</span><span class="n">body</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="p">()</span>
+        <span class="p">)</span>
         <span class="k">if</span> <span class="n">show_gripper_base_frame</span> <span class="ow">and</span> <span class="n">target_is_different_from_gripper_base</span><span class="p">:</span>
             <span class="n">AddMultibodyTriad</span><span class="p">(</span>
                 <span class="n">gripper_base_frame</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">scene_graph</span><span class="p">,</span>
                 <span class="c1"># scale=0.1,</span>
             <span class="p">)</span>
-            
 
         <span class="c1"># Weld the gripper to the manipuland</span>
         <span class="k">if</span> <span class="n">and_weld_to</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -749,27 +760,32 @@
 <span class="sd">        and then weld it to the origin.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Setup</span>
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">manipuland_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> \
-            <span class="s2">&quot;The manipuland index is already set. Please DO NOT add the manipuland to the plant before this function.&quot;</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">manipuland_index</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="p">),</span> <span class="s2">&quot;The manipuland index is already set. Please DO NOT add the manipuland to the plant before this function.&quot;</span>
 
-        <span class="n">plant</span> <span class="p">:</span> <span class="n">MultibodyPlant</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span>
+        <span class="n">plant</span><span class="p">:</span> <span class="n">MultibodyPlant</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span>
 
         <span class="c1"># Add the manipuland to the plant</span>
         <span class="n">temp_idcs</span> <span class="o">=</span> <span class="n">Parser</span><span class="p">(</span><span class="n">plant</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="p">)</span><span class="o">.</span><span class="n">AddModels</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">path_to_object</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">temp_idcs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Only one model should be added; received </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">temp_idcs</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">temp_idcs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Only one model should be added; received </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">temp_idcs</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">manipuland_index</span> <span class="o">=</span> <span class="n">temp_idcs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">manipuland_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetModelInstanceName</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">manipuland_index</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">and_weld_to</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># Weld the first frame in the model to the frame given by and_weld_to</span>
-            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">and_weld_to</span><span class="p">,</span> <span class="n">Frame</span><span class="p">),</span> \
-                <span class="sa">f</span><span class="s2">&quot;and_weld_to must be a Frame; received </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">and_weld_to</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-            
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+                <span class="n">and_weld_to</span><span class="p">,</span> <span class="n">Frame</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;and_weld_to must be a Frame; received </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">and_weld_to</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+
             <span class="n">manipuland_body_idcs</span> <span class="o">=</span> <span class="n">plant</span><span class="o">.</span><span class="n">GetBodyIndices</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">manipuland_index</span><span class="p">)</span>
-            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">manipuland_body_idcs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> \
-                <span class="sa">f</span><span class="s2">&quot;Expected at least one body in the manipuland; received </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">manipuland_body_idcs</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="nb">len</span><span class="p">(</span><span class="n">manipuland_body_idcs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expected at least one body in the manipuland; received </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">manipuland_body_idcs</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="n">manipuland_body</span> <span class="o">=</span> <span class="n">plant</span><span class="o">.</span><span class="n">get_body</span><span class="p">(</span><span class="n">manipuland_body_idcs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
             <span class="n">frame0</span> <span class="o">=</span> <span class="n">manipuland_body</span><span class="o">.</span><span class="n">body_frame</span><span class="p">()</span>
 
@@ -794,7 +810,9 @@
         <span class="c1"># Setup</span>
 
         <span class="c1"># Create meshcat object</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">meshcat</span> <span class="o">=</span> <span class="n">Meshcat</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">meshcat_port_number</span><span class="p">)</span>  <span class="c1"># Object provides an interface to Meshcat</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">meshcat</span> <span class="o">=</span> <span class="n">Meshcat</span><span class="p">(</span>
+            <span class="n">port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">meshcat_port_number</span>
+        <span class="p">)</span>  <span class="c1"># Object provides an interface to Meshcat</span>
         <span class="n">m_visualizer</span> <span class="o">=</span> <span class="n">MeshcatVisualizer</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">meshcat</span><span class="p">,</span>
         <span class="p">)</span>
@@ -807,7 +825,9 @@
             <span class="p">)</span>
 
         <span class="n">m_visualizer</span><span class="o">.</span><span class="n">AddToBuilder</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">scene_graph</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">meshcat</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">scene_graph</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">meshcat</span><span class="p">,</span>
             <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
         <span class="p">)</span></div>
 </div>
@@ -844,7 +864,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../_static/documentation_options.js?v=1dd76d02"></script>
+</div><script src="../../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

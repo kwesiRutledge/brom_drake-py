@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.control.arms.cartesian_arm_controller - brom_drake-py 0.5.0 documentation</title>
+        <title>brom_drake.control.arms.cartesian_arm_controller - brom_drake-py v0.0.0+githubActionDefault documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">brom_drake-py 0.5.0 documentation</div></a>
+      <a href="../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.0 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -558,16 +558,22 @@
 <span class="sd">    This file defines the CartesianArmController class. This class is used to control different manipulators and generates</span>
 <span class="sd">    torque based control commands for the targeted arm.</span>
 <span class="sd">&quot;&quot;&quot;</span>
+
 <span class="c1"># External Imports</span>
 <span class="kn">from</span> <span class="nn">pydrake.all</span> <span class="kn">import</span> <span class="n">DifferentialInverseKinematicsStatus</span>
 <span class="kn">from</span> <span class="nn">pydrake.common.value</span> <span class="kn">import</span> <span class="n">AbstractValue</span>
 <span class="kn">from</span> <span class="nn">pydrake.math</span> <span class="kn">import</span> <span class="n">RollPitchYaw</span><span class="p">,</span> <span class="n">RigidTransform</span><span class="p">,</span> <span class="n">RotationMatrix</span>
 <span class="kn">from</span> <span class="nn">pydrake.multibody.inverse_kinematics</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">DifferentialInverseKinematicsParameters</span><span class="p">,</span>
-    <span class="n">DoDifferentialInverseKinematics</span><span class="p">,</span> <span class="n">InverseKinematics</span>
+    <span class="n">DoDifferentialInverseKinematics</span><span class="p">,</span>
+    <span class="n">InverseKinematics</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">pydrake.multibody.plant</span> <span class="kn">import</span> <span class="n">MultibodyPlant</span>
-<span class="kn">from</span> <span class="nn">pydrake.multibody.tree</span> <span class="kn">import</span> <span class="n">MultibodyForces</span><span class="p">,</span> <span class="n">JacobianWrtVariable</span><span class="p">,</span> <span class="n">ModelInstanceIndex</span>
+<span class="kn">from</span> <span class="nn">pydrake.multibody.tree</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">MultibodyForces</span><span class="p">,</span>
+    <span class="n">JacobianWrtVariable</span><span class="p">,</span>
+    <span class="n">ModelInstanceIndex</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">pydrake.solvers</span> <span class="kn">import</span> <span class="n">Solve</span>
 <span class="kn">from</span> <span class="nn">pydrake.systems.framework</span> <span class="kn">import</span> <span class="n">BasicVector</span>
 
@@ -583,7 +589,7 @@
 <span class="k">class</span> <span class="nc">CartesianArmController</span><span class="p">(</span><span class="n">BaseArmController</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    *Description*</span>
-<span class="sd">    </span>
+
 <span class="sd">    .. warning::</span>
 <span class="sd">        This controller appears to be only partially tested/implemented.</span>
 <span class="sd">        Use at your own risk.</span>
@@ -630,7 +636,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">DeclareVectorOutputPort</span><span class="p">(</span>
             <span class="s2">&quot;applied_arm_torque&quot;</span><span class="p">,</span>
             <span class="n">BasicVector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">num_actuators</span><span class="p">()),</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">CalcArmTorques</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">CalcArmTorques</span><span class="p">,</span>
+        <span class="p">)</span>
 
         <span class="c1"># Store desired end-effector pose and corresponding joint</span>
         <span class="c1"># angles so we only run full IK when we need to</span>
@@ -642,21 +649,23 @@
     <span class="k">def</span> <span class="nf">define_cartesian_target_input_ports</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        Define the input ports for the CartesianArmController system</span>
-<span class="sd">        </span>
+
 <span class="sd">        This method should instantiate the following input ports:</span>
-<span class="sd">        </span>
+
 <span class="sd">        - ee_target: A vector input port of size 7 representing the desired end-effector target. It&#39;s a bit strange that this is always 7 dimensional, given the types of targets that are possible.</span>
 <span class="sd">        - ee_target_type: An abstract input port representing the type of end-effector target. Recall the types of targets are defined in the EndEffectorTarget class.</span>
 <span class="sd">        - arm_joint_position: A vector input port representing the current joint positions of the arm.</span>
 <span class="sd">        - arm_joint_velocity: A vector input port representing the current joint velocities of the arm.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Input Processing</span>
-        <span class="n">plant</span> <span class="p">:</span> <span class="n">MultibodyPlant</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span>
+        <span class="n">plant</span><span class="p">:</span> <span class="n">MultibodyPlant</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">plant</span><span class="o">.</span><span class="n">is_finalized</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;The plant must be finalized before defining input ports.&quot;</span><span class="p">)</span>
-        
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s2">&quot;The plant must be finalized before defining input ports.&quot;</span>
+            <span class="p">)</span>
+
         <span class="c1"># Setup</span>
         <span class="n">n_dof</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">num_positions</span><span class="p">()</span>
 
@@ -701,7 +710,8 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">ee_frame</span><span class="p">,</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">world_frame</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">world_frame</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">world_frame</span><span class="p">,</span>
+            <span class="p">)</span>
 
             <span class="n">tau</span> <span class="o">=</span> <span class="n">tau_g</span> <span class="o">+</span> <span class="n">J</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">wrench_des</span>
 
@@ -712,17 +722,16 @@
             <span class="n">twist_des</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ee_target_port</span><span class="o">.</span><span class="n">Eval</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
 
             <span class="c1"># Use DoDifferentialInverseKinematics to determine desired qd</span>
-            <span class="n">params</span> <span class="o">=</span> <span class="n">DifferentialInverseKinematicsParameters</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">num_positions</span><span class="p">(),</span>
-                                                             <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">num_velocities</span><span class="p">())</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="n">DifferentialInverseKinematicsParameters</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">num_positions</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">num_velocities</span><span class="p">()</span>
+            <span class="p">)</span>
             <span class="n">params</span><span class="o">.</span><span class="n">set_time_step</span><span class="p">(</span><span class="mf">0.005</span><span class="p">)</span>
             <span class="n">params</span><span class="o">.</span><span class="n">set_joint_velocity_limits</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">qd_min</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">qd_max</span><span class="p">))</span>
             <span class="n">params</span><span class="o">.</span><span class="n">set_joint_position_limits</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">q_min</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_max</span><span class="p">))</span>
 
-            <span class="n">result</span> <span class="o">=</span> <span class="n">DoDifferentialInverseKinematics</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="p">,</span>
-                                                     <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span>
-                                                     <span class="n">twist_des</span><span class="p">,</span>
-                                                     <span class="bp">self</span><span class="o">.</span><span class="n">ee_frame</span><span class="p">,</span>
-                                                     <span class="n">params</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">DoDifferentialInverseKinematics</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span> <span class="n">twist_des</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ee_frame</span><span class="p">,</span> <span class="n">params</span>
+            <span class="p">)</span>
 
             <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">DifferentialInverseKinematicsStatus</span><span class="o">.</span><span class="n">kSolutionFound</span><span class="p">:</span>
                 <span class="n">qd_nom</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">joint_velocities</span>
@@ -754,16 +763,20 @@
                 <span class="c1"># This sets up a nonconvex optimization problem to find joint angles consistent</span>
                 <span class="c1"># with the given constraints</span>
                 <span class="n">ik</span> <span class="o">=</span> <span class="n">InverseKinematics</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">)</span>
-                <span class="n">ik</span><span class="o">.</span><span class="n">AddPositionConstraint</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ee_frame</span><span class="p">,</span>
-                                         <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-                                         <span class="bp">self</span><span class="o">.</span><span class="n">world_frame</span><span class="p">,</span>
-                                         <span class="n">X_WE_des</span><span class="o">.</span><span class="n">translation</span><span class="p">(),</span>
-                                         <span class="n">X_WE_des</span><span class="o">.</span><span class="n">translation</span><span class="p">())</span>
-                <span class="n">ik</span><span class="o">.</span><span class="n">AddOrientationConstraint</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ee_frame</span><span class="p">,</span>
-                                            <span class="n">RotationMatrix</span><span class="p">(),</span>
-                                            <span class="bp">self</span><span class="o">.</span><span class="n">world_frame</span><span class="p">,</span>
-                                            <span class="n">X_WE_des</span><span class="o">.</span><span class="n">rotation</span><span class="p">(),</span>
-                                            <span class="mf">0.001</span><span class="p">)</span>
+                <span class="n">ik</span><span class="o">.</span><span class="n">AddPositionConstraint</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">ee_frame</span><span class="p">,</span>
+                    <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">world_frame</span><span class="p">,</span>
+                    <span class="n">X_WE_des</span><span class="o">.</span><span class="n">translation</span><span class="p">(),</span>
+                    <span class="n">X_WE_des</span><span class="o">.</span><span class="n">translation</span><span class="p">(),</span>
+                <span class="p">)</span>
+                <span class="n">ik</span><span class="o">.</span><span class="n">AddOrientationConstraint</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">ee_frame</span><span class="p">,</span>
+                    <span class="n">RotationMatrix</span><span class="p">(),</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">world_frame</span><span class="p">,</span>
+                    <span class="n">X_WE_des</span><span class="o">.</span><span class="n">rotation</span><span class="p">(),</span>
+                    <span class="mf">0.001</span><span class="p">,</span>
+                <span class="p">)</span>
 
                 <span class="n">prog</span> <span class="o">=</span> <span class="n">ik</span><span class="o">.</span><span class="n">get_mutable_prog</span><span class="p">()</span>
                 <span class="n">q_var</span> <span class="o">=</span> <span class="n">ik</span><span class="o">.</span><span class="n">q</span><span class="p">()</span>
@@ -836,7 +849,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=1dd76d02"></script>
+</div><script src="../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>

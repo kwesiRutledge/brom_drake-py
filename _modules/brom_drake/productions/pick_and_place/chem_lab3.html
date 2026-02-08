@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.productions.pick_and_place.chem_lab3 - brom_drake-py 0.5.0 documentation</title>
+        <title>brom_drake.productions.pick_and_place.chem_lab3 - brom_drake-py v0.0.0+githubActionDefault documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">brom_drake-py 0.5.0 documentation</div></a>
+      <a href="../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.0 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -551,8 +551,7 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for brom_drake.productions.pick_and_place.chem_lab3</h1><div class="highlight"><pre>
-<span></span>
-<span class="kn">from</span> <span class="nn">importlib</span> <span class="kn">import</span> <span class="n">resources</span> <span class="k">as</span> <span class="n">impresources</span>
+<span></span><span class="kn">from</span> <span class="nn">importlib</span> <span class="kn">import</span> <span class="n">resources</span> <span class="k">as</span> <span class="n">impresources</span>
 <span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">pydrake.all</span> <span class="kn">import</span> <span class="p">(</span>
@@ -580,9 +579,13 @@
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">brom_drake.file_manipulation.urdf</span> <span class="kn">import</span> <span class="n">drakeify_my_urdf</span>
 <span class="kn">from</span> <span class="nn">brom_drake.file_manipulation.urdf.shapes.box</span> <span class="kn">import</span> <span class="n">BoxDefinition</span>
-<span class="kn">from</span> <span class="nn">brom_drake.file_manipulation.urdf.simple_writer.urdf_definition</span> <span class="kn">import</span> <span class="n">SimpleShapeURDFDefinition</span><span class="p">,</span> \
-    <span class="n">InertiaDefinition</span>
-<span class="kn">from</span> <span class="nn">brom_drake.motion_planning.systems.open_loop_dispensers.open_loop_plan_dispenser</span> <span class="kn">import</span> <span class="n">OpenLoopPlanDispenser</span>
+<span class="kn">from</span> <span class="nn">brom_drake.file_manipulation.urdf.simple_writer.urdf_definition</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">SimpleShapeURDFDefinition</span><span class="p">,</span>
+    <span class="n">InertiaDefinition</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">brom_drake.motion_planning.systems.open_loop_dispensers.open_loop_plan_dispenser</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">OpenLoopPlanDispenser</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">import</span> <span class="nn">brom_drake.robots</span> <span class="k">as</span> <span class="nn">robots</span>
 <span class="kn">from</span> <span class="nn">brom_drake.robots.gripper_type</span> <span class="kn">import</span> <span class="n">GripperType</span>
 <span class="kn">from</span> <span class="nn">brom_drake.stations.classical</span> <span class="kn">import</span> <span class="n">UR10eStation</span>
@@ -602,6 +605,7 @@
 <span class="sd">    It is used to test the pick and place capabilities of the robot</span>
 <span class="sd">    in a chemistry lab setting with minimal constraints.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">time_step</span><span class="o">=</span><span class="mf">5e-4</span><span class="p">,</span>
@@ -618,7 +622,7 @@
 <span class="sd">        **Description**</span>
 
 <span class="sd">        Constructor for the ChemLab3 Production.</span>
-<span class="sd">    </span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Superclass constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -665,7 +669,7 @@
     <span class="k">def</span> <span class="nf">add_supporting_cast</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        **Description**</span>
-<span class="sd">        </span>
+
 <span class="sd">        This method adds all secondary cast members to the builder.</span>
 <span class="sd">        The secondary cast members in the production are the:</span>
 
@@ -674,7 +678,7 @@
 <span class="sd">        - Component which share&#39;s the robot model reference</span>
 <span class="sd">        - Motion Planning components (e.g., dispensers, etc.)</span>
 <span class="sd">        - Start and Goal sources</span>
-<span class="sd">        </span>
+
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Call the superclass method</span>
@@ -709,7 +713,7 @@
     <span class="k">def</span> <span class="nf">add_dummy_gripper_components</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        **Description**</span>
-<span class="sd">        </span>
+
 <span class="sd">        Add more components to the production that are used</span>
 <span class="sd">        to hold the gripper in place.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -717,11 +721,9 @@
 
         <span class="c1"># Create a dummy target type object for the gripper and connect it to the gripper controller</span>
         <span class="n">dummy_gripper_target_type_source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">AddSystem</span><span class="p">(</span>
-            <span class="n">ConstantValueSource</span><span class="p">(</span>
-                <span class="n">AbstractValue</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="n">GripperTarget</span><span class="o">.</span><span class="n">kPosition</span><span class="p">)</span>
-            <span class="p">),</span>
+            <span class="n">ConstantValueSource</span><span class="p">(</span><span class="n">AbstractValue</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="n">GripperTarget</span><span class="o">.</span><span class="n">kPosition</span><span class="p">)),</span>
         <span class="p">)</span>
-        
+
         <span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">Connect</span><span class="p">(</span>
             <span class="n">dummy_gripper_target_type_source</span><span class="o">.</span><span class="n">get_output_port</span><span class="p">(),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">station</span><span class="o">.</span><span class="n">GetInputPort</span><span class="p">(</span><span class="s2">&quot;gripper_target_type&quot;</span><span class="p">),</span>
@@ -742,7 +744,7 @@
     <span class="k">def</span> <span class="nf">add_erlenmeyer_flask</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        **Description**</span>
-<span class="sd">        </span>
+
 <span class="sd">        Adds the 500ml Erlenmeyer flask to the production.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Setup</span>
@@ -773,7 +775,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Setup</span>
         <span class="n">arm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">arm</span>
-        <span class="n">n_actuated_dof</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">num_actuated_dofs</span><span class="p">(</span><span class="n">arm</span><span class="p">)</span> <span class="c1"># Number of actuated DOF in arm</span>
+        <span class="n">n_actuated_dof</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">num_actuated_dofs</span><span class="p">(</span>
+            <span class="n">arm</span>
+        <span class="p">)</span>  <span class="c1"># Number of actuated DOF in arm</span>
 
         <span class="c1"># Add the Plan Dispenser and connect it to the station</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plan_dispenser</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">AddSystem</span><span class="p">(</span>
@@ -790,7 +794,7 @@
             <span class="c1"># - Gripper Target Type</span>
             <span class="c1"># - Gripper Target</span>
             <span class="c1"># Both should be static.</span>
-            
+
             <span class="c1"># Add the gripper target to the builder</span>
             <span class="n">gripper_target_type_source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">AddSystem</span><span class="p">(</span>
                 <span class="n">ConstantValueSource</span><span class="p">(</span>
@@ -814,7 +818,6 @@
                 <span class="n">gripper_target_source</span><span class="o">.</span><span class="n">get_output_port</span><span class="p">(),</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">station</span><span class="o">.</span><span class="n">GetInputPort</span><span class="p">(</span><span class="s2">&quot;gripper_target&quot;</span><span class="p">),</span>
             <span class="p">)</span></div>
-
 
 
 <div class="viewcode-block" id="ChemLab3.add_shelf">
@@ -847,14 +850,18 @@
     <span class="k">def</span> <span class="nf">add_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        **Description**</span>
-<span class="sd">        </span>
+
 <span class="sd">        This method adds the table to the production.</span>
 <span class="sd">        The table will be &quot;L-shaped&quot;, and we will define it with 2 box</span>
 <span class="sd">        shapes.</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Setup</span>
-        <span class="n">table_width</span><span class="p">,</span> <span class="n">table_length</span><span class="p">,</span> <span class="n">table_height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_length</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_height</span>
+        <span class="n">table_width</span><span class="p">,</span> <span class="n">table_length</span><span class="p">,</span> <span class="n">table_height</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table_width</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table_length</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table_height</span><span class="p">,</span>
+        <span class="p">)</span>
 
         <span class="c1"># 11111111111111111</span>
         <span class="c1"># Create first half</span>
@@ -865,7 +872,7 @@
             <span class="n">shape</span><span class="o">=</span><span class="n">BoxDefinition</span><span class="p">(</span>
                 <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">table_width</span><span class="p">,</span> <span class="n">table_length</span><span class="p">,</span> <span class="n">table_height</span><span class="p">),</span>
             <span class="p">),</span>
-            <span class="n">mass</span><span class="o">=</span><span class="mf">100.0</span><span class="p">,</span> <span class="c1"># kg</span>
+            <span class="n">mass</span><span class="o">=</span><span class="mf">100.0</span><span class="p">,</span>  <span class="c1"># kg</span>
             <span class="n">inertia</span><span class="o">=</span><span class="n">InertiaDefinition</span><span class="p">(</span>
                 <span class="n">ixx</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
                 <span class="n">iyy</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
@@ -882,7 +889,9 @@
         <span class="c1"># Weld the table to the world frame</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">WeldFrames</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">world_frame</span><span class="p">(),</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetFrameByName</span><span class="p">(</span><span class="n">half1_defn</span><span class="o">.</span><span class="n">base_link_name</span><span class="p">,</span> <span class="n">table_half1_model_index</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetFrameByName</span><span class="p">(</span>
+                <span class="n">half1_defn</span><span class="o">.</span><span class="n">base_link_name</span><span class="p">,</span> <span class="n">table_half1_model_index</span>
+            <span class="p">),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pose_WorldTableHalf1</span><span class="p">,</span>
         <span class="p">)</span>
 
@@ -893,9 +902,9 @@
         <span class="n">half2_defn</span> <span class="o">=</span> <span class="n">SimpleShapeURDFDefinition</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="s2">&quot;table_half2&quot;</span><span class="p">,</span>
             <span class="n">shape</span><span class="o">=</span><span class="n">BoxDefinition</span><span class="p">(</span>
-                <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">table_width</span><span class="o">/</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">table_length</span><span class="p">,</span> <span class="n">table_height</span><span class="p">),</span>
+                <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">table_width</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">,</span> <span class="n">table_length</span><span class="p">,</span> <span class="n">table_height</span><span class="p">),</span>
             <span class="p">),</span>
-            <span class="n">mass</span><span class="o">=</span><span class="mf">50.0</span><span class="p">,</span> <span class="c1"># kg</span>
+            <span class="n">mass</span><span class="o">=</span><span class="mf">50.0</span><span class="p">,</span>  <span class="c1"># kg</span>
             <span class="n">inertia</span><span class="o">=</span><span class="n">InertiaDefinition</span><span class="p">(</span>
                 <span class="n">ixx</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
                 <span class="n">iyy</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
@@ -912,7 +921,9 @@
         <span class="c1"># Weld the table to the world frame</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">WeldFrames</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">world_frame</span><span class="p">(),</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetFrameByName</span><span class="p">(</span><span class="n">half2_defn</span><span class="o">.</span><span class="n">base_link_name</span><span class="p">,</span> <span class="n">table_half2_model_index</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetFrameByName</span><span class="p">(</span>
+                <span class="n">half2_defn</span><span class="o">.</span><span class="n">base_link_name</span><span class="p">,</span> <span class="n">table_half2_model_index</span>
+            <span class="p">),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pose_WorldTableHalf2</span><span class="p">,</span>
         <span class="p">)</span></div>
 
@@ -942,24 +953,24 @@
         <span class="c1"># Configure the scene graph for collision detection</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">configure_collision_filter</span><span class="p">(</span>
             <span class="n">diagram</span><span class="o">.</span><span class="n">GetSubsystemContext</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">scene_graph</span><span class="p">,</span> <span class="n">diagram_context</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">scene_graph</span><span class="p">,</span>
+                <span class="n">diagram_context</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="p">)</span>
 
         <span class="c1"># Connect arm controller to the appropriate plant_context</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">station</span><span class="o">.</span><span class="n">arm_controller</span><span class="o">.</span><span class="n">plant_context</span> <span class="o">=</span> <span class="n">diagram</span><span class="o">.</span><span class="n">GetSubsystemContext</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">station</span><span class="o">.</span><span class="n">arm_controller</span><span class="o">.</span><span class="n">plant</span><span class="p">,</span> <span class="n">diagram_context</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">station</span><span class="o">.</span><span class="n">arm_controller</span><span class="o">.</span><span class="n">plant</span><span class="p">,</span>
+            <span class="n">diagram_context</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="k">for</span> <span class="n">role_ii</span><span class="p">,</span> <span class="n">performer_ii</span> <span class="ow">in</span> <span class="n">cast</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">role_ii</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;OfflineMotionPlanner&quot;</span><span class="p">:</span>
-                <span class="n">performer_ii</span><span class="o">.</span><span class="n">set_internal_root_context</span><span class="p">(</span>
-                    <span class="n">diagram_context</span>
-                <span class="p">)</span>
+                <span class="n">performer_ii</span><span class="o">.</span><span class="n">set_internal_root_context</span><span class="p">(</span><span class="n">diagram_context</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">diagram</span><span class="p">,</span> <span class="n">diagram_context</span></div>
 
-    
+
 <div class="viewcode-block" id="ChemLab3.build_production">
 <a class="viewcode-back" href="../../../../generated/productions/pick_and_place/pick_and_place.html#brom_drake.productions.pick_and_place.chem_lab3.ChemLab3.build_production">[docs]</a>
     <span class="k">def</span> <span class="nf">build_production</span><span class="p">(</span>
@@ -987,7 +998,7 @@
         <span class="n">plant</span><span class="o">.</span><span class="n">SetPositions</span><span class="p">(</span>
             <span class="n">plant</span><span class="o">.</span><span class="n">GetMyMutableContextFromRoot</span><span class="p">(</span><span class="n">diagram_context</span><span class="p">),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">shelf_model_index</span><span class="p">,</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="p">(</span><span class="mf">3.0</span><span class="o">/</span><span class="mf">4.0</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="p">(</span><span class="mf">3.0</span><span class="o">/</span><span class="mf">4.0</span><span class="p">)]),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="mf">3.0</span> <span class="o">/</span> <span class="mf">4.0</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="mf">3.0</span> <span class="o">/</span> <span class="mf">4.0</span><span class="p">)]),</span>
         <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">diagram</span><span class="p">,</span> <span class="n">diagram_context</span></div>
@@ -1048,7 +1059,7 @@
         <span class="c1">#         GeometrySet(self.arm_geometry_ids)</span>
         <span class="c1">#     )</span>
         <span class="c1"># )</span>
-    
+
 <div class="viewcode-block" id="ChemLab3.define_pose_ik_problem">
 <a class="viewcode-back" href="../../../../generated/productions/pick_and_place/pick_and_place.html#brom_drake.productions.pick_and_place.chem_lab3.ChemLab3.define_pose_ik_problem">[docs]</a>
     <span class="k">def</span> <span class="nf">define_pose_ik_problem</span><span class="p">(</span>
@@ -1078,8 +1089,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">world_frame</span><span class="p">(),</span>
             <span class="n">pose_WorldTarget</span><span class="o">.</span><span class="n">translation</span><span class="p">(),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetFrameByName</span><span class="p">(</span><span class="n">target_frame_name</span><span class="p">),</span>
-            <span class="p">(</span><span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,))</span> <span class="o">*</span> <span class="n">eps0</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
-            <span class="p">(</span><span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,))</span> <span class="o">*</span> <span class="n">eps0</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+            <span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,))</span> <span class="o">*</span> <span class="n">eps0</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+            <span class="p">(</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,))</span> <span class="o">*</span> <span class="n">eps0</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
         <span class="p">)</span>
 
         <span class="c1"># TODO(kwesi): Add OrientationCosntraint</span>
@@ -1145,7 +1156,8 @@
         <span class="c1"># Configure the scene graph for collision detection</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">configure_collision_filter</span><span class="p">(</span>
             <span class="n">diagram</span><span class="o">.</span><span class="n">GetSubsystemContext</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">scene_graph</span><span class="p">,</span> <span class="n">diagram_context</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">scene_graph</span><span class="p">,</span>
+                <span class="n">diagram_context</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="p">)</span>
 
@@ -1154,9 +1166,7 @@
         <span class="c1">#     self.station.arm_controller.plant, diagram_context,</span>
         <span class="c1"># )</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">performers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_internal_root_context</span><span class="p">(</span>
-            <span class="n">diagram_context</span>
-        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">performers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_internal_root_context</span><span class="p">(</span><span class="n">diagram_context</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">diagram</span><span class="p">,</span> <span class="n">diagram_context</span></div>
 
@@ -1169,12 +1179,12 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Setup</span>
         <span class="n">hardcoded_robot_joint_names</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="s1">&#39;ur10e-test_shoulder_pan_joint_q&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;ur10e-test_shoulder_lift_joint_q&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;ur10e-test_elbow_joint_q&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;ur10e-test_wrist_1_joint_q&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;ur10e-test_wrist_2_joint_q&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;ur10e-test_wrist_3_joint_q&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;ur10e-test_shoulder_pan_joint_q&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ur10e-test_shoulder_lift_joint_q&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ur10e-test_elbow_joint_q&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ur10e-test_wrist_1_joint_q&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ur10e-test_wrist_2_joint_q&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ur10e-test_wrist_3_joint_q&quot;</span><span class="p">,</span>
         <span class="p">]</span>
 
         <span class="c1"># Retrieve goal_configuraiton value</span>
@@ -1212,16 +1222,25 @@
             <span class="c1"># self._goal_pose = RigidTransform(goal_orientation, goal_position)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_goal_pose</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">solve_forward_kinematics_problem_for_arm</span><span class="p">(</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
-                    <span class="mf">2.18266076</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.26145905</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.21521333</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.56075315</span><span class="p">,</span>  <span class="mf">1.45027155</span><span class="p">,</span>  <span class="mf">5.12764245</span>
-                <span class="p">])</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="mf">2.18266076</span><span class="p">,</span>
+                        <span class="o">-</span><span class="mf">6.26145905</span><span class="p">,</span>
+                        <span class="o">-</span><span class="mf">1.21521333</span><span class="p">,</span>
+                        <span class="o">-</span><span class="mf">3.56075315</span><span class="p">,</span>
+                        <span class="mf">1.45027155</span><span class="p">,</span>
+                        <span class="mf">5.12764245</span><span class="p">,</span>
+                    <span class="p">]</span>
+                <span class="p">)</span>
             <span class="p">)</span>
 
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_goal_pose</span>
         <span class="k">elif</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_goal_pose</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_goal_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
             <span class="c1"># If the goal configuration is given,</span>
             <span class="c1"># use the forward kinematics solver to get the goal pose</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_goal_pose</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">solve_forward_kinematics_problem_for_arm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_goal_config</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_goal_pose</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">solve_forward_kinematics_problem_for_arm</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_goal_config</span>
+            <span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_goal_pose</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -1231,15 +1250,19 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ProductionID</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">ProductionID</span><span class="o">.</span><span class="n">kChemLab3</span>
-        
+
     <span class="k">def</span> <span class="nf">initialize_pose_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Setup</span>
-        <span class="n">table_width</span><span class="p">,</span> <span class="n">table_length</span><span class="p">,</span> <span class="n">table_height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_length</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_height</span>
+        <span class="n">table_width</span><span class="p">,</span> <span class="n">table_length</span><span class="p">,</span> <span class="n">table_height</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table_width</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table_length</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table_height</span><span class="p">,</span>
+        <span class="p">)</span>
 
         <span class="c1"># Set shelf pose</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">shelf_pose</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pose_WorldShelf</span> <span class="o">=</span> <span class="n">RigidTransform</span><span class="p">(</span>
-                <span class="n">RollPitchYaw</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">2.0</span><span class="p">)</span><span class="o">.</span><span class="n">ToQuaternion</span><span class="p">(),</span>
+                <span class="n">RollPitchYaw</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span><span class="o">.</span><span class="n">ToQuaternion</span><span class="p">(),</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.66</span><span class="p">]),</span>
             <span class="p">)</span>
 
@@ -1250,7 +1273,7 @@
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pose_WorldTableHalf2</span> <span class="o">=</span> <span class="n">RigidTransform</span><span class="p">(</span>
             <span class="n">RollPitchYaw</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span><span class="o">.</span><span class="n">ToQuaternion</span><span class="p">(),</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="n">table_width</span><span class="o">/</span><span class="mf">2.0</span> <span class="o">+</span> <span class="p">(</span><span class="n">table_width</span><span class="o">/</span><span class="mf">3.0</span><span class="p">)</span><span class="o">*</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="n">table_width</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="o">+</span> <span class="p">(</span><span class="n">table_width</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>
         <span class="p">)</span>
 
         <span class="c1"># Define pose of the starting point of the flask</span>
@@ -1261,7 +1284,9 @@
                 <span class="n">table2_to_flask_orientation0</span><span class="p">,</span>
                 <span class="n">table2_to_flask_translation0</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">pose_WorldFlask0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pose_WorldTableHalf2</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">pose_Table2Flask0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pose_WorldFlask0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pose_WorldTableHalf2</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span>
+                <span class="n">pose_Table2Flask0</span>
+            <span class="p">)</span>
 
         <span class="c1"># Define starting pose for the robot w.r.t. the flask</span>
         <span class="n">flask_to_start_translation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">+</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
@@ -1296,7 +1321,7 @@
 
         <span class="c1"># Use station&#39;s plant to solve the forward kinematics problem</span>
         <span class="n">shadow_plant</span> <span class="o">=</span> <span class="n">shadow_station</span><span class="o">.</span><span class="n">plant</span>
-        
+
         <span class="n">temp_context</span> <span class="o">=</span> <span class="n">shadow_plant</span><span class="o">.</span><span class="n">CreateDefaultContext</span><span class="p">()</span>
         <span class="n">shadow_plant</span><span class="o">.</span><span class="n">SetPositions</span><span class="p">(</span>
             <span class="n">temp_context</span><span class="p">,</span>
@@ -1323,12 +1348,12 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Setup</span>
         <span class="n">hardcoded_robot_joint_names</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="s1">&#39;ur10e-test_shoulder_pan_joint_q&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;ur10e-test_shoulder_lift_joint_q&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;ur10e-test_elbow_joint_q&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;ur10e-test_wrist_1_joint_q&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;ur10e-test_wrist_2_joint_q&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;ur10e-test_wrist_3_joint_q&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;ur10e-test_shoulder_pan_joint_q&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ur10e-test_shoulder_lift_joint_q&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ur10e-test_elbow_joint_q&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ur10e-test_wrist_1_joint_q&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ur10e-test_wrist_2_joint_q&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ur10e-test_wrist_3_joint_q&quot;</span><span class="p">,</span>
         <span class="p">]</span>
 
         <span class="c1"># Algorithm</span>
@@ -1345,7 +1370,6 @@
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
                 <span class="s2">&quot;This function should be implemented by the subclass.&quot;</span>
             <span class="p">)</span>
-
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">start_pose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RigidTransform</span><span class="p">:</span>
@@ -1366,12 +1390,12 @@
         <span class="k">elif</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start_pose</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
             <span class="c1"># Use the start configuration to get the starting pose</span>
             <span class="c1"># Using a &quot;forward kinematics solver&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_start_pose</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">solve_forward_kinematics_problem_for_arm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start_config</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_start_pose</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">solve_forward_kinematics_problem_for_arm</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_start_config</span>
+            <span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_pose</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Unexpected behavior. This should never happen.&quot;</span>
-            <span class="p">)</span></div>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unexpected behavior. This should never happen.&quot;</span><span class="p">)</span></div>
 
 </pre></div>
         </article>
@@ -1405,7 +1429,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=1dd76d02"></script>
+</div><script src="../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>

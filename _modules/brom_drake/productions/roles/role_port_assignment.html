@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.productions.roles.role_port_assignment - brom_drake-py 0.5.0 documentation</title>
+        <title>brom_drake.productions.roles.role_port_assignment - brom_drake-py v0.0.0+githubActionDefault documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">brom_drake-py 0.5.0 documentation</div></a>
+      <a href="../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.0 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -552,15 +552,15 @@
         <article role="main" id="furo-main-content">
           <h1>Source code for brom_drake.productions.roles.role_port_assignment</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">distutils.command.build</span> <span class="kn">import</span> <span class="n">build</span>
 <span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">IntEnum</span>
-<span class="kn">from</span> <span class="nn">platform</span> <span class="kn">import</span> <span class="n">system</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span>
 
 <span class="kn">from</span> <span class="nn">pydrake.systems.framework</span> <span class="kn">import</span> <span class="n">DiagramBuilder</span><span class="p">,</span> <span class="n">LeafSystem</span>
 
 <span class="kn">from</span> <span class="nn">brom_drake.utils</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">Performer</span><span class="p">,</span> <span class="n">find_all_systems_with_output_port</span><span class="p">,</span> <span class="n">find_all_systems_with_input_port</span><span class="p">,</span>
+    <span class="n">Performer</span><span class="p">,</span>
+    <span class="n">find_all_systems_with_output_port</span><span class="p">,</span>
+    <span class="n">find_all_systems_with_input_port</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">brom_drake.utils.search</span> <span class="kn">import</span> <span class="n">find_all_systems_with_name</span>
 
@@ -581,8 +581,10 @@
 
 <span class="sd">    kOutput =&gt; Connection is between an external target and a performer&#39;s OUTPUT port.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">kInput</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">kOutput</span> <span class="o">=</span> <span class="mi">2</span></div>
+
 
 
 <div class="viewcode-block" id="RolePortAssignment">
@@ -596,7 +598,7 @@
 <span class="sd">    and the rest of the diagram. Some connections are required, but they need not be.</span>
 
 <span class="sd">    TODO(Kwesi): Refactor this class to use the ``DiagramTarget`` object.</span>
-<span class="sd">    </span>
+
 <span class="sd">    *Parameters*</span>
 
 <span class="sd">    external_target_name: TargetName</span>
@@ -612,6 +614,7 @@
 <span class="sd">    is_required: bool, optional</span>
 <span class="sd">        Default is True.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">external_target_name</span><span class="p">:</span> <span class="n">TargetName</span>  <span class="c1"># The name of the port (or system) that we want to connect this port to</span>
     <span class="n">performer_port_name</span><span class="p">:</span> <span class="n">PortName</span>
     <span class="n">pairing_type</span><span class="p">:</span> <span class="n">PairingType</span>
@@ -626,7 +629,7 @@
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        Creates the connection between the performer and the appropriate</span>
 <span class="sd">        port in the incomplete Drake diagram specified by `builder`.</span>
 
@@ -651,9 +654,7 @@
                 <span class="n">performer</span><span class="o">=</span><span class="n">performer</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Unknown pairing type: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pairing_type</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="p">)</span></div>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown pairing type: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pairing_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="RolePortAssignment.create_input_port_connections_in">
@@ -684,24 +685,24 @@
         <span class="c1"># Setup</span>
 
         <span class="c1"># Check to see if the performer has the given input port</span>
-        <span class="n">performer_has_input_port</span> <span class="o">=</span> <span class="n">performer</span><span class="o">.</span><span class="n">HasInputPort</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">performer_port_name</span>
-        <span class="p">)</span>
+        <span class="n">performer_has_input_port</span> <span class="o">=</span> <span class="n">performer</span><span class="o">.</span><span class="n">HasInputPort</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">performer_port_name</span><span class="p">)</span>
         <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">performer_has_input_port</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_required</span><span class="p">:</span>
             <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_assignment_port_unavailable_error</span><span class="p">()</span>
         <span class="k">elif</span> <span class="p">(</span><span class="ow">not</span> <span class="n">performer_has_input_port</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_required</span><span class="p">):</span>
             <span class="nb">print</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Performer </span><span class="si">{</span><span class="n">performer</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="si">}</span><span class="s2"> does not have OPTIONAL input port named </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">performer_port_name</span><span class="si">}</span><span class="s2">.&quot;</span> <span class="o">+</span>
-                <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Will skip its connection.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Performer </span><span class="si">{</span><span class="n">performer</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="si">}</span><span class="s2"> does not have OPTIONAL input port named </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">performer_port_name</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Will skip its connection.&quot;</span>
             <span class="p">)</span>
-            <span class="k">return</span> <span class="c1"># Do not do anything if the port does not exist</span>
+            <span class="k">return</span>  <span class="c1"># Do not do anything if the port does not exist</span>
 
         <span class="c1"># Otherwise, port exists.</span>
         <span class="n">performer_port</span> <span class="o">=</span> <span class="n">performer</span><span class="o">.</span><span class="n">GetInputPort</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">performer_port_name</span><span class="p">)</span>
 
         <span class="c1"># Get the external system that has the output port with the correct name</span>
         <span class="n">systems_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_any_matching_output_targets</span><span class="p">(</span><span class="n">builder</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">systems_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_not_enough_systems_error</span><span class="p">(</span><span class="n">systems_list</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">systems_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_not_enough_systems_error</span><span class="p">(</span>
+            <span class="n">systems_list</span>
+        <span class="p">)</span>
 
         <span class="c1"># Connect system</span>
         <span class="n">system_is_target</span> <span class="o">=</span> <span class="n">systems_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">external_target_name</span>
@@ -725,13 +726,13 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">LeafSystem</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This function attempts to find all targets that match the output</span>
 <span class="sd">        target definition, i.e.:</span>
-<span class="sd">        </span>
+
 <span class="sd">        - A system with the output port with given name</span>
 <span class="sd">        - A system with the given name.</span>
-<span class="sd">        </span>
+
 <span class="sd">        *Parameters*</span>
 
 <span class="sd">        builder: DiagramBuilder</span>
@@ -747,7 +748,8 @@
 
         <span class="c1"># Retrieve all systems that have that output port name external_target_name</span>
         <span class="n">systems_list</span> <span class="o">=</span> <span class="n">find_all_systems_with_output_port</span><span class="p">(</span>
-            <span class="n">builder</span><span class="p">,</span> <span class="n">external_target_name</span><span class="p">,</span>
+            <span class="n">builder</span><span class="p">,</span>
+            <span class="n">external_target_name</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">systems_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -761,7 +763,6 @@
 
         <span class="c1"># Otherwise, raise an error</span>
         <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_no_target_found_error</span><span class="p">()</span></div>
-
 
 
 <div class="viewcode-block" id="RolePortAssignment.create_output_port_connections_in">
@@ -792,15 +793,13 @@
         <span class="c1"># Setup</span>
 
         <span class="c1"># Check to see if the performer has the given input port</span>
-        <span class="n">performer_has_output_port</span> <span class="o">=</span> <span class="n">performer</span><span class="o">.</span><span class="n">HasOutputPort</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">performer_port_name</span>
-        <span class="p">)</span>
+        <span class="n">performer_has_output_port</span> <span class="o">=</span> <span class="n">performer</span><span class="o">.</span><span class="n">HasOutputPort</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">performer_port_name</span><span class="p">)</span>
         <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">performer_has_output_port</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_required</span><span class="p">:</span>
             <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_assignment_port_unavailable_error</span><span class="p">()</span>
         <span class="k">elif</span> <span class="p">(</span><span class="ow">not</span> <span class="n">performer_has_output_port</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_required</span><span class="p">):</span>
             <span class="nb">print</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Performer </span><span class="si">{</span><span class="n">performer</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="si">}</span><span class="s2"> does not have OPTIONAL output port named </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">performer_port_name</span><span class="si">}</span><span class="s2">.&quot;</span> <span class="o">+</span>
-                <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Will skip its connection.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Performer </span><span class="si">{</span><span class="n">performer</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="si">}</span><span class="s2"> does not have OPTIONAL output port named </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">performer_port_name</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Will skip its connection.&quot;</span>
             <span class="p">)</span>
             <span class="k">return</span>  <span class="c1"># Do not do anything if the port does not exist</span>
 
@@ -809,7 +808,9 @@
 
         <span class="c1"># Get the external system that has the input port with the correct name</span>
         <span class="n">systems_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_any_matching_input_targets</span><span class="p">(</span><span class="n">builder</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">systems_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_not_enough_systems_error</span><span class="p">(</span><span class="n">systems_list</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">systems_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_not_enough_systems_error</span><span class="p">(</span>
+            <span class="n">systems_list</span>
+        <span class="p">)</span>
 
         <span class="c1"># TODO(kwesi): Create if-else statement to handle the cases of when systems_list</span>
         <span class="c1"># contains either:</span>
@@ -829,13 +830,13 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">LeafSystem</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This function attempts to find all targets that match the input</span>
 <span class="sd">        target definition, i.e.:</span>
 
 <span class="sd">        - A system with the input port with given name</span>
 <span class="sd">        - A system with the given name.</span>
-<span class="sd">        </span>
+
 <span class="sd">        TODO(Kwesi): Compress this method and the output targets method?</span>
 
 <span class="sd">        builder: DiagramBuilder</span>
@@ -851,7 +852,8 @@
 
         <span class="c1"># Retrieve all systems that have that output port name external_target_name</span>
         <span class="n">systems_list</span> <span class="o">=</span> <span class="n">find_all_systems_with_input_port</span><span class="p">(</span>
-            <span class="n">builder</span><span class="p">,</span> <span class="n">external_target_name</span><span class="p">,</span>
+            <span class="n">builder</span><span class="p">,</span>
+            <span class="n">external_target_name</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">systems_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -886,7 +888,7 @@
 
         <span class="c1"># Create the error message</span>
         <span class="k">return</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Performer does not have required </span><span class="si">{</span><span class="n">port_type_str</span><span class="si">}</span><span class="s2"> port </span><span class="se">\&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">performer_port_name</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s1">&#39;Performer does not have required </span><span class="si">{</span><span class="n">port_type_str</span><span class="si">}</span><span class="s1"> port &quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">performer_port_name</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
         <span class="p">)</span></div>
 
 
@@ -899,8 +901,10 @@
             <span class="n">port_type_str</span> <span class="o">=</span> <span class="s2">&quot;OUTPUT&quot;</span>
 
         <span class="c1"># Create message depending on the pairing type</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Expected 1 system to have </span><span class="si">{</span><span class="n">port_type_str</span><span class="si">}</span><span class="s2"> port </span><span class="se">\&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">external_target_name</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">,&quot;</span> <span class="o">+</span> \
-            <span class="sa">f</span><span class="s2">&quot; but found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">systems_list</span><span class="p">)</span><span class="si">}</span><span class="s2"> systems with that </span><span class="si">{</span><span class="n">port_type_str</span><span class="si">}</span><span class="s2"> port.&quot;</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Expected 1 system to have </span><span class="si">{</span><span class="n">port_type_str</span><span class="si">}</span><span class="s1"> port &quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">external_target_name</span><span class="si">}</span><span class="s1">&quot;,&#39;</span>
+            <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; but found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">systems_list</span><span class="p">)</span><span class="si">}</span><span class="s2"> systems with that </span><span class="si">{</span><span class="n">port_type_str</span><span class="si">}</span><span class="s2"> port.&quot;</span>
+        <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">create_no_target_found_error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Setup</span>
@@ -915,9 +919,9 @@
 
         <span class="c1"># Create error</span>
         <span class="k">return</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Failed to find an external system with the name </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">external_target_name</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">&quot;</span> <span class="o">+</span>
-            <span class="sa">f</span><span class="s2">&quot; or an external system with </span><span class="si">{</span><span class="n">external_target_type</span><span class="si">}</span><span class="s2"> port name </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">external_target_name</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">.&quot;</span> <span class="o">+</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Check your RolePortAssignment definition.&quot;</span>
+            <span class="sa">f</span><span class="s1">&#39;Failed to find an external system with the name &quot;</span><span class="si">{</span><span class="n">external_target_name</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
+            <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39; or an external system with </span><span class="si">{</span><span class="n">external_target_type</span><span class="si">}</span><span class="s1"> port name &quot;</span><span class="si">{</span><span class="n">external_target_name</span><span class="si">}</span><span class="s1">&quot;.&#39;</span>
+            <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Check your RolePortAssignment definition.&quot;</span>
         <span class="p">)</span></div>
 
 </pre></div>
@@ -952,7 +956,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=1dd76d02"></script>
+</div><script src="../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>

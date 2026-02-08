@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.systems.switches.abstract_port_switch_system - brom_drake-py 0.5.0 documentation</title>
+        <title>brom_drake.systems.switches.abstract_port_switch_system - brom_drake-py v0.0.0+githubActionDefault documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">brom_drake-py 0.5.0 documentation</div></a>
+      <a href="../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.0 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -554,25 +554,22 @@
 <span></span><span class="kn">from</span> <span class="nn">pydrake.common.value</span> <span class="kn">import</span> <span class="n">AbstractValue</span>
 <span class="kn">from</span> <span class="nn">pydrake.systems.framework</span> <span class="kn">import</span> <span class="n">Context</span><span class="p">,</span> <span class="n">InputPort</span><span class="p">,</span> <span class="n">InputPortIndex</span><span class="p">,</span> <span class="n">LeafSystem</span>
 
+
 <div class="viewcode-block" id="AbstractPortSwitch">
 <a class="viewcode-back" href="../../../../generated/systems/switches/switches.html#brom_drake.systems.switches.abstract_port_switch_system.AbstractPortSwitch">[docs]</a>
 <span class="k">class</span> <span class="nc">AbstractPortSwitch</span><span class="p">(</span><span class="n">LeafSystem</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    *Description*</span>
-<span class="sd">    </span>
+
 <span class="sd">    This system is a simplification of the PortSwitch system primitive</span>
 <span class="sd">    that is built into Drake. It allows for you to command the switch</span>
 <span class="sd">    with a simple input (i.e., a string or an int) instead of</span>
 <span class="sd">    a more complicated type.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">selector_type_in</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">,</span>
-        <span class="n">input_type</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">str</span>
-    <span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selector_type_in</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">,</span> <span class="n">input_type</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">LeafSystem</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        
+
         <span class="c1"># Setup</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_selector_type_in</span> <span class="o">=</span> <span class="n">selector_type_in</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_input_type</span> <span class="o">=</span> <span class="n">input_type</span>
@@ -591,10 +588,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">DoCalcValue</span><span class="p">,</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">declare_port_selector_input_port</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">type_in</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">str</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">InputPort</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">declare_port_selector_input_port</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_in</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">InputPort</span><span class="p">:</span>
         <span class="c1"># Setup</span>
         <span class="n">port_name</span> <span class="o">=</span> <span class="s2">&quot;port_selector&quot;</span>
 
@@ -624,7 +618,7 @@
     <span class="k">def</span> <span class="nf">DeclareInputPort</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">InputPort</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This method will declare an input port for the system.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Setup</span>
@@ -647,27 +641,27 @@
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Type </span><span class="si">{</span><span class="n">selector_type_in</span><span class="si">}</span><span class="s2"> is not supported. Please use str, int, or InputPortIndex.&quot;</span>
             <span class="p">)</span>
-        
+
         <span class="k">return</span> <span class="n">input_port</span></div>
 
-    
+
 <div class="viewcode-block" id="AbstractPortSwitch.get_port_selector_input_port">
 <a class="viewcode-back" href="../../../../generated/systems/switches/switches.html#brom_drake.systems.switches.abstract_port_switch_system.AbstractPortSwitch.get_port_selector_input_port">[docs]</a>
     <span class="k">def</span> <span class="nf">get_port_selector_input_port</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">InputPort</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This method will return the port selector input port.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">port_selector_port</span></div>
 
-    
+
 <div class="viewcode-block" id="AbstractPortSwitch.DoCalcValue">
 <a class="viewcode-back" href="../../../../generated/systems/switches/switches.html#brom_drake.systems.switches.abstract_port_switch_system.AbstractPortSwitch.DoCalcValue">[docs]</a>
     <span class="k">def</span> <span class="nf">DoCalcValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="n">AbstractValue</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This method will calculate the value of the output port.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Setup</span>
@@ -679,11 +673,13 @@
             <span class="n">port_selection</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">port_selection</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
         <span class="c1"># Vet the port selector value</span>
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">port_selection</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_selector_type_in</span><span class="p">),</span> \
-            <span class="sa">f</span><span class="s2">&quot;Expected </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_selector_type_in</span><span class="si">}</span><span class="s2">; received </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">port_selection</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-        
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_input_ports</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> \
-            <span class="s2">&quot;No input ports have been declared. Please declare at least one input port.&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+            <span class="n">port_selection</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_selector_type_in</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expected </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_selector_type_in</span><span class="si">}</span><span class="s2">; received </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">port_selection</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_input_ports</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="p">),</span> <span class="s2">&quot;No input ports have been declared. Please declare at least one input port.&quot;</span>
 
         <span class="c1"># Get the input port</span>
         <span class="n">input_port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_ports</span><span class="p">[</span><span class="n">port_selection</span><span class="p">]</span>
@@ -727,7 +723,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=1dd76d02"></script>
+</div><script src="../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>

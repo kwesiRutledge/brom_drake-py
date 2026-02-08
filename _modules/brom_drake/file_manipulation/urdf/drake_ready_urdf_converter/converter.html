@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.converter - brom_drake-py 0.5.0 documentation</title>
+        <title>brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.converter - brom_drake-py v0.0.0+githubActionDefault documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../index.html"><div class="brand">brom_drake-py 0.5.0 documentation</div></a>
+      <a href="../../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.0 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -558,6 +558,7 @@
 <span class="sd">arbitrary URDFs into URDFs that the Drake toolbox can</span>
 <span class="sd">support.</span>
 <span class="sd">&quot;&quot;&quot;</span>
+
 <span class="kn">import</span> <span class="nn">coacd</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span><span class="p">,</span> <span class="n">deepcopy</span>
 <span class="kn">from</span> <span class="nn">doctest</span> <span class="kn">import</span> <span class="n">UnexpectedException</span>
@@ -582,19 +583,23 @@
     <span class="n">does_drake_parser_support</span><span class="p">,</span>
     <span class="n">find_mesh_file_path_in</span><span class="p">,</span>
     <span class="n">get_mesh_element_in</span><span class="p">,</span>
-    <span class="n">URDF_CONVERSION_LOG_LEVEL_NAME</span><span class="p">,</span> <span class="n">URDF_CONVERSION_LEVEL</span><span class="p">,</span>
+    <span class="n">URDF_CONVERSION_LOG_LEVEL_NAME</span><span class="p">,</span>
+    <span class="n">URDF_CONVERSION_LEVEL</span><span class="p">,</span>
     <span class="n">tree_contains_transmission_for_joint</span><span class="p">,</span>
     <span class="n">create_transmission_element_for_joint</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">brom_drake.file_manipulation.urdf.shapes.cylinder</span> <span class="kn">import</span> <span class="n">CylinderDefinition</span>
-<span class="kn">from</span> <span class="nn">brom_drake.file_manipulation.urdf.simple_writer.urdf_element_creator</span> <span class="kn">import</span> <span class="n">URDFElementCreator</span>
+<span class="kn">from</span> <span class="nn">brom_drake.file_manipulation.urdf.simple_writer.urdf_element_creator</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">URDFElementCreator</span><span class="p">,</span>
+<span class="p">)</span>
+
 
 <div class="viewcode-block" id="DrakeReadyURDFConverter">
 <a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/drake_ready_urdf_converter/drake_ready_urdf_converter.html#brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.converter.DrakeReadyURDFConverter">[docs]</a>
 <span class="k">class</span> <span class="nc">DrakeReadyURDFConverter</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    *Description*</span>
-<span class="sd">    </span>
+
 <span class="sd">    This class is used to convert a URDF file into a Drake-compatible URDF file.</span>
 <span class="sd">    It makes the following considerations when parsing a URDF file:</span>
 
@@ -605,10 +610,10 @@
 <span class="sd">      a transmission element to the URDF file.</span>
 
 <span class="sd">    *Parameters*</span>
-<span class="sd">        </span>
+
 <span class="sd">    original_urdf_filename: str</span>
 <span class="sd">        The path to the original URDF file.</span>
-<span class="sd">    </span>
+
 <span class="sd">    config: DrakeReadyURDFConverterConfig (optional)</span>
 <span class="sd">        The configuration for the URDF converter.</span>
 <span class="sd">        This controls:</span>
@@ -625,11 +630,11 @@
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This method initializes the DrakeReadyURDFConverter.</span>
 
 <span class="sd">        *Parameters*</span>
-<span class="sd">        </span>
+
 <span class="sd">        original_urdf_filename: str</span>
 <span class="sd">            The path to the original URDF file.</span>
 
@@ -646,17 +651,19 @@
 
         <span class="c1"># Define the file manager which handles the tricky file paths that</span>
         <span class="c1"># we encounter during the conversion process.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">file_manager</span> <span class="p">:</span> <span class="n">DrakeReadyURDFConverterFileManager</span> <span class="o">=</span> <span class="n">DrakeReadyURDFConverterFileManager</span><span class="p">(</span>
-            <span class="n">original_urdf_path</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">original_urdf_filename</span><span class="p">),</span>
-            <span class="n">models_directory</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="n">DEFAULT_BROM_MODELS_DIR</span><span class="p">),</span>
-            <span class="n">log_file_name</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">log_file_name</span><span class="p">,</span>
-            <span class="n">_output_urdf_path</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">output_urdf_file_path</span><span class="p">,</span>
-        <span class="p">)</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_manager</span><span class="p">:</span> <span class="n">DrakeReadyURDFConverterFileManager</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">DrakeReadyURDFConverterFileManager</span><span class="p">(</span>
+                <span class="n">original_urdf_path</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">original_urdf_filename</span><span class="p">),</span>
+                <span class="n">models_directory</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="n">DEFAULT_BROM_MODELS_DIR</span><span class="p">),</span>
+                <span class="n">log_file_name</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">log_file_name</span><span class="p">,</span>
+                <span class="n">_output_urdf_path</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">output_urdf_file_path</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
 
         <span class="c1"># Define conversion data directory in brom</span>
         <span class="c1"># (If it already exists, then we will overwrite it with the proper flag set)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">file_manager</span><span class="o">.</span><span class="n">models_directory</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">DEFAULT_BROM_MODELS_DIR</span><span class="p">)</span>
-        
+
         <span class="n">overwrite_old_models</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">overwrite_old_models</span>
 
         <span class="k">if</span> <span class="n">overwrite_old_models</span><span class="p">:</span>
@@ -665,7 +672,9 @@
 
         <span class="c1"># Input Processing</span>
         <span class="n">original_urdf_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">original_urdf_filename</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">original_urdf_path</span><span class="o">.</span><span class="n">exists</span><span class="p">(),</span> <span class="sa">f</span><span class="s2">&quot;URDF file </span><span class="si">{</span><span class="n">original_urdf_path</span><span class="si">}</span><span class="s2"> does not exist!&quot;</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="n">original_urdf_path</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;URDF file </span><span class="si">{</span><span class="n">original_urdf_path</span><span class="si">}</span><span class="s2"> does not exist!&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="s2">&quot;.urdf&quot;</span> <span class="ow">in</span> <span class="n">original_urdf_path</span><span class="o">.</span><span class="n">name</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Original URDF file must have a .urdf extension!&quot;</span><span class="p">)</span>
@@ -673,7 +682,7 @@
         <span class="c1"># Set Up logger</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_logger</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Created a new DrakeReadyURDFConverter for file </span><span class="se">\&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">original_urdf_filename</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">.&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">&#39;Created a new DrakeReadyURDFConverter for file &quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">original_urdf_filename</span><span class="si">}</span><span class="s1">&quot;.&#39;</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="c1"># Configure coacd, just in case</span>
@@ -687,9 +696,9 @@
     <span class="k">def</span> <span class="nf">create_logger</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">logging</span><span class="o">.</span><span class="n">Logger</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This method configures the `logging` logger for the URDF conversion.</span>
-<span class="sd">        </span>
+
 <span class="sd">        *Returns*</span>
 
 <span class="sd">        logging.Logger</span>
@@ -701,11 +710,13 @@
 
         <span class="c1"># Check if the log level exists in the logging module</span>
         <span class="n">overwrite_old_logs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">overwrite_old_logs</span>
-        <span class="k">if</span> <span class="n">overwrite_old_logs</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_manager</span><span class="o">.</span><span class="n">output_file_directory</span><span class="p">()</span> <span class="o">/</span> <span class="n">log_file_name</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">overwrite_old_logs</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">file_manager</span><span class="o">.</span><span class="n">output_file_directory</span><span class="p">()</span> <span class="o">/</span> <span class="n">log_file_name</span>
+        <span class="p">):</span>
             <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_manager</span><span class="o">.</span><span class="n">output_file_directory</span><span class="p">()</span> <span class="o">/</span> <span class="n">log_file_name</span><span class="p">)</span>
 
         <span class="c1"># Create (or collect) a logger for the given file</span>
-        <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;DrakeReadyURDFConverter (</span><span class="si">{target_file}</span><span class="s2">)&quot;</span> <span class="p">)</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;DrakeReadyURDFConverter (</span><span class="si">{target_file}</span><span class="s2">)&quot;</span><span class="p">)</span>
 
         <span class="c1"># Create the file handler</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_manager</span><span class="o">.</span><span class="n">output_file_directory</span><span class="p">()</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
@@ -713,15 +724,14 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">file_manager</span><span class="o">.</span><span class="n">output_file_directory</span><span class="p">()</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="n">file_handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">file_manager</span><span class="o">.</span><span class="n">output_file_directory</span><span class="p">()</span> <span class="o">/</span> <span class="n">log_file_name</span><span class="p">,</span>
-            <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">file_manager</span><span class="o">.</span><span class="n">output_file_directory</span><span class="p">()</span> <span class="o">/</span> <span class="n">log_file_name</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span>
         <span class="p">)</span>
         <span class="n">file_handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
 
         <span class="c1"># Create a formatter and set it for the file handler</span>
         <span class="n">formatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span>
-            <span class="s1">&#39;</span><span class="si">%(asctime)s</span><span class="s1"> - </span><span class="si">%(name)s</span><span class="s1"> - </span><span class="si">%(levelname)s</span><span class="s1"> - </span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">,</span>
-            <span class="n">datefmt</span><span class="o">=</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span>
+            <span class="s2">&quot;</span><span class="si">%(asctime)s</span><span class="s2"> - </span><span class="si">%(name)s</span><span class="s2"> - </span><span class="si">%(levelname)s</span><span class="s2"> - </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">datefmt</span><span class="o">=</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">file_handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">)</span>
 
@@ -742,16 +752,16 @@
     <span class="k">def</span> <span class="nf">convert_collision_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">collision_elt</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This method will convert the collision element in the URDF file.</span>
 
 <span class="sd">        *Parameters*</span>
-<span class="sd">        </span>
+
 <span class="sd">        collision_elt: xml.etree.ElementTree.Element</span>
 <span class="sd">            The collision element that we want to convert.</span>
-<span class="sd">        </span>
+
 <span class="sd">        *Returns*</span>
-<span class="sd">        </span>
+
 <span class="sd">        List[xml.etree.ElementTree.Element]</span>
 <span class="sd">            The collision elements that will replace the original collision element.</span>
 <span class="sd">            Usually, this is a list of length 1, but in some cases (e.g., convex decomposition)</span>
@@ -778,18 +788,21 @@
 
         <span class="c1"># Announce algorithm start</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Converting element with tag </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">collision_elt</span><span class="o">.</span><span class="n">tag</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2"> using strategy </span><span class="si">{</span><span class="n">replacement_strategy</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="sa">f</span><span class="s1">&#39;Converting element with tag &quot;</span><span class="si">{</span><span class="n">collision_elt</span><span class="o">.</span><span class="n">tag</span><span class="si">}</span><span class="s1">&quot; using strategy </span><span class="si">{</span><span class="n">replacement_strategy</span><span class="si">}</span><span class="s1">.&#39;</span>
         <span class="p">)</span>
         <span class="n">n_replacements_made</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">new_elts</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="c1"># If the strategy is kWithMinimalEnclosingCylinder,</span>
         <span class="c1"># then we can replace the entire collision element and don&#39;t need to iterate through the children.</span>
-        <span class="k">if</span> <span class="n">replacement_strategy</span> <span class="o">==</span> <span class="n">MeshReplacementStrategy</span><span class="o">.</span><span class="n">kWithMinimalEnclosingCylinder</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">replacement_strategy</span>
+            <span class="o">==</span> <span class="n">MeshReplacementStrategy</span><span class="o">.</span><span class="n">kWithMinimalEnclosingCylinder</span>
+        <span class="p">):</span>
             <span class="n">n_replacements_made</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="n">new_elts</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">replace_element_with_enclosing_cylinder</span><span class="p">(</span>
-                <span class="n">deepcopy</span><span class="p">(</span><span class="n">collision_elt</span><span class="p">)</span>
-            <span class="p">)]</span>
+            <span class="n">new_elts</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">replace_element_with_enclosing_cylinder</span><span class="p">(</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">collision_elt</span><span class="p">))</span>
+            <span class="p">]</span>
 
         <span class="k">elif</span> <span class="n">replacement_strategy</span> <span class="o">==</span> <span class="n">MeshReplacementStrategy</span><span class="o">.</span><span class="n">kWithObj</span><span class="p">:</span>
             <span class="c1"># Otherwise, let&#39;s slowly build the new element</span>
@@ -798,12 +811,13 @@
             <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">child_ii</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">collision_elt</span><span class="p">):</span>
                 <span class="c1"># Check to see if the child is a geometry element</span>
                 <span class="k">if</span> <span class="n">child_ii</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;geometry&quot;</span><span class="p">:</span>
-                    <span class="n">new_geometry_elt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">convert_geometry_element</span><span class="p">(</span><span class="n">child_ii</span><span class="p">,</span> <span class="n">replacement_strategy</span><span class="p">)</span>
+                    <span class="n">new_geometry_elt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">convert_geometry_element</span><span class="p">(</span>
+                        <span class="n">child_ii</span><span class="p">,</span> <span class="n">replacement_strategy</span>
+                    <span class="p">)</span>
                     <span class="n">new_elt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_geometry_elt</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="c1"># If the child is not a geometry element, then we will just copy it over</span>
                     <span class="n">new_elt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">child_ii</span><span class="p">))</span>
-
 
             <span class="c1"># Add the new element to the list of new elements</span>
             <span class="n">new_elts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_elt</span><span class="p">)</span>
@@ -817,13 +831,11 @@
                 <span class="p">)</span>
                 <span class="n">new_elts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">collision_elt</span><span class="p">))</span>
                 <span class="k">return</span> <span class="n">new_elts</span>
-            
+
             <span class="c1"># If the collision element has a mesh element within it, then we will perform convex decomposition</span>
             <span class="n">original_mesh_elt</span> <span class="o">=</span> <span class="n">get_mesh_element_in</span><span class="p">(</span><span class="n">collision_elt</span><span class="p">)</span>
             <span class="n">scale_as_str</span> <span class="o">=</span> <span class="n">original_mesh_elt</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;scale&quot;</span><span class="p">,</span> <span class="s2">&quot;1 1 1&quot;</span><span class="p">)</span>
-            <span class="n">original_mesh_scale</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-                <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">scale_as_str</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
-            <span class="p">)</span>
+            <span class="n">original_mesh_scale</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">scale_as_str</span><span class="o">.</span><span class="n">split</span><span class="p">()])</span>
 
             <span class="c1"># Load the mesh file and perform convex decomposition</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
@@ -835,10 +847,10 @@
                 <span class="n">force</span><span class="o">=</span><span class="s2">&quot;mesh&quot;</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">mesh</span> <span class="o">=</span> <span class="n">coacd</span><span class="o">.</span><span class="n">Mesh</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">vertices</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">faces</span><span class="p">)</span>
-            <span class="n">parts</span> <span class="o">=</span> <span class="n">coacd</span><span class="o">.</span><span class="n">run_coacd</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span> <span class="c1"># a list of convex hulls</span>
+            <span class="n">parts</span> <span class="o">=</span> <span class="n">coacd</span><span class="o">.</span><span class="n">run_coacd</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>  <span class="c1"># a list of convex hulls</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;coacd created </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span><span class="si">}</span><span class="s2"> convex parts from the mesh file </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">original_mesh_path</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s1">&#39;coacd created </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span><span class="si">}</span><span class="s1"> convex parts from the mesh file &quot;</span><span class="si">{</span><span class="n">original_mesh_path</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
             <span class="p">)</span>
 
             <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">part_ii</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parts</span><span class="p">):</span>
@@ -847,13 +859,18 @@
                 <span class="c1"># print(len(part_ii))</span>
 
                 <span class="c1"># Construct new mesh and choose the path to export it to</span>
-                <span class="n">mesh_ii</span> <span class="o">=</span> <span class="n">trimesh</span><span class="o">.</span><span class="n">Trimesh</span><span class="p">(</span>
-                    <span class="n">vertices</span><span class="o">=</span><span class="n">part_ii</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">faces</span><span class="o">=</span><span class="n">part_ii</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">mesh_ii</span> <span class="o">=</span> <span class="n">trimesh</span><span class="o">.</span><span class="n">Trimesh</span><span class="p">(</span><span class="n">vertices</span><span class="o">=</span><span class="n">part_ii</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">faces</span><span class="o">=</span><span class="n">part_ii</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">mesh_file_name_ii</span> <span class="o">=</span> <span class="n">original_mesh_path</span><span class="o">.</span><span class="n">name</span><span class="p">[</span>
+                    <span class="p">:</span> <span class="n">original_mesh_path</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+                <span class="p">]</span>
+                <span class="n">mesh_ii_file_relative_path</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;meshes/</span><span class="si">{</span><span class="n">mesh_file_name_ii</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">mesh_file_name_ii</span><span class="si">}</span><span class="s2">_part_</span><span class="si">{</span><span class="n">ii</span><span class="si">}</span><span class="s2">.obj&quot;</span>
                 <span class="p">)</span>
-                <span class="n">mesh_file_name_ii</span> <span class="o">=</span> <span class="n">original_mesh_path</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="n">original_mesh_path</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)]</span>
-                <span class="n">mesh_ii_file_relative_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;meshes/</span><span class="si">{</span><span class="n">mesh_file_name_ii</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">mesh_file_name_ii</span><span class="si">}</span><span class="s2">_part_</span><span class="si">{</span><span class="n">ii</span><span class="si">}</span><span class="s2">.obj&quot;</span>
-                <span class="n">mesh_ii_file_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_manager</span><span class="o">.</span><span class="n">output_file_directory</span><span class="p">()</span> <span class="o">/</span> <span class="n">mesh_ii_file_relative_path</span>
-                
+                <span class="n">mesh_ii_file_path</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">file_manager</span><span class="o">.</span><span class="n">output_file_directory</span><span class="p">()</span>
+                    <span class="o">/</span> <span class="n">mesh_ii_file_relative_path</span>
+                <span class="p">)</span>
+
                 <span class="c1"># Export after checking that the parent directory exists</span>
                 <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">mesh_ii_file_path</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
                 <span class="n">mesh_ii</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="n">mesh_ii_file_path</span><span class="p">)</span>
@@ -869,19 +886,19 @@
                 <span class="n">n_replacements_made</span> <span class="o">+=</span> <span class="mi">1</span>
 
         <span class="c1"># Check to see if the collision element has a mesh element within it</span>
-        
+
         <span class="c1"># # Iterate through every element of the collision element</span>
         <span class="c1"># for ii, child_ii in enumerate(collision_elt):</span>
-        <span class="c1">#     if child_ii.tag == &quot;geometry&quot;: </span>
+        <span class="c1">#     if child_ii.tag == &quot;geometry&quot;:</span>
         <span class="c1">#         # If the child is a geometry element, then we will check if replacement is needed.</span>
         <span class="c1">#         geometry_elt = child_ii</span>
-                
+
         <span class="c1">#         # Iterate through every element of the geometry element</span>
         <span class="c1">#         for jj, child_jj in enumerate(geometry_elt):</span>
         <span class="c1">#             if child_jj.tag == &quot;mesh&quot;:</span>
         <span class="c1">#                 # If the child is a mesh element, then we will check if replacement is needed.</span>
         <span class="c1">#                 mesh_elt = child_jj</span>
-                        
+
         <span class="c1">#                 # Replace!</span>
         <span class="c1">#                 if replacement_strategy == MeshReplacementStrategy.kWithObj:</span>
         <span class="c1">#                     new_mesh_elt = self.convert_mesh_element(mesh_elt)</span>
@@ -889,45 +906,41 @@
         <span class="c1">#                 elif replacement_strategy == MeshReplacementStrategy.kWithMinimalEnclosingCylinder:</span>
         <span class="c1">#                     new_elt = self.replace_element_with_enclosing_cylinder(new_elt)</span>
         <span class="c1">#                 # elif replacement_strategy == MeshReplacementStrategy.kWithConvexDecomposition:</span>
-                            
+
         <span class="c1">#                 else:</span>
         <span class="c1">#                     raise ValueError(</span>
         <span class="c1">#                         f&quot;Invalid mesh replacement strategy: {replacement_strategy}&quot;</span>
-        <span class="c1">#                     )    </span>
+        <span class="c1">#                     )</span>
 
-        <span class="c1">#                 n_replacements_made += 1       </span>
+        <span class="c1">#                 n_replacements_made += 1</span>
 
         <span class="c1"># Announce the number of replacements made in the logger.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Made </span><span class="si">{</span><span class="n">n_replacements_made</span><span class="si">}</span><span class="s2"> replacements in the collision element.&quot;</span>
-        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Made </span><span class="si">{</span><span class="n">n_replacements_made</span><span class="si">}</span><span class="s2"> replacements in the collision element.&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">new_elts</span></div>
 
-    
+
 <div class="viewcode-block" id="DrakeReadyURDFConverter.convert_geometry_element">
 <a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/drake_ready_urdf_converter/drake_ready_urdf_converter.html#brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.converter.DrakeReadyURDFConverter.convert_geometry_element">[docs]</a>
     <span class="k">def</span> <span class="nf">convert_geometry_element</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">geometry_elt</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">,</span>
-        <span class="n">replacement_strategy</span><span class="p">:</span> <span class="n">MeshReplacementStrategy</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">geometry_elt</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">,</span> <span class="n">replacement_strategy</span><span class="p">:</span> <span class="n">MeshReplacementStrategy</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This method will convert the geometry element in the URDF (i.e., an XML) file</span>
 <span class="sd">        according to the conversion strategy provided as input.</span>
-<span class="sd">        </span>
+
 <span class="sd">        *Parameters*</span>
-<span class="sd">        </span>
+
 <span class="sd">        geometry_elt: xml.etree.ElementTree.Element</span>
 <span class="sd">            The geometry element that we want to convert.</span>
 
 <span class="sd">        replacement_strategy: MeshReplacementStrategy</span>
 <span class="sd">            The strategy to use for replacing mesh files.</span>
-<span class="sd">        </span>
+
 <span class="sd">        *Returns*</span>
-<span class="sd">        </span>
+
 <span class="sd">        xml.etree.ElementTree.Element</span>
 <span class="sd">            The new geometry element.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -935,9 +948,7 @@
         <span class="n">new_elt</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="n">geometry_elt</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">geometry_elt</span><span class="o">.</span><span class="n">attrib</span><span class="p">)</span>
 
         <span class="c1"># Algorithm</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Converting geometry element with strategy </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">replacement_strategy</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">.&quot;</span>
-        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Converting geometry element with strategy &quot;</span><span class="si">{</span><span class="n">replacement_strategy</span><span class="si">}</span><span class="s1">&quot;.&#39;</span><span class="p">)</span>
 
         <span class="c1"># Iterate through every element of the geometry element</span>
         <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">child_ii</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">geometry_elt</span><span class="p">):</span>
@@ -955,25 +966,25 @@
 
         <span class="k">return</span> <span class="n">new_elt</span></div>
 
-    
+
 <div class="viewcode-block" id="DrakeReadyURDFConverter.convert_visual_element">
 <a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/drake_ready_urdf_converter/drake_ready_urdf_converter.html#brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.converter.DrakeReadyURDFConverter.convert_visual_element">[docs]</a>
     <span class="k">def</span> <span class="nf">convert_visual_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visual_elt</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This method will convert the collision element in the URDF file.</span>
 
 <span class="sd">        For now, this is very similar to the collision element handling, but it may</span>
 <span class="sd">        change in the future.</span>
 
 <span class="sd">        *Parameters*</span>
-<span class="sd">        </span>
+
 <span class="sd">        visual_elt: xml.etree.ElementTree.Element</span>
 <span class="sd">            The visual element that we want to convert.</span>
 
 <span class="sd">        *Returns*</span>
-<span class="sd">        </span>
+
 <span class="sd">        xml.etree.ElementTree.Element</span>
 <span class="sd">            The new visual element.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -983,7 +994,7 @@
 
         <span class="c1"># Algorithm</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Converting element with tag </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">visual_elt</span><span class="o">.</span><span class="n">tag</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2"> using the </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">replacement_strategy</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2"> strategy.&quot;</span>
+            <span class="sa">f</span><span class="s1">&#39;Converting element with tag &quot;</span><span class="si">{</span><span class="n">visual_elt</span><span class="o">.</span><span class="n">tag</span><span class="si">}</span><span class="s1">&quot; using the &quot;</span><span class="si">{</span><span class="n">replacement_strategy</span><span class="si">}</span><span class="s1">&quot; strategy.&#39;</span>
         <span class="p">)</span>
 
         <span class="c1"># Search through all children of the visual element</span>
@@ -1022,7 +1033,7 @@
 
                         <span class="c1">#     # Copy!</span>
                         <span class="c1">#     shutil.copy(true_old_mesh_file, new_mesh_full_path)</span>
-                            
+
                         <span class="k">else</span><span class="p">:</span>
                             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                                 <span class="sa">f</span><span class="s2">&quot;Invalid mesh replacement strategy: </span><span class="si">{</span><span class="n">replacement_strategy</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -1047,14 +1058,14 @@
             <span class="n">new_material_elt</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s2">&quot;material&quot;</span><span class="p">)</span>
             <span class="n">new_elt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_material_elt</span><span class="p">)</span>
 
-            <span class="n">transformed_material_elt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_new_material_element</span><span class="p">(</span><span class="n">new_material_elt</span><span class="p">)</span>
+            <span class="n">transformed_material_elt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_new_material_element</span><span class="p">(</span>
+                <span class="n">new_material_elt</span>
+            <span class="p">)</span>
             <span class="n">new_elt</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">transformed_material_elt</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Added a new material element to the visual element with RGBA values </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">replace_colors_with</span><span class="si">}</span><span class="s2">.&quot;</span>
             <span class="p">)</span>
             <span class="n">n_replacements_made</span> <span class="o">+=</span> <span class="mi">1</span>
-
-
 
             <span class="n">added_material</span> <span class="o">=</span> <span class="kc">True</span>
 
@@ -1066,11 +1077,11 @@
     <span class="k">def</span> <span class="nf">convert_urdf</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        Converts the original URDF file into a Drake-compatible URDF file.</span>
 
 <span class="sd">        *Returns*</span>
-<span class="sd">        </span>
+
 <span class="sd">        Path</span>
 <span class="sd">            The path to the new URDF file.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1082,8 +1093,9 @@
 
         <span class="c1"># Use recursive function to convert the tree</span>
         <span class="n">new_trees</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">convert_tree</span><span class="p">(</span><span class="n">original_xml</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_trees</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> \
-            <span class="sa">f</span><span class="s2">&quot;Expected to get exactly one new tree after conversion, but got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">new_trees</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">new_trees</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expected to get exactly one new tree after conversion, but got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">new_trees</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
         <span class="n">new_tree</span> <span class="o">=</span> <span class="n">new_trees</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="c1"># Add transmissions, if needed</span>
@@ -1093,7 +1105,9 @@
                     <span class="k">continue</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="c1"># If transmission doesn&#39;t exist in URDF, then add it!</span>
-                    <span class="n">transmission_element</span> <span class="o">=</span> <span class="n">create_transmission_element_for_joint</span><span class="p">(</span><span class="n">joint_name</span><span class="p">)</span>
+                    <span class="n">transmission_element</span> <span class="o">=</span> <span class="n">create_transmission_element_for_joint</span><span class="p">(</span>
+                        <span class="n">joint_name</span>
+                    <span class="p">)</span>
                     <span class="n">ET</span><span class="o">.</span><span class="n">indent</span><span class="p">(</span><span class="n">transmission_element</span><span class="p">,</span> <span class="n">space</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
                     <span class="n">new_tree</span><span class="o">.</span><span class="n">getroot</span><span class="p">()</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">transmission_element</span><span class="p">)</span>
 
@@ -1139,7 +1153,7 @@
         <span class="c1"># Check the value of the filename</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="s2">&quot;filename&quot;</span> <span class="ow">in</span> <span class="n">new_elt</span><span class="o">.</span><span class="n">attrib</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Found a mesh element that does not contain the </span><span class="se">\&quot;</span><span class="s2">filename</span><span class="se">\&quot;</span><span class="s2"> attribute.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s1">&#39;Found a mesh element that does not contain the &quot;filename&quot; attribute.</span><span class="se">\n</span><span class="s1">&#39;</span>
                 <span class="o">+</span> <span class="s2">&quot;Brom doesn&#39;t know how to handle this!&quot;</span>
             <span class="p">)</span>
 
@@ -1152,10 +1166,11 @@
             <span class="n">old_filename</span> <span class="o">=</span> <span class="n">new_elt</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">]</span>
             <span class="n">new_filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_obj_to_replace_mesh_file</span><span class="p">(</span><span class="n">old_filename</span><span class="p">)</span>
             <span class="n">new_elt</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-                <span class="s2">&quot;filename&quot;</span><span class="p">,</span> <span class="n">new_filename</span><span class="p">,</span>
+                <span class="s2">&quot;filename&quot;</span><span class="p">,</span>
+                <span class="n">new_filename</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Copied the Drake-compatible mesh file </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">old_filename</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2"> to </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">new_filename</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s1">&#39;Copied the Drake-compatible mesh file &quot;</span><span class="si">{</span><span class="n">old_filename</span><span class="si">}</span><span class="s1">&quot; to &quot;</span><span class="si">{</span><span class="n">new_filename</span><span class="si">}</span><span class="s1">&quot;.&#39;</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># If parser does not support the given filename,</span>
@@ -1163,10 +1178,11 @@
             <span class="n">old_filename</span> <span class="o">=</span> <span class="n">new_elt</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">]</span>
             <span class="n">new_filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_obj_to_replace_mesh_file</span><span class="p">(</span><span class="n">old_filename</span><span class="p">)</span>
             <span class="n">new_elt</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-                <span class="s2">&quot;filename&quot;</span><span class="p">,</span> <span class="n">new_filename</span><span class="p">,</span>
+                <span class="s2">&quot;filename&quot;</span><span class="p">,</span>
+                <span class="n">new_filename</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Replaced the mesh file </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">old_filename</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2"> with a Drake-compatible .obj file at </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">new_filename</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s1">&#39;Replaced the mesh file &quot;</span><span class="si">{</span><span class="n">old_filename</span><span class="si">}</span><span class="s1">&quot; with a Drake-compatible .obj file at &quot;</span><span class="si">{</span><span class="n">new_filename</span><span class="si">}</span><span class="s1">&quot;.&#39;</span>
             <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">new_elt</span></div>
@@ -1174,24 +1190,21 @@
 
 <div class="viewcode-block" id="DrakeReadyURDFConverter.convert_tree">
 <a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/drake_ready_urdf_converter/drake_ready_urdf_converter.html#brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.converter.DrakeReadyURDFConverter.convert_tree">[docs]</a>
-    <span class="k">def</span> <span class="nf">convert_tree</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">current_tree</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">ElementTree</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ET</span><span class="o">.</span><span class="n">ElementTree</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">convert_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">current_tree</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">ElementTree</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ET</span><span class="o">.</span><span class="n">ElementTree</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This recursive method is used to parse each element of the</span>
 <span class="sd">        xml element tree and replace the components that are not</span>
 <span class="sd">        supported by the Drake URDF parser.</span>
 
 <span class="sd">        *Parameters*</span>
-<span class="sd">        </span>
+
 <span class="sd">        current_tree: xml.etree.ElementTree.ElementTree</span>
 <span class="sd">            The current tree that we are parsing.</span>
-<span class="sd">        </span>
+
 <span class="sd">        *Returns*</span>
-<span class="sd">        </span>
+
 <span class="sd">        List[xml.etree.ElementTree.ElementTree]</span>
 <span class="sd">            The new trees that has been converted.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1205,9 +1218,7 @@
             <span class="c1"># Modify Children of the root</span>
             <span class="n">initial_children</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">element_ii</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">initial_children</span><span class="p">:</span>
-                <span class="n">new_children</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">convert_tree</span><span class="p">(</span>
-                    <span class="n">ET</span><span class="o">.</span><span class="n">ElementTree</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
-                <span class="p">)</span>
+                <span class="n">new_children</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">convert_tree</span><span class="p">(</span><span class="n">ET</span><span class="o">.</span><span class="n">ElementTree</span><span class="p">(</span><span class="n">child</span><span class="p">))</span>
                 <span class="n">element_ii</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
 
                 <span class="c1"># Add new children to new root</span>
@@ -1215,10 +1226,7 @@
                     <span class="c1"># Convert the new child element</span>
                     <span class="n">element_ii</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_child</span><span class="o">.</span><span class="n">getroot</span><span class="p">())</span>
 
-        <span class="k">return</span> <span class="p">[</span>
-            <span class="n">ET</span><span class="o">.</span><span class="n">ElementTree</span><span class="p">(</span><span class="n">element_ii</span><span class="p">)</span> <span class="k">for</span> <span class="n">element_ii</span> <span class="ow">in</span> <span class="n">new_elements</span>
-        <span class="p">]</span></div>
-
+        <span class="k">return</span> <span class="p">[</span><span class="n">ET</span><span class="o">.</span><span class="n">ElementTree</span><span class="p">(</span><span class="n">element_ii</span><span class="p">)</span> <span class="k">for</span> <span class="n">element_ii</span> <span class="ow">in</span> <span class="n">new_elements</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="DrakeReadyURDFConverter.convert_tree_element">
@@ -1229,19 +1237,19 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This method is used to transform one element in the XML tree into an eleemnt</span>
 <span class="sd">        that that Drake URDF parser can handle. If necessary, it will create a new</span>
 <span class="sd">        3d model file and place it into the right directory.</span>
 
 <span class="sd">        *Parameters*</span>
-<span class="sd">        </span>
+
 <span class="sd">        elt: xml.etree.ElementTree.Element</span>
 <span class="sd">            An element in the ElementTree that we would like to convert</span>
 <span class="sd">            into a Drake-ready element.</span>
-<span class="sd">        </span>
+
 <span class="sd">        *Returns*</span>
-<span class="sd">        </span>
+
 <span class="sd">        List[xml.etree.ElementTree.Element]</span>
 <span class="sd">            The new elements that has been converted.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1262,7 +1270,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># If the element is not a mesh element, then we will just return a copy of it.</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Found an element with tag </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">elt</span><span class="o">.</span><span class="n">tag</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2"> that does not require handling. No modification needed...&quot;</span>
+                <span class="sa">f</span><span class="s1">&#39;Found an element with tag &quot;</span><span class="si">{</span><span class="n">elt</span><span class="o">.</span><span class="n">tag</span><span class="si">}</span><span class="s1">&quot; that does not require handling. No modification needed...&#39;</span>
             <span class="p">)</span>
             <span class="n">new_elts</span> <span class="o">=</span> <span class="p">[</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">elt</span><span class="p">)]</span>
 
@@ -1278,17 +1286,17 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This function will create an .obj file to replace the</span>
 <span class="sd">        .stl or .dae file that is given in mesh file &quot;mesh_file_name&quot;.</span>
 
 <span class="sd">        *Parameters*</span>
-<span class="sd">        </span>
+
 <span class="sd">        mesh_file_name: str</span>
 <span class="sd">            The name of the mesh file that we want to convert.</span>
-<span class="sd">        </span>
+
 <span class="sd">        *Returns*</span>
-<span class="sd">        </span>
+
 <span class="sd">        str</span>
 <span class="sd">            The name of the new .obj file that has been created.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1305,10 +1313,11 @@
         <span class="n">new_mesh_path</span> <span class="o">=</span> <span class="n">converter</span><span class="o">.</span><span class="n">convert</span><span class="p">()</span>
 
         <span class="c1"># Clip off all parts of path that include the exported output</span>
-        <span class="n">new_mesh_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_mesh_path</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_manager</span><span class="o">.</span><span class="n">output_file_directory</span><span class="p">()),</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">new_mesh_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_mesh_path</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_manager</span><span class="o">.</span><span class="n">output_file_directory</span><span class="p">()),</span> <span class="s2">&quot;&quot;</span>
+        <span class="p">)</span>
 
         <span class="k">return</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_mesh_path</span><span class="p">)</span></div>
-
 
 
 <div class="viewcode-block" id="DrakeReadyURDFConverter.handle_joint_element">
@@ -1316,21 +1325,21 @@
     <span class="k">def</span> <span class="nf">handle_joint_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">joint_elt</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This method will handle the joint element in the URDF file.</span>
 <span class="sd">        Specifically, it will check to see if the joint is actuated</span>
 <span class="sd">        and (if it is) add it to the list of actuated joints.</span>
 
 <span class="sd">        This is useful when attempting to add transmissions to the URDF file</span>
 <span class="sd">        later on.</span>
-<span class="sd">        </span>
+
 <span class="sd">        *Parameters*</span>
-<span class="sd">        </span>
+
 <span class="sd">        joint_elt: xml.etree.ElementTree.Element</span>
 <span class="sd">            The joint element that we want to handle.</span>
-<span class="sd">        </span>
+
 <span class="sd">        *Returns*</span>
-<span class="sd">        </span>
+
 <span class="sd">        None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Setup</span>
@@ -1356,21 +1365,21 @@
     <span class="k">def</span> <span class="nf">create_new_material_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">material_elt</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This method will handle the material element in the URDF file.</span>
-<span class="sd">        Specifically, it will check to see if the user wants us to assign a color to the </span>
+<span class="sd">        Specifically, it will check to see if the user wants us to assign a color to the</span>
 <span class="sd">        material element. If so, then we will assign the color to the material element.</span>
 
 <span class="sd">        This is useful when attempting to add transmissions to the URDF file</span>
 <span class="sd">        later on.</span>
-<span class="sd">        </span>
+
 <span class="sd">        *Parameters*</span>
-<span class="sd">    </span>
+
 <span class="sd">        material_elt: xml.etree.ElementTree.Element</span>
 <span class="sd">            The material element that we want to handle.</span>
-<span class="sd">        </span>
+
 <span class="sd">        *Returns*</span>
-<span class="sd">        </span>
+
 <span class="sd">        None, but modifies the material element.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Setup</span>
@@ -1380,12 +1389,12 @@
         <span class="c1"># Input Processing (Abort, if no color replacement is needed)</span>
         <span class="k">if</span> <span class="n">replace_colors_with</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">material_elt</span>
-        
+
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">replace_colors_with</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;The color replacement list must have exactly 4 elements (RGBA).&quot;</span>
             <span class="p">)</span>
-        
+
         <span class="c1"># Algorithm</span>
         <span class="c1"># Check to see if the material element has a color element</span>
         <span class="n">color_elt</span> <span class="o">=</span> <span class="n">material_elt</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;color&quot;</span><span class="p">)</span>
@@ -1402,7 +1411,7 @@
         <span class="c1"># Set the color of the material element</span>
         <span class="n">color_elt</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
             <span class="s2">&quot;rgba&quot;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">replace_colors_with</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">replace_colors_with</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">replace_colors_with</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">replace_colors_with</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">replace_colors_with</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">replace_colors_with</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">replace_colors_with</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">replace_colors_with</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">material_elt</span></div>
 
@@ -1412,16 +1421,16 @@
     <span class="k">def</span> <span class="nf">log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        Logs a message to the logging.logger.</span>
 
 <span class="sd">        *Parameters*</span>
-<span class="sd">        </span>
+
 <span class="sd">        message: str</span>
 <span class="sd">            The message that we want to log.</span>
-<span class="sd">        </span>
+
 <span class="sd">        *Returns*</span>
-<span class="sd">        </span>
+
 <span class="sd">        None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span></div>
@@ -1429,19 +1438,21 @@
 
 <div class="viewcode-block" id="DrakeReadyURDFConverter.replace_element_with_enclosing_cylinder">
 <a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/drake_ready_urdf_converter/drake_ready_urdf_converter.html#brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.converter.DrakeReadyURDFConverter.replace_element_with_enclosing_cylinder">[docs]</a>
-    <span class="k">def</span> <span class="nf">replace_element_with_enclosing_cylinder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">collision_elt</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">replace_element_with_enclosing_cylinder</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">collision_elt</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This method will replace the geometry element with an enclosing cylinder.</span>
 
 <span class="sd">        *Parameters*</span>
-<span class="sd">        </span>
+
 <span class="sd">        collision_elt: xml.etree.ElementTree.Element</span>
 <span class="sd">            The collision element that we want to replace.</span>
 
 <span class="sd">        *Returns*</span>
-<span class="sd">        </span>
+
 <span class="sd">        xml.etree.ElementTree.Element</span>
 <span class="sd">            The new collision element with the enclosing cylinder.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1452,9 +1463,9 @@
         <span class="c1"># Save the initial pose of the element</span>
         <span class="n">origin_elt</span> <span class="o">=</span> <span class="n">new_elt</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;origin&quot;</span><span class="p">)</span>
         <span class="n">pose0</span> <span class="o">=</span> <span class="n">RigidTransform</span><span class="p">(</span>
-            <span class="n">R</span><span class="o">=</span><span class="n">RollPitchYaw</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-                <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">elt</span><span class="p">)</span> <span class="k">for</span> <span class="n">elt</span> <span class="ow">in</span> <span class="n">origin_elt</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">&quot;rpy&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)]</span>
-            <span class="p">))</span><span class="o">.</span><span class="n">ToRotationMatrix</span><span class="p">(),</span>
+            <span class="n">R</span><span class="o">=</span><span class="n">RollPitchYaw</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">elt</span><span class="p">)</span> <span class="k">for</span> <span class="n">elt</span> <span class="ow">in</span> <span class="n">origin_elt</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">&quot;rpy&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)])</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">ToRotationMatrix</span><span class="p">(),</span>
             <span class="n">p</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
                 <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">elt</span><span class="p">)</span> <span class="k">for</span> <span class="n">elt</span> <span class="ow">in</span> <span class="n">origin_elt</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">&quot;xyz&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)],</span>
             <span class="p">),</span>
@@ -1478,8 +1489,8 @@
         <span class="c1"># Create the enclosing cylinder</span>
         <span class="n">cylinder_result</span> <span class="o">=</span> <span class="n">trimesh</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">minimum_cylinder</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">sample_count</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
         <span class="n">cylinder_shape</span> <span class="o">=</span> <span class="n">CylinderDefinition</span><span class="p">(</span>
-            <span class="n">radius</span><span class="o">=</span><span class="n">cylinder_result</span><span class="p">[</span><span class="s1">&#39;radius&#39;</span><span class="p">],</span>
-            <span class="n">length</span><span class="o">=</span><span class="n">cylinder_result</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">],</span>
+            <span class="n">radius</span><span class="o">=</span><span class="n">cylinder_result</span><span class="p">[</span><span class="s2">&quot;radius&quot;</span><span class="p">],</span>
+            <span class="n">length</span><span class="o">=</span><span class="n">cylinder_result</span><span class="p">[</span><span class="s2">&quot;height&quot;</span><span class="p">],</span>
         <span class="p">)</span>
 
         <span class="c1"># Remove the mesh element and pose element from the collision element, if they exist</span>
@@ -1492,7 +1503,7 @@
             <span class="n">new_elt</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">origin_elt</span><span class="p">)</span>
 
         <span class="c1"># Add the origin element to the collision element</span>
-        <span class="n">transform</span> <span class="o">=</span> <span class="n">cylinder_result</span><span class="p">[</span><span class="s1">&#39;transform&#39;</span><span class="p">]</span>
+        <span class="n">transform</span> <span class="o">=</span> <span class="n">cylinder_result</span><span class="p">[</span><span class="s2">&quot;transform&quot;</span><span class="p">]</span>
         <span class="n">transform_as_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">transform</span><span class="p">)</span>
         <span class="n">transform_as_rt</span> <span class="o">=</span> <span class="n">RigidTransform</span><span class="p">(</span>
             <span class="n">RotationMatrix</span><span class="p">(</span><span class="n">transform_as_matrix</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]),</span>
@@ -1549,7 +1560,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../_static/documentation_options.js?v=1dd76d02"></script>
+</div><script src="../../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.systems.conversion.rigid_transform_to_vector_system.system - brom_drake-py 0.5.0 documentation</title>
+        <title>brom_drake.systems.conversion.rigid_transform_to_vector_system.system - brom_drake-py v0.0.0+githubActionDefault documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../index.html"><div class="brand">brom_drake-py 0.5.0 documentation</div></a>
+      <a href="../../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.0 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -553,7 +553,8 @@
           <h1>Source code for brom_drake.systems.conversion.rigid_transform_to_vector_system.system</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">pydrake.all</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">AbstractValue</span><span class="p">,</span> <span class="n">BasicVector</span><span class="p">,</span>
+    <span class="n">AbstractValue</span><span class="p">,</span>
+    <span class="n">BasicVector</span><span class="p">,</span>
     <span class="n">Context</span><span class="p">,</span>
     <span class="n">LeafSystem</span><span class="p">,</span>
     <span class="n">RigidTransform</span><span class="p">,</span>
@@ -561,12 +562,13 @@
 
 <span class="kn">from</span> <span class="nn">.configuration</span> <span class="kn">import</span> <span class="n">Configuration</span> <span class="k">as</span> <span class="n">RigidTransformToVectorSystemConfiguration</span>
 
+
 <div class="viewcode-block" id="RigidTransformToVectorSystem">
 <a class="viewcode-back" href="../../../../../generated/systems/conversion/rigid_transform_to_vector_system/rigid_transform_to_vector_system.html#brom_drake.systems.conversion.rigid_transform_to_vector_system.system.RigidTransformToVectorSystem">[docs]</a>
 <span class="k">class</span> <span class="nc">RigidTransformToVectorSystem</span><span class="p">(</span><span class="n">LeafSystem</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    *Description*</span>
-<span class="sd">    </span>
+
 <span class="sd">    This system will take in a RigidTransform and output a vector</span>
 <span class="sd">    of size 7, where the first 3 elements are the translation</span>
 <span class="sd">    and the last 4 elements are the quaternion representation</span>
@@ -575,13 +577,14 @@
 <span class="sd">    *Diagram*</span>
 
 <span class="sd">    The LeafSystem&#39;s inputs and outputs can be represented as: ::</span>
-<span class="sd">    </span>
+
 <span class="sd">                                |-------------------|</span>
 <span class="sd">                                | RigidTransform    |</span>
 <span class="sd">        rigid_transform ----&gt;   | To                | vector_xyz_quat(wxyz) (BasicVector[7])</span>
 <span class="sd">        (RigidTransform)        | VectorSystem      |</span>
 <span class="sd">                                |-------------------|</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">config</span><span class="p">:</span> <span class="n">RigidTransformToVectorSystemConfiguration</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -604,20 +607,16 @@
 
         <span class="c1"># Collect Transform</span>
         <span class="n">rigid_transform</span><span class="p">:</span> <span class="n">RigidTransform</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rigid_transform_input</span><span class="o">.</span><span class="n">Eval</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
-        
+
         <span class="c1"># Create output vector</span>
         <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">output_format</span> <span class="o">==</span> <span class="s2">&quot;vector_xyz_quat(wxyz)&quot;</span><span class="p">:</span>
             <span class="n">xyz</span> <span class="o">=</span> <span class="n">rigid_transform</span><span class="o">.</span><span class="n">translation</span><span class="p">()</span>
             <span class="n">quat</span> <span class="o">=</span> <span class="n">rigid_transform</span><span class="o">.</span><span class="n">rotation</span><span class="p">()</span><span class="o">.</span><span class="n">ToQuaternion</span><span class="p">()</span><span class="o">.</span><span class="n">wxyz</span><span class="p">()</span>
-            <span class="n">output</span><span class="o">.</span><span class="n">SetFromVector</span><span class="p">(</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">xyz</span><span class="p">,</span> <span class="n">quat</span><span class="p">))</span>
-            <span class="p">)</span>
+            <span class="n">output</span><span class="o">.</span><span class="n">SetFromVector</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">xyz</span><span class="p">,</span> <span class="n">quat</span><span class="p">)))</span>
         <span class="k">elif</span> <span class="n">config</span><span class="o">.</span><span class="n">output_format</span> <span class="o">==</span> <span class="s2">&quot;vector_xyz_euler(rpy)&quot;</span><span class="p">:</span>
             <span class="n">xyz</span> <span class="o">=</span> <span class="n">rigid_transform</span><span class="o">.</span><span class="n">translation</span><span class="p">()</span>
             <span class="n">euler</span> <span class="o">=</span> <span class="n">rigid_transform</span><span class="o">.</span><span class="n">rotation</span><span class="p">()</span><span class="o">.</span><span class="n">ToRollPitchYaw</span><span class="p">()</span><span class="o">.</span><span class="n">vector</span><span class="p">()</span>
-            <span class="n">output</span><span class="o">.</span><span class="n">SetFromVector</span><span class="p">(</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">xyz</span><span class="p">,</span> <span class="n">euler</span><span class="p">))</span>
-            <span class="p">)</span>
+            <span class="n">output</span><span class="o">.</span><span class="n">SetFromVector</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">xyz</span><span class="p">,</span> <span class="n">euler</span><span class="p">)))</span>
 
     <span class="k">def</span> <span class="nf">create_system_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Setup</span>
@@ -676,7 +675,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../_static/documentation_options.js?v=1dd76d02"></script>
+</div><script src="../../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

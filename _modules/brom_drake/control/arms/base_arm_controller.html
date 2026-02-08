@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.control.arms.base_arm_controller - brom_drake-py 0.5.0 documentation</title>
+        <title>brom_drake.control.arms.base_arm_controller - brom_drake-py v0.0.0+githubActionDefault documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">brom_drake-py 0.5.0 documentation</div></a>
+      <a href="../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.0 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -564,7 +564,7 @@
 <span class="k">class</span> <span class="nc">BaseArmController</span><span class="p">(</span><span class="n">LeafSystem</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    *Description*</span>
-<span class="sd">    </span>
+
 <span class="sd">    A controller which provides the basic functionality for controlling</span>
 <span class="sd">    a robotic arm.</span>
 
@@ -582,12 +582,12 @@
 <span class="sd">                                    |                      |</span>
 <span class="sd">                                    |                      |</span>
 <span class="sd">                                    ------------------------</span>
-<span class="sd">    </span>
+
 <span class="sd">    The type of target is determined by ee_target_type, and the options are defined in the</span>
 <span class="sd">    end effector target.</span>
 
 <span class="sd">    *Parameters*</span>
-<span class="sd">    </span>
+
 <span class="sd">    plant: pydrake.multibody.plant.MultibodyPlant</span>
 <span class="sd">        The multibody plant containing the arm to be controlled.</span>
 <span class="sd">        This plant is assumed to be finalized.</span>
@@ -596,6 +596,7 @@
 <span class="sd">    end_effector_frame_name: str, optional</span>
 <span class="sd">        The name of the end-effector frame in the plant, by default &quot;end_effector_frame&quot;.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">plant</span><span class="p">:</span> <span class="n">MultibodyPlant</span><span class="p">,</span>
@@ -628,10 +629,10 @@
     <span class="k">def</span> <span class="nf">define_input_ports_for_arm_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        Defines the input ports for the arm state. This is useful for</span>
 <span class="sd">        connecting the arm state to the controller.</span>
-<span class="sd">        </span>
+
 <span class="sd">        The input ports defined are:</span>
 <span class="sd">            - arm_joint_position</span>
 <span class="sd">            - arm_joint_velocity</span>
@@ -651,10 +652,10 @@
     <span class="k">def</span> <span class="nf">define_output_measurement_ports</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        Defines the output ports for the controller that have to deal with</span>
 <span class="sd">        the sensed state of the input arm.</span>
-<span class="sd">        </span>
+
 <span class="sd">        The output ports defined are:</span>
 <span class="sd">            - measured_ee_pose</span>
 <span class="sd">            - measured_ee_twist</span>
@@ -663,13 +664,14 @@
             <span class="s2">&quot;measured_ee_pose&quot;</span><span class="p">,</span>
             <span class="n">BasicVector</span><span class="p">(</span><span class="mi">6</span><span class="p">),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">CalcEndEffectorPose</span><span class="p">,</span>
-            <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">time_ticket</span><span class="p">()}</span>  <span class="c1"># indicate that this doesn&#39;t depend on any inputs,</span>
+            <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">time_ticket</span><span class="p">()},</span>  <span class="c1"># indicate that this doesn&#39;t depend on any inputs,</span>
         <span class="p">)</span>  <span class="c1"># but should still be updated each timestep</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">DeclareVectorOutputPort</span><span class="p">(</span>
             <span class="s2">&quot;measured_ee_twist&quot;</span><span class="p">,</span>
             <span class="n">BasicVector</span><span class="p">(</span><span class="mi">6</span><span class="p">),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">CalcEndEffectorTwist</span><span class="p">,</span>
-            <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">time_ticket</span><span class="p">()})</span></div>
+            <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">time_ticket</span><span class="p">()},</span>
+        <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="BaseArmController.CalcEndEffectorPose">
@@ -677,7 +679,7 @@
     <span class="k">def</span> <span class="nf">CalcEndEffectorPose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="n">BasicVector</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This method is called each timestep to determine the end-effector pose</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">arm_joint_position_port</span><span class="o">.</span><span class="n">Eval</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
@@ -692,10 +694,9 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">ee_frame</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="n">ee_pose</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span>
-            <span class="n">RollPitchYaw</span><span class="p">(</span><span class="n">X_ee</span><span class="o">.</span><span class="n">rotation</span><span class="p">())</span><span class="o">.</span><span class="n">vector</span><span class="p">(),</span>
-            <span class="n">X_ee</span><span class="o">.</span><span class="n">translation</span><span class="p">()</span>
-        <span class="p">])</span>
+        <span class="n">ee_pose</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">RollPitchYaw</span><span class="p">(</span><span class="n">X_ee</span><span class="o">.</span><span class="n">rotation</span><span class="p">())</span><span class="o">.</span><span class="n">vector</span><span class="p">(),</span> <span class="n">X_ee</span><span class="o">.</span><span class="n">translation</span><span class="p">()]</span>
+        <span class="p">)</span>
 
         <span class="n">output</span><span class="o">.</span><span class="n">SetFromVector</span><span class="p">(</span><span class="n">ee_pose</span><span class="p">)</span></div>
 
@@ -705,7 +706,7 @@
     <span class="k">def</span> <span class="nf">CalcEndEffectorTwist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="n">BasicVector</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        Callback for the `measured_ee_twist` output port.</span>
 <span class="sd">        This method computes the end-effector twist based on the current</span>
 <span class="sd">        joint positions and velocities.</span>
@@ -737,13 +738,13 @@
     <span class="k">def</span> <span class="nf">GetJointLimits</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        Iterate through the associated plant to determine</span>
 <span class="sd">        the joint limits (i.e., on position and velocity)</span>
 <span class="sd">        of all joints associated with the arm.</span>
-<span class="sd">        </span>
+
 <span class="sd">        *Notes*</span>
-<span class="sd">        </span>
+
 <span class="sd">        Sets the following internal variables:</span>
 
 <span class="sd">        - q_min</span>
@@ -766,7 +767,9 @@
                 <span class="n">q_min</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">joint</span><span class="o">.</span><span class="n">position_lower_limit</span><span class="p">())</span>
                 <span class="n">q_max</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">joint</span><span class="o">.</span><span class="n">position_upper_limit</span><span class="p">())</span>
                 <span class="n">qd_min</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">joint</span><span class="o">.</span><span class="n">velocity_lower_limit</span><span class="p">())</span>  <span class="c1"># note that higher limits</span>
-                <span class="n">qd_max</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">joint</span><span class="o">.</span><span class="n">velocity_upper_limit</span><span class="p">())</span>  <span class="c1"># are availible in cartesian mode</span>
+                <span class="n">qd_max</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">joint</span><span class="o">.</span><span class="n">velocity_upper_limit</span><span class="p">()</span>
+                <span class="p">)</span>  <span class="c1"># are availible in cartesian mode</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">q_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">q_min</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">q_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">q_max</span><span class="p">)</span>
@@ -808,7 +811,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=1dd76d02"></script>
+</div><script src="../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>

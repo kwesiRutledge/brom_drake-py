@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.control.grippers.gripper_controller - brom_drake-py 0.5.0 documentation</title>
+        <title>brom_drake.control.grippers.gripper_controller - brom_drake-py v0.0.0+githubActionDefault documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">brom_drake-py 0.5.0 documentation</div></a>
+      <a href="../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.0 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -557,6 +557,7 @@
 
 <span class="sd">        This file defines the GripperController class.</span>
 <span class="sd">&quot;&quot;&quot;</span>
+
 <span class="c1"># External Imports</span>
 <span class="kn">import</span> <span class="nn">importlib.resources</span> <span class="k">as</span> <span class="nn">impresources</span>
 
@@ -575,7 +576,6 @@
 <span class="kn">from</span> <span class="nn">brom_drake.robots.gripper_type</span> <span class="kn">import</span> <span class="n">GripperType</span>
 
 <span class="kn">from</span> <span class="nn">brom_drake</span> <span class="kn">import</span> <span class="n">robots</span>
-
 
 <span class="c1"># Constants</span>
 <span class="n">package_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
@@ -619,10 +619,13 @@
 <span class="sd">        The derivative gain matrix for the PD controller.</span>
 <span class="sd">        By default, this is set based on the gripper type.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gripper_type</span><span class="p">:</span> <span class="n">GripperType</span><span class="p">,</span> <span class="n">Kp</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Kd</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">gripper_type</span><span class="p">:</span> <span class="n">GripperType</span><span class="p">,</span> <span class="n">Kp</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Kd</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        Constructor for the GripperController class.</span>
 <span class="sd">        :param gripper_type: The type can be &quot;Robotiq_2f_85&quot; or &quot;NoGripper&quot;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -636,9 +639,10 @@
 
             <span class="c1"># We&#39;ll create a simple model of the gripper which is welded to the floor.</span>
             <span class="c1"># This will allow us to compute the distance between fingers.</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">plant</span> <span class="o">=</span> <span class="n">MultibodyPlant</span><span class="p">(</span><span class="n">time_step</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span> <span class="c1"># time step doesn&#39;t matter</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plant</span> <span class="o">=</span> <span class="n">MultibodyPlant</span><span class="p">(</span><span class="n">time_step</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>  <span class="c1"># time step doesn&#39;t matter</span>
             <span class="n">gripper_urdf</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span>
-                <span class="n">impresources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="n">robots</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;models/robotiq/2f_85_gripper/urdf/robotiq_2f_85.urdf&quot;</span>
+                <span class="n">impresources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="n">robots</span><span class="p">)</span>
+                <span class="o">/</span> <span class="s2">&quot;models/robotiq/2f_85_gripper/urdf/robotiq_2f_85.urdf&quot;</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">gripper</span> <span class="o">=</span> <span class="n">Parser</span><span class="p">(</span><span class="n">plant</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="p">)</span><span class="o">.</span><span class="n">AddModels</span><span class="p">(</span><span class="n">gripper_urdf</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">WeldFrames</span><span class="p">(</span>
@@ -653,10 +657,7 @@
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Invalid gripper type: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
 
         <span class="c1"># Declare input ports</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">target_port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DeclareVectorInputPort</span><span class="p">(</span>
-            <span class="s2">&quot;gripper_target&quot;</span><span class="p">,</span>
-            <span class="n">BasicVector</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target_port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DeclareVectorInputPort</span><span class="p">(</span><span class="s2">&quot;gripper_target&quot;</span><span class="p">,</span> <span class="n">BasicVector</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">target_type_port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DeclareAbstractInputPort</span><span class="p">(</span>
             <span class="s2">&quot;gripper_target_type&quot;</span><span class="p">,</span>
             <span class="n">AbstractValue</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="n">GripperTarget</span><span class="o">.</span><span class="n">kPosition</span><span class="p">),</span>
@@ -676,12 +677,14 @@
             <span class="s2">&quot;measured_gripper_position&quot;</span><span class="p">,</span>
             <span class="n">BasicVector</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">CalcGripperPosition</span><span class="p">,</span>
-            <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">time_ticket</span><span class="p">()}</span>    <span class="c1"># indicate that this doesn&#39;t depend on any inputs,</span>
-        <span class="p">)</span>                           <span class="c1"># but should still be updated each timestep</span>
+            <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">time_ticket</span><span class="p">()},</span>  <span class="c1"># indicate that this doesn&#39;t depend on any inputs,</span>
+        <span class="p">)</span>  <span class="c1"># but should still be updated each timestep</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">DeclareVectorOutputPort</span><span class="p">(</span>
-            <span class="s2">&quot;measured_gripper_velocity&quot;</span><span class="p">,</span> <span class="n">BasicVector</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">CalcGripperVelocity</span><span class="p">,</span>
-            <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">time_ticket</span><span class="p">()}</span>    <span class="c1"># indicate that this doesn&#39;t depend on any inputs,</span>
-        <span class="p">)</span>                           <span class="c1"># but should still be updated each timestep</span>
+            <span class="s2">&quot;measured_gripper_velocity&quot;</span><span class="p">,</span>
+            <span class="n">BasicVector</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">CalcGripperVelocity</span><span class="p">,</span>
+            <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">time_ticket</span><span class="p">()},</span>  <span class="c1"># indicate that this doesn&#39;t depend on any inputs,</span>
+        <span class="p">)</span>  <span class="c1"># but should still be updated each timestep</span>
 
         <span class="c1"># Create the gain values</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Kp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Kd</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
@@ -705,28 +708,31 @@
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;hande&quot;</span><span class="p">:</span>
             <span class="n">width</span> <span class="o">=</span> <span class="mf">0.03</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">GripperType</span><span class="o">.</span><span class="n">Robotiq_2f_85</span><span class="p">:</span>  <span class="c1">#2f_85</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">GripperType</span><span class="o">.</span><span class="n">Robotiq_2f_85</span><span class="p">:</span>  <span class="c1"># 2f_85</span>
             <span class="n">width</span> <span class="o">=</span> <span class="mf">0.06</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Gripper type </span><span class="si">%s</span><span class="s2"> does not have CalcGripperPosition() implemented&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                <span class="s2">&quot;Gripper type </span><span class="si">%s</span><span class="s2"> does not have CalcGripperPosition() implemented&quot;</span>
+                <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span>
+            <span class="p">)</span>
 
         <span class="c1"># Send a single number to match the hardware</span>
         <span class="n">both_finger_positions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ComputePosition</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
-        <span class="n">net_position</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">width</span><span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">both_finger_positions</span><span class="p">)</span>
+        <span class="n">net_position</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">width</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">both_finger_positions</span><span class="p">)</span>
 
         <span class="n">output</span><span class="o">.</span><span class="n">SetFromVector</span><span class="p">([</span><span class="n">net_position</span><span class="p">])</span>
 
     <span class="k">def</span> <span class="nf">CalcGripperVelocity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        Calculate the gripper velocity from the state input port.</span>
-<span class="sd">        </span>
+
 <span class="sd">        *Parameters*</span>
-<span class="sd">        </span>
+
 <span class="sd">        context: pydrake.systems.framework.Context</span>
 <span class="sd">            The current context of the system.</span>
-<span class="sd">            </span>
+
 <span class="sd">        output: pydrake.systems.framework.BasicVector</span>
 <span class="sd">            The output vector to store the gripper velocity.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -737,7 +743,10 @@
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">GripperType</span><span class="o">.</span><span class="n">Robotiq_2f_85</span><span class="p">:</span>  <span class="c1"># 2f_85</span>
             <span class="n">width</span> <span class="o">=</span> <span class="mf">0.06</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Gripper type </span><span class="si">%s</span><span class="s2"> does not have CalcGripperVelocity() implemented&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                <span class="s2">&quot;Gripper type </span><span class="si">%s</span><span class="s2"> does not have CalcGripperVelocity() implemented&quot;</span>
+                <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span>
+            <span class="p">)</span>
 
         <span class="c1"># Send a single number to match the hardware</span>
         <span class="n">both_finger_velocity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ComputeVelocity</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
@@ -778,12 +787,8 @@
             <span class="n">left_finger</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetFrameByName</span><span class="p">(</span><span class="s2">&quot;left_inner_finger_pad&quot;</span><span class="p">)</span>
             <span class="n">base</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetFrameByName</span><span class="p">(</span><span class="s2">&quot;robotiq_arg2f_base_link&quot;</span><span class="p">)</span>
 
-            <span class="n">X_lf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">CalcRelativeTransform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span>
-                                                    <span class="n">left_finger</span><span class="p">,</span>
-                                                    <span class="n">base</span><span class="p">)</span>
-            <span class="n">X_rf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">CalcRelativeTransform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span>
-                                                    <span class="n">right_finger</span><span class="p">,</span>
-                                                    <span class="n">base</span><span class="p">)</span>
+            <span class="n">X_lf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">CalcRelativeTransform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span> <span class="n">left_finger</span><span class="p">,</span> <span class="n">base</span><span class="p">)</span>
+            <span class="n">X_rf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">CalcRelativeTransform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span> <span class="n">right_finger</span><span class="p">,</span> <span class="n">base</span><span class="p">)</span>
 
             <span class="n">lf_pos</span> <span class="o">=</span> <span class="o">-</span><span class="n">X_lf</span><span class="o">.</span><span class="n">translation</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
             <span class="n">rf_pos</span> <span class="o">=</span> <span class="o">-</span><span class="n">X_rf</span><span class="o">.</span><span class="n">translation</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
@@ -791,7 +796,10 @@
             <span class="n">finger_position</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">lf_pos</span><span class="p">,</span> <span class="n">rf_pos</span><span class="p">])</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Gripper type </span><span class="si">%s</span><span class="s2"> does not have ComputePosition() implemented&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                <span class="s2">&quot;Gripper type </span><span class="si">%s</span><span class="s2"> does not have ComputePosition() implemented&quot;</span>
+                <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span>
+            <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">finger_position</span></div>
 
@@ -819,17 +827,27 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">GripperType</span><span class="o">.</span><span class="n">Robotiq_2f_85</span><span class="p">:</span>
             <span class="c1"># For the more complex 2F-85 gripper, we need to do some kinematics</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">SetPositionsAndVelocities</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
-            <span class="n">v</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">num_velocities</span><span class="p">():]</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">num_velocities</span><span class="p">()</span> <span class="p">:]</span>
 
             <span class="n">right_finger</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetFrameByName</span><span class="p">(</span><span class="s2">&quot;right_inner_finger_pad&quot;</span><span class="p">)</span>
             <span class="n">left_finger</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetFrameByName</span><span class="p">(</span><span class="s2">&quot;left_inner_finger_pad&quot;</span><span class="p">)</span>
             <span class="n">base</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetFrameByName</span><span class="p">(</span><span class="s2">&quot;robotiq_arg2f_base_link&quot;</span><span class="p">)</span>
 
             <span class="n">J_lf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">CalcJacobianTranslationalVelocity</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span> <span class="n">JacobianWrtVariable</span><span class="o">.</span><span class="n">kV</span><span class="p">,</span> <span class="n">left_finger</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">base</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span>
+                <span class="n">JacobianWrtVariable</span><span class="o">.</span><span class="n">kV</span><span class="p">,</span>
+                <span class="n">left_finger</span><span class="p">,</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span>
+                <span class="n">base</span><span class="p">,</span>
+                <span class="n">base</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">J_rf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">CalcJacobianTranslationalVelocity</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span> <span class="n">JacobianWrtVariable</span><span class="o">.</span><span class="n">kV</span><span class="p">,</span> <span class="n">right_finger</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">base</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span>
+                <span class="n">JacobianWrtVariable</span><span class="o">.</span><span class="n">kV</span><span class="p">,</span>
+                <span class="n">right_finger</span><span class="p">,</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span>
+                <span class="n">base</span><span class="p">,</span>
+                <span class="n">base</span><span class="p">,</span>
             <span class="p">)</span>
 
             <span class="n">lf_vel</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="n">J_lf</span> <span class="o">@</span> <span class="n">v</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
@@ -838,7 +856,10 @@
             <span class="n">finger_velocity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">lf_vel</span><span class="p">,</span> <span class="n">rf_vel</span><span class="p">])</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Gripper type </span><span class="si">%s</span><span class="s2"> does not have ComputeVelocity() implemented&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                <span class="s2">&quot;Gripper type </span><span class="si">%s</span><span class="s2"> does not have ComputeVelocity() implemented&quot;</span>
+                <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span>
+            <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">finger_velocity</span></div>
 
@@ -864,14 +885,17 @@
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;hande&quot;</span><span class="p">:</span>
             <span class="n">width</span> <span class="o">=</span> <span class="mf">0.03</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">GripperType</span><span class="o">.</span><span class="n">Robotiq_2f_85</span><span class="p">:</span>  <span class="c1">#2f_85</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">GripperType</span><span class="o">.</span><span class="n">Robotiq_2f_85</span><span class="p">:</span>  <span class="c1"># 2f_85</span>
             <span class="n">width</span> <span class="o">=</span> <span class="mf">0.06</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Gripper type </span><span class="si">%s</span><span class="s2"> does not have CalcGripperPosition() implemented&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                <span class="s2">&quot;Gripper type </span><span class="si">%s</span><span class="s2"> does not have CalcGripperPosition() implemented&quot;</span>
+                <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span>
+            <span class="p">)</span>
 
         <span class="c1"># Send a single number to match the hardware</span>
         <span class="n">both_finger_positions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ComputePosition</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
-        <span class="n">net_position</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">width</span><span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">both_finger_positions</span><span class="p">)</span>
+        <span class="n">net_position</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">width</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">both_finger_positions</span><span class="p">)</span>
 
         <span class="n">output</span><span class="o">.</span><span class="n">SetFromVector</span><span class="p">([</span><span class="n">net_position</span><span class="p">])</span></div>
 
@@ -884,7 +908,10 @@
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">GripperType</span><span class="o">.</span><span class="n">Robotiq_2f_85</span><span class="p">:</span>  <span class="c1"># 2f_85</span>
             <span class="n">width</span> <span class="o">=</span> <span class="mf">0.06</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Gripper type </span><span class="si">%s</span><span class="s2"> does not have CalcGripperVelocity() implemented&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                <span class="s2">&quot;Gripper type </span><span class="si">%s</span><span class="s2"> does not have CalcGripperVelocity() implemented&quot;</span>
+                <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span>
+            <span class="p">)</span>
 
         <span class="c1"># Send a single number to match the hardware</span>
         <span class="n">both_finger_velocity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ComputeVelocity</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
@@ -930,11 +957,11 @@
     <span class="k">def</span> <span class="nf">initialize_gains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Kp</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Kd</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        Initialize the gains for the gripper controller.</span>
 
 <span class="sd">        *Parameters*</span>
-<span class="sd">        </span>
+
 <span class="sd">        Kp: np.ndarray</span>
 <span class="sd">            The proportional gain</span>
 
@@ -951,7 +978,9 @@
             <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;hande&quot;</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">Kp</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Gripper type </span><span class="si">%s</span><span class="s2"> does not have Kp initialized&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                    <span class="s2">&quot;Gripper type </span><span class="si">%s</span><span class="s2"> does not have Kp initialized&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span>
+                <span class="p">)</span>
 
         <span class="c1"># Handle derivative gain</span>
         <span class="k">if</span> <span class="n">Kd</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -963,16 +992,18 @@
             <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;hande&quot;</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">Kd</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Kp</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Gripper type </span><span class="si">%s</span><span class="s2"> does not have Kd initialized&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">)</span></div>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                    <span class="s2">&quot;Gripper type </span><span class="si">%s</span><span class="s2"> does not have Kd initialized&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span>
+                <span class="p">)</span></div>
 
-    
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">gripper_width</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        Return the gripper width.</span>
-<span class="sd">        </span>
+
 <span class="sd">        *Returns*</span>
 
 <span class="sd">        width: float</span>
@@ -983,7 +1014,9 @@
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;hande&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="mf">0.03</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Gripper type </span><span class="si">%s</span><span class="s2"> does not have gripper_width implemented&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                <span class="s2">&quot;Gripper type </span><span class="si">%s</span><span class="s2"> does not have gripper_width implemented&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span>
+            <span class="p">)</span></div>
 
 </pre></div>
         </article>
@@ -1017,7 +1050,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=1dd76d02"></script>
+</div><script src="../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>

@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.stations.classical.ur10e - brom_drake-py 0.5.0 documentation</title>
+        <title>brom_drake.stations.classical.ur10e - brom_drake-py v0.0.0+githubActionDefault documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">brom_drake-py 0.5.0 documentation</div></a>
+      <a href="../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.0 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -575,9 +575,12 @@
 <span class="kn">from</span> <span class="nn">brom_drake.robots.gripper_type</span> <span class="kn">import</span> <span class="n">GripperType</span>
 <span class="kn">from</span> <span class="nn">brom_drake.control.grippers.gripper_controller</span> <span class="kn">import</span> <span class="n">GripperController</span>
 <span class="kn">from</span> <span class="nn">brom_drake.file_manipulation.urdf</span> <span class="kn">import</span> <span class="n">DrakeReadyURDFConverter</span>
-<span class="kn">from</span> <span class="nn">brom_drake.systems.end_effector_wrench_calculator</span> <span class="kn">import</span> <span class="n">EndEffectorWrenchCalculator</span>
+<span class="kn">from</span> <span class="nn">brom_drake.systems.end_effector_wrench_calculator</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">EndEffectorWrenchCalculator</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="kn">from</span> <span class="nn">brom_drake</span> <span class="kn">import</span> <span class="n">robots</span>
+
 
 <div class="viewcode-block" id="UR10eStation">
 <a class="viewcode-back" href="../../../../generated/stations/classical/classical.html#brom_drake.stations.classical.ur10e.UR10eStation">[docs]</a>
@@ -586,9 +589,9 @@
 <span class="sd">    *Description*</span>
 
 <span class="sd">    A template system diagram for controlling a UR10e robot in a simulated environment.</span>
-<span class="sd">    </span>
+
 <span class="sd">    *Diagram*</span>
-<span class="sd">    </span>
+
 <span class="sd">    The diagram&#39;s inputs and outputs can be represented as: ::</span>
 
 <span class="sd">                                            -----------------</span>
@@ -647,7 +650,6 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">Add2f85Gripper</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">add_gripper_controller</span><span class="p">()</span>
 
-
 <div class="viewcode-block" id="UR10eStation.add_arm_to_plant_with_ee_frame">
 <a class="viewcode-back" href="../../../../generated/stations/classical/classical.html#brom_drake.stations.classical.ur10e.UR10eStation.add_arm_to_plant_with_ee_frame">[docs]</a>
     <span class="k">def</span> <span class="nf">add_arm_to_plant_with_ee_frame</span><span class="p">(</span>
@@ -659,21 +661,21 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">ModelInstanceIndex</span><span class="p">,</span> <span class="n">Frame</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This function adds the &quot;arm&quot; object at the arm_urdf_path location to the plant.</span>
 
 <span class="sd">        *Parameters*</span>
-<span class="sd">        </span>
+
 <span class="sd">        arm_urdf_path : str</span>
 <span class="sd">            The path to the URDF file for the arm.</span>
 <span class="sd">        plant : MultibodyPlant</span>
 <span class="sd">            The plant to which the arm will be added.</span>
-<span class="sd">        </span>
+
 <span class="sd">        *Returns*</span>
-<span class="sd">        </span>
+
 <span class="sd">        arm: ModelInstanceIndex</span>
 <span class="sd">            The model instance index of the arm and the frame of the end effector.</span>
-<span class="sd">        </span>
+
 <span class="sd">        end_effector_frame: Frame</span>
 <span class="sd">            The frame of the end effector.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -700,13 +702,13 @@
 
         <span class="k">return</span> <span class="n">arm</span><span class="p">,</span> <span class="n">end_effector_frame</span></div>
 
-    
+
 <div class="viewcode-block" id="UR10eStation.add_gripper_controller">
 <a class="viewcode-back" href="../../../../generated/stations/classical/classical.html#brom_drake.stations.classical.ur10e.UR10eStation.add_gripper_controller">[docs]</a>
     <span class="k">def</span> <span class="nf">add_gripper_controller</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This function adds a controller for the gripper to the station.</span>
 <span class="sd">        It is optional and may not be necessary for all stations.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -724,7 +726,7 @@
     <span class="k">def</span> <span class="nf">AddArm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        Add the UR10e arm to the system.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Setup</span>
@@ -742,14 +744,18 @@
 
         <span class="c1"># Add the arm to the plant using our convenience function</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">arm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">arm_ee_frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_arm_to_plant_with_ee_frame</span><span class="p">(</span>
-            <span class="n">arm_urdf</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="p">,</span>
+            <span class="n">arm_urdf</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="p">,</span>
             <span class="n">X_ee</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">X_ee</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="c1"># Add the arm to the controller plant using our convenience function</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">controller_arm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">controller_arm_ee_frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_arm_to_plant_with_ee_frame</span><span class="p">(</span>
-            <span class="n">arm_urdf</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">controller_plant</span><span class="p">,</span>
-            <span class="n">X_ee</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">X_ee</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">controller_arm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">controller_arm_ee_frame</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_arm_to_plant_with_ee_frame</span><span class="p">(</span>
+                <span class="n">arm_urdf</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">controller_plant</span><span class="p">,</span>
+                <span class="n">X_ee</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">X_ee</span><span class="p">,</span>
+            <span class="p">)</span>
         <span class="p">)</span></div>
 
 
@@ -765,14 +771,13 @@
 
         <span class="c1"># Add a gripper with actuation to the full simulated plant</span>
         <span class="n">gripper_urdf_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span>
-            <span class="n">impresources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="n">robots</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;models/robotiq/2f_85_gripper/urdf/robotiq_2f_85.urdf&quot;</span>
+            <span class="n">impresources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="n">robots</span><span class="p">)</span>
+            <span class="o">/</span> <span class="s2">&quot;models/robotiq/2f_85_gripper/urdf/robotiq_2f_85.urdf&quot;</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gripper</span> <span class="o">=</span> <span class="n">Parser</span><span class="p">(</span><span class="n">plant</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="p">)</span><span class="o">.</span><span class="n">AddModels</span><span class="p">(</span><span class="n">gripper_urdf_path</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="n">X_grip</span> <span class="o">=</span> <span class="n">RigidTransform</span><span class="p">()</span>
-        <span class="n">X_grip</span><span class="o">.</span><span class="n">set_rotation</span><span class="p">(</span>
-            <span class="n">RotationMatrix</span><span class="p">(</span><span class="n">RollPitchYaw</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">]))</span>
-        <span class="p">)</span>
+        <span class="n">X_grip</span><span class="o">.</span><span class="n">set_rotation</span><span class="p">(</span><span class="n">RotationMatrix</span><span class="p">(</span><span class="n">RollPitchYaw</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">])))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">WeldFrames</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetFrameByName</span><span class="p">(</span><span class="s2">&quot;tool0&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">arm</span><span class="p">),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetFrameByName</span><span class="p">(</span><span class="s2">&quot;robotiq_arg2f_base_link&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gripper</span><span class="p">),</span>
@@ -792,13 +797,16 @@
         <span class="c1">#     self.controller_plant.GetFrameByName(&quot;tool0&quot;, self.controller_arm),</span>
         <span class="c1">#     self.controller_plant.GetFrameByName(&quot;robotiq_arg2f_base_link&quot;, static_gripper),</span>
         <span class="c1">#     X_grip)</span>
-    
+
     <span class="k">def</span> <span class="nf">ConnectToMeshcatVisualizer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">meshcat</span> <span class="o">=</span> <span class="n">Meshcat</span><span class="p">(</span><span class="n">port</span><span class="p">)</span>
         <span class="n">m</span> <span class="o">=</span> <span class="n">MeshcatVisualizer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">meshcat</span><span class="p">)</span>
         <span class="n">m</span><span class="o">.</span><span class="n">AddToBuilder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">scene_graph</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">meshcat</span><span class="p">)</span>
 
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Open </span><span class="si">%s</span><span class="s2"> in a browser to view the meshcat visualizer.&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">meshcat</span><span class="o">.</span><span class="n">web_url</span><span class="p">())</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="s2">&quot;Open </span><span class="si">%s</span><span class="s2"> in a browser to view the meshcat visualizer.&quot;</span>
+            <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">meshcat</span><span class="o">.</span><span class="n">web_url</span><span class="p">()</span>
+        <span class="p">)</span>
 
 <div class="viewcode-block" id="UR10eStation.CreateArmControllerAndConnect">
 <a class="viewcode-back" href="../../../../generated/stations/classical/classical.html#brom_drake.stations.classical.ur10e.UR10eStation.CreateArmControllerAndConnect">[docs]</a>
@@ -818,7 +826,7 @@
             <span class="n">InverseDynamicsController</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">controller_plant</span><span class="p">,</span>
                 <span class="n">kp</span><span class="o">=</span><span class="n">kp</span><span class="p">,</span>
-                <span class="n">ki</span><span class="o">=</span><span class="mf">0.0</span><span class="o">*</span><span class="n">kp</span><span class="p">,</span>
+                <span class="n">ki</span><span class="o">=</span><span class="mf">0.0</span> <span class="o">*</span> <span class="n">kp</span><span class="p">,</span>
                 <span class="n">kd</span><span class="o">=</span><span class="n">kd</span><span class="p">,</span>
                 <span class="n">has_reference_acceleration</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="p">)</span>
@@ -848,10 +856,10 @@
     <span class="k">def</span> <span class="nf">CreateGripperControllerAndConnect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        Connects the gripper controller to:</span>
 <span class="sd">        - The Gripper Actuators (done via the plant of the station)</span>
-<span class="sd">        </span>
+
 <span class="sd">        and exports some of the gripper controller&#39;s inputs and outputs</span>
 <span class="sd">        (so that they become the inputs and outputs of the station).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -894,11 +902,11 @@
     <span class="k">def</span> <span class="nf">create_plants_and_scene_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_step</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.001</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This function creates the plant and scene graph for the diagram.</span>
 
 <span class="sd">        *Parameters*</span>
-<span class="sd">        </span>
+
 <span class="sd">        time_step : float</span>
 <span class="sd">            The time step for the MultibodyPlant.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -919,13 +927,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">controller_plant</span><span class="o">.</span><span class="n">set_name</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="si">}</span><span class="s2">_ControllerPlant&quot;</span><span class="p">)</span></div>
 
 
-
 <div class="viewcode-block" id="UR10eStation.ExportArmPositionInputPort">
 <a class="viewcode-back" href="../../../../generated/stations/classical/classical.html#brom_drake.stations.classical.ur10e.UR10eStation.ExportArmPositionInputPort">[docs]</a>
     <span class="k">def</span> <span class="nf">ExportArmPositionInputPort</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        Creates the input port for the arm position (i.e. the joint position)</span>
 <span class="sd">        for the station.</span>
 <span class="sd">        This requires creating a special connection to the arm controller</span>
@@ -937,10 +944,12 @@
 
         <span class="c1"># Create multiplexer to provide input to arm controller</span>
         <span class="n">mux_for_controller</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">AddSystem</span><span class="p">(</span>
-            <span class="n">Multiplexer</span><span class="p">([</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">num_positions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">arm</span><span class="p">),</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">num_velocities</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">arm</span><span class="p">),</span>
-            <span class="p">]),</span>
+            <span class="n">Multiplexer</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">num_positions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">arm</span><span class="p">),</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">num_velocities</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">arm</span><span class="p">),</span>
+                <span class="p">]</span>
+            <span class="p">),</span>
         <span class="p">)</span>
 
         <span class="c1"># Create constant velocity source</span>
@@ -972,7 +981,7 @@
     <span class="k">def</span> <span class="nf">ExportArmControllerPorts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This function creates the input and output ports for the diagram</span>
 <span class="sd">        that are related to the arm controller.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -988,7 +997,7 @@
 
         <span class="c1"># Create desired position input</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ExportArmPositionInputPort</span><span class="p">()</span>
-        
+
         <span class="c1"># Create Multiplexer to extract the arm position and velocity</span>
         <span class="n">demux</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">AddSystem</span><span class="p">(</span>
             <span class="n">Demultiplexer</span><span class="p">(</span>
@@ -1021,14 +1030,15 @@
         <span class="n">wrench_calculator</span><span class="o">.</span><span class="n">set_name</span><span class="p">(</span><span class="s2">&quot;wrench_calculator&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">Connect</span><span class="p">(</span>
-            <span class="n">demux</span><span class="o">.</span><span class="n">get_output_port</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
-            <span class="n">wrench_calculator</span><span class="o">.</span><span class="n">GetInputPort</span><span class="p">(</span><span class="s2">&quot;joint_positions&quot;</span><span class="p">))</span>
+            <span class="n">demux</span><span class="o">.</span><span class="n">get_output_port</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">wrench_calculator</span><span class="o">.</span><span class="n">GetInputPort</span><span class="p">(</span><span class="s2">&quot;joint_positions&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">Connect</span><span class="p">(</span>
-            <span class="n">demux</span><span class="o">.</span><span class="n">get_output_port</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
-            <span class="n">wrench_calculator</span><span class="o">.</span><span class="n">GetInputPort</span><span class="p">(</span><span class="s2">&quot;joint_velocities&quot;</span><span class="p">))</span>
+            <span class="n">demux</span><span class="o">.</span><span class="n">get_output_port</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">wrench_calculator</span><span class="o">.</span><span class="n">GetInputPort</span><span class="p">(</span><span class="s2">&quot;joint_velocities&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">Connect</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">controller</span><span class="o">.</span><span class="n">get_output_port_control</span><span class="p">(),</span>
-            <span class="n">wrench_calculator</span><span class="o">.</span><span class="n">GetInputPort</span><span class="p">(</span><span class="s2">&quot;joint_torques&quot;</span><span class="p">))</span>
+            <span class="n">wrench_calculator</span><span class="o">.</span><span class="n">GetInputPort</span><span class="p">(</span><span class="s2">&quot;joint_torques&quot;</span><span class="p">),</span>
+        <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">ExportOutput</span><span class="p">(</span>
             <span class="n">wrench_calculator</span><span class="o">.</span><span class="n">get_output_port</span><span class="p">(),</span>
@@ -1041,7 +1051,7 @@
     <span class="k">def</span> <span class="nf">ExportGripperStatePort</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This function exports the gripper&#39;s state</span>
 <span class="sd">        as a port of the diagram.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1053,13 +1063,13 @@
             <span class="s2">&quot;gripper_state&quot;</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-    
+
 <div class="viewcode-block" id="UR10eStation.Finalize">
 <a class="viewcode-back" href="../../../../generated/stations/classical/classical.html#brom_drake.stations.classical.ur10e.UR10eStation.Finalize">[docs]</a>
     <span class="k">def</span> <span class="nf">Finalize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This finalizes the diagram by:</span>
 
 <span class="sd">        - Finalizing all plants in the diagram</span>
@@ -1100,13 +1110,13 @@
         <span class="c1"># Build the diagram</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">BuildInto</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
-    
+
 <div class="viewcode-block" id="UR10eStation.use_meshcat">
 <a class="viewcode-back" href="../../../../generated/stations/classical/classical.html#brom_drake.stations.classical.ur10e.UR10eStation.use_meshcat">[docs]</a>
     <span class="k">def</span> <span class="nf">use_meshcat</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This function returns whether or not to use meshcat for visualization.</span>
 <span class="sd">        :return: (bool) Whether or not to use meshcat for visualization.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1145,7 +1155,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=1dd76d02"></script>
+</div><script src="../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>

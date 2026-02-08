@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.productions.debug.show_me.show_me_this_model - brom_drake-py 0.5.0 documentation</title>
+        <title>brom_drake.productions.debug.show_me.show_me_this_model - brom_drake-py v0.0.0+githubActionDefault documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../index.html"><div class="brand">brom_drake-py 0.5.0 documentation</div></a>
+      <a href="../../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.0 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -571,18 +571,19 @@
 <span class="kn">from</span> <span class="nn">brom_drake.utils</span> <span class="kn">import</span> <span class="n">Performer</span><span class="p">,</span> <span class="n">AddMultibodyTriad</span>
 <span class="kn">from</span> <span class="nn">.show_me_system</span> <span class="kn">import</span> <span class="n">ShowMeSystem</span>
 
+
 <div class="viewcode-block" id="ShowMeThisModel">
 <a class="viewcode-back" href="../../../../../generated/productions/debug/show_me/show_me.html#brom_drake.productions.debug.show_me.show_me_this_model.ShowMeThisModel">[docs]</a>
 <span class="k">class</span> <span class="nc">ShowMeThisModel</span><span class="p">(</span><span class="n">BaseProduction</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    **Description**</span>
-<span class="sd">    </span>
+
 <span class="sd">    A production which allows the user to visualize a specified model</span>
 <span class="sd">    in Meshcat, with the ability to set desired joint positions, if the model is</span>
 <span class="sd">    a robot/articulated.</span>
-<span class="sd">    </span>
+
 <span class="sd">    **Parameters**</span>
-<span class="sd">    </span>
+
 <span class="sd">    path_to_model: str</span>
 <span class="sd">        The path to the model file to be visualized.</span>
 <span class="sd">        TODO: Add support for Path type. Make sure to add tests!!</span>
@@ -615,8 +616,8 @@
 <span class="sd">    **Usage**</span>
 
 <span class="sd">    The production can be used to show both simple models (e.g., single objects)</span>
-<span class="sd">    or articulated models (e.g., robots). </span>
-<span class="sd">    </span>
+<span class="sd">    or articulated models (e.g., robots).</span>
+
 <span class="sd">    To show a simple model, simply provide the path to the model file. ::</span>
 
 <span class="sd">        from brom_drake.productions import ShowMeThisModel</span>
@@ -664,13 +665,14 @@
 <span class="sd">        simulator.set_publish_every_time_step(False)</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">path_to_model</span><span class="p">:</span> <span class="nb">str</span><span class="o">|</span><span class="n">Path</span><span class="p">,</span>
+        <span class="n">path_to_model</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">,</span>
         <span class="n">with_these_joint_positions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">base_link_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">time_step</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-3</span><span class="p">,</span>
-        <span class="n">meshcat_port_number</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">7001</span><span class="p">,</span> <span class="c1"># Usually turn off for CI (i.e., make it None)</span>
+        <span class="n">meshcat_port_number</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">7001</span><span class="p">,</span>  <span class="c1"># Usually turn off for CI (i.e., make it None)</span>
         <span class="n">show_collision_geometries</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
@@ -689,7 +691,9 @@
 
         <span class="c1"># Check that the model exists</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">path_to_model</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The path </span><span class="se">\&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path_to_model</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2"> does not exist! Can not show a model that does not exist!&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;The path &quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path_to_model</span><span class="si">}</span><span class="s1">&quot; does not exist! Can not show a model that does not exist!&#39;</span>
+            <span class="p">)</span>
 
         <span class="c1"># If the base link name is not provided,</span>
         <span class="c1"># then we will try to do a smart search for it.</span>
@@ -712,7 +716,7 @@
     <span class="k">def</span> <span class="nf">add_supporting_cast</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        **Description**</span>
-<span class="sd">        </span>
+
 <span class="sd">        This method updates the production&#39;s</span>
 <span class="sd">        - MultibodyPlant with the user&#39;s model</span>
 <span class="sd">        - Using the ShowMeSystem to freeze the model in place</span>
@@ -723,12 +727,11 @@
         <span class="c1"># Setup</span>
 
         <span class="c1"># Add Model</span>
-        <span class="n">model_idcs</span> <span class="o">=</span> <span class="n">Parser</span><span class="p">(</span><span class="n">plant</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="p">)</span><span class="o">.</span><span class="n">AddModels</span><span class="p">(</span>
-            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path_to_model</span><span class="p">)</span>
+        <span class="n">model_idcs</span> <span class="o">=</span> <span class="n">Parser</span><span class="p">(</span><span class="n">plant</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="p">)</span><span class="o">.</span><span class="n">AddModels</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path_to_model</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">model_idcs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Only one model should be added in this production;&quot;</span>
+            <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; received </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">model_idcs</span><span class="p">)</span><span class="si">}</span><span class="s2"> in the file </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path_to_model</span><span class="si">}</span><span class="s2">.&quot;</span>
         <span class="p">)</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">model_idcs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> \
-            <span class="sa">f</span><span class="s2">&quot;Only one model should be added in this production;&quot;</span> <span class="o">+</span> \
-            <span class="sa">f</span><span class="s2">&quot; received </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">model_idcs</span><span class="p">)</span><span class="si">}</span><span class="s2"> in the file </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path_to_model</span><span class="si">}</span><span class="s2">.&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_index</span> <span class="o">=</span> <span class="n">model_idcs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetModelInstanceName</span><span class="p">(</span><span class="n">model_idcs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
@@ -737,8 +740,9 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_des</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">q_des</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_dofs</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_des</span><span class="p">)</span> <span class="o">==</span> <span class="n">n_dofs</span><span class="p">,</span> \
-                <span class="sa">f</span><span class="s2">&quot;Expected </span><span class="si">{</span><span class="n">n_dofs</span><span class="si">}</span><span class="s2"> joint positions; received </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_des</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_des</span><span class="p">)</span> <span class="o">==</span> <span class="n">n_dofs</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expected </span><span class="si">{</span><span class="n">n_dofs</span><span class="si">}</span><span class="s2"> joint positions; received </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_des</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
 
         <span class="c1"># Add ShowMeSystem</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">show_me_system</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">AddSystem</span><span class="p">(</span>
@@ -772,7 +776,9 @@
 
         <span class="c1"># Connect to Meshcat, if requested</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">meshcat_port_number</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">meshcat</span> <span class="o">=</span> <span class="n">Meshcat</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">meshcat_port_number</span><span class="p">)</span>  <span class="c1"># Object provides an interface to Meshcat</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">meshcat</span> <span class="o">=</span> <span class="n">Meshcat</span><span class="p">(</span>
+                <span class="n">port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">meshcat_port_number</span>
+            <span class="p">)</span>  <span class="c1"># Object provides an interface to Meshcat</span>
             <span class="n">m_visualizer</span> <span class="o">=</span> <span class="n">MeshcatVisualizer</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">meshcat</span><span class="p">,</span>
             <span class="p">)</span>
@@ -785,7 +791,9 @@
                 <span class="p">)</span>
 
             <span class="n">m_visualizer</span><span class="o">.</span><span class="n">AddToBuilder</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">scene_graph</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">meshcat</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">scene_graph</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">meshcat</span><span class="p">,</span>
                 <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
             <span class="p">)</span>
 
@@ -801,16 +809,16 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Diagram</span><span class="p">,</span> <span class="n">Context</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        **Description**</span>
-<span class="sd">        </span>
+
 <span class="sd">        This method builds the production&#39;s diagram and context,</span>
 <span class="sd">        and assigns the plant context to the internal ShowMeSystem.</span>
-<span class="sd">        </span>
+
 <span class="sd">        **Parameters**</span>
-<span class="sd">        </span>
+
 <span class="sd">        cast: Tuple[Role, Performer], optional</span>
 <span class="sd">            The cast to be added to the production.</span>
 <span class="sd">            Default is an empty tuple.</span>
-<span class="sd">            </span>
+
 <span class="sd">        **Returns**</span>
 
 <span class="sd">        diagram: Diagram</span>
@@ -822,8 +830,10 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">add_cast_and_build</span><span class="p">(</span><span class="n">cast</span><span class="p">)</span>
 
         <span class="c1"># Assign the diagram context to the internal show_me_system</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">show_me_system</span><span class="o">.</span><span class="n">mutable_plant_context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetMyMutableContextFromRoot</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">diagram_context</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">show_me_system</span><span class="o">.</span><span class="n">mutable_plant_context</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetMyMutableContextFromRoot</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">diagram_context</span><span class="p">,</span>
+            <span class="p">)</span>
         <span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">diagram</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">diagram_context</span></div>
@@ -834,15 +844,16 @@
     <span class="k">def</span> <span class="nf">add_multibody_triads</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        **Description**</span>
-<span class="sd">        </span>
+
 <span class="sd">        This method will add triads to the world frame</span>
 <span class="sd">        and any other relevant frames.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Setup</span>
 
         <span class="c1"># Input Checking</span>
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> \
-            <span class="s2">&quot;The model index is not yet set. Please call add_supporting_cast() first.&quot;</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">),</span> <span class="s2">&quot;The model index is not yet set. Please call add_supporting_cast() first.&quot;</span>
 
         <span class="c1"># Add A Triad to base?</span>
         <span class="n">AddMultibodyTriad</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">world_frame</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">scene_graph</span><span class="p">)</span></div>
@@ -853,7 +864,7 @@
     <span class="k">def</span> <span class="nf">create_and_connect_source_of_joint_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        **Description**</span>
-<span class="sd">        </span>
+
 <span class="sd">        This method will create and connect a source of joint positions</span>
 <span class="sd">        to the ShowMeSystem.</span>
 
@@ -864,11 +875,13 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Setup</span>
 
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">show_me_system</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> \
-            <span class="s2">&quot;The show_me_system is not yet created. Please call add_supporting_cast() first.&quot;</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">show_me_system</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">),</span> <span class="s2">&quot;The show_me_system is not yet created. Please call add_supporting_cast() first.&quot;</span>
 
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_des</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> \
-            <span class="s2">&quot;The desired joint positions are not yet set. Please provide them at initialization.&quot;</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">q_des</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">),</span> <span class="s2">&quot;The desired joint positions are not yet set. Please provide them at initialization.&quot;</span>
 
         <span class="c1"># Add Source</span>
         <span class="n">desired_joint_positions_source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">AddSystem</span><span class="p">(</span>
@@ -889,12 +902,12 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        **Description**</span>
-<span class="sd">        </span>
+
 <span class="sd">        This method will return the number of positions in the model</span>
 <span class="sd">        as defined by the user (through the path_to_model).</span>
 
 <span class="sd">        **Returns**</span>
-<span class="sd">        </span>
+
 <span class="sd">        n_positions: int</span>
 <span class="sd">            The number of positions in the model.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -902,9 +915,7 @@
 
         <span class="c1"># Create a shadow plant</span>
         <span class="n">shadow_plant</span> <span class="o">=</span> <span class="n">MultibodyPlant</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time_step</span><span class="p">)</span>
-        <span class="n">model_idcs</span> <span class="o">=</span> <span class="n">Parser</span><span class="p">(</span><span class="n">plant</span><span class="o">=</span><span class="n">shadow_plant</span><span class="p">)</span><span class="o">.</span><span class="n">AddModels</span><span class="p">(</span>
-            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path_to_model</span><span class="p">)</span>
-        <span class="p">)</span>
+        <span class="n">model_idcs</span> <span class="o">=</span> <span class="n">Parser</span><span class="p">(</span><span class="n">plant</span><span class="o">=</span><span class="n">shadow_plant</span><span class="p">)</span><span class="o">.</span><span class="n">AddModels</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path_to_model</span><span class="p">))</span>
         <span class="n">shadow_model_idx</span> <span class="o">=</span> <span class="n">model_idcs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="c1"># Weld the base link to the world frame</span>
@@ -923,14 +934,14 @@
     <span class="k">def</span> <span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ProductionID</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        **Description**</span>
-<span class="sd">        </span>
+
 <span class="sd">        This property returns the unique identifier for this production.</span>
 <span class="sd">        (i.e., ProductionID.kShowMeThisModel)</span>
 
 <span class="sd">        This is required to be implemented by all children of the BaseProduction class.</span>
 
 <span class="sd">        **Returns**</span>
-<span class="sd">        </span>
+
 <span class="sd">        id: ProductionID</span>
 <span class="sd">            The unique identifier for this production.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -985,7 +996,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../_static/documentation_options.js?v=1dd76d02"></script>
+</div><script src="../../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

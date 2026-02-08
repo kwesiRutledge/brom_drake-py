@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.systems.network_fsm.networkx_fsm - brom_drake-py 0.5.0 documentation</title>
+        <title>brom_drake.systems.network_fsm.networkx_fsm - brom_drake-py v0.0.0+githubActionDefault documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">brom_drake-py 0.5.0 documentation</div></a>
+      <a href="../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.0 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -570,7 +570,8 @@
 <span class="c1"># Internal Imports</span>
 <span class="kn">from</span> <span class="nn">brom_drake.systems.network_fsm.fsm_output_definition</span> <span class="kn">import</span> <span class="n">FSMOutputDefinition</span>
 <span class="kn">from</span> <span class="nn">brom_drake.systems.network_fsm.fsm_transition_condition</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">FSMTransitionCondition</span><span class="p">,</span> <span class="n">FSMTransitionConditionType</span>
+    <span class="n">FSMTransitionCondition</span><span class="p">,</span>
+    <span class="n">FSMTransitionConditionType</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">brom_drake.systems.network_fsm.fsm_edge_definition</span> <span class="kn">import</span> <span class="n">FSMEdgeDefinition</span>
 <span class="kn">from</span> <span class="nn">brom_drake.systems.network_fsm.errors</span> <span class="kn">import</span> <span class="p">(</span>
@@ -582,6 +583,7 @@
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">brom_drake.systems.network_fsm.config</span> <span class="kn">import</span> <span class="n">NetworkXFSMConfig</span>
 <span class="kn">from</span> <span class="nn">brom_drake.directories</span> <span class="kn">import</span> <span class="n">DEFAULT_NETWORKX_FSM_DIR</span>
+
 
 <div class="viewcode-block" id="NetworkXFSM">
 <a class="viewcode-back" href="../../../../generated/systems/network_fsm/network_fsm.html#brom_drake.systems.network_fsm.networkx_fsm.NetworkXFSM">[docs]</a>
@@ -650,7 +652,7 @@
     <span class="k">def</span> <span class="nf">advance_state_if_necessary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">debug_flag</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        Checks the current values of all relevant inputs</span>
 <span class="sd">        and advances the state if necessary according to the</span>
 <span class="sd">        conditions established in the FSM graph.</span>
@@ -669,7 +671,10 @@
 
         <span class="k">if</span> <span class="n">debug_flag</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Current state: </span><span class="si">{</span><span class="n">s_t</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Edge definitions for state </span><span class="si">{</span><span class="n">s_t</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">s_t_edge_definitions</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Edge definitions for state </span><span class="si">{</span><span class="n">s_t</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">s_t_edge_definitions</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span>
+            <span class="p">)</span>
 
         <span class="c1"># Iterate through all edge definitions to find the next state (if it exists)</span>
         <span class="n">edge_conditions_satisfied</span> <span class="o">=</span> <span class="p">[</span><span class="kc">False</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">s_t_edge_definitions</span><span class="p">))]</span>
@@ -679,7 +684,8 @@
             <span class="k">for</span> <span class="n">jj</span><span class="p">,</span> <span class="n">condition</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">edge_definition</span><span class="o">.</span><span class="n">conditions</span><span class="p">):</span>
                 <span class="c1"># Check the condition</span>
                 <span class="n">condition_ii_met</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_transition_condition</span><span class="p">(</span>
-                    <span class="n">condition</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span>
+                    <span class="n">condition</span><span class="p">,</span>
+                    <span class="n">context</span><span class="p">,</span>
                 <span class="p">)</span>
 
                 <span class="c1"># If the condition is not met,</span>
@@ -717,8 +723,7 @@
             <span class="c1"># - previous state</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">t_start_of_current_state</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get_time</span><span class="p">()</span>
             <span class="n">context</span><span class="o">.</span><span class="n">SetDiscreteState</span><span class="p">(</span>
-                <span class="n">group_index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">previous_state_index</span><span class="p">,</span>
-                <span class="n">xd</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">s_t</span><span class="p">])</span>
+                <span class="n">group_index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">previous_state_index</span><span class="p">,</span> <span class="n">xd</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">s_t</span><span class="p">])</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># If more than one condition is satisfied, then raise an error</span>
@@ -727,15 +732,16 @@
             <span class="p">)</span>
             <span class="c1"># TODO(kwesi): make this error more verbose to explain to people how to create</span>
             <span class="c1">#              mutually exclusive conditions for transition.</span>
-        
+
         <span class="k">if</span> <span class="n">debug_flag</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Transitioning from state </span><span class="si">{</span><span class="n">s_t</span><span class="si">}</span><span class="s2"> to state </span><span class="si">{</span><span class="n">next_state</span><span class="si">}</span><span class="s2"> at time </span><span class="si">{</span><span class="n">context</span><span class="o">.</span><span class="n">get_time</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Transitioning from state </span><span class="si">{</span><span class="n">s_t</span><span class="si">}</span><span class="s2"> to state </span><span class="si">{</span><span class="n">next_state</span><span class="si">}</span><span class="s2"> at time </span><span class="si">{</span><span class="n">context</span><span class="o">.</span><span class="n">get_time</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
 
         <span class="c1"># Update the current state</span>
         <span class="c1"># self.current_state = next_state</span>
         <span class="n">context</span><span class="o">.</span><span class="n">SetDiscreteState</span><span class="p">(</span>
-            <span class="n">group_index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">current_state_index</span><span class="p">,</span>
-            <span class="n">xd</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">next_state</span><span class="p">])</span>
+            <span class="n">group_index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">current_state_index</span><span class="p">,</span> <span class="n">xd</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">next_state</span><span class="p">])</span>
         <span class="p">)</span></div>
 
 
@@ -744,12 +750,14 @@
     <span class="k">def</span> <span class="nf">universal_allocation_lambda</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AbstractValue</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This function returns the allocation lambda for the given port name.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">port_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">allocation_lambdas</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Allocation lambda for port </span><span class="si">{</span><span class="n">port_name</span><span class="si">}</span><span class="s2"> cannot be created because we have no entry for it in the last_output_value dictionary!&quot;</span><span class="p">)</span>
-        
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Allocation lambda for port </span><span class="si">{</span><span class="n">port_name</span><span class="si">}</span><span class="s2"> cannot be created because we have no entry for it in the last_output_value dictionary!&quot;</span>
+            <span class="p">)</span>
+
         <span class="k">return</span> <span class="n">AbstractValue</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">last_output_value</span><span class="p">[</span><span class="n">port_name</span><span class="p">])</span></div>
 
 
@@ -758,7 +766,7 @@
     <span class="k">def</span> <span class="nf">CalcFSMState</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">fsm_state</span><span class="p">:</span> <span class="n">BasicVector</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This function calculates the current state of the FSM.</span>
 <span class="sd">        It uses the various Edge Definitions to determine the next state,</span>
 <span class="sd">        based on the current state and the input values.</span>
@@ -799,14 +807,14 @@
         <span class="c1"># and identify:</span>
         <span class="c1">#   - The input ports that are required for each edge</span>
         <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">edge_ii</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">fsm_graph</span><span class="o">.</span><span class="n">edges</span><span class="p">):</span>
-            <span class="n">src_ii</span><span class="p">,</span> <span class="n">dst_ii</span> <span class="o">=</span> <span class="n">edge_ii</span> 
+            <span class="n">src_ii</span><span class="p">,</span> <span class="n">dst_ii</span> <span class="o">=</span> <span class="n">edge_ii</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- Edge: </span><span class="si">{</span><span class="n">src_ii</span><span class="si">}</span><span class="s2"> -&gt; </span><span class="si">{</span><span class="n">dst_ii</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
 
             <span class="n">edge_data</span> <span class="o">=</span> <span class="n">fsm_graph</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">edge_ii</span><span class="p">]</span>
 
             <span class="c1"># Get the conditions for each edge</span>
             <span class="n">ii_th_conditions</span> <span class="o">=</span> <span class="n">edge_data</span><span class="p">[</span><span class="s2">&quot;conditions&quot;</span><span class="p">]</span>
-            
+
             <span class="c1"># Create the FSMEdgeDefinition object</span>
             <span class="n">edge_definition</span> <span class="o">=</span> <span class="n">FSMEdgeDefinition</span><span class="p">(</span>
                 <span class="n">conditions</span><span class="o">=</span><span class="n">ii_th_conditions</span><span class="p">,</span>
@@ -825,7 +833,7 @@
     <span class="k">def</span> <span class="nf">create_logger</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">logging</span><span class="o">.</span><span class="n">Logger</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This function configures the logger for the FSM.</span>
 <span class="sd">        It sets the logger to log messages at the INFO level.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -841,7 +849,9 @@
             <span class="n">console_handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span><span class="p">)</span>
 
             <span class="c1"># Create a formatter and set it for the handler</span>
-            <span class="n">formatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%(asctime)s</span><span class="s1"> | </span><span class="si">%(levelname)s</span><span class="s1"> | </span><span class="si">%(name)s</span><span class="s1"> | </span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">formatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span>
+                <span class="s2">&quot;</span><span class="si">%(asctime)s</span><span class="s2"> | </span><span class="si">%(levelname)s</span><span class="s2"> | </span><span class="si">%(name)s</span><span class="s2"> | </span><span class="si">%(message)s</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
             <span class="n">console_handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">)</span>
 
             <span class="c1"># Add the handler to the logger</span>
@@ -855,13 +865,16 @@
 
             <span class="c1"># Create a file handler</span>
             <span class="n">file_handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span>
-                <span class="n">filename</span><span class="o">=</span><span class="n">DEFAULT_NETWORKX_FSM_DIR</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">config</span><span class="o">.</span><span class="n">log_file_name</span><span class="p">,</span>
-                <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span>
+                <span class="n">filename</span><span class="o">=</span><span class="n">DEFAULT_NETWORKX_FSM_DIR</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">config</span><span class="o">.</span><span class="n">log_file_name</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span>
             <span class="p">)</span>
-            <span class="n">file_handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span> <span class="c1"># Set to DEBUG to get REALLY verbose logs</span>
+            <span class="n">file_handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">INFO</span>
+            <span class="p">)</span>  <span class="c1"># Set to DEBUG to get REALLY verbose logs</span>
 
             <span class="c1"># Create a formatter and set it for the handler</span>
-            <span class="n">formatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%(asctime)s</span><span class="s1"> - </span><span class="si">%(name)s</span><span class="s1"> - </span><span class="si">%(levelname)s</span><span class="s1"> - </span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">formatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span>
+                <span class="s2">&quot;</span><span class="si">%(asctime)s</span><span class="s2"> - </span><span class="si">%(name)s</span><span class="s2"> - </span><span class="si">%(levelname)s</span><span class="s2"> - </span><span class="si">%(message)s</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
             <span class="n">file_handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">)</span>
 
             <span class="c1"># Add the handler to the logger</span>
@@ -879,21 +892,22 @@
 <div class="viewcode-block" id="NetworkXFSM.create_output_port_function">
 <a class="viewcode-back" href="../../../../generated/systems/network_fsm/network_fsm.html#brom_drake.systems.network_fsm.networkx_fsm.NetworkXFSM.create_output_port_function">[docs]</a>
     <span class="k">def</span> <span class="nf">create_output_port_function</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">port_name_ii</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">create_abstract_port</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">port_name_ii</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">create_abstract_port</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Context</span><span class="p">,</span> <span class="n">AbstractValue</span><span class="p">],</span> <span class="kc">None</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This function creates the output port function for the FSM.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Setup</span>
 
         <span class="c1"># Create the output port function</span>
-        <span class="n">update_map_ii</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">derive_output_update_map</span><span class="p">(</span><span class="n">port_name_ii</span><span class="p">)</span> <span class="c1"># (This describes when to update the value of port_ii)</span>
+        <span class="n">update_map_ii</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">derive_output_update_map</span><span class="p">(</span>
+            <span class="n">port_name_ii</span>
+        <span class="p">)</span>  <span class="c1"># (This describes when to update the value of port_ii)</span>
 
         <span class="k">if</span> <span class="n">create_abstract_port</span><span class="p">:</span>
+
             <span class="k">def</span> <span class="nf">dummy_output_function_ii</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="n">AbstractValue</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">advance_state_if_necessary</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
                 <span class="c1"># Get Current State</span>
@@ -906,11 +920,12 @@
 
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;Output value for port </span><span class="si">{</span><span class="n">port_name_ii</span><span class="si">}</span><span class="s2"> is </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">last_output_value</span><span class="p">[</span><span class="n">port_name_ii</span><span class="p">]</span><span class="si">}</span><span class="s2"> at time </span><span class="si">{</span><span class="n">context</span><span class="o">.</span><span class="n">get_time</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                    <span class="p">)</span>
+                <span class="p">)</span>
                 <span class="n">output</span><span class="o">.</span><span class="n">SetFrom</span><span class="p">(</span><span class="n">AbstractValue</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">last_output_value</span><span class="p">[</span><span class="n">port_name_ii</span><span class="p">]))</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">output_functions</span><span class="p">[</span><span class="n">port_name_ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">dummy_output_function_ii</span>
         <span class="k">else</span><span class="p">:</span>
+
             <span class="k">def</span> <span class="nf">dummy_output_function_ii</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="n">BasicVector</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">advance_state_if_necessary</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
                 <span class="c1"># Get Current State</span>
@@ -920,11 +935,10 @@
                 <span class="k">if</span> <span class="n">s_t</span> <span class="ow">in</span> <span class="n">update_map_ii</span><span class="p">:</span>
                     <span class="c1"># Update the output value</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">last_output_value</span><span class="p">[</span><span class="n">port_name_ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">update_map_ii</span><span class="p">[</span><span class="n">s_t</span><span class="p">]</span>
-                    
+
                 <span class="n">output</span><span class="o">.</span><span class="n">SetFrom</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">last_output_value</span><span class="p">[</span><span class="n">port_name_ii</span><span class="p">])</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">output_functions</span><span class="p">[</span><span class="n">port_name_ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">dummy_output_function_ii</span>
-        
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_functions</span><span class="p">[</span><span class="n">port_name_ii</span><span class="p">]</span></div>
 
@@ -934,7 +948,7 @@
     <span class="k">def</span> <span class="nf">derive_input_ports_from_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">debug_flag</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This function creates the input ports for the FSM.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Setup</span>
@@ -951,19 +965,25 @@
             <span class="c1"># Get the input port names</span>
             <span class="k">for</span> <span class="n">jj</span><span class="p">,</span> <span class="n">condition_jj</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ii_th_conditions</span><span class="p">):</span>
                 <span class="c1"># Log what we&#39;ve found</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Condition </span><span class="si">{</span><span class="n">jj</span><span class="si">}</span><span class="s2"> of edge </span><span class="si">{</span><span class="n">ii</span><span class="si">}</span><span class="s2"> has:</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span>
-                        <span class="sa">f</span><span class="s2">&quot;- Input port </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">condition_jj</span><span class="o">.</span><span class="n">input_port_name</span><span class="si">}</span><span class="se">\&quot;\n</span><span class="s2">&quot;</span> <span class="o">+</span>
-                        <span class="sa">f</span><span class="s2">&quot;- Condition value </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">condition_jj</span><span class="o">.</span><span class="n">condition_value</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">&quot;</span> <span class="o">+</span>
-                        <span class="sa">f</span><span class="s2">&quot;- Condition type </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">condition_jj</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">,</span>
-                        <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Condition </span><span class="si">{</span><span class="n">jj</span><span class="si">}</span><span class="s2"> of edge </span><span class="si">{</span><span class="n">ii</span><span class="si">}</span><span class="s2"> has:</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;- Input port &quot;</span><span class="si">{</span><span class="n">condition_jj</span><span class="o">.</span><span class="n">input_port_name</span><span class="si">}</span><span class="s1">&quot;</span><span class="se">\n</span><span class="s1">&#39;</span>
+                    <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;- Condition value &quot;</span><span class="si">{</span><span class="n">condition_jj</span><span class="o">.</span><span class="n">condition_value</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
+                    <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;- Condition type &quot;</span><span class="si">{</span><span class="n">condition_jj</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">,</span>
+                <span class="p">)</span>
 
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">condition_jj</span><span class="o">.</span><span class="n">requires_input_port</span><span class="p">():</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Condition </span><span class="si">{</span><span class="n">jj</span><span class="si">}</span><span class="s2"> does not require an input port.&quot;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Condition </span><span class="si">{</span><span class="n">jj</span><span class="si">}</span><span class="s2"> does not require an input port.&quot;</span><span class="p">,</span>
+                        <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
+                    <span class="p">)</span>
 
                     <span class="k">continue</span>
 
                 <span class="n">input_port_name</span> <span class="o">=</span> <span class="n">condition_jj</span><span class="o">.</span><span class="n">input_port_name</span>
-                <span class="k">if</span> <span class="n">input_port_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">port_defn</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">port_defn</span> <span class="ow">in</span> <span class="n">input_port_definitions</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">input_port_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span>
+                    <span class="n">port_defn</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">port_defn</span> <span class="ow">in</span> <span class="n">input_port_definitions</span>
+                <span class="p">]:</span>
                     <span class="n">input_port_definitions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                         <span class="p">(</span><span class="n">input_port_name</span><span class="p">,</span> <span class="n">condition_jj</span><span class="o">.</span><span class="n">condition_value</span><span class="p">)</span>
                     <span class="p">)</span>
@@ -972,11 +992,13 @@
         <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">input_port_definition</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">input_port_definitions</span><span class="p">):</span>
             <span class="c1"># Debug messages</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Creating input port </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">input_port_definition</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2"> with example value </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">input_port_definition</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">&#39;Creating input port &quot;</span><span class="si">{</span><span class="n">input_port_definition</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">&quot; with example value &quot;</span><span class="si">{</span><span class="n">input_port_definition</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">,</span>
             <span class="p">)</span>
 
             <span class="k">if</span> <span class="n">debug_flag</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found definition for port </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">input_port_definition</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2"> with example value.&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Found definition for port &quot;</span><span class="si">{</span><span class="n">input_port_definition</span><span class="si">}</span><span class="s1">&quot; with example value.&#39;</span>
+                <span class="p">)</span>
 
             <span class="c1"># Extract values from the input port definition</span>
             <span class="n">port_name_ii</span><span class="p">,</span> <span class="n">example_value_ii</span> <span class="o">=</span> <span class="n">input_port_definition</span>
@@ -996,7 +1018,7 @@
                     <span class="n">input_port_size</span><span class="p">,</span>
                 <span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Created vector input port </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">port_name_ii</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2"> of size </span><span class="si">{</span><span class="n">input_port_size</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s1">&#39;Created vector input port &quot;</span><span class="si">{</span><span class="n">port_name_ii</span><span class="si">}</span><span class="s1">&quot; of size </span><span class="si">{</span><span class="n">input_port_size</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">,</span>
                 <span class="p">)</span>
             <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">example_value_ii</span><span class="p">)</span> <span class="o">==</span> <span class="nb">bool</span><span class="p">:</span>
                 <span class="c1"># Create port</span>
@@ -1007,13 +1029,13 @@
 
                 <span class="c1"># Announce creation</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Created abstract input port </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">port_name_ii</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2"> of type bool.&quot;</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s1">&#39;Created abstract input port &quot;</span><span class="si">{</span><span class="n">port_name_ii</span><span class="si">}</span><span class="s1">&quot; of type bool.&#39;</span><span class="p">,</span>
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># Raise an error</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Input port type </span><span class="se">\&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">example_value_ii</span><span class="p">)</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2"> not supported by&quot;</span> <span class="o">+</span> \
-                    <span class="s2">&quot; NetworkXFSM.create_input_ports().&quot;</span>
+                    <span class="sa">f</span><span class="s1">&#39;Input port type &quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">example_value_ii</span><span class="p">)</span><span class="si">}</span><span class="s1">&quot; not supported by&#39;</span>
+                    <span class="o">+</span> <span class="s2">&quot; NetworkXFSM.create_input_ports().&quot;</span>
                 <span class="p">)</span></div>
 
 
@@ -1022,7 +1044,7 @@
     <span class="k">def</span> <span class="nf">derive_output_ports_from_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">debug_flag</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This method uses the fsm_graph to infer what output ports</span>
 <span class="sd">        should be created for the FSM.</span>
 
@@ -1057,7 +1079,9 @@
                 <span class="k">continue</span>
 
             <span class="c1"># Create the port</span>
-            <span class="n">update_map_ii</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">derive_output_update_map</span><span class="p">(</span><span class="n">port_name_ii</span><span class="p">)</span> <span class="c1"># (This describes when to update the value of port_ii)</span>
+            <span class="n">update_map_ii</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">derive_output_update_map</span><span class="p">(</span>
+                <span class="n">port_name_ii</span>
+            <span class="p">)</span>  <span class="c1"># (This describes when to update the value of port_ii)</span>
             <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">output_value_ii</span><span class="p">)</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
                 <span class="c1"># Compute size of the output port</span>
                 <span class="n">output_port_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">output_value_ii</span><span class="p">)</span>
@@ -1066,25 +1090,31 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">output_port_dict</span><span class="p">[</span><span class="n">port_name_ii</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DeclareVectorOutputPort</span><span class="p">(</span>
                     <span class="n">port_name_ii</span><span class="p">,</span>
                     <span class="n">output_port_size</span><span class="p">,</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">create_output_port_function</span><span class="p">(</span><span class="n">port_name_ii</span><span class="p">,</span> <span class="n">create_abstract_port</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">create_output_port_function</span><span class="p">(</span>
+                        <span class="n">port_name_ii</span><span class="p">,</span> <span class="n">create_abstract_port</span><span class="o">=</span><span class="kc">False</span>
+                    <span class="p">),</span>
                 <span class="p">)</span>
 
                 <span class="c1"># Announce creation</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Created vector output port </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">port_name_ii</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2"> of size </span><span class="si">{</span><span class="n">output_port_size</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s1">&#39;Created vector output port &quot;</span><span class="si">{</span><span class="n">port_name_ii</span><span class="si">}</span><span class="s1">&quot; of size </span><span class="si">{</span><span class="n">output_port_size</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">,</span>
                 <span class="p">)</span>
             <span class="k">elif</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">output_value_ii</span><span class="p">)</span> <span class="o">==</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">output_value_ii</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">):</span>
                 <span class="c1"># Make sure to save the value we wish to allocate/the allocation function</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">allocation_lambdas</span><span class="p">[</span><span class="n">port_name_ii</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">AbstractValue</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">last_output_value</span><span class="p">[</span><span class="n">port_name_ii</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">allocation_lambdas</span><span class="p">[</span><span class="n">port_name_ii</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">AbstractValue</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">last_output_value</span><span class="p">[</span><span class="n">port_name_ii</span><span class="p">]</span>
+                <span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">output_port_dict</span><span class="p">[</span><span class="n">port_name_ii</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DeclareAbstractOutputPort</span><span class="p">(</span>
                     <span class="n">port_name_ii</span><span class="p">,</span>
                     <span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">universal_allocation_lambda</span><span class="p">,</span> <span class="n">port_name</span><span class="o">=</span><span class="n">port_name_ii</span><span class="p">),</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">create_output_port_function</span><span class="p">(</span><span class="n">port_name_ii</span><span class="p">,</span> <span class="n">create_abstract_port</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">create_output_port_function</span><span class="p">(</span>
+                        <span class="n">port_name_ii</span><span class="p">,</span> <span class="n">create_abstract_port</span><span class="o">=</span><span class="kc">True</span>
+                    <span class="p">),</span>
                 <span class="p">)</span>
 
                 <span class="c1"># Announce creation</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Created abstract output port </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">port_name_ii</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2"> of type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">output_value_ii</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s1">&#39;Created abstract output port &quot;</span><span class="si">{</span><span class="n">port_name_ii</span><span class="si">}</span><span class="s1">&quot; of type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">output_value_ii</span><span class="p">)</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">,</span>
                 <span class="p">)</span>
             <span class="k">elif</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">output_value_ii</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">output_value_ii</span><span class="p">)</span> <span class="o">==</span> <span class="nb">float</span><span class="p">):</span>
                 <span class="c1"># Create a np.array from the scalar value</span>
@@ -1094,30 +1124,29 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">output_port_dict</span><span class="p">[</span><span class="n">port_name_ii</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DeclareVectorOutputPort</span><span class="p">(</span>
                     <span class="n">port_name_ii</span><span class="p">,</span>
                     <span class="mi">1</span><span class="p">,</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">create_output_port_function</span><span class="p">(</span><span class="n">port_name_ii</span><span class="p">,</span> <span class="n">create_abstract_port</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">create_output_port_function</span><span class="p">(</span>
+                        <span class="n">port_name_ii</span><span class="p">,</span> <span class="n">create_abstract_port</span><span class="o">=</span><span class="kc">False</span>
+                    <span class="p">),</span>
                 <span class="p">)</span>
 
                 <span class="c1"># Announce creation</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Created vector output port </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">port_name_ii</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2"> of size 1.&quot;</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s1">&#39;Created vector output port &quot;</span><span class="si">{</span><span class="n">port_name_ii</span><span class="si">}</span><span class="s1">&quot; of size 1.&#39;</span><span class="p">,</span>
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># Raise an error</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Output port type </span><span class="se">\&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">output_value_ii</span><span class="p">)</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2"> not supported by&quot;</span> <span class="o">+</span> \
-                    <span class="s2">&quot; NetworkXFSM.create_output_ports().&quot;</span>
+                    <span class="sa">f</span><span class="s1">&#39;Output port type &quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">output_value_ii</span><span class="p">)</span><span class="si">}</span><span class="s1">&quot; not supported by&#39;</span>
+                    <span class="o">+</span> <span class="s2">&quot; NetworkXFSM.create_output_ports().&quot;</span>
                 <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="NetworkXFSM.derive_output_update_map">
 <a class="viewcode-back" href="../../../../generated/systems/network_fsm/network_fsm.html#brom_drake.systems.network_fsm.networkx_fsm.NetworkXFSM.derive_output_update_map">[docs]</a>
-    <span class="k">def</span> <span class="nf">derive_output_update_map</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">port_name_ii</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
+    <span class="k">def</span> <span class="nf">derive_output_update_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port_name_ii</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This method constructs a small mapping of WHEN to change the value of</span>
 <span class="sd">        port_name_ii.</span>
 
@@ -1126,7 +1155,7 @@
 <span class="sd">        the value is the value that the state should be changed to when we reach there.</span>
 
 <span class="sd">        *Parameters*</span>
-<span class="sd">        </span>
+
 <span class="sd">        port_name_ii: str</span>
 <span class="sd">            The name of the port for which this mapping applies.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1138,17 +1167,22 @@
         <span class="k">for</span> <span class="n">node_index_ii</span> <span class="ow">in</span> <span class="n">fsm_graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
             <span class="n">node_ii</span> <span class="o">=</span> <span class="n">fsm_graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node_index_ii</span><span class="p">]</span>
             <span class="k">if</span> <span class="s2">&quot;outputs&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">node_ii</span><span class="p">:</span>
-                <span class="k">continue</span> <span class="c1"># Skip this node if it doesn&#39;t have an &quot;outputs&quot; key</span>
+                <span class="k">continue</span>  <span class="c1"># Skip this node if it doesn&#39;t have an &quot;outputs&quot; key</span>
 
-            <span class="k">if</span> <span class="n">port_name_ii</span> <span class="ow">in</span> <span class="p">[</span> <span class="n">output_port_definition</span><span class="o">.</span><span class="n">output_port_name</span> <span class="k">for</span> <span class="n">output_port_definition</span> <span class="ow">in</span> <span class="n">node_ii</span><span class="p">[</span><span class="s2">&quot;outputs&quot;</span><span class="p">]</span> <span class="p">]:</span>
+            <span class="k">if</span> <span class="n">port_name_ii</span> <span class="ow">in</span> <span class="p">[</span>
+                <span class="n">output_port_definition</span><span class="o">.</span><span class="n">output_port_name</span>
+                <span class="k">for</span> <span class="n">output_port_definition</span> <span class="ow">in</span> <span class="n">node_ii</span><span class="p">[</span><span class="s2">&quot;outputs&quot;</span><span class="p">]</span>
+            <span class="p">]:</span>
                 <span class="n">relevant_nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node_index_ii</span><span class="p">)</span>
 
         <span class="c1"># Iterate through each node in the relevant list and create the mapping</span>
         <span class="n">update_map</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">node_ii</span> <span class="ow">in</span> <span class="n">relevant_nodes</span><span class="p">:</span>
             <span class="c1"># Get the output port definition</span>
-            <span class="n">output_port_definitions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">FSMOutputDefinition</span><span class="p">]</span> <span class="o">=</span> <span class="n">fsm_graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node_ii</span><span class="p">][</span><span class="s2">&quot;outputs&quot;</span><span class="p">]</span>
-            
+            <span class="n">output_port_definitions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">FSMOutputDefinition</span><span class="p">]</span> <span class="o">=</span> <span class="n">fsm_graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span>
+                <span class="n">node_ii</span>
+            <span class="p">][</span><span class="s2">&quot;outputs&quot;</span><span class="p">]</span>
+
             <span class="c1"># Find the output port for our target port</span>
             <span class="n">output_value_ii</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">for</span> <span class="n">output_port_definition</span> <span class="ow">in</span> <span class="n">output_port_definitions</span><span class="p">:</span>
@@ -1166,7 +1200,9 @@
 
 <div class="viewcode-block" id="NetworkXFSM.evaluate_transition_condition">
 <a class="viewcode-back" href="../../../../generated/systems/network_fsm/network_fsm.html#brom_drake.systems.network_fsm.networkx_fsm.NetworkXFSM.evaluate_transition_condition">[docs]</a>
-    <span class="k">def</span> <span class="nf">evaluate_transition_condition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">condition</span><span class="p">:</span> <span class="n">FSMTransitionCondition</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">evaluate_transition_condition</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">condition</span><span class="p">:</span> <span class="n">FSMTransitionCondition</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Context</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Description</span>
 <span class="sd">        -----------</span>
@@ -1196,7 +1232,7 @@
     <span class="k">def</span> <span class="nf">initialize_last_output_value_map</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This function takes the initial node and then uses</span>
 <span class="sd">        all of the output definitions for that node to define</span>
 <span class="sd">        the initial values for the `last_output_value` map.</span>
@@ -1224,7 +1260,9 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Initialized last output value map:&quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">port_name</span><span class="p">,</span> <span class="n">output_value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_output_value</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- Port </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">port_name</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">: </span><span class="si">{</span><span class="n">output_value</span><span class="si">}</span><span class="s2">, type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">output_value</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;- Port &quot;</span><span class="si">{</span><span class="n">port_name</span><span class="si">}</span><span class="s1">&quot;: </span><span class="si">{</span><span class="n">output_value</span><span class="si">}</span><span class="s1">, type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">output_value</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="NetworkXFSM.initialize_fsm_state">
@@ -1259,10 +1297,9 @@
 <span class="sd">            - the previous state of the fsm</span>
 <span class="sd">            &quot;&quot;&quot;</span>
             <span class="n">discrete_values</span><span class="o">.</span><span class="n">SetFrom</span><span class="p">(</span>
-                <span class="n">DiscreteValues</span><span class="p">([</span>
-                    <span class="n">BasicVector</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">initial_node</span><span class="p">]))</span>
-                    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-                <span class="p">])</span>
+                <span class="n">DiscreteValues</span><span class="p">(</span>
+                    <span class="p">[</span><span class="n">BasicVector</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">initial_node</span><span class="p">]))</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">)]</span>
+                <span class="p">)</span>
             <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">DeclareInitializationDiscreteUpdateEvent</span><span class="p">(</span><span class="n">discrete_state_init</span><span class="p">)</span>
@@ -1313,16 +1350,13 @@
         <span class="n">connected_components</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">weakly_connected_components</span><span class="p">(</span><span class="n">digraph</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">debug_flag</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">connected_components</span><span class="p">)</span><span class="si">}</span><span class="s2"> connected components.&quot;</span><span class="p">)</span>
-        
+
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">connected_components</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">MultipleConnectedComponentsError</span><span class="p">(</span><span class="n">connected_components</span><span class="p">)</span>
 
-
         <span class="c1"># Check if the graph has a single start node</span>
         <span class="n">start_nodes</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">node</span>
-            <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">digraph</span><span class="o">.</span><span class="n">nodes</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">digraph</span><span class="o">.</span><span class="n">predecessors</span><span class="p">(</span><span class="n">node</span><span class="p">)))</span> <span class="o">==</span> <span class="mi">0</span>
+            <span class="n">node</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">digraph</span><span class="o">.</span><span class="n">nodes</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">digraph</span><span class="o">.</span><span class="n">predecessors</span><span class="p">(</span><span class="n">node</span><span class="p">)))</span> <span class="o">==</span> <span class="mi">0</span>
         <span class="p">]</span>
         <span class="k">if</span> <span class="n">debug_flag</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">start_nodes</span><span class="p">)</span><span class="si">}</span><span class="s2"> start nodes.&quot;</span><span class="p">)</span>
@@ -1337,7 +1371,7 @@
             <span class="c1"># print(digraph.edges[edge])</span>
             <span class="k">if</span> <span class="n">digraph</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">edge</span><span class="p">]</span> <span class="o">==</span> <span class="p">{}:</span>
                 <span class="k">return</span> <span class="n">EdgeContainsNoLabelsError</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span>
-            
+
             <span class="n">conditions</span> <span class="o">=</span> <span class="n">digraph</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">edge</span><span class="p">][</span><span class="s2">&quot;conditions&quot;</span><span class="p">]</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">conditions</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">EdgeContainsNoConditionsError</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span>
@@ -1347,7 +1381,9 @@
         <span class="n">initial_node</span> <span class="o">=</span> <span class="n">start_nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">initial_node_data</span> <span class="o">=</span> <span class="n">digraph</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">initial_node</span><span class="p">]</span>
         <span class="n">output_ports_defined</span> <span class="o">=</span> <span class="n">initial_node_data</span><span class="p">[</span><span class="s2">&quot;outputs&quot;</span><span class="p">]</span>
-        <span class="n">output_ports_defined</span> <span class="o">=</span> <span class="p">[</span><span class="n">output_defn</span><span class="o">.</span><span class="n">output_port_name</span> <span class="k">for</span> <span class="n">output_defn</span> <span class="ow">in</span> <span class="n">output_ports_defined</span><span class="p">]</span>
+        <span class="n">output_ports_defined</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">output_defn</span><span class="o">.</span><span class="n">output_port_name</span> <span class="k">for</span> <span class="n">output_defn</span> <span class="ow">in</span> <span class="n">output_ports_defined</span>
+        <span class="p">]</span>
         <span class="k">if</span> <span class="n">debug_flag</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Output ports defined by the initial node: </span><span class="si">{</span><span class="n">output_ports_defined</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
@@ -1358,10 +1394,14 @@
                 <span class="k">continue</span>
 
             <span class="n">output_ports</span> <span class="o">=</span> <span class="n">node_data</span><span class="p">[</span><span class="s2">&quot;outputs&quot;</span><span class="p">]</span>
-            <span class="n">output_ports</span> <span class="o">=</span> <span class="p">[</span><span class="n">output_defn</span><span class="o">.</span><span class="n">output_port_name</span> <span class="k">for</span> <span class="n">output_defn</span> <span class="ow">in</span> <span class="n">output_ports</span><span class="p">]</span>
+            <span class="n">output_ports</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">output_defn</span><span class="o">.</span><span class="n">output_port_name</span> <span class="k">for</span> <span class="n">output_defn</span> <span class="ow">in</span> <span class="n">output_ports</span>
+            <span class="p">]</span>
             <span class="k">for</span> <span class="n">output_port</span> <span class="ow">in</span> <span class="n">output_ports</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">output_port</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">output_ports_defined</span><span class="p">:</span>
-                    <span class="k">return</span> <span class="n">OutputPortNotInitializedError</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">output_port</span><span class="p">,</span> <span class="n">output_ports_defined</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">OutputPortNotInitializedError</span><span class="p">(</span>
+                        <span class="n">node</span><span class="p">,</span> <span class="n">output_port</span><span class="p">,</span> <span class="n">output_ports_defined</span>
+                    <span class="p">)</span>
 
         <span class="c1"># All checks passed</span>
         <span class="k">return</span> <span class="kc">None</span></div>
@@ -1399,7 +1439,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=1dd76d02"></script>
+</div><script src="../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>

@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.productions.types.pick_and_place.script - brom_drake-py 0.5.0 documentation</title>
+        <title>brom_drake.productions.types.pick_and_place.script - brom_drake-py v0.0.0+githubActionDefault documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../index.html"><div class="brand">brom_drake-py 0.5.0 documentation</div></a>
+      <a href="../../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.0 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -557,10 +557,14 @@
 
 <span class="c1"># Internal Imports</span>
 <span class="kn">from</span> <span class="nn">brom_drake.systems.network_fsm</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">NetworkXFSM</span><span class="p">,</span> <span class="n">FSMOutputDefinition</span><span class="p">,</span>
+    <span class="n">NetworkXFSM</span><span class="p">,</span>
+    <span class="n">FSMOutputDefinition</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">brom_drake.utils.pick_and_place.phase</span> <span class="kn">import</span> <span class="n">PickAndPlacePhase</span>
-<span class="kn">from</span> <span class="nn">brom_drake.utils.pick_and_place.target_description</span> <span class="kn">import</span> <span class="n">PickAndPlaceTargetDescription</span>
+<span class="kn">from</span> <span class="nn">brom_drake.utils.pick_and_place.target_description</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">PickAndPlaceTargetDescription</span><span class="p">,</span>
+<span class="p">)</span>
+
 
 <div class="viewcode-block" id="Script">
 <a class="viewcode-back" href="../../../../../generated/productions/types/pick_and_place/pick_and_place.html#brom_drake.productions.types.pick_and_place.script.Script">[docs]</a>
@@ -568,19 +572,22 @@
 <span class="k">class</span> <span class="nc">Script</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    **Description**</span>
-<span class="sd">    </span>
+
 <span class="sd">    This class defines the &quot;script&quot; or the sequence of events that is meant to happen in the</span>
 <span class="sd">    Pick and Place (or Motion Planning and Grasping) task.</span>
-<span class="sd">    </span>
+
 <span class="sd">    **Assumptions**</span>
-<span class="sd">    </span>
+
 <span class="sd">    We assume that the robot will try to grasp each of the targets in the order that they</span>
 <span class="sd">    appear in the list below. (i.e., pick up target 0, then target 1, etc.)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">grasping_targets</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">PickAndPlaceTargetDescription</span><span class="p">]</span>
-    <span class="n">time_outs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="c1"># The amount of time given for the robot to reach each of the targets</span>
-    <span class="n">initial_settling_time</span><span class="p">:</span> <span class="nb">float</span> <span class="c1"># The time after initialization before the robot begins planning or moving</span>
-    
+    <span class="n">time_outs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span>
+        <span class="nb">float</span>
+    <span class="p">]</span>  <span class="c1"># The amount of time given for the robot to reach each of the targets</span>
+    <span class="n">initial_settling_time</span><span class="p">:</span> <span class="nb">float</span>  <span class="c1"># The time after initialization before the robot begins planning or moving</span>
+
     <span class="k">def</span> <span class="nf">to_networkx_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">:</span>
         <span class="c1"># Setup</span>
         <span class="n">graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
@@ -594,35 +601,42 @@
             <span class="n">name_candidate_ii</span> <span class="o">=</span> <span class="n">target_name_ii</span><span class="o">.</span><span class="n">name</span>
             <span class="k">if</span> <span class="n">name_candidate_ii</span> <span class="ow">in</span> <span class="n">target_names</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Unsure of how to add a second object with name </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">name_candidate_ii</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2"> to the list of targets for the MotionPlanningAndGraspingProductionScript.&quot;</span>
+                    <span class="sa">f</span><span class="s1">&#39;Unsure of how to add a second object with name &quot;</span><span class="si">{</span><span class="n">name_candidate_ii</span><span class="si">}</span><span class="s1">&quot; to the list of targets for the MotionPlanningAndGraspingProductionScript.&#39;</span>
                 <span class="p">)</span>
-            
+
             <span class="n">target_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name_candidate_ii</span><span class="p">)</span>
 
         <span class="n">n_targets</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">target_names</span><span class="p">)</span>
 
         <span class="c1"># For each target name, we&#39;re going to create the following PickAndPlace states.</span>
         <span class="n">pick_and_place_phases</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">PickAndPlacePhase</span><span class="o">.</span><span class="n">kPreGrasp</span><span class="p">,</span> <span class="n">PickAndPlacePhase</span><span class="o">.</span><span class="n">kGrasp</span><span class="p">,</span> <span class="n">PickAndPlacePhase</span><span class="o">.</span><span class="n">kPostGrasp</span><span class="p">,</span>
-            <span class="n">PickAndPlacePhase</span><span class="o">.</span><span class="n">kPrePlace</span><span class="p">,</span> <span class="n">PickAndPlacePhase</span><span class="o">.</span><span class="n">kPlace</span><span class="p">,</span> <span class="n">PickAndPlacePhase</span><span class="o">.</span><span class="n">kPostPlace</span>
+            <span class="n">PickAndPlacePhase</span><span class="o">.</span><span class="n">kPreGrasp</span><span class="p">,</span>
+            <span class="n">PickAndPlacePhase</span><span class="o">.</span><span class="n">kGrasp</span><span class="p">,</span>
+            <span class="n">PickAndPlacePhase</span><span class="o">.</span><span class="n">kPostGrasp</span><span class="p">,</span>
+            <span class="n">PickAndPlacePhase</span><span class="o">.</span><span class="n">kPrePlace</span><span class="p">,</span>
+            <span class="n">PickAndPlacePhase</span><span class="o">.</span><span class="n">kPlace</span><span class="p">,</span>
+            <span class="n">PickAndPlacePhase</span><span class="o">.</span><span class="n">kPostPlace</span><span class="p">,</span>
         <span class="p">]</span>
         <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">target_name_ii</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">target_names</span><span class="p">):</span>
             <span class="n">target_ii</span><span class="p">:</span> <span class="n">PickAndPlaceTargetDescription</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grasping_targets</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span>
 
             <span class="c1"># Check the value of the model instance index</span>
-            <span class="k">assert</span> <span class="n">target_ii</span><span class="o">.</span><span class="n">model_instance_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> \
-                <span class="sa">f</span><span class="s2">&quot;The provided target does not have a model instance index defined yet. Please define one before calling to_networkx_graph()!&quot;</span>
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="n">target_ii</span><span class="o">.</span><span class="n">model_instance_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;The provided target does not have a model instance index defined yet. Please define one before calling to_networkx_graph()!&quot;</span>
 
             <span class="k">for</span> <span class="n">phase_jj</span> <span class="ow">in</span> <span class="n">pick_and_place_phases</span><span class="p">:</span>
                 <span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span>
                     <span class="n">target_ii</span><span class="o">.</span><span class="n">name_for_pick_and_place_phase</span><span class="p">(</span><span class="n">phase_jj</span><span class="p">),</span>
                     <span class="n">outputs</span><span class="o">=</span><span class="p">[</span>
-                        <span class="n">FSMOutputDefinition</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;model_target&quot;</span><span class="p">,</span> <span class="n">target_ii</span><span class="o">.</span><span class="n">model_instance_index</span><span class="p">),</span>
-                    <span class="p">]</span>
+                        <span class="n">FSMOutputDefinition</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;model_target&quot;</span><span class="p">,</span> <span class="n">target_ii</span><span class="o">.</span><span class="n">model_instance_index</span>
+                        <span class="p">),</span>
+                    <span class="p">],</span>
                 <span class="p">)</span>
 
         <span class="c1"># Add edges</span>
-            
+
         <span class="k">return</span> <span class="n">graph</span>
 
     <span class="k">def</span> <span class="nf">to_networkx_fsm</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NetworkXFSM</span><span class="p">:</span>
@@ -660,7 +674,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../_static/documentation_options.js?v=1dd76d02"></script>
+</div><script src="../../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

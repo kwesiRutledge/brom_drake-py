@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.motion_planning.algorithms.rrt.bidirectional_connect - brom_drake-py 0.5.0 documentation</title>
+        <title>brom_drake.motion_planning.algorithms.rrt.bidirectional_connect - brom_drake-py v0.0.0+githubActionDefault documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../index.html"><div class="brand">brom_drake-py 0.5.0 documentation</div></a>
+      <a href="../../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.0 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -571,7 +571,9 @@
 
 <span class="c1"># Internal Imports</span>
 <span class="kn">from</span> <span class="nn">brom_drake.motion_planning.algorithms.motion_planner</span> <span class="kn">import</span> <span class="n">MotionPlanner</span>
+
 <span class="c1"># TODO(Kwesi): Introduce planning node object</span>
+
 
 <span class="c1"># Define config dataclass</span>
 <div class="viewcode-block" id="BiRRTConnectSamplingProbabilities">
@@ -581,10 +583,11 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A dataclass that defines the sampling probabilities for a bidirectional RRT planner.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">sample_goal_tree</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.10</span>
     <span class="n">sample_opposite_tree</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.10</span></div>
 
-    
+
 
 <div class="viewcode-block" id="BidirectionalRRTConnectPlannerConfig">
 <a class="viewcode-back" href="../../../../../generated/motion_planning/algorithms/rrt/rrt.html#brom_drake.motion_planning.algorithms.rrt.bidirectional_connect.BidirectionalRRTConnectPlannerConfig">[docs]</a>
@@ -593,12 +596,16 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A dataclass that defines the configuration for a bidirectional RRT planner.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">convergence_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-3</span>
     <span class="n">max_tree_nodes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e5</span><span class="p">)</span>
-    <span class="n">probabilities</span><span class="p">:</span> <span class="n">BiRRTConnectSamplingProbabilities</span> <span class="o">=</span> <span class="n">BiRRTConnectSamplingProbabilities</span><span class="p">()</span>
+    <span class="n">probabilities</span><span class="p">:</span> <span class="n">BiRRTConnectSamplingProbabilities</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">BiRRTConnectSamplingProbabilities</span><span class="p">()</span>
+    <span class="p">)</span>
     <span class="n">random_seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">23</span>
     <span class="n">steering_step_size</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span>
     <span class="n">debug</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span></div>
+
 
 
 <div class="viewcode-block" id="BidirectionalRRTConnectPlanner">
@@ -620,7 +627,9 @@
 
         <span class="c1"># Use the parent class constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">robot_model_idx</span><span class="p">,</span> <span class="n">plant</span><span class="p">,</span> <span class="n">scene_graph</span><span class="p">,</span> 
+            <span class="n">robot_model_idx</span><span class="p">,</span>
+            <span class="n">plant</span><span class="p">,</span>
+            <span class="n">scene_graph</span><span class="p">,</span>
             <span class="n">random_seed</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">random_seed</span><span class="p">,</span>
         <span class="p">)</span>
 
@@ -652,13 +661,13 @@
         <span class="n">target_tree</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">n_nodes</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="n">q_new</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">tree_is_goal</span><span class="p">:</span>
             <span class="n">target_tree</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span>
-                <span class="n">target_tree</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">()</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                <span class="n">target_tree</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
                 <span class="n">prev_node</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">target_tree</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span>
                 <span class="n">prev_node</span><span class="p">,</span>
-                <span class="n">target_tree</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">()</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                <span class="n">target_tree</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
             <span class="p">)</span></div>
 
 
@@ -692,7 +701,7 @@
         <span class="n">debug</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">debug</span>
 
         <span class="c1"># Steer from nearest node to random configuration</span>
-        <span class="n">q_current</span> <span class="o">=</span> <span class="n">nearest_node</span><span class="p">[</span><span class="s1">&#39;q&#39;</span><span class="p">]</span>
+        <span class="n">q_current</span> <span class="o">=</span> <span class="n">nearest_node</span><span class="p">[</span><span class="s2">&quot;q&quot;</span><span class="p">]</span>
         <span class="n">last_node_view</span> <span class="o">=</span> <span class="n">nearest_node_view</span>
 
         <span class="n">n_loops</span> <span class="o">=</span> <span class="mi">0</span>
@@ -727,7 +736,7 @@
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of loops in connection: </span><span class="si">{</span><span class="n">n_loops</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;RRT Size: </span><span class="si">{</span><span class="n">rrt</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">q_current</span><span class="p">,</span> <span class="n">reached_new</span> <span class="c1"># Return the last configuration we visited</span></div>
+        <span class="k">return</span> <span class="n">q_current</span><span class="p">,</span> <span class="n">reached_new</span>  <span class="c1"># Return the last configuration we visited</span></div>
 
 
 <div class="viewcode-block" id="BidirectionalRRTConnectPlanner.plan">
@@ -756,8 +765,8 @@
         <span class="n">q_goal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">q_goal</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">q_start</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim_q</span> <span class="ow">or</span> <span class="n">q_goal</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim_q</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Start configuration shape (</span><span class="si">{</span><span class="n">q_start</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">) and goal configuration &quot;</span> <span class="o">+</span>
-                <span class="sa">f</span><span class="s2">&quot;shape (</span><span class="si">{</span><span class="n">q_goal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">) must match the dimension of the robot (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dim_q</span><span class="si">}</span><span class="s2">).&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Start configuration shape (</span><span class="si">{</span><span class="n">q_start</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">) and goal configuration &quot;</span>
+                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;shape (</span><span class="si">{</span><span class="n">q_goal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">) must match the dimension of the robot (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dim_q</span><span class="si">}</span><span class="s2">).&quot;</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">collision_check_fcn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -780,9 +789,9 @@
         <span class="k">while</span> <span class="p">(</span><span class="n">n_nodes_start</span> <span class="o">+</span> <span class="n">n_nodes_goal</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">max_tree_nodes</span><span class="p">:</span>
             <span class="c1"># Decide whether to sample from the start or goal tree</span>
             <span class="n">sample_from_goal_tree</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">prob_sample_goal_tree</span>
-            <span class="k">if</span> <span class="n">sample_from_goal_tree</span><span class="p">:</span> <span class="c1"># Sample from the goal tree</span>
+            <span class="k">if</span> <span class="n">sample_from_goal_tree</span><span class="p">:</span>  <span class="c1"># Sample from the goal tree</span>
                 <span class="n">current_tree</span> <span class="o">=</span> <span class="n">rrt_goal</span>
-            <span class="k">else</span><span class="p">:</span> <span class="c1"># Sample from the start tree</span>
+            <span class="k">else</span><span class="p">:</span>  <span class="c1"># Sample from the start tree</span>
                 <span class="n">current_tree</span> <span class="o">=</span> <span class="n">rrt_start</span>
 
             <span class="c1"># Choose whether or not to sample from the opposite tree or randomly</span>
@@ -801,7 +810,9 @@
                 <span class="n">q_random</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_random_configuration</span><span class="p">()</span>
 
                 <span class="c1"># Find the nearest node in the tree and steer towards it</span>
-                <span class="n">nearest_node_view</span><span class="p">,</span> <span class="n">nearest_node_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_nearest_in_tree</span><span class="p">(</span><span class="n">current_tree</span><span class="p">,</span> <span class="n">q_random</span><span class="p">)</span>
+                <span class="n">nearest_node_view</span><span class="p">,</span> <span class="n">nearest_node_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_nearest_in_tree</span><span class="p">(</span>
+                    <span class="n">current_tree</span><span class="p">,</span> <span class="n">q_random</span>
+                <span class="p">)</span>
                 <span class="n">q_new</span><span class="p">,</span> <span class="n">reached_new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
                     <span class="n">nearest_node_view</span><span class="p">,</span>
                     <span class="n">q_random</span><span class="p">,</span>
@@ -861,7 +872,7 @@
             <span class="sa">f</span><span class="s2">&quot;Random index (</span><span class="si">{</span><span class="n">random_index</span><span class="si">}</span><span class="s2">) not found in RRT with </span><span class="si">{</span><span class="n">n_tree</span><span class="si">}</span><span class="s2"> nodes.&quot;</span>
         <span class="p">)</span></div>
 
-    
+
 <div class="viewcode-block" id="BidirectionalRRTConnectPlanner.sample_nearest_in_tree">
 <a class="viewcode-back" href="../../../../../generated/motion_planning/algorithms/rrt/rrt.html#brom_drake.motion_planning.algorithms.rrt.bidirectional_connect.BidirectionalRRTConnectPlanner.sample_nearest_in_tree">[docs]</a>
     <span class="k">def</span> <span class="nf">sample_nearest_in_tree</span><span class="p">(</span>
@@ -888,22 +899,22 @@
 <span class="sd">            Use this to access the node as follows rrt.nodes[node_view].</span>
 <span class="sd">        distance: float</span>
 <span class="sd">            The distance from the random configuration to the nearest node in the RRT.</span>
-<span class="sd">            </span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Setup</span>
 
         <span class="c1"># Search through the tree to find the node that is nearest to the random configuration</span>
-        <span class="n">min_distance</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
+        <span class="n">min_distance</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
         <span class="n">nearest_node_view</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">rrt</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
-            <span class="n">distance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">rrt</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="s1">&#39;q&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">q_random</span><span class="p">)</span>
+            <span class="n">distance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">rrt</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="s2">&quot;q&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">q_random</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">distance</span> <span class="o">&lt;</span> <span class="n">min_distance</span><span class="p">:</span>
                 <span class="n">min_distance</span> <span class="o">=</span> <span class="n">distance</span>
                 <span class="n">nearest_node_view</span> <span class="o">=</span> <span class="n">node</span>
 
         <span class="k">return</span> <span class="n">nearest_node_view</span><span class="p">,</span> <span class="n">min_distance</span></div>
 
-    
+
 <div class="viewcode-block" id="BidirectionalRRTConnectPlanner.steer">
 <a class="viewcode-back" href="../../../../../generated/motion_planning/algorithms/rrt/rrt.html#brom_drake.motion_planning.algorithms.rrt.bidirectional_connect.BidirectionalRRTConnectPlanner.steer">[docs]</a>
     <span class="k">def</span> <span class="nf">steer</span><span class="p">(</span>
@@ -943,10 +954,10 @@
 
         <span class="k">if</span> <span class="n">distance</span> <span class="o">&lt;</span> <span class="n">step_size</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">q_target</span><span class="p">,</span> <span class="kc">True</span>
-        
+
         <span class="k">return</span> <span class="n">q_current</span> <span class="o">+</span> <span class="n">step_size</span> <span class="o">*</span> <span class="p">(</span><span class="n">direction</span> <span class="o">/</span> <span class="n">distance</span><span class="p">),</span> <span class="kc">False</span></div>
 
-    
+
 <div class="viewcode-block" id="BidirectionalRRTConnectPlanner.steer_towards_tree">
 <a class="viewcode-back" href="../../../../../generated/motion_planning/algorithms/rrt/rrt.html#brom_drake.motion_planning.algorithms.rrt.bidirectional_connect.BidirectionalRRTConnectPlanner.steer_towards_tree">[docs]</a>
     <span class="k">def</span> <span class="nf">steer_towards_tree</span><span class="p">(</span>
@@ -978,14 +989,16 @@
 
         <span class="c1"># Sample a node in the current tree</span>
         <span class="n">current_node_view</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_from_tree</span><span class="p">(</span><span class="n">current_tree</span><span class="p">)</span>
-        <span class="n">q_current</span> <span class="o">=</span> <span class="n">current_tree</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">current_node_view</span><span class="p">][</span><span class="s1">&#39;q&#39;</span><span class="p">]</span>
+        <span class="n">q_current</span> <span class="o">=</span> <span class="n">current_tree</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">current_node_view</span><span class="p">][</span><span class="s2">&quot;q&quot;</span><span class="p">]</span>
 
         <span class="c1"># Sample from the opposite tree</span>
         <span class="n">opposite_tree</span> <span class="o">=</span> <span class="n">rrt_start</span> <span class="k">if</span> <span class="n">current_tree_is_goal</span> <span class="k">else</span> <span class="n">rrt_goal</span>
-        <span class="n">node_idx_in_opposite_tree</span><span class="p">,</span> <span class="n">min_distance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_nearest_in_tree</span><span class="p">(</span><span class="n">opposite_tree</span><span class="p">,</span> <span class="n">q_current</span><span class="p">)</span>
-        
+        <span class="n">node_idx_in_opposite_tree</span><span class="p">,</span> <span class="n">min_distance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_nearest_in_tree</span><span class="p">(</span>
+            <span class="n">opposite_tree</span><span class="p">,</span> <span class="n">q_current</span>
+        <span class="p">)</span>
+
         <span class="n">node_in_opposite_tree</span> <span class="o">=</span> <span class="n">opposite_tree</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node_idx_in_opposite_tree</span><span class="p">]</span>
-        <span class="n">sampled_config</span> <span class="o">=</span> <span class="n">node_in_opposite_tree</span><span class="p">[</span><span class="s1">&#39;q&#39;</span><span class="p">]</span>
+        <span class="n">sampled_config</span> <span class="o">=</span> <span class="n">node_in_opposite_tree</span><span class="p">[</span><span class="s2">&quot;q&quot;</span><span class="p">]</span>
 
         <span class="c1"># Steer from the current configuration to the sampled one</span>
         <span class="c1"># q_new, reached_new = self.steer(q_current, sampled_config)</span>
@@ -1007,7 +1020,9 @@
             <span class="c1"># add edge between the two trees</span>
             <span class="k">if</span> <span class="n">current_tree_is_goal</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Adding edge between </span><span class="si">{</span><span class="n">node_idx_in_opposite_tree</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">rrt_start</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">int</span><span class="p">(</span><span class="n">current_node_view</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Adding edge between </span><span class="si">{</span><span class="n">node_idx_in_opposite_tree</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">rrt_start</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">int</span><span class="p">(</span><span class="n">current_node_view</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
 
                 <span class="n">combined_rrt</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span>
                     <span class="n">node_idx_in_opposite_tree</span><span class="p">,</span>
@@ -1015,7 +1030,9 @@
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Adding edge between </span><span class="si">{</span><span class="n">current_node_view</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">rrt_start</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">node_idx_in_opposite_tree</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Adding edge between </span><span class="si">{</span><span class="n">current_node_view</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">rrt_start</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">node_idx_in_opposite_tree</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
 
                 <span class="n">combined_rrt</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span>
                     <span class="nb">int</span><span class="p">(</span><span class="n">current_node_view</span><span class="p">),</span>
@@ -1069,7 +1086,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../_static/documentation_options.js?v=1dd76d02"></script>
+</div><script src="../../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

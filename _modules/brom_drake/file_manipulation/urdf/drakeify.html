@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.file_manipulation.urdf.drakeify - brom_drake-py 0.5.0 documentation</title>
+        <title>brom_drake.file_manipulation.urdf.drakeify - brom_drake-py v0.0.0+githubActionDefault documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">brom_drake-py 0.5.0 documentation</div></a>
+      <a href="../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.0 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -565,8 +565,11 @@
 <span class="c1"># Internal Imports</span>
 <span class="kn">from</span> <span class="nn">.drake_ready_urdf_converter.converter</span> <span class="kn">import</span> <span class="n">DrakeReadyURDFConverter</span>
 <span class="kn">from</span> <span class="nn">brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.config</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">MeshReplacementStrategy</span><span class="p">,</span> <span class="n">MeshReplacementStrategies</span><span class="p">,</span> <span class="n">DrakeReadyURDFConverterConfig</span>
+    <span class="n">MeshReplacementStrategy</span><span class="p">,</span>
+    <span class="n">MeshReplacementStrategies</span><span class="p">,</span>
+    <span class="n">DrakeReadyURDFConverterConfig</span><span class="p">,</span>
 <span class="p">)</span>
+
 
 <div class="viewcode-block" id="drakeify_my_urdf">
 <a class="viewcode-back" href="../../../../generated/file_manipulation/urdf/urdf.html#brom_drake.file_manipulation.urdf.drakeify.drakeify_my_urdf">[docs]</a>
@@ -580,12 +583,12 @@
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    *Description*</span>
-<span class="sd">    </span>
+
 <span class="sd">    This function provides a convenience function for the user to convert a URDF file</span>
 <span class="sd">    into a &quot;Drake-ready&quot; URDF file.</span>
 
 <span class="sd">    *Parameters*</span>
-<span class="sd">    </span>
+
 <span class="sd">    urdf_file_path: str</span>
 <span class="sd">        A string representing the path to the URDF file that you would like to convert.</span>
 
@@ -673,7 +676,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=1dd76d02"></script>
+</div><script src="../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>

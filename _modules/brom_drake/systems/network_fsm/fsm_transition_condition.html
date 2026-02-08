@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.systems.network_fsm.fsm_transition_condition - brom_drake-py 0.5.0 documentation</title>
+        <title>brom_drake.systems.network_fsm.fsm_transition_condition - brom_drake-py v0.0.0+githubActionDefault documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">brom_drake-py 0.5.0 documentation</div></a>
+      <a href="../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.0 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -556,6 +556,7 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
 
+
 <div class="viewcode-block" id="FSMTransitionConditionType">
 <a class="viewcode-back" href="../../../../generated/systems/network_fsm/network_fsm.html#brom_drake.systems.network_fsm.fsm_transition_condition.FSMTransitionConditionType">[docs]</a>
 <span class="k">class</span> <span class="nc">FSMTransitionConditionType</span><span class="p">(</span><span class="n">IntEnum</span><span class="p">):</span>
@@ -563,10 +564,12 @@
 <span class="sd">    Enum to represent the different types of conditions that can be used to</span>
 <span class="sd">    transition between states in a finite state machine.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">kEqual</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">kGreaterThanEqual</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">kLessThanEqual</span> <span class="o">=</span> <span class="mi">2</span>
     <span class="n">kAfterThisManySeconds</span> <span class="o">=</span> <span class="mi">3</span></div>
+
 
 
 <div class="viewcode-block" id="FSMTransitionCondition">
@@ -576,6 +579,7 @@
 <span class="sd">    Dataclass to represent a single condition that can be used to transition</span>
 <span class="sd">    between states in a finite state machine.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">condition_type</span><span class="p">:</span> <span class="n">FSMTransitionConditionType</span><span class="p">,</span>
@@ -590,7 +594,9 @@
         <span class="c1"># Setup</span>
 
         <span class="c1"># Input Checking</span>
-        <span class="k">assert</span> <span class="n">condition_type</span> <span class="ow">in</span> <span class="n">FSMTransitionConditionType</span><span class="p">,</span> <span class="s2">&quot;Invalid condition type provided.&quot;</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="n">condition_type</span> <span class="ow">in</span> <span class="n">FSMTransitionConditionType</span>
+        <span class="p">),</span> <span class="s2">&quot;Invalid condition type provided.&quot;</span>
 
         <span class="c1"># Assign Attributes</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">input_port_name</span> <span class="o">=</span> <span class="n">input_port_name</span>
@@ -600,16 +606,19 @@
         <span class="c1"># Check that the condition contains the input_port_name IF the condition type</span>
         <span class="c1"># is not kAfterThisManySeconds</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="n">FSMTransitionConditionType</span><span class="o">.</span><span class="n">kAfterThisManySeconds</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_port_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> \
-                <span class="sa">f</span><span class="s2">&quot;Input port name must be provided for condition type </span><span class="se">\&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">.&quot;</span>
-            
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">input_port_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;Input port name must be provided for condition type &quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s1">&quot;.&#39;</span>
+
         <span class="c1"># Check that the condition value is a positive float IF the condition type is</span>
         <span class="c1"># kAfterThisManySeconds</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">FSMTransitionConditionType</span><span class="o">.</span><span class="n">kAfterThisManySeconds</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">condition_value</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span> \
-                <span class="sa">f</span><span class="s2">&quot;Condition value must be a float for condition type </span><span class="se">\&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">.&quot;</span>
-            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">condition_value</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">,</span> \
-                <span class="sa">f</span><span class="s2">&quot;Condition value must be a positive float for condition type </span><span class="se">\&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">.&quot;</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">condition_value</span><span class="p">,</span> <span class="nb">float</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;Condition value must be a float for condition type &quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s1">&quot;.&#39;</span>
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">condition_value</span> <span class="o">&gt;</span> <span class="mf">0.0</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;Condition value must be a positive float for condition type &quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s1">&quot;.&#39;</span>
 
 <div class="viewcode-block" id="FSMTransitionCondition.ForAfterThisManySeconds">
 <a class="viewcode-back" href="../../../../generated/systems/network_fsm/network_fsm.html#brom_drake.systems.network_fsm.fsm_transition_condition.FSMTransitionCondition.ForAfterThisManySeconds">[docs]</a>
@@ -636,11 +645,10 @@
         <span class="k">if</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">input_x</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">input_x</span><span class="p">)</span> <span class="o">==</span> <span class="nb">float</span><span class="p">):</span>
             <span class="n">input_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">([</span><span class="n">input_x</span><span class="p">])</span>
 
-
         <span class="c1"># Input Checking</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">FSMTransitionConditionType</span><span class="o">.</span><span class="n">kAfterThisManySeconds</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Condition type </span><span class="se">\&quot;</span><span class="s2">kAfterThisManySeconds</span><span class="se">\&quot;</span><span class="s2"> can not yet be evaluated yet implemented.&quot;</span>
+                <span class="sa">f</span><span class="s1">&#39;Condition type &quot;kAfterThisManySeconds&quot; can not yet be evaluated yet implemented.&#39;</span>
             <span class="p">)</span>
 
         <span class="c1"># Evaluate the condition for array types</span>
@@ -664,7 +672,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Condition type not yet implemented.&quot;</span><span class="p">)</span></div>
 
-            
+
 <div class="viewcode-block" id="FSMTransitionCondition.requires_input_port">
 <a class="viewcode-back" href="../../../../generated/systems/network_fsm/network_fsm.html#brom_drake.systems.network_fsm.fsm_transition_condition.FSMTransitionCondition.requires_input_port">[docs]</a>
     <span class="k">def</span> <span class="nf">requires_input_port</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -708,7 +716,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=1dd76d02"></script>
+</div><script src="../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>

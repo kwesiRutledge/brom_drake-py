@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.productions.debug.grasping.show_me_this_static_grasp.production - brom_drake-py 0.5.0 documentation</title>
+        <title>brom_drake.productions.debug.grasping.show_me_this_static_grasp.production - brom_drake-py v0.0.0+githubActionDefault documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../../index.html"><div class="brand">brom_drake-py 0.5.0 documentation</div></a>
+      <a href="../../../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.0 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -585,6 +585,7 @@
 <span class="kn">from</span> <span class="nn">brom_drake.productions.debug.show_me.show_me_system</span> <span class="kn">import</span> <span class="n">ShowMeSystem</span>
 <span class="kn">from</span> <span class="nn">.config</span> <span class="kn">import</span> <span class="n">Configuration</span> <span class="k">as</span> <span class="n">ShowMeThisStaticGraspConfiguration</span>
 
+
 <div class="viewcode-block" id="ShowMeThisStaticGrasp">
 <a class="viewcode-back" href="../../../../../../generated/productions/debug/grasping/show_me_this_static_grasp/show_me_this_static_grasp.html#brom_drake.productions.debug.grasping.show_me_this_static_grasp.production.ShowMeThisStaticGrasp">[docs]</a>
 <span class="k">class</span> <span class="nc">ShowMeThisStaticGrasp</span><span class="p">(</span><span class="n">BasicGraspingDebuggingProduction</span><span class="p">):</span>
@@ -623,7 +624,9 @@
 
         <span class="c1"># Create joint position array</span>
         <span class="k">if</span> <span class="n">gripper_joint_positions</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">gripper_joint_positions</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="n">find_number_of_positions_in_welded_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path_to_gripper</span><span class="p">)</span>
+            <span class="n">gripper_joint_positions</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="n">find_number_of_positions_in_welded_model</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">path_to_gripper</span>
+            <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gripper_joint_positions</span> <span class="o">=</span> <span class="n">gripper_joint_positions</span>
 
         <span class="c1"># Add Name to plantPlant and Scene Graph for easy simulation</span>
@@ -641,8 +644,10 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">add_cast_and_build</span><span class="p">(</span><span class="n">cast</span><span class="p">,</span> <span class="n">with_watcher</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="c1"># Assign the diagram context to the internal show_me_system</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">show_me_system</span><span class="o">.</span><span class="n">mutable_plant_context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetMyMutableContextFromRoot</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">diagram_context</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">show_me_system</span><span class="o">.</span><span class="n">mutable_plant_context</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetMyMutableContextFromRoot</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">diagram_context</span><span class="p">,</span>
+            <span class="p">)</span>
         <span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">diagram</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">diagram_context</span>
@@ -727,9 +732,11 @@
         <span class="n">shadow_plant</span> <span class="o">=</span> <span class="n">MultibodyPlant</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time_step</span><span class="p">)</span>
         <span class="n">model_idcs</span> <span class="o">=</span> <span class="n">Parser</span><span class="p">(</span><span class="n">plant</span><span class="o">=</span><span class="n">shadow_plant</span><span class="p">)</span><span class="o">.</span><span class="n">AddModels</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path_to_gripper</span><span class="p">)</span>
         <span class="n">shadow_model_idx</span> <span class="o">=</span> <span class="n">model_idcs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        
+
         <span class="c1"># Get the first body on the gripper</span>
-        <span class="n">name_of_first_body_in_gripper</span> <span class="o">=</span> <span class="n">get_name_of_first_body_in_urdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path_to_gripper</span><span class="p">)</span>
+        <span class="n">name_of_first_body_in_gripper</span> <span class="o">=</span> <span class="n">get_name_of_first_body_in_urdf</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">path_to_gripper</span>
+        <span class="p">)</span>
 
         <span class="c1"># Weld the base link to the world frame</span>
         <span class="n">shadow_plant</span><span class="o">.</span><span class="n">WeldFrames</span><span class="p">(</span>
@@ -759,7 +766,7 @@
         <span class="p">)</span>
 
         <span class="n">X_Object_GripperTarget</span> <span class="o">=</span> <span class="n">X_ObjectGripper</span>
-        <span class="n">X_WorldObject</span> <span class="o">=</span> <span class="n">RigidTransform</span><span class="o">.</span><span class="n">Identity</span><span class="p">()</span> <span class="c1"># Identity</span>
+        <span class="n">X_WorldObject</span> <span class="o">=</span> <span class="n">RigidTransform</span><span class="o">.</span><span class="n">Identity</span><span class="p">()</span>  <span class="c1"># Identity</span>
 
         <span class="n">X_Object_GripperBase</span> <span class="o">=</span> <span class="n">X_Object_GripperTarget</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span>
             <span class="n">X_GripperBase_GripperTarget</span><span class="o">.</span><span class="n">inverse</span><span class="p">()</span>
@@ -808,7 +815,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../../_static/documentation_options.js?v=1dd76d02"></script>
+</div><script src="../../../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.productions.debug.grasping.attempt_grasp.with_static_wrist.production - brom_drake-py 0.5.0 documentation</title>
+        <title>brom_drake.productions.debug.grasping.attempt_grasp.with_static_wrist.production - brom_drake-py v0.0.0+githubActionDefault documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../../../index.html"><div class="brand">brom_drake-py 0.5.0 documentation</div></a>
+      <a href="../../../../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.0 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -591,11 +591,10 @@
 <span class="kn">from</span> <span class="nn">brom_drake.productions.types.debug</span> <span class="kn">import</span> <span class="n">BasicGraspingDebuggingProduction</span>
 <span class="kn">from</span> <span class="nn">brom_drake.productions.ids</span> <span class="kn">import</span> <span class="n">ProductionID</span>
 <span class="kn">from</span> <span class="nn">brom_drake.productions.roles.role</span> <span class="kn">import</span> <span class="n">Role</span>
-<span class="kn">from</span> <span class="nn">brom_drake.systems.all</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">NetworkXFSM</span><span class="p">,</span> <span class="n">FlexiblePortSwitch</span>
-<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">brom_drake.systems.all</span> <span class="kn">import</span> <span class="n">NetworkXFSM</span><span class="p">,</span> <span class="n">FlexiblePortSwitch</span>
 <span class="kn">from</span> <span class="nn">brom_drake.utils</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">Performer</span><span class="p">,</span> <span class="n">collision_checking</span><span class="p">,</span>
+    <span class="n">Performer</span><span class="p">,</span>
+    <span class="n">collision_checking</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">brom_drake.utils.model_instances</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">get_name_of_first_body_in_urdf</span><span class="p">,</span>
@@ -605,6 +604,7 @@
 <span class="kn">from</span> <span class="nn">.config</span> <span class="kn">import</span> <span class="n">Configuration</span>
 <span class="kn">from</span> <span class="nn">.phases</span> <span class="kn">import</span> <span class="n">AttemptGraspWithStaticWristPhase</span>
 <span class="kn">from</span> <span class="nn">.script</span> <span class="kn">import</span> <span class="n">Script</span> <span class="k">as</span> <span class="n">AttemptGraspWithStaticWristScript</span>
+
 
 <div class="viewcode-block" id="AttemptGraspWithStaticWrist">
 <a class="viewcode-back" href="../../../../../../../generated/productions/debug/grasping/attempt_grasp/with_static_wrist/with_static_wrist.html#brom_drake.productions.debug.grasping.attempt_grasp.with_static_wrist.production.AttemptGraspWithStaticWrist">[docs]</a>
@@ -623,16 +623,21 @@
         <span class="c1"># Use the enum to choose the gripper URDF from a set of supported grippers</span>
         <span class="k">if</span> <span class="n">gripper_choice</span> <span class="o">==</span> <span class="n">GripperType</span><span class="o">.</span><span class="n">Robotiq_2f_85</span><span class="p">:</span>
             <span class="n">path_to_gripper</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span>
-                <span class="n">impresources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="n">robots</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;models/robotiq/2f_85_gripper/urdf/robotiq_2f_85.urdf&quot;</span>
+                <span class="n">impresources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="n">robots</span><span class="p">)</span>
+                <span class="o">/</span> <span class="s2">&quot;models/robotiq/2f_85_gripper/urdf/robotiq_2f_85.urdf&quot;</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Gripper type </span><span class="si">{</span><span class="n">gripper_choice</span><span class="si">}</span><span class="s2"> not supported for this scene! Create an issue on GitHub if you want it to be!&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Gripper type </span><span class="si">{</span><span class="n">gripper_choice</span><span class="si">}</span><span class="s2"> not supported for this scene! Create an issue on GitHub if you want it to be!&quot;</span>
+            <span class="p">)</span>
 
         <span class="c1"># Handle config</span>
         <span class="k">if</span> <span class="n">meshcat_port_number</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">config</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">meshcat_port_number</span> <span class="o">=</span> <span class="n">meshcat_port_number</span>
-        
-        <span class="k">if</span> <span class="n">script</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="c1"># If the user provided a &quot;script&quot; for this production, then use it!</span>
+
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">script</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">):</span>  <span class="c1"># If the user provided a &quot;script&quot; for this production, then use it!</span>
             <span class="n">config</span><span class="o">.</span><span class="n">script</span> <span class="o">=</span> <span class="n">script</span>
 
         <span class="c1"># Call the parent constructor</span>
@@ -662,19 +667,23 @@
 
         <span class="c1"># TODO(kwesi): Figure out a better way to handle the initial joint positions</span>
         <span class="c1"># Create INITIAL joint position array</span>
-        <span class="n">n_gripper_positions</span> <span class="o">=</span> <span class="n">find_number_of_positions_in_welded_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path_to_gripper</span><span class="p">)</span>
+        <span class="n">n_gripper_positions</span> <span class="o">=</span> <span class="n">find_number_of_positions_in_welded_model</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">path_to_gripper</span>
+        <span class="p">)</span>
         <span class="c1"># if initial_gripper_joint_positions is None:</span>
         <span class="c1">#     initial_gripper_joint_positions = [0.0] * n_gripper_positions</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">initial_gripper_joint_positions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">grasp_joint_positions</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="c1"># initial_gripper_joint_positions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initial_gripper_joint_positions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
+            <span class="n">grasp_joint_positions</span><span class="o">.</span><span class="n">shape</span>
+        <span class="p">)</span>  <span class="c1"># initial_gripper_joint_positions</span>
 
         <span class="c1"># Save target joint position array</span>
         <span class="c1"># assert len(grasp_joint_positions) != n_gripper_positions, \</span>
         <span class="c1">#     f&quot;Expected for the \&quot;grasp_joint_positions\&quot; array to contain {n_gripper_positions} values (the number of positions)&quot; + \</span>
         <span class="c1">#     f&quot;in the model, but received length {len(grasp_joint_positions)} array.&quot;</span>
-        
+
         <span class="bp">self</span><span class="o">.</span><span class="n">grasp_joint_positions</span> <span class="o">=</span> <span class="n">grasp_joint_positions</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
-        
+
         <span class="c1"># Add Name to plantPlant and Scene Graph for easy simulation</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">set_name</span><span class="p">(</span><span class="s2">&quot;DemonstrateStaticGrasp_plant&quot;</span><span class="p">)</span>
 
@@ -686,14 +695,18 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">floor_shape</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># Create an executive/brain</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">executive</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_executive_system</span><span class="p">()</span> <span class="c1"># The executive system that coordinates ALL the systems</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">executive</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">create_executive_system</span><span class="p">()</span>
+        <span class="p">)</span>  <span class="c1"># The executive system that coordinates ALL the systems</span>
 
     <span class="k">def</span> <span class="nf">add_cast_and_build</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">cast</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Role</span><span class="p">,</span> <span class="n">Performer</span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
         <span class="n">figure_naming_convention</span><span class="p">:</span> <span class="n">FigureNamingConvention</span> <span class="o">=</span> <span class="n">FigureNamingConvention</span><span class="o">.</span><span class="n">kHierarchical</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Diagram</span><span class="p">,</span> <span class="n">Context</span><span class="p">]:</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">add_cast_and_build</span><span class="p">(</span><span class="n">cast</span><span class="p">,</span> <span class="n">with_watcher</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figure_naming_convention</span><span class="o">=</span><span class="n">figure_naming_convention</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">add_cast_and_build</span><span class="p">(</span>
+            <span class="n">cast</span><span class="p">,</span> <span class="n">with_watcher</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figure_naming_convention</span><span class="o">=</span><span class="n">figure_naming_convention</span>
+        <span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">diagram</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">diagram_context</span>
 
@@ -703,9 +716,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">floor_mass</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span>
         <span class="n">plant</span><span class="p">:</span> <span class="n">MultibodyPlant</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span>
-        <span class="nb">float</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">ModelInstanceIndex</span><span class="p">,</span> <span class="n">JointActuator</span>
-    <span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">ModelInstanceIndex</span><span class="p">,</span> <span class="n">JointActuator</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Description</span>
 <span class="sd">        -----------</span>
@@ -716,7 +727,7 @@
             <span class="n">plant</span><span class="p">:</span> <span class="n">MultibodyPlant</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span>
 
         <span class="c1"># Create a box urdf for the floor</span>
-        <span class="n">floor_shape</span> <span class="o">=</span> <span class="p">[</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">]</span> <span class="c1"># Length, Width, Height</span>
+        <span class="n">floor_shape</span> <span class="o">=</span> <span class="p">[</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">]</span>  <span class="c1"># Length, Width, Height</span>
         <span class="n">floor_geometry_defn</span> <span class="o">=</span> <span class="n">BoxDefinition</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">floor_shape</span><span class="p">)</span>
 
         <span class="c1"># Create a urdf for the floor</span>
@@ -724,7 +735,7 @@
             <span class="n">name</span><span class="o">=</span><span class="s2">&quot;floor&quot;</span><span class="p">,</span>
             <span class="n">shape</span><span class="o">=</span><span class="n">floor_geometry_defn</span><span class="p">,</span>
             <span class="n">mass</span><span class="o">=</span><span class="n">floor_mass</span><span class="p">,</span>
-        <span class="p">)</span> 
+        <span class="p">)</span>
         <span class="n">floor_urdf</span> <span class="o">=</span> <span class="n">floor_urdf_defn</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">()</span>
 
         <span class="c1"># Add the floor to the plant</span>
@@ -736,7 +747,9 @@
             <span class="n">PrismaticJoint</span><span class="p">(</span>
                 <span class="n">name</span><span class="o">=</span><span class="s2">&quot;floor_joint&quot;</span><span class="p">,</span>
                 <span class="n">frame_on_parent</span><span class="o">=</span><span class="n">plant</span><span class="o">.</span><span class="n">world_frame</span><span class="p">(),</span>
-                <span class="n">frame_on_child</span><span class="o">=</span><span class="n">plant</span><span class="o">.</span><span class="n">GetFrameByName</span><span class="p">(</span><span class="n">get_name_of_first_body_in_urdf</span><span class="p">(</span><span class="n">floor_urdf</span><span class="p">)),</span>
+                <span class="n">frame_on_child</span><span class="o">=</span><span class="n">plant</span><span class="o">.</span><span class="n">GetFrameByName</span><span class="p">(</span>
+                    <span class="n">get_name_of_first_body_in_urdf</span><span class="p">(</span><span class="n">floor_urdf</span><span class="p">)</span>
+                <span class="p">),</span>
                 <span class="n">axis</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
             <span class="p">)</span>
         <span class="p">)</span>
@@ -778,7 +791,9 @@
         <span class="p">)</span>
 
         <span class="c1"># Add the floor</span>
-        <span class="n">floor_mass</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">floor_shape</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">floor_model_index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">floor_actuator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_floor_to_plant</span><span class="p">()</span>
+        <span class="n">floor_mass</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">floor_shape</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">floor_model_index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">floor_actuator</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_floor_to_plant</span><span class="p">()</span>
+        <span class="p">)</span>
 
         <span class="c1"># Connect the plant to the meshcat, if requested</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">meshcat_port_number</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -814,7 +829,9 @@
 
         <span class="c1"># Create a piecewise trajectory for the gripper to follow&#39;</span>
         <span class="n">joint_position_samples</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">joint_position_samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p_gripper0</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span> <span class="c1"># This wild compression is needed because of bugs in Drake. :&#39;(</span>
+        <span class="n">joint_position_samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">p_gripper0</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="p">)</span>  <span class="c1"># This wild compression is needed because of bugs in Drake. :&#39;(</span>
         <span class="n">joint_position_samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p_gripper0</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
         <span class="n">joint_position_samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p_gripper_final</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
         <span class="n">gripper_trajectory</span> <span class="o">=</span> <span class="n">PiecewisePolynomial</span><span class="o">.</span><span class="n">FirstOrderHold</span><span class="p">(</span>
@@ -828,7 +845,6 @@
         <span class="p">)</span>
         <span class="n">gripper_trajectory_source</span><span class="o">.</span><span class="n">set_name</span><span class="p">(</span><span class="s2">&quot;[Gripper] Trajectory Source&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">gripper_trajectory_source</span>
-
 
     <span class="k">def</span> <span class="nf">add_gripper_controller_and_connect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Setup</span>
@@ -877,7 +893,6 @@
             <span class="n">gripper_controller</span><span class="o">.</span><span class="n">GetInputPort</span><span class="p">(</span><span class="s2">&quot;gripper_state&quot;</span><span class="p">),</span>
         <span class="p">)</span>
 
-
     <span class="k">def</span> <span class="nf">add_floor_controller_and_connect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">floor_mass</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
         <span class="c1"># Setup</span>
         <span class="n">plant</span><span class="p">:</span> <span class="n">MultibodyPlant</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span>
@@ -886,8 +901,8 @@
         <span class="n">z_floor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_floor_z_via_line_search</span><span class="p">()</span>
 
         <span class="c1"># Connect a PID Controller to the floor actuator</span>
-        <span class="n">kp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">floor_mass</span> <span class="o">*</span> <span class="mf">9.81</span> <span class="o">*</span> <span class="mf">1.0e0</span><span class="p">]])</span> <span class="c1">#Idk how I&#39;m picking this number.</span>
-        <span class="n">ki</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">kp</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="c1"># 0.1 * np.sqrt(kp)</span>
+        <span class="n">kp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">floor_mass</span> <span class="o">*</span> <span class="mf">9.81</span> <span class="o">*</span> <span class="mf">1.0e0</span><span class="p">]])</span>  <span class="c1"># Idk how I&#39;m picking this number.</span>
+        <span class="n">ki</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">kp</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>  <span class="c1"># 0.1 * np.sqrt(kp)</span>
         <span class="n">kd</span> <span class="o">=</span> <span class="mf">4.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">kp</span><span class="p">)</span>
         <span class="n">floor_controller</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">AddSystem</span><span class="p">(</span>
             <span class="n">PidController</span><span class="p">(</span><span class="n">kp</span><span class="o">=</span><span class="n">kp</span><span class="p">,</span> <span class="n">ki</span><span class="o">=</span><span class="n">ki</span><span class="p">,</span> <span class="n">kd</span><span class="o">=</span><span class="n">kd</span><span class="p">),</span>
@@ -898,7 +913,9 @@
         <span class="c1"># output to keep the floor at a constant height</span>
         <span class="c1"># (i.e., the weight of the object)</span>
         <span class="n">feedforward_term</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">AddSystem</span><span class="p">(</span>
-            <span class="n">ConstantVectorSource</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">floor_mass</span> <span class="o">*</span> <span class="mf">9.81</span><span class="p">]])),</span>  <span class="c1"># Weight of the object</span>
+            <span class="n">ConstantVectorSource</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">floor_mass</span> <span class="o">*</span> <span class="mf">9.81</span><span class="p">]])</span>
+            <span class="p">),</span>  <span class="c1"># Weight of the object</span>
         <span class="p">)</span>
         <span class="n">feedforward_term</span><span class="o">.</span><span class="n">set_name</span><span class="p">(</span><span class="s2">&quot;[Floor] Feedforward&quot;</span><span class="p">)</span>
 
@@ -949,26 +966,22 @@
         <span class="k">return</span> <span class="n">executive</span>
 
     <span class="k">def</span> <span class="nf">create_floor_trajectory_source</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">z_floor</span><span class="p">:</span> <span class="nb">float</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">z_floor</span><span class="p">:</span> <span class="nb">float</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">FlexiblePortSwitch</span><span class="p">]:</span>
         <span class="c1"># Setup</span>
         <span class="n">builder</span><span class="p">:</span> <span class="n">DiagramBuilder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">builder</span>
 
-        <span class="c1">#Create a proper trajectory source for the floor so that it slowly falls away</span>
+        <span class="c1"># Create a proper trajectory source for the floor so that it slowly falls away</span>
         <span class="n">floor_target_height_source</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">AddSystem</span><span class="p">(</span>
             <span class="n">OpenLoopPlanDispenser</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">speed</span><span class="o">=</span><span class="mf">0.25</span><span class="p">),</span>
         <span class="p">)</span>
 
         <span class="c1"># Create the trajectory that will be run</span>
-        <span class="n">simple_plan</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
-            <span class="p">[</span><span class="n">z_floor</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
-            <span class="p">[</span><span class="n">z_floor</span> <span class="o">-</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
-        <span class="p">])</span>
+        <span class="n">simple_plan</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">z_floor</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="n">z_floor</span> <span class="o">-</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]])</span>
         <span class="n">floor_trajectory_source</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">AddSystem</span><span class="p">(</span>
             <span class="n">ConstantValueSource</span><span class="p">(</span><span class="n">AbstractValue</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="n">simple_plan</span><span class="p">))</span>
         <span class="p">)</span>
-        
+
         <span class="n">builder</span><span class="o">.</span><span class="n">Connect</span><span class="p">(</span>
             <span class="n">floor_trajectory_source</span><span class="o">.</span><span class="n">get_output_port</span><span class="p">(),</span>
             <span class="n">floor_target_height_source</span><span class="o">.</span><span class="n">GetInputPort</span><span class="p">(</span><span class="s2">&quot;plan&quot;</span><span class="p">),</span>
@@ -1010,7 +1023,9 @@
 
         <span class="c1"># Add the object to the shadow plant</span>
         <span class="n">model_idcs</span> <span class="o">=</span> <span class="n">Parser</span><span class="p">(</span><span class="n">plant</span><span class="o">=</span><span class="n">shadow_plant</span><span class="p">)</span><span class="o">.</span><span class="n">AddModels</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path_to_object</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">model_idcs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Only one model should be added; received </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">model_idcs</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">model_idcs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Only one model should be added; received </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">model_idcs</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="n">model_idx</span> <span class="o">=</span> <span class="n">model_idcs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">model_name</span> <span class="o">=</span> <span class="n">shadow_plant</span><span class="o">.</span><span class="n">GetModelInstanceName</span><span class="p">(</span><span class="n">model_idx</span><span class="p">)</span>
 
@@ -1061,15 +1076,17 @@
             <span class="k">if</span> <span class="n">lower_left</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">objects_minimum_z</span><span class="p">:</span>
                 <span class="n">objects_minimum_z</span> <span class="o">=</span> <span class="n">lower_left</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  + New z_out: </span><span class="si">{</span><span class="n">objects_minimum_z</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        
+
         <span class="c1"># If we didn&#39;t find any geometry, raise an error</span>
         <span class="k">if</span> <span class="n">objects_minimum_z</span> <span class="o">==</span> <span class="mf">1_000.0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unable to find geometry for the manipuland.&quot;</span><span class="p">)</span>
-        
+
         <span class="c1"># If we found a geometry, then we need to set the floor height</span>
         <span class="c1"># using the known shape of the table</span>
 
-        <span class="k">return</span> <span class="n">objects_minimum_z</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">floor_shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="mf">0.5</span>  <span class="c1"># Subtract the height of the floor</span></div>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">objects_minimum_z</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">floor_shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.5</span>
+        <span class="p">)</span>  <span class="c1"># Subtract the height of the floor</span></div>
 
 
 <div class="viewcode-block" id="AttemptGraspWithStaticWrist.find_floor_z_via_line_search">
@@ -1097,10 +1114,10 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">collision_detected</span><span class="p">:</span>
             <span class="c1"># If no collision detected, return the initial guess</span>
             <span class="k">return</span> <span class="n">z_floor</span>
-        
+
         <span class="c1"># If we have a collision, then we need to perform a line search</span>
         <span class="c1"># to find the height that is collision free</span>
-        
+
         <span class="c1"># Start with a small step size</span>
         <span class="n">step_size</span> <span class="o">=</span> <span class="n">floor_shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.25</span>  <span class="c1"># 25% of the floor height</span>
 
@@ -1116,7 +1133,6 @@
                 <span class="c1"># If no collision detected, return the current height</span>
                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found collision-free height: </span><span class="si">{</span><span class="n">candidate_z_floor</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="k">return</span> <span class="n">candidate_z_floor</span>
-            
 
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Collision detected at height: </span><span class="si">{</span><span class="n">candidate_z_floor</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="c1"># If we have a collision, then increase the height</span>
@@ -1124,8 +1140,8 @@
 
             <span class="c1"># If we exceed a certain height, break out of the loop</span>
             <span class="k">if</span> <span class="n">candidate_z_floor</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mf">10.0</span><span class="p">:</span>
-                <span class="k">break</span>        
-                
+                <span class="k">break</span>
+
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unable to find a collision-free height for the floor.&quot;</span><span class="p">)</span></div>
 
 
@@ -1149,9 +1165,11 @@
         <span class="n">shadow_plant</span> <span class="o">=</span> <span class="n">MultibodyPlant</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time_step</span><span class="p">)</span>
         <span class="n">model_idcs</span> <span class="o">=</span> <span class="n">Parser</span><span class="p">(</span><span class="n">plant</span><span class="o">=</span><span class="n">shadow_plant</span><span class="p">)</span><span class="o">.</span><span class="n">AddModels</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path_to_gripper</span><span class="p">)</span>
         <span class="n">shadow_model_idx</span> <span class="o">=</span> <span class="n">model_idcs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        
+
         <span class="c1"># Get the first body on the gripper</span>
-        <span class="n">name_of_first_body_in_gripper</span> <span class="o">=</span> <span class="n">get_name_of_first_body_in_urdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path_to_gripper</span><span class="p">)</span>
+        <span class="n">name_of_first_body_in_gripper</span> <span class="o">=</span> <span class="n">get_name_of_first_body_in_urdf</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">path_to_gripper</span>
+        <span class="p">)</span>
 
         <span class="c1"># Weld the base link to the world frame</span>
         <span class="n">shadow_plant</span><span class="o">.</span><span class="n">WeldFrames</span><span class="p">(</span>
@@ -1207,7 +1225,9 @@
 
         <span class="c1"># Add the object to the shadow plant</span>
         <span class="n">model_idcs</span> <span class="o">=</span> <span class="n">Parser</span><span class="p">(</span><span class="n">plant</span><span class="o">=</span><span class="n">shadow_plant</span><span class="p">)</span><span class="o">.</span><span class="n">AddModels</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path_to_object</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">model_idcs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Only one model should be added; received </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">model_idcs</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">model_idcs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Only one model should be added; received </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">model_idcs</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="n">model_idx</span> <span class="o">=</span> <span class="n">model_idcs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">model_name</span> <span class="o">=</span> <span class="n">shadow_plant</span><span class="o">.</span><span class="n">GetModelInstanceName</span><span class="p">(</span><span class="n">model_idx</span><span class="p">)</span>
 
@@ -1234,7 +1254,9 @@
         <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">collision_checking</span><span class="o">.</span><span class="n">using_point_pair_penetration</span><span class="p">(</span>
-            <span class="n">shadow_plant</span><span class="p">,</span> <span class="n">shadow_scene_graph</span><span class="p">,</span> <span class="n">shadow_diagram_context</span><span class="p">,</span>
+            <span class="n">shadow_plant</span><span class="p">,</span>
+            <span class="n">shadow_scene_graph</span><span class="p">,</span>
+            <span class="n">shadow_diagram_context</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="nd">@property</span>
@@ -1261,7 +1283,9 @@
             <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">z_floor</span><span class="p">]),</span>
         <span class="p">)</span>
 
-        <span class="n">n_gripper_positions</span> <span class="o">=</span> <span class="n">find_number_of_positions_in_welded_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path_to_gripper</span><span class="p">)</span>
+        <span class="n">n_gripper_positions</span> <span class="o">=</span> <span class="n">find_number_of_positions_in_welded_model</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">path_to_gripper</span>
+        <span class="p">)</span>
         <span class="n">plant</span><span class="o">.</span><span class="n">SetDefaultPositions</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">gripper_model_index</span><span class="p">,</span>
             <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_gripper_positions</span><span class="p">,)),</span>
@@ -1272,8 +1296,6 @@
     <span class="k">def</span> <span class="nf">suggested_roles</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Role</span><span class="p">]:</span>
         <span class="k">return</span> <span class="p">[]</span></div>
 
-    
-    
 </pre></div>
         </article>
       </div>
@@ -1306,7 +1328,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../../../_static/documentation_options.js?v=1dd76d02"></script>
+</div><script src="../../../../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

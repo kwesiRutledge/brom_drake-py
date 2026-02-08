@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.file_manipulation.urdf.simple_writer.urdf_definition - brom_drake-py 0.5.0 documentation</title>
+        <title>brom_drake.file_manipulation.urdf.simple_writer.urdf_definition - brom_drake-py v0.0.0+githubActionDefault documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../index.html"><div class="brand">brom_drake-py 0.5.0 documentation</div></a>
+      <a href="../../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.0 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -556,6 +556,7 @@
 <span class="sd">    This file will contain utilities for quickly creating simple URDF files</span>
 <span class="sd">    to be used in debugging and testing.</span>
 <span class="sd">&quot;&quot;&quot;</span>
+
 <span class="c1"># External Imports</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">IntEnum</span>
@@ -567,9 +568,15 @@
 <span class="kn">from</span> <span class="nn">pydrake.math</span> <span class="kn">import</span> <span class="n">RigidTransform</span>
 
 <span class="c1"># Internal Imports</span>
-<span class="kn">from</span> <span class="nn">brom_drake.file_manipulation.urdf.shapes.shape_definition</span> <span class="kn">import</span> <span class="n">ShapeEnum</span><span class="p">,</span> <span class="n">ShapeDefinition</span>
-<span class="kn">from</span> <span class="nn">brom_drake.file_manipulation.urdf.simple_writer.inertia_definition</span> <span class="kn">import</span> <span class="n">InertiaDefinition</span>
+<span class="kn">from</span> <span class="nn">brom_drake.file_manipulation.urdf.shapes.shape_definition</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ShapeEnum</span><span class="p">,</span>
+    <span class="n">ShapeDefinition</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">brom_drake.file_manipulation.urdf.simple_writer.inertia_definition</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">InertiaDefinition</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">brom_drake.directories</span> <span class="kn">import</span> <span class="n">DEFAULT_BROM_MODELS_DIR</span>
+
 
 <div class="viewcode-block" id="SimpleShapeURDFDefinition">
 <a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/simple_writer/simple_writer.html#brom_drake.file_manipulation.urdf.simple_writer.urdf_definition.SimpleShapeURDFDefinition">[docs]</a>
@@ -582,7 +589,7 @@
 <span class="sd">    specifiy it in a URDF.</span>
 
 <span class="sd">    *Attributes*</span>
-<span class="sd">    </span>
+
 <span class="sd">    name: str</span>
 <span class="sd">        The name of the shape.</span>
 
@@ -619,16 +626,19 @@
 <span class="sd">        Whether to use hydroelastic collision for the shape.</span>
 <span class="sd">        Defaults to True.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">shape</span><span class="p">:</span> <span class="n">ShapeDefinition</span>
     <span class="n">color</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">create_collision</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span> <span class="c1"># Whether to create the collision elements of the urdf</span>
+    <span class="n">create_collision</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="kc">True</span>  <span class="c1"># Whether to create the collision elements of the urdf</span>
+    <span class="p">)</span>
     <span class="n">mass</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>
     <span class="n">inertia</span><span class="p">:</span> <span class="n">InertiaDefinition</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">pose</span><span class="p">:</span> <span class="n">RigidTransform</span> <span class="o">=</span> <span class="n">RigidTransform</span><span class="p">()</span>
     <span class="n">mu_static</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.7</span>
     <span class="n">mu_dynamic</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.4</span>
-    <span class="n">is_hydroelastic</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span> <span class="c1"># Whether to use hydroelastic collision for the shape</span>
+    <span class="n">is_hydroelastic</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># Whether to use hydroelastic collision for the shape</span>
 
 <div class="viewcode-block" id="SimpleShapeURDFDefinition.as_urdf">
 <a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/simple_writer/simple_writer.html#brom_drake.file_manipulation.urdf.simple_writer.urdf_definition.SimpleShapeURDFDefinition.as_urdf">[docs]</a>
@@ -649,7 +659,7 @@
             <span class="p">{</span>
                 <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_robot&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;xmlns:drake&quot;</span><span class="p">:</span> <span class="s2">&quot;http://drake.mit.edu&quot;</span><span class="p">,</span>
-            <span class="p">}</span>
+            <span class="p">},</span>
         <span class="p">)</span>
         <span class="n">link</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s2">&quot;link&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_link_name</span><span class="p">})</span>
 
@@ -673,7 +683,7 @@
 <span class="sd">        *Description*</span>
 
 <span class="sd">        Add the inertial elements to the link element.</span>
-<span class="sd">        </span>
+
 <span class="sd">        *Parameters*</span>
 
 <span class="sd">        link_elt: xml.etree.ElementTree.Element</span>
@@ -709,7 +719,7 @@
 <span class="sd">        *Description*</span>
 
 <span class="sd">        Add the visual elements to the link element.</span>
-<span class="sd">        </span>
+
 <span class="sd">        *Parameters*</span>
 
 <span class="sd">        link_elt: xml.etree.ElementTree.Element</span>
@@ -790,21 +800,17 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Setup</span>
         <span class="n">proximity_properties</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">collision_elt</span><span class="p">,</span> <span class="s2">&quot;proximity_properties&quot;</span><span class="p">)</span>
-        
+
         <span class="c1"># Create mu_static element</span>
-        <span class="n">mu_static</span><span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span>
-            <span class="n">proximity_properties</span><span class="p">,</span>
-            <span class="s2">&quot;drake:mu_static&quot;</span><span class="p">,</span>
-            <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mu_static</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}</span>
-            <span class="p">)</span>
+        <span class="n">mu_static</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span>
+            <span class="n">proximity_properties</span><span class="p">,</span> <span class="s2">&quot;drake:mu_static&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mu_static</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}</span>
+        <span class="p">)</span>
 
         <span class="c1"># Create mu_dynamic element</span>
         <span class="n">mu_dynamic</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span>
-            <span class="n">proximity_properties</span><span class="p">,</span>
-            <span class="s2">&quot;drake:mu_dynamic&quot;</span><span class="p">,</span>
-            <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mu_dynamic</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}</span>
-            <span class="p">)</span>
-        
+            <span class="n">proximity_properties</span><span class="p">,</span> <span class="s2">&quot;drake:mu_dynamic&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mu_dynamic</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}</span>
+        <span class="p">)</span>
+
         <span class="c1"># Create is_hydroelastic element</span>
         <span class="n">hydroelastic</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span>
             <span class="n">proximity_properties</span><span class="p">,</span>
@@ -819,7 +825,7 @@
 <span class="sd">        *Description*</span>
 
 <span class="sd">        Add the origin element to the target element.</span>
-<span class="sd">        </span>
+
 <span class="sd">        *Parameters*</span>
 
 <span class="sd">        target_element: xml.etree.ElementTree.Element</span>
@@ -867,9 +873,9 @@
 
 <span class="sd">        file_path: str</span>
 <span class="sd">            The path to the file where the URDF will be written.</span>
-<span class="sd">        </span>
+
 <span class="sd">        *Returns*</span>
-<span class="sd">        </span>
+
 <span class="sd">        str</span>
 <span class="sd">            The path to the file where the URDF was written.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -891,8 +897,6 @@
 
         <span class="k">return</span> <span class="n">file_path</span></div>
 </div>
-
-
 
 </pre></div>
         </article>
@@ -926,7 +930,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../_static/documentation_options.js?v=1dd76d02"></script>
+</div><script src="../../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.systems.network_fsm.errors - brom_drake-py 0.5.0 documentation</title>
+        <title>brom_drake.systems.network_fsm.errors - brom_drake-py v0.0.0+githubActionDefault documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">brom_drake-py 0.5.0 documentation</div></a>
+      <a href="../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.0 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -551,8 +551,8 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for brom_drake.systems.network_fsm.errors</h1><div class="highlight"><pre>
-<span></span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Tuple</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Tuple</span>
+
 
 <div class="viewcode-block" id="EdgeContainsNoLabelsError">
 <a class="viewcode-back" href="../../../../generated/systems/network_fsm/network_fsm.html#brom_drake.systems.network_fsm.errors.EdgeContainsNoLabelsError">[docs]</a>
@@ -562,11 +562,17 @@
 <span class="sd">    -----------</span>
 <span class="sd">    Raised when an edge in the FSM graph contains no labels.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edge</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">edge</span> <span class="o">=</span> <span class="n">edge</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Edge </span><span class="si">{</span><span class="n">edge</span><span class="si">}</span><span class="s2"> contains no labels (i.e., it is an empty dictionary);</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Need at least one label (the label should be called </span><span class="se">\&quot;</span><span class="s2">conditions</span><span class="se">\&quot;</span><span class="s2">)!</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Edge </span><span class="si">{</span><span class="n">edge</span><span class="si">}</span><span class="s2"> contains no labels (i.e., it is an empty dictionary);</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">+=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Need at least one label (the label should be called &quot;conditions&quot;)!</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">)</span></div>
+
 
 
 <div class="viewcode-block" id="EdgeContainsNoConditionsError">
@@ -577,10 +583,12 @@
 <span class="sd">    -----------</span>
 <span class="sd">    Raised when an edge in the FSM graph contains no conditions.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edge</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">edge</span> <span class="o">=</span> <span class="n">edge</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Edge </span><span class="si">{</span><span class="n">edge</span><span class="si">}</span><span class="s2"> contains 0 conditions; need at least one!</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">)</span></div>
+
 
 
 <div class="viewcode-block" id="MultipleConnectedComponentsError">
@@ -591,11 +599,13 @@
 <span class="sd">    -----------</span>
 <span class="sd">    Raised when the FSM graph has multiple connected components.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connected_components</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Set</span><span class="p">[</span><span class="nb">int</span><span class="p">]]):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">connected_components</span> <span class="o">=</span> <span class="n">connected_components</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">connected_components</span><span class="p">)</span><span class="si">}</span><span class="s2"> connected components in the FSM graph.</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Connected components are: </span><span class="si">{</span><span class="n">connected_components</span><span class="si">}</span><span class="s2">.</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">)</span></div>
+
 
 
 <div class="viewcode-block" id="NumberOfStartNodesError">
@@ -606,11 +616,13 @@
 <span class="sd">    -----------</span>
 <span class="sd">    Raised when the FSM graph has multiple start nodes.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_nodes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">start_nodes</span> <span class="o">=</span> <span class="n">start_nodes</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">start_nodes</span><span class="p">)</span><span class="si">}</span><span class="s2"> start nodes in the FSM graph.</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Start nodes are: </span><span class="si">{</span><span class="n">start_nodes</span><span class="si">}</span><span class="s2">.</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">)</span></div>
+
 
 
 <div class="viewcode-block" id="OutputPortNotInitializedError">
@@ -621,10 +633,15 @@
 <span class="sd">    -----------</span>
 <span class="sd">    Raised when an output port is not intiialized in the FSM graph.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">output_port</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_ports_initialized</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">node_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">output_port</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_ports_initialized</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output_port</span> <span class="o">=</span> <span class="n">output_port</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Output port </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">output_port</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2"> for node #</span><span class="si">{</span><span class="n">node_index</span><span class="si">}</span><span class="s2"> does not have an initial value in the FSM graph;</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;The ports that were initialized are </span><span class="si">{</span><span class="n">output_ports_initialized</span><span class="si">}</span><span class="s2">!</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Output port &quot;</span><span class="si">{</span><span class="n">output_port</span><span class="si">}</span><span class="s1">&quot; for node #</span><span class="si">{</span><span class="n">node_index</span><span class="si">}</span><span class="s1"> does not have an initial value in the FSM graph;</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">+=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;The ports that were initialized are </span><span class="si">{</span><span class="n">output_ports_initialized</span><span class="si">}</span><span class="s2">!</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">)</span></div>
 
 </pre></div>
@@ -659,7 +676,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=1dd76d02"></script>
+</div><script src="../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>

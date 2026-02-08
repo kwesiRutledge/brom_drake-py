@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.productions.debug.grasping.attempt_grasp.with_static_wrist.script - brom_drake-py 0.5.0 documentation</title>
+        <title>brom_drake.productions.debug.grasping.attempt_grasp.with_static_wrist.script - brom_drake-py v0.0.0+githubActionDefault documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../../../index.html"><div class="brand">brom_drake-py 0.5.0 documentation</div></a>
+      <a href="../../../../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.0 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -556,9 +556,13 @@
 
 <span class="c1"># Internal Imports</span>
 <span class="kn">from</span> <span class="nn">brom_drake.systems.network_fsm</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">NetworkXFSM</span><span class="p">,</span> <span class="n">FSMOutputDefinition</span><span class="p">,</span> <span class="n">FSMTransitionCondition</span><span class="p">,</span> <span class="n">FSMTransitionConditionType</span>
+    <span class="n">NetworkXFSM</span><span class="p">,</span>
+    <span class="n">FSMOutputDefinition</span><span class="p">,</span>
+    <span class="n">FSMTransitionCondition</span><span class="p">,</span>
+    <span class="n">FSMTransitionConditionType</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">.phases</span> <span class="kn">import</span> <span class="n">AttemptGraspWithStaticWristPhase</span>
+
 
 <span class="c1"># Define some internal classes/enums</span>
 <div class="viewcode-block" id="Script">
@@ -571,6 +575,7 @@
 <span class="sd">    This class defines the &quot;script&quot; or the sequence of events that is meant to happen in the</span>
 <span class="sd">    AttemptGrasp production.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">settling_time_on_floor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span>
     <span class="n">grasp_closing_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span>
     <span class="n">post_grasp_settling_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>
@@ -585,7 +590,7 @@
             <span class="n">outputs</span><span class="o">=</span><span class="p">[</span>
                 <span class="n">FSMOutputDefinition</span><span class="p">(</span><span class="s2">&quot;start_floor&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>  <span class="c1"># Floor trigger</span>
                 <span class="n">FSMOutputDefinition</span><span class="p">(</span><span class="s2">&quot;start_gripper&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>  <span class="c1"># Gripper trigger</span>
-            <span class="p">]</span>
+            <span class="p">],</span>
         <span class="p">)</span>
 
         <span class="c1"># Third State: Close gripper</span>
@@ -593,7 +598,7 @@
             <span class="n">AttemptGraspWithStaticWristPhase</span><span class="o">.</span><span class="n">kGripperClosing</span><span class="p">,</span>
             <span class="n">outputs</span><span class="o">=</span><span class="p">[</span>
                 <span class="n">FSMOutputDefinition</span><span class="p">(</span><span class="s2">&quot;start_gripper&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
-            <span class="p">]</span>
+            <span class="p">],</span>
         <span class="p">)</span>
 
         <span class="c1"># Fourth State: Drop the floor</span>
@@ -601,7 +606,7 @@
             <span class="n">AttemptGraspWithStaticWristPhase</span><span class="o">.</span><span class="n">kFloorDrop</span><span class="p">,</span>
             <span class="n">outputs</span><span class="o">=</span><span class="p">[</span>
                 <span class="n">FSMOutputDefinition</span><span class="p">(</span><span class="s2">&quot;start_floor&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
-            <span class="p">]</span>
+            <span class="p">],</span>
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">start_time_of_phase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phase</span><span class="p">:</span> <span class="n">AttemptGraspWithStaticWristPhase</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -612,7 +617,11 @@
         <span class="k">elif</span> <span class="n">phase</span> <span class="o">==</span> <span class="n">AttemptGraspWithStaticWristPhase</span><span class="o">.</span><span class="n">kObjectSettlingInGrasp</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">settling_time_on_floor</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">grasp_closing_time</span>
         <span class="k">elif</span> <span class="n">phase</span> <span class="o">==</span> <span class="n">AttemptGraspWithStaticWristPhase</span><span class="o">.</span><span class="n">kFloorDrop</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">settling_time_on_floor</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">grasp_closing_time</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_grasp_settling_time</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">settling_time_on_floor</span>
+                <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">grasp_closing_time</span>
+                <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_grasp_settling_time</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Phase </span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s2"> not recognized!&quot;</span><span class="p">)</span>
 
@@ -629,13 +638,13 @@
         <span class="c1"># Create time from init -&gt; Let object settle</span>
         <span class="n">graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span>
             <span class="n">AttemptGraspWithStaticWristPhase</span><span class="o">.</span><span class="n">kObjectSettlingOnFloor</span><span class="p">,</span>
-            <span class="n">AttemptGraspWithStaticWristPhase</span><span class="o">.</span><span class="n">kGripperClosing</span><span class="p">,</span> 
+            <span class="n">AttemptGraspWithStaticWristPhase</span><span class="o">.</span><span class="n">kGripperClosing</span><span class="p">,</span>
             <span class="n">conditions</span><span class="o">=</span><span class="p">[</span>
                 <span class="n">FSMTransitionCondition</span><span class="p">(</span>
                     <span class="n">condition_type</span><span class="o">=</span><span class="n">FSMTransitionConditionType</span><span class="o">.</span><span class="n">kAfterThisManySeconds</span><span class="p">,</span>
                     <span class="n">condition_value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">settling_time_on_floor</span><span class="p">,</span>
                 <span class="p">)</span>
-            <span class="p">]</span>
+            <span class="p">],</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_grasp_settling_time</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
@@ -648,7 +657,7 @@
                         <span class="n">condition_type</span><span class="o">=</span><span class="n">FSMTransitionConditionType</span><span class="o">.</span><span class="n">kAfterThisManySeconds</span><span class="p">,</span>
                         <span class="n">condition_value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grasp_closing_time</span><span class="p">,</span>
                     <span class="p">)</span>
-                <span class="p">]</span>
+                <span class="p">],</span>
             <span class="p">)</span>
 
             <span class="c1"># Create time from end of grasp closing to floor drop start</span>
@@ -660,7 +669,7 @@
                         <span class="n">condition_type</span><span class="o">=</span><span class="n">FSMTransitionConditionType</span><span class="o">.</span><span class="n">kAfterThisManySeconds</span><span class="p">,</span>
                         <span class="n">condition_value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">post_grasp_settling_time</span><span class="p">,</span>
                     <span class="p">)</span>
-                <span class="p">]</span>
+                <span class="p">],</span>
             <span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
@@ -673,15 +682,19 @@
                         <span class="n">condition_type</span><span class="o">=</span><span class="n">FSMTransitionConditionType</span><span class="o">.</span><span class="n">kAfterThisManySeconds</span><span class="p">,</span>
                         <span class="n">condition_value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grasp_closing_time</span><span class="p">,</span>
                     <span class="p">)</span>
-                <span class="p">]</span>
+                <span class="p">],</span>
             <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">graph</span>
 
     <span class="k">def</span> <span class="nf">total_time</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">settling_time_on_floor</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">grasp_closing_time</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_grasp_settling_time</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">drop_time</span></div>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">settling_time_on_floor</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">grasp_closing_time</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_grasp_settling_time</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">drop_time</span>
+        <span class="p">)</span></div>
 
-    
 </pre></div>
         </article>
       </div>
@@ -714,7 +727,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../../../_static/documentation_options.js?v=1dd76d02"></script>
+</div><script src="../../../../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

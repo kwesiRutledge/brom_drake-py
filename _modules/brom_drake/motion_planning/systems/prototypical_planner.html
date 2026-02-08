@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.motion_planning.systems.prototypical_planner - brom_drake-py 0.5.0 documentation</title>
+        <title>brom_drake.motion_planning.systems.prototypical_planner - brom_drake-py v0.0.0+githubActionDefault documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">brom_drake-py 0.5.0 documentation</div></a>
+      <a href="../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.0 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -578,6 +578,7 @@
 <span class="sd">    It will receive a planning algorithm and wrap that algorithm in a LeafSystem</span>
 <span class="sd">    that works in Brom.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">plant</span><span class="p">:</span> <span class="n">MultibodyPlant</span><span class="p">,</span>
@@ -620,7 +621,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">robot_model_idx</span> <span class="o">=</span> <span class="n">robot_model_idx</span>
 
         <span class="c1"># Define Input Ports</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">root_context</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># NOTE: This should be assigned by the user before calling!</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root_context</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="kc">None</span>  <span class="c1"># NOTE: This should be assigned by the user before calling!</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plan</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">create_input_ports</span><span class="p">()</span>
 
@@ -652,18 +655,18 @@
 
         <span class="c1"># Setup</span>
         <span class="n">plant_context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetMyMutableContextFromRoot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root_context</span><span class="p">)</span>
-        <span class="n">scene_graph_context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scene_graph</span><span class="o">.</span><span class="n">GetMyMutableContextFromRoot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root_context</span><span class="p">)</span>
+        <span class="n">scene_graph_context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scene_graph</span><span class="o">.</span><span class="n">GetMyMutableContextFromRoot</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">root_context</span>
+        <span class="p">)</span>
         <span class="n">q_init</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetPositions</span><span class="p">(</span><span class="n">plant_context</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">robot_model_idx</span><span class="p">)</span>
 
         <span class="c1"># Set the configuration</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">SetPositions</span><span class="p">(</span>
-            <span class="n">plant_context</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">robot_model_idx</span><span class="p">,</span>
-            <span class="n">q_model</span>
-        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">SetPositions</span><span class="p">(</span><span class="n">plant_context</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">robot_model_idx</span><span class="p">,</span> <span class="n">q_model</span><span class="p">)</span>
 
         <span class="c1"># Check for collisions using the query object</span>
-        <span class="n">query_object</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scene_graph</span><span class="o">.</span><span class="n">get_query_output_port</span><span class="p">()</span><span class="o">.</span><span class="n">Eval</span><span class="p">(</span><span class="n">scene_graph_context</span><span class="p">)</span>
+        <span class="n">query_object</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scene_graph</span><span class="o">.</span><span class="n">get_query_output_port</span><span class="p">()</span><span class="o">.</span><span class="n">Eval</span><span class="p">(</span>
+            <span class="n">scene_graph_context</span>
+        <span class="p">)</span>
         <span class="c1"># return query_object.HasCollisions()</span>
 
         <span class="c1"># Alternative method to check for collisions</span>
@@ -675,13 +678,9 @@
             <span class="k">if</span> <span class="n">pair_ii</span><span class="o">.</span><span class="n">depth</span> <span class="o">&gt;</span> <span class="n">eps0</span><span class="p">:</span>
                 <span class="n">collision_detected</span> <span class="o">=</span> <span class="kc">True</span>
                 <span class="k">break</span>
-            
+
         <span class="c1"># Otherwise return false (after resetting the configuration)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">SetPositions</span><span class="p">(</span>
-            <span class="n">plant_context</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">robot_model_idx</span><span class="p">,</span>
-            <span class="n">q_init</span>
-        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">SetPositions</span><span class="p">(</span><span class="n">plant_context</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">robot_model_idx</span><span class="p">,</span> <span class="n">q_init</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">collision_detected</span></div>
 
 
@@ -706,7 +705,11 @@
             <span class="n">q_start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetInputPort</span><span class="p">(</span><span class="s2">&quot;start_configuration&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">Eval</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
             <span class="n">q_goal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetInputPort</span><span class="p">(</span><span class="s2">&quot;goal_configuration&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">Eval</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">robot_model_idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">robot_model_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetInputPort</span><span class="p">(</span><span class="s2">&quot;robot_model_index&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">EvalAbstract</span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="o">.</span><span class="n">get_value</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">robot_model_idx</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">GetInputPort</span><span class="p">(</span><span class="s2">&quot;robot_model_index&quot;</span><span class="p">)</span>
+                    <span class="o">.</span><span class="n">EvalAbstract</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+                    <span class="o">.</span><span class="n">get_value</span><span class="p">()</span>
+                <span class="p">)</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_context</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Plant context is not initialized yet!&quot;</span><span class="p">)</span>
@@ -715,16 +718,12 @@
 
             <span class="c1"># Plan and extract path</span>
             <span class="n">planning_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">planning_algorithm</span><span class="p">(</span>
-                <span class="n">q_start</span><span class="p">,</span>
-                <span class="n">q_goal</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">check_collision_in_config</span>
+                <span class="n">q_start</span><span class="p">,</span> <span class="n">q_goal</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_collision_in_config</span>
             <span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">plan</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">planning_result_to_array</span><span class="p">(</span><span class="n">planning_result</span><span class="p">)</span>
 
-        <span class="n">output</span><span class="o">.</span><span class="n">SetFrom</span><span class="p">(</span>
-            <span class="n">AbstractValue</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plan</span><span class="p">)</span>
-        <span class="p">)</span></div>
+        <span class="n">output</span><span class="o">.</span><span class="n">SetFrom</span><span class="p">(</span><span class="n">AbstractValue</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plan</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="PrototypicalPlannerSystem.create_input_ports">
@@ -735,9 +734,7 @@
 <span class="sd">            This function creates the input ports for the RRT planner.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Setup</span>
-        <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetActuatedJointIndices</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">robot_model_idx</span><span class="p">)</span>
-        <span class="p">)</span>
+        <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetActuatedJointIndices</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">robot_model_idx</span><span class="p">))</span>
 
         <span class="c1"># Define outputs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">DeclareVectorInputPort</span><span class="p">(</span>
@@ -749,8 +746,7 @@
             <span class="n">BasicVector</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">N</span><span class="p">,))),</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">DeclareAbstractInputPort</span><span class="p">(</span>
-            <span class="s2">&quot;robot_model_index&quot;</span><span class="p">,</span>
-            <span class="n">AbstractValue</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="n">ModelInstanceIndex</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+            <span class="s2">&quot;robot_model_index&quot;</span><span class="p">,</span> <span class="n">AbstractValue</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="n">ModelInstanceIndex</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
         <span class="p">)</span></div>
 
 
@@ -768,7 +764,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">DeclareAbstractOutputPort</span><span class="p">(</span>
             <span class="s2">&quot;motion_plan&quot;</span><span class="p">,</span>
             <span class="k">lambda</span><span class="p">:</span> <span class="n">AbstractValue</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="n">sample_plan</span><span class="p">),</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">compute_plan_if_not_available</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">compute_plan_if_not_available</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="c1"># Create output for plan readiness</span>
@@ -804,8 +800,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">world_frame</span><span class="p">(),</span>
             <span class="n">input_pose_vec</span><span class="p">[:</span><span class="mi">3</span><span class="p">],</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetFrameByName</span><span class="p">(</span><span class="s2">&quot;ft_frame&quot;</span><span class="p">),</span>
-            <span class="p">(</span><span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,))</span> <span class="o">*</span> <span class="n">eps0</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
-            <span class="p">(</span><span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,))</span> <span class="o">*</span> <span class="n">eps0</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+            <span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,))</span> <span class="o">*</span> <span class="n">eps0</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+            <span class="p">(</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,))</span> <span class="o">*</span> <span class="n">eps0</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
         <span class="p">)</span>
 
         <span class="c1"># Add Orientation Cost (not a hard constraint to help with feasibility)</span>
@@ -838,14 +834,14 @@
 <span class="sd">        Description:</span>
 <span class="sd">            This function checks if the plan is ready.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">output</span><span class="o">.</span><span class="n">SetFrom</span><span class="p">(</span>
-            <span class="n">AbstractValue</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plan</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="p">)</span></div>
+        <span class="n">output</span><span class="o">.</span><span class="n">SetFrom</span><span class="p">(</span><span class="n">AbstractValue</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plan</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="PrototypicalPlannerSystem.planning_result_to_array">
 <a class="viewcode-back" href="../../../../generated/motion_planning/systems/systems.html#brom_drake.motion_planning.systems.prototypical_planner.PrototypicalPlannerSystem.planning_result_to_array">[docs]</a>
-    <span class="k">def</span> <span class="nf">planning_result_to_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">planning_result</span><span class="p">:</span> <span class="n">MotionPlanningResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">planning_result_to_array</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">planning_result</span><span class="p">:</span> <span class="n">MotionPlanningResult</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Description</span>
 <span class="sd">        -----------</span>
@@ -861,19 +857,27 @@
             <span class="n">plan_in</span><span class="p">,</span> <span class="n">goal_node_index</span> <span class="o">=</span> <span class="n">planning_result</span>
 
             <span class="k">if</span> <span class="n">goal_node_index</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;No path found! Try increasing the number of iterations or checking your problem!&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                    <span class="s2">&quot;No path found! Try increasing the number of iterations or checking your problem!&quot;</span>
+                <span class="p">)</span>
 
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">planning_result</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
             <span class="n">plan_in</span> <span class="o">=</span> <span class="n">planning_result</span>
-            <span class="n">goal_node_index</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="c1"># Assume that the last configuration is the one we&#39;re trying to get to!</span>
+            <span class="n">goal_node_index</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="o">-</span><span class="mi">1</span>
+            <span class="p">)</span>  <span class="c1"># Assume that the last configuration is the one we&#39;re trying to get to!</span>
 
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">planning_result</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">):</span>
             <span class="n">plan_in</span> <span class="o">=</span> <span class="n">planning_result</span>
             <span class="n">all_node_ids</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">plan_in</span><span class="o">.</span><span class="n">nodes</span><span class="p">]</span>
-            <span class="n">goal_node_index</span> <span class="o">=</span> <span class="n">all_node_ids</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># Assume that the last configuration is the one we&#39;re trying to get to!</span>
+            <span class="n">goal_node_index</span> <span class="o">=</span> <span class="n">all_node_ids</span><span class="p">[</span>
+                <span class="o">-</span><span class="mi">1</span>
+            <span class="p">]</span>  <span class="c1"># Assume that the last configuration is the one we&#39;re trying to get to!</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown planning result type: </span><span class="se">\&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">planning_result</span><span class="p">)</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">!&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Unknown planning result type: &quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">planning_result</span><span class="p">)</span><span class="si">}</span><span class="s1">&quot;!&#39;</span>
+            <span class="p">)</span>
 
         <span class="c1"># Setup</span>
 
@@ -885,9 +889,9 @@
                 <span class="n">source</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
                 <span class="n">target</span><span class="o">=</span><span class="n">goal_node_index</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">plan_in</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="s1">&#39;q&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">path</span><span class="p">])</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">plan_in</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="s2">&quot;q&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">path</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown plan type: </span><span class="se">\&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">plan_in</span><span class="p">)</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">!&quot;</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unknown plan type: &quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">plan_in</span><span class="p">)</span><span class="si">}</span><span class="s1">&quot;!&#39;</span><span class="p">)</span></div>
 
 
     <span class="k">def</span> <span class="nf">set_internal_root_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root_context_in</span><span class="p">:</span> <span class="n">Context</span><span class="p">):</span>
@@ -925,7 +929,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=1dd76d02"></script>
+</div><script src="../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>

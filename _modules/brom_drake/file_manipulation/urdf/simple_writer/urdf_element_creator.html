@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.file_manipulation.urdf.simple_writer.urdf_element_creator - brom_drake-py 0.5.0 documentation</title>
+        <title>brom_drake.file_manipulation.urdf.simple_writer.urdf_element_creator - brom_drake-py v0.0.0+githubActionDefault documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../index.html"><div class="brand">brom_drake-py 0.5.0 documentation</div></a>
+      <a href="../../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.0 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -560,12 +560,14 @@
 <span class="c1"># Internal imports</span>
 <span class="kn">from</span> <span class="nn">brom_drake.file_manipulation.urdf.shapes.shape_definition</span> <span class="kn">import</span> <span class="n">ShapeDefinition</span>
 
+
 <div class="viewcode-block" id="URDFElementCreator">
 <a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/simple_writer/simple_writer.html#brom_drake.file_manipulation.urdf.simple_writer.urdf_element_creator.URDFElementCreator">[docs]</a>
 <span class="k">class</span> <span class="nc">URDFElementCreator</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class to create URDF elements quickly and easily.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
 <div class="viewcode-block" id="URDFElementCreator.create_collision_element">
 <a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/simple_writer/simple_writer.html#brom_drake.file_manipulation.urdf.simple_writer.urdf_element_creator.URDFElementCreator.create_collision_element">[docs]</a>
     <span class="nd">@staticmethod</span>
@@ -577,7 +579,7 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a collision element for the URDF.</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        name: str</span>
@@ -586,7 +588,7 @@
 <span class="sd">            The pose of the parent mesh in the collision element. If None, a default RigidTransform is used.</span>
 <span class="sd">            If provided as a numpy array, it should be a 7-element array representing position and quaternion.</span>
 <span class="sd">            (Specifically, the first 3 elements are the position, and the last 4 elements are the quaternion [x,y,z,w].)</span>
-<span class="sd">        </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        ET.Element</span>
@@ -596,13 +598,16 @@
 
         <span class="k">if</span> <span class="n">pose_ParentMesh</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">pose_ParentMesh</span> <span class="o">=</span> <span class="n">RigidTransform</span><span class="p">()</span>
-        
+
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pose_ParentMesh</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-            <span class="k">assert</span> <span class="n">pose_ParentMesh</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">7</span><span class="p">,),</span> \
-                <span class="s2">&quot;pose_ParentMesh should be a 7-element array representing a RigidTransform.&quot;</span>
+            <span class="k">assert</span> <span class="n">pose_ParentMesh</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span>
+                <span class="mi">7</span><span class="p">,</span>
+            <span class="p">),</span> <span class="s2">&quot;pose_ParentMesh should be a 7-element array representing a RigidTransform.&quot;</span>
             <span class="n">pose_ParentMesh</span><span class="p">:</span> <span class="n">RigidTransform</span> <span class="o">=</span> <span class="n">RigidTransform</span><span class="p">(</span>
-                <span class="n">p</span> <span class="o">=</span> <span class="n">pose_ParentMesh</span><span class="p">[:</span><span class="mi">3</span><span class="p">],</span>  <span class="c1"># Position (x, y, z)</span>
-                <span class="n">quaternion</span><span class="o">=</span> <span class="n">Quaternion</span><span class="p">(</span><span class="n">pose_ParentMesh</span><span class="p">[[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">]])</span> <span class="c1"># Quaternion given as (w, x, y, z)</span>
+                <span class="n">p</span><span class="o">=</span><span class="n">pose_ParentMesh</span><span class="p">[:</span><span class="mi">3</span><span class="p">],</span>  <span class="c1"># Position (x, y, z)</span>
+                <span class="n">quaternion</span><span class="o">=</span><span class="n">Quaternion</span><span class="p">(</span>
+                    <span class="n">pose_ParentMesh</span><span class="p">[[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]]</span>
+                <span class="p">),</span>  <span class="c1"># Quaternion given as (w, x, y, z)</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">mesh_file_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -615,9 +620,7 @@
 
         <span class="c1"># Add the origin sub-element to the collision element</span>
         <span class="n">collision</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-            <span class="n">URDFElementCreator</span><span class="o">.</span><span class="n">create_origin_element</span><span class="p">(</span>
-                <span class="n">pose_ParentOrigin</span><span class="o">=</span><span class="n">pose_ParentMesh</span>
-            <span class="p">)</span>
+            <span class="n">URDFElementCreator</span><span class="o">.</span><span class="n">create_origin_element</span><span class="p">(</span><span class="n">pose_ParentOrigin</span><span class="o">=</span><span class="n">pose_ParentMesh</span><span class="p">)</span>
         <span class="p">)</span>
 
         <span class="c1"># If a mesh file path is provided, add a geometry sub-element</span>
@@ -632,7 +635,7 @@
 
         <span class="k">return</span> <span class="n">collision</span></div>
 
-    
+
 <div class="viewcode-block" id="URDFElementCreator.create_origin_element">
 <a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/simple_writer/simple_writer.html#brom_drake.file_manipulation.urdf.simple_writer.urdf_element_creator.URDFElementCreator.create_origin_element">[docs]</a>
     <span class="nd">@staticmethod</span>
@@ -641,14 +644,14 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create an origin element for the URDF.</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        translation: np.ndarray</span>
 <span class="sd">            The translation vector (x, y, z).</span>
 <span class="sd">        rotation: Quaternion</span>
 <span class="sd">            The rotation as a Quaternion.</span>
-<span class="sd">        </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        ET.Element</span>
@@ -662,29 +665,32 @@
         <span class="c1"># Create the origin element</span>
         <span class="n">origin</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s2">&quot;origin&quot;</span><span class="p">)</span>
         <span class="n">origin</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;xyz&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">translation</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">translation</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">translation</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">origin</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;rpy&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">rotation_as_rpy</span><span class="o">.</span><span class="n">roll_angle</span><span class="p">()</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">rotation_as_rpy</span><span class="o">.</span><span class="n">pitch_angle</span><span class="p">()</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">rotation_as_rpy</span><span class="o">.</span><span class="n">yaw_angle</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        
+        <span class="n">origin</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+            <span class="s2">&quot;rpy&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">rotation_as_rpy</span><span class="o">.</span><span class="n">roll_angle</span><span class="p">()</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">rotation_as_rpy</span><span class="o">.</span><span class="n">pitch_angle</span><span class="p">()</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">rotation_as_rpy</span><span class="o">.</span><span class="n">yaw_angle</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
         <span class="k">return</span> <span class="n">origin</span></div>
 
-    
+
 <div class="viewcode-block" id="URDFElementCreator.create_geometry_element">
 <a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/simple_writer/simple_writer.html#brom_drake.file_manipulation.urdf.simple_writer.urdf_element_creator.URDFElementCreator.create_geometry_element">[docs]</a>
-    <span class="nd">@staticmethod</span>   
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">create_geometry_element</span><span class="p">(</span>
         <span class="n">mesh_file_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">definition</span><span class="p">:</span> <span class="n">ShapeDefinition</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">mesh_scale</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+        <span class="n">mesh_scale</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]),</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a geometry element for the URDF.</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        mesh_file_path: Path, optional</span>
 <span class="sd">            The path to the mesh file. If provided, a mesh sub-element will be created.</span>
 <span class="sd">        definition: ShapeDefinition, optional</span>
 <span class="sd">            The dimensions of the geometry. Required for box and cylinder types.</span>
-<span class="sd">        </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        ET.Element</span>
@@ -692,7 +698,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Create the geometry element</span>
         <span class="n">geometry</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s2">&quot;geometry&quot;</span><span class="p">)</span>
-        
+
         <span class="c1"># If a path to a mesh file is provided, add a mesh sub-element</span>
         <span class="k">if</span> <span class="n">mesh_file_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">mesh</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="s2">&quot;mesh&quot;</span><span class="p">)</span>
@@ -703,11 +709,10 @@
 
             <span class="c1"># Set the scale for the mesh</span>
             <span class="n">mesh</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;scale&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">mesh_scale</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">mesh_scale</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">mesh_scale</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            
 
         <span class="c1"># If a shape definition is provided, add the appropriate sub-element</span>
         <span class="c1"># TODO: Implement support for different shape definitions</span>
-        
+
         <span class="k">return</span> <span class="n">geometry</span></div>
 </div>
 
@@ -743,7 +748,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../_static/documentation_options.js?v=1dd76d02"></script>
+</div><script src="../../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

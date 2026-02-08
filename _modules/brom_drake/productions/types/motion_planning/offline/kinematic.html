@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.productions.types.motion_planning.offline.kinematic - brom_drake-py 0.5.0 documentation</title>
+        <title>brom_drake.productions.types.motion_planning.offline.kinematic - brom_drake-py v0.0.0+githubActionDefault documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../../index.html"><div class="brand">brom_drake-py 0.5.0 documentation</div></a>
+      <a href="../../../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.0 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -558,9 +558,13 @@
 <span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">pydrake.all</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">RotationMatrix</span><span class="p">,</span> <span class="n">Quaternion</span><span class="p">,</span> <span class="n">RollPitchYaw</span><span class="p">,</span>
-    <span class="n">Solve</span><span class="p">,</span> <span class="n">SolutionResult</span><span class="p">,</span>
-    <span class="n">InverseKinematics</span><span class="p">,</span> <span class="n">ModelInstanceIndex</span><span class="p">,</span>
+    <span class="n">RotationMatrix</span><span class="p">,</span>
+    <span class="n">Quaternion</span><span class="p">,</span>
+    <span class="n">RollPitchYaw</span><span class="p">,</span>
+    <span class="n">Solve</span><span class="p">,</span>
+    <span class="n">SolutionResult</span><span class="p">,</span>
+    <span class="n">InverseKinematics</span><span class="p">,</span>
+    <span class="n">ModelInstanceIndex</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">pydrake.common.value</span> <span class="kn">import</span> <span class="n">AbstractValue</span>
 <span class="kn">from</span> <span class="nn">pydrake.math</span> <span class="kn">import</span> <span class="n">RigidTransform</span>
@@ -570,11 +574,15 @@
 <span class="kn">from</span> <span class="nn">pydrake.systems.primitives</span> <span class="kn">import</span> <span class="n">ConstantVectorSource</span><span class="p">,</span> <span class="n">ConstantValueSource</span>
 
 <span class="c1"># Internal Imports</span>
-<span class="kn">from</span> <span class="nn">brom_drake.motion_planning.systems.prototypical_planner</span> <span class="kn">import</span> <span class="n">PrototypicalPlannerSystem</span>
+<span class="kn">from</span> <span class="nn">brom_drake.motion_planning.systems.prototypical_planner</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">PrototypicalPlannerSystem</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">brom_drake.productions.types</span> <span class="kn">import</span> <span class="n">BaseProduction</span>
 <span class="kn">from</span> <span class="nn">brom_drake.productions.roles.all</span> <span class="kn">import</span> <span class="n">kKinematicMotionPlanner</span><span class="p">,</span> <span class="n">Role</span>
 <span class="kn">from</span> <span class="nn">brom_drake.file_manipulation.urdf.shapes.sphere</span> <span class="kn">import</span> <span class="n">SphereDefinition</span>
-<span class="kn">from</span> <span class="nn">brom_drake.file_manipulation.urdf.simple_writer.urdf_definition</span> <span class="kn">import</span> <span class="n">SimpleShapeURDFDefinition</span>
+<span class="kn">from</span> <span class="nn">brom_drake.file_manipulation.urdf.simple_writer.urdf_definition</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">SimpleShapeURDFDefinition</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">brom_drake.utils</span> <span class="kn">import</span> <span class="n">Performer</span><span class="p">,</span> <span class="n">MotionPlan</span>
 
 
@@ -609,6 +617,7 @@
 <span class="sd">    goal_pose: RigidTransform, optional</span>
 <span class="sd">        The goal pose of the robot, by default None.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">start_configuration</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -638,7 +647,7 @@
     <span class="k">def</span> <span class="nf">add_supporting_cast</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        Create illustrations for the start and goal poses to the builder.</span>
 
 <span class="sd">        .. important::</span>
@@ -649,13 +658,13 @@
 
 <span class="sd">            This method is only meant to add the start and goal visualizations</span>
 <span class="sd">            to the plant.</span>
-<span class="sd">        </span>
+
 <span class="sd">        .. warning::</span>
 
 <span class="sd">            We recommend that the plant NOT be finalized before calling this method.</span>
 <span class="sd">            This is because this method adds visual elements to the plant.</span>
-<span class="sd">        </span>
-<span class="sd">            </span>
+
+
 <span class="sd">        *Usage*</span>
 
 <span class="sd">        To demonstrate how to use this method in a child class, see the</span>
@@ -690,7 +699,7 @@
     <span class="k">def</span> <span class="nf">add_robot_source_system</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This method adds a source for providing the motion planner</span>
 <span class="sd">        with the model index for the robot that we are trying to control.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -710,7 +719,7 @@
     <span class="k">def</span> <span class="nf">add_start_and_goal_to_plant</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plant</span><span class="p">:</span> <span class="n">MultibodyPlant</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        Add 3D visualizations of the pose where the start and goal</span>
 <span class="sd">        are for the current production.</span>
 
@@ -718,9 +727,9 @@
 
 <span class="sd">            Feel free to overwrite this if you have specific sizes of the start and goal in mind,</span>
 <span class="sd">            or if you want to add more than just spheres, etc.</span>
-<span class="sd">        </span>
+
 <span class="sd">        *Parameters*</span>
-<span class="sd">        </span>
+
 <span class="sd">        plant: pydrake.multibody.plant.MultibodyPlant</span>
 <span class="sd">            The plant to add the start and goal to.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -738,7 +747,9 @@
         <span class="n">start_sphere_defn</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="n">start_sphere_urdf_location</span><span class="p">)</span>
 
         <span class="c1"># Load the start sphere into the plant and rigidly attach it at the start_pose</span>
-        <span class="n">start_sphere_model_idx</span> <span class="o">=</span> <span class="n">Parser</span><span class="p">(</span><span class="n">plant</span><span class="p">)</span><span class="o">.</span><span class="n">AddModels</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">start_sphere_urdf_location</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">start_sphere_model_idx</span> <span class="o">=</span> <span class="n">Parser</span><span class="p">(</span><span class="n">plant</span><span class="p">)</span><span class="o">.</span><span class="n">AddModels</span><span class="p">(</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">start_sphere_urdf_location</span><span class="p">)</span>
+        <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">plant</span><span class="o">.</span><span class="n">WeldFrames</span><span class="p">(</span>
             <span class="n">plant</span><span class="o">.</span><span class="n">world_frame</span><span class="p">(),</span>
             <span class="n">plant</span><span class="o">.</span><span class="n">GetFrameByName</span><span class="p">(</span><span class="s2">&quot;start_sphere_base_link&quot;</span><span class="p">,</span> <span class="n">start_sphere_model_idx</span><span class="p">),</span>
@@ -758,10 +769,14 @@
         <span class="n">goal_sphere_defn</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="n">goal_sphere_urdf_location</span><span class="p">)</span>
 
         <span class="c1"># Load the start sphere into the plant and rigidly attach it at the start_pose</span>
-        <span class="n">goal_sphere_model_idx</span> <span class="o">=</span> <span class="n">Parser</span><span class="p">(</span><span class="n">plant</span><span class="p">)</span><span class="o">.</span><span class="n">AddModels</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">goal_sphere_urdf_location</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">goal_sphere_model_idx</span> <span class="o">=</span> <span class="n">Parser</span><span class="p">(</span><span class="n">plant</span><span class="p">)</span><span class="o">.</span><span class="n">AddModels</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">goal_sphere_urdf_location</span><span class="p">))[</span>
+            <span class="mi">0</span>
+        <span class="p">]</span>
         <span class="n">plant</span><span class="o">.</span><span class="n">WeldFrames</span><span class="p">(</span>
             <span class="n">plant</span><span class="o">.</span><span class="n">world_frame</span><span class="p">(),</span>
-            <span class="n">plant</span><span class="o">.</span><span class="n">GetFrameByName</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">goal_sphere_defn</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_base_link&quot;</span><span class="p">,</span> <span class="n">goal_sphere_model_idx</span><span class="p">),</span>
+            <span class="n">plant</span><span class="o">.</span><span class="n">GetFrameByName</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">goal_sphere_defn</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_base_link&quot;</span><span class="p">,</span> <span class="n">goal_sphere_model_idx</span>
+            <span class="p">),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">goal_pose</span><span class="p">,</span>
         <span class="p">)</span></div>
 
@@ -771,7 +786,7 @@
     <span class="k">def</span> <span class="nf">add_start_and_goal_sources_to_builder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This method will add the start and goal sources to the builder.</span>
 
 <span class="sd">        .. warning::</span>
@@ -779,7 +794,9 @@
 <span class="sd">            The plant must be finalized before calling this method.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Input Processing</span>
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">is_finalized</span><span class="p">(),</span> <span class="s2">&quot;Plant must be finalized before adding start and goal sources.&quot;</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">is_finalized</span><span class="p">()</span>
+        <span class="p">),</span> <span class="s2">&quot;Plant must be finalized before adding start and goal sources.&quot;</span>
 
         <span class="c1"># Add the start and goal poses to the builder</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_start_source_system</span><span class="p">()</span>
@@ -810,9 +827,9 @@
     <span class="k">def</span> <span class="nf">add_goal_source_system</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        Add a source system for the goal pose.</span>
-<span class="sd">        </span>
+
 <span class="sd">        This will be a ConstantVectorSource that outputs the goal configuration</span>
 <span class="sd">        in the diagram.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -833,10 +850,10 @@
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This small modification to the normal add_main_cast()</span>
 <span class="sd">        function includes a call to create the optional inputs if needed.</span>
-<span class="sd">        </span>
+
 <span class="sd">        *Parameters*</span>
 
 <span class="sd">        cast: List[Tuple[Role, Performer]], optional</span>
@@ -849,16 +866,14 @@
 
         <span class="c1"># Create optional outputs, if needed</span>
         <span class="k">for</span> <span class="n">role_ii</span><span class="p">,</span> <span class="n">performer_ii</span> <span class="ow">in</span> <span class="n">cast</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">create_optional_outputs_if_necessary</span><span class="p">(</span>
-                <span class="n">role_ii</span><span class="p">,</span> <span class="n">performer_ii</span>
-            <span class="p">)</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">create_optional_outputs_if_necessary</span><span class="p">(</span><span class="n">role_ii</span><span class="p">,</span> <span class="n">performer_ii</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="KinematicMotionPlanningProduction.create_optional_outputs_if_necessary">
 <a class="viewcode-back" href="../../../../../../generated/productions/types/motion_planning/offline/offline.html#brom_drake.productions.types.motion_planning.offline.kinematic.KinematicMotionPlanningProduction.create_optional_outputs_if_necessary">[docs]</a>
     <span class="k">def</span> <span class="nf">create_optional_outputs_if_necessary</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">role</span><span class="p">:</span> <span class="n">Role</span><span class="p">,</span> <span class="c1"># This role will always be the Motion Planner, won&#39;t it?</span>
+        <span class="n">role</span><span class="p">:</span> <span class="n">Role</span><span class="p">,</span>  <span class="c1"># This role will always be the Motion Planner, won&#39;t it?</span>
         <span class="n">performer</span><span class="p">:</span> <span class="n">Performer</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -897,20 +912,20 @@
         <span class="c1"># TODO(kwesi): Maybe move above, general code to somewhere else?</span>
         <span class="k">if</span> <span class="n">role</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s2">&quot;OfflineMotionPlanner&quot;</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Expected role for OfflineMotionPlanning Production to be </span><span class="se">\&quot;</span><span class="s2">OfflineMotionPlanner</span><span class="se">\&quot;</span><span class="s2">;&quot;</span> <span class="o">+</span>
-                <span class="sa">f</span><span class="s2">&quot;received </span><span class="si">{</span><span class="n">role</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s1">&#39;Expected role for OfflineMotionPlanning Production to be &quot;OfflineMotionPlanner&quot;;&#39;</span>
+                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;received </span><span class="si">{</span><span class="n">role</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
 
         <span class="c1"># Check to see if performer has the LAST assignment in the motion planning role</span>
         <span class="n">last_assignment</span> <span class="o">=</span> <span class="n">role</span><span class="o">.</span><span class="n">port_assignments</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">last_assignment</span><span class="o">.</span><span class="n">performer_port_name</span> <span class="o">!=</span> <span class="s2">&quot;plan_is_ready&quot;</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Expected last port assignment to be </span><span class="se">\&quot;</span><span class="s2">plan_is_ready</span><span class="se">\&quot;</span><span class="s2"> assignment, but&quot;</span> <span class="o">+</span>
-                <span class="sa">f</span><span class="s2">&quot;received an assignment with performer_port_name </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">last_assignment</span><span class="o">.</span><span class="n">performer_port_name</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s1">&#39;Expected last port assignment to be &quot;plan_is_ready&quot; assignment, but&#39;</span>
+                <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;received an assignment with performer_port_name &quot;</span><span class="si">{</span><span class="n">last_assignment</span><span class="o">.</span><span class="n">performer_port_name</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">performer</span><span class="o">.</span><span class="n">HasOutputPort</span><span class="p">(</span><span class="n">last_assignment</span><span class="o">.</span><span class="n">performer_port_name</span><span class="p">):</span>
-            <span class="k">return</span> <span class="c1"># Do nothing; performer should already be connected</span>
+            <span class="k">return</span>  <span class="c1"># Do nothing; performer should already be connected</span>
 
         <span class="c1"># If the performer does not have plan_is_ready port, then</span>
         <span class="c1"># let&#39;s create a dummy value and connect it to the right place.</span>
@@ -921,14 +936,15 @@
 
         <span class="c1"># Find system we want to connect it to</span>
         <span class="n">systems_list</span> <span class="o">=</span> <span class="n">last_assignment</span><span class="o">.</span><span class="n">find_any_matching_input_targets</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">systems_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> \
-            <span class="sa">f</span><span class="s2">&quot;Expected 1 system to have port </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">last_assignment</span><span class="o">.</span><span class="n">external_target_name</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">,&quot;</span> <span class="o">+</span> \
-            <span class="sa">f</span><span class="s2">&quot; but found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">systems_list</span><span class="p">)</span><span class="si">}</span><span class="s2"> systems with that output port.&quot;</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">systems_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Expected 1 system to have port &quot;</span><span class="si">{</span><span class="n">last_assignment</span><span class="o">.</span><span class="n">external_target_name</span><span class="si">}</span><span class="s1">&quot;,&#39;</span>
+            <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; but found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">systems_list</span><span class="p">)</span><span class="si">}</span><span class="s2"> systems with that output port.&quot;</span>
+        <span class="p">)</span>
         <span class="c1"># TODO(kwesi): Perhaps move more of these error assertions to a separate file?</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">Connect</span><span class="p">(</span>
             <span class="n">plan_ready_source</span><span class="o">.</span><span class="n">get_output_port</span><span class="p">(),</span>
-            <span class="n">systems_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">GetInputPort</span><span class="p">(</span><span class="n">last_assignment</span><span class="o">.</span><span class="n">external_target_name</span><span class="p">)</span>
+            <span class="n">systems_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">GetInputPort</span><span class="p">(</span><span class="n">last_assignment</span><span class="o">.</span><span class="n">external_target_name</span><span class="p">),</span>
         <span class="p">)</span></div>
 
 
@@ -958,8 +974,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">world_frame</span><span class="p">(),</span>
             <span class="n">pose_WorldTarget</span><span class="o">.</span><span class="n">translation</span><span class="p">(),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetFrameByName</span><span class="p">(</span><span class="n">target_frame_name</span><span class="p">),</span>
-            <span class="p">(</span><span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,))</span> <span class="o">*</span> <span class="n">eps0</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
-            <span class="p">(</span><span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,))</span> <span class="o">*</span> <span class="n">eps0</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+            <span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,))</span> <span class="o">*</span> <span class="n">eps0</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+            <span class="p">(</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,))</span> <span class="o">*</span> <span class="n">eps0</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
         <span class="p">)</span>
 
         <span class="c1"># TODO(kwesi): Add OrientationCosntraint</span>
@@ -981,7 +997,7 @@
 
         <span class="k">return</span> <span class="n">ik_problem</span></div>
 
-    
+
 <div class="viewcode-block" id="KinematicMotionPlanningProduction.easy_cast_and_build">
 <a class="viewcode-back" href="../../../../../../generated/productions/types/motion_planning/offline/offline.html#brom_drake.productions.types.motion_planning.offline.kinematic.KinematicMotionPlanningProduction.easy_cast_and_build">[docs]</a>
     <span class="k">def</span> <span class="nf">easy_cast_and_build</span><span class="p">(</span>
@@ -1009,7 +1025,8 @@
 
         <span class="c1"># Create a planner from the algorithm</span>
         <span class="n">prototypical_planner</span> <span class="o">=</span> <span class="n">PrototypicalPlannerSystem</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">scene_graph</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">scene_graph</span><span class="p">,</span>
             <span class="n">planning_algorithm</span><span class="p">,</span>
             <span class="n">robot_model_idx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">robot_model_index</span><span class="p">,</span>
         <span class="p">)</span>
@@ -1021,9 +1038,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">fill_role</span><span class="p">(</span><span class="n">planner_role</span><span class="p">,</span> <span class="n">prototypical_planner</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;filled role&quot;</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">create_optional_outputs_if_necessary</span><span class="p">(</span>
-            <span class="n">planner_role</span><span class="p">,</span> <span class="n">prototypical_planner</span>
-        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">create_optional_outputs_if_necessary</span><span class="p">(</span><span class="n">planner_role</span><span class="p">,</span> <span class="n">prototypical_planner</span><span class="p">)</span>
 
         <span class="c1"># Build</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_production</span><span class="p">(</span><span class="n">with_watcher</span><span class="o">=</span><span class="n">with_watcher</span><span class="p">)</span></div>
@@ -1058,13 +1073,13 @@
             <span class="c1"># The user would need to define a forward kinematics function,</span>
             <span class="c1"># to convert the goal configuration to a goal pose.</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-                <span class="s2">&quot;It looks like you are trying to get the goal pose from the goal configuration.</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span>
-                <span class="s2">&quot;This is not implemented (yet!) because it would require solving the forward kinematics&quot;</span> <span class="o">+</span>
-                <span class="s2">&quot;problem for your specific scene.</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span>
-                <span class="s2">&quot;Please implement your own goal_pose() function with a custom forward kinamtics function&quot;</span> <span class="o">+</span>
-                <span class="s2">&quot; (see ChemLab2&#39;s forward kinematics function) to convert the goal configuration to a goal pose.&quot;</span>
+                <span class="s2">&quot;It looks like you are trying to get the goal pose from the goal configuration.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="o">+</span> <span class="s2">&quot;This is not implemented (yet!) because it would require solving the forward kinematics&quot;</span>
+                <span class="o">+</span> <span class="s2">&quot;problem for your specific scene.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="o">+</span> <span class="s2">&quot;Please implement your own goal_pose() function with a custom forward kinamtics function&quot;</span>
+                <span class="o">+</span> <span class="s2">&quot; (see ChemLab2&#39;s forward kinematics function) to convert the goal configuration to a goal pose.&quot;</span>
             <span class="p">)</span>
-            <span class="c1">#TODO(kwesi): Is there a way to do this without knowing about the user&#39;s robot?</span>
+            <span class="c1"># TODO(kwesi): Is there a way to do this without knowing about the user&#39;s robot?</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
                 <span class="s2">&quot;This function should be implemented by the subclass.&quot;</span>
@@ -1078,7 +1093,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">robot_model_idx_</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">robot_model_idx_</span>
-        <span class="k">else</span><span class="p">:</span>        
+        <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
                 <span class="s2">&quot;This function should be implemented by the subclass.&quot;</span>
             <span class="p">)</span>
@@ -1099,7 +1114,7 @@
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
                 <span class="s2">&quot;This function should be implemented by the subclass.&quot;</span>
             <span class="p">)</span>
-    
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">start_pose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RigidTransform</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1112,13 +1127,13 @@
             <span class="c1"># The user would need to define a forward kinematics function,</span>
             <span class="c1"># to convert the start configuration to a start pose.</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-                <span class="s2">&quot;It looks like you are trying to get the start pose from the start configuration.</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span>
-                <span class="s2">&quot;This is not implemented (yet!) because it would require solving the forward kinematics&quot;</span> <span class="o">+</span>
-                <span class="s2">&quot;problem for your specific scene.</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span>
-                <span class="s2">&quot;Please implement your own start_pose() function with a custom forward kinamtics function&quot;</span> <span class="o">+</span>
-                <span class="s2">&quot; (see ChemLab2&#39;s forward kinematics function) to convert the start configuration to a start pose.&quot;</span>
+                <span class="s2">&quot;It looks like you are trying to get the start pose from the start configuration.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="o">+</span> <span class="s2">&quot;This is not implemented (yet!) because it would require solving the forward kinematics&quot;</span>
+                <span class="o">+</span> <span class="s2">&quot;problem for your specific scene.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="o">+</span> <span class="s2">&quot;Please implement your own start_pose() function with a custom forward kinamtics function&quot;</span>
+                <span class="o">+</span> <span class="s2">&quot; (see ChemLab2&#39;s forward kinematics function) to convert the start configuration to a start pose.&quot;</span>
             <span class="p">)</span>
-            <span class="c1">#TODO(kwesi): Is there a way to do this without knowing about the user&#39;s robot?</span>
+            <span class="c1"># TODO(kwesi): Is there a way to do this without knowing about the user&#39;s robot?</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
                 <span class="s2">&quot;This function should be implemented by the subclass.&quot;</span>
@@ -1144,7 +1159,9 @@
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Input Processing</span>
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;Plant must be defined before solving IK problem!&quot;</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plant</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">),</span> <span class="s2">&quot;Plant must be defined before solving IK problem!&quot;</span>
 
         <span class="c1"># Setup</span>
 
@@ -1158,16 +1175,19 @@
         <span class="n">ik_program</span> <span class="o">=</span> <span class="n">ik_problem</span><span class="o">.</span><span class="n">prog</span><span class="p">()</span>
         <span class="n">ik_result</span> <span class="o">=</span> <span class="n">Solve</span><span class="p">(</span><span class="n">ik_program</span><span class="p">)</span>
 
-        <span class="k">assert</span> <span class="n">ik_result</span><span class="o">.</span><span class="n">get_solution_result</span><span class="p">()</span> <span class="o">==</span> <span class="n">SolutionResult</span><span class="o">.</span><span class="n">kSolutionFound</span><span class="p">,</span> \
-            <span class="sa">f</span><span class="s2">&quot;Solution result was </span><span class="si">{</span><span class="n">ik_result</span><span class="o">.</span><span class="n">get_solution_result</span><span class="p">()</span><span class="si">}</span><span class="s2">; need SolutionResult.kSolutionFound to make RRT Plan!&quot;</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="n">ik_result</span><span class="o">.</span><span class="n">get_solution_result</span><span class="p">()</span> <span class="o">==</span> <span class="n">SolutionResult</span><span class="o">.</span><span class="n">kSolutionFound</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Solution result was </span><span class="si">{</span><span class="n">ik_result</span><span class="o">.</span><span class="n">get_solution_result</span><span class="p">()</span><span class="si">}</span><span class="s2">; need SolutionResult.kSolutionFound to make RRT Plan!&quot;</span>
 
         <span class="n">q_solution</span> <span class="o">=</span> <span class="n">ik_result</span><span class="o">.</span><span class="n">get_x_val</span><span class="p">()</span>
         <span class="c1"># print(f&quot;solved ik problem: {q_solution}&quot;)</span>
 
         <span class="c1"># Extract only the positions that correspond to our robot&#39;s joints</span>
         <span class="k">if</span> <span class="n">robot_joint_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">robot_joint_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetPositionNames</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">robot_model_index</span><span class="p">,</span> <span class="n">add_model_instance_prefix</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        
+            <span class="n">robot_joint_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetPositionNames</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">robot_model_index</span><span class="p">,</span> <span class="n">add_model_instance_prefix</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+
         <span class="n">all_joint_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetPositionNames</span><span class="p">()</span>
         <span class="n">q_out_list</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">joint_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">all_joint_names</span><span class="p">):</span>
@@ -1211,7 +1231,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../../_static/documentation_options.js?v=1dd76d02"></script>
+</div><script src="../../../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

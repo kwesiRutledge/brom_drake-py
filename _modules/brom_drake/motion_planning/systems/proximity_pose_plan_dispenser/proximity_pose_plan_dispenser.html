@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.motion_planning.systems.proximity_pose_plan_dispenser.proximity_pose_plan_dispenser - brom_drake-py 0.5.0 documentation</title>
+        <title>brom_drake.motion_planning.systems.proximity_pose_plan_dispenser.proximity_pose_plan_dispenser - brom_drake-py v0.0.0+githubActionDefault documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../index.html"><div class="brand">brom_drake-py 0.5.0 documentation</div></a>
+      <a href="../../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.0 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -553,9 +553,13 @@
           <h1>Source code for brom_drake.motion_planning.systems.proximity_pose_plan_dispenser.proximity_pose_plan_dispenser</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">pydrake.all</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">AbstractValue</span><span class="p">,</span> <span class="n">BasicVector</span><span class="p">,</span> <span class="n">Context</span><span class="p">,</span>
+    <span class="n">AbstractValue</span><span class="p">,</span>
+    <span class="n">BasicVector</span><span class="p">,</span>
+    <span class="n">Context</span><span class="p">,</span>
     <span class="n">LeafSystem</span><span class="p">,</span>
-    <span class="n">PiecewisePolynomial</span><span class="p">,</span> <span class="n">PiecewiseQuaternionSlerp</span><span class="p">,</span> <span class="n">PiecewisePose</span><span class="p">,</span>
+    <span class="n">PiecewisePolynomial</span><span class="p">,</span>
+    <span class="n">PiecewiseQuaternionSlerp</span><span class="p">,</span>
+    <span class="n">PiecewisePose</span><span class="p">,</span>
     <span class="n">RigidTransform</span><span class="p">,</span>
 <span class="p">)</span>
 
@@ -565,7 +569,8 @@
     <span class="n">DispenserTransitionRequest</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">brom_drake.motion_planning.systems.proximity_pose_plan_dispenser.dispenser_internal_state</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">DispenserInternalState</span><span class="p">,</span> <span class="n">DispenserTransitionRequest</span><span class="p">,</span>
+    <span class="n">DispenserInternalState</span><span class="p">,</span>
+    <span class="n">DispenserTransitionRequest</span><span class="p">,</span>
 <span class="p">)</span>
 
 
@@ -574,7 +579,7 @@
 <span class="k">class</span> <span class="nc">ProximityPosePlanDispenser</span><span class="p">(</span><span class="n">LeafSystem</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    *Description*</span>
-<span class="sd">    </span>
+
 <span class="sd">    A dispenser which will dispense the plan that is given to it. It will provide the</span>
 <span class="sd">    next point in the plan when the current_pose is &quot;within proximity&quot; of the current target</span>
 <span class="sd">    in the plan. The proximity is defined by the proximity config that is given to the</span>
@@ -591,11 +596,11 @@
 <span class="sd">        plan           -----------&gt; |  Plan         | ----&gt; dispenser_state</span>
 <span class="sd">                                    |  Dispenser    |</span>
 <span class="sd">        request ------------------&gt; |               | ----&gt; current_pose_index</span>
-<span class="sd">                                    |               | </span>
+<span class="sd">                                    |               |</span>
 <span class="sd">                                    -----------------</span>
 
 <span class="sd">    *Input Ports*</span>
-<span class="sd">    </span>
+
 <span class="sd">    plan: AbstractValue (List[RigidTransform])</span>
 <span class="sd">        This port is used to receive the plan that the system should follow.</span>
 <span class="sd">    plan_ready: AbstractValue (bool)</span>
@@ -603,17 +608,18 @@
 <span class="sd">        Lower this (to false) and then raise it (to true) to trigger the system to</span>
 <span class="sd">        reset the plan.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">config</span><span class="p">:</span> <span class="n">ProximityPosePlanDispenserConfig</span> <span class="o">=</span> <span class="n">ProximityPosePlanDispenserConfig</span><span class="p">(),</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This function initializes the Proximity Pose Plan Dispenser.</span>
 
 <span class="sd">        *Parameters*</span>
-<span class="sd">        </span>
+
 <span class="sd">        config: ProximityPosePlanDispenserConfig</span>
 <span class="sd">            The configuration for the Proximity Pose Plan Dispenser.</span>
 <span class="sd">            See brom_drake/motion_planning/systems/proximity_pose_plan_dispenser/proximity_pose_plan_dispenser.py</span>
@@ -646,12 +652,12 @@
     <span class="k">def</span> <span class="nf">advance_plan_if_necessary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This function is responsible for advancing the plan index if the system</span>
 <span class="sd">        is ready to do so.</span>
 
 <span class="sd">        *Parameters*</span>
-<span class="sd">        </span>
+
 <span class="sd">        context: Context</span>
 <span class="sd">            The current context of the system.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -672,10 +678,9 @@
             <span class="n">plan</span><span class="p">[</span><span class="n">plan_idx</span><span class="p">],</span>
         <span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">should_advance</span> <span class="ow">and</span> <span class="p">(</span><span class="n">plan_idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">plan</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">should_advance</span> <span class="ow">and</span> <span class="p">(</span><span class="n">plan_idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">plan</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">dispenser_plan_index</span> <span class="o">+=</span> <span class="mi">1</span></div>
 
-                    
 
 <div class="viewcode-block" id="ProximityPosePlanDispenser.declare_input_ports">
 <a class="viewcode-back" href="../../../../../generated/motion_planning/systems/proximity_pose_plan_dispenser/proximity_pose_plan_dispenser.html#brom_drake.motion_planning.systems.proximity_pose_plan_dispenser.proximity_pose_plan_dispenser.ProximityPosePlanDispenser.declare_input_ports">[docs]</a>
@@ -693,7 +698,7 @@
             <span class="s2">&quot;current_pose&quot;</span><span class="p">,</span>
             <span class="n">AbstractValue</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="n">RigidTransform</span><span class="p">()),</span>
         <span class="p">)</span>
-        
+
         <span class="bp">self</span><span class="o">.</span><span class="n">plan_port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DeclareAbstractInputPort</span><span class="p">(</span>
             <span class="s2">&quot;plan&quot;</span><span class="p">,</span>
             <span class="n">AbstractValue</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="n">sample_plan</span><span class="p">),</span>
@@ -710,7 +715,7 @@
     <span class="k">def</span> <span class="nf">declare_output_ports</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This function creates the output ports for the plan dispenser.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Setup</span>
@@ -740,11 +745,11 @@
     <span class="k">def</span> <span class="nf">GetCurrentPoseIndex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="n">BasicVector</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This function is responsible for outputting the current index of the plan that the system is on.</span>
 
 <span class="sd">        *Parameters*</span>
-<span class="sd">        </span>
+
 <span class="sd">        context: Context</span>
 <span class="sd">            The current context of the system.</span>
 
@@ -755,9 +760,7 @@
         <span class="n">plan_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dispenser_plan_index</span>
 
         <span class="c1"># Output the current index</span>
-        <span class="n">output</span><span class="o">.</span><span class="n">SetFromVector</span><span class="p">(</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">plan_idx</span><span class="p">])</span>
-        <span class="p">)</span></div>
+        <span class="n">output</span><span class="o">.</span><span class="n">SetFromVector</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">plan_idx</span><span class="p">]))</span></div>
 
 
 <div class="viewcode-block" id="ProximityPosePlanDispenser.GetCurrentPoseInPlan">
@@ -765,14 +768,14 @@
     <span class="k">def</span> <span class="nf">GetCurrentPoseInPlan</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">output_pose</span><span class="p">:</span> <span class="n">AbstractValue</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This function is responsible for outputting the current pose in the plan that the system is on.</span>
 <span class="sd">        The plan will only advance if the system is currently &quot;within proximity&quot;</span>
 <span class="sd">        of the current target in the plan. (i.e., if the current pose satisfies the</span>
 <span class="sd">        in_proximity() function of the proximity config.)</span>
-<span class="sd">        </span>
+
 <span class="sd">        *Parameters*</span>
-<span class="sd">        </span>
+
 <span class="sd">        context: Context</span>
 <span class="sd">            The current context of the system.</span>
 
@@ -793,20 +796,16 @@
         <span class="c1"># the LAST pose.</span>
         <span class="n">dispenser_in_reset</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">DispenserInternalState</span><span class="o">.</span><span class="n">kReady</span>
         <span class="k">if</span> <span class="n">dispenser_in_reset</span><span class="p">:</span>
-            <span class="n">output_pose</span><span class="o">.</span><span class="n">SetFrom</span><span class="p">(</span>
-                <span class="n">AbstractValue</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="n">last_pose</span><span class="p">)</span>
-            <span class="p">)</span>
+            <span class="n">output_pose</span><span class="o">.</span><span class="n">SetFrom</span><span class="p">(</span><span class="n">AbstractValue</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="n">last_pose</span><span class="p">))</span>
             <span class="k">return</span>
-        
+
         <span class="c1"># If the state of the plan is kPlanSet,</span>
         <span class="c1"># then check to see if we should ADVANCE to the next part of the plan</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">advance_plan_if_necessary</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
         <span class="n">plan_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dispenser_plan_index</span>
 
         <span class="c1"># Output The Current Point in the Plan</span>
-        <span class="n">output_pose</span><span class="o">.</span><span class="n">SetFrom</span><span class="p">(</span>
-            <span class="n">AbstractValue</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="n">plan</span><span class="p">[</span><span class="n">plan_idx</span><span class="p">])</span>
-        <span class="p">)</span></div>
+        <span class="n">output_pose</span><span class="o">.</span><span class="n">SetFrom</span><span class="p">(</span><span class="n">AbstractValue</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="n">plan</span><span class="p">[</span><span class="n">plan_idx</span><span class="p">]))</span></div>
 
 
 <div class="viewcode-block" id="ProximityPosePlanDispenser.GetInternalState">
@@ -814,13 +813,13 @@
     <span class="k">def</span> <span class="nf">GetInternalState</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="n">BasicVector</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        Retrieves the current value of the internal state of this</span>
 <span class="sd">        planner. The internal state is defined by the DispenserInternalState</span>
 <span class="sd">        enum found in brom_drake/motion_planning/systems/proximity_pose_plan_dispenser/dispsenser_internal_state.py.</span>
 
 <span class="sd">        *Parameters*</span>
-<span class="sd">        </span>
+
 <span class="sd">        context: Context</span>
 <span class="sd">            The current context of the system.</span>
 
@@ -833,9 +832,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">transition_internal_state</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
 
         <span class="c1"># Output the internal state</span>
-        <span class="n">output</span><span class="o">.</span><span class="n">SetFrom</span><span class="p">(</span>
-            <span class="n">context</span><span class="o">.</span><span class="n">get_discrete_state</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dispenser_state</span><span class="p">)</span>
-        <span class="p">)</span></div>
+        <span class="n">output</span><span class="o">.</span><span class="n">SetFrom</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">get_discrete_state</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dispenser_state</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="ProximityPosePlanDispenser.transition_internal_state">
@@ -843,12 +840,12 @@
     <span class="k">def</span> <span class="nf">transition_internal_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This function is responsible for transitioning the internal state of the system</span>
 <span class="sd">        based on the request that is given to it.</span>
 
 <span class="sd">        *Parameters*</span>
-<span class="sd">        </span>
+
 <span class="sd">        context: Context</span>
 <span class="sd">            The current context of the system.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -862,26 +859,26 @@
         <span class="n">dispenser_is_ready</span> <span class="o">=</span> <span class="n">current_state</span> <span class="o">==</span> <span class="n">DispenserInternalState</span><span class="o">.</span><span class="n">kReady</span>
         <span class="n">dispenser_plan_is_set</span> <span class="o">=</span> <span class="n">current_state</span> <span class="o">==</span> <span class="n">DispenserInternalState</span><span class="o">.</span><span class="n">kPlanSet</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="n">request</span> <span class="o">==</span> <span class="n">DispenserTransitionRequest</span><span class="o">.</span><span class="n">kRequestSavePlan</span><span class="p">)</span> <span class="ow">and</span> <span class="n">dispenser_is_ready</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">request</span> <span class="o">==</span> <span class="n">DispenserTransitionRequest</span><span class="o">.</span><span class="n">kRequestSavePlan</span>
+        <span class="p">)</span> <span class="ow">and</span> <span class="n">dispenser_is_ready</span><span class="p">:</span>
             <span class="c1"># Save the plan AND transition to the &quot;Plan Set&quot; state</span>
             <span class="n">current_plan</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plan_port</span><span class="o">.</span><span class="n">Eval</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">plan</span> <span class="o">=</span> <span class="n">current_plan</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">dispenser_plan_index</span> <span class="o">=</span> <span class="mi">0</span>
 
             <span class="c1"># Set the internal state</span>
-            <span class="n">context</span><span class="o">.</span><span class="n">SetDiscreteState</span><span class="p">(</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">DispenserInternalState</span><span class="o">.</span><span class="n">kPlanSet</span><span class="p">])</span>
-            <span class="p">)</span>
-        <span class="k">elif</span> <span class="p">(</span><span class="n">request</span> <span class="o">==</span> <span class="n">DispenserTransitionRequest</span><span class="o">.</span><span class="n">kRequestReset</span><span class="p">)</span> <span class="ow">and</span> <span class="n">dispenser_plan_is_set</span><span class="p">:</span>
+            <span class="n">context</span><span class="o">.</span><span class="n">SetDiscreteState</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">DispenserInternalState</span><span class="o">.</span><span class="n">kPlanSet</span><span class="p">]))</span>
+        <span class="k">elif</span> <span class="p">(</span>
+            <span class="n">request</span> <span class="o">==</span> <span class="n">DispenserTransitionRequest</span><span class="o">.</span><span class="n">kRequestReset</span>
+        <span class="p">)</span> <span class="ow">and</span> <span class="n">dispenser_plan_is_set</span><span class="p">:</span>
             <span class="c1"># Prepare the system to receive a new plan</span>
             <span class="c1"># self.dispenser_plan_index = 0</span>
 
             <span class="c1"># Set the internal state</span>
-            <span class="n">context</span><span class="o">.</span><span class="n">SetDiscreteState</span><span class="p">(</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">DispenserInternalState</span><span class="o">.</span><span class="n">kReady</span><span class="p">])</span>
-            <span class="p">)</span>
+            <span class="n">context</span><span class="o">.</span><span class="n">SetDiscreteState</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">DispenserInternalState</span><span class="o">.</span><span class="n">kReady</span><span class="p">]))</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># Otherwise, do nothing </span>
+            <span class="c1"># Otherwise, do nothing</span>
             <span class="k">pass</span></div>
 </div>
 
@@ -916,7 +913,7 @@
     <span class="c1">#             self.plan[ii].translation(),</span>
     <span class="c1">#             self.plan[ii+1].translation(),</span>
     <span class="c1">#             )</span>
-            
+
     <span class="c1">#         # Save the times, positions and orientaitons separately</span>
     <span class="c1">#         times += [t_ii]</span>
     <span class="c1">#         positions_as_array = np.vstack(</span>
@@ -935,13 +932,11 @@
     <span class="c1">#         [p.translation() for p in self.plan],</span>
     <span class="c1">#     )</span>
     <span class="c1">#     orientation_trajectory = PiecewiseQuaternionSlerp(times, [RigidTransform(p).rotation() for p in self.plan])</span>
-        
+
     <span class="c1">#     self.planned_trajectory = PiecewisePose(</span>
     <span class="c1">#         position_trajectory,</span>
     <span class="c1">#         orientation_trajectory,</span>
     <span class="c1">#     )</span>
-
-
 </pre></div>
         </article>
       </div>
@@ -974,7 +969,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../_static/documentation_options.js?v=1dd76d02"></script>
+</div><script src="../../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.motion_planning.algorithms.rrt.base - brom_drake-py 0.5.0 documentation</title>
+        <title>brom_drake.motion_planning.algorithms.rrt.base - brom_drake-py v0.0.0+githubActionDefault documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../index.html"><div class="brand">brom_drake-py 0.5.0 documentation</div></a>
+      <a href="../../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.0 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -554,6 +554,7 @@
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">base.py</span>
 <span class="sd">&quot;&quot;&quot;</span>
+
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Callable</span>
 
@@ -562,8 +563,10 @@
 <span class="kn">from</span> <span class="nn">pydrake.geometry</span> <span class="kn">import</span> <span class="n">SceneGraph</span>
 <span class="kn">from</span> <span class="nn">pydrake.multibody.plant</span> <span class="kn">import</span> <span class="n">MultibodyPlant</span>
 <span class="kn">from</span> <span class="nn">pydrake.multibody.tree</span> <span class="kn">import</span> <span class="n">ModelInstanceIndex</span>
+
 <span class="c1"># Internal Imports</span>
 <span class="kn">from</span> <span class="nn">brom_drake.motion_planning.algorithms.motion_planner</span> <span class="kn">import</span> <span class="n">MotionPlanner</span>
+
 
 <div class="viewcode-block" id="BaseRRTPlannerConfig">
 <a class="viewcode-back" href="../../../../../generated/motion_planning/algorithms/rrt/rrt.html#brom_drake.motion_planning.algorithms.rrt.base.BaseRRTPlannerConfig">[docs]</a>
@@ -574,6 +577,7 @@
     <span class="n">prob_sample_goal</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.25</span>
     <span class="n">max_iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e4</span><span class="p">)</span>
     <span class="n">convergence_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-3</span></div>
+
 
 
 <div class="viewcode-block" id="BaseRRTPlanner">
@@ -597,26 +601,26 @@
 
         <span class="c1"># Use the parent class constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">robot_model_idx</span><span class="p">,</span> <span class="n">plant</span><span class="p">,</span> <span class="n">scene_graph</span><span class="p">,</span> 
+            <span class="n">robot_model_idx</span><span class="p">,</span>
+            <span class="n">plant</span><span class="p">,</span>
+            <span class="n">scene_graph</span><span class="p">,</span>
             <span class="n">random_seed</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">random_seed</span><span class="p">,</span>
         <span class="p">)</span>
 
 <div class="viewcode-block" id="BaseRRTPlanner.find_nearest_node">
 <a class="viewcode-back" href="../../../../../generated/motion_planning/algorithms/rrt/rrt.html#brom_drake.motion_planning.algorithms.rrt.base.BaseRRTPlanner.find_nearest_node">[docs]</a>
     <span class="k">def</span> <span class="nf">find_nearest_node</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">rrt</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">,</span>
-        <span class="n">q_random</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">rrt</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">,</span> <span class="n">q_random</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">nx</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">reportviews</span><span class="o">.</span><span class="n">NodeView</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Description:</span>
 <span class="sd">            This function finds the nearest node in the RRT to the random configuration.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">nearest_node</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">min_distance</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
+        <span class="n">min_distance</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">rrt</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
-            <span class="n">distance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">rrt</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="s1">&#39;q&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">q_random</span><span class="p">)</span>
+            <span class="n">distance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">rrt</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="s2">&quot;q&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">q_random</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">distance</span> <span class="o">&lt;</span> <span class="n">min_distance</span><span class="p">:</span>
                 <span class="n">min_distance</span> <span class="o">=</span> <span class="n">distance</span>
                 <span class="n">nearest_node_idx</span> <span class="o">=</span> <span class="n">node</span>
@@ -642,16 +646,16 @@
         <span class="n">q_goal</span> <span class="o">=</span> <span class="n">q_goal</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">q_start</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim_q</span> <span class="ow">or</span> <span class="n">q_goal</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim_q</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Start configuration shape (</span><span class="si">{</span><span class="n">q_start</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">) and goal configuration &quot;</span> <span class="o">+</span>
-                <span class="sa">f</span><span class="s2">&quot;shape (</span><span class="si">{</span><span class="n">q_goal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">) must match the dimension of the robot (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dim_q</span><span class="si">}</span><span class="s2">).&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Start configuration shape (</span><span class="si">{</span><span class="n">q_start</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">) and goal configuration &quot;</span>
+                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;shape (</span><span class="si">{</span><span class="n">q_goal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">) must match the dimension of the robot (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dim_q</span><span class="si">}</span><span class="s2">).&quot;</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">collision_check_fcn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">collision_check_fcn</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">check_collision_in_config</span>
+            <span class="n">collision_check_fcn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_collision_in_config</span>
 
         <span class="c1"># Setup</span>
         <span class="n">rrt</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
-        <span class="n">rrt</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="n">q_start</span><span class="p">)</span> <span class="c1"># Make this graph contain all configurations</span>
+        <span class="n">rrt</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="n">q_start</span><span class="p">)</span>  <span class="c1"># Make this graph contain all configurations</span>
         <span class="n">prob_sample_goal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">prob_sample_goal</span>
 
         <span class="c1"># RRT Planner</span>
@@ -666,7 +670,7 @@
             <span class="n">nearest_node</span><span class="p">,</span> <span class="n">nearest_node_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_nearest_node</span><span class="p">(</span><span class="n">rrt</span><span class="p">,</span> <span class="n">q_random</span><span class="p">)</span>
 
             <span class="c1"># Steer from nearest node to random configuration</span>
-            <span class="n">q_new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">steer</span><span class="p">(</span><span class="n">nearest_node</span><span class="p">[</span><span class="s1">&#39;q&#39;</span><span class="p">],</span> <span class="n">q_random</span><span class="p">)</span>
+            <span class="n">q_new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">steer</span><span class="p">(</span><span class="n">nearest_node</span><span class="p">[</span><span class="s2">&quot;q&quot;</span><span class="p">],</span> <span class="n">q_random</span><span class="p">)</span>
 
             <span class="c1"># Check for collisions</span>
             <span class="k">if</span> <span class="n">collision_check_fcn</span><span class="p">(</span><span class="n">q_new</span><span class="p">):</span>
@@ -674,7 +678,7 @@
 
             <span class="c1"># Add new node to the tree</span>
             <span class="n">rrt</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">rrt</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">(),</span> <span class="n">q</span><span class="o">=</span><span class="n">q_new</span><span class="p">)</span>
-            <span class="n">rrt</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">nearest_node_idx</span><span class="p">,</span> <span class="n">rrt</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">()</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">rrt</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">nearest_node_idx</span><span class="p">,</span> <span class="n">rrt</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
 
             <span class="c1"># Check if we have reached the goal</span>
             <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">q_new</span> <span class="o">-</span> <span class="n">q_goal</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">convergence_threshold</span><span class="p">:</span>
@@ -682,10 +686,12 @@
                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Check all points in path: </span><span class="si">{</span><span class="n">rrt</span><span class="o">.</span><span class="n">nodes</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">rrt</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
                     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Node </span><span class="si">{</span><span class="n">node</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">rrt</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                    <span class="n">collision_check_value</span> <span class="o">=</span> <span class="n">collision_check_fcn</span><span class="p">(</span><span class="n">rrt</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="s1">&#39;q&#39;</span><span class="p">])</span>
+                    <span class="n">collision_check_value</span> <span class="o">=</span> <span class="n">collision_check_fcn</span><span class="p">(</span><span class="n">rrt</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="s2">&quot;q&quot;</span><span class="p">])</span>
                     <span class="k">if</span> <span class="n">collision_check_value</span><span class="p">:</span>
-                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Collision check node: </span><span class="si">{</span><span class="n">collision_check_fcn</span><span class="p">(</span><span class="n">rrt</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="s1">&#39;q&#39;</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="k">return</span> <span class="n">rrt</span><span class="p">,</span> <span class="n">rrt</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">()</span><span class="o">-</span><span class="mi">1</span>
+                        <span class="nb">print</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;Collision check node: </span><span class="si">{</span><span class="n">collision_check_fcn</span><span class="p">(</span><span class="n">rrt</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="s1">&#39;q&#39;</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="p">)</span>
+                <span class="k">return</span> <span class="n">rrt</span><span class="p">,</span> <span class="n">rrt</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span>
 
         <span class="c1"># If we exit the loop without finding a path to the goal,</span>
         <span class="c1"># return the RRT and indicate failure</span>
@@ -695,11 +701,7 @@
 
 <div class="viewcode-block" id="BaseRRTPlanner.steer">
 <a class="viewcode-back" href="../../../../../generated/motion_planning/algorithms/rrt/rrt.html#brom_drake.motion_planning.algorithms.rrt.base.BaseRRTPlanner.steer">[docs]</a>
-    <span class="k">def</span> <span class="nf">steer</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">nearest_node</span><span class="p">,</span>
-        <span class="n">q_random</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">steer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nearest_node</span><span class="p">,</span> <span class="n">q_random</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Description</span>
 <span class="sd">        -----------</span>
@@ -754,7 +756,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../_static/documentation_options.js?v=1dd76d02"></script>
+</div><script src="../../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

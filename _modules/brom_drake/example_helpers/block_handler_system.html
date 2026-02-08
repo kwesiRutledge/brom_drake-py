@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.example_helpers.block_handler_system - brom_drake-py 0.5.0 documentation</title>
+        <title>brom_drake.example_helpers.block_handler_system - brom_drake-py v0.0.0+githubActionDefault documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">brom_drake-py 0.5.0 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.0 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -557,13 +557,20 @@
 <span class="kn">from</span> <span class="nn">pydrake.multibody.math</span> <span class="kn">import</span> <span class="n">SpatialVelocity</span>
 <span class="kn">from</span> <span class="nn">pydrake.multibody.parsing</span> <span class="kn">import</span> <span class="n">Parser</span>
 <span class="kn">from</span> <span class="nn">pydrake.multibody.plant</span> <span class="kn">import</span> <span class="n">MultibodyPlant</span><span class="p">,</span> <span class="n">CoulombFriction</span>
-<span class="kn">from</span> <span class="nn">pydrake.systems.framework</span> <span class="kn">import</span> <span class="n">Diagram</span><span class="p">,</span> <span class="n">DiagramBuilder</span><span class="p">,</span> <span class="n">LeafSystem</span><span class="p">,</span> <span class="n">PortDataType</span><span class="p">,</span> <span class="n">BasicVector</span>
+<span class="kn">from</span> <span class="nn">pydrake.systems.framework</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Diagram</span><span class="p">,</span>
+    <span class="n">DiagramBuilder</span><span class="p">,</span>
+    <span class="n">LeafSystem</span><span class="p">,</span>
+    <span class="n">PortDataType</span><span class="p">,</span>
+    <span class="n">BasicVector</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="c1"># Internal Imports</span>
 <span class="kn">from</span> <span class="nn">brom_drake</span> <span class="kn">import</span> <span class="n">example_helpers</span> <span class="k">as</span> <span class="n">eh</span>
 <span class="kn">from</span> <span class="nn">brom_drake.utils</span> <span class="kn">import</span> <span class="n">AddGround</span><span class="p">,</span> <span class="n">AddMultibodyTriad</span>
+
 
 <div class="viewcode-block" id="BlockHandlerSystem">
 <a class="viewcode-back" href="../../../generated/example_helpers/example_helpers.html#brom_drake.example_helpers.block_handler_system.BlockHandlerSystem">[docs]</a>
@@ -592,7 +599,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">block_model_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetModelInstanceName</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">block_model_idx</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">block_body_name</span> <span class="o">=</span> <span class="s2">&quot;block&quot;</span>
 
-        <span class="n">AddGround</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="p">)</span> <span class="c1">#Add ground to plant</span>
+        <span class="n">AddGround</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="p">)</span>  <span class="c1"># Add ground to plant</span>
 
         <span class="c1"># Add the Triad</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scene_graph</span> <span class="o">=</span> <span class="n">scene_graph</span>
@@ -612,8 +619,8 @@
             <span class="s2">&quot;measured_block_pose&quot;</span><span class="p">,</span>
             <span class="n">BasicVector</span><span class="p">(</span><span class="mi">6</span><span class="p">),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">SetBlockPose</span><span class="p">,</span>
-            <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">time_ticket</span><span class="p">()}</span>    <span class="c1"># indicate that this doesn&#39;t depend on any inputs,</span>
-        <span class="p">)</span>                           <span class="c1"># but should still be updated each timestep</span>
+            <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">time_ticket</span><span class="p">()},</span>  <span class="c1"># indicate that this doesn&#39;t depend on any inputs,</span>
+        <span class="p">)</span>  <span class="c1"># but should still be updated each timestep</span>
 
 <div class="viewcode-block" id="BlockHandlerSystem.SetBlockPose">
 <a class="viewcode-back" href="../../../generated/example_helpers/example_helpers.html#brom_drake.example_helpers.block_handler_system.BlockHandlerSystem.SetBlockPose">[docs]</a>
@@ -630,7 +637,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">SetFreeBodyPose</span><span class="p">(</span>
             <span class="n">plant_context</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetBodyByName</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">block_body_name</span><span class="p">),</span>
-            <span class="n">RigidTransform</span><span class="p">(</span><span class="n">RollPitchYaw</span><span class="p">(</span><span class="n">pose_as_vec</span><span class="p">[:</span><span class="mi">3</span><span class="p">]),</span><span class="n">pose_as_vec</span><span class="p">[</span><span class="mi">3</span><span class="p">:])</span>
+            <span class="n">RigidTransform</span><span class="p">(</span><span class="n">RollPitchYaw</span><span class="p">(</span><span class="n">pose_as_vec</span><span class="p">[:</span><span class="mi">3</span><span class="p">]),</span> <span class="n">pose_as_vec</span><span class="p">[</span><span class="mi">3</span><span class="p">:]),</span>
         <span class="p">)</span>
 
         <span class="c1"># self.plant.SetFreeBodySpatialVelocity(</span>
@@ -640,11 +647,12 @@
         <span class="c1"># )</span>
 
         <span class="n">X_WBlock</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetFreeBodyPose</span><span class="p">(</span>
-            <span class="n">plant_context</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetBodyByName</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">block_body_name</span><span class="p">)</span>
+            <span class="n">plant_context</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetBodyByName</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">block_body_name</span><span class="p">)</span>
         <span class="p">)</span>
 
-        <span class="n">pose_as_vector</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">RollPitchYaw</span><span class="p">(</span><span class="n">X_WBlock</span><span class="o">.</span><span class="n">rotation</span><span class="p">())</span><span class="o">.</span><span class="n">vector</span><span class="p">(),</span> <span class="n">X_WBlock</span><span class="o">.</span><span class="n">translation</span><span class="p">()])</span>
+        <span class="n">pose_as_vector</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">RollPitchYaw</span><span class="p">(</span><span class="n">X_WBlock</span><span class="o">.</span><span class="n">rotation</span><span class="p">())</span><span class="o">.</span><span class="n">vector</span><span class="p">(),</span> <span class="n">X_WBlock</span><span class="o">.</span><span class="n">translation</span><span class="p">()]</span>
+        <span class="p">)</span>
 
         <span class="c1"># Create Output</span>
         <span class="n">output</span><span class="o">.</span><span class="n">SetFromVector</span><span class="p">(</span><span class="n">pose_as_vector</span><span class="p">)</span></div>
@@ -652,7 +660,7 @@
 
 <div class="viewcode-block" id="BlockHandlerSystem.SetInitialBlockState">
 <a class="viewcode-back" href="../../../generated/example_helpers/example_helpers.html#brom_drake.example_helpers.block_handler_system.BlockHandlerSystem.SetInitialBlockState">[docs]</a>
-    <span class="k">def</span> <span class="nf">SetInitialBlockState</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">diagram_context</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">SetInitialBlockState</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">diagram_context</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Description:</span>
 <span class="sd">            Sets the initial position to be slightly above the ground (small, positive z value)</span>
@@ -661,18 +669,22 @@
 
         <span class="c1"># Set Pose</span>
         <span class="n">p_WBlock</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">]</span>
-        <span class="n">R_WBlock</span> <span class="o">=</span> <span class="n">RotationMatrix</span><span class="o">.</span><span class="n">MakeXRotation</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">2.0</span><span class="p">)</span> <span class="c1"># RotationMatrix.MakeXRotation(-np.pi/2.0)</span>
+        <span class="n">R_WBlock</span> <span class="o">=</span> <span class="n">RotationMatrix</span><span class="o">.</span><span class="n">MakeXRotation</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="p">)</span>  <span class="c1"># RotationMatrix.MakeXRotation(-np.pi/2.0)</span>
         <span class="n">X_WBlock</span> <span class="o">=</span> <span class="n">RigidTransform</span><span class="p">(</span><span class="n">R_WBlock</span><span class="p">,</span> <span class="n">p_WBlock</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">SetFreeBodyPose</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetMyContextFromRoot</span><span class="p">(</span><span class="n">diagram_context</span><span class="p">),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetBodyByName</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">block_body_name</span><span class="p">),</span>
-            <span class="n">X_WBlock</span><span class="p">)</span>
+            <span class="n">X_WBlock</span><span class="p">,</span>
+        <span class="p">)</span>
 
         <span class="c1"># Set Velocities</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">SetFreeBodySpatialVelocity</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetBodyByName</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">block_body_name</span><span class="p">),</span>
-            <span class="n">SpatialVelocity</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">])),</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetMyContextFromRoot</span><span class="p">(</span><span class="n">diagram_context</span><span class="p">))</span></div>
+            <span class="n">SpatialVelocity</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetMyContextFromRoot</span><span class="p">(</span><span class="n">diagram_context</span><span class="p">),</span>
+        <span class="p">)</span></div>
 </div>
 
 </pre></div>
@@ -707,7 +719,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=1dd76d02"></script>
+</div><script src="../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>

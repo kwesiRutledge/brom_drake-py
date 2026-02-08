@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.productions.debug.grasping.attempt_grasp.with_puppeteer_wrist.config - brom_drake-py 0.5.0 documentation</title>
+        <title>brom_drake.productions.debug.grasping.attempt_grasp.with_puppeteer_wrist.config - brom_drake-py v0.0.0+githubActionDefault documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../../../index.html"><div class="brand">brom_drake-py 0.5.0 documentation</div></a>
+      <a href="../../../../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.0 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -556,8 +556,11 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="c1"># Internal Imports</span>
-<span class="kn">from</span> <span class="nn">brom_drake.productions.types.base.configuration</span> <span class="kn">import</span> <span class="n">Configuration</span> <span class="k">as</span> <span class="n">BaseConfiguration</span>
+<span class="kn">from</span> <span class="nn">brom_drake.productions.types.base.configuration</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Configuration</span> <span class="k">as</span> <span class="n">BaseConfiguration</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">.script</span> <span class="kn">import</span> <span class="n">Script</span> <span class="k">as</span> <span class="n">AttemptGraspWithPuppeteerWristScript</span>
+
 
 <div class="viewcode-block" id="Configuration">
 <a class="viewcode-back" href="../../../../../../../generated/productions/debug/grasping/attempt_grasp/with_puppeteer_wrist/with_puppeteer_wrist.html#brom_drake.productions.debug.grasping.attempt_grasp.with_puppeteer_wrist.config.Configuration">[docs]</a>
@@ -603,13 +606,20 @@
 <span class="sd">        Default is the standard AttemptGraspWithPuppeteerWristScript.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">base</span><span class="p">:</span> <span class="n">BaseConfiguration</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">BaseConfiguration</span><span class="p">)</span> <span class="c1">#By default, use the standard script</span>
+
+    <span class="n">base</span><span class="p">:</span> <span class="n">BaseConfiguration</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="n">BaseConfiguration</span>
+    <span class="p">)</span>  <span class="c1"># By default, use the standard script</span>
     <span class="n">show_collision_geometries</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">initial_gripper_joint_positions</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">target_body_on_gripper</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># The &quot;Gripper&quot; Frame that we use to define X_GripperObject</span>
+    <span class="n">target_body_on_gripper</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="kc">None</span>  <span class="c1"># The &quot;Gripper&quot; Frame that we use to define X_GripperObject</span>
+    <span class="p">)</span>
     <span class="n">gripper_color</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">show_gripper_base_frame</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">script</span><span class="p">:</span> <span class="n">AttemptGraspWithPuppeteerWristScript</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">AttemptGraspWithPuppeteerWristScript</span><span class="p">)</span> <span class="c1">#By default, use the standard script</span>
+    <span class="n">script</span><span class="p">:</span> <span class="n">AttemptGraspWithPuppeteerWristScript</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="n">AttemptGraspWithPuppeteerWristScript</span>
+    <span class="p">)</span>  <span class="c1"># By default, use the standard script</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">meshcat_port_number</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -661,7 +671,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../../../_static/documentation_options.js?v=1dd76d02"></script>
+</div><script src="../../../../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

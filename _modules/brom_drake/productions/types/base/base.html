@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.productions.types.base.base - brom_drake-py 0.5.0 documentation</title>
+        <title>brom_drake.productions.types.base.base - brom_drake-py v0.0.0+githubActionDefault documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../index.html"><div class="brand">brom_drake-py 0.5.0 documentation</div></a>
+      <a href="../../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.0 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -563,6 +563,7 @@
 <span class="kn">from</span> <span class="nn">brom_drake.watchers.diagram_watcher.add_watcher</span> <span class="kn">import</span> <span class="n">add_watcher_and_build</span>
 <span class="kn">from</span> <span class="nn">brom_drake.utils.initial_condition_manager</span> <span class="kn">import</span> <span class="n">InitialConditionManager</span>
 
+
 <div class="viewcode-block" id="BaseProduction">
 <a class="viewcode-back" href="../../../../../generated/productions/types/base/base.html#brom_drake.productions.types.base.base.BaseProduction">[docs]</a>
 <span class="k">class</span> <span class="nc">BaseProduction</span><span class="p">:</span>
@@ -602,8 +603,9 @@
 <span class="sd">    initial_condition_manager : InitialConditionManager</span>
 <span class="sd">        The InitialConditionManager used to manage initial conditions</span>
 <span class="sd">        for the production.</span>
-<span class="sd">        </span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="c1"># Create a builder for the production</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">builder</span> <span class="o">=</span> <span class="n">DiagramBuilder</span><span class="p">()</span>
@@ -629,11 +631,11 @@
     <span class="k">def</span> <span class="nf">add_supporting_cast</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This method must be implemented by the subclass.</span>
 <span class="sd">        It should add all &quot;secondary&quot; elements to the builder (i.e., the</span>
 <span class="sd">        cast members that the user doesn&#39;t need to worry about).</span>
-<span class="sd">        </span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
@@ -643,10 +645,10 @@
     <span class="k">def</span> <span class="nf">suggested_roles</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Role</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This method should be implemented by the subclass.</span>
 <span class="sd">        It should return a list of roles that are suggested for the production.</span>
-<span class="sd">        </span>
+
 <span class="sd">        *Returns*</span>
 
 <span class="sd">        suggested_roles: List[Role]</span>
@@ -664,10 +666,10 @@
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This method should be implemented by the subclass. It should add the</span>
 <span class="sd">        system to the role.</span>
-<span class="sd">        </span>
+
 <span class="sd">        *Parameters*</span>
 
 <span class="sd">        role: Role</span>
@@ -705,10 +707,10 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Diagram</span><span class="p">,</span> <span class="n">Context</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This method builds the production.</span>
 <span class="sd">        It assumes that all components have been added to the builder.</span>
-<span class="sd">        </span>
+
 <span class="sd">        *Parameters*</span>
 
 <span class="sd">        with_watcher: bool, optional</span>
@@ -741,8 +743,7 @@
         <span class="c1"># Build the diagram</span>
         <span class="k">if</span> <span class="n">with_watcher</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">watcher</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">diagram</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">diagram_context</span> <span class="o">=</span> <span class="n">add_watcher_and_build</span><span class="p">(</span>
-                <span class="n">builder</span><span class="p">,</span>
-                <span class="n">figure_naming_convention</span><span class="o">=</span><span class="n">figure_naming_convention</span>
+                <span class="n">builder</span><span class="p">,</span> <span class="n">figure_naming_convention</span><span class="o">=</span><span class="n">figure_naming_convention</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">diagram</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">Build</span><span class="p">()</span>
@@ -772,13 +773,13 @@
     <span class="k">def</span> <span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ProductionID</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        The unique identifier for the production.</span>
 
 <span class="sd">        If not defined, returns ProductionID.kNotDefined.</span>
-<span class="sd">        </span>
+
 <span class="sd">        *Returns*</span>
-<span class="sd">        </span>
+
 <span class="sd">        ProductionID</span>
 <span class="sd">            The unique identifier for the production.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -816,7 +817,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../_static/documentation_options.js?v=1dd76d02"></script>
+</div><script src="../../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

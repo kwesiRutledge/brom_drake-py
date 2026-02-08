@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.systems.pose_composition - brom_drake-py 0.5.0 documentation</title>
+        <title>brom_drake.systems.pose_composition - brom_drake-py v0.0.0+githubActionDefault documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">brom_drake-py 0.5.0 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.0 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -555,6 +555,7 @@
 <span class="kn">from</span> <span class="nn">pydrake.all</span> <span class="kn">import</span> <span class="n">RigidTransform</span>
 <span class="kn">from</span> <span class="nn">pydrake.systems.framework</span> <span class="kn">import</span> <span class="n">Context</span><span class="p">,</span> <span class="n">InputPort</span><span class="p">,</span> <span class="n">LeafSystem</span>
 
+
 <div class="viewcode-block" id="PoseCompositionSystem">
 <a class="viewcode-back" href="../../../generated/systems/systems.html#brom_drake.systems.pose_composition.PoseCompositionSystem">[docs]</a>
 <span class="k">class</span> <span class="nc">PoseCompositionSystem</span><span class="p">(</span><span class="n">LeafSystem</span><span class="p">):</span>
@@ -583,12 +584,10 @@
 
         <span class="c1"># Define Input Ports</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pose_AB_port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DeclareAbstractInputPort</span><span class="p">(</span>
-            <span class="s2">&quot;pose_AB&quot;</span><span class="p">,</span>
-            <span class="n">AbstractValue</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="n">RigidTransform</span><span class="p">())</span>
+            <span class="s2">&quot;pose_AB&quot;</span><span class="p">,</span> <span class="n">AbstractValue</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="n">RigidTransform</span><span class="p">())</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pose_BC_port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DeclareAbstractInputPort</span><span class="p">(</span>
-            <span class="s2">&quot;pose_BC&quot;</span><span class="p">,</span>
-            <span class="n">AbstractValue</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="n">RigidTransform</span><span class="p">())</span>
+            <span class="s2">&quot;pose_BC&quot;</span><span class="p">,</span> <span class="n">AbstractValue</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="n">RigidTransform</span><span class="p">())</span>
         <span class="p">)</span>
 
         <span class="c1"># Define Output Port</span>
@@ -610,19 +609,19 @@
         <span class="c1"># Retrieve current input values</span>
         <span class="n">pose_AB</span><span class="p">:</span> <span class="n">RigidTransform</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetInputPort</span><span class="p">(</span><span class="s2">&quot;pose_AB&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">Eval</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
         <span class="n">pose_BC</span><span class="p">:</span> <span class="n">RigidTransform</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetInputPort</span><span class="p">(</span><span class="s2">&quot;pose_BC&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">Eval</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
-        
-        <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">pose_AB</span><span class="p">)</span> <span class="ow">is</span> <span class="n">RigidTransform</span><span class="p">,</span> \
-            <span class="sa">f</span><span class="s2">&quot;Expected pose_AB port to contain </span><span class="se">\&quot;</span><span class="s2">RigidTransform</span><span class="se">\&quot;</span><span class="s2"> objects, but received type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">pose_AB</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-        
-        <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">pose_BC</span><span class="p">)</span> <span class="ow">is</span> <span class="n">RigidTransform</span><span class="p">,</span> \
-            <span class="sa">f</span><span class="s2">&quot;Expected pose_BC port to contain </span><span class="se">\&quot;</span><span class="s2">RigidTransform</span><span class="se">\&quot;</span><span class="s2"> objects, but received type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">pose_BC</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="nb">type</span><span class="p">(</span><span class="n">pose_AB</span><span class="p">)</span> <span class="ow">is</span> <span class="n">RigidTransform</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;Expected pose_AB port to contain &quot;RigidTransform&quot; objects, but received type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">pose_AB</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="nb">type</span><span class="p">(</span><span class="n">pose_BC</span><span class="p">)</span> <span class="ow">is</span> <span class="n">RigidTransform</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;Expected pose_BC port to contain &quot;RigidTransform&quot; objects, but received type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">pose_BC</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
 
         <span class="c1"># Compute Product and return it</span>
         <span class="n">pose_AC</span> <span class="o">=</span> <span class="n">pose_AB</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">pose_BC</span><span class="p">)</span>
 
-        <span class="n">output</span><span class="o">.</span><span class="n">SetFrom</span><span class="p">(</span>
-            <span class="n">AbstractValue</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="n">pose_AC</span><span class="p">)</span>
-        <span class="p">)</span></div>
+        <span class="n">output</span><span class="o">.</span><span class="n">SetFrom</span><span class="p">(</span><span class="n">AbstractValue</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="n">pose_AC</span><span class="p">))</span></div>
 
 
     <span class="k">def</span> <span class="nf">get_pose_AB_port</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">InputPort</span><span class="p">:</span>
@@ -663,7 +662,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=1dd76d02"></script>
+</div><script src="../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>

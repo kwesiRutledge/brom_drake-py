@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.utils.puppetmaker.puppetmaker - brom_drake-py 0.5.0 documentation</title>
+        <title>brom_drake.utils.puppetmaker.puppetmaker - brom_drake-py v0.0.0+githubActionDefault documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">brom_drake-py 0.5.0 documentation</div></a>
+      <a href="../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.0 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -551,7 +551,10 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for brom_drake.utils.puppetmaker.puppetmaker</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">brom_drake.utils.angles</span> <span class="kn">import</span> <span class="n">RollPitchYawAngle</span><span class="p">,</span> <span class="n">rpy_equivalent_body_rotation_order</span>
+<span></span><span class="kn">from</span> <span class="nn">brom_drake.utils.angles</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">RollPitchYawAngle</span><span class="p">,</span>
+    <span class="n">rpy_equivalent_body_rotation_order</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">pydrake.all</span> <span class="kn">import</span> <span class="p">(</span>
@@ -574,12 +577,18 @@
 <span class="kn">from</span> <span class="nn">pydrake.multibody.tree</span> <span class="kn">import</span> <span class="n">ModelInstanceIndex</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
 
-<span class="kn">from</span> <span class="nn">brom_drake.systems.named_vector_selection_system</span> <span class="kn">import</span> <span class="n">define_named_vector_selection_system</span>
+<span class="kn">from</span> <span class="nn">brom_drake.systems.named_vector_selection_system</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">define_named_vector_selection_system</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">brom_drake.utils.model_instances</span> <span class="kn">import</span> <span class="n">get_all_bodies_in</span>
 
 <span class="c1"># Internal Imports</span>
 <span class="kn">from</span> <span class="nn">.configuration</span> <span class="kn">import</span> <span class="n">Configuration</span> <span class="k">as</span> <span class="n">PuppetmakerConfiguration</span>
-<span class="kn">from</span> <span class="nn">.puppet_signature</span> <span class="kn">import</span> <span class="n">PuppetSignature</span><span class="p">,</span> <span class="n">PuppeteerJointSignature</span><span class="p">,</span> <span class="n">AllJointSignatures</span>
+<span class="kn">from</span> <span class="nn">.puppet_signature</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">PuppetSignature</span><span class="p">,</span>
+    <span class="n">PuppeteerJointSignature</span><span class="p">,</span>
+    <span class="n">AllJointSignatures</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">brom_drake.file_manipulation.urdf</span> <span class="kn">import</span> <span class="n">SimpleShapeURDFDefinition</span>
 <span class="kn">from</span> <span class="nn">brom_drake.file_manipulation.urdf.shapes</span> <span class="kn">import</span> <span class="n">SphereDefinition</span>
 <span class="kn">from</span> <span class="nn">brom_drake.systems.conversion.rigid_transform_to_vector_system</span> <span class="kn">import</span> <span class="p">(</span>
@@ -587,17 +596,18 @@
     <span class="n">RigidTransformToVectorSystemConfiguration</span><span class="p">,</span>
 <span class="p">)</span>
 
+
 <div class="viewcode-block" id="Puppetmaker">
 <a class="viewcode-back" href="../../../../generated/utils/puppetmaker/puppetmaker.html#brom_drake.utils.puppetmaker.puppetmaker.Puppetmaker">[docs]</a>
 <span class="k">class</span> <span class="nc">Puppetmaker</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    **Description**</span>
-<span class="sd">    </span>
+
 <span class="sd">    This class turns a &quot;free body&quot; in Drake into a &quot;puppet&quot; whose pose and orientation</span>
 <span class="sd">    can be controlled using 6 actuated joints (3 prismatic and 3 revolute).</span>
 
 <span class="sd">    This object is used to:</span>
-<span class="sd">    </span>
+
 <span class="sd">    - Add &quot;invisible&quot; actuators for moving a free body (i.e., `add_strings_for` or `add_actuators_for`), and</span>
 <span class="sd">    - Control actuate a free body that has been added with the expected &quot;puppet&quot; actuators (i.e., `add_puppet_controller_for`).</span>
 
@@ -606,13 +616,14 @@
 <span class="sd">        The 2 functions of the puppetmaker are designed to be used at different times.</span>
 <span class="sd">        The `add_strings_for` or `add_actuators_for` methods MUST be called BEFORE finalizing the plant.</span>
 <span class="sd">        The `add_puppet_controller_for` method MUST be called AFTER finalizing the plant.</span>
-<span class="sd">    </span>
+
 <span class="sd">    **Notes**</span>
-<span class="sd">    </span>
+
 <span class="sd">    - The puppet is assumed to be a free body (i.e., it has no existing joints connecting it to the world).</span>
 <span class="sd">      After adding the puppet actuators, the puppet will NO LONGER be a free body.</span>
 <span class="sd">    - You must call add_strings_for or add_actuators_for BEFORE finalizing the plant.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">plant</span><span class="p">:</span> <span class="n">MultibodyPlant</span><span class="p">,</span>
@@ -645,12 +656,12 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">PrismaticJoint</span><span class="p">,</span> <span class="n">JointActuator</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        **Description**</span>
-<span class="sd">        </span>
+
 <span class="sd">        This method will add an prismatic joint in the direction `axis_dimension`</span>
 <span class="sd">        between `previous_frame` and `next_frame`, along with an actuator to control it.</span>
-<span class="sd">        </span>
+
 <span class="sd">        **Parameters**</span>
-<span class="sd">        </span>
+
 <span class="sd">        axis_dimension: int</span>
 <span class="sd">            The axis to translate in (0 for X, 1 for Y, 2 for Z).</span>
 
@@ -664,12 +675,12 @@
 <span class="sd">            The name of the joint we are creating.</span>
 
 <span class="sd">        **Returns**</span>
-<span class="sd">        </span>
+
 <span class="sd">        translation_joint_ii: PrismaticJoint</span>
 <span class="sd">            The created prismatic joint.</span>
 
 <span class="sd">        translation_actuator_ii: JointActuator</span>
-<span class="sd">            The created actuator for the prismatic joint.        </span>
+<span class="sd">            The created actuator for the prismatic joint.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Setup</span>
         <span class="n">plant</span><span class="p">:</span> <span class="n">MultibodyPlant</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span>
@@ -714,7 +725,7 @@
 <span class="sd">        *Parameters*</span>
 
 <span class="sd">        axis_dimension: int</span>
-<span class="sd">            The axis to rotate about </span>
+<span class="sd">            The axis to rotate about</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Setup</span>
         <span class="n">plant</span><span class="p">:</span> <span class="n">MultibodyPlant</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span>
@@ -748,7 +759,7 @@
             <span class="n">joint_name</span> <span class="o">+</span> <span class="s2">&quot;_actuator&quot;</span><span class="p">,</span>
             <span class="n">rotation_joint_ii</span><span class="p">,</span>
         <span class="p">)</span>
-        
+
         <span class="c1"># Return</span>
         <span class="k">return</span> <span class="n">rotation_joint_ii</span><span class="p">,</span> <span class="n">rotation_actuator_ii</span></div>
 
@@ -776,7 +787,7 @@
             <span class="n">sphere_ii_bodies</span> <span class="o">=</span> <span class="n">plant</span><span class="o">.</span><span class="n">GetBodyIndices</span><span class="p">(</span><span class="n">sphere_ii</span><span class="p">)</span>
             <span class="n">sphere_ii_frame</span> <span class="o">=</span> <span class="n">plant</span><span class="o">.</span><span class="n">get_body</span><span class="p">(</span><span class="n">sphere_ii_bodies</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">body_frame</span><span class="p">()</span>
 
-            <span class="n">joint_ii</span><span class="p">,</span> <span class="n">joint_actuator_ii</span> <span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">add_actuated_prismatic_joint</span><span class="p">(</span>
+            <span class="n">joint_ii</span><span class="p">,</span> <span class="n">joint_actuator_ii</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_actuated_prismatic_joint</span><span class="p">(</span>
                 <span class="n">axis_dimension</span><span class="o">=</span><span class="n">axis_dimension</span><span class="p">,</span>
                 <span class="n">previous_frame</span><span class="o">=</span><span class="n">previous_frame</span><span class="p">,</span>
                 <span class="n">next_frame</span><span class="o">=</span><span class="n">sphere_ii_frame</span><span class="p">,</span>
@@ -792,8 +803,7 @@
 
         <span class="k">return</span> <span class="p">[</span>
             <span class="n">PuppeteerJointSignature</span><span class="p">(</span>
-                <span class="n">joint</span><span class="o">=</span><span class="n">joints</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span>
-                <span class="n">joint_actuator</span><span class="o">=</span><span class="n">joint_actuators</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span>
+                <span class="n">joint</span><span class="o">=</span><span class="n">joints</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">joint_actuator</span><span class="o">=</span><span class="n">joint_actuators</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span>
             <span class="p">)</span>
             <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">joints</span><span class="p">))</span>
         <span class="p">]</span>
@@ -814,12 +824,12 @@
 <span class="sd">        Because the puppet&#39;s orientation is controlled using roll-pitch-yaw angles,</span>
 <span class="sd">        the order of the revolute joints will correspond to the standard body rotation</span>
 <span class="sd">        order for roll-pitch-yaw (note this is not roll first, then pitch, then yaw).</span>
-<span class="sd">        </span>
+
 
 <span class="sd">        *Notes*</span>
 
 <span class="sd">        This function expects 3 massless sphere inputs.</span>
-<span class="sd">        The first sphere in the list should be the one representing the last </span>
+<span class="sd">        The first sphere in the list should be the one representing the last</span>
 <span class="sd">        translation sphere (i.e., the one we should connect the first revolute sphere to.)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Setup</span>
@@ -843,10 +853,10 @@
                 <span class="n">target_model</span><span class="o">=</span><span class="n">target_model</span><span class="p">,</span>
                 <span class="n">rpy_selection</span><span class="o">=</span><span class="n">rpy_angle</span><span class="p">,</span>
             <span class="p">)</span>
-            
+
             <span class="c1"># Compute the next frame to connect to from sphere_ii</span>
             <span class="c1"># It will be the only frame in the sphere model</span>
-            <span class="n">sphere_ii</span> <span class="o">=</span> <span class="n">massless_sphere_indices</span><span class="p">[</span><span class="n">axis_dimension</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">sphere_ii</span> <span class="o">=</span> <span class="n">massless_sphere_indices</span><span class="p">[</span><span class="n">axis_dimension</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
             <span class="n">sphere_ii_bodies</span> <span class="o">=</span> <span class="n">plant</span><span class="o">.</span><span class="n">GetBodyIndices</span><span class="p">(</span><span class="n">sphere_ii</span><span class="p">)</span>
             <span class="n">sphere_ii_frame</span> <span class="o">=</span> <span class="n">plant</span><span class="o">.</span><span class="n">get_body</span><span class="p">(</span><span class="n">sphere_ii_bodies</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">body_frame</span><span class="p">()</span>
 
@@ -883,8 +893,7 @@
 
         <span class="k">return</span> <span class="p">[</span>
             <span class="n">PuppeteerJointSignature</span><span class="p">(</span>
-                <span class="n">joint</span><span class="o">=</span><span class="n">joints</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span>
-                <span class="n">joint_actuator</span><span class="o">=</span><span class="n">joint_actuators</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span>
+                <span class="n">joint</span><span class="o">=</span><span class="n">joints</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">joint_actuator</span><span class="o">=</span><span class="n">joint_actuators</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span>
             <span class="p">)</span>
             <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">joints</span><span class="p">))</span>
         <span class="p">]</span></div>
@@ -900,9 +909,9 @@
 <span class="sd">        *Description*</span>
 
 <span class="sd">        Adds the necessary actuators for the puppet&#39;s joints.</span>
-<span class="sd">        </span>
+
 <span class="sd">        *Parameters*</span>
-<span class="sd">        </span>
+
 <span class="sd">        target_model: pydrake.multibody.tree.ModelInstanceIndex</span>
 <span class="sd">            The model instance index of the puppet to add actuators for.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -917,7 +926,7 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PuppetSignature</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        Creates actuated joints on the object we want to be the &quot;puppet&quot; so that we can control</span>
 <span class="sd">        its entire pose. This will be 6 joints:</span>
 
@@ -944,7 +953,9 @@
             <span class="p">)</span>
 
         <span class="c1"># Create some fictitious bodies which will be used to connect some new actuators</span>
-        <span class="n">translation_ghost_models</span><span class="p">,</span> <span class="n">revolute_ghost_models</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_ghost_bodies_for_actuators</span><span class="p">()</span>
+        <span class="n">translation_ghost_models</span><span class="p">,</span> <span class="n">revolute_ghost_models</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">create_ghost_bodies_for_actuators</span><span class="p">()</span>
+        <span class="p">)</span>
 
         <span class="c1"># Create Three Translation Joints</span>
         <span class="n">prismatic_signatures</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_all_actuated_prismatic_joints</span><span class="p">(</span>
@@ -955,7 +966,8 @@
         <span class="c1"># Create the rotational joints</span>
         <span class="n">revolute_signatures</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_all_actuated_revolute_joints</span><span class="p">(</span>
             <span class="n">target_model</span><span class="o">=</span><span class="n">target_model</span><span class="p">,</span>
-            <span class="n">massless_sphere_indices</span><span class="o">=</span><span class="p">[</span><span class="n">translation_ghost_models</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">+</span> <span class="n">revolute_ghost_models</span><span class="p">,</span>
+            <span class="n">massless_sphere_indices</span><span class="o">=</span><span class="p">[</span><span class="n">translation_ghost_models</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+            <span class="o">+</span> <span class="n">revolute_ghost_models</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="c1"># Return</span>
@@ -990,7 +1002,7 @@
 
         <span class="c1"># Create the adder system</span>
         <span class="n">feedforward_adder</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">AddNamedSystem</span><span class="p">(</span>
-            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">] Feedforward Adder for puppeteering </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">signature</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">] Feedforward Adder for puppeteering &quot;</span><span class="si">{</span><span class="n">signature</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">,</span>
             <span class="n">system</span><span class="o">=</span><span class="n">Adder</span><span class="p">(</span>
                 <span class="n">num_inputs</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
                 <span class="n">size</span><span class="o">=</span><span class="n">n_actuators_for_puppet</span><span class="p">,</span>
@@ -1000,20 +1012,20 @@
         <span class="c1"># Create a constant vector source to provide feedforward gravity compensation</span>
         <span class="c1"># for the linear actuators</span>
         <span class="n">gravity_field</span> <span class="o">=</span> <span class="n">plant</span><span class="o">.</span><span class="n">gravity_field</span><span class="p">()</span>
-        <span class="n">gravity_vector</span> <span class="o">=</span> <span class="n">gravity_field</span><span class="o">.</span><span class="n">gravity_vector</span><span class="p">()</span> <span class="c1"># Returns the gravity vector in world frame in units of m/s^2</span>
+        <span class="n">gravity_vector</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">gravity_field</span><span class="o">.</span><span class="n">gravity_vector</span><span class="p">()</span>
+        <span class="p">)</span>  <span class="c1"># Returns the gravity vector in world frame in units of m/s^2</span>
 
         <span class="c1"># Calculate mass of the puppet</span>
         <span class="n">bodies_in_puppet</span> <span class="o">=</span> <span class="n">get_all_bodies_in</span><span class="p">(</span><span class="n">plant</span><span class="p">,</span> <span class="n">signature</span><span class="o">.</span><span class="n">model_instance_index</span><span class="p">)</span>
-        <span class="n">total_mass</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
-            <span class="p">[</span><span class="n">body_ii</span><span class="o">.</span><span class="n">default_mass</span><span class="p">()</span> <span class="k">for</span> <span class="n">body_ii</span> <span class="ow">in</span> <span class="n">bodies_in_puppet</span><span class="p">]</span>
-        <span class="p">)</span>
+        <span class="n">total_mass</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">body_ii</span><span class="o">.</span><span class="n">default_mass</span><span class="p">()</span> <span class="k">for</span> <span class="n">body_ii</span> <span class="ow">in</span> <span class="n">bodies_in_puppet</span><span class="p">])</span>
 
         <span class="n">gravity_compensation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_actuators_for_puppet</span><span class="p">,))</span>
         <span class="n">gravity_compensation</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">total_mass</span> <span class="o">*</span> <span class="n">gravity_vector</span>
 
         <span class="c1"># Create the constant vector source</span>
         <span class="n">gravity_compensation_source</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">AddNamedSystem</span><span class="p">(</span>
-            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">] Gravity Compensation for puppeteering </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">signature</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">] Gravity Compensation for puppeteering &quot;</span><span class="si">{</span><span class="n">signature</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">,</span>
             <span class="n">system</span><span class="o">=</span><span class="n">ConstantVectorSource</span><span class="p">(</span><span class="n">gravity_compensation</span><span class="p">),</span>
         <span class="p">)</span>
 
@@ -1034,15 +1046,15 @@
         <span class="n">builder</span><span class="p">:</span> <span class="n">DiagramBuilder</span><span class="p">,</span>
         <span class="n">Kp</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">Kd</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">RigidTransformToVectorSystem</span><span class="p">,</span> <span class="n">PassThrough</span><span class="o">|</span><span class="kc">None</span><span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">RigidTransformToVectorSystem</span><span class="p">,</span> <span class="n">PassThrough</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This method will create a simple PID controller to actuate the puppet</span>
 <span class="sd">        to a desired pose.</span>
 
 <span class="sd">        *Parameters*</span>
-<span class="sd">        </span>
+
 <span class="sd">        signature : PuppetSignature</span>
 <span class="sd">            The signature of the puppet to be controlled.</span>
 
@@ -1051,12 +1063,12 @@
 
 <span class="sd">        Kp : np.ndarray, optional</span>
 <span class="sd">            The proportional gain for the PID controller. If not provided, a default value will be used.</span>
-<span class="sd">            </span>
+
 <span class="sd">        Kd : np.ndarray, optional</span>
 <span class="sd">            The derivative gain for the PID controller. If not provided, a default value will be used.</span>
 
 <span class="sd">        *Returns*</span>
-<span class="sd">        </span>
+
 <span class="sd">        pose_to_vector_system : RigidTransformToVectorSystem</span>
 <span class="sd">            The system that converts the desired pose to a vector format.</span>
 <span class="sd">            This system is what provides the target to the PID controller.</span>
@@ -1074,7 +1086,9 @@
         <span class="c1"># Input Processing</span>
         <span class="c1"># - Verify that plant is finalized already</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">is_finalized</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Plant is not finalized yet.</span><span class="se">\n</span><span class="s2">Plant must be finalized before calling this method!&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Plant is not finalized yet.</span><span class="se">\n</span><span class="s2">Plant must be finalized before calling this method!&quot;</span>
+            <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">Kp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">bodies_in_puppet</span> <span class="o">=</span> <span class="n">plant</span><span class="o">.</span><span class="n">GetBodyIndices</span><span class="p">(</span><span class="n">signature</span><span class="o">.</span><span class="n">model_instance_index</span><span class="p">)</span>
@@ -1082,14 +1096,16 @@
             <span class="k">for</span> <span class="n">body_ii</span> <span class="ow">in</span> <span class="n">bodies_in_puppet</span><span class="p">:</span>
                 <span class="n">m</span> <span class="o">+=</span> <span class="n">plant</span><span class="o">.</span><span class="n">get_body</span><span class="p">(</span><span class="n">body_ii</span><span class="p">)</span><span class="o">.</span><span class="n">default_mass</span><span class="p">()</span>
             <span class="n">Kp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_actuators_for_puppet</span><span class="p">,))</span>
-            <span class="n">Kp</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1e2</span><span class="o">*</span><span class="n">m</span><span class="o">*</span><span class="n">gravity</span><span class="p">]</span><span class="o">*</span><span class="mi">3</span><span class="p">)</span>
-            <span class="n">Kp</span><span class="p">[</span><span class="mi">3</span><span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1e0</span><span class="o">*</span><span class="n">m</span><span class="o">*</span><span class="n">gravity</span><span class="p">]</span><span class="o">*</span><span class="mi">3</span><span class="p">)</span>
+            <span class="n">Kp</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1e2</span> <span class="o">*</span> <span class="n">m</span> <span class="o">*</span> <span class="n">gravity</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span>
+            <span class="n">Kp</span><span class="p">[</span><span class="mi">3</span><span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1e0</span> <span class="o">*</span> <span class="n">m</span> <span class="o">*</span> <span class="n">gravity</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">Kd</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">Kd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Kp</span><span class="p">)</span>
 
         <span class="c1"># Create a demultiplexer to combine all actuator inputs</span>
-        <span class="n">actuator_demux</span><span class="p">,</span> <span class="n">pass_through_system</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_actuator_demux</span><span class="p">(</span><span class="n">signature</span><span class="p">,</span> <span class="n">builder</span><span class="p">)</span>
+        <span class="n">actuator_demux</span><span class="p">,</span> <span class="n">pass_through_system</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_actuator_demux</span><span class="p">(</span>
+            <span class="n">signature</span><span class="p">,</span> <span class="n">builder</span>
+        <span class="p">)</span>
 
         <span class="c1"># Create the PID Controller</span>
         <span class="n">controller</span><span class="p">:</span> <span class="n">PidController</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">AddSystem</span><span class="p">(</span>
@@ -1120,21 +1136,17 @@
         <span class="c1"># Connect a PoseToVector System to the PID controller</span>
         <span class="c1"># as reference.</span>
         <span class="n">p2v_config</span> <span class="o">=</span> <span class="n">RigidTransformToVectorSystemConfiguration</span><span class="p">(</span>
-            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">]Pose to vector for puppeteering </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">signature</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">]Pose to vector for puppeteering &quot;</span><span class="si">{</span><span class="n">signature</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">,</span>
             <span class="n">output_format</span><span class="o">=</span><span class="s2">&quot;vector_xyz_euler(rpy)&quot;</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">pose_to_vector</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">AddSystem</span><span class="p">(</span>
-            <span class="n">RigidTransformToVectorSystem</span><span class="p">(</span><span class="n">p2v_config</span><span class="p">)</span>
-        <span class="p">)</span>
+        <span class="n">pose_to_vector</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">AddSystem</span><span class="p">(</span><span class="n">RigidTransformToVectorSystem</span><span class="p">(</span><span class="n">p2v_config</span><span class="p">))</span>
 
         <span class="c1"># Reference signal is a state which contains two pieces: a pose and a twist</span>
         <span class="c1"># - Target Twist is zero</span>
-        <span class="n">zero_twist_source</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">AddSystem</span><span class="p">(</span>
-            <span class="n">ConstantVectorSource</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">6</span><span class="p">,)))</span>
-        <span class="p">)</span>
+        <span class="n">zero_twist_source</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">AddSystem</span><span class="p">(</span><span class="n">ConstantVectorSource</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">6</span><span class="p">,))))</span>
 
         <span class="n">target_state_mux</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">AddNamedSystem</span><span class="p">(</span>
-            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">] Target State Mux for puppeteering </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">signature</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">] Target State Mux for puppeteering &quot;</span><span class="si">{</span><span class="n">signature</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">,</span>
             <span class="n">system</span><span class="o">=</span><span class="n">Multiplexer</span><span class="p">(</span><span class="n">input_sizes</span><span class="o">=</span><span class="p">[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">]),</span>
         <span class="p">)</span>
 
@@ -1148,7 +1160,7 @@
             <span class="n">sequence_of_names_for_output</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">,</span> <span class="s2">&quot;yaw&quot;</span><span class="p">,</span> <span class="s2">&quot;pitch&quot;</span><span class="p">,</span> <span class="s2">&quot;roll&quot;</span><span class="p">],</span>
         <span class="p">)</span>
         <span class="n">builder</span><span class="o">.</span><span class="n">AddNamedSystem</span><span class="p">(</span>
-            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">] RPY Ordering Selection for puppeteering </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">signature</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">] RPY Ordering Selection for puppeteering &quot;</span><span class="si">{</span><span class="n">signature</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">,</span>
             <span class="n">system</span><span class="o">=</span><span class="n">rpy_ordering_selection_system</span><span class="p">,</span>
         <span class="p">)</span>
 
@@ -1165,7 +1177,7 @@
             <span class="n">zero_twist_source</span><span class="o">.</span><span class="n">get_output_port</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
             <span class="n">target_state_mux</span><span class="o">.</span><span class="n">get_input_port</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
         <span class="p">)</span>
-        
+
         <span class="c1"># Connect mux output (i.e., the desired state) to PID</span>
         <span class="n">builder</span><span class="o">.</span><span class="n">Connect</span><span class="p">(</span>
             <span class="n">target_state_mux</span><span class="o">.</span><span class="n">get_output_port</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
@@ -1204,16 +1216,16 @@
 
     <span class="k">def</span> <span class="nf">config_from_initialization_params</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">puppet_anchored_to</span><span class="p">:</span> <span class="n">Frame</span><span class="o">|</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">frame_on_puppet</span><span class="p">:</span> <span class="n">Frame</span><span class="o">|</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="o">|</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">puppet_anchored_to</span><span class="p">:</span> <span class="n">Frame</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">frame_on_puppet</span><span class="p">:</span> <span class="n">Frame</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">sphere_radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">config</span><span class="p">:</span> <span class="n">PuppetmakerConfiguration</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PuppetmakerConfiguration</span><span class="p">:</span>
         <span class="c1"># Input Checking</span>
         <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">config</span> <span class="c1"># If the config was provided, then simply return that.</span>
-        
+            <span class="k">return</span> <span class="n">config</span>  <span class="c1"># If the config was provided, then simply return that.</span>
+
         <span class="c1"># If config is not given, then we will try to create it.</span>
 
         <span class="c1"># Setup</span>
@@ -1264,8 +1276,8 @@
 
         <span class="c1"># - Create a massive multiplexer to combine all of the states (2 each) of the models (there should be 6) in the puppet</span>
         <span class="n">state_mux</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">AddNamedSystem</span><span class="p">(</span>
-            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">] State Mux for puppeteering </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">signature</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="n">system</span><span class="o">=</span><span class="n">Multiplexer</span><span class="p">(</span><span class="n">num_scalar_inputs</span><span class="o">=</span><span class="mi">2</span><span class="o">*</span><span class="n">signature</span><span class="o">.</span><span class="n">n_models</span><span class="p">),</span>
+            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">] State Mux for puppeteering &quot;</span><span class="si">{</span><span class="n">signature</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">,</span>
+            <span class="n">system</span><span class="o">=</span><span class="n">Multiplexer</span><span class="p">(</span><span class="n">num_scalar_inputs</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">signature</span><span class="o">.</span><span class="n">n_models</span><span class="p">),</span>
         <span class="p">)</span>
 
         <span class="c1"># - Create connections from the state of each puppet model (comes from the plant)</span>
@@ -1326,10 +1338,10 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">signature</span><span class="p">:</span> <span class="n">PuppetSignature</span><span class="p">,</span>
         <span class="n">builder</span><span class="p">:</span> <span class="n">DiagramBuilder</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Demultiplexer</span><span class="p">,</span> <span class="n">PassThrough</span><span class="o">|</span><span class="kc">None</span><span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Demultiplexer</span><span class="p">,</span> <span class="n">PassThrough</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This method creates a demultiplexer to split the actuator inputs</span>
 <span class="sd">        to the puppet&#39;s various models.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1343,21 +1355,23 @@
         <span class="p">)</span>
 
         <span class="c1"># Connect demultiplexer to each of the actuators</span>
-        <span class="n">pass_through_system</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># Default output, if the puppet has no actuators</span>
+        <span class="n">pass_through_system</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Default output, if the puppet has no actuators</span>
 
         <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">model_ii</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">signature</span><span class="o">.</span><span class="n">all_models</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">plant</span><span class="o">.</span><span class="n">num_actuators</span><span class="p">(</span><span class="n">model_ii</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">continue</span>
 
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;n_actuators for model </span><span class="si">{</span><span class="n">plant</span><span class="o">.</span><span class="n">GetModelInstanceName</span><span class="p">(</span><span class="n">model_ii</span><span class="p">)</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">plant</span><span class="o">.</span><span class="n">num_actuators</span><span class="p">(</span><span class="n">model_ii</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;n_actuators for model </span><span class="si">{</span><span class="n">plant</span><span class="o">.</span><span class="n">GetModelInstanceName</span><span class="p">(</span><span class="n">model_ii</span><span class="p">)</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">plant</span><span class="o">.</span><span class="n">num_actuators</span><span class="p">(</span><span class="n">model_ii</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
             <span class="c1"># print(f&quot;Model #{ii}&#39;s actuators: {plant.GetActuatorNames(model_ii)}&quot;)</span>
 
             <span class="c1"># for port_jj in plant.GetActuatorNames(model_ii):</span>
             <span class="c1">#     print(f&quot;Actuator on model {plant.GetModelInstanceName(model_ii)}: {port_jj}&quot;)</span>
-                
+
             <span class="k">if</span> <span class="n">plant</span><span class="o">.</span><span class="n">num_actuators</span><span class="p">(</span><span class="n">model_ii</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="c1"># If there is only one actuator for this model,</span>
-                <span class="c1"># then it is the actuator that we created and </span>
+                <span class="c1"># then it is the actuator that we created and</span>
                 <span class="c1"># we can connect it directly to the demux input</span>
 
                 <span class="n">builder</span><span class="o">.</span><span class="n">Connect</span><span class="p">(</span>
@@ -1369,10 +1383,12 @@
                 <span class="c1"># then we will need to create a passthrough system to</span>
                 <span class="c1"># pass the &quot;default&quot; actuator inputs for the puppet&#39;s (default) actuated joints</span>
                 <span class="c1"># and a separate passthrough system to pass the &quot;puppet&quot; actuator input for puppeteering.</span>
-                
-                <span class="n">default_actuator_pass_through</span><span class="p">,</span> <span class="n">puppeteer_pass_through</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_actuator_passthrough_for_puppet_with_actuated_joints</span><span class="p">(</span>
-                    <span class="n">signature</span><span class="o">=</span><span class="n">signature</span><span class="p">,</span>
-                    <span class="n">builder</span><span class="o">=</span><span class="n">builder</span><span class="p">,</span>
+
+                <span class="n">default_actuator_pass_through</span><span class="p">,</span> <span class="n">puppeteer_pass_through</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">create_actuator_passthrough_for_puppet_with_actuated_joints</span><span class="p">(</span>
+                        <span class="n">signature</span><span class="o">=</span><span class="n">signature</span><span class="p">,</span>
+                        <span class="n">builder</span><span class="o">=</span><span class="n">builder</span><span class="p">,</span>
+                    <span class="p">)</span>
                 <span class="p">)</span>
                 <span class="n">pass_through_system</span> <span class="o">=</span> <span class="n">default_actuator_pass_through</span>
 
@@ -1380,11 +1396,11 @@
                 <span class="n">builder</span><span class="o">.</span><span class="n">Connect</span><span class="p">(</span>
                     <span class="n">actuator_demux</span><span class="o">.</span><span class="n">get_output_port</span><span class="p">(</span><span class="n">ii</span><span class="p">),</span>
                     <span class="n">puppeteer_pass_through</span><span class="o">.</span><span class="n">get_input_port</span><span class="p">(),</span>
-                <span class="p">)</span>                
+                <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">actuator_demux</span><span class="p">,</span> <span class="n">pass_through_system</span></div>
 
-    
+
 <div class="viewcode-block" id="Puppetmaker.create_actuator_passthrough_for_puppet_with_actuated_joints">
 <a class="viewcode-back" href="../../../../generated/utils/puppetmaker/puppetmaker.html#brom_drake.utils.puppetmaker.puppetmaker.Puppetmaker.create_actuator_passthrough_for_puppet_with_actuated_joints">[docs]</a>
     <span class="k">def</span> <span class="nf">create_actuator_passthrough_for_puppet_with_actuated_joints</span><span class="p">(</span>
@@ -1394,7 +1410,7 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">PassThrough</span><span class="p">,</span> <span class="n">PassThrough</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This method creates two passthrough systems:</span>
 <span class="sd">        1. passes the &quot;default&quot; actuator inputs for the puppet&#39;s (default) actuated joints,</span>
 <span class="sd">        2. passes the &quot;puppet&quot; actuator input for puppeteering.</span>
@@ -1412,16 +1428,16 @@
         <span class="n">plant</span><span class="p">:</span> <span class="n">MultibodyPlant</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span>
         <span class="n">puppet_model_idx</span> <span class="o">=</span> <span class="n">signature</span><span class="o">.</span><span class="n">model_instance_index</span>
         <span class="n">n_default_actuators_in_puppet</span> <span class="o">=</span> <span class="n">plant</span><span class="o">.</span><span class="n">num_actuators</span><span class="p">(</span><span class="n">puppet_model_idx</span><span class="p">)</span>
-        
+
         <span class="c1"># Create a Multiplexer system to combine all actuator inputs</span>
         <span class="n">passthrough_mux</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">AddNamedSystem</span><span class="p">(</span>
-            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">] Total Actuation Mux for puppeteering </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">signature</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2"> WITH default inputs needed&quot;</span><span class="p">,</span>
-            <span class="n">system</span><span class="o">=</span><span class="n">Multiplexer</span><span class="p">(</span><span class="n">input_sizes</span><span class="o">=</span><span class="p">[</span><span class="n">n_default_actuators_in_puppet</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]),</span>
+            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">] Total Actuation Mux for puppeteering &quot;</span><span class="si">{</span><span class="n">signature</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&quot; WITH default inputs needed&#39;</span><span class="p">,</span>
+            <span class="n">system</span><span class="o">=</span><span class="n">Multiplexer</span><span class="p">(</span><span class="n">input_sizes</span><span class="o">=</span><span class="p">[</span><span class="n">n_default_actuators_in_puppet</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span>
         <span class="p">)</span>
 
         <span class="c1"># Create a passthrough system to pass the combined actuator inputs to the puppet</span>
         <span class="n">default_actuator_inputs_passthrough</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">AddSystem</span><span class="p">(</span>
-            <span class="n">PassThrough</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_default_actuators_in_puppet</span><span class="o">-</span><span class="mi">1</span><span class="p">,))),</span>
+            <span class="n">PassThrough</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_default_actuators_in_puppet</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,))),</span>
         <span class="p">)</span>
 
         <span class="c1"># Connect the default actuator inputs to the multiplexer</span>
@@ -1508,18 +1524,20 @@
 
 <div class="viewcode-block" id="Puppetmaker.add_massless_sphere_to_plant_with_name">
 <a class="viewcode-back" href="../../../../generated/utils/puppetmaker/puppetmaker.html#brom_drake.utils.puppetmaker.puppetmaker.Puppetmaker.add_massless_sphere_to_plant_with_name">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_massless_sphere_to_plant_with_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">color</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelInstanceIndex</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">add_massless_sphere_to_plant_with_name</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">color</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelInstanceIndex</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This method adds a sphere with:</span>
 
 <span class="sd">        - nearly zero mass</span>
 <span class="sd">        - no collision geometry,</span>
 <span class="sd">        - and an associated color</span>
-<span class="sd">        </span>
-<span class="sd">        to the Puppeteer&#39;s plant. </span>
-<span class="sd">        </span>
+
+<span class="sd">        to the Puppeteer&#39;s plant.</span>
+
 <span class="sd">        The sphere&#39;s name will be assigned by the input to the function.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Setup</span>
@@ -1570,7 +1588,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">model_instance_index</span><span class="p">:</span> <span class="n">ModelInstanceIndex</span><span class="p">,</span>
         <span class="n">signature</span><span class="p">:</span> <span class="n">PuppetSignature</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="o">|</span><span class="kc">None</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Description</span>
 <span class="sd">        -----------</span>
@@ -1586,20 +1604,27 @@
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;state name: &quot;</span><span class="p">,</span> <span class="n">state_name_ii</span><span class="p">)</span>
             <span class="c1"># Check to see if name is either:</span>
             <span class="c1"># - A Translational joint state name (for the target model)</span>
-            <span class="k">for</span> <span class="n">translation_joint_name_jj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">translation_joint_names</span><span class="p">(</span><span class="n">target_model</span><span class="p">,</span> <span class="n">remove_puppeteer_prefix</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">translation_joint_name_jj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">translation_joint_names</span><span class="p">(</span>
+                <span class="n">target_model</span><span class="p">,</span> <span class="n">remove_puppeteer_prefix</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">):</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;- translation_joint_name: &quot;</span><span class="p">,</span> <span class="n">translation_joint_name_jj</span><span class="p">)</span>
-                <span class="k">if</span> <span class="p">(</span><span class="n">translation_joint_name_jj</span> <span class="ow">in</span> <span class="n">state_name_ii</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="s2">&quot;_x&quot;</span> <span class="ow">in</span> <span class="n">state_name_ii</span><span class="p">):</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">translation_joint_name_jj</span> <span class="ow">in</span> <span class="n">state_name_ii</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
+                    <span class="s2">&quot;_x&quot;</span> <span class="ow">in</span> <span class="n">state_name_ii</span>
+                <span class="p">):</span>
                     <span class="k">return</span> <span class="n">ii</span>
-                
+
             <span class="c1"># - A Rotational Joint state name</span>
-            <span class="k">for</span> <span class="n">rotational_joint_name_jj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotation_joint_names</span><span class="p">(</span><span class="n">target_model</span><span class="p">,</span> <span class="n">remove_puppeteer_prefix</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">rotational_joint_name_jj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotation_joint_names</span><span class="p">(</span>
+                <span class="n">target_model</span><span class="p">,</span> <span class="n">remove_puppeteer_prefix</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">):</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;- rotational_joint_name: &quot;</span><span class="p">,</span> <span class="n">rotational_joint_name_jj</span><span class="p">)</span>
-                <span class="k">if</span> <span class="p">(</span><span class="n">rotational_joint_name_jj</span> <span class="ow">in</span> <span class="n">state_name_ii</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="s2">&quot;_q&quot;</span> <span class="ow">in</span> <span class="n">state_name_ii</span><span class="p">):</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">rotational_joint_name_jj</span> <span class="ow">in</span> <span class="n">state_name_ii</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
+                    <span class="s2">&quot;_q&quot;</span> <span class="ow">in</span> <span class="n">state_name_ii</span>
+                <span class="p">):</span>
                     <span class="k">return</span> <span class="n">ii</span>
-                
+
         <span class="c1"># If none of the states contained a joint name, then return None</span>
         <span class="k">return</span> <span class="kc">None</span></div>
-
 
 
 <div class="viewcode-block" id="Puppetmaker.find_index_of_velocity_state_in">
@@ -1608,10 +1633,10 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">model_instance_index</span><span class="p">:</span> <span class="n">ModelInstanceIndex</span><span class="p">,</span>
         <span class="n">signature</span><span class="p">:</span> <span class="n">PuppetSignature</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="o">|</span><span class="kc">None</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This method finds the names of the &quot;velocity&quot; component for the</span>
 <span class="sd">        state of the joint connected to model_instance_index.</span>
 
@@ -1631,15 +1656,23 @@
         <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">state_name_ii</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">plant</span><span class="o">.</span><span class="n">GetStateNames</span><span class="p">(</span><span class="n">model_instance_index</span><span class="p">)):</span>
             <span class="c1"># Check to see if name is either:</span>
             <span class="c1"># - A Translational joint state name</span>
-            <span class="k">for</span> <span class="n">translation_joint_name_jj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">translation_joint_names</span><span class="p">(</span><span class="n">target_model</span><span class="p">,</span> <span class="n">remove_puppeteer_prefix</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-                <span class="k">if</span> <span class="p">(</span><span class="n">translation_joint_name_jj</span> <span class="ow">in</span> <span class="n">state_name_ii</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="s2">&quot;_v&quot;</span> <span class="ow">in</span> <span class="n">state_name_ii</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">translation_joint_name_jj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">translation_joint_names</span><span class="p">(</span>
+                <span class="n">target_model</span><span class="p">,</span> <span class="n">remove_puppeteer_prefix</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">):</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">translation_joint_name_jj</span> <span class="ow">in</span> <span class="n">state_name_ii</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
+                    <span class="s2">&quot;_v&quot;</span> <span class="ow">in</span> <span class="n">state_name_ii</span>
+                <span class="p">):</span>
                     <span class="k">return</span> <span class="n">ii</span>
-                
+
             <span class="c1"># - A Rotational Joint state name</span>
-            <span class="k">for</span> <span class="n">rotational_joint_name_jj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotation_joint_names</span><span class="p">(</span><span class="n">target_model</span><span class="p">,</span> <span class="n">remove_puppeteer_prefix</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-                <span class="k">if</span> <span class="p">(</span><span class="n">rotational_joint_name_jj</span> <span class="ow">in</span> <span class="n">state_name_ii</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="s2">&quot;_w&quot;</span> <span class="ow">in</span> <span class="n">state_name_ii</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">rotational_joint_name_jj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotation_joint_names</span><span class="p">(</span>
+                <span class="n">target_model</span><span class="p">,</span> <span class="n">remove_puppeteer_prefix</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">):</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">rotational_joint_name_jj</span> <span class="ow">in</span> <span class="n">state_name_ii</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
+                    <span class="s2">&quot;_w&quot;</span> <span class="ow">in</span> <span class="n">state_name_ii</span>
+                <span class="p">):</span>
                     <span class="k">return</span> <span class="n">ii</span>
-                
+
         <span class="c1"># If none of the states contained a joint name, then return None</span>
         <span class="k">return</span> <span class="kc">None</span></div>
 
@@ -1654,7 +1687,7 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This method returns the name of a specific rotation joint created for the puppet.</span>
 
 <span class="sd">        *Parameters*</span>
@@ -1677,7 +1710,9 @@
         <span class="n">target_model_name</span> <span class="o">=</span> <span class="n">plant</span><span class="o">.</span><span class="n">GetModelInstanceName</span><span class="p">(</span><span class="n">target_model</span><span class="p">)</span>
         <span class="n">puppeteer_prefix</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="n">remove_puppeteer_prefix</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">]&quot;</span>
 
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">puppeteer_prefix</span><span class="si">}{</span><span class="n">target_model_name</span><span class="si">}</span><span class="s2">_rotation_joint_</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">rpy_selection</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span></div>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">puppeteer_prefix</span><span class="si">}{</span><span class="n">target_model_name</span><span class="si">}</span><span class="s2">_rotation_joint_</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">rpy_selection</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Puppetmaker.rotation_joint_names">
@@ -1689,7 +1724,7 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *Description*</span>
-<span class="sd">        </span>
+
 <span class="sd">        This method returns the names of all rotation joints created for the puppet.</span>
 
 <span class="sd">        *Parameters*</span>
@@ -1775,7 +1810,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=1dd76d02"></script>
+</div><script src="../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>
