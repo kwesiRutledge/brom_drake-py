@@ -26,6 +26,7 @@ if __name__ == "__main__":
             "networkx",
             "numpy",
             "pycollada",
+            "scipy",
             "trimesh",
             "coacd",
         ],
