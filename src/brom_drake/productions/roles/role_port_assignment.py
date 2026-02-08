@@ -1,7 +1,5 @@
 from dataclasses import dataclass
-from distutils.command.build import build
 from enum import IntEnum
-from platform import system
 from typing import Union, List
 
 from pydrake.systems.framework import DiagramBuilder, LeafSystem
