@@ -4,6 +4,7 @@ Description
 This module tests the Manipulation Station that we're making
 for the UR10e robot.
 """
+
 import numpy as np
 from pydrake.all import (
     AbstractValue,
@@ -19,9 +20,8 @@ from brom_drake.all import (
 )
 from brom_drake.robots.gripper_type import GripperType
 from brom_drake.stations.classical.ur10e import UR10eStation
-from brom_drake.motion_planning.systems import (
-    OpenLoopPlanDispenser
-)
+from brom_drake.motion_planning.systems import OpenLoopPlanDispenser
+
 
 class TestUR10e(unittest.TestCase):
     def test_init1(self):
@@ -32,7 +32,7 @@ class TestUR10e(unittest.TestCase):
         """
         # Setup
         station = UR10eStation(
-            meshcat_port_number=None, # Use None for CI
+            meshcat_port_number=None,  # Use None for CI
         )
 
         self.assertTrue(True)
@@ -56,15 +56,13 @@ class TestUR10e(unittest.TestCase):
         station.Finalize()
 
         # Create a simple plan and a source for it
-        plan = np.array([
-            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-            [0.0, 0.0, 0.0, 0.0, 0.0, np.pi],
-        ])
-        plan_source = builder.AddSystem(
-            ConstantValueSource(
-                AbstractValue.Make(plan)
-            )
+        plan = np.array(
+            [
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, np.pi],
+            ]
         )
+        plan_source = builder.AddSystem(ConstantValueSource(AbstractValue.Make(plan)))
 
         ready_signal_source = builder.AddSystem(
             ConstantValueSource(

@@ -4,7 +4,7 @@ Description:
 
     This file is a placeholder for a test that will be written in the future.
 """
-import ipdb
+
 import numpy as np
 from pydrake.all import Simulator, DiagramBuilder
 from pydrake.common.value import AbstractValue
@@ -31,7 +31,7 @@ class PlaceholderTest(unittest.TestCase):
         # station = UR10eStation()
         station = UR10eStation(
             gripper_type=GripperType.Robotiq_2f_85,
-            meshcat_port_number=None, # Use None for CI
+            meshcat_port_number=None,  # Use None for CI
         )
         station.ConnectToMeshcatVisualizer()
         station.Finalize()
@@ -44,13 +44,12 @@ class PlaceholderTest(unittest.TestCase):
 
         # Create the GripperTargetType and connect it to the system
         gripper_target_type_source = builder.AddSystem(
-            ConstantValueSource(
-                AbstractValue.Make(gripper_target)
-            )
+            ConstantValueSource(AbstractValue.Make(gripper_target))
         )
         builder.Connect(
             gripper_target_type_source.get_output_port(),
-            station.GetInputPort("gripper_target_type"))
+            station.GetInputPort("gripper_target_type"),
+        )
 
         builder.Connect(
             gripper_target_source.get_output_port(),
@@ -60,15 +59,11 @@ class PlaceholderTest(unittest.TestCase):
         # Create the EndEffectorTarget and target value (then connect to the system)
         ee_target_type = EndEffectorTarget.kPose
         ee_target_type_source = builder.AddSystem(
-            ConstantValueSource(
-                AbstractValue.Make(ee_target_type)
-            )
+            ConstantValueSource(AbstractValue.Make(ee_target_type))
         )
 
         ee_target = np.array([0.5, 0.5, 0.5, 0, 0, 0])
-        ee_target_source = builder.AddSystem(
-            ConstantVectorSource(ee_target)
-        )
+        ee_target_source = builder.AddSystem(ConstantVectorSource(ee_target))
 
         # Connect the end effector target type and target to the system
         # builder.Connect(
@@ -78,7 +73,7 @@ class PlaceholderTest(unittest.TestCase):
 
         builder.Connect(
             ee_target_source.get_output_port(),
-            station.GetInputPort("desired_joint_positions")
+            station.GetInputPort("desired_joint_positions"),
         )
 
         # Build System
@@ -101,6 +96,7 @@ class PlaceholderTest(unittest.TestCase):
 
         # Tautology
         self.assertTrue(True)
+
 
 if __name__ == "__main__":
     unittest.main()

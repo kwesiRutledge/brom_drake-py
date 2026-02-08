@@ -2,6 +2,7 @@
 Description:
     This file contains tests for the IdealJointPositionController class.
 """
+
 # External Imports
 from importlib import resources as impresources
 import os
@@ -15,6 +16,7 @@ from pydrake.systems.framework import DiagramBuilder
 from pydrake.systems.primitives import AffineSystem, ConstantVectorSource
 
 from brom_drake.all import add_watcher_and_build
+
 # Internal Imports
 from brom_drake.control import IdealJointPositionController
 from brom_drake import robots
@@ -68,9 +70,7 @@ class TestIdealJointPositionController(unittest.TestCase):
         D = np.zeros((6, 1))
         y0 = np.zeros((6, 1))
         x0 = np.array([0.0, 0.0, 0.0, 0.0, 0.2, 0.5])
-        target_source2 = builder.AddSystem(
-            AffineSystem(A, B, f0, C, D, y0)
-        )
+        target_source2 = builder.AddSystem(AffineSystem(A, B, f0, C, D, y0))
         target_source2.configure_default_state(x0)
 
         # Create a simple input for it (an affine system)
@@ -79,12 +79,10 @@ class TestIdealJointPositionController(unittest.TestCase):
 
         # Connect input to affine system
         builder.Connect(
-            affine_system_input.get_output_port(),
-            target_source2.get_input_port()
+            affine_system_input.get_output_port(), target_source2.get_input_port()
         )
 
         return target_source2, affine_system_input
-
 
     def test_simple_diagram_simulation1(self):
         """
@@ -120,10 +118,7 @@ class TestIdealJointPositionController(unittest.TestCase):
         target_source2, affine_system_input = self.create_simple_affine_system1(builder)
 
         # Connect the controller to the target source
-        builder.Connect(
-            target_source2.get_output_port(),
-            controller.get_input_port(0)
-        )
+        builder.Connect(target_source2.get_output_port(), controller.get_input_port(0))
 
         # Add a watcher and build the diagram
         watcher, diagram, diagram_context = add_watcher_and_build(builder)
@@ -144,5 +139,5 @@ class TestIdealJointPositionController(unittest.TestCase):
         self.assertTrue(True)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

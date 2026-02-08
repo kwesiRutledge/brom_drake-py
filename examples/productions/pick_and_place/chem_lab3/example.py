@@ -1,10 +1,8 @@
 from importlib import resources as impresources
-import ipdb
 import numpy as np
 from pydrake.all import (
     Simulator,
 )
-import typer
 
 # Internal Imports
 from brom_drake.all import (
@@ -37,8 +35,8 @@ def main(meshcat_port_number: int = 7001):
     # )
 
     raise NotImplementedError(
-        "This example is not working yet. " +
-        "Please wait for future versions of brom_drake to fix this."
+        "This example is not working yet. "
+        + "Please wait for future versions of brom_drake to fix this."
     )
 
     # Setup
@@ -47,7 +45,7 @@ def main(meshcat_port_number: int = 7001):
 
     # Create the production
     production = ChemLab3(
-        meshcat_port_number=meshcat_port_number, # Use None for CI
+        meshcat_port_number=meshcat_port_number,  # Use None for CI
     )
 
     # Create a planner object which will be used to plan the motion

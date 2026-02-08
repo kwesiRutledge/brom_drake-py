@@ -2,10 +2,13 @@ from enum import IntEnum
 import numpy as np
 from pydrake.all import (
     MultibodyPlant,
-    RotationMatrix, RigidTransform,
+    RotationMatrix,
+    RigidTransform,
     CoulombFriction,
-    HalfSpace, Box,
+    HalfSpace,
+    Box,
 )
+
 
 # Class Definition
 class GroundShape(IntEnum):
@@ -13,8 +16,10 @@ class GroundShape(IntEnum):
     Description:
         This class defines the different shapes that the ground can have.
     """
+
     kHalfSpace = 0
     kBox = 1
+
 
 def AddGround(
     plant: MultibodyPlant,
@@ -47,11 +52,11 @@ def AddGround(
     if z_ground is None:
         p_GroundOrigin = [0, 0.0, 0.0]
         R_GroundOrigin = RotationMatrix.MakeXRotation(0.0)
-        X_GroundOrigin = RigidTransform(R_GroundOrigin,p_GroundOrigin)
+        X_GroundOrigin = RigidTransform(R_GroundOrigin, p_GroundOrigin)
     else:
-        p_GroundOrigin = [0, 0.0, z_ground - ground_thickness/2.0]
+        p_GroundOrigin = [0, 0.0, z_ground - ground_thickness / 2.0]
         R_GroundOrigin = RotationMatrix.MakeXRotation(0.0)
-        X_GroundOrigin = RigidTransform(R_GroundOrigin,p_GroundOrigin)
+        X_GroundOrigin = RigidTransform(R_GroundOrigin, p_GroundOrigin)
 
     # Input Processing
     if shape == GroundShape.kHalfSpace:
@@ -59,21 +64,13 @@ def AddGround(
     elif shape == GroundShape.kBox:
         shape = Box(10, 10, ground_thickness)
     else:
-        raise ValueError(f"Invalid shape: {shape}!")  
+        raise ValueError(f"Invalid shape: {shape}!")
 
     # Set Up Ground on Plant
-    surface_friction = CoulombFriction(
-            static_friction = 0.7,
-            dynamic_friction = 0.5)
+    surface_friction = CoulombFriction(static_friction=0.7, dynamic_friction=0.5)
     plant.RegisterCollisionGeometry(
-            plant.world_body(),
-            X_GroundOrigin,
-            shape,
-            "ground_collision",
-            surface_friction)
+        plant.world_body(), X_GroundOrigin, shape, "ground_collision", surface_friction
+    )
     plant.RegisterVisualGeometry(
-            plant.world_body(),
-            X_GroundOrigin,
-            shape,
-            "ground_visual",
-            transparent_color)  # transparent
+        plant.world_body(), X_GroundOrigin, shape, "ground_visual", transparent_color
+    )  # transparent

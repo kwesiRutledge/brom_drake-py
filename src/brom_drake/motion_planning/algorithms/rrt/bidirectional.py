@@ -18,7 +18,9 @@ from typing import Callable, Tuple
 
 # Internal Imports
 from brom_drake.motion_planning.algorithms.motion_planner import MotionPlanner
+
 # TODO(Kwesi): Introduce planning node object
+
 
 # Define config dataclass
 @dataclass(frozen=True)
@@ -26,20 +28,23 @@ class BiRRTSamplingProbabilities:
     """
     A dataclass that defines the sampling probabilities for a bidirectional RRT planner.
     """
+
     sample_goal_tree: float = 0.10
     sample_opposite_tree: float = 0.10
-    
+
 
 @dataclass
 class BidirectionalRRTPlannerConfig:
     """
     A dataclass that defines the configuration for a bidirectional RRT planner.
     """
+
     convergence_threshold: float = 1e-3
     max_tree_nodes: int = int(1e5)
     probabilities: BiRRTSamplingProbabilities = BiRRTSamplingProbabilities()
     random_seed: int = 23
     steering_step_size: float = 0.1
+
 
 class BidirectionalRRTPlanner(MotionPlanner):
     def __init__(
@@ -58,7 +63,9 @@ class BidirectionalRRTPlanner(MotionPlanner):
 
         # Use the parent class constructor
         super().__init__(
-            robot_model_idx, plant, scene_graph, 
+            robot_model_idx,
+            plant,
+            scene_graph,
             random_seed=self.config.random_seed,
         )
 
@@ -88,13 +95,13 @@ class BidirectionalRRTPlanner(MotionPlanner):
         target_tree.add_node(n_nodes, q=q_new)
         if tree_is_goal:
             target_tree.add_edge(
-                target_tree.number_of_nodes()-1,
+                target_tree.number_of_nodes() - 1,
                 prev_node,
             )
         else:
             target_tree.add_edge(
                 prev_node,
-                target_tree.number_of_nodes()-1,
+                target_tree.number_of_nodes() - 1,
             )
 
     def plan(
@@ -121,8 +128,8 @@ class BidirectionalRRTPlanner(MotionPlanner):
         q_goal = np.array(q_goal)
         if q_start.shape[0] != self.dim_q or q_goal.shape[0] != self.dim_q:
             raise ValueError(
-                f"Start configuration shape ({q_start.shape}) and goal configuration " +
-                f"shape ({q_goal.shape}) must match the dimension of the robot ({self.dim_q})."
+                f"Start configuration shape ({q_start.shape}) and goal configuration "
+                + f"shape ({q_goal.shape}) must match the dimension of the robot ({self.dim_q})."
             )
 
         if collision_check_fcn is None:
@@ -145,9 +152,9 @@ class BidirectionalRRTPlanner(MotionPlanner):
         while (n_nodes_start + n_nodes_goal) <= max_tree_nodes:
             # Decide whether to sample from the start or goal tree
             sample_from_goal_tree = np.random.rand() < prob_sample_goal_tree
-            if sample_from_goal_tree: # Sample from the goal tree
+            if sample_from_goal_tree:  # Sample from the goal tree
                 current_tree = rrt_goal
-            else: # Sample from the start tree
+            else:  # Sample from the start tree
                 current_tree = rrt_start
 
             # Choose whether or not to sample from the opposite tree or randomly
@@ -166,9 +173,11 @@ class BidirectionalRRTPlanner(MotionPlanner):
                 q_random = self.sample_random_configuration()
 
                 # Find the nearest node in the tree and steer towards it
-                nearest_node, nearest_node_dist = self.sample_nearest_in_tree(current_tree, q_random)
+                nearest_node, nearest_node_dist = self.sample_nearest_in_tree(
+                    current_tree, q_random
+                )
                 q_new, reached_new = self.steer(
-                    current_tree.nodes[nearest_node]['q'],
+                    current_tree.nodes[nearest_node]["q"],
                     q_random,
                 )
 
@@ -215,7 +224,7 @@ class BidirectionalRRTPlanner(MotionPlanner):
         raise ValueError(
             f"Random index ({random_index}) not found in RRT with {n_tree} nodes."
         )
-    
+
     def sample_nearest_in_tree(
         self,
         rrt: nx.DiGraph,
@@ -240,21 +249,21 @@ class BidirectionalRRTPlanner(MotionPlanner):
             Use this to access the node as follows rrt.nodes[node_view].
         distance: float
             The distance from the random configuration to the nearest node in the RRT.
-            
+
         """
         # Setup
 
         # Search through the tree to find the node that is nearest to the random configuration
-        min_distance = float('inf')
+        min_distance = float("inf")
         nearest_node_view = None
         for node in rrt.nodes:
-            distance = np.linalg.norm(rrt.nodes[node]['q'] - q_random)
+            distance = np.linalg.norm(rrt.nodes[node]["q"] - q_random)
             if distance < min_distance:
                 min_distance = distance
                 nearest_node_view = node
 
         return nearest_node_view, min_distance
-    
+
     def steer(
         self,
         q_current: np.ndarray,
@@ -292,9 +301,9 @@ class BidirectionalRRTPlanner(MotionPlanner):
 
         if distance < step_size:
             return q_target, True
-        
+
         return q_current + step_size * (direction / distance), False
-    
+
     def steer_towards_tree(
         self,
         rrt_start: nx.DiGraph,
@@ -324,14 +333,16 @@ class BidirectionalRRTPlanner(MotionPlanner):
 
         # Sample a node in the current tree
         current_node_view = self.sample_from_tree(current_tree)
-        q_current = current_tree.nodes[current_node_view]['q']
+        q_current = current_tree.nodes[current_node_view]["q"]
 
         # Sample from the opposite tree
         opposite_tree = rrt_start if current_tree_is_goal else rrt_goal
-        node_idx_in_opposite_tree, min_distance = self.sample_nearest_in_tree(opposite_tree, q_current)
-        
+        node_idx_in_opposite_tree, min_distance = self.sample_nearest_in_tree(
+            opposite_tree, q_current
+        )
+
         node_in_opposite_tree = opposite_tree.nodes[node_idx_in_opposite_tree]
-        sampled_config = node_in_opposite_tree['q']
+        sampled_config = node_in_opposite_tree["q"]
 
         # Steer from the current configuration to the sampled one
         q_new, reached_new = self.steer(q_current, sampled_config)
@@ -346,7 +357,9 @@ class BidirectionalRRTPlanner(MotionPlanner):
             # TODO(Kwesi): Check that this int conversion is okay...
             if current_tree_is_goal:
                 if debug_flag:
-                    print(f"Adding edge between {node_idx_in_opposite_tree} and {rrt_start.number_of_nodes() + int(current_node_view)}")
+                    print(
+                        f"Adding edge between {node_idx_in_opposite_tree} and {rrt_start.number_of_nodes() + int(current_node_view)}"
+                    )
 
                 combined_rrt.add_edge(
                     node_idx_in_opposite_tree,
@@ -355,7 +368,9 @@ class BidirectionalRRTPlanner(MotionPlanner):
             else:
                 # TODO(Kwesi): Check that this int conversion is okay...
                 if debug_flag:
-                    print(f"Adding edge between {current_node_view} and {rrt_start.number_of_nodes() + node_idx_in_opposite_tree}")
+                    print(
+                        f"Adding edge between {current_node_view} and {rrt_start.number_of_nodes() + node_idx_in_opposite_tree}"
+                    )
 
                 combined_rrt.add_edge(
                     int(current_node_view),

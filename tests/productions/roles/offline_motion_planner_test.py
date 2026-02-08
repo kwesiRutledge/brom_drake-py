@@ -1,6 +1,8 @@
 import unittest
 
-from brom_drake.productions.roles.motion_planners.kinematic import kKinematicMotionPlanner
+from brom_drake.productions.roles.motion_planners.kinematic import (
+    kKinematicMotionPlanner,
+)
 from brom_drake.productions.roles.role_port_assignment import PairingType
 
 
@@ -42,11 +44,12 @@ class OfflineMotionPlannerTest(unittest.TestCase):
         # Assertion
         required_performer_outputs = [
             assignment.performer_port_name
-                for assignment in omp_role.port_assignments
-                if assignment.pairing_type == PairingType.kOutput
+            for assignment in omp_role.port_assignments
+            if assignment.pairing_type == PairingType.kOutput
         ]
         for port_name in expected_port_names:
             self.assertTrue(port_name in required_performer_outputs)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,9 +1,9 @@
-import ipdb
 import numpy as np
 from pydrake.all import (
     AbstractValue,
-    RigidTransform, RollPitchYaw,
-    AddMultibodyPlantSceneGraph, 
+    RigidTransform,
+    RollPitchYaw,
+    AddMultibodyPlantSceneGraph,
     ConstantValueSource,
     Parser,
     Meshcat,
@@ -12,7 +12,6 @@ from pydrake.all import (
     DiagramBuilder,
     Simulator,
 )
-import typer
 
 # Internal imports
 from brom_drake.file_manipulation.urdf.shapes import (
@@ -21,12 +20,15 @@ from brom_drake.file_manipulation.urdf.shapes import (
 from brom_drake.file_manipulation.urdf import (
     SimpleShapeURDFDefinition,
 )
-from brom_drake.motion_planning.systems.open_loop_dispensers import OpenLoopPosePlanDispenser
+from brom_drake.motion_planning.systems.open_loop_dispensers import (
+    OpenLoopPosePlanDispenser,
+)
 from brom_drake.all import (
     add_watcher_and_build,
     Puppetmaker,
     PuppetmakerConfiguration,
 )
+
 
 def create_piecewise_pose_trajectory(t_final: float = 15.0):
     # Setup
@@ -37,7 +39,7 @@ def create_piecewise_pose_trajectory(t_final: float = 15.0):
 
     # Create rotation trajectory
     rpy0 = RollPitchYaw(0.0, 0.0, 0.0)
-    rpyT = RollPitchYaw(0.0, np.pi/4.0, np.pi/2.0)
+    rpyT = RollPitchYaw(0.0, np.pi / 4.0, np.pi / 2.0)
 
     # Return the pose trajectory
     return [
@@ -45,16 +47,14 @@ def create_piecewise_pose_trajectory(t_final: float = 15.0):
         RigidTransform(rpy=rpyT, p=xT),
     ]
 
+
 def create_trajectory_source(
-    builder: DiagramBuilder,
-    pose_trajectory: list[RigidTransform]
+    builder: DiagramBuilder, pose_trajectory: list[RigidTransform]
 ) -> OpenLoopPosePlanDispenser:
     # Setup
 
-    # Create dispenser of trajectory 
-    trajectory_dispenser = builder.AddSystem(
-        OpenLoopPosePlanDispenser(speed=0.025)
-    )
+    # Create dispenser of trajectory
+    trajectory_dispenser = builder.AddSystem(OpenLoopPosePlanDispenser(speed=0.025))
 
     # Connect a source to "ALWAYS enable" the trajectory source
     enable_trajectory_source = builder.AddSystem(
@@ -63,22 +63,20 @@ def create_trajectory_source(
 
     builder.Connect(
         enable_trajectory_source.get_output_port(),
-        trajectory_dispenser.GetInputPort("plan_ready")
+        trajectory_dispenser.GetInputPort("plan_ready"),
     )
 
     # Create source for trajectory
     trajectory_value = builder.AddSystem(
-        ConstantValueSource(
-            AbstractValue.Make(pose_trajectory)
-        )
+        ConstantValueSource(AbstractValue.Make(pose_trajectory))
     )
 
     builder.Connect(
-        trajectory_value.get_output_port(),
-        trajectory_dispenser.GetInputPort("plan")
+        trajectory_value.get_output_port(), trajectory_dispenser.GetInputPort("plan")
     )
 
     return trajectory_dispenser
+
 
 def main(t_final: float = 15.0):
 
@@ -90,15 +88,14 @@ def main(t_final: float = 15.0):
     # plant = builder.AddSystem(MultibodyPlant(time_step=time_step)) #Add plant to diagram builder
     plant, scene_graph = AddMultibodyPlantSceneGraph(builder, time_step=1e-3)
 
-
     # Create Cube 3d model
-    simple_cube = BoxDefinition(size=[0.05,0.05,0.05])
+    simple_cube = BoxDefinition(size=[0.05, 0.05, 0.05])
     cube_urdf_defn = SimpleShapeURDFDefinition(
         name="tutorial-cube",
         shape=simple_cube,
-        color=[0.1,0.1,0.5,1.0],
+        color=[0.1, 0.1, 0.5, 1.0],
     )
-    cube_urdf_path =cube_urdf_defn.write_to_file()
+    cube_urdf_path = cube_urdf_defn.write_to_file()
 
     # Add cube urdf to plant
     cube_model = Parser(plant=plant).AddModels(cube_urdf_path)[0]
@@ -108,7 +105,9 @@ def main(t_final: float = 15.0):
         frame_on_parent=plant.world_frame(),
         name="cube_puppet",
         sphere_radius=0.02,
-        sphere_color=np.array([1.0,0.0,0.0,0.8]), # Change the color of the puppet links to red
+        sphere_color=np.array(
+            [1.0, 0.0, 0.0, 0.8]
+        ),  # Change the color of the puppet links to red
     )
     puppetmaker0 = Puppetmaker(
         plant=plant,
@@ -120,7 +119,7 @@ def main(t_final: float = 15.0):
     plant.Finalize()
 
     # Add the puppet controller to the builder
-    pose_converter_system = puppetmaker0.add_puppet_controller_for(
+    pose_converter_system, _ = puppetmaker0.add_puppet_controller_for(
         cube_signature,
         builder,
     )
@@ -131,7 +130,7 @@ def main(t_final: float = 15.0):
 
     builder.Connect(
         trajectory_source.GetOutputPort("pose_in_plan"),
-        pose_converter_system.get_input_port()
+        pose_converter_system.get_input_port(),
     )
 
     # Connect to Meshcat
@@ -150,6 +149,6 @@ def main(t_final: float = 15.0):
     simulator.Initialize()
     simulator.AdvanceTo(t_final)
 
-if __name__ == '__main__':
-    with ipdb.launch_ipdb_on_exception():
-        typer.run(main)
+
+if __name__ == "__main__":
+    main()

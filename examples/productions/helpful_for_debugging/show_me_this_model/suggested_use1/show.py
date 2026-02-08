@@ -7,10 +7,8 @@ For more info, refer to the README or the Wiki:
 https://github.com/kwesiRutledge/brom_drake-py/wiki/Productions-%E2%80%90-ShowMeThisModel
 """
 
-import ipdb
 from importlib import resources as impresources
 import numpy as np
-import typer
 from pydrake.systems.analysis import Simulator
 
 # Internal imports
@@ -18,11 +16,10 @@ from brom_drake import robots
 from brom_drake.all import drakeify_my_urdf
 from brom_drake.productions.all import ShowMeThisModel
 
+
 def main():
     # Setup
-    urdf_file_path = str(
-        impresources.files(robots) / "models/ur/ur10e.urdf"
-    )
+    urdf_file_path = str(impresources.files(robots) / "models/ur/ur10e.urdf")
 
     # Convert the URDF into a format that Drake likes
     new_urdf_path = drakeify_my_urdf(

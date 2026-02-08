@@ -1,18 +1,19 @@
 from importlib import resources as impresources
-import ipdb
 import numpy as np
 from pydrake.all import (
     Simulator,
-    RollPitchYaw, RigidTransform,
+    RollPitchYaw,
+    RigidTransform,
 )
-import typer
 
 # Internal Imports
 from brom_drake.all import drakeify_my_urdf
 from brom_drake import robots
 from brom_drake.productions.all import (
-    ShowMeThisStaticGrasp, ShowMeThisStaticGraspConfiguration
+    ShowMeThisStaticGrasp,
+    ShowMeThisStaticGraspConfiguration,
 )
+
 
 def main(meshcat_port_number: int = 7001):
     """
@@ -36,26 +37,26 @@ def main(meshcat_port_number: int = 7001):
 
     # Create the gripper urdf
     gripper_urdf = str(
-        impresources.files(robots) / "models/robotiq/2f_85_gripper-no-mimic/urdf/robotiq_2f_85.urdf"
-    )    
-    
-    X_ObjectTarget = RigidTransform(
-        p=np.array([-0.08, 0.05, 0.15]),
-        rpy=RollPitchYaw(0.0, np.pi/2.0, 0.0),
+        impresources.files(robots)
+        / "models/robotiq/2f_85_gripper-no-mimic/urdf/robotiq_2f_85.urdf"
     )
 
+    X_ObjectTarget = RigidTransform(
+        p=np.array([-0.08, 0.05, 0.15]),
+        rpy=RollPitchYaw(0.0, np.pi / 2.0, 0.0),
+    )
 
     # Create the config for the production
     config = ShowMeThisStaticGraspConfiguration()
     config.meshcat_port_number = meshcat_port_number
-    config.gripper_color = [0.0, 1.0, 0.0, 0.6] # Green
+    config.gripper_color = [0.0, 1.0, 0.0, 0.6]  # Green
 
     # Create production
     production = ShowMeThisStaticGrasp(
         path_to_object=str(drakeified_flask_urdf),
         path_to_gripper=gripper_urdf,
         X_ObjectGripper=X_ObjectTarget,
-        config=config
+        config=config,
     )
 
     # Call the method
@@ -67,6 +68,7 @@ def main(meshcat_port_number: int = 7001):
     simulator.set_publish_every_time_step(False)
     simulator.Initialize()
     simulator.AdvanceTo(10.0)
+
 
 if __name__ == "__main__":
     main()

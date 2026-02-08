@@ -6,6 +6,7 @@ from .sphere import SphereDefinition
 __all__ = [
     "BoxDefinition",
     "CylinderDefinition",
-    "ShapeDefinition", "ShapeEnum",
+    "ShapeDefinition",
+    "ShapeEnum",
     "SphereDefinition",
 ]

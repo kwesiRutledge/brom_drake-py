@@ -1,5 +1,4 @@
 from importlib import resources as impresources
-import ipdb
 import numpy as np
 from pathlib import Path
 from pydrake.all import (
@@ -7,7 +6,6 @@ from pydrake.all import (
     RollPitchYaw,
     Simulator,
 )
-import typer
 
 # Internal Imports
 from brom_drake.watchers.port_watcher.port_watcher_options import FigureNamingConvention
@@ -15,10 +13,11 @@ from brom_drake.all import drakeify_my_urdf, GripperType, MeshReplacementStrateg
 from brom_drake import robots
 from brom_drake.productions.all import AttemptGraspWithPuppeteerWrist
 
+
 def main():
     """
     *Description*
-    
+
     In this example, we will demonstrate how to:
     - Load a model into the `AttempptGraspWithPuppeteerWrist` production
     - Specify a sequence of target poses for the gripper wrist to follow
@@ -47,7 +46,7 @@ def main():
     # - The Grasp Pose (i.e. the target pose of the gripper wrist when grasping the object)
     X_ObjectTarget = RigidTransform(
         p=np.array([-0.08, 0.05, 0.15]),
-        rpy=RollPitchYaw(0.1, (11.0/20.0)*np.pi, 0.1),
+        rpy=RollPitchYaw(0.1, (11.0 / 20.0) * np.pi, 0.1),
     )
 
     # - The Pre-Grasp Pose (i.e. the pose of the gripper wrist just before reaching to grasp the object)
@@ -64,7 +63,7 @@ def main():
         gripper_choice=GripperType.Robotiq_2f_85,
         grasp_joint_positions=np.array([0.7]),
         X_ObjectGripper_trajectory=[X_WorldPreGrasp, X_ObjectTarget],
-        meshcat_port_number=7001, # Use None for CI
+        meshcat_port_number=7001,  # Use None for CI
     )
 
     # Build with watcher (so we can view the simulation's data in `brom/watcher/plots` which is helpful for debugging)
@@ -78,6 +77,7 @@ def main():
     simulator.set_publish_every_time_step(False)
     simulator.Initialize()
     simulator.AdvanceTo(60.0)
+
 
 if __name__ == "__main__":
     main()

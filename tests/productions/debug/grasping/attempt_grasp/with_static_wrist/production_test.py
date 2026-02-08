@@ -14,13 +14,20 @@ import unittest
 from brom_drake.all import drakeify_my_urdf, add_watcher_and_build, GripperType
 from brom_drake import robots
 from brom_drake.file_manipulation.urdf.shapes.box import BoxDefinition
-from brom_drake.file_manipulation.urdf.simple_writer.urdf_definition import SimpleShapeURDFDefinition
+from brom_drake.file_manipulation.urdf.simple_writer.urdf_definition import (
+    SimpleShapeURDFDefinition,
+)
 from brom_drake.productions.types.base import Configuration as BaseConfiguration
-from brom_drake.productions.debug.grasping.attempt_grasp.with_static_wrist.production import AttemptGraspWithStaticWrist
-from brom_drake.productions.debug.grasping.attempt_grasp.with_static_wrist.config import Configuration as AttemptGraspWithStaticWristConfiguration
+from brom_drake.productions.debug.grasping.attempt_grasp.with_static_wrist.production import (
+    AttemptGraspWithStaticWrist,
+)
+from brom_drake.productions.debug.grasping.attempt_grasp.with_static_wrist.config import (
+    Configuration as AttemptGraspWithStaticWristConfiguration,
+)
 from brom_drake.utils.model_instances import (
     get_name_of_first_body_in_urdf,
 )
+
 
 class AttemptGraspWithStaticWristTest(unittest.TestCase):
     def setUp(self):
@@ -48,14 +55,14 @@ class AttemptGraspWithStaticWristTest(unittest.TestCase):
         # Create the production
         config = AttemptGraspWithStaticWristConfiguration(
             base=BaseConfiguration(
-                meshcat_port_number=None, # Use None for CI
+                meshcat_port_number=None,  # Use None for CI
             ),
         )
         production = AttemptGraspWithStaticWrist(
             path_to_object=flask_urdf,
             gripper_choice=GripperType.Robotiq_2f_85,
             grasp_joint_positions=np.array([0.7]),
-            config=config
+            config=config,
         )
         production.add_supporting_cast()
 
@@ -81,16 +88,14 @@ class AttemptGraspWithStaticWristTest(unittest.TestCase):
         plant = builder.AddSystem(MultibodyPlant(time_step=0.0))
 
         # Create a box urdf for the floor
-        floor_geometry_defn = BoxDefinition(
-            size=[10.0, 10.0, 0.1]
-        )
+        floor_geometry_defn = BoxDefinition(size=[10.0, 10.0, 0.1])
         floor_thickness = floor_geometry_defn.size[2]
 
         # Create a urdf for the floor
         floor_urdf_defn = SimpleShapeURDFDefinition(
             name="floor",
             shape=floor_geometry_defn,
-        ) 
+        )
         floor_urdf = floor_urdf_defn.write_to_file()
 
         # Add the floor to the plant
@@ -102,7 +107,9 @@ class AttemptGraspWithStaticWristTest(unittest.TestCase):
             PrismaticJoint(
                 name="floor_joint",
                 frame_on_parent=plant.world_frame(),
-                frame_on_child=plant.GetFrameByName(get_name_of_first_body_in_urdf(floor_urdf)),
+                frame_on_child=plant.GetFrameByName(
+                    get_name_of_first_body_in_urdf(floor_urdf)
+                ),
                 axis=[0, 0, 1],
             )
         )
@@ -135,19 +142,19 @@ class AttemptGraspWithStaticWristTest(unittest.TestCase):
         This test verifies that we can add the floor to the plant without any errors.
         """
         # Setup
-        flask_urdf = self.drakeified_flask_urdf  
+        flask_urdf = self.drakeified_flask_urdf
 
         # Create the production
         config = AttemptGraspWithStaticWristConfiguration(
             base=BaseConfiguration(
-                meshcat_port_number=None, # Use None for CI
+                meshcat_port_number=None,  # Use None for CI
             ),
         )
         production = AttemptGraspWithStaticWrist(
             path_to_object=flask_urdf,
             gripper_choice=GripperType.Robotiq_2f_85,
             grasp_joint_positions=np.array([0.7]),
-            config=config
+            config=config,
         )
 
         # Call the method
@@ -179,14 +186,14 @@ class AttemptGraspWithStaticWristTest(unittest.TestCase):
         # Create the production
         config = AttemptGraspWithStaticWristConfiguration(
             base=BaseConfiguration(
-                meshcat_port_number=None, # Use None for CI
+                meshcat_port_number=None,  # Use None for CI
             ),
         )
         production = AttemptGraspWithStaticWrist(
             path_to_object=flask_urdf,
             gripper_choice=GripperType.Robotiq_2f_85,
             grasp_joint_positions=np.array([0.7]),
-            config=config
+            config=config,
         )
 
         # Call the method
@@ -199,7 +206,6 @@ class AttemptGraspWithStaticWristTest(unittest.TestCase):
             tf,
             msg="The floor height of 0.1 should cause a collision between the flask and the floor.",
         )
-
 
 
 if __name__ == "__main__":

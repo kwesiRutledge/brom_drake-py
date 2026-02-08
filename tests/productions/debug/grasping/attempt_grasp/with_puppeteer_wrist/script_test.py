@@ -1,6 +1,9 @@
-from brom_drake.productions.debug.grasping.attempt_grasp.with_puppeteer_wrist.script import Script as AttemptGraspWithPuppeteerWristScript
+from brom_drake.productions.debug.grasping.attempt_grasp.with_puppeteer_wrist.script import (
+    Script as AttemptGraspWithPuppeteerWristScript,
+)
 
 import unittest
+
 
 class TestAttemptGraspWithPuppeteerWristScript(unittest.TestCase):
     def test_to_networkx_graph1(self):
@@ -43,5 +46,3 @@ class TestAttemptGraspWithPuppeteerWristScript(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-
-        

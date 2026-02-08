@@ -11,6 +11,7 @@ from typing import List, Tuple
 
 import brom_drake
 
+
 def generate_all_discoverable_docs(
     output_dir: Path,
     package_dir: Path = Path("../src/brom_drake"),
@@ -21,7 +22,7 @@ def generate_all_discoverable_docs(
     Iterates through all submodules in the given package directory,
     generating documentation files for each submodule, and finally
     generating an index file for the entire package.
-    
+
     :param output_dir: Place to create the doc file for Sphinx.
     :type output_dir: Path
     :param package_dir: Location of the code we are seeking to document.
@@ -52,8 +53,8 @@ def generate_all_discoverable_docs(
                 continue
 
             directories_found.append(child)
-    
-    #TODO(Kwesi): figure out an elegant way to replace this in the loop below
+
+    # TODO(Kwesi): figure out an elegant way to replace this in the loop below
     submodule_names = [elt.name for elt in directories_found]
 
     # Iterate through all files in the package directory
@@ -70,8 +71,10 @@ def generate_all_discoverable_docs(
             continue
 
         # Identify available functions in this file
-        temp_functions, temp_variables, temp_classes = identify_available_functions_and_variables_in_file(
-            target_file_path=file_path_i
+        temp_functions, temp_variables, temp_classes = (
+            identify_available_functions_and_variables_in_file(
+                target_file_path=file_path_i
+            )
         )
 
         available_functions.extend(temp_functions)
@@ -85,11 +88,7 @@ def generate_all_discoverable_docs(
 
     # Identify all functions in this package
     package_dir_contents = os.listdir(package_dir)
-    files_in_package_dir = [
-        elt
-        for elt in package_dir_contents
-        if ".py" in elt
-    ]
+    files_in_package_dir = [elt for elt in package_dir_contents if ".py" in elt]
 
     for mod in submodule_names:
         print(f"Generating docs for module: {mod}")
@@ -121,6 +120,7 @@ def generate_all_discoverable_docs(
         variables=available_variables,
     )
 
+
 def identify_available_functions_and_variables_in_file(
     target_file_path: Path,
 ) -> Tuple[List[str], List[str], List[str]]:
@@ -147,21 +147,23 @@ def identify_available_functions_and_variables_in_file(
     # Announce the beginning of this function
     print(f"Determining the functions in the following file: {target_file_path}")
 
-
     canonicalized_file_name = package_path_to_module_name(target_file_path)
     print(f"- Canonicalized file: {canonicalized_file_name}")
 
     # Use importlib to import all contents of this file path
     spec = importlib.util.spec_from_file_location(
-        canonicalized_file_name,
-        target_file_path
-    ) # 1. Create a spec from the file path
+        canonicalized_file_name, target_file_path
+    )  # 1. Create a spec from the file path
     if spec is None or spec.loader is None:
         print(f"  + Unable to load module from path: {target_file_path}")
         return [], [], []
-    
-    module = importlib.util.module_from_spec(spec) # 2. Create a new module based on the spec
-    spec.loader.exec_module(module) # 3. Execute the module (this populates it with functions/classes)
+
+    module = importlib.util.module_from_spec(
+        spec
+    )  # 2. Create a new module based on the spec
+    spec.loader.exec_module(
+        module
+    )  # 3. Execute the module (this populates it with functions/classes)
 
     # Collect all contents of package
     available_functions = []
@@ -196,7 +198,10 @@ def identify_available_functions_and_variables_in_file(
             continue
         else:
             obj_module = getattr(obj, "__module__", None)
-            if obj_module is not None and obj_module not in (module.__name__, "builtins"):
+            if obj_module is not None and obj_module not in (
+                module.__name__,
+                "builtins",
+            ):
                 # Ignore variables that are imported from other modules
                 print(f"  + Ignoring imported variable: {name}")
                 continue
@@ -214,8 +219,9 @@ def identify_available_functions_and_variables_in_file(
     print("- Available variables:")
     for candidate in available_variables:
         print(f"  + {candidate}")
-    
+
     return available_functions, available_variables, available_classes
+
 
 def get_canonicalized_function_name(
     output_dir: Path,
@@ -223,7 +229,7 @@ def get_canonicalized_function_name(
 ) -> str:
     """
     Docstring for get_canonicalized_function_name
-    
+
     :param output_dir: Description
     :type output_dir: Path
     :param function_name: Description
@@ -239,13 +245,16 @@ def get_canonicalized_function_name(
     # "source/generated/control/arms" -> "control/arms"
     expected_prefix = "source/generated"
     if expected_prefix not in str(output_dir):
-        raise ValueError(f"`output_dir` does not contain the expected prefix: {expected_prefix}")
+        raise ValueError(
+            f"`output_dir` does not contain the expected prefix: {expected_prefix}"
+        )
 
     # Add the component that should be relevant to the expected output
     # e.g., adds "control.arms" to out
-    out += \
-        str(output_dir)[str(output_dir).find(expected_prefix)+len(expected_prefix):]
-    out = out.replace("/",".")
+    out += str(output_dir)[
+        str(output_dir).find(expected_prefix) + len(expected_prefix) :
+    ]
+    out = out.replace("/", ".")
 
     assert ".." not in out, f"Invalid canonicalized name generated: {out}"
 
@@ -253,6 +262,7 @@ def get_canonicalized_function_name(
         out += "."
 
     return out + function_name
+
 
 def package_path_to_module_name(package_dir: Path) -> str:
     """
@@ -285,6 +295,7 @@ def package_path_to_module_name(package_dir: Path) -> str:
 
     return module_name
 
+
 def write_rst_file_for_package(
     package_name: str,
     output_dir: Path,
@@ -312,12 +323,12 @@ def write_rst_file_for_package(
 
     # Create the .rst file
     rst_file_path = output_dir / f"{package_name}.rst"
-    
-    # Fix the name of the .rst file 
+
+    # Fix the name of the .rst file
     # For the overall package (this is important so that the index always points to a clear place)
-    if package_name == "brom_drake": 
+    if package_name == "brom_drake":
         rst_file_path = output_dir / f"api.rst"
-        
+
     with open(rst_file_path, "w") as rst_file:
         # Write the module title
         title = package_name
@@ -347,7 +358,9 @@ def write_rst_file_for_package(
             rst_file.write("(None found)\n\n")
         else:
             for cls in sorted(classes, key=str.lower):
-                canonical_cls_name = get_canonicalized_function_name(output_dir, function_name=cls)
+                canonical_cls_name = get_canonicalized_function_name(
+                    output_dir, function_name=cls
+                )
                 rst_file.write(f".. autoclass:: {canonical_cls_name}\n")
                 rst_file.write(f"   :members:\n")
             rst_file.write("\n")
@@ -360,7 +373,9 @@ def write_rst_file_for_package(
             rst_file.write("(None found)\n\n")
         else:
             for fcn in sorted(functions, key=str.lower):
-                canonical_fcn_name = get_canonicalized_function_name(output_dir, function_name=fcn)
+                canonical_fcn_name = get_canonicalized_function_name(
+                    output_dir, function_name=fcn
+                )
                 rst_file.write(f".. autofunction:: {canonical_fcn_name}\n")
             rst_file.write("\n")
 
@@ -372,7 +387,9 @@ def write_rst_file_for_package(
             rst_file.write("(None found)\n\n")
         else:
             for var in sorted(variables, key=str.lower):
-                canonical_var_name = get_canonicalized_function_name(output_dir, function_name=var)
+                canonical_var_name = get_canonicalized_function_name(
+                    output_dir, function_name=var
+                )
                 rst_file.write(f".. autodata:: {canonical_var_name}\n")
             rst_file.write("\n")
 
@@ -383,6 +400,7 @@ def write_rst_file_for_package(
 
     print(f"Wrote RST file for module {package_name} at:")
     print(f"- {rst_file_path}")
+
 
 def main(
     output_dir: Path = Path("source"),
@@ -406,9 +424,8 @@ def main(
             "sphinx-build",
             "-M",
             "html",
-            "source", # Source directory
+            "source",  # Source directory
             "build",  # Build directory
-
         ]
     )
 
@@ -429,6 +446,7 @@ def main(
     #     ],
     #     check=True,
     # )
+
 
 if __name__ == "__main__":
     typer.run(main)

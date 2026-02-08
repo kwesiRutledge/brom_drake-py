@@ -7,6 +7,6 @@ from brom_drake.productions.motion_planning.offline.dynamic import (
 )
 
 __all__ = [
-    'ShelfPlanning1',
-    'ChemLab1',
+    "ShelfPlanning1",
+    "ChemLab1",
 ]

@@ -6,7 +6,7 @@ jobs:
     name: Run tests and collect coverage
     strategy:
       matrix:
-        python_version: [ '3.10', '3.11' ]
+        python_version: [ '3.10', '3.11', '3.14' ]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -16,8 +16,6 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python_version }}
-      - name: Install dependencies
-        run: pip install -r requirements.txt
       - name: Get Previous Tag
         id: previous_tag
         uses: "WyriHaximus/github-action-get-previous-tag@v1"
@@ -27,8 +25,8 @@ jobs:
       - name: Update version in setup.py
         run: >-
           sed -i "s/{{VERSION_PLACEHOLDER}}/${{ steps.previous_tag.outputs.tag }}/g" setup.py
-      - name: Install package
-        run: pip install -e .
+      - name: Install package with the "test" extra dependencies
+        run: pip install .[test]
       - name: Run tests and collect coverage
         run: pytest --cov brom_drake
       - name: Upload coverage reports to Codecov

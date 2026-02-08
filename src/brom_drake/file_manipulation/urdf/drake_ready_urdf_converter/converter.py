@@ -5,6 +5,7 @@ This file contains the URDF converter for transforming
 arbitrary URDFs into URDFs that the Drake toolbox can
 support.
 """
+
 import coacd
 from copy import copy, deepcopy
 from doctest import UnexpectedException
@@ -29,17 +30,21 @@ from .util import (
     does_drake_parser_support,
     find_mesh_file_path_in,
     get_mesh_element_in,
-    URDF_CONVERSION_LOG_LEVEL_NAME, URDF_CONVERSION_LEVEL,
+    URDF_CONVERSION_LOG_LEVEL_NAME,
+    URDF_CONVERSION_LEVEL,
     tree_contains_transmission_for_joint,
     create_transmission_element_for_joint,
 )
 from brom_drake.file_manipulation.urdf.shapes.cylinder import CylinderDefinition
-from brom_drake.file_manipulation.urdf.simple_writer.urdf_element_creator import URDFElementCreator
+from brom_drake.file_manipulation.urdf.simple_writer.urdf_element_creator import (
+    URDFElementCreator,
+)
+
 
 class DrakeReadyURDFConverter:
     """
     *Description*
-    
+
     This class is used to convert a URDF file into a Drake-compatible URDF file.
     It makes the following considerations when parsing a URDF file:
 
@@ -50,10 +55,10 @@ class DrakeReadyURDFConverter:
       a transmission element to the URDF file.
 
     *Parameters*
-        
+
     original_urdf_filename: str
         The path to the original URDF file.
-    
+
     config: DrakeReadyURDFConverterConfig (optional)
         The configuration for the URDF converter.
         This controls:
@@ -70,11 +75,11 @@ class DrakeReadyURDFConverter:
     ):
         """
         *Description*
-        
+
         This method initializes the DrakeReadyURDFConverter.
 
         *Parameters*
-        
+
         original_urdf_filename: str
             The path to the original URDF file.
 
@@ -91,17 +96,19 @@ class DrakeReadyURDFConverter:
 
         # Define the file manager which handles the tricky file paths that
         # we encounter during the conversion process.
-        self.file_manager : DrakeReadyURDFConverterFileManager = DrakeReadyURDFConverterFileManager(
-            original_urdf_path=Path(self.original_urdf_filename),
-            models_directory=Path(DEFAULT_BROM_MODELS_DIR),
-            log_file_name=config.log_file_name,
-            _output_urdf_path=config.output_urdf_file_path,
-        ) 
+        self.file_manager: DrakeReadyURDFConverterFileManager = (
+            DrakeReadyURDFConverterFileManager(
+                original_urdf_path=Path(self.original_urdf_filename),
+                models_directory=Path(DEFAULT_BROM_MODELS_DIR),
+                log_file_name=config.log_file_name,
+                _output_urdf_path=config.output_urdf_file_path,
+            )
+        )
 
         # Define conversion data directory in brom
         # (If it already exists, then we will overwrite it with the proper flag set)
         self.file_manager.models_directory = Path(DEFAULT_BROM_MODELS_DIR)
-        
+
         overwrite_old_models = self.config.overwrite_old_models
 
         if overwrite_old_models:
@@ -110,7 +117,9 @@ class DrakeReadyURDFConverter:
 
         # Input Processing
         original_urdf_path = Path(self.original_urdf_filename)
-        assert original_urdf_path.exists(), f"URDF file {original_urdf_path} does not exist!"
+        assert (
+            original_urdf_path.exists()
+        ), f"URDF file {original_urdf_path} does not exist!"
 
         if not (".urdf" in original_urdf_path.name):
             raise ValueError("Original URDF file must have a .urdf extension!")
@@ -118,7 +127,7 @@ class DrakeReadyURDFConverter:
         # Set Up logger
         self.logger = self.create_logger()
         self.log(
-            f"Created a new DrakeReadyURDFConverter for file \"{self.original_urdf_filename}\".",
+            f'Created a new DrakeReadyURDFConverter for file "{self.original_urdf_filename}".',
         )
 
         # Configure coacd, just in case
@@ -130,9 +139,9 @@ class DrakeReadyURDFConverter:
     def create_logger(self) -> logging.Logger:
         """
         *Description*
-        
+
         This method configures the `logging` logger for the URDF conversion.
-        
+
         *Returns*
 
         logging.Logger
@@ -144,11 +153,13 @@ class DrakeReadyURDFConverter:
 
         # Check if the log level exists in the logging module
         overwrite_old_logs = self.config.overwrite_old_logs
-        if overwrite_old_logs and os.path.exists(self.file_manager.output_file_directory() / log_file_name):
+        if overwrite_old_logs and os.path.exists(
+            self.file_manager.output_file_directory() / log_file_name
+        ):
             os.remove(self.file_manager.output_file_directory() / log_file_name)
 
         # Create (or collect) a logger for the given file
-        logger = logging.getLogger("DrakeReadyURDFConverter ({target_file})" )
+        logger = logging.getLogger("DrakeReadyURDFConverter ({target_file})")
 
         # Create the file handler
         if not self.file_manager.output_file_directory().exists():
@@ -156,15 +167,14 @@ class DrakeReadyURDFConverter:
             self.file_manager.output_file_directory().mkdir(parents=True, exist_ok=True)
 
         file_handler = logging.FileHandler(
-            self.file_manager.output_file_directory() / log_file_name,
-            mode='w'
+            self.file_manager.output_file_directory() / log_file_name, mode="w"
         )
         file_handler.setLevel(logging.INFO)
 
         # Create a formatter and set it for the file handler
         formatter = logging.Formatter(
-            '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-            datefmt='%Y-%m-%d %H:%M:%S'
+            "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S",
         )
         file_handler.setFormatter(formatter)
 
@@ -182,16 +192,16 @@ class DrakeReadyURDFConverter:
     def convert_collision_element(self, collision_elt: ET.Element) -> List[ET.Element]:
         """
         *Description*
-        
+
         This method will convert the collision element in the URDF file.
 
         *Parameters*
-        
+
         collision_elt: xml.etree.ElementTree.Element
             The collision element that we want to convert.
-        
+
         *Returns*
-        
+
         List[xml.etree.ElementTree.Element]
             The collision elements that will replace the original collision element.
             Usually, this is a list of length 1, but in some cases (e.g., convex decomposition)
@@ -218,18 +228,21 @@ class DrakeReadyURDFConverter:
 
         # Announce algorithm start
         self.log(
-            f"Converting element with tag \"{collision_elt.tag}\" using strategy {replacement_strategy}."
+            f'Converting element with tag "{collision_elt.tag}" using strategy {replacement_strategy}.'
         )
         n_replacements_made = 0
         new_elts = []
 
         # If the strategy is kWithMinimalEnclosingCylinder,
         # then we can replace the entire collision element and don't need to iterate through the children.
-        if replacement_strategy == MeshReplacementStrategy.kWithMinimalEnclosingCylinder:
+        if (
+            replacement_strategy
+            == MeshReplacementStrategy.kWithMinimalEnclosingCylinder
+        ):
             n_replacements_made += 1
-            new_elts = [self.replace_element_with_enclosing_cylinder(
-                deepcopy(collision_elt)
-            )]
+            new_elts = [
+                self.replace_element_with_enclosing_cylinder(deepcopy(collision_elt))
+            ]
 
         elif replacement_strategy == MeshReplacementStrategy.kWithObj:
             # Otherwise, let's slowly build the new element
@@ -238,12 +251,13 @@ class DrakeReadyURDFConverter:
             for ii, child_ii in enumerate(collision_elt):
                 # Check to see if the child is a geometry element
                 if child_ii.tag == "geometry":
-                    new_geometry_elt = self.convert_geometry_element(child_ii, replacement_strategy)
+                    new_geometry_elt = self.convert_geometry_element(
+                        child_ii, replacement_strategy
+                    )
                     new_elt.append(new_geometry_elt)
                 else:
                     # If the child is not a geometry element, then we will just copy it over
                     new_elt.append(deepcopy(child_ii))
-
 
             # Add the new element to the list of new elements
             new_elts.append(new_elt)
@@ -257,13 +271,11 @@ class DrakeReadyURDFConverter:
                 )
                 new_elts.append(deepcopy(collision_elt))
                 return new_elts
-            
+
             # If the collision element has a mesh element within it, then we will perform convex decomposition
             original_mesh_elt = get_mesh_element_in(collision_elt)
             scale_as_str = original_mesh_elt.attrib.get("scale", "1 1 1")
-            original_mesh_scale = np.array(
-                [float(x) for x in scale_as_str.split()]
-            )
+            original_mesh_scale = np.array([float(x) for x in scale_as_str.split()])
 
             # Load the mesh file and perform convex decomposition
             self.log(
@@ -275,10 +287,10 @@ class DrakeReadyURDFConverter:
                 force="mesh",
             )
             mesh = coacd.Mesh(mesh.vertices, mesh.faces)
-            parts = coacd.run_coacd(mesh) # a list of convex hulls
+            parts = coacd.run_coacd(mesh)  # a list of convex hulls
 
             self.log(
-                f"coacd created {len(parts)} convex parts from the mesh file \"{original_mesh_path}\""
+                f'coacd created {len(parts)} convex parts from the mesh file "{original_mesh_path}"'
             )
 
             for ii, part_ii in enumerate(parts):
@@ -287,13 +299,18 @@ class DrakeReadyURDFConverter:
                 # print(len(part_ii))
 
                 # Construct new mesh and choose the path to export it to
-                mesh_ii = trimesh.Trimesh(
-                    vertices=part_ii[0], faces=part_ii[1]
+                mesh_ii = trimesh.Trimesh(vertices=part_ii[0], faces=part_ii[1])
+                mesh_file_name_ii = original_mesh_path.name[
+                    : original_mesh_path.name.index(".")
+                ]
+                mesh_ii_file_relative_path = (
+                    f"meshes/{mesh_file_name_ii}/{mesh_file_name_ii}_part_{ii}.obj"
                 )
-                mesh_file_name_ii = original_mesh_path.name[:original_mesh_path.name.index(".")]
-                mesh_ii_file_relative_path = f"meshes/{mesh_file_name_ii}/{mesh_file_name_ii}_part_{ii}.obj"
-                mesh_ii_file_path = self.file_manager.output_file_directory() / mesh_ii_file_relative_path
-                
+                mesh_ii_file_path = (
+                    self.file_manager.output_file_directory()
+                    / mesh_ii_file_relative_path
+                )
+
                 # Export after checking that the parent directory exists
                 os.makedirs(mesh_ii_file_path.parent, exist_ok=True)
                 mesh_ii.export(mesh_ii_file_path)
@@ -309,19 +326,19 @@ class DrakeReadyURDFConverter:
                 n_replacements_made += 1
 
         # Check to see if the collision element has a mesh element within it
-        
+
         # # Iterate through every element of the collision element
         # for ii, child_ii in enumerate(collision_elt):
-        #     if child_ii.tag == "geometry": 
+        #     if child_ii.tag == "geometry":
         #         # If the child is a geometry element, then we will check if replacement is needed.
         #         geometry_elt = child_ii
-                
+
         #         # Iterate through every element of the geometry element
         #         for jj, child_jj in enumerate(geometry_elt):
         #             if child_jj.tag == "mesh":
         #                 # If the child is a mesh element, then we will check if replacement is needed.
         #                 mesh_elt = child_jj
-                        
+
         #                 # Replace!
         #                 if replacement_strategy == MeshReplacementStrategy.kWithObj:
         #                     new_mesh_elt = self.convert_mesh_element(mesh_elt)
@@ -329,42 +346,38 @@ class DrakeReadyURDFConverter:
         #                 elif replacement_strategy == MeshReplacementStrategy.kWithMinimalEnclosingCylinder:
         #                     new_elt = self.replace_element_with_enclosing_cylinder(new_elt)
         #                 # elif replacement_strategy == MeshReplacementStrategy.kWithConvexDecomposition:
-                            
+
         #                 else:
         #                     raise ValueError(
         #                         f"Invalid mesh replacement strategy: {replacement_strategy}"
-        #                     )    
+        #                     )
 
-        #                 n_replacements_made += 1       
+        #                 n_replacements_made += 1
 
         # Announce the number of replacements made in the logger.
-        self.log(
-            f"Made {n_replacements_made} replacements in the collision element."
-        )
+        self.log(f"Made {n_replacements_made} replacements in the collision element.")
 
         return new_elts
-    
+
     def convert_geometry_element(
-        self,
-        geometry_elt: ET.Element,
-        replacement_strategy: MeshReplacementStrategy
+        self, geometry_elt: ET.Element, replacement_strategy: MeshReplacementStrategy
     ) -> ET.Element:
         """
         *Description*
-        
+
         This method will convert the geometry element in the URDF (i.e., an XML) file
         according to the conversion strategy provided as input.
-        
+
         *Parameters*
-        
+
         geometry_elt: xml.etree.ElementTree.Element
             The geometry element that we want to convert.
 
         replacement_strategy: MeshReplacementStrategy
             The strategy to use for replacing mesh files.
-        
+
         *Returns*
-        
+
         xml.etree.ElementTree.Element
             The new geometry element.
         """
@@ -372,9 +385,7 @@ class DrakeReadyURDFConverter:
         new_elt = ET.Element(geometry_elt.tag, geometry_elt.attrib)
 
         # Algorithm
-        self.log(
-            f"Converting geometry element with strategy \"{replacement_strategy}\"."
-        )
+        self.log(f'Converting geometry element with strategy "{replacement_strategy}".')
 
         # Iterate through every element of the geometry element
         for ii, child_ii in enumerate(geometry_elt):
@@ -391,23 +402,23 @@ class DrakeReadyURDFConverter:
                 new_elt.append(deepcopy(child_ii))
 
         return new_elt
-    
+
     def convert_visual_element(self, visual_elt: ET.Element) -> ET.Element:
         """
         *Description*
-        
+
         This method will convert the collision element in the URDF file.
 
         For now, this is very similar to the collision element handling, but it may
         change in the future.
 
         *Parameters*
-        
+
         visual_elt: xml.etree.ElementTree.Element
             The visual element that we want to convert.
 
         *Returns*
-        
+
         xml.etree.ElementTree.Element
             The new visual element.
         """
@@ -417,7 +428,7 @@ class DrakeReadyURDFConverter:
 
         # Algorithm
         self.log(
-            f"Converting element with tag \"{visual_elt.tag}\" using the \"{replacement_strategy}\" strategy."
+            f'Converting element with tag "{visual_elt.tag}" using the "{replacement_strategy}" strategy.'
         )
 
         # Search through all children of the visual element
@@ -456,7 +467,7 @@ class DrakeReadyURDFConverter:
 
                         #     # Copy!
                         #     shutil.copy(true_old_mesh_file, new_mesh_full_path)
-                            
+
                         else:
                             raise ValueError(
                                 f"Invalid mesh replacement strategy: {replacement_strategy}"
@@ -481,14 +492,14 @@ class DrakeReadyURDFConverter:
             new_material_elt = ET.Element("material")
             new_elt.append(new_material_elt)
 
-            transformed_material_elt = self.create_new_material_element(new_material_elt)
+            transformed_material_elt = self.create_new_material_element(
+                new_material_elt
+            )
             new_elt[-1] = transformed_material_elt
             self.log(
                 f"Added a new material element to the visual element with RGBA values {self.config.replace_colors_with}."
             )
             n_replacements_made += 1
-
-
 
             added_material = True
 
@@ -497,11 +508,11 @@ class DrakeReadyURDFConverter:
     def convert_urdf(self) -> Path:
         """
         *Description*
-        
+
         Converts the original URDF file into a Drake-compatible URDF file.
 
         *Returns*
-        
+
         Path
             The path to the new URDF file.
         """
@@ -513,8 +524,9 @@ class DrakeReadyURDFConverter:
 
         # Use recursive function to convert the tree
         new_trees = self.convert_tree(original_xml)
-        assert len(new_trees) == 1, \
-            f"Expected to get exactly one new tree after conversion, but got {len(new_trees)}."
+        assert (
+            len(new_trees) == 1
+        ), f"Expected to get exactly one new tree after conversion, but got {len(new_trees)}."
         new_tree = new_trees[0]
 
         # Add transmissions, if needed
@@ -524,7 +536,9 @@ class DrakeReadyURDFConverter:
                     continue
                 else:
                     # If transmission doesn't exist in URDF, then add it!
-                    transmission_element = create_transmission_element_for_joint(joint_name)
+                    transmission_element = create_transmission_element_for_joint(
+                        joint_name
+                    )
                     ET.indent(transmission_element, space="\t", level=0)
                     new_tree.getroot().append(transmission_element)
 
@@ -567,7 +581,7 @@ class DrakeReadyURDFConverter:
         # Check the value of the filename
         if not ("filename" in new_elt.attrib):
             raise ValueError(
-                f"Found a mesh element that does not contain the \"filename\" attribute.\n"
+                f'Found a mesh element that does not contain the "filename" attribute.\n'
                 + "Brom doesn't know how to handle this!"
             )
 
@@ -580,10 +594,11 @@ class DrakeReadyURDFConverter:
             old_filename = new_elt.attrib["filename"]
             new_filename = self.create_obj_to_replace_mesh_file(old_filename)
             new_elt.set(
-                "filename", new_filename,
+                "filename",
+                new_filename,
             )
             self.log(
-                f"Copied the Drake-compatible mesh file \"{old_filename}\" to \"{new_filename}\"."
+                f'Copied the Drake-compatible mesh file "{old_filename}" to "{new_filename}".'
             )
         else:
             # If parser does not support the given filename,
@@ -591,32 +606,30 @@ class DrakeReadyURDFConverter:
             old_filename = new_elt.attrib["filename"]
             new_filename = self.create_obj_to_replace_mesh_file(old_filename)
             new_elt.set(
-                "filename", new_filename,
+                "filename",
+                new_filename,
             )
             self.log(
-                f"Replaced the mesh file \"{old_filename}\" with a Drake-compatible .obj file at \"{new_filename}\"."
+                f'Replaced the mesh file "{old_filename}" with a Drake-compatible .obj file at "{new_filename}".'
             )
 
         return new_elt
 
-    def convert_tree(
-        self,
-        current_tree: ET.ElementTree
-    ) -> List[ET.ElementTree]:
+    def convert_tree(self, current_tree: ET.ElementTree) -> List[ET.ElementTree]:
         """
         *Description*
-        
+
         This recursive method is used to parse each element of the
         xml element tree and replace the components that are not
         supported by the Drake URDF parser.
 
         *Parameters*
-        
+
         current_tree: xml.etree.ElementTree.ElementTree
             The current tree that we are parsing.
-        
+
         *Returns*
-        
+
         List[xml.etree.ElementTree.ElementTree]
             The new trees that has been converted.
         """
@@ -630,9 +643,7 @@ class DrakeReadyURDFConverter:
             # Modify Children of the root
             initial_children = list(element_ii)
             for child in initial_children:
-                new_children = self.convert_tree(
-                    ET.ElementTree(child)
-                )
+                new_children = self.convert_tree(ET.ElementTree(child))
                 element_ii.remove(child)
 
                 # Add new children to new root
@@ -640,10 +651,7 @@ class DrakeReadyURDFConverter:
                     # Convert the new child element
                     element_ii.append(new_child.getroot())
 
-        return [
-            ET.ElementTree(element_ii) for element_ii in new_elements
-        ]
-
+        return [ET.ElementTree(element_ii) for element_ii in new_elements]
 
     def convert_tree_element(
         self,
@@ -651,19 +659,19 @@ class DrakeReadyURDFConverter:
     ) -> List[ET.Element]:
         """
         *Description*
-        
+
         This method is used to transform one element in the XML tree into an eleemnt
         that that Drake URDF parser can handle. If necessary, it will create a new
         3d model file and place it into the right directory.
 
         *Parameters*
-        
+
         elt: xml.etree.ElementTree.Element
             An element in the ElementTree that we would like to convert
             into a Drake-ready element.
-        
+
         *Returns*
-        
+
         List[xml.etree.ElementTree.Element]
             The new elements that has been converted.
         """
@@ -684,7 +692,7 @@ class DrakeReadyURDFConverter:
         else:
             # If the element is not a mesh element, then we will just return a copy of it.
             self.log(
-                f"Found an element with tag \"{elt.tag}\" that does not require handling. No modification needed..."
+                f'Found an element with tag "{elt.tag}" that does not require handling. No modification needed...'
             )
             new_elts = [deepcopy(elt)]
 
@@ -697,17 +705,17 @@ class DrakeReadyURDFConverter:
     ) -> str:
         """
         *Description*
-        
+
         This function will create an .obj file to replace the
         .stl or .dae file that is given in mesh file "mesh_file_name".
 
         *Parameters*
-        
+
         mesh_file_name: str
             The name of the mesh file that we want to convert.
-        
+
         *Returns*
-        
+
         str
             The name of the new .obj file that has been created.
         """
@@ -724,29 +732,30 @@ class DrakeReadyURDFConverter:
         new_mesh_path = converter.convert()
 
         # Clip off all parts of path that include the exported output
-        new_mesh_path = str(new_mesh_path).replace(str(self.file_manager.output_file_directory()), "")
+        new_mesh_path = str(new_mesh_path).replace(
+            str(self.file_manager.output_file_directory()), ""
+        )
 
         return "." + str(new_mesh_path)
-
 
     def handle_joint_element(self, joint_elt: ET.Element):
         """
         *Description*
-        
+
         This method will handle the joint element in the URDF file.
         Specifically, it will check to see if the joint is actuated
         and (if it is) add it to the list of actuated joints.
 
         This is useful when attempting to add transmissions to the URDF file
         later on.
-        
+
         *Parameters*
-        
+
         joint_elt: xml.etree.ElementTree.Element
             The joint element that we want to handle.
-        
+
         *Returns*
-        
+
         None
         """
         # Setup
@@ -769,21 +778,21 @@ class DrakeReadyURDFConverter:
     def create_new_material_element(self, material_elt: ET.Element):
         """
         *Description*
-        
+
         This method will handle the material element in the URDF file.
-        Specifically, it will check to see if the user wants us to assign a color to the 
+        Specifically, it will check to see if the user wants us to assign a color to the
         material element. If so, then we will assign the color to the material element.
 
         This is useful when attempting to add transmissions to the URDF file
         later on.
-        
+
         *Parameters*
-    
+
         material_elt: xml.etree.ElementTree.Element
             The material element that we want to handle.
-        
+
         *Returns*
-        
+
         None, but modifies the material element.
         """
         # Setup
@@ -793,12 +802,12 @@ class DrakeReadyURDFConverter:
         # Input Processing (Abort, if no color replacement is needed)
         if replace_colors_with is None:
             return material_elt
-        
+
         if len(replace_colors_with) != 4:
             raise ValueError(
                 "The color replacement list must have exactly 4 elements (RGBA)."
             )
-        
+
         # Algorithm
         # Check to see if the material element has a color element
         color_elt = material_elt.find("color")
@@ -815,40 +824,42 @@ class DrakeReadyURDFConverter:
         # Set the color of the material element
         color_elt.set(
             "rgba",
-            f"{replace_colors_with[0]} {replace_colors_with[1]} {replace_colors_with[2]} {replace_colors_with[3]}"
+            f"{replace_colors_with[0]} {replace_colors_with[1]} {replace_colors_with[2]} {replace_colors_with[3]}",
         )
         return material_elt
 
     def log(self, message: str):
         """
         *Description*
-        
+
         Logs a message to the logging.logger.
 
         *Parameters*
-        
+
         message: str
             The message that we want to log.
-        
+
         *Returns*
-        
+
         None
         """
         self.logger.log(logging.INFO, message)
 
-    def replace_element_with_enclosing_cylinder(self, collision_elt: ET.Element) -> ET.Element:
+    def replace_element_with_enclosing_cylinder(
+        self, collision_elt: ET.Element
+    ) -> ET.Element:
         """
         *Description*
-        
+
         This method will replace the geometry element with an enclosing cylinder.
 
         *Parameters*
-        
+
         collision_elt: xml.etree.ElementTree.Element
             The collision element that we want to replace.
 
         *Returns*
-        
+
         xml.etree.ElementTree.Element
             The new collision element with the enclosing cylinder.
         """
@@ -859,9 +870,9 @@ class DrakeReadyURDFConverter:
         # Save the initial pose of the element
         origin_elt = new_elt.find("origin")
         pose0 = RigidTransform(
-            R=RollPitchYaw(np.array(
-                [float(elt) for elt in origin_elt.attrib["rpy"].split(" ")]
-            )).ToRotationMatrix(),
+            R=RollPitchYaw(
+                np.array([float(elt) for elt in origin_elt.attrib["rpy"].split(" ")])
+            ).ToRotationMatrix(),
             p=np.array(
                 [float(elt) for elt in origin_elt.attrib["xyz"].split(" ")],
             ),
@@ -885,8 +896,8 @@ class DrakeReadyURDFConverter:
         # Create the enclosing cylinder
         cylinder_result = trimesh.bounds.minimum_cylinder(mesh, sample_count=12)
         cylinder_shape = CylinderDefinition(
-            radius=cylinder_result['radius'],
-            length=cylinder_result['height'],
+            radius=cylinder_result["radius"],
+            length=cylinder_result["height"],
         )
 
         # Remove the mesh element and pose element from the collision element, if they exist
@@ -899,7 +910,7 @@ class DrakeReadyURDFConverter:
             new_elt.remove(origin_elt)
 
         # Add the origin element to the collision element
-        transform = cylinder_result['transform']
+        transform = cylinder_result["transform"]
         transform_as_matrix = np.array(transform)
         transform_as_rt = RigidTransform(
             RotationMatrix(transform_as_matrix[:3, :3]),

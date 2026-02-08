@@ -18,16 +18,17 @@ from brom_drake.productions.roles.role import Role
 from brom_drake.utils import Performer, AddMultibodyTriad
 from .show_me_system import ShowMeSystem
 
+
 class ShowMeThisModel(BaseProduction):
     """
     **Description**
-    
+
     A production which allows the user to visualize a specified model
     in Meshcat, with the ability to set desired joint positions, if the model is
     a robot/articulated.
-    
+
     **Parameters**
-    
+
     path_to_model: str
         The path to the model file to be visualized.
         TODO: Add support for Path type. Make sure to add tests!!
@@ -60,8 +61,8 @@ class ShowMeThisModel(BaseProduction):
     **Usage**
 
     The production can be used to show both simple models (e.g., single objects)
-    or articulated models (e.g., robots). 
-    
+    or articulated models (e.g., robots).
+
     To show a simple model, simply provide the path to the model file. ::
 
         from brom_drake.productions import ShowMeThisModel
@@ -109,13 +110,14 @@ class ShowMeThisModel(BaseProduction):
         simulator.set_publish_every_time_step(False)
 
     """
+
     def __init__(
         self,
-        path_to_model: str|Path,
+        path_to_model: str | Path,
         with_these_joint_positions: List[float] = None,
         base_link_name: str = None,
         time_step: float = 1e-3,
-        meshcat_port_number: int = 7001, # Usually turn off for CI (i.e., make it None)
+        meshcat_port_number: int = 7001,  # Usually turn off for CI (i.e., make it None)
         show_collision_geometries: bool = False,
         **kwargs,
     ):
@@ -134,7 +136,9 @@ class ShowMeThisModel(BaseProduction):
 
         # Check that the model exists
         if not self.path_to_model.exists():
-            raise ValueError(f"The path \"{self.path_to_model}\" does not exist! Can not show a model that does not exist!")
+            raise ValueError(
+                f'The path "{self.path_to_model}" does not exist! Can not show a model that does not exist!'
+            )
 
         # If the base link name is not provided,
         # then we will try to do a smart search for it.
@@ -155,7 +159,7 @@ class ShowMeThisModel(BaseProduction):
     def add_supporting_cast(self):
         """
         **Description**
-        
+
         This method updates the production's
         - MultibodyPlant with the user's model
         - Using the ShowMeSystem to freeze the model in place
@@ -166,12 +170,11 @@ class ShowMeThisModel(BaseProduction):
         # Setup
 
         # Add Model
-        model_idcs = Parser(plant=self.plant).AddModels(
-            str(self.path_to_model)
+        model_idcs = Parser(plant=self.plant).AddModels(str(self.path_to_model))
+        assert len(model_idcs) == 1, (
+            f"Only one model should be added in this production;"
+            + f" received {len(model_idcs)} in the file {self.path_to_model}."
         )
-        assert len(model_idcs) == 1, \
-            f"Only one model should be added in this production;" + \
-            f" received {len(model_idcs)} in the file {self.path_to_model}."
         self.model_index = model_idcs[0]
         self.model_name = self.plant.GetModelInstanceName(model_idcs[0])
 
@@ -180,8 +183,9 @@ class ShowMeThisModel(BaseProduction):
         if self.q_des is None:
             self.q_des = np.zeros(n_dofs)
         else:
-            assert len(self.q_des) == n_dofs, \
-                f"Expected {n_dofs} joint positions; received {len(self.q_des)}."
+            assert (
+                len(self.q_des) == n_dofs
+            ), f"Expected {n_dofs} joint positions; received {len(self.q_des)}."
 
         # Add ShowMeSystem
         self.show_me_system = self.builder.AddSystem(
@@ -215,7 +219,9 @@ class ShowMeThisModel(BaseProduction):
 
         # Connect to Meshcat, if requested
         if self.meshcat_port_number is not None:
-            self.meshcat = Meshcat(port=self.meshcat_port_number)  # Object provides an interface to Meshcat
+            self.meshcat = Meshcat(
+                port=self.meshcat_port_number
+            )  # Object provides an interface to Meshcat
             m_visualizer = MeshcatVisualizer(
                 self.meshcat,
             )
@@ -228,7 +234,9 @@ class ShowMeThisModel(BaseProduction):
                 )
 
             m_visualizer.AddToBuilder(
-                self.builder, self.scene_graph, self.meshcat,
+                self.builder,
+                self.scene_graph,
+                self.meshcat,
                 params=params,
             )
 
@@ -241,16 +249,16 @@ class ShowMeThisModel(BaseProduction):
     ) -> Tuple[Diagram, Context]:
         """
         **Description**
-        
+
         This method builds the production's diagram and context,
         and assigns the plant context to the internal ShowMeSystem.
-        
+
         **Parameters**
-        
+
         cast: Tuple[Role, Performer], optional
             The cast to be added to the production.
             Default is an empty tuple.
-            
+
         **Returns**
 
         diagram: Diagram
@@ -262,8 +270,10 @@ class ShowMeThisModel(BaseProduction):
         super().add_cast_and_build(cast)
 
         # Assign the diagram context to the internal show_me_system
-        self.show_me_system.mutable_plant_context = self.plant.GetMyMutableContextFromRoot(
-            self.diagram_context,
+        self.show_me_system.mutable_plant_context = (
+            self.plant.GetMyMutableContextFromRoot(
+                self.diagram_context,
+            )
         )
 
         return self.diagram, self.diagram_context
@@ -271,15 +281,16 @@ class ShowMeThisModel(BaseProduction):
     def add_multibody_triads(self):
         """
         **Description**
-        
+
         This method will add triads to the world frame
         and any other relevant frames.
         """
         # Setup
 
         # Input Checking
-        assert self.model_index is not None, \
-            "The model index is not yet set. Please call add_supporting_cast() first."
+        assert (
+            self.model_index is not None
+        ), "The model index is not yet set. Please call add_supporting_cast() first."
 
         # Add A Triad to base?
         AddMultibodyTriad(self.plant.world_frame(), self.scene_graph)
@@ -287,7 +298,7 @@ class ShowMeThisModel(BaseProduction):
     def create_and_connect_source_of_joint_positions(self):
         """
         **Description**
-        
+
         This method will create and connect a source of joint positions
         to the ShowMeSystem.
 
@@ -298,11 +309,13 @@ class ShowMeThisModel(BaseProduction):
         """
         # Setup
 
-        assert self.show_me_system is not None, \
-            "The show_me_system is not yet created. Please call add_supporting_cast() first."
+        assert (
+            self.show_me_system is not None
+        ), "The show_me_system is not yet created. Please call add_supporting_cast() first."
 
-        assert self.q_des is not None, \
-            "The desired joint positions are not yet set. Please provide them at initialization."
+        assert (
+            self.q_des is not None
+        ), "The desired joint positions are not yet set. Please provide them at initialization."
 
         # Add Source
         desired_joint_positions_source = self.builder.AddSystem(
@@ -320,12 +333,12 @@ class ShowMeThisModel(BaseProduction):
     ) -> int:
         """
         **Description**
-        
+
         This method will return the number of positions in the model
         as defined by the user (through the path_to_model).
 
         **Returns**
-        
+
         n_positions: int
             The number of positions in the model.
         """
@@ -333,9 +346,7 @@ class ShowMeThisModel(BaseProduction):
 
         # Create a shadow plant
         shadow_plant = MultibodyPlant(self.time_step)
-        model_idcs = Parser(plant=shadow_plant).AddModels(
-            str(self.path_to_model)
-        )
+        model_idcs = Parser(plant=shadow_plant).AddModels(str(self.path_to_model))
         shadow_model_idx = model_idcs[0]
 
         # Weld the base link to the world frame
@@ -353,14 +364,14 @@ class ShowMeThisModel(BaseProduction):
     def id(self) -> ProductionID:
         """
         **Description**
-        
+
         This property returns the unique identifier for this production.
         (i.e., ProductionID.kShowMeThisModel)
 
         This is required to be implemented by all children of the BaseProduction class.
 
         **Returns**
-        
+
         id: ProductionID
             The unique identifier for this production.
         """

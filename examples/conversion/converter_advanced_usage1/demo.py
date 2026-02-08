@@ -5,6 +5,7 @@ Description
 This script contains an example of how to convert a URDF file into a
 "Drake-ready" URDF file using Brom's new utility.
 """
+
 from importlib import resources as impresources
 from pydrake.geometry import Meshcat, MeshcatVisualizer
 from pydrake.multibody.parsing import Parser
@@ -14,21 +15,24 @@ from pydrake.systems.framework import DiagramBuilder
 
 # Internal imports
 from brom_drake import robots
-from brom_drake.all import DrakeReadyURDFConverter, add_watcher_and_build, DrakeReadyURDFConverterConfig
+from brom_drake.all import (
+    DrakeReadyURDFConverter,
+    add_watcher_and_build,
+    DrakeReadyURDFConverterConfig,
+)
 from brom_drake.utils import AddGround
+
 
 def main():
     # Setup
-    urdf_file_path = str(
-        impresources.files(robots) / "models/ur/ur10e.urdf"
-    )
+    urdf_file_path = str(impresources.files(robots) / "models/ur/ur10e.urdf")
 
     # Use converter
     converter = DrakeReadyURDFConverter(
         urdf_file_path,
         config=DrakeReadyURDFConverterConfig(
             overwrite_old_logs=True,
-        )
+        ),
     )
 
     # Convert the URDF
@@ -41,9 +45,7 @@ def main():
     # Create Plant and the "Block + Ground system"
     plant, scene_graph = AddMultibodyPlantSceneGraph(builder, time_step=time_step)
     added_models = Parser(plant=plant).AddModels(str(new_urdf_path))
-    print(
-        f"Added the following models to the plant: {added_models}"
-    )
+    print(f"Added the following models to the plant: {added_models}")
     AddGround(plant)  # Add ground to plant
     plant.Finalize()
 
@@ -63,7 +65,6 @@ def main():
     # Run simulation
     simulator.Initialize()
     simulator.AdvanceTo(15.0)
-
 
 
 if __name__ == "__main__":

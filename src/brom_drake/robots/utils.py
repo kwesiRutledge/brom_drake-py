@@ -9,21 +9,26 @@ from pathlib import Path
 from typing import List
 import xml.etree.ElementTree as ET
 
+
 class BaseLinkSearchApproach(IntEnum):
     kIncludesBaseInName = 1
     kFirstLinkFound = 2
 
-def find_base_link_name_in(path_to_robot_model: str|Path, search_method: BaseLinkSearchApproach = BaseLinkSearchApproach.kFirstLinkFound) -> str:
+
+def find_base_link_name_in(
+    path_to_robot_model: str | Path,
+    search_method: BaseLinkSearchApproach = BaseLinkSearchApproach.kFirstLinkFound,
+) -> str:
     """
     *Description*
-    
+
     This method will try to find a good base link for the model.
-    
+
     *Parameters*
 
     path_to_robot_model: str|Path
         The path to the robot model.
-    
+
     *Returns*
 
     base_link_name: str
@@ -45,33 +50,32 @@ def find_base_link_name_in(path_to_robot_model: str|Path, search_method: BaseLin
             case BaseLinkSearchApproach.kIncludesBaseInName:
                 for link_name in link_names:
                     if "base" in link_name.lower():
-                        return link_name # Return the first one we find
-                    
-                
+                        return link_name  # Return the first one we find
+
             case BaseLinkSearchApproach.kFirstLinkFound:
                 return link_names[0]
 
     else:
         raise ValueError(
-            "We can only smartly find base links in .urdf files, for now.\n" +
-            "File an issue if you want more support in the future."
+            "We can only smartly find base links in .urdf files, for now.\n"
+            + "File an issue if you want more support in the future."
         )
 
     # If we can't find a base link, then we will raise an error
     raise ValueError(
-        "We could not find a good base link in the model.\n" +
-        "Please provide the base link name manually by adding \"base\" to one of the urdf's links."
+        "We could not find a good base link in the model.\n"
+        + 'Please provide the base link name manually by adding "base" to one of the urdf\'s links.'
     )
 
 
 def find_all_link_names(xml_tree: ET.ElementTree) -> List[str]:
     """
     **Description**
-    
+
     This method will find all the link names in the xml tree ``xml_tree``.
 
     **Parameters**
-    
+
     xml_tree: xml.etree.ElementTree.ElementTree
         The xml tree that we would like to investigate.
 

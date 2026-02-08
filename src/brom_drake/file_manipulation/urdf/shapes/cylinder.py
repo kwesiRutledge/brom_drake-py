@@ -4,11 +4,12 @@ import xml.etree.ElementTree as ET
 # Internal Import
 from .shape_definition import ShapeDefinition, ShapeEnum
 
+
 @dataclass
 class CylinderDefinition(ShapeDefinition):
     """
     *Description*
-    
+
     Defines a cylinder shape as per URDF specifications.
 
     *Attributes*
@@ -20,15 +21,16 @@ class CylinderDefinition(ShapeDefinition):
         The length of the cylinder along its central axis.
 
     """
+
     radius: float
     length: float
 
     def add_geometry_to_element(self, target_element: ET.Element) -> ET.Element:
         """
         *Description*
-        
+
         Adds the cylinder geometry as a sub-element to the given target element.
-        
+
         This method is an implementation of the abstract method defined in the
         ShapeDefinition base class.
 

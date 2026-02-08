@@ -6,6 +6,7 @@ import xml.etree.ElementTree as ET
 # Internal Import
 from .shape_definition import ShapeDefinition, ShapeEnum
 
+
 @dataclass
 class BoxDefinition(ShapeDefinition):
     """
@@ -19,6 +20,7 @@ class BoxDefinition(ShapeDefinition):
         The size of the box along the x, y, and z axes.
         If this is a float, it is assumed to be a cube with equal sides.
     """
+
     size: Union[float, list, tuple, np.ndarray]
 
     def add_geometry_to_element(self, target_element: ET.Element) -> ET.Element:
@@ -48,7 +50,9 @@ class BoxDefinition(ShapeDefinition):
         elif isinstance(self.size, float):
             self.size = np.array([self.size, self.size, self.size])
         else:
-            raise ValueError(f"Size {self.size} (type \"{type(self.size)}\") not supported.")
+            raise ValueError(
+                f'Size {self.size} (type "{type(self.size)}") not supported.'
+            )
 
         # Return the element
         return ET.SubElement(

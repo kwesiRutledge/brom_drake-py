@@ -7,6 +7,7 @@ from typing import Union
 # Internal Imports
 from brom_drake.directories import DEFAULT_BROM_MODELS_DIR
 
+
 @dataclass
 class DrakeReadyURDFConverterFileManager:
     """
@@ -15,6 +16,7 @@ class DrakeReadyURDFConverterFileManager:
     A dataclass that specifies how the DrakeReadyURDFConverter
     should manage files.
     """
+
     original_urdf_path: Path
     models_directory: Path = Path(DEFAULT_BROM_MODELS_DIR)
     log_file_name: str = None
@@ -27,7 +29,9 @@ class DrakeReadyURDFConverterFileManager:
         This method will clean up the models directory.
         """
         # Make sure that the models directory exists
-        os.makedirs(self.models_directory, exist_ok=True) # TODO: Can we just use Pathlib here to check for existence?
+        os.makedirs(
+            self.models_directory, exist_ok=True
+        )  # TODO: Can we just use Pathlib here to check for existence?
         shutil.rmtree(self.models_directory, ignore_errors=True)
 
     def output_file_directory(self) -> Path:
@@ -44,7 +48,7 @@ class DrakeReadyURDFConverterFileManager:
             The directory where the output URDF file will be saved.
         """
         return self.output_urdf_path.parent
-    
+
     def file_path_in_context_of_urdf_dir(self, file_path: Union[str, Path]) -> Path:
         """
         Description
@@ -84,7 +88,7 @@ class DrakeReadyURDFConverterFileManager:
         original_file_path = self.original_urdf_path
         output_urdf_file_path = self._output_urdf_path
 
-        if output_urdf_file_path is None: # If the output file path was not given.
+        if output_urdf_file_path is None:  # If the output file path was not given.
             # Use Pathlib to extract the filename, if it exists
             original_name = original_file_path.name
             original_name = original_name.replace(".urdf", "")
@@ -119,9 +123,8 @@ class DrakeReadyURDFConverterFileManager:
         else:
             original_urdf_filename = original_urdf_path.name
             new_subdirectory_name = original_urdf_filename.replace(".urdf", "")
-            return self.models_directory / new_subdirectory_name / self.output_urdf_file_name()
-
-    
-
-
-        
+            return (
+                self.models_directory
+                / new_subdirectory_name
+                / self.output_urdf_file_name()
+            )

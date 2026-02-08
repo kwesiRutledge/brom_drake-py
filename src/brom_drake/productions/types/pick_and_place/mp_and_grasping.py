@@ -7,9 +7,14 @@ import networkx as nx
 import numpy as np
 from pydrake.all import (
     FixedOffsetFrame,
-    RotationMatrix, Quaternion, RollPitchYaw,
-    Solve, SolutionResult, SpatialVelocity,
-    InverseKinematics, ModelInstanceIndex,
+    RotationMatrix,
+    Quaternion,
+    RollPitchYaw,
+    Solve,
+    SolutionResult,
+    SpatialVelocity,
+    InverseKinematics,
+    ModelInstanceIndex,
 )
 from pydrake.common.value import AbstractValue
 from pydrake.math import RigidTransform
@@ -19,21 +24,28 @@ from pydrake.systems.framework import Diagram, Context
 from pydrake.systems.primitives import ConstantVectorSource, ConstantValueSource
 
 # Internal Imports
-from brom_drake.motion_planning.systems.prototypical_planner import PrototypicalPlannerSystem
+from brom_drake.motion_planning.systems.prototypical_planner import (
+    PrototypicalPlannerSystem,
+)
 from brom_drake.productions.types import BaseProduction
 from brom_drake.productions.roles.role import Role
-from brom_drake.productions.roles.motion_planners.kinematic import kKinematicMotionPlanner
-from brom_drake.file_manipulation.urdf.shapes.sphere import SphereDefinition
-from brom_drake.file_manipulation.urdf.simple_writer.urdf_definition import SimpleShapeURDFDefinition
-from brom_drake.utils import Performer, MotionPlan
-from brom_drake.systems.network_fsm import (
-    NetworkXFSM, FSMOutputDefinition
+from brom_drake.productions.roles.motion_planners.kinematic import (
+    kKinematicMotionPlanner,
 )
+from brom_drake.file_manipulation.urdf.shapes.sphere import SphereDefinition
+from brom_drake.file_manipulation.urdf.simple_writer.urdf_definition import (
+    SimpleShapeURDFDefinition,
+)
+from brom_drake.utils import Performer, MotionPlan
+from brom_drake.systems.network_fsm import NetworkXFSM, FSMOutputDefinition
 from brom_drake.utils.pick_and_place.phase import PickAndPlacePhase
-from brom_drake.utils.pick_and_place.target_description import PickAndPlaceTargetDescription
+from brom_drake.utils.pick_and_place.target_description import (
+    PickAndPlaceTargetDescription,
+)
 
 # Internal Imports
 from .script import Script as MotionPlanningAndGraspingProductionScript
+
 
 class MotionPlanningAndGraspingProduction(BaseProduction):
     def __init__(
@@ -79,7 +91,7 @@ class MotionPlanningAndGraspingProduction(BaseProduction):
         Description
         -----------
         This method will add the start and goal poses to the builder.
-        
+
         Returns
         -------
         None
@@ -136,7 +148,7 @@ class MotionPlanningAndGraspingProduction(BaseProduction):
             self.start_frame,
             color=np.array([0, 0.3, 0.8, 0.3]),
         )
-        
+
         # Create a frame for the start pose of the goal
         self.goal_frame = FixedOffsetFrame(
             "goal_frame",
@@ -168,7 +180,7 @@ class MotionPlanningAndGraspingProduction(BaseProduction):
         if color is None:
             color = np.array([0, 0.8, 0.3, 0.3])
 
-        sphere_index = len(self.spheres) # index to use when labeling the sphere
+        sphere_index = len(self.spheres)  # index to use when labeling the sphere
 
         # Create a sphere for the goal
         sphere_shape_defn = SimpleShapeURDFDefinition(
@@ -191,9 +203,10 @@ class MotionPlanningAndGraspingProduction(BaseProduction):
         goal_sphere_model_idx = Parser(plant).AddModels(str(sphere_urdf_location))[0]
         plant.WeldFrames(
             frame_in,
-            plant.GetFrameByName(f"{sphere_shape_defn.name}_base_link", goal_sphere_model_idx),
+            plant.GetFrameByName(
+                f"{sphere_shape_defn.name}_base_link", goal_sphere_model_idx
+            ),
         )
-
 
     def add_start_and_goal_sources_to_builder(self):
         """
@@ -202,7 +215,9 @@ class MotionPlanningAndGraspingProduction(BaseProduction):
         This method will add the start and goal sources to the builder.
         """
         # Input Processing
-        assert self.plant.is_finalized(), "Plant must be finalized before adding start and goal sources."
+        assert (
+            self.plant.is_finalized()
+        ), "Plant must be finalized before adding start and goal sources."
 
         # Add the start and goal poses to the builder
         self.add_start_source_system()
@@ -253,9 +268,7 @@ class MotionPlanningAndGraspingProduction(BaseProduction):
 
         # Create optional outputs, if needed
         for role_ii, performer_ii in cast:
-            self.create_optional_outputs_if_necessary(
-                role_ii, performer_ii
-            )
+            self.create_optional_outputs_if_necessary(role_ii, performer_ii)
 
     def build_production(
         self,
@@ -273,7 +286,7 @@ class MotionPlanningAndGraspingProduction(BaseProduction):
             A Boolean that determines whether to add a watcher to the diagram.
         """
         # Setup
-        plant : MultibodyPlant = self.plant
+        plant: MultibodyPlant = self.plant
 
         # Call the parent method
         diagram, diagram_context = super().build_production(with_watcher=with_watcher)
@@ -312,7 +325,7 @@ class MotionPlanningAndGraspingProduction(BaseProduction):
 
     def create_optional_outputs_if_necessary(
         self,
-        role: Role, # This role will always be the Motion Planner, won't it?
+        role: Role,  # This role will always be the Motion Planner, won't it?
         performer: Performer,
     ):
         """
@@ -351,31 +364,32 @@ class MotionPlanningAndGraspingProduction(BaseProduction):
         # TODO(kwesi): Maybe move above, general code to somewhere else?
         if role.name != "OfflineMotionPlanner":
             raise ValueError(
-                f"Expected role for OfflineMotionPlanning Production to be \"OfflineMotionPlanner\";" +
-                f"received {role.name}"
+                f'Expected role for OfflineMotionPlanning Production to be "OfflineMotionPlanner";'
+                + f"received {role.name}"
             )
 
         # Check to see if performer has the LAST assignment in the motion planning role
         last_assignment = role.port_assignments[-1]
         if last_assignment.performer_port_name != "plan_is_ready":
             raise ValueError(
-                f"Expected last port assignment to be \"plan_is_ready\" assignment, but" +
-                f"received an assignment with performer_port_name \"{last_assignment.performer_port_name}\""
+                f'Expected last port assignment to be "plan_is_ready" assignment, but'
+                + f'received an assignment with performer_port_name "{last_assignment.performer_port_name}"'
             )
 
         if performer.HasOutputPort(last_assignment.performer_port_name):
-            return # Do nothing; performer should already be connected
+            return  # Do nothing; performer should already be connected
 
         # Find system we want to connect it to
         systems_list = last_assignment.find_any_matching_input_targets(self.builder)
-        assert len(systems_list) == 1, \
-            f"Expected 1 system to have port \"{last_assignment.external_target_name}\"," + \
-            f" but found {len(systems_list)} systems with that output port."
+        assert len(systems_list) == 1, (
+            f'Expected 1 system to have port "{last_assignment.external_target_name}",'
+            + f" but found {len(systems_list)} systems with that output port."
+        )
         # TODO(kwesi): Perhaps move more of these error assertions to a separate file?
 
         self.builder.Connect(
             self.plan_ready_source.get_output_port(),
-            systems_list[0].GetInputPort(last_assignment.external_target_name)
+            systems_list[0].GetInputPort(last_assignment.external_target_name),
         )
 
     def define_pose_ik_problem(
@@ -402,8 +416,8 @@ class MotionPlanningAndGraspingProduction(BaseProduction):
             self.plant.world_frame(),
             pose_WorldTarget.translation(),
             self.plant.GetFrameByName(target_frame_name),
-            (- np.ones((3,)) * eps0).reshape((-1, 1)),
-            (+ np.ones((3,)) * eps0).reshape((-1, 1)),
+            (-np.ones((3,)) * eps0).reshape((-1, 1)),
+            (+np.ones((3,)) * eps0).reshape((-1, 1)),
         )
 
         # TODO(kwesi): Add OrientationCosntraint
@@ -424,7 +438,7 @@ class MotionPlanningAndGraspingProduction(BaseProduction):
         )
 
         return ik_problem
-    
+
     def easy_cast_and_build(
         self,
         planning_algorithm: Callable[
@@ -450,7 +464,8 @@ class MotionPlanningAndGraspingProduction(BaseProduction):
 
         # Create a planner from the algorithm
         prototypical_planner = PrototypicalPlannerSystem(
-            self.plant, self.scene_graph,
+            self.plant,
+            self.scene_graph,
             planning_algorithm,
             robot_model_idx=self.robot_model_index,
             controller_plant=self.station.controller_plant,
@@ -463,9 +478,7 @@ class MotionPlanningAndGraspingProduction(BaseProduction):
         self.fill_role(planner_role, prototypical_planner)
         print("filled role")
 
-        self.create_optional_outputs_if_necessary(
-            planner_role, prototypical_planner
-        )
+        self.create_optional_outputs_if_necessary(planner_role, prototypical_planner)
 
         # Build
         diagram, diagram_context = self.build_production(with_watcher=with_watcher)
@@ -508,7 +521,7 @@ class MotionPlanningAndGraspingProduction(BaseProduction):
         # builder.Connect(
         #     system.GetOutputPort("motion_plan"),
         #     initialize_robots_system.GetInputPort("plan"),
-        # )        
+        # )
 
         # self.builder.Connect(
         #     self.plan_ready_source.get_output_port(),
@@ -547,13 +560,13 @@ class MotionPlanningAndGraspingProduction(BaseProduction):
             # The user would need to define a forward kinematics function,
             # to convert the goal configuration to a goal pose.
             raise NotImplementedError(
-                "It looks like you are trying to get the goal pose from the goal configuration.\n" +
-                "This is not implemented (yet!) because it would require solving the forward kinematics" +
-                "problem for your specific scene.\n" +
-                "Please implement your own goal_pose() function with a custom forward kinamtics function" +
-                " (see ChemLab2's forward kinematics function) to convert the goal configuration to a goal pose."
+                "It looks like you are trying to get the goal pose from the goal configuration.\n"
+                + "This is not implemented (yet!) because it would require solving the forward kinematics"
+                + "problem for your specific scene.\n"
+                + "Please implement your own goal_pose() function with a custom forward kinamtics function"
+                + " (see ChemLab2's forward kinematics function) to convert the goal configuration to a goal pose."
             )
-            #TODO(kwesi): Is there a way to do this without knowing about the user's robot?
+            # TODO(kwesi): Is there a way to do this without knowing about the user's robot?
         else:
             raise NotImplementedError(
                 "This function should be implemented by the subclass."
@@ -567,7 +580,7 @@ class MotionPlanningAndGraspingProduction(BaseProduction):
         """
         if self.robot_model_idx_ is not None:
             return self.robot_model_idx_
-        else:        
+        else:
             raise NotImplementedError(
                 "This function should be implemented by the subclass."
             )
@@ -588,7 +601,7 @@ class MotionPlanningAndGraspingProduction(BaseProduction):
             raise NotImplementedError(
                 "This function should be implemented by the subclass."
             )
-    
+
     @property
     def start_pose(self) -> RigidTransform:
         """
@@ -601,13 +614,13 @@ class MotionPlanningAndGraspingProduction(BaseProduction):
             # The user would need to define a forward kinematics function,
             # to convert the start configuration to a start pose.
             raise NotImplementedError(
-                "It looks like you are trying to get the start pose from the start configuration.\n" +
-                "This is not implemented (yet!) because it would require solving the forward kinematics" +
-                "problem for your specific scene.\n" +
-                "Please implement your own start_pose() function with a custom forward kinamtics function" +
-                " (see ChemLab2's forward kinematics function) to convert the start configuration to a start pose."
+                "It looks like you are trying to get the start pose from the start configuration.\n"
+                + "This is not implemented (yet!) because it would require solving the forward kinematics"
+                + "problem for your specific scene.\n"
+                + "Please implement your own start_pose() function with a custom forward kinamtics function"
+                + " (see ChemLab2's forward kinematics function) to convert the start configuration to a start pose."
             )
-            #TODO(kwesi): Is there a way to do this without knowing about the user's robot?
+            # TODO(kwesi): Is there a way to do this without knowing about the user's robot?
         else:
             raise NotImplementedError(
                 "This function should be implemented by the subclass."
@@ -628,7 +641,9 @@ class MotionPlanningAndGraspingProduction(BaseProduction):
         :return:
         """
         # Input Processing
-        assert self.plant is not None, "Plant must be defined before solving IK problem!"
+        assert (
+            self.plant is not None
+        ), "Plant must be defined before solving IK problem!"
 
         # Setup
 
@@ -641,20 +656,25 @@ class MotionPlanningAndGraspingProduction(BaseProduction):
         # Solve problem
         ik_program = ik_problem.prog()
         q_var = ik_problem.q()
-        ik_program.AddQuadraticErrorCost(np.eye(len(q_var)), np.zeros(q_var.shape), q_var)
+        ik_program.AddQuadraticErrorCost(
+            np.eye(len(q_var)), np.zeros(q_var.shape), q_var
+        )
         # ik_program.SetInitialGuess(q_var, np.zeros(q_var.shape))
         ik_result = Solve(ik_program)
 
-        assert ik_result.get_solution_result() == SolutionResult.kSolutionFound, \
-            f"Solution result was {ik_result.get_solution_result()}; need SolutionResult.kSolutionFound to make RRT Plan!"
+        assert (
+            ik_result.get_solution_result() == SolutionResult.kSolutionFound
+        ), f"Solution result was {ik_result.get_solution_result()}; need SolutionResult.kSolutionFound to make RRT Plan!"
 
         q_solution = ik_result.get_x_val()
         # print(f"solved ik problem: {q_solution}")
 
         # Extract only the positions that correspond to our robot's joints
         if robot_joint_names is None:
-            robot_joint_names = self.plant.GetPositionNames(self.robot_model_index, add_model_instance_prefix=True)
-        
+            robot_joint_names = self.plant.GetPositionNames(
+                self.robot_model_index, add_model_instance_prefix=True
+            )
+
         all_joint_names = self.plant.GetPositionNames()
         q_out_list = []
         for ii, joint_name in enumerate(all_joint_names):

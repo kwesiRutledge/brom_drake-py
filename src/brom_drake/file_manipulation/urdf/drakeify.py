@@ -12,8 +12,11 @@ from pathlib import Path
 # Internal Imports
 from .drake_ready_urdf_converter.converter import DrakeReadyURDFConverter
 from brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.config import (
-    MeshReplacementStrategy, MeshReplacementStrategies, DrakeReadyURDFConverterConfig
+    MeshReplacementStrategy,
+    MeshReplacementStrategies,
+    DrakeReadyURDFConverterConfig,
 )
+
 
 def drakeify_my_urdf(
     urdf_file_path: Union[str, Path],
@@ -25,12 +28,12 @@ def drakeify_my_urdf(
 ) -> Path:
     """
     *Description*
-    
+
     This function provides a convenience function for the user to convert a URDF file
     into a "Drake-ready" URDF file.
 
     *Parameters*
-    
+
     urdf_file_path: str
         A string representing the path to the URDF file that you would like to convert.
 

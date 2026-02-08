@@ -6,12 +6,12 @@ from pydrake.systems.framework import LeafSystem, BasicVector
 class EndEffectorWrenchCalculator(LeafSystem):
     """
     **Description**
-    
+
     A simple system which takes as input joint torques and outputs the corresponding
     wrench applied to the end-effector.
 
     **Diagram**
-    
+
     The system can be illustrated with the following block: ::
 
                             ---------------------------------
@@ -25,6 +25,7 @@ class EndEffectorWrenchCalculator(LeafSystem):
                             |                               |
                             ---------------------------------
     """
+
     def __init__(self, plant, end_effector_frame):
         LeafSystem.__init__(self)
 
@@ -34,20 +35,19 @@ class EndEffectorWrenchCalculator(LeafSystem):
 
         # Inputs are joint positions, angles and torques
         self.q_port = self.DeclareVectorInputPort(
-                                "joint_positions",
-                                BasicVector(plant.num_positions()))
+            "joint_positions", BasicVector(plant.num_positions())
+        )
         self.v_port = self.DeclareVectorInputPort(
-                                "joint_velocities",
-                                BasicVector(plant.num_velocities()))
+            "joint_velocities", BasicVector(plant.num_velocities())
+        )
         self.tau_port = self.DeclareVectorInputPort(
-                                "joint_torques",
-                                BasicVector(plant.num_actuators()))
+            "joint_torques", BasicVector(plant.num_actuators())
+        )
 
         # Output is applied wrench at the end-effector
         self.DeclareVectorOutputPort(
-                "end_effector_wrench",
-                BasicVector(6),
-                self.CalcEndEffectorWrench)
+            "end_effector_wrench", BasicVector(6), self.CalcEndEffectorWrench
+        )
 
     def CalcEndEffectorWrench(self, context, output):
         # Gather inputs
@@ -66,19 +66,19 @@ class EndEffectorWrenchCalculator(LeafSystem):
         # Compute end-effector jacobian
         J = self.plant.CalcJacobianSpatialVelocity(
             self.context,
-           JacobianWrtVariable.kV,
-           self.ee_frame,
-           np.zeros(3),
-           self.plant.world_frame(),
-           self.plant.world_frame()
+            JacobianWrtVariable.kV,
+            self.ee_frame,
+            np.zeros(3),
+            self.plant.world_frame(),
+            self.plant.world_frame(),
         )
 
         # Compute jacobian pseudoinverse
         Minv = np.linalg.inv(M)
-        Lambda = np.linalg.pinv(J@Minv@J.T)
-        Jbar = Lambda@J@Minv
+        Lambda = np.linalg.pinv(J @ Minv @ J.T)
+        Jbar = Lambda @ J @ Minv
 
         # Compute wrench (spatial force) applied at end-effector
-        w = Jbar@(tau-tau_g)
+        w = Jbar @ (tau - tau_g)
 
         output.SetFromVector(w)

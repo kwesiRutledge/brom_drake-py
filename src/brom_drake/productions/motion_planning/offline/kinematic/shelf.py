@@ -14,11 +14,15 @@ from pydrake.systems.primitives import ConstantValueSource
 
 # Internal Imports
 import brom_drake.robots as robots
-from brom_drake.motion_planning.systems.open_loop_dispensers.open_loop_plan_dispenser import OpenLoopPlanDispenser
+from brom_drake.motion_planning.systems.open_loop_dispensers.open_loop_plan_dispenser import (
+    OpenLoopPlanDispenser,
+)
 from brom_drake.stations.kinematic import UR10eStation as KinematicUR10eStation
 from brom_drake.productions.ids import ProductionID
 from brom_drake.productions.roles.role import Role
-from brom_drake.productions.types.motion_planning import KinematicMotionPlanningProduction
+from brom_drake.productions.types.motion_planning import (
+    KinematicMotionPlanningProduction,
+)
 from brom_drake.utils import Performer, GroundShape, AddGround, MotionPlan
 
 
@@ -107,11 +111,12 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
 
 
     """
+
     def __init__(
         self,
         time_step: float = 1e-3,
-        shelf_pose: RigidTransform = None, # The pose of the shelf
-        meshcat_port_number: int = 7001, # Usually turn off for CI (i.e., make it None)
+        shelf_pose: RigidTransform = None,  # The pose of the shelf
+        meshcat_port_number: int = 7001,  # Usually turn off for CI (i.e., make it None)
         plan_execution_speed: float = 0.2,
         **kwargs,
     ):
@@ -119,9 +124,9 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
         *Description*
 
         Constructor for ShelfPlanning1.
-        
+
         This:
-        
+
         - Stores all inputs in the appropriate places
         - Selects the default shelf_pose, if none is given
         - Sets the cupboard joints to be in the "open" configuration
@@ -140,7 +145,7 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
             The port number for meshcat visualization, by default 7001.
 
         plan_execution_speed: float, optional
-            The speed at which to execute the motion plan, by default 0.2        
+            The speed at which to execute the motion plan, by default 0.2
         """
         super().__init__(**kwargs)
 
@@ -152,7 +157,7 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
         # Input Processing
         if self.shelf_pose is None:
             self.shelf_pose = RigidTransform(
-                RollPitchYaw(0.0, 0.0, +np.pi/2.0).ToQuaternion(),
+                RollPitchYaw(0.0, 0.0, +np.pi / 2.0).ToQuaternion(),
                 np.array([0.0, 1.0, 0.65]),
             )
 
@@ -195,13 +200,13 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
             - Motion Planning Components
             - Start and Goal Pose sources
         - Setting initial configuration of the arm for the plant
-        
+
         """
         # Call the parent class method
         super().add_supporting_cast()
 
         # Setup
-        self.add_ur10e_station() # Use the UR10e station's plant + scene graph for all other objects
+        self.add_ur10e_station()  # Use the UR10e station's plant + scene graph for all other objects
 
         # Add obstacles
         self.add_shelf(self.plant)
@@ -278,7 +283,7 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
     def add_ur10e_station(self):
         """
         *Description*
-        
+
         Add the Kinematic UR10e station to the production's plant for simple motion planning.
         """
         # Setup
@@ -293,13 +298,13 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
     ) -> Tuple[Diagram, Context]:
         """
         *Description*
-        
+
         Modifies the normal add_cast_and_build, so that
         we share the context of the plant with the appropriate
         parts of the system.
 
         In addition to using the parent class's implementation of add_cast_and_build, this:
-        - Configures the collision filter to avoid spurious collisions between the cupboard's 
+        - Configures the collision filter to avoid spurious collisions between the cupboard's
         various parts and itself
         - Insert the motion planner role into the diagram and connect it properly
 
@@ -331,32 +336,32 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
         # Configure the scene graph for collision detection
         self.configure_collision_filter(
             diagram.GetSubsystemContext(
-                self.scene_graph, diagram_context,
+                self.scene_graph,
+                diagram_context,
             )
         )
 
         # Connect arm controller to the appropriate plant_context
         self.station.arm_controller.plant_context = diagram.GetSubsystemContext(
-            self.station.arm_controller.plant, diagram_context,
+            self.station.arm_controller.plant,
+            diagram_context,
         )
 
         for role_ii, performer_ii in cast:
             if role_ii.name == "OfflineMotionPlanner":
-                performer_ii.set_internal_root_context(
-                    diagram_context
-                )
+                performer_ii.set_internal_root_context(diagram_context)
 
         return diagram, diagram_context
 
     def configure_collision_filter(self, scene_graph_context: Context):
         """
         *Description*
-        
+
         This method configures the collision filter, so that:
-        
+
         - self collisions between the shelf's pieces, and
         - self collisions between the arm's parts,
-        
+
         are ignored during simulation.
 
         *Parameters*
@@ -420,7 +425,7 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
     ) -> Tuple[Diagram, Context]:
         """
         *Description*
-        
+
         This function is used to easily cast and build the production.
 
         *Parameters*
@@ -432,7 +437,7 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
         with_watcher: bool, optional
             A Boolean that determines whether to add a watcher to the diagram.
             Default is False.
-        
+
         *Returns*
 
         diagram: pydrake.systems.framework.Diagram
@@ -457,18 +462,18 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
         # Configure the scene graph for collision detection
         self.configure_collision_filter(
             diagram.GetSubsystemContext(
-                self.scene_graph, diagram_context,
+                self.scene_graph,
+                diagram_context,
             )
         )
 
         # Connect arm controller to the appropriate plant_context
         self.station.arm_controller.plant_context = diagram.GetSubsystemContext(
-            self.station.arm_controller.plant, diagram_context,
+            self.station.arm_controller.plant,
+            diagram_context,
         )
 
-        self.performers[0].set_internal_root_context(
-            diagram_context
-        )
+        self.performers[0].set_internal_root_context(diagram_context)
 
         # Set the initial positions of the arm
         # self.station.plant.SetPositions(
@@ -484,10 +489,10 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
         """
         *Description*
 
-        Get the goal pose. 
-        
+        Get the goal pose.
+
         *Returns*
-        
+
         pose_WorldGoal: RigidTransform
             The goal pose.
         """
@@ -499,19 +504,20 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
         elif (self._goal_pose is None) and (self._goal_config is None):
             # If we have no guidance on how to start, then we will use a default
             goal_position = np.array([+0.0, 1.0, 0.6])
-            goal_orientation = RollPitchYaw(np.pi / 2.0, np.pi / 2.0, 0.0).ToQuaternion()
+            goal_orientation = RollPitchYaw(
+                np.pi / 2.0, np.pi / 2.0, 0.0
+            ).ToQuaternion()
             self._goal_pose = RigidTransform(goal_orientation, goal_position)
             return self._goal_pose
         elif (self._goal_pose is None) and (self._goal_config is not None):
             # Use the goal configuration to get the goal pose
             # Using a "forward kinematics solver"
-            self._goal_pose = self.solve_forward_kinematics_problem_for_arm(self._goal_config)
+            self._goal_pose = self.solve_forward_kinematics_problem_for_arm(
+                self._goal_config
+            )
             return self._goal_pose
         else:
-            raise ValueError(
-                f"Unexpected behavior. This should never happen."
-            )
-
+            raise ValueError(f"Unexpected behavior. This should never happen.")
 
     @property
     def id(self) -> ProductionID:
@@ -525,7 +531,7 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
     ) -> RigidTransform:
         """
         *Description*
-        
+
         This method solves the forward kinematics problem for the UR10e arm
         by itself.
 
@@ -539,9 +545,9 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
         target_frame_name: str, optional
             The frame that we compute the pose of with respect to the world origin frame.
             Default is "ft_frame"
-        
+
         *Returns*
-        
+
         pose_WorldTarget: RigidTransform
             The end effector pose of the robot expressed in the world frame.
         """
@@ -556,7 +562,7 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
 
         # Use station's plant to solve the forward kinematics problem
         shadow_plant = shadow_station.plant
-        
+
         temp_context = shadow_plant.CreateDefaultContext()
         shadow_plant.SetPositions(
             temp_context,
@@ -576,9 +582,9 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
     def start_pose(self) -> RigidTransform:
         """
         *Description*
-        
+
         Get the start pose.
-        
+
         *Returns*
 
         pose_WorldStart: RigidTransform
@@ -598,9 +604,9 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
         elif (self._start_pose is None) and (self._start_config is not None):
             # Use the start configuration to get the starting pose
             # Using a "forward kinematics solver"
-            self._start_pose = self.solve_forward_kinematics_problem_for_arm(self._start_config)
+            self._start_pose = self.solve_forward_kinematics_problem_for_arm(
+                self._start_config
+            )
             return self._start_pose
         else:
-            raise ValueError(
-                f"Unexpected behavior. This should never happen."
-            )
+            raise ValueError(f"Unexpected behavior. This should never happen.")

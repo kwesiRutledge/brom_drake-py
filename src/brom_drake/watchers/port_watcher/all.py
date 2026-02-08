@@ -4,13 +4,14 @@ from .port_figure_arrangement import PortFigureArrangement
 from .port_watcher import PortWatcher
 from .port_watcher_options import (
     FigureNamingConvention,
-    PortWatcherOptions, 
+    PortWatcherOptions,
     PortWatcherPlottingOptions,
-    PortWatcherRawDataOptions
+    PortWatcherRawDataOptions,
 )
 from .support_types import (
-    assert_port_is_supported, assert_abstract_value_ports_type_is_supported,
-    create_port_value_type_error
+    assert_port_is_supported,
+    assert_abstract_value_ports_type_is_supported,
+    create_port_value_type_error,
 )
 
 __all__ = [

@@ -6,22 +6,26 @@ Description:
     This shows one how to use the `easy_cast_and_build` method to simplify how to build
     a production.
 """
-import ipdb
+
 import numpy as np
 from pydrake.all import (
     Simulator,
-    RollPitchYaw, RigidTransform,
+    RollPitchYaw,
+    RigidTransform,
 )
-import typer
 
 # Internal imports
-from brom_drake.motion_planning.algorithms.rrt import RRTConnectPlannerConfig, RRTConnectPlanner
+from brom_drake.motion_planning.algorithms.rrt import (
+    RRTConnectPlannerConfig,
+    RRTConnectPlanner,
+)
 from brom_drake.productions.motion_planning.offline import ShelfPlanning1
+
 
 def main(meshcat_port_number: int = 7001):
     # Setup
     if meshcat_port_number < 0:
-        meshcat_port_number = None # Use None for CI
+        meshcat_port_number = None  # Use None for CI
 
     # Define the goal pose
     easy_goal_position = np.array([+0.0, 1.0, 1.05])
@@ -30,7 +34,7 @@ def main(meshcat_port_number: int = 7001):
 
     # Create the production
     production = ShelfPlanning1(
-        meshcat_port_number=meshcat_port_number, # Use None for CI
+        meshcat_port_number=meshcat_port_number,  # Use None for CI
         goal_pose=goal_pose,
     )
 
@@ -65,10 +69,13 @@ def main(meshcat_port_number: int = 7001):
     simulator.Initialize()
     simulator.AdvanceTo(0.1)
     planned_trajectory = production.plan_dispenser.planned_trajectory
-    print(f"Expected end time of the planned trajectory: {planned_trajectory.end_time()}")
-    
+    print(
+        f"Expected end time of the planned trajectory: {planned_trajectory.end_time()}"
+    )
+
     # Simulate the full plan
-    simulator.AdvanceTo(planned_trajectory.end_time()+1.0)
+    simulator.AdvanceTo(planned_trajectory.end_time() + 1.0)
+
 
 if __name__ == "__main__":
     main()

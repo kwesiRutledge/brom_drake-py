@@ -6,13 +6,20 @@ from pathlib import Path
 from pydrake.all import (
     AbstractValue,
     AddMultibodyPlantSceneGraph,
-    ConstantValueSource, ConstantVectorSource,
-    Context, CoulombFriction,
-    Diagram, DiagramBuilder, HalfSpace,
+    ConstantValueSource,
+    ConstantVectorSource,
+    Context,
+    CoulombFriction,
+    Diagram,
+    DiagramBuilder,
+    HalfSpace,
     LogVectorOutput,
-    MultibodyPlant, Parser,
-    RotationMatrix, RigidTransform,
-    Simulator, SpatialVelocity,
+    MultibodyPlant,
+    Parser,
+    RotationMatrix,
+    RigidTransform,
+    Simulator,
+    SpatialVelocity,
     VectorLogSink,
 )
 import shutil
@@ -23,12 +30,15 @@ import unittest
 from brom_drake.watchers.port_watcher.file_manager import PortWatcherFileManager
 from brom_drake.watchers.port_watcher.plotter import PortWatcherPlotter
 from brom_drake.watchers.port_watcher.port_watcher_options import (
-    PortWatcherPlottingOptions, PortFigureArrangement,
-    FigureNamingConvention, PortWatcherOptions,
+    PortWatcherPlottingOptions,
+    PortFigureArrangement,
+    FigureNamingConvention,
+    PortWatcherOptions,
 )
 from brom_drake.watchers.port_watcher.port_watcher import PortWatcher
 import brom_drake.robots as robots
 from brom_drake.directories import DEFAULT_BROM_DIR
+
 
 class PortWatcherPlotterTest(unittest.TestCase):
     def get_brom_drake_dir(self):
@@ -42,7 +52,7 @@ class PortWatcherPlotterTest(unittest.TestCase):
             return os.path.abspath(os.path.join(os.getcwd(), "..", ".."))
         else:
             return os.getcwd()
-        
+
     def setUp(self):
         """
         Description:
@@ -75,13 +85,14 @@ class PortWatcherPlotterTest(unittest.TestCase):
             parent_dir.mkdir(parents=True, exist_ok=True)
 
         file_handler = logging.FileHandler(
-            filename=parent_dir / log_file_name,
-            mode='w'
+            filename=parent_dir / log_file_name, mode="w"
         )
         file_handler.setLevel(logging.DEBUG)
 
         # Create a formatter and set it for the handler
-        formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(name)s | %(message)s')
+        formatter = logging.Formatter(
+            "%(asctime)s | %(levelname)s | %(name)s | %(message)s"
+        )
         file_handler.setFormatter(formatter)
         python_logger.addHandler(file_handler)
 
@@ -89,7 +100,7 @@ class PortWatcherPlotterTest(unittest.TestCase):
         python_logger.setLevel(logging.DEBUG)
 
         return python_logger
-        
+
     def test_compute_plot_shape1(self):
         """
         Description:
@@ -114,7 +125,9 @@ class PortWatcherPlotterTest(unittest.TestCase):
         # Create PortWatcherPlotter
         plotter0 = PortWatcherPlotter(
             plant.GetOutputPort("state"),
-            python_logger=self.create_dummy_logger("PortWatcherPlotterTest_compute_plot_shape1.log"),
+            python_logger=self.create_dummy_logger(
+                "PortWatcherPlotterTest_compute_plot_shape1.log"
+            ),
             file_manager=self.basic_file_manager,
         )
 
@@ -122,7 +135,8 @@ class PortWatcherPlotterTest(unittest.TestCase):
         shape0 = plotter0.compute_plot_shape(1)
 
         self.assertEqual(
-            shape0, (1,1),
+            shape0,
+            (1, 1),
         )
 
     def test_compute_plot_shape2(self):
@@ -148,7 +162,9 @@ class PortWatcherPlotterTest(unittest.TestCase):
         # Create PortWatcherPlotter
         plotter0 = PortWatcherPlotter(
             plant.GetOutputPort("state"),
-            python_logger=self.create_dummy_logger("PortWatcherPlotterTest_compute_plot_shape2.log"),
+            python_logger=self.create_dummy_logger(
+                "PortWatcherPlotterTest_compute_plot_shape2.log"
+            ),
             file_manager=self.basic_file_manager,
         )
 
@@ -156,7 +172,8 @@ class PortWatcherPlotterTest(unittest.TestCase):
         shape0 = plotter0.compute_plot_shape(2)
 
         self.assertEqual(
-            shape0, (1,2),
+            shape0,
+            (1, 2),
         )
 
     def test_compute_plot_shape3(self):
@@ -182,7 +199,9 @@ class PortWatcherPlotterTest(unittest.TestCase):
         # Create PortWatcherPlotter
         plotter0 = PortWatcherPlotter(
             plant.GetOutputPort("state"),
-            python_logger=self.create_dummy_logger("PortWatcherPlotterTest_compute_plot_shape3.log"),
+            python_logger=self.create_dummy_logger(
+                "PortWatcherPlotterTest_compute_plot_shape3.log"
+            ),
             file_manager=self.basic_file_manager,
         )
 
@@ -190,7 +209,8 @@ class PortWatcherPlotterTest(unittest.TestCase):
         shape0 = plotter0.compute_plot_shape(6)
 
         self.assertEqual(
-            shape0, (2,3),
+            shape0,
+            (2, 3),
         )
 
     def test_compute_plot_shape4(self):
@@ -216,7 +236,9 @@ class PortWatcherPlotterTest(unittest.TestCase):
         # Create PortWatcherPlotter
         plotter0 = PortWatcherPlotter(
             plant.GetOutputPort("state"),
-            python_logger=self.create_dummy_logger("PortWatcherPlotterTest_compute_plot_shape4.log"),
+            python_logger=self.create_dummy_logger(
+                "PortWatcherPlotterTest_compute_plot_shape4.log"
+            ),
             file_manager=self.basic_file_manager,
         )
 
@@ -224,7 +246,8 @@ class PortWatcherPlotterTest(unittest.TestCase):
         shape0 = plotter0.compute_plot_shape(12)
 
         self.assertEqual(
-            shape0, (3,4),
+            shape0,
+            (3, 4),
         )
 
     def test_plot_logger_data1(self):
@@ -249,22 +272,22 @@ class PortWatcherPlotterTest(unittest.TestCase):
         plant, scene_graph = AddMultibodyPlantSceneGraph(builder, time_step=time_step)
 
         block_model_idx = Parser(plant=plant).AddModels(
-            self.get_brom_drake_dir() + "/examples/watcher/suggested_use1/slider-block.urdf",
+            self.get_brom_drake_dir()
+            + "/examples/watcher/suggested_use1/slider-block.urdf",
         )[0]
         block_body_name = "block"
 
         p_GroundOrigin = [0.0, 0.0, 0.0]
         R_GroundOrigin = RotationMatrix.MakeXRotation(0.0)
         X_GroundOrigin = RigidTransform(R_GroundOrigin, p_GroundOrigin)
-        surface_friction = CoulombFriction(
-            static_friction=0.7,
-            dynamic_friction=0.5)
+        surface_friction = CoulombFriction(static_friction=0.7, dynamic_friction=0.5)
         plant.RegisterCollisionGeometry(
             plant.world_body(),
             X_GroundOrigin,
             HalfSpace(),
             "ground_collision",
-            surface_friction)
+            surface_friction,
+        )
 
         plant.Finalize()
 
@@ -276,7 +299,9 @@ class PortWatcherPlotterTest(unittest.TestCase):
         # Create PortWatcherPlotter
         plotter0 = PortWatcherPlotter(
             plant.GetOutputPort("state"),
-            python_logger=self.create_dummy_logger("PortWatcherPlotterTest_plot_logger_data1.log"),
+            python_logger=self.create_dummy_logger(
+                "PortWatcherPlotterTest_plot_logger_data1.log"
+            ),
             file_manager=self.basic_file_manager,
         )
 
@@ -287,18 +312,22 @@ class PortWatcherPlotterTest(unittest.TestCase):
         # Set initial conditions
         # - Initial pose
         p_WBlock = [0.0, 0.0, 0.2]
-        R_WBlock = RotationMatrix.MakeXRotation(np.pi / 2.0)  # RotationMatrix.MakeXRotation(-np.pi/2.0)
+        R_WBlock = RotationMatrix.MakeXRotation(
+            np.pi / 2.0
+        )  # RotationMatrix.MakeXRotation(-np.pi/2.0)
         X_WBlock = RigidTransform(R_WBlock, p_WBlock)
         plant.SetFreeBodyPose(
             plant.GetMyContextFromRoot(diagram_context),
             plant.GetBodyByName(block_body_name),
-            X_WBlock)
+            X_WBlock,
+        )
 
         # - initial Velocities
         plant.SetFreeBodySpatialVelocity(
             plant.GetBodyByName(block_body_name),
             SpatialVelocity(np.zeros(3), np.array([0.0, 0.0, 0.0])),
-            plant.GetMyContextFromRoot(diagram_context))
+            plant.GetMyContextFromRoot(diagram_context),
+        )
 
         # Run sim
         simulator = Simulator(diagram, diagram_context)
@@ -332,22 +361,22 @@ class PortWatcherPlotterTest(unittest.TestCase):
         plant, scene_graph = AddMultibodyPlantSceneGraph(builder, time_step=1e-3)
 
         block_model_idx = Parser(plant=plant).AddModels(
-            self.get_brom_drake_dir() + "/examples/watcher/suggested_use1/slider-block.urdf",
+            self.get_brom_drake_dir()
+            + "/examples/watcher/suggested_use1/slider-block.urdf",
         )[0]
         block_body_name = "block"
 
         p_GroundOrigin = [0, 0.0, 0.0]
         R_GroundOrigin = RotationMatrix.MakeXRotation(0.0)
         X_GroundOrigin = RigidTransform(R_GroundOrigin, p_GroundOrigin)
-        surface_friction = CoulombFriction(
-            static_friction=0.7,
-            dynamic_friction=0.5)
+        surface_friction = CoulombFriction(static_friction=0.7, dynamic_friction=0.5)
         plant.RegisterCollisionGeometry(
             plant.world_body(),
             X_GroundOrigin,
             HalfSpace(),
             "ground_collision",
-            surface_friction)
+            surface_friction,
+        )
 
         plant.Finalize()
 
@@ -359,11 +388,13 @@ class PortWatcherPlotterTest(unittest.TestCase):
         # Create PortWatcherPlotter
         plotter0 = PortWatcherPlotter(
             plant.GetOutputPort("state"),
-            python_logger=self.create_dummy_logger("PortWatcherPlotterTest_plot_logger_data2.log"),
+            python_logger=self.create_dummy_logger(
+                "PortWatcherPlotterTest_plot_logger_data2.log"
+            ),
             file_manager=self.basic_file_manager,
             plotting_options=PortWatcherPlottingOptions(
                 plot_arrangement=PortFigureArrangement.OnePlotPerDim,
-            )
+            ),
         )
 
         # Setup simulation
@@ -373,18 +404,22 @@ class PortWatcherPlotterTest(unittest.TestCase):
         # Set initial conditions
         # - Initial pose
         p_WBlock = [0.0, 0.0, 0.2]
-        R_WBlock = RotationMatrix.MakeXRotation(np.pi / 2.0)  # RotationMatrix.MakeXRotation(-np.pi/2.0)
+        R_WBlock = RotationMatrix.MakeXRotation(
+            np.pi / 2.0
+        )  # RotationMatrix.MakeXRotation(-np.pi/2.0)
         X_WBlock = RigidTransform(R_WBlock, p_WBlock)
         plant.SetFreeBodyPose(
             plant.GetMyContextFromRoot(diagram_context),
             plant.GetBodyByName(block_body_name),
-            X_WBlock)
+            X_WBlock,
+        )
 
         # - initial Velocities
         plant.SetFreeBodySpatialVelocity(
             plant.GetBodyByName(block_body_name),
             SpatialVelocity(np.zeros(3), np.array([0.0, 0.0, 0.0])),
-            plant.GetMyContextFromRoot(diagram_context))
+            plant.GetMyContextFromRoot(diagram_context),
+        )
 
         # Run sim
         simulator = Simulator(diagram, diagram_context)
@@ -423,22 +458,22 @@ class PortWatcherPlotterTest(unittest.TestCase):
         plant, scene_graph = AddMultibodyPlantSceneGraph(builder, time_step=1e-3)
 
         block_model_idx = Parser(plant=plant).AddModels(
-            self.get_brom_drake_dir() + "/examples/watcher/suggested_use1/slider-block.urdf",
+            self.get_brom_drake_dir()
+            + "/examples/watcher/suggested_use1/slider-block.urdf",
         )[0]
         block_body_name = "block"
 
         p_GroundOrigin = [0, 0.0, 0.0]
         R_GroundOrigin = RotationMatrix.MakeXRotation(0.0)
         X_GroundOrigin = RigidTransform(R_GroundOrigin, p_GroundOrigin)
-        surface_friction = CoulombFriction(
-            static_friction=0.7,
-            dynamic_friction=0.5)
+        surface_friction = CoulombFriction(static_friction=0.7, dynamic_friction=0.5)
         plant.RegisterCollisionGeometry(
             plant.world_body(),
             X_GroundOrigin,
             HalfSpace(),
             "ground_collision",
-            surface_friction)
+            surface_friction,
+        )
 
         plant.Finalize()
 
@@ -450,11 +485,13 @@ class PortWatcherPlotterTest(unittest.TestCase):
         # Create PortWatcherPlotter
         plotter0 = PortWatcherPlotter(
             plant.GetOutputPort("state"),
-            python_logger=self.create_dummy_logger("PortWatcherPlotterTest_plot_logger_data3.log"),
+            python_logger=self.create_dummy_logger(
+                "PortWatcherPlotterTest_plot_logger_data3.log"
+            ),
             file_manager=self.basic_file_manager,
             plotting_options=PortWatcherPlottingOptions(
                 plot_arrangement=PortFigureArrangement.OnePlotPerDim,
-            )
+            ),
         )
 
         # Setup simulation
@@ -464,18 +501,22 @@ class PortWatcherPlotterTest(unittest.TestCase):
         # Set initial conditions
         # - Initial pose
         p_WBlock = [0.0, 0.0, 0.2]
-        R_WBlock = RotationMatrix.MakeXRotation(np.pi / 2.0)  # RotationMatrix.MakeXRotation(-np.pi/2.0)
+        R_WBlock = RotationMatrix.MakeXRotation(
+            np.pi / 2.0
+        )  # RotationMatrix.MakeXRotation(-np.pi/2.0)
         X_WBlock = RigidTransform(R_WBlock, p_WBlock)
         plant.SetFreeBodyPose(
             plant.GetMyContextFromRoot(diagram_context),
             plant.GetBodyByName(block_body_name),
-            X_WBlock)
+            X_WBlock,
+        )
 
         # - initial Velocities
         plant.SetFreeBodySpatialVelocity(
             plant.GetBodyByName(block_body_name),
             SpatialVelocity(np.zeros(3), np.array([0.0, 0.0, 0.0])),
-            plant.GetMyContextFromRoot(diagram_context))
+            plant.GetMyContextFromRoot(diagram_context),
+        )
 
         # Run sim
         simulator = Simulator(diagram, diagram_context)
@@ -511,22 +552,22 @@ class PortWatcherPlotterTest(unittest.TestCase):
         plant, scene_graph = AddMultibodyPlantSceneGraph(builder, time_step=time_step)
 
         block_model_idx = Parser(plant=plant).AddModels(
-            self.get_brom_drake_dir() + "/examples/watcher/suggested_use1/slider-block.urdf",
+            self.get_brom_drake_dir()
+            + "/examples/watcher/suggested_use1/slider-block.urdf",
         )[0]
         block_body_name = "block"
 
         p_GroundOrigin = [0, 0.0, 0.0]
         R_GroundOrigin = RotationMatrix.MakeXRotation(0.0)
         X_GroundOrigin = RigidTransform(R_GroundOrigin, p_GroundOrigin)
-        surface_friction = CoulombFriction(
-            static_friction=0.7,
-            dynamic_friction=0.5)
+        surface_friction = CoulombFriction(static_friction=0.7, dynamic_friction=0.5)
         plant.RegisterCollisionGeometry(
             plant.world_body(),
             X_GroundOrigin,
             HalfSpace(),
             "ground_collision",
-            surface_friction)
+            surface_friction,
+        )
 
         plant.Finalize()
 
@@ -538,7 +579,9 @@ class PortWatcherPlotterTest(unittest.TestCase):
         # Create PortWatcherPlotter
         plotter0 = PortWatcherPlotter(
             plant.GetOutputPort("state"),
-            python_logger=self.create_dummy_logger("PortWatcherPlotterTest_plot_logger_data_subplots1.log"),
+            python_logger=self.create_dummy_logger(
+                "PortWatcherPlotterTest_plot_logger_data_subplots1.log"
+            ),
             file_manager=self.basic_file_manager,
         )
 
@@ -553,18 +596,22 @@ class PortWatcherPlotterTest(unittest.TestCase):
         # Set initial conditions
         # - Initial pose
         p_WBlock = [0.0, 0.0, 0.2]
-        R_WBlock = RotationMatrix.MakeXRotation(np.pi / 2.0)  # RotationMatrix.MakeXRotation(-np.pi/2.0)
+        R_WBlock = RotationMatrix.MakeXRotation(
+            np.pi / 2.0
+        )  # RotationMatrix.MakeXRotation(-np.pi/2.0)
         X_WBlock = RigidTransform(R_WBlock, p_WBlock)
         plant.SetFreeBodyPose(
             plant.GetMyContextFromRoot(diagram_context),
             plant.GetBodyByName(block_body_name),
-            X_WBlock)
+            X_WBlock,
+        )
 
         # - initial Velocities
         plant.SetFreeBodySpatialVelocity(
             plant.GetBodyByName(block_body_name),
             SpatialVelocity(np.zeros(3), np.array([0.0, 0.0, 0.0])),
-            plant.GetMyContextFromRoot(diagram_context))
+            plant.GetMyContextFromRoot(diagram_context),
+        )
 
         # Run sim
         simulator = Simulator(diagram, diagram_context)
@@ -589,7 +636,7 @@ class PortWatcherPlotterTest(unittest.TestCase):
         time_step: float = 0.01,
         plotting_options: PortWatcherPlottingOptions = PortWatcherPlottingOptions(),
         base_watcher_dir: str = "./.brom",
-    )->Tuple[Diagram, Context, PortWatcherPlotter, MultibodyPlant, VectorLogSink]:
+    ) -> Tuple[Diagram, Context, PortWatcherPlotter, MultibodyPlant, VectorLogSink]:
         """
         Description:
 
@@ -621,22 +668,22 @@ class PortWatcherPlotterTest(unittest.TestCase):
         plant, scene_graph = AddMultibodyPlantSceneGraph(builder, time_step=time_step)
 
         block_model_idx = Parser(plant=plant).AddModels(
-            self.get_brom_drake_dir() + "/examples/watcher/suggested_use1/slider-block.urdf",
+            self.get_brom_drake_dir()
+            + "/examples/watcher/suggested_use1/slider-block.urdf",
         )[0]
         block_body_name = "block"
 
         p_GroundOrigin = [0, 0.0, 0.0]
         R_GroundOrigin = RotationMatrix.MakeXRotation(0.0)
         X_GroundOrigin = RigidTransform(R_GroundOrigin, p_GroundOrigin)
-        surface_friction = CoulombFriction(
-            static_friction=0.7,
-            dynamic_friction=0.5)
+        surface_friction = CoulombFriction(static_friction=0.7, dynamic_friction=0.5)
         plant.RegisterCollisionGeometry(
             plant.world_body(),
             X_GroundOrigin,
             HalfSpace(),
             "ground_collision",
-            surface_friction)
+            surface_friction,
+        )
 
         plant.Finalize()
 
@@ -645,7 +692,9 @@ class PortWatcherPlotterTest(unittest.TestCase):
         # Create PortWatcherPlotter
         plotter0 = PortWatcherPlotter(
             plant.GetOutputPort("state"),
-            python_logger=self.create_dummy_logger("PortWatcherPlotterTest_plot_logger_data_subplots1.log"),
+            python_logger=self.create_dummy_logger(
+                "PortWatcherPlotterTest_plot_logger_data_subplots1.log"
+            ),
             plotting_options=plotting_options,
             file_manager=updated_file_manager,
         )
@@ -657,18 +706,22 @@ class PortWatcherPlotterTest(unittest.TestCase):
         # Set initial conditions
         # - Initial pose
         p_WBlock = [0.0, 0.0, 0.2]
-        R_WBlock = RotationMatrix.MakeXRotation(np.pi / 2.0)  # RotationMatrix.MakeXRotation(-np.pi/2.0)
+        R_WBlock = RotationMatrix.MakeXRotation(
+            np.pi / 2.0
+        )  # RotationMatrix.MakeXRotation(-np.pi/2.0)
         X_WBlock = RigidTransform(R_WBlock, p_WBlock)
         plant.SetFreeBodyPose(
             plant.GetMyContextFromRoot(diagram_context),
             plant.GetBodyByName(block_body_name),
-            X_WBlock)
+            X_WBlock,
+        )
 
         # - initial Velocities
         plant.SetFreeBodySpatialVelocity(
             plant.GetBodyByName(block_body_name),
             SpatialVelocity(np.zeros(3), np.array([0.0, 0.0, 0.0])),
-            plant.GetMyContextFromRoot(diagram_context))
+            plant.GetMyContextFromRoot(diagram_context),
+        )
 
         return diagram, diagram_context, plotter0, plant, logger0
 
@@ -717,7 +770,7 @@ class PortWatcherPlotterTest(unittest.TestCase):
 
         Verifies that the savefigs method properly saves thirteen figures to the desired directory when we
         use a PortWatcher with the OnePlotPerDim arrangement.
-        
+
         The figures should not be within the main plot_dir, but in a directory below it.
         """
         # Setup
@@ -754,7 +807,9 @@ class PortWatcherPlotterTest(unittest.TestCase):
         png_files = [f for f in files if f.endswith(".png")]
 
         state_dim = plant.get_state_output_port().size()
-        self.assertEqual(state_dim, len(png_files)) # TODO(Kwesi): Why is one state dimension not plotted?
+        self.assertEqual(
+            state_dim, len(png_files)
+        )  # TODO(Kwesi): Why is one state dimension not plotted?
 
         if self.delete_test_brom_directory_on_teardown:
             shutil.rmtree(plot_dir)
@@ -789,7 +844,7 @@ class PortWatcherPlotterTest(unittest.TestCase):
         simulator.AdvanceTo(self.T_sim1)
 
         # Save figs
-        pw0.save_figures(log_sink0,diagram_context)
+        pw0.save_figures(log_sink0, diagram_context)
 
         # Check that there are 0 png files in the plot_dir
         files = os.listdir(plot_dir)
@@ -801,7 +856,9 @@ class PortWatcherPlotterTest(unittest.TestCase):
         files = os.listdir(port_dir)
         png_files = [f for f in files if f.endswith(".png")]
         state_dim = plant.get_state_output_port().size()
-        self.assertEqual(state_dim, len(png_files)) # TODO(Kwesi): Why is one state dimension not plotted?
+        self.assertEqual(
+            state_dim, len(png_files)
+        )  # TODO(Kwesi): Why is one state dimension not plotted?
 
         if self.delete_test_brom_directory_on_teardown:
             shutil.rmtree(plot_dir)
@@ -877,7 +934,7 @@ class PortWatcherPlotterTest(unittest.TestCase):
         simulator.AdvanceTo(self.T_sim1)
 
         # Save figs
-        pw0.save_figures(log_sink0,diagram_context)
+        pw0.save_figures(log_sink0, diagram_context)
 
         # Check that there are 0 png files in the plot_dir
         files = os.listdir(test_brom_watcher_dir)
@@ -888,7 +945,7 @@ class PortWatcherPlotterTest(unittest.TestCase):
         files = os.listdir(test_brom_watcher_dir + "/plots/system_plant")
         png_files = [f for f in files if f.endswith(".png")]
 
-        expected_n_plots = 1 # Because we are targeting only one port in the system
+        expected_n_plots = 1  # Because we are targeting only one port in the system
         self.assertEqual(len(png_files), expected_n_plots)
 
         if self.delete_test_brom_directory_on_teardown:
@@ -911,9 +968,11 @@ class PortWatcherPlotterTest(unittest.TestCase):
         )
 
         # Set up a simple diagram with an included watcher
-        diagram, diagram_context, plotter0, plant, log_sink0 = self.build_example_diagram(
-            plotting_options=plotting_options,
-            base_watcher_dir=temp_brom_dir,
+        diagram, diagram_context, plotter0, plant, log_sink0 = (
+            self.build_example_diagram(
+                plotting_options=plotting_options,
+                base_watcher_dir=temp_brom_dir,
+            )
         )
 
         # Run sim
@@ -935,7 +994,7 @@ class PortWatcherPlotterTest(unittest.TestCase):
         files = os.listdir(temp_brom_dir + "/plots/system_plant")
         png_files = [f for f in files if f.endswith(f".{test_file_format}")]
 
-        expected_n_plots = 1 # Because we are targeting only one port in the system
+        expected_n_plots = 1  # Because we are targeting only one port in the system
         self.assertEqual(len(png_files), expected_n_plots)
 
         if self.delete_test_brom_directory_on_teardown:
@@ -944,7 +1003,7 @@ class PortWatcherPlotterTest(unittest.TestCase):
     def test_save_figures8(self):
         """
         *Description*
-        
+
         This test verifies that the save_figures() method properly saves data
         for the RigidTransform type of data.
         """
@@ -961,9 +1020,11 @@ class PortWatcherPlotterTest(unittest.TestCase):
         pw0 = PortWatcher(
             pose_source.get_output_port(),
             builder,
-            python_logger=self.create_dummy_logger("PortWatcherPlotterTest_save_figures8.log"),
+            python_logger=self.create_dummy_logger(
+                "PortWatcherPlotterTest_save_figures8.log"
+            ),
             options=pw_options0,
-            base_watcher_dir="./brom/test_save_figures8/watcher"
+            base_watcher_dir="./brom/test_save_figures8/watcher",
         )
 
         # Build Diagram
@@ -1021,11 +1082,13 @@ class PortWatcherPlotterTest(unittest.TestCase):
         # Create PortWatcherPlotter
         plotter0 = PortWatcherPlotter(
             plant.GetOutputPort("state"),
-            python_logger=self.create_dummy_logger("PortWatcherPlotterTest_system_is_multibody_plant1.log"),
+            python_logger=self.create_dummy_logger(
+                "PortWatcherPlotterTest_system_is_multibody_plant1.log"
+            ),
             file_manager=self.basic_file_manager,
             plotting_options=PortWatcherPlottingOptions(
                 plot_arrangement=PortFigureArrangement.OnePlotPerDim,
-            )
+            ),
         )
 
         # Test
@@ -1048,7 +1111,9 @@ class PortWatcherPlotterTest(unittest.TestCase):
         plant = builder.AddNamedSystem("my_plant", MultibodyPlant(time_step=time_step))
         plant.Finalize()
 
-        constant_vector_source = builder.AddSystem(ConstantVectorSource([1.0, 2.0, 3.0]))
+        constant_vector_source = builder.AddSystem(
+            ConstantVectorSource([1.0, 2.0, 3.0])
+        )
 
         logger0 = LogVectorOutput(
             constant_vector_source.get_output_port(),
@@ -1058,12 +1123,15 @@ class PortWatcherPlotterTest(unittest.TestCase):
         # Create PortWatcherPlotter
         plotter0 = PortWatcherPlotter(
             constant_vector_source.get_output_port(),
-            python_logger=self.create_dummy_logger("PortWatcherPlotterTest_system_is_multibody_plant2.log"),
+            python_logger=self.create_dummy_logger(
+                "PortWatcherPlotterTest_system_is_multibody_plant2.log"
+            ),
             file_manager=self.basic_file_manager,
         )
 
         # Test
         self.assertFalse(plotter0.system_is_multibody_plant())
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

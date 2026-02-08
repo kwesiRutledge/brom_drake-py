@@ -3,5 +3,5 @@ from brom_drake.productions.pick_and_place.chem_lab3 import (
 )
 
 __all__ = [
-    'ChemLab3',
+    "ChemLab3",
 ]

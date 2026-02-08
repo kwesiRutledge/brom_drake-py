@@ -1,4 +1,3 @@
-
 from importlib import resources as impresources
 import networkx as nx
 import numpy as np
@@ -27,9 +26,13 @@ from brom_drake.control import (
 )
 from brom_drake.file_manipulation.urdf import drakeify_my_urdf
 from brom_drake.file_manipulation.urdf.shapes.box import BoxDefinition
-from brom_drake.file_manipulation.urdf.simple_writer.urdf_definition import SimpleShapeURDFDefinition, \
-    InertiaDefinition
-from brom_drake.motion_planning.systems.open_loop_dispensers.open_loop_plan_dispenser import OpenLoopPlanDispenser
+from brom_drake.file_manipulation.urdf.simple_writer.urdf_definition import (
+    SimpleShapeURDFDefinition,
+    InertiaDefinition,
+)
+from brom_drake.motion_planning.systems.open_loop_dispensers.open_loop_plan_dispenser import (
+    OpenLoopPlanDispenser,
+)
 import brom_drake.robots as robots
 from brom_drake.robots.gripper_type import GripperType
 from brom_drake.stations.classical import UR10eStation
@@ -47,6 +50,7 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
     It is used to test the pick and place capabilities of the robot
     in a chemistry lab setting with minimal constraints.
     """
+
     def __init__(
         self,
         time_step=5e-4,
@@ -63,7 +67,7 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
         **Description**
 
         Constructor for the ChemLab3 Production.
-    
+
         """
         # Superclass constructor
         super().__init__(**kwargs)
@@ -108,7 +112,7 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
     def add_supporting_cast(self):
         """
         **Description**
-        
+
         This method adds all secondary cast members to the builder.
         The secondary cast members in the production are the:
 
@@ -117,7 +121,7 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
         - Component which share's the robot model reference
         - Motion Planning components (e.g., dispensers, etc.)
         - Start and Goal sources
-        
+
         :return:
         """
         # Call the superclass method
@@ -149,7 +153,7 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
     def add_dummy_gripper_components(self):
         """
         **Description**
-        
+
         Add more components to the production that are used
         to hold the gripper in place.
         """
@@ -157,11 +161,9 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
 
         # Create a dummy target type object for the gripper and connect it to the gripper controller
         dummy_gripper_target_type_source = self.builder.AddSystem(
-            ConstantValueSource(
-                AbstractValue.Make(GripperTarget.kPosition)
-            ),
+            ConstantValueSource(AbstractValue.Make(GripperTarget.kPosition)),
         )
-        
+
         self.builder.Connect(
             dummy_gripper_target_type_source.get_output_port(),
             self.station.GetInputPort("gripper_target_type"),
@@ -179,7 +181,7 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
     def add_erlenmeyer_flask(self):
         """
         **Description**
-        
+
         Adds the 500ml Erlenmeyer flask to the production.
         """
         # Setup
@@ -207,7 +209,9 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
         """
         # Setup
         arm = self.arm
-        n_actuated_dof = self.plant.num_actuated_dofs(arm) # Number of actuated DOF in arm
+        n_actuated_dof = self.plant.num_actuated_dofs(
+            arm
+        )  # Number of actuated DOF in arm
 
         # Add the Plan Dispenser and connect it to the station
         self.plan_dispenser = self.builder.AddSystem(
@@ -224,7 +228,7 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
             # - Gripper Target Type
             # - Gripper Target
             # Both should be static.
-            
+
             # Add the gripper target to the builder
             gripper_target_type_source = self.builder.AddSystem(
                 ConstantValueSource(
@@ -248,7 +252,6 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
                 gripper_target_source.get_output_port(),
                 self.station.GetInputPort("gripper_target"),
             )
-
 
     def add_shelf(self):
         """
@@ -275,14 +278,18 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
     def add_table(self):
         """
         **Description**
-        
+
         This method adds the table to the production.
         The table will be "L-shaped", and we will define it with 2 box
         shapes.
         :return:
         """
         # Setup
-        table_width, table_length, table_height = self.table_width, self.table_length, self.table_height
+        table_width, table_length, table_height = (
+            self.table_width,
+            self.table_length,
+            self.table_height,
+        )
 
         # 11111111111111111
         # Create first half
@@ -293,7 +300,7 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
             shape=BoxDefinition(
                 size=(table_width, table_length, table_height),
             ),
-            mass=100.0, # kg
+            mass=100.0,  # kg
             inertia=InertiaDefinition(
                 ixx=10.0,
                 iyy=10.0,
@@ -310,7 +317,9 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
         # Weld the table to the world frame
         self.plant.WeldFrames(
             self.plant.world_frame(),
-            self.plant.GetFrameByName(half1_defn.base_link_name, table_half1_model_index),
+            self.plant.GetFrameByName(
+                half1_defn.base_link_name, table_half1_model_index
+            ),
             self.pose_WorldTableHalf1,
         )
 
@@ -321,9 +330,9 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
         half2_defn = SimpleShapeURDFDefinition(
             name="table_half2",
             shape=BoxDefinition(
-                size=(table_width/3.0, table_length, table_height),
+                size=(table_width / 3.0, table_length, table_height),
             ),
-            mass=50.0, # kg
+            mass=50.0,  # kg
             inertia=InertiaDefinition(
                 ixx=10.0,
                 iyy=10.0,
@@ -340,7 +349,9 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
         # Weld the table to the world frame
         self.plant.WeldFrames(
             self.plant.world_frame(),
-            self.plant.GetFrameByName(half2_defn.base_link_name, table_half2_model_index),
+            self.plant.GetFrameByName(
+                half2_defn.base_link_name, table_half2_model_index
+            ),
             self.pose_WorldTableHalf2,
         )
 
@@ -367,23 +378,23 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
         # Configure the scene graph for collision detection
         self.configure_collision_filter(
             diagram.GetSubsystemContext(
-                self.scene_graph, diagram_context,
+                self.scene_graph,
+                diagram_context,
             )
         )
 
         # Connect arm controller to the appropriate plant_context
         self.station.arm_controller.plant_context = diagram.GetSubsystemContext(
-            self.station.arm_controller.plant, diagram_context,
+            self.station.arm_controller.plant,
+            diagram_context,
         )
 
         for role_ii, performer_ii in cast:
             if role_ii.name == "OfflineMotionPlanner":
-                performer_ii.set_internal_root_context(
-                    diagram_context
-                )
+                performer_ii.set_internal_root_context(diagram_context)
 
         return diagram, diagram_context
-    
+
     def build_production(
         self,
         with_watcher: bool = True,
@@ -409,7 +420,7 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
         plant.SetPositions(
             plant.GetMyMutableContextFromRoot(diagram_context),
             self.shelf_model_index,
-            np.array([-np.pi*(3.0/4.0), np.pi*(3.0/4.0)]),
+            np.array([-np.pi * (3.0 / 4.0), np.pi * (3.0 / 4.0)]),
         )
 
         return diagram, diagram_context
@@ -466,7 +477,7 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
         #         GeometrySet(self.arm_geometry_ids)
         #     )
         # )
-    
+
     def define_pose_ik_problem(
         self,
         pose_WorldTarget: RigidTransform,
@@ -494,8 +505,8 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
             self.plant.world_frame(),
             pose_WorldTarget.translation(),
             self.plant.GetFrameByName(target_frame_name),
-            (- np.ones((3,)) * eps0).reshape((-1, 1)),
-            (+ np.ones((3,)) * eps0).reshape((-1, 1)),
+            (-np.ones((3,)) * eps0).reshape((-1, 1)),
+            (+np.ones((3,)) * eps0).reshape((-1, 1)),
         )
 
         # TODO(kwesi): Add OrientationCosntraint
@@ -558,7 +569,8 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
         # Configure the scene graph for collision detection
         self.configure_collision_filter(
             diagram.GetSubsystemContext(
-                self.scene_graph, diagram_context,
+                self.scene_graph,
+                diagram_context,
             )
         )
 
@@ -567,9 +579,7 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
         #     self.station.arm_controller.plant, diagram_context,
         # )
 
-        self.performers[0].set_internal_root_context(
-            diagram_context
-        )
+        self.performers[0].set_internal_root_context(diagram_context)
 
         return diagram, diagram_context
 
@@ -581,12 +591,12 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
         """
         # Setup
         hardcoded_robot_joint_names = [
-            'ur10e-test_shoulder_pan_joint_q',
-            'ur10e-test_shoulder_lift_joint_q',
-            'ur10e-test_elbow_joint_q',
-            'ur10e-test_wrist_1_joint_q',
-            'ur10e-test_wrist_2_joint_q',
-            'ur10e-test_wrist_3_joint_q',
+            "ur10e-test_shoulder_pan_joint_q",
+            "ur10e-test_shoulder_lift_joint_q",
+            "ur10e-test_elbow_joint_q",
+            "ur10e-test_wrist_1_joint_q",
+            "ur10e-test_wrist_2_joint_q",
+            "ur10e-test_wrist_3_joint_q",
         ]
 
         # Retrieve goal_configuraiton value
@@ -624,16 +634,25 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
             # self._goal_pose = RigidTransform(goal_orientation, goal_position)
 
             self._goal_pose = self.solve_forward_kinematics_problem_for_arm(
-                np.array([
-                    2.18266076, -6.26145905, -1.21521333, -3.56075315,  1.45027155,  5.12764245
-                ])
+                np.array(
+                    [
+                        2.18266076,
+                        -6.26145905,
+                        -1.21521333,
+                        -3.56075315,
+                        1.45027155,
+                        5.12764245,
+                    ]
+                )
             )
 
             return self._goal_pose
         elif (self._goal_pose is None) and (self._goal_config is not None):
             # If the goal configuration is given,
             # use the forward kinematics solver to get the goal pose
-            self._goal_pose = self.solve_forward_kinematics_problem_for_arm(self._goal_config)
+            self._goal_pose = self.solve_forward_kinematics_problem_for_arm(
+                self._goal_config
+            )
             return self._goal_pose
         else:
             raise ValueError(
@@ -643,15 +662,19 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
     @property
     def id(self) -> ProductionID:
         return ProductionID.kChemLab3
-        
+
     def initialize_pose_data(self):
         # Setup
-        table_width, table_length, table_height = self.table_width, self.table_length, self.table_height
+        table_width, table_length, table_height = (
+            self.table_width,
+            self.table_length,
+            self.table_height,
+        )
 
         # Set shelf pose
         if self.shelf_pose is None:
             self.pose_WorldShelf = RigidTransform(
-                RollPitchYaw(0.0, 0.0, -np.pi/2.0).ToQuaternion(),
+                RollPitchYaw(0.0, 0.0, -np.pi / 2.0).ToQuaternion(),
                 np.array([0.0, 0.95, 0.66]),
             )
 
@@ -662,7 +685,7 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
         )
         self.pose_WorldTableHalf2 = RigidTransform(
             RollPitchYaw(0.0, 0.0, 0.0).ToQuaternion(),
-            np.array([-table_width/2.0 + (table_width/3.0)*0.5, -0.2, 0.0]),
+            np.array([-table_width / 2.0 + (table_width / 3.0) * 0.5, -0.2, 0.0]),
         )
 
         # Define pose of the starting point of the flask
@@ -673,7 +696,9 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
                 table2_to_flask_orientation0,
                 table2_to_flask_translation0,
             )
-            self.pose_WorldFlask0 = self.pose_WorldTableHalf2.multiply(pose_Table2Flask0)
+            self.pose_WorldFlask0 = self.pose_WorldTableHalf2.multiply(
+                pose_Table2Flask0
+            )
 
         # Define starting pose for the robot w.r.t. the flask
         flask_to_start_translation = np.array([+0.0, 0.0, 0.5])
@@ -706,7 +731,7 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
 
         # Use station's plant to solve the forward kinematics problem
         shadow_plant = shadow_station.plant
-        
+
         temp_context = shadow_plant.CreateDefaultContext()
         shadow_plant.SetPositions(
             temp_context,
@@ -732,12 +757,12 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
         """
         # Setup
         hardcoded_robot_joint_names = [
-            'ur10e-test_shoulder_pan_joint_q',
-            'ur10e-test_shoulder_lift_joint_q',
-            'ur10e-test_elbow_joint_q',
-            'ur10e-test_wrist_1_joint_q',
-            'ur10e-test_wrist_2_joint_q',
-            'ur10e-test_wrist_3_joint_q',
+            "ur10e-test_shoulder_pan_joint_q",
+            "ur10e-test_shoulder_lift_joint_q",
+            "ur10e-test_elbow_joint_q",
+            "ur10e-test_wrist_1_joint_q",
+            "ur10e-test_wrist_2_joint_q",
+            "ur10e-test_wrist_3_joint_q",
         ]
 
         # Algorithm
@@ -754,7 +779,6 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
             raise NotImplementedError(
                 "This function should be implemented by the subclass."
             )
-
 
     @property
     def start_pose(self) -> RigidTransform:
@@ -775,9 +799,9 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
         elif (self._start_pose is None) and (self._start_config is not None):
             # Use the start configuration to get the starting pose
             # Using a "forward kinematics solver"
-            self._start_pose = self.solve_forward_kinematics_problem_for_arm(self._start_config)
+            self._start_pose = self.solve_forward_kinematics_problem_for_arm(
+                self._start_config
+            )
             return self._start_pose
         else:
-            raise ValueError(
-                f"Unexpected behavior. This should never happen."
-            )
+            raise ValueError(f"Unexpected behavior. This should never happen.")

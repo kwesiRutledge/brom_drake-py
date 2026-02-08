@@ -2,9 +2,11 @@
 Description:
     This script tests the cylinder class in the shapes module.
 """
+
 import numpy as np
 from pydrake.all import (
-    RigidTransform, RollPitchYaw,
+    RigidTransform,
+    RollPitchYaw,
     Simulator,
 )
 import unittest
@@ -12,14 +14,18 @@ import xml.etree.ElementTree as ET
 
 # Internal Imports
 from brom_drake.directories import DEFAULT_BROM_MODELS_DIR
-from brom_drake.file_manipulation.urdf.simple_writer.urdf_definition import SimpleShapeURDFDefinition
+from brom_drake.file_manipulation.urdf.simple_writer.urdf_definition import (
+    SimpleShapeURDFDefinition,
+)
 from brom_drake.file_manipulation.urdf.shapes.cylinder import CylinderDefinition
 from brom_drake.productions.debug.show_me import ShowMeThisModel
+
 
 class TestCylinder(unittest.TestCase):
     """
     A class to test the Cylinder class.
     """
+
     def test_init1(self):
         """
         Test the __init__ method.
@@ -57,7 +63,7 @@ class TestCylinder(unittest.TestCase):
             shape=cylinder,
             create_collision=True,
             pose=RigidTransform(
-                R=RollPitchYaw(np.pi/4, 0, 0).ToRotationMatrix(),
+                R=RollPitchYaw(np.pi / 4, 0, 0).ToRotationMatrix(),
             ),
         )
         defn1.write_to_file(urdf_location)
@@ -72,5 +78,6 @@ class TestCylinder(unittest.TestCase):
 
         self.assertTrue(True)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

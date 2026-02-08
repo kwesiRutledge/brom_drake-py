@@ -1,10 +1,10 @@
-import ipdb
 import importlib.resources as impresources
 import numpy as np
 from pydrake.all import (
     AbstractValue,
-    RigidTransform, RollPitchYaw,
-    AddMultibodyPlantSceneGraph, 
+    RigidTransform,
+    RollPitchYaw,
+    AddMultibodyPlantSceneGraph,
     ConstantValueSource,
     Parser,
     Meshcat,
@@ -13,7 +13,6 @@ from pydrake.all import (
     DiagramBuilder,
     Simulator,
 )
-import typer
 
 # Internal imports
 from brom_drake import robots
@@ -23,7 +22,9 @@ from brom_drake.file_manipulation.urdf.shapes import (
 from brom_drake.file_manipulation.urdf import (
     SimpleShapeURDFDefinition,
 )
-from brom_drake.motion_planning.systems.open_loop_dispensers import OpenLoopPosePlanDispenser
+from brom_drake.motion_planning.systems.open_loop_dispensers import (
+    OpenLoopPosePlanDispenser,
+)
 from brom_drake.all import (
     add_watcher_and_build,
     drakeify_my_urdf,
@@ -31,6 +32,7 @@ from brom_drake.all import (
     Puppetmaker,
     PuppetmakerConfiguration,
 )
+
 
 def create_piecewise_pose_trajectory(t_final: float = 15.0):
     # Setup
@@ -40,22 +42,20 @@ def create_piecewise_pose_trajectory(t_final: float = 15.0):
     # Return the pose trajectory
     return [
         RigidTransform(
-            rpy=RollPitchYaw(ii*np.pi/4.0, 0.0, ii*np.pi/4.0),
-            p=np.array([-ii*0.1, -ii*0.1, ii*0.2]),
+            rpy=RollPitchYaw(ii * np.pi / 4.0, 0.0, ii * np.pi / 4.0),
+            p=np.array([-ii * 0.1, -ii * 0.1, ii * 0.2]),
         )
         for ii in range(8)
     ]
 
+
 def create_trajectory_source(
-    builder: DiagramBuilder,
-    pose_trajectory: list[RigidTransform]
+    builder: DiagramBuilder, pose_trajectory: list[RigidTransform]
 ) -> OpenLoopPosePlanDispenser:
     # Setup
 
-    # Create dispenser of trajectory 
-    trajectory_dispenser = builder.AddSystem(
-        OpenLoopPosePlanDispenser(speed=0.06)
-    )
+    # Create dispenser of trajectory
+    trajectory_dispenser = builder.AddSystem(OpenLoopPosePlanDispenser(speed=0.06))
 
     # Connect a source to "ALWAYS enable" the trajectory source
     enable_trajectory_source = builder.AddSystem(
@@ -64,22 +64,20 @@ def create_trajectory_source(
 
     builder.Connect(
         enable_trajectory_source.get_output_port(),
-        trajectory_dispenser.GetInputPort("plan_ready")
+        trajectory_dispenser.GetInputPort("plan_ready"),
     )
 
     # Create source for trajectory
     trajectory_value = builder.AddSystem(
-        ConstantValueSource(
-            AbstractValue.Make(pose_trajectory)
-        )
+        ConstantValueSource(AbstractValue.Make(pose_trajectory))
     )
 
     builder.Connect(
-        trajectory_value.get_output_port(),
-        trajectory_dispenser.GetInputPort("plan")
+        trajectory_value.get_output_port(), trajectory_dispenser.GetInputPort("plan")
     )
 
     return trajectory_dispenser
+
 
 def main(t_final: float = 15.0):
 
@@ -110,8 +108,10 @@ def main(t_final: float = 15.0):
         frame_on_parent=plant.world_frame(),
         name="cube_puppet",
         sphere_radius=0.02,
-        sphere_mass=1e-4, # Make the puppet links very light
-        sphere_color=np.array([0.11372549,0.12890625,0.34375,0.0]), # Change the color of the puppet links to red
+        sphere_mass=1e-4,  # Make the puppet links very light
+        sphere_color=np.array(
+            [0.11372549, 0.12890625, 0.34375, 0.0]
+        ),  # Change the color of the puppet links to red
     )
     puppetmaker0 = Puppetmaker(
         plant=plant,
@@ -135,7 +135,7 @@ def main(t_final: float = 15.0):
 
     builder.Connect(
         trajectory_source.GetOutputPort("pose_in_plan"),
-        pose_converter_system.get_input_port()
+        pose_converter_system.get_input_port(),
     )
 
     # Connect to Meshcat
@@ -154,5 +154,6 @@ def main(t_final: float = 15.0):
     simulator.Initialize()
     simulator.AdvanceTo(t_final)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

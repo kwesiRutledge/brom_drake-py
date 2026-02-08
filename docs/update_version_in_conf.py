@@ -1,9 +1,10 @@
 import typer
 
+
 def main(version: str):
     """
     *Description*
-    
+
     This script updates the version number in the configuration files.
 
     *Parameters*
@@ -32,7 +33,8 @@ def main(version: str):
         with open(config_file, "w") as file:
             file.write(content)
 
-    print(f"Updated version to \"{version}\" in configuration files.")
+    print(f'Updated version to "{version}" in configuration files.')
+
 
 if __name__ == "__main__":
     typer.run(main)

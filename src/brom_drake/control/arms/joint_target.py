@@ -6,7 +6,9 @@ Description:
     This class is used to control different manipulators and helps us
     define the type of target that we want to control.
 """
+
 from enum import IntEnum
+
 
 class JointTarget(IntEnum):
     """
@@ -24,6 +26,7 @@ class JointTarget(IntEnum):
         # Selecting the position target type
         joint_target_type = JointTarget.kPosition
     """
+
     kPosition = 1
     kVelocity = 2
     kTorque = 3

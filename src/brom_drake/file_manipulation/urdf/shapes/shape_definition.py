@@ -8,22 +8,25 @@ import xml.etree.ElementTree as ET
 class ShapeEnum(IntEnum):
     """
     *Description*
-    
+
     The different simple shapes that can be created.
     """
+
     kBox = 1
     kSphere = 2
     kCylinder = 3
     kCapsule = 4
+
 
 # Shape Definition Can be any one of these
 @dataclass
 class ShapeDefinition:
     """
     *Description*
-    
+
     Base class for defining a shape as per URDF specifications.
     """
+
     def add_geometry_to_element(self, target_element: ET.Element) -> ET.Element:
         """
         *Description*

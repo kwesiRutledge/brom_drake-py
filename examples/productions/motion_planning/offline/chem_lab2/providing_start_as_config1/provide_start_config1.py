@@ -6,10 +6,9 @@ Description:
     This shows one how to use the `easy_cast_and_build` method to simplify how to build
     a Production.
 """
-import ipdb
+
 import numpy as np
 from pydrake.all import Simulator, RigidTransform, RollPitchYaw
-import typer
 
 # Internal imports
 from brom_drake.motion_planning.algorithms.rrt.bidirectional_connect import (
@@ -19,14 +18,15 @@ from brom_drake.motion_planning.algorithms.rrt.bidirectional_connect import (
 )
 from brom_drake.productions.all import ChemLab2
 
+
 def main(meshcat_port_number: int = 7001):
     # Setup
     if meshcat_port_number < 0:
-        meshcat_port_number = None # Use None for CI
+        meshcat_port_number = None  # Use None for CI
 
     # Create the production
     production = ChemLab2(
-        meshcat_port_number=meshcat_port_number, # Use None for CI
+        meshcat_port_number=meshcat_port_number,  # Use None for CI
         start_configuration=np.zeros((6,)),
     )
 
@@ -61,7 +61,8 @@ def main(meshcat_port_number: int = 7001):
     print(f"Expected end time of trajectory: {planned_trajectory.end_time()}")
     simulator.AdvanceTo(0.1)
     # return
-    simulator.AdvanceTo(planned_trajectory.end_time()+1.0)
+    simulator.AdvanceTo(planned_trajectory.end_time() + 1.0)
+
 
 if __name__ == "__main__":
     main()

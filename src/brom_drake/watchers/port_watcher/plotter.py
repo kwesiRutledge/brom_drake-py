@@ -12,24 +12,30 @@ from pydrake.all import (
 from pydrake.systems.primitives import VectorLogSink
 from typing import List, Tuple
 
-
 # Internal Imports
 from brom_drake.watchers.port_watcher.file_manager import PortWatcherFileManager
-from brom_drake.watchers.port_watcher.port_figure_arrangement import PortFigureArrangement
-from brom_drake.watchers.port_watcher.port_watcher_options import FigureNamingConvention, PortWatcherPlottingOptions
+from brom_drake.watchers.port_watcher.port_figure_arrangement import (
+    PortFigureArrangement,
+)
+from brom_drake.watchers.port_watcher.port_watcher_options import (
+    FigureNamingConvention,
+    PortWatcherPlottingOptions,
+)
 from brom_drake.utils.constants import SupportedLogger
 from brom_drake.utils.type_checking import is_rigid_transform
 from brom_drake.directories import DEFAULT_PLOT_DIR
+
 
 class PortWatcherPlotter:
     """
     *Description*
 
     A plotter for the PortWatcher object. This is responsible for interpreting
-    the data from the :py:class:`brom_drake.PortWatcher.PortWatcher` 
-    
+    the data from the :py:class:`brom_drake.PortWatcher.PortWatcher`
+
     TODO(Kwesi): Consider making this a dataclass
     """
+
     def __init__(
         self,
         port: OutputPort,
@@ -46,16 +52,16 @@ class PortWatcherPlotter:
     def compute_plot_shape(self, n_dims: int) -> Tuple[int, int]:
         """
         *Description*
-        
+
         Computes the shape of the plot based on the data.
 
         *Parameters*
-        
+
         n_dims: int
             The number of dimensions in the data.
 
         *Returns*
-        
+
         n_rows: int
             The number of rows in the plot.
 
@@ -89,16 +95,16 @@ class PortWatcherPlotter:
     def data_dimension(self) -> int:
         """
         *Description*
-        
+
         Returns the dimension of the data in the port.
-        
+
         *Parameters*
-        
+
         self : PortWatcherPlotter
             The PortWatcherPlotter object.
 
         *Returns*
-        
+
         data_dim: int
             The dimension of the data in the port.
         """
@@ -110,9 +116,9 @@ class PortWatcherPlotter:
             example_value = example_allocation.get_value()
             if is_rigid_transform(example_value):
                 return 7
-            elif type(example_value) == bool: # if the output_value is a boolean
+            elif type(example_value) == bool:  # if the output_value is a boolean
                 return 1
-        
+
         # Otherwise, raise an error
         raise ValueError(
             f"Port {self.port.get_name()} of system {self.port.get_system().get_name()} is not of the correct type for plotting."
@@ -125,22 +131,22 @@ class PortWatcherPlotter:
     ) -> Tuple[List[plt.Figure], List[List[plt.Axes]]]:
         """
         *Description*
-        
+
         This function plots the data in the logger.
 
         *Parameters*
-        
+
         self : PortWatcherPlotter
             The PortWatcherPlotter object.
 
         diagram_context : Context
             The context of the diagram.
-        
+
         *Returns*
-        
+
         Tuple[List[plt.Figure], List[List[plt.Axes]]]
             A tuple where:
-            - the first element is a list of figures and 
+            - the first element is a list of figures and
             - the second element is a list of lists of axes.
         """
         # Setup
@@ -156,12 +162,15 @@ class PortWatcherPlotter:
 
         if (log_data.shape[1] == 0) or (log_data.shape[0] == 0):
             python_logger.warning(
-                f"No data found for {system.get_name()} - Port {self.port.get_name()}! Skipping...")
+                f"No data found for {system.get_name()} - Port {self.port.get_name()}! Skipping..."
+            )
             return None, None
 
         # Plot the data
         if plotting_options.plot_arrangement == PortFigureArrangement.OnePlotPerPort:
-            fig, ax_list = self.plot_logger_data_subplots(log_times, log_data, drake_vector_log)
+            fig, ax_list = self.plot_logger_data_subplots(
+                log_times, log_data, drake_vector_log
+            )
             return [fig], [ax_list]
 
         elif plotting_options.plot_arrangement == PortFigureArrangement.OnePlotPerDim:
@@ -169,13 +178,15 @@ class PortWatcherPlotter:
             for port_index in range(self.port.size()):
                 fig_ii = plt.figure()
                 ax_ii = fig_ii.add_subplot(1, 1, 1)
-                ax_ii.plot(
-                    log_times, log_data[port_index, :]
-                )
+                ax_ii.plot(log_times, log_data[port_index, :])
 
                 # Add axis titles and labels
                 ax_ii.set_xlabel("Time (s)")
-                ax_ii.set_title(self.file_manager.name_of_data_at_index(port_index, self.port, drake_vector_log))
+                ax_ii.set_title(
+                    self.file_manager.name_of_data_at_index(
+                        port_index, self.port, drake_vector_log
+                    )
+                )
 
                 # Save figures and axes to lists
                 figs.append(fig_ii)
@@ -196,13 +207,13 @@ class PortWatcherPlotter:
     ):
         """
         *Description*
-        
+
         This function plots the data in the logger.
 
         TODO(Kwesi): Consider adding refactoring this to remove dependecny on drake_vector_log
 
         *Parameters*
-        
+
         self : PortWatcherPlotter
             The PortWatcherPlotter object.
 
@@ -211,9 +222,9 @@ class PortWatcherPlotter:
 
         data : np.array
             The data that was recorded.
-        
+
         *Returns*
-        
+
         fig_out: plt.Figure
             The figure containing subplots that we use in the output.
 
@@ -228,19 +239,23 @@ class PortWatcherPlotter:
 
         self.add_to_python_report(
             f"Plotting {n_dims} dimensions in a {n_rows}x{n_cols} grid."
-            )
+        )
 
         fig, ax_list = plt.subplots(n_rows, n_cols)
 
         if n_rows == 1 and n_cols == 1:
             ax_list.plot(times, data[0, :])
-            ax_list.set_title(self.file_manager.name_of_data_at_index(0, self.port, drake_vector_log))
+            ax_list.set_title(
+                self.file_manager.name_of_data_at_index(0, self.port, drake_vector_log)
+            )
 
         elif (n_rows == 1) or (n_cols == 1):
             for dim_index in range(n_dims):
                 ax_list[dim_index].plot(times, data[dim_index, :])
                 ax_list[dim_index].set_title(
-                    self.file_manager.name_of_data_at_index(dim_index, self.port, drake_vector_log),
+                    self.file_manager.name_of_data_at_index(
+                        dim_index, self.port, drake_vector_log
+                    ),
                 )
 
         else:
@@ -254,7 +269,11 @@ class PortWatcherPlotter:
                         continue
 
                     ax_list[row_index, col_index].plot(times, data[dim_index, :])
-                    ax_list[row_index, col_index].set_title(self.file_manager.name_of_data_at_index(dim_index, self.port, drake_vector_log))
+                    ax_list[row_index, col_index].set_title(
+                        self.file_manager.name_of_data_at_index(
+                            dim_index, self.port, drake_vector_log
+                        )
+                    )
 
         return fig, ax_list
 
@@ -262,11 +281,11 @@ class PortWatcherPlotter:
         self,
         vector_log_sink: VectorLogSink,
         diagram_context: Context,
-        port_component_name: str|None = None,
+        port_component_name: str | None = None,
     ):
         """
         *Description*
-        
+
         This function saves the figures.
 
         .. note::
@@ -274,7 +293,7 @@ class PortWatcherPlotter:
             TODO(kwesi): Make it so that this function computes names + directory structure based on plot arrangement.
 
         *Parameters*
-        
+
         self : PortWatcherPlotter
             The PortWatcherPlotter object.
 
@@ -296,7 +315,7 @@ class PortWatcherPlotter:
             self.add_warning_to_python_report(
                 "Zero figures to save; plot_logger_data was empty."
             )
-            return # Do nothing
+            return  # Do nothing
 
         # Save the figures
         figure_paths = self.file_manager.compute_path_for_each_figure(
@@ -331,16 +350,16 @@ class PortWatcherPlotter:
     def system_is_multibody_plant(self) -> bool:
         """
         *Description*
-        
+
         Returns True if the system is a MultibodyPlant.
-        
+
         *Parameters*
-        
+
         self : PortWatcherPlotter
             The PortWatcherPlotter object.
 
         *Returns*
-        
+
         is_plant: bool
             True if the system is a MultibodyPlant.
         """

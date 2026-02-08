@@ -41,9 +41,8 @@ class IdealJointPositionController(LeafSystem):
             "measured_joint_positions",
             BasicVector(self.plant.num_actuated_dofs(self.arm)),
             self.SetJointPositions,
-            {self.time_ticket()}    # indicate that this doesn't depend on any inputs,
-        )                           # but should still be updated each timestep
-
+            {self.time_ticket()},  # indicate that this doesn't depend on any inputs,
+        )  # but should still be updated each timestep
 
     def SetJointPositions(self, context, output):
         """
@@ -64,9 +63,7 @@ class IdealJointPositionController(LeafSystem):
 
         self.plant.SetPositions(plant_context, robot_model, joint_positions)
         self.plant.SetVelocities(
-            plant_context,
-            robot_model,
-            np.zeros(self.plant.num_velocities(robot_model))
+            plant_context, robot_model, np.zeros(self.plant.num_velocities(robot_model))
         )
 
         output.SetFromVector(joint_positions)
@@ -92,5 +89,5 @@ class IdealJointPositionController(LeafSystem):
         self.plant.SetVelocities(
             plant_context,
             self.robot_model,
-            np.zeros(self.plant.num_velocities(self.robot_model))
+            np.zeros(self.plant.num_velocities(self.robot_model)),
         )

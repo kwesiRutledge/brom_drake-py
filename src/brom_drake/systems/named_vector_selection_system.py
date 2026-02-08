@@ -2,20 +2,21 @@ import numpy as np
 from pydrake.all import AffineSystem
 from typing import List
 
+
 def define_named_vector_selection_system(
     all_element_names: List[str],
     sequence_of_names_for_output: List[str],
 ) -> AffineSystem:
     """
     *Description*
-    
+
     This method creates an Affine System that will receive as input
     a vector where each element is named according to `all_element_names`
     and returns an output vector that selects only the elements
     specified in `desired_inputs`.
 
     *Parameters*
-    
+
     name : str
         The name of the system to be added.
 
@@ -26,7 +27,7 @@ def define_named_vector_selection_system(
         The list of desired element names to be selected for output.
 
     *Returns*
-    
+
     AffineSystem
         The created NamedVectorSelectionSystem.
     """

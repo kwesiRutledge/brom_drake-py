@@ -3,21 +3,25 @@ from enum import IntEnum
 import numpy as np
 from typing import List, Union
 
+
 class FSMTransitionConditionType(IntEnum):
     """
     Enum to represent the different types of conditions that can be used to
     transition between states in a finite state machine.
     """
+
     kEqual = 0
     kGreaterThanEqual = 1
     kLessThanEqual = 2
     kAfterThisManySeconds = 3
+
 
 class FSMTransitionCondition:
     """
     Dataclass to represent a single condition that can be used to transition
     between states in a finite state machine.
     """
+
     def __init__(
         self,
         condition_type: FSMTransitionConditionType,
@@ -32,7 +36,9 @@ class FSMTransitionCondition:
         # Setup
 
         # Input Checking
-        assert condition_type in FSMTransitionConditionType, "Invalid condition type provided."
+        assert (
+            condition_type in FSMTransitionConditionType
+        ), "Invalid condition type provided."
 
         # Assign Attributes
         self.input_port_name = input_port_name
@@ -42,16 +48,19 @@ class FSMTransitionCondition:
         # Check that the condition contains the input_port_name IF the condition type
         # is not kAfterThisManySeconds
         if self.type != FSMTransitionConditionType.kAfterThisManySeconds:
-            assert self.input_port_name is not None, \
-                f"Input port name must be provided for condition type \"{self.type}\"."
-            
+            assert (
+                self.input_port_name is not None
+            ), f'Input port name must be provided for condition type "{self.type}".'
+
         # Check that the condition value is a positive float IF the condition type is
         # kAfterThisManySeconds
         if self.type == FSMTransitionConditionType.kAfterThisManySeconds:
-            assert isinstance(self.condition_value, float), \
-                f"Condition value must be a float for condition type \"{self.type}\"."
-            assert self.condition_value > 0.0, \
-                f"Condition value must be a positive float for condition type \"{self.type}\"."
+            assert isinstance(
+                self.condition_value, float
+            ), f'Condition value must be a float for condition type "{self.type}".'
+            assert (
+                self.condition_value > 0.0
+            ), f'Condition value must be a positive float for condition type "{self.type}".'
 
     @staticmethod
     def ForAfterThisManySeconds(seconds: float) -> "FSMTransitionConditionType":
@@ -73,11 +82,10 @@ class FSMTransitionCondition:
         if (type(input_x) == int) or (type(input_x) == float):
             input_x = np.ndarray([input_x])
 
-
         # Input Checking
         if self.type == FSMTransitionConditionType.kAfterThisManySeconds:
             raise NotImplementedError(
-                f"Condition type \"kAfterThisManySeconds\" can not yet be evaluated yet implemented."
+                f'Condition type "kAfterThisManySeconds" can not yet be evaluated yet implemented.'
             )
 
         # Evaluate the condition for array types
@@ -100,7 +108,7 @@ class FSMTransitionCondition:
                 return input_port_value <= self.condition_value
             else:
                 raise NotImplementedError("Condition type not yet implemented.")
-            
+
     def requires_input_port(self):
         """
         Description

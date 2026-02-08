@@ -7,10 +7,12 @@ from xml.etree import ElementTree as ET
 # Internal imports
 from brom_drake.file_manipulation.urdf.shapes.shape_definition import ShapeDefinition
 
+
 class URDFElementCreator:
     """
     A class to create URDF elements quickly and easily.
     """
+
     @staticmethod
     def create_collision_element(
         name: str,
@@ -20,7 +22,7 @@ class URDFElementCreator:
     ) -> ET.Element:
         """
         Create a collision element for the URDF.
-        
+
         Parameters
         ----------
         name: str
@@ -29,7 +31,7 @@ class URDFElementCreator:
             The pose of the parent mesh in the collision element. If None, a default RigidTransform is used.
             If provided as a numpy array, it should be a 7-element array representing position and quaternion.
             (Specifically, the first 3 elements are the position, and the last 4 elements are the quaternion [x,y,z,w].)
-        
+
         Returns
         -------
         ET.Element
@@ -39,13 +41,16 @@ class URDFElementCreator:
 
         if pose_ParentMesh is None:
             pose_ParentMesh = RigidTransform()
-        
+
         if isinstance(pose_ParentMesh, np.ndarray):
-            assert pose_ParentMesh.shape == (7,), \
-                "pose_ParentMesh should be a 7-element array representing a RigidTransform."
+            assert pose_ParentMesh.shape == (
+                7,
+            ), "pose_ParentMesh should be a 7-element array representing a RigidTransform."
             pose_ParentMesh: RigidTransform = RigidTransform(
-                p = pose_ParentMesh[:3],  # Position (x, y, z)
-                quaternion= Quaternion(pose_ParentMesh[[-1,3,4,5]]) # Quaternion given as (w, x, y, z)
+                p=pose_ParentMesh[:3],  # Position (x, y, z)
+                quaternion=Quaternion(
+                    pose_ParentMesh[[-1, 3, 4, 5]]
+                ),  # Quaternion given as (w, x, y, z)
             )
 
         if mesh_file_path is None:
@@ -58,9 +63,7 @@ class URDFElementCreator:
 
         # Add the origin sub-element to the collision element
         collision.append(
-            URDFElementCreator.create_origin_element(
-                pose_ParentOrigin=pose_ParentMesh
-            )
+            URDFElementCreator.create_origin_element(pose_ParentOrigin=pose_ParentMesh)
         )
 
         # If a mesh file path is provided, add a geometry sub-element
@@ -74,21 +77,21 @@ class URDFElementCreator:
             )
 
         return collision
-    
+
     @staticmethod
     def create_origin_element(
         pose_ParentOrigin: RigidTransform,
     ) -> ET.Element:
         """
         Create an origin element for the URDF.
-        
+
         Parameters
         ----------
         translation: np.ndarray
             The translation vector (x, y, z).
         rotation: Quaternion
             The rotation as a Quaternion.
-        
+
         Returns
         -------
         ET.Element
@@ -102,26 +105,29 @@ class URDFElementCreator:
         # Create the origin element
         origin = ET.Element("origin")
         origin.set("xyz", f"{translation[0]} {translation[1]} {translation[2]}")
-        origin.set("rpy", f"{rotation_as_rpy.roll_angle()} {rotation_as_rpy.pitch_angle()} {rotation_as_rpy.yaw_angle()}")
-        
+        origin.set(
+            "rpy",
+            f"{rotation_as_rpy.roll_angle()} {rotation_as_rpy.pitch_angle()} {rotation_as_rpy.yaw_angle()}",
+        )
+
         return origin
-    
-    @staticmethod   
+
+    @staticmethod
     def create_geometry_element(
         mesh_file_path: str = None,
         definition: ShapeDefinition = None,
-        mesh_scale: np.ndarray = np.array([1.0, 1.0, 1.0])
+        mesh_scale: np.ndarray = np.array([1.0, 1.0, 1.0]),
     ) -> ET.Element:
         """
         Create a geometry element for the URDF.
-        
+
         Parameters
         ----------
         mesh_file_path: Path, optional
             The path to the mesh file. If provided, a mesh sub-element will be created.
         definition: ShapeDefinition, optional
             The dimensions of the geometry. Required for box and cylinder types.
-        
+
         Returns
         -------
         ET.Element
@@ -129,7 +135,7 @@ class URDFElementCreator:
         """
         # Create the geometry element
         geometry = ET.Element("geometry")
-        
+
         # If a path to a mesh file is provided, add a mesh sub-element
         if mesh_file_path is not None:
             mesh = ET.SubElement(geometry, "mesh")
@@ -140,9 +146,8 @@ class URDFElementCreator:
 
             # Set the scale for the mesh
             mesh.set("scale", f"{mesh_scale[0]} {mesh_scale[1]} {mesh_scale[2]}")
-            
 
         # If a shape definition is provided, add the appropriate sub-element
         # TODO: Implement support for different shape definitions
-        
+
         return geometry

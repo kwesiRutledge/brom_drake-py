@@ -14,13 +14,16 @@ from brom_drake.all import drakeify_my_urdf
 from brom_drake.productions.debug.grasping.show_me_this_static_grasp.production import (
     ShowMeThisStaticGrasp,
 )
-from brom_drake.productions.debug.grasping.show_me_this_static_grasp.config import Configuration as ShowMeThisStaticGraspConfiguration
+from brom_drake.productions.debug.grasping.show_me_this_static_grasp.config import (
+    Configuration as ShowMeThisStaticGraspConfiguration,
+)
 from brom_drake.productions.types.base import Configuration as BaseConfiguration
 from brom_drake.utils.model_instances import (
     get_name_of_first_body_in_urdf,
     get_name_of_all_bodies_in_urdf,
 )
 from brom_drake import robots
+
 
 class DemonstrateStaticGraspTest(unittest.TestCase):
     def setUp(self):
@@ -38,7 +41,8 @@ class DemonstrateStaticGraspTest(unittest.TestCase):
 
         # Create the gripper urdf
         gripper_urdf_path = str(
-            impresources.files(robots) / "models/robotiq/2f_85_gripper-no-mimic/urdf/robotiq_2f_85.urdf"
+            impresources.files(robots)
+            / "models/robotiq/2f_85_gripper-no-mimic/urdf/robotiq_2f_85.urdf"
         )
         self.gripper_urdf_path = gripper_urdf_path
 
@@ -49,13 +53,13 @@ class DemonstrateStaticGraspTest(unittest.TestCase):
         This test verifies that we can add the manipuland to the plant without any errors.
         """
         # Setup
-        flask_urdf = self.drakeified_flask_urdf  
-        gripper_urdf = self.gripper_urdf_path      
+        flask_urdf = self.drakeified_flask_urdf
+        gripper_urdf = self.gripper_urdf_path
 
         # Create the production
         config = ShowMeThisStaticGraspConfiguration(
             base=BaseConfiguration(
-                meshcat_port_number=None, # Use None for CI
+                meshcat_port_number=None,  # Use None for CI
                 time_step=1e-3,
             ),
         )
@@ -71,7 +75,7 @@ class DemonstrateStaticGraspTest(unittest.TestCase):
         # Finalize the plant
         production.plant.Finalize()
         # production.connect_to_meshcat()
-        
+
         # Build the production and simulate
         diagram, diagram_context = production.build_production()
         simulator = Simulator(diagram, diagram_context)
@@ -92,14 +96,14 @@ class DemonstrateStaticGraspTest(unittest.TestCase):
         the gripper to the plant without any errors.
         """
         # Setup
-        flask_urdf = self.drakeified_flask_urdf  
-        gripper_urdf = self.gripper_urdf_path      
+        flask_urdf = self.drakeified_flask_urdf
+        gripper_urdf = self.gripper_urdf_path
 
         # Create the production
         production = ShowMeThisStaticGrasp(
             path_to_object=flask_urdf,
             path_to_gripper=gripper_urdf,
-            meshcat_port_number=None, # Use None for CI
+            meshcat_port_number=None,  # Use None for CI
         )
 
         # Call the method
@@ -109,15 +113,16 @@ class DemonstrateStaticGraspTest(unittest.TestCase):
         # Finalize the plant
         production.plant.Finalize()
         production.connect_to_meshcat()
-        
+
         # Build the production and simulate
         diagram, diagram_context = production.build_production()
         simulator = Simulator(diagram, diagram_context)
 
-        production.show_me_system.mutable_plant_context = production.plant.GetMyMutableContextFromRoot(
-            production.diagram_context,
+        production.show_me_system.mutable_plant_context = (
+            production.plant.GetMyMutableContextFromRoot(
+                production.diagram_context,
+            )
         )
-
 
         # Set up simulation
         simulator.set_target_realtime_rate(1.0)
@@ -135,18 +140,17 @@ class DemonstrateStaticGraspTest(unittest.TestCase):
         to build a DemonstrateStaticGrasp production.
         """
         # Setup
-        flask_urdf = self.drakeified_flask_urdf  
-        gripper_urdf = self.gripper_urdf_path      
+        flask_urdf = self.drakeified_flask_urdf
+        gripper_urdf = self.gripper_urdf_path
         X_ObjectTarget = RigidTransform(
             p=np.array([-0.08, 0.05, 0.15]),
-            rpy=RollPitchYaw(0.0, np.pi/2.0, 0.0),
+            rpy=RollPitchYaw(0.0, np.pi / 2.0, 0.0),
         )
-
 
         # Create the production
         config = ShowMeThisStaticGraspConfiguration(
             base=BaseConfiguration(
-                meshcat_port_number=None, # Use None for CI
+                meshcat_port_number=None,  # Use None for CI
             ),
         )
         production = ShowMeThisStaticGrasp(
@@ -168,7 +172,6 @@ class DemonstrateStaticGraspTest(unittest.TestCase):
 
         self.assertTrue(True)
 
-
     def test_add_gripper_to_plant1(self):
         """
         Description
@@ -178,13 +181,13 @@ class DemonstrateStaticGraspTest(unittest.TestCase):
         call the vanilla version of add_gripper_to_plant.
         """
         # Setup
-        flask_urdf = self.drakeified_flask_urdf  
-        gripper_urdf = self.gripper_urdf_path      
+        flask_urdf = self.drakeified_flask_urdf
+        gripper_urdf = self.gripper_urdf_path
 
         # Create the production
         config = ShowMeThisStaticGraspConfiguration(
             base=BaseConfiguration(
-                meshcat_port_number=None, # Use None for CI
+                meshcat_port_number=None,  # Use None for CI
                 time_step=1e-3,
             ),
         )
@@ -202,8 +205,8 @@ class DemonstrateStaticGraspTest(unittest.TestCase):
 
         # Verify that the gripper frame is added to the base
         scene_graph: SceneGraph = production.scene_graph
-        
-        # Search through the geometries in the scene for the ones created by the 
+
+        # Search through the geometries in the scene for the ones created by the
         # AddMultibodyTriad method on the gripper base.
         all_geometries = scene_graph.model_inspector().GetAllGeometryIds()
         foundTriad = False
@@ -213,12 +216,11 @@ class DemonstrateStaticGraspTest(unittest.TestCase):
                 frame_geometry_x = scene_graph.model_inspector().GetGeometryIdByName(
                     frame_id,
                     DrakeRole.kIllustration,
-                    production.target_body_name_on_gripper + " x-axis"
+                    production.target_body_name_on_gripper + " x-axis",
                 )
                 foundTriad = foundTriad or True
             except:
                 pass
-                        
 
         self.assertTrue(foundTriad)
 
@@ -232,13 +234,13 @@ class DemonstrateStaticGraspTest(unittest.TestCase):
         base.
         """
         # Setup
-        flask_urdf = self.drakeified_flask_urdf  
-        gripper_urdf = self.gripper_urdf_path      
+        flask_urdf = self.drakeified_flask_urdf
+        gripper_urdf = self.gripper_urdf_path
 
         # Create the production
         config = ShowMeThisStaticGraspConfiguration(
             base=BaseConfiguration(
-                meshcat_port_number=None, # Use None for CI
+                meshcat_port_number=None,  # Use None for CI
                 time_step=1e-3,
             ),
             show_gripper_base_frame=True,
@@ -258,8 +260,8 @@ class DemonstrateStaticGraspTest(unittest.TestCase):
 
         # Verify that the gripper frame is added to the base
         scene_graph: SceneGraph = production.scene_graph
-        
-        # Search through the geometries in the scene for the ones created by the 
+
+        # Search through the geometries in the scene for the ones created by the
         # AddMultibodyTriad method on the gripper target.
         all_geometries = scene_graph.model_inspector().GetAllGeometryIds()
         foundTargetTriad = False
@@ -269,7 +271,7 @@ class DemonstrateStaticGraspTest(unittest.TestCase):
                 frame_geometry_x = scene_graph.model_inspector().GetGeometryIdByName(
                     frame_id,
                     DrakeRole.kIllustration,
-                    production.target_body_name_on_gripper + " x-axis"
+                    production.target_body_name_on_gripper + " x-axis",
                 )
                 foundTargetTriad = foundTargetTriad or True
             except:
@@ -289,13 +291,14 @@ class DemonstrateStaticGraspTest(unittest.TestCase):
                 frame_geometry_x = scene_graph.model_inspector().GetGeometryIdByName(
                     frame_id,
                     DrakeRole.kIllustration,
-                    gripper_base_frame.name() + " x-axis"
+                    gripper_base_frame.name() + " x-axis",
                 )
                 foundBaseTriad = foundBaseTriad or True
             except:
                 pass
 
         self.assertTrue(foundBaseTriad)
+
 
 if __name__ == "__main__":
     unittest.main()

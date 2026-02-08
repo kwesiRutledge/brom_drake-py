@@ -4,11 +4,16 @@ from pydrake.all import (
     RigidTransform,
 )
 
+
 @dataclass
 class ProximityPosePlanDispenserConfig:
-    proximity_limit: float = 1e-1   # The proximity limit for the poses.
-    translation_weight: float = 1.0 # The weight for the translation distance in the distance calculation.
-    orientation_weight: float = 0.0 # The weight for the orientation distance in the distance calculation.
+    proximity_limit: float = 1e-1  # The proximity limit for the poses.
+    translation_weight: float = (
+        1.0  # The weight for the translation distance in the distance calculation.
+    )
+    orientation_weight: float = (
+        0.0  # The weight for the orientation distance in the distance calculation.
+    )
 
     def distance_between_poses(
         self,
@@ -30,10 +35,14 @@ class ProximityPosePlanDispenserConfig:
         # Setup
         Q_translation = self.translation_weight
         Q_orientation = self.orientation_weight
-        # 
+        #
         translation_distance = np.linalg.norm(pose1.translation() - pose2.translation())
-        orientation_distance = np.linalg.norm(pose1.rotation().matrix() - pose2.rotation().matrix())
-        return Q_translation * translation_distance + Q_orientation * orientation_distance
+        orientation_distance = np.linalg.norm(
+            pose1.rotation().matrix() - pose2.rotation().matrix()
+        )
+        return (
+            Q_translation * translation_distance + Q_orientation * orientation_distance
+        )
 
     def in_proximity(
         self,

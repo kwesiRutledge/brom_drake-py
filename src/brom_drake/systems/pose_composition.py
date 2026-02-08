@@ -2,6 +2,7 @@ from pydrake.common.value import AbstractValue
 from pydrake.all import RigidTransform
 from pydrake.systems.framework import Context, InputPort, LeafSystem
 
+
 class PoseCompositionSystem(LeafSystem):
     """
     *Description*
@@ -28,12 +29,10 @@ class PoseCompositionSystem(LeafSystem):
 
         # Define Input Ports
         self._pose_AB_port = self.DeclareAbstractInputPort(
-            "pose_AB",
-            AbstractValue.Make(RigidTransform())
+            "pose_AB", AbstractValue.Make(RigidTransform())
         )
         self._pose_BC_port = self.DeclareAbstractInputPort(
-            "pose_BC",
-            AbstractValue.Make(RigidTransform())
+            "pose_BC", AbstractValue.Make(RigidTransform())
         )
 
         # Define Output Port
@@ -53,19 +52,19 @@ class PoseCompositionSystem(LeafSystem):
         # Retrieve current input values
         pose_AB: RigidTransform = self.GetInputPort("pose_AB").Eval(context)
         pose_BC: RigidTransform = self.GetInputPort("pose_BC").Eval(context)
-        
-        assert type(pose_AB) is RigidTransform, \
-            f"Expected pose_AB port to contain \"RigidTransform\" objects, but received type {type(pose_AB)}"
-        
-        assert type(pose_BC) is RigidTransform, \
-            f"Expected pose_BC port to contain \"RigidTransform\" objects, but received type {type(pose_BC)}"
+
+        assert (
+            type(pose_AB) is RigidTransform
+        ), f'Expected pose_AB port to contain "RigidTransform" objects, but received type {type(pose_AB)}'
+
+        assert (
+            type(pose_BC) is RigidTransform
+        ), f'Expected pose_BC port to contain "RigidTransform" objects, but received type {type(pose_BC)}'
 
         # Compute Product and return it
         pose_AC = pose_AB.multiply(pose_BC)
 
-        output.SetFrom(
-            AbstractValue.Make(pose_AC)
-        )
+        output.SetFrom(AbstractValue.Make(pose_AC))
 
     def get_pose_AB_port(self) -> InputPort:
         return self._pose_AB_port

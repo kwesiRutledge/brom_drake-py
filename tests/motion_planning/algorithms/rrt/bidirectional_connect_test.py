@@ -19,6 +19,7 @@ from brom_drake.motion_planning.algorithms.rrt.bidirectional_connect import (
 )
 from brom_drake.motion_planning import PlanningNode
 
+
 class BidirectionalRRTPlannerTest(unittest.TestCase):
     def setUp(self):
         """
@@ -36,9 +37,7 @@ class BidirectionalRRTPlannerTest(unittest.TestCase):
         )
 
         # Add the UR10e
-        urdf_file_path = str(
-            impresources.files(robots) / "models/ur/ur10e.urdf"
-        )
+        urdf_file_path = str(impresources.files(robots) / "models/ur/ur10e.urdf")
 
         new_urdf_path = drakeify_my_urdf(
             urdf_file_path,
@@ -105,15 +104,13 @@ class BidirectionalRRTPlannerTest(unittest.TestCase):
         # Check that rrt_start has over 3+3=6 nodes
         self.assertGreaterEqual(
             len(rrt0.nodes),
-            3+3,
+            3 + 3,
         )
 
         self.assertTrue(reached_goal)
 
         # Check that there exists a path from start to goal
-        self.assertTrue(
-            nx.has_path(rrt0, 0, 5)
-        )
+        self.assertTrue(nx.has_path(rrt0, 0, 5))
 
     def test_sample_from_tree1(self):
         """
@@ -134,7 +131,6 @@ class BidirectionalRRTPlannerTest(unittest.TestCase):
             q=np.array([0.1, 0.1, 0.1, 0.1, 0.1, 0.1]),
         )
 
-
         # Create Planner
         planner = BidirectionalRRTConnectPlanner(
             self.arm_model_idx,
@@ -148,7 +144,7 @@ class BidirectionalRRTPlannerTest(unittest.TestCase):
         # Check that the sampled node is in the tree
         found_node = False
         for node in rrt0.nodes:
-            if np.allclose(rrt0.nodes[sampled_node]['q'], rrt0.nodes[node]['q']):
+            if np.allclose(rrt0.nodes[sampled_node]["q"], rrt0.nodes[node]["q"]):
                 found_node = True
                 break
 
@@ -166,14 +162,8 @@ class BidirectionalRRTPlannerTest(unittest.TestCase):
         """
         # Setup
         rrt0 = nx.DiGraph()
-        rrt0.add_node(
-            0,
-            q=np.array([0, 0, 0, 0, 0, 0])
-        )
-        rrt0.add_node(
-            1,
-            q=np.array([0.1, 0.1, 0.1, 0.1, 0.1, 0.1])
-        )
+        rrt0.add_node(0, q=np.array([0, 0, 0, 0, 0, 0]))
+        rrt0.add_node(1, q=np.array([0.1, 0.1, 0.1, 0.1, 0.1, 0.1]))
 
         # Create Planner
         planner = BidirectionalRRTConnectPlanner(
@@ -189,11 +179,10 @@ class BidirectionalRRTPlannerTest(unittest.TestCase):
         )
 
         # Check that the sampled node is in the tree
-        node_idcs = [ idx for idx in rrt0.nodes ]
+        node_idcs = [idx for idx in rrt0.nodes]
         self.assertTrue(
             np.allclose(
-                rrt0.nodes[sampled_node]['q'],
-                rrt0.nodes[list(rrt0.nodes)[1]]['q']
+                rrt0.nodes[sampled_node]["q"], rrt0.nodes[list(rrt0.nodes)[1]]["q"]
             )
         )
 
@@ -232,14 +221,12 @@ class BidirectionalRRTPlannerTest(unittest.TestCase):
         # Check that the sampled node is in the tree
         self.assertTrue(
             np.allclose(
-                rrt0.nodes[sampled_node]['q'],
-                rrt0.nodes[list(rrt0.nodes)[0]]['q']
+                rrt0.nodes[sampled_node]["q"], rrt0.nodes[list(rrt0.nodes)[0]]["q"]
             )
         )
 
         # Check that minimum distance is close to zero
         self.assertFalse(np.isclose(min_dist, 0.0))
-    
 
     def test_steer_towards_tree1(self):
         """
@@ -291,7 +278,7 @@ class BidirectionalRRTPlannerTest(unittest.TestCase):
         )
 
         # Check that
-        # -  rrt_start has >4 = 3 + 1 nodes and 
+        # -  rrt_start has >4 = 3 + 1 nodes and
         # - rrt_goal has 1 node.
         # rrt_start would normally have 4 nodes IF WE DIDN't USE CONNECT.
         # Because of the fact that we are using connect, we will have more.
@@ -310,10 +297,8 @@ class BidirectionalRRTPlannerTest(unittest.TestCase):
                 node2 = node_ii
             elif ii == 3:
                 node3 = node_ii
-        
-        self.assertTrue(
-            node3 in [elt for elt in rrt_start.neighbors(node2)]
-        )
+
+        self.assertTrue(node3 in [elt for elt in rrt_start.neighbors(node2)])
 
     def test_steer_towards_tree2(self):
         """
@@ -384,10 +369,8 @@ class BidirectionalRRTPlannerTest(unittest.TestCase):
                 node1 = node_ii
             elif ii == 0:
                 node0 = node_ii
-        
-        self.assertTrue(
-            node0 in [elt for elt in rrt_goal.neighbors(node1)]
-        )
+
+        self.assertTrue(node0 in [elt for elt in rrt_goal.neighbors(node1)])
 
     def test_steer_towards_tree3(self):
         """
@@ -445,7 +428,7 @@ class BidirectionalRRTPlannerTest(unittest.TestCase):
         )
 
         # Check that:
-        # - rrt_start has 3 nodes and 
+        # - rrt_start has 3 nodes and
         # - rrt_goal has 1 nodes
         self.assertEqual(rrt_start.number_of_nodes(), 3)
         self.assertEqual(rrt_goal.number_of_nodes(), 1)
@@ -456,9 +439,7 @@ class BidirectionalRRTPlannerTest(unittest.TestCase):
 
         # Check that there exists a path from the last node of the combined
         # rrt to the first node of the combined rrt
-        self.assertTrue(
-            nx.has_path(combined_rrt, 0, 3)
-        )
+        self.assertTrue(nx.has_path(combined_rrt, 0, 3))
 
     def test_plan1(self):
         """
@@ -466,7 +447,7 @@ class BidirectionalRRTPlannerTest(unittest.TestCase):
         -----------
         In this test, we will include one of the small problems from above
         and verify that it can be solved by the planner.
-        This should be possible in a bounded number of iterations if we force the 
+        This should be possible in a bounded number of iterations if we force the
         planner to always sample the opposite tree.
         """
         # Setup
@@ -482,7 +463,7 @@ class BidirectionalRRTPlannerTest(unittest.TestCase):
                 steering_step_size=0.2,
                 probabilities=BiRRTConnectSamplingProbabilities(
                     sample_opposite_tree=1.0,
-                )
+                ),
             ),
         )
 
@@ -498,9 +479,8 @@ class BidirectionalRRTPlannerTest(unittest.TestCase):
         self.assertIsNotNone(plan)
 
         # Check that a path exists between the start and goal
-        self.assertTrue(
-            nx.has_path(plan, 0, goal_node_index)
-        )
+        self.assertTrue(nx.has_path(plan, 0, goal_node_index))
+
 
 if __name__ == "__main__":
     unittest.main()

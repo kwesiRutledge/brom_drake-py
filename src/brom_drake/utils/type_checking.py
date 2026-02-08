@@ -1,6 +1,7 @@
 from pydrake.all import RigidTransform
 from typing import Any
 
+
 def is_rigid_transform(obj: Any) -> bool:
     """
     Description
@@ -13,12 +14,12 @@ def is_rigid_transform(obj: Any) -> bool:
     # Check if the object is a RigidTransform object directly
     if isinstance(obj, RigidTransform):
         return True
-    
+
     # Check if the object has the translation() and rotation() methods
     if hasattr(obj, "translation") and hasattr(obj, "rotation"):
         # Check to see if the translation and rotation methods are callable
         if callable(obj.translation) and callable(obj.rotation):
             return True
-        
+
     # Otherwise, return False
     return False

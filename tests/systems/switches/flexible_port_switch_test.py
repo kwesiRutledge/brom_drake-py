@@ -12,6 +12,7 @@ from pydrake.all import (
 )
 import unittest
 
+
 class TestFlexiblePortSwitch(unittest.TestCase):
     def test_init1(self):
         """
@@ -28,7 +29,7 @@ class TestFlexiblePortSwitch(unittest.TestCase):
 
         self.assertEqual(switch0.get_output_port(0).size(), 2)
         self.assertEqual(switch0.num_input_ports(), 1)
-        input_port0 : InputPort = switch0.get_input_port(0)
+        input_port0: InputPort = switch0.get_input_port(0)
         self.assertTrue(input_port0.get_data_type() == PortDataType.kAbstractValued)
 
     def test_init2(self):
@@ -64,7 +65,7 @@ class TestFlexiblePortSwitch(unittest.TestCase):
 
         self.assertEqual(switch0.get_output_port(0).size(), 2)
         self.assertEqual(switch0.num_input_ports(), 1)
-        input_port0 : InputPort = switch0.get_input_port(0)
+        input_port0: InputPort = switch0.get_input_port(0)
 
         self.assertTrue(input_port0.get_data_type() == PortDataType.kAbstractValued)
 
@@ -74,7 +75,7 @@ class TestFlexiblePortSwitch(unittest.TestCase):
         self.assertEqual(switch0.num_input_ports(), 2)
 
         # check that the input port named "input_port_0" is a vector input port
-        input_port1 : InputPort = switch0.GetInputPort(port_name)
+        input_port1: InputPort = switch0.GetInputPort(port_name)
         self.assertTrue(input_port1.get_data_type() == PortDataType.kVectorValued)
         self.assertEqual(input_port1.size(), 2)
 
@@ -95,7 +96,7 @@ class TestFlexiblePortSwitch(unittest.TestCase):
         # - there is only one input port (it should not be a vector input port; it should be abstract)
         self.assertEqual(switch0.get_output_port(0).size(), 7)
         self.assertEqual(switch0.num_input_ports(), 1)
-        input_port0 : InputPort = switch0.get_input_port(0)
+        input_port0: InputPort = switch0.get_input_port(0)
         self.assertTrue(input_port0.get_data_type() == PortDataType.kVectorValued)
 
         # Declare three input ports with unique names
@@ -108,7 +109,7 @@ class TestFlexiblePortSwitch(unittest.TestCase):
 
         # Check that the input ports are of the correct type
         for port_name in port_names:
-            input_port : InputPort = switch0.GetInputPort(port_name)
+            input_port: InputPort = switch0.GetInputPort(port_name)
             self.assertTrue(input_port.get_data_type() == PortDataType.kVectorValued)
             self.assertEqual(input_port.size(), 7)
 
@@ -129,7 +130,7 @@ class TestFlexiblePortSwitch(unittest.TestCase):
         # - there is only one input port (it should not be a vector input port; it should be abstract)
         self.assertEqual(switch0.get_output_port(0).size(), 7)
         self.assertEqual(switch0.num_input_ports(), 1)
-        input_port0 : InputPort = switch0.get_input_port(0)
+        input_port0: InputPort = switch0.get_input_port(0)
         self.assertTrue(input_port0.get_data_type() == PortDataType.kAbstractValued)
 
         # Declare three input ports with unique names
@@ -161,31 +162,20 @@ class TestFlexiblePortSwitch(unittest.TestCase):
 
         # Create two DIFFERENT CONSTANT vector sources and connect them
         # to the input ports
-        values = [
-            np.array([1, 2, 3, 4, 5, 6, 7]),
-            np.array([7, 6, 5, 4, 3, 2, 1])
-        ]
+        values = [np.array([1, 2, 3, 4, 5, 6, 7]), np.array([7, 6, 5, 4, 3, 2, 1])]
         sources = []
         for ii, value_ii in enumerate(values):
-            source_ii = builder.AddSystem(
-                ConstantVectorSource(value_ii)
-            )
+            source_ii = builder.AddSystem(ConstantVectorSource(value_ii))
             sources.append(source_ii)
             # Connect the source to the input port
             input_port_ii = switch0.GetInputPort(port_names[ii])
-            builder.Connect(
-                source_ii.get_output_port(0),
-                input_port_ii
-            )
+            builder.Connect(source_ii.get_output_port(0), input_port_ii)
 
         # Create a constant vector source for the selector input port
         selector_value = np.array([1])
-        selector_source = builder.AddSystem(
-            ConstantVectorSource(selector_value)
-            )
+        selector_source = builder.AddSystem(ConstantVectorSource(selector_value))
         builder.Connect(
-            selector_source.get_output_port(0),
-            switch0.get_port_selector_input_port()
+            selector_source.get_output_port(0), switch0.get_port_selector_input_port()
         )
 
         # Build the diagram
@@ -199,9 +189,7 @@ class TestFlexiblePortSwitch(unittest.TestCase):
 
         # Attempt to calculate the value of the output port
         output_value = BasicVector(7)
-        switch0.DoCalcValue(
-            switch0.GetMyContextFromRoot(diagram_context),
-            output_value)
+        switch0.DoCalcValue(switch0.GetMyContextFromRoot(diagram_context), output_value)
 
         # Check that the output value is correct
         expected_value = values[selector_value[0]]

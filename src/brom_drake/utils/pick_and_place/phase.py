@@ -1,5 +1,6 @@
 from enum import IntEnum
 
+
 class PickAndPlacePhase(IntEnum):
     kPreGrasp = 1
     kGrasp = 2
@@ -24,6 +25,5 @@ class PickAndPlacePhase(IntEnum):
                 return "post_place"
             case _:
                 raise NotImplementedError(
-                    f"The string for PickAndPlacePhase \"{self}\" does not exist yet. Create an issue on GitHub to see this addressed!"
+                    f'The string for PickAndPlacePhase "{self}" does not exist yet. Create an issue on GitHub to see this addressed!'
                 )
-            

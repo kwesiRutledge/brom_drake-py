@@ -16,8 +16,10 @@ from pydrake.systems.framework import LeafSystem
 from pydrake.systems.primitives import AffineSystem
 
 from brom_drake.all import (
-    DiagramTarget, parse_list_of_simplified_targets,
-    add_watcher, add_watcher_and_build,
+    DiagramTarget,
+    parse_list_of_simplified_targets,
+    add_watcher,
+    add_watcher_and_build,
     PortFigureArrangement,
 )
 from brom_drake.example_helpers import BlockHandlerSystem
@@ -71,7 +73,9 @@ class AddWatcherTest(unittest.TestCase):
         controller = builder.AddNamedSystem("my_controller", LeafSystem())
 
         # Test
-        targets = parse_list_of_simplified_targets(builder, ["my_plant", "my_controller"])
+        targets = parse_list_of_simplified_targets(
+            builder, ["my_plant", "my_controller"]
+        )
         self.assertEqual(len(targets), 2)
 
         for ii, dt_ii in enumerate(targets):
@@ -91,12 +95,15 @@ class AddWatcherTest(unittest.TestCase):
         builder = DiagramBuilder()
         plant = builder.AddNamedSystem("my_plant", MultibodyPlant(time_step=time_step))
         plant.Finalize()
-        controller = builder.AddNamedSystem("my_controller", MultibodyPlant(time_step=time_step))
+        controller = builder.AddNamedSystem(
+            "my_controller", MultibodyPlant(time_step=time_step)
+        )
         controller.Finalize()
 
         # Test
         targets = parse_list_of_simplified_targets(
-            builder, [("my_plant", [0, 1]), ("my_controller", [0, 1, 2])],
+            builder,
+            [("my_plant", [0, 1]), ("my_controller", [0, 1, 2])],
         )
         self.assertEqual(len(targets), 2)
 
@@ -119,12 +126,15 @@ class AddWatcherTest(unittest.TestCase):
         builder = DiagramBuilder()
         plant = builder.AddNamedSystem("my_plant", MultibodyPlant(time_step=time_step))
         plant.Finalize()
-        controller = builder.AddNamedSystem("my_controller", MultibodyPlant(time_step=time_step))
+        controller = builder.AddNamedSystem(
+            "my_controller", MultibodyPlant(time_step=time_step)
+        )
         controller.Finalize()
 
         # Test
         targets = parse_list_of_simplified_targets(
-            builder, [("my_plant", 0), ("my_controller", 1)],
+            builder,
+            [("my_plant", 0), ("my_controller", 1)],
         )
         self.assertEqual(len(targets), 2)
 
@@ -147,12 +157,15 @@ class AddWatcherTest(unittest.TestCase):
         builder = DiagramBuilder()
         plant = builder.AddNamedSystem("my_plant", MultibodyPlant(time_step=time_step))
         plant.Finalize()
-        controller = builder.AddNamedSystem("my_controller", MultibodyPlant(time_step=time_step))
+        controller = builder.AddNamedSystem(
+            "my_controller", MultibodyPlant(time_step=time_step)
+        )
         controller.Finalize()
 
         # Test
         targets = parse_list_of_simplified_targets(
-            builder, [(0, 0), (1, 1)],
+            builder,
+            [(0, 0), (1, 1)],
         )
         self.assertEqual(len(targets), 2)
 
@@ -176,13 +189,16 @@ class AddWatcherTest(unittest.TestCase):
         builder = DiagramBuilder()
         plant = builder.AddNamedSystem("my_plant", MultibodyPlant(time_step=time_step))
         plant.Finalize()
-        controller = builder.AddNamedSystem("my_controller", MultibodyPlant(time_step=time_step))
+        controller = builder.AddNamedSystem(
+            "my_controller", MultibodyPlant(time_step=time_step)
+        )
         controller.Finalize()
 
         # Test
         try:
             targets = parse_list_of_simplified_targets(
-                builder, [(3, 0)],
+                builder,
+                [(3, 0)],
             )
             self.assertTrue(False)
         except ValueError as e:
@@ -207,19 +223,23 @@ class AddWatcherTest(unittest.TestCase):
         builder = DiagramBuilder()
         plant = builder.AddNamedSystem("my_plant", MultibodyPlant(time_step=time_step))
         plant.Finalize()
-        controller = builder.AddNamedSystem("my_controller", MultibodyPlant(time_step=time_step))
+        controller = builder.AddNamedSystem(
+            "my_controller", MultibodyPlant(time_step=time_step)
+        )
         controller.Finalize()
 
         # Test
         try:
             targets = parse_list_of_simplified_targets(
-                builder, [(3.14, 0)],
+                builder,
+                [(3.14, 0)],
             )
             self.assertTrue(False)
         except ValueError as e:
             expectedError = ValueError(
                 "the first element of the tuple must be a string or an integer; received {} (type {}).".format(
-                    3.14, type(3.14),
+                    3.14,
+                    type(3.14),
                 )
             )
             self.assertEqual(str(e), str(expectedError))
@@ -240,7 +260,9 @@ class AddWatcherTest(unittest.TestCase):
         builder = DiagramBuilder()
         plant = builder.AddNamedSystem("my_plant", MultibodyPlant(time_step=time_step))
         plant.Finalize()
-        controller = builder.AddNamedSystem("my_controller", MultibodyPlant(time_step=time_step))
+        controller = builder.AddNamedSystem(
+            "my_controller", MultibodyPlant(time_step=time_step)
+        )
         controller.Finalize()
 
         # Test
@@ -273,7 +295,9 @@ class AddWatcherTest(unittest.TestCase):
         builder = DiagramBuilder()
         plant = builder.AddNamedSystem("my_plant", MultibodyPlant(time_step=time_step))
         plant.Finalize()
-        controller = builder.AddNamedSystem("my_controller", MultibodyPlant(time_step=time_step))
+        controller = builder.AddNamedSystem(
+            "my_controller", MultibodyPlant(time_step=time_step)
+        )
         controller.Finalize()
 
         # Test
@@ -285,8 +309,8 @@ class AddWatcherTest(unittest.TestCase):
             self.assertTrue(False)
         except ValueError as e:
             expectedError = ValueError(
-                f"the target_list[{0}] of the tuple is not an integer or a string! " +
-                f"Received {bad_port_name} of type {type(bad_port_name)}."
+                f"the target_list[{0}] of the tuple is not an integer or a string! "
+                + f"Received {bad_port_name} of type {type(bad_port_name)}."
             )
             self.assertEqual(str(e), str(expectedError))
         else:
@@ -307,7 +331,9 @@ class AddWatcherTest(unittest.TestCase):
         builder = DiagramBuilder()
         plant = builder.AddNamedSystem("my_plant", MultibodyPlant(time_step=time_step))
         plant.Finalize()
-        controller = builder.AddNamedSystem("my_controller", MultibodyPlant(time_step=time_step))
+        controller = builder.AddNamedSystem(
+            "my_controller", MultibodyPlant(time_step=time_step)
+        )
         controller.Finalize()
 
         # Test
@@ -319,13 +345,13 @@ class AddWatcherTest(unittest.TestCase):
             self.assertTrue(False)
         except ValueError as e:
             expectedError = ValueError(
-                "the second element of the tuple must be either a: \n" +
-                "- an integer\n" +
-                "- a list of integers\n" +
-                "- a string\n" +
-                "- a list of strings\n" +
-                "- None.\n" +
-                f"Received type {type(bad_port_name)}"
+                "the second element of the tuple must be either a: \n"
+                + "- an integer\n"
+                + "- a list of integers\n"
+                + "- a string\n"
+                + "- a list of strings\n"
+                + "- None.\n"
+                + f"Received type {type(bad_port_name)}"
             )
             self.assertEqual(str(e), str(expectedError))
         else:
@@ -346,11 +372,15 @@ class AddWatcherTest(unittest.TestCase):
         builder = DiagramBuilder()
         plant = builder.AddNamedSystem("my_plant", MultibodyPlant(time_step=time_step))
         plant.Finalize()
-        controller = builder.AddNamedSystem("my_controller", MultibodyPlant(time_step=time_step))
+        controller = builder.AddNamedSystem(
+            "my_controller", MultibodyPlant(time_step=time_step)
+        )
         controller.Finalize()
 
         # Add Watcher
-        watcher = add_watcher(builder, targets=[("my_plant", "state"), ("my_controller", "state")])
+        watcher = add_watcher(
+            builder, targets=[("my_plant", "state"), ("my_controller", "state")]
+        )
 
         # Verify that the watcher is connected to the correct ports
         self.assertEqual(len(watcher.port_watchers), 2)
@@ -371,7 +401,9 @@ class AddWatcherTest(unittest.TestCase):
         builder = DiagramBuilder()
         plant = builder.AddNamedSystem("my_plant", MultibodyPlant(time_step=time_step))
         plant.Finalize()
-        controller = builder.AddNamedSystem("my_controller", MultibodyPlant(time_step=time_step))
+        controller = builder.AddNamedSystem(
+            "my_controller", MultibodyPlant(time_step=time_step)
+        )
         controller.Finalize()
 
         # Add Watcher
@@ -379,14 +411,15 @@ class AddWatcherTest(unittest.TestCase):
             builder,
             targets=[
                 ("my_plant", ["state", "generalized_acceleration"]),
-                ("my_controller", "state")
+                ("my_controller", "state"),
             ],
         )
 
         # Verify that the watcher is connected to the correct ports
         self.assertEqual(
             3,
-            len(watcher.port_watchers["my_plant"]) + len(watcher.port_watchers["my_controller"]),
+            len(watcher.port_watchers["my_plant"])
+            + len(watcher.port_watchers["my_controller"]),
         )
 
     def test_add_watcher3(self):
@@ -405,7 +438,9 @@ class AddWatcherTest(unittest.TestCase):
         builder = DiagramBuilder()
         plant = builder.AddNamedSystem("my_plant", MultibodyPlant(time_step=time_step))
         plant.Finalize()
-        controller = builder.AddNamedSystem("my_controller", MultibodyPlant(time_step=time_step))
+        controller = builder.AddNamedSystem(
+            "my_controller", MultibodyPlant(time_step=time_step)
+        )
         controller.Finalize()
 
         # Add Watcher
@@ -420,7 +455,8 @@ class AddWatcherTest(unittest.TestCase):
         # Verify that the watcher is connected to the correct ports
         self.assertLessEqual(
             4,
-            len(watcher.port_watchers["my_plant"]) + len(watcher.port_watchers["my_controller"]),
+            len(watcher.port_watchers["my_plant"])
+            + len(watcher.port_watchers["my_controller"]),
         )
         self.assertEqual(1, len(watcher.port_watchers["my_controller"]))
         self.assertLess(
@@ -443,7 +479,9 @@ class AddWatcherTest(unittest.TestCase):
         builder = DiagramBuilder()
         plant = builder.AddNamedSystem("my_plant", MultibodyPlant(time_step=time_step))
         plant.Finalize()
-        controller = builder.AddNamedSystem("my_controller", MultibodyPlant(time_step=time_step))
+        controller = builder.AddNamedSystem(
+            "my_controller", MultibodyPlant(time_step=time_step)
+        )
         controller.Finalize()
 
         # Add Watcher
@@ -492,26 +530,26 @@ class AddWatcherTest(unittest.TestCase):
         D = np.zeros((6, 1))
         y0 = np.zeros((6, 1))
         x0 = np.array([0.0, 0.0, 0.0, 0.0, 0.2, 0.5])
-        target_source2 = builder.AddSystem(
-            AffineSystem(A, B, f0, C, D, y0)
-        )
+        target_source2 = builder.AddSystem(AffineSystem(A, B, f0, C, D, y0))
         target_source2.configure_default_state(x0)
 
         # Connect the state of the block to the output of a slowly changing system.
         builder.Connect(
             target_source2.get_output_port(),
-            block_handler_system.GetInputPort("desired_pose"))
+            block_handler_system.GetInputPort("desired_pose"),
+        )
 
         u0 = np.array([0.2])
         affine_system_input = builder.AddSystem(ConstantVectorSource(u0))
         builder.Connect(
-            affine_system_input.get_output_port(),
-            target_source2.get_input_port()
+            affine_system_input.get_output_port(), target_source2.get_input_port()
         )
 
         plant = builder.AddNamedSystem("my_plant", MultibodyPlant(time_step=time_step))
         plant.Finalize()
-        controller = builder.AddNamedSystem("my_controller", MultibodyPlant(time_step=time_step))
+        controller = builder.AddNamedSystem(
+            "my_controller", MultibodyPlant(time_step=time_step)
+        )
         controller.Finalize()
 
         # Add Watcher
@@ -529,7 +567,9 @@ class AddWatcherTest(unittest.TestCase):
 
         # Set up simulation
         simulator = Simulator(diagram, diagram_context)
-        block_handler_system.context = block_handler_system.plant.GetMyMutableContextFromRoot(diagram_context)
+        block_handler_system.context = (
+            block_handler_system.plant.GetMyMutableContextFromRoot(diagram_context)
+        )
 
         # Run simulation
         simulator.Initialize()

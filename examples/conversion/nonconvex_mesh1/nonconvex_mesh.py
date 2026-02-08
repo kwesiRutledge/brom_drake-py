@@ -14,6 +14,7 @@ from brom_drake import robots
 from brom_drake.all import drakeify_my_urdf, MeshReplacementStrategy
 from brom_drake.productions.all import ShowMeThisModel
 
+
 def main():
     # Setup
     urdf_file_path = str(
@@ -43,6 +44,7 @@ def main():
 
     simulator.Initialize()
     simulator.AdvanceTo(15.0)
+
 
 if __name__ == "__main__":
     main()

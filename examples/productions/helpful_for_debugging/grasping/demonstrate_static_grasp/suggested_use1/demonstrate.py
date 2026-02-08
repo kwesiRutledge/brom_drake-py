@@ -1,18 +1,19 @@
 from importlib import resources as impresources
-import ipdb
 import numpy as np
 from pydrake.all import (
     Simulator,
-    RollPitchYaw, RigidTransform,
+    RollPitchYaw,
+    RigidTransform,
 )
-import typer
 
 # Internal Imports
 from brom_drake.all import drakeify_my_urdf
 from brom_drake import robots
 from brom_drake.productions.all import (
-    ShowMeThisStaticGrasp, ShowMeThisStaticGraspConfiguration
+    ShowMeThisStaticGrasp,
+    ShowMeThisStaticGraspConfiguration,
 )
+
 
 def main(meshcat_port_number: int = 7001):
     """
@@ -36,14 +37,14 @@ def main(meshcat_port_number: int = 7001):
 
     # Create the gripper urdf
     gripper_urdf = str(
-        impresources.files(robots) / "models/robotiq/2f_85_gripper-no-mimic/urdf/robotiq_2f_85.urdf"
-    )    
-    
-    X_ObjectTarget = RigidTransform(
-        p=np.array([-0.08, 0.05, 0.15]),
-        rpy=RollPitchYaw(0.0, np.pi/2.0, 0.0),
+        impresources.files(robots)
+        / "models/robotiq/2f_85_gripper-no-mimic/urdf/robotiq_2f_85.urdf"
     )
 
+    X_ObjectTarget = RigidTransform(
+        p=np.array([-0.08, 0.05, 0.15]),
+        rpy=RollPitchYaw(0.0, np.pi / 2.0, 0.0),
+    )
 
     # Create the production
     config = ShowMeThisStaticGraspConfiguration()
@@ -66,6 +67,7 @@ def main(meshcat_port_number: int = 7001):
     simulator.set_publish_every_time_step(False)
     simulator.Initialize()
     simulator.AdvanceTo(10.0)
+
 
 if __name__ == "__main__":
     main()

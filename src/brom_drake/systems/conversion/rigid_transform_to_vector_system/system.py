@@ -1,6 +1,7 @@
 import numpy as np
 from pydrake.all import (
-    AbstractValue, BasicVector,
+    AbstractValue,
+    BasicVector,
     Context,
     LeafSystem,
     RigidTransform,
@@ -8,10 +9,11 @@ from pydrake.all import (
 
 from .configuration import Configuration as RigidTransformToVectorSystemConfiguration
 
+
 class RigidTransformToVectorSystem(LeafSystem):
     """
     *Description*
-    
+
     This system will take in a RigidTransform and output a vector
     of size 7, where the first 3 elements are the translation
     and the last 4 elements are the quaternion representation
@@ -20,13 +22,14 @@ class RigidTransformToVectorSystem(LeafSystem):
     *Diagram*
 
     The LeafSystem's inputs and outputs can be represented as: ::
-    
+
                                 |-------------------|
                                 | RigidTransform    |
         rigid_transform ---->   | To                | vector_xyz_quat(wxyz) (BasicVector[7])
         (RigidTransform)        | VectorSystem      |
                                 |-------------------|
     """
+
     def __init__(
         self,
         config: RigidTransformToVectorSystemConfiguration = None,
@@ -49,20 +52,16 @@ class RigidTransformToVectorSystem(LeafSystem):
 
         # Collect Transform
         rigid_transform: RigidTransform = self.rigid_transform_input.Eval(context)
-        
+
         # Create output vector
         if config.output_format == "vector_xyz_quat(wxyz)":
             xyz = rigid_transform.translation()
             quat = rigid_transform.rotation().ToQuaternion().wxyz()
-            output.SetFromVector(
-                np.hstack((xyz, quat))
-            )
+            output.SetFromVector(np.hstack((xyz, quat)))
         elif config.output_format == "vector_xyz_euler(rpy)":
             xyz = rigid_transform.translation()
             euler = rigid_transform.rotation().ToRollPitchYaw().vector()
-            output.SetFromVector(
-                np.hstack((xyz, euler))
-            )
+            output.SetFromVector(np.hstack((xyz, euler)))
 
     def create_system_inputs(self):
         # Setup

@@ -3,6 +3,7 @@ motion_planner_test.py
 Description:
     This script tests some of the basic features of the motion_planner base object.
 """
+
 from importlib import resources as impresources
 
 import numpy as np
@@ -22,7 +23,9 @@ from brom_drake.all import (
     drakeify_my_urdf,
 )
 from brom_drake.productions.debug import ShowMeThisModel
-from brom_drake.file_manipulation.urdf.drake_ready_urdf_converter import MeshReplacementStrategy
+from brom_drake.file_manipulation.urdf.drake_ready_urdf_converter import (
+    MeshReplacementStrategy,
+)
 from brom_drake.utils import AddGround
 
 
@@ -70,17 +73,13 @@ class MotionPlannerTest(unittest.TestCase):
         root_context: Context,
         scene_graph: SceneGraph,
         robot_model_idx: ModelInstanceIndex,
-        q_model: np.ndarray
+        q_model: np.ndarray,
     ) -> bool:
         plant_context = plant.GetMyMutableContextFromRoot(root_context)
         scene_graph_context = scene_graph.GetMyMutableContextFromRoot(root_context)
 
         # Set the configuration
-        plant.SetPositions(
-            plant_context,
-            robot_model_idx,
-            q_model
-        )
+        plant.SetPositions(plant_context, robot_model_idx, q_model)
 
         # Check for Collisions (and investigate scene) using query object from SceneGraph
         query = scene_graph.get_query_output_port().Eval(scene_graph_context)
@@ -88,7 +87,9 @@ class MotionPlannerTest(unittest.TestCase):
         print(f"Collision exist in query? {query.HasCollisions()}")
         inspector = scene_graph.model_inspector()
         # print(query.ComputeSignedDistancePairwiseClosestPoints())
-        for ii, pair_ii in enumerate(query.ComputeSignedDistancePairwiseClosestPoints()):
+        for ii, pair_ii in enumerate(
+            query.ComputeSignedDistancePairwiseClosestPoints()
+        ):
             if pair_ii.distance < 0.0:
                 print(pair_ii)
                 print(f"{inspector.GetName(pair_ii.id_A)} with id {pair_ii.id_A}")
@@ -98,8 +99,7 @@ class MotionPlannerTest(unittest.TestCase):
                 # Apply filtering for each of these geometries
                 scene_graph.collision_filter_manager(scene_graph_context).Apply(
                     CollisionFilterDeclaration().ExcludeBetween(
-                        GeometrySet(pair_ii.id_A),
-                        GeometrySet(pair_ii.id_B)
+                        GeometrySet(pair_ii.id_A), GeometrySet(pair_ii.id_B)
                     )
                 )
 
@@ -113,17 +113,17 @@ class MotionPlannerTest(unittest.TestCase):
         Test the collision checking functionality.
         """
         # Setup
-        urdf_file_path = str(
-            impresources.files(robots) / "models/ur/ur10e.urdf"
+        urdf_file_path = str(impresources.files(robots) / "models/ur/ur10e.urdf")
+        q0 = np.array(
+            [
+                0.65 * (np.pi / 2.0),  # 0.95*(np.pi/2.0),
+                (-6 / 4.0) * (np.pi / 4.0),
+                -0.25 + np.pi / 2.0,
+                1.5 * (-np.pi / 2.0),
+                0.0,
+                0.0,
+            ]
         )
-        q0 = np.array([
-            0.65*(np.pi/2.0), # 0.95*(np.pi/2.0),
-            (-6/4.0)*(np.pi/4.0),
-            -0.25 + np.pi / 2.0,
-            1.5*(-np.pi/2.0),
-            0.0,
-            0.0,
-        ])
 
         # Convert the URDF
         new_urdf_path = drakeify_my_urdf(
@@ -139,20 +139,20 @@ class MotionPlannerTest(unittest.TestCase):
             str(new_urdf_path),
             with_these_joint_positions=q0,
             time_step=time_step,
-            meshcat_port_number=None, # Turn off for CI
+            meshcat_port_number=None,  # Turn off for CI
         )
 
         # Add Bookshelf to the Production
         shelf_model_index = self.add_shelf1(production.plant)
         shelf_pose = RigidTransform(
-            RollPitchYaw(0.0, 0.0, +np.pi/2.0).ToQuaternion(),
+            RollPitchYaw(0.0, 0.0, +np.pi / 2.0).ToQuaternion(),
             np.array([0.0, 1.0, 0.4]),
         )
         production.plant.WeldFrames(
             production.plant.world_frame(),
             production.plant.GetFrameByName("cupboard_body", shelf_model_index),
             shelf_pose,
-        ) # Weld the bookshelf to the world frame
+        )  # Weld the bookshelf to the world frame
 
         # Build Diagram and Simulate
         diagram, diagram_context = production.add_cast_and_build()
@@ -163,7 +163,7 @@ class MotionPlannerTest(unittest.TestCase):
             diagram_context,
             production.scene_graph,
             production.model_index,
-            q0
+            q0,
         )
 
         self.assertFalse(in_collision)
@@ -243,5 +243,6 @@ class MotionPlannerTest(unittest.TestCase):
     #     simulator.set_target_realtime_rate(1.0)
     #     simulator.AdvanceTo(10.0)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

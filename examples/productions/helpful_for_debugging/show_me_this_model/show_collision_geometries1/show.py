@@ -5,10 +5,8 @@ This script contains an example of how to show
 a given urdf at the specified joint positions.
 """
 
-import ipdb
 from importlib import resources as impresources
 import numpy as np
-import typer
 from pydrake.systems.analysis import Simulator
 
 # Internal imports
@@ -20,9 +18,7 @@ from brom_drake.file_manipulation.urdf import MeshReplacementStrategy
 
 def main():
     # Setup
-    urdf_file_path = str(
-        impresources.files(robots) / "models/ur/ur10e.urdf"
-    )
+    urdf_file_path = str(impresources.files(robots) / "models/ur/ur10e.urdf")
 
     # Convert the URDF
     new_urdf_path = drakeify_my_urdf(
@@ -36,7 +32,7 @@ def main():
     time_step = 1e-3
     production = ShowMeThisModel(
         str(new_urdf_path),
-        with_these_joint_positions=[0.0, 0.0, -np.pi/4.0, 0.0, 0.0, 0.0],
+        with_these_joint_positions=[0.0, 0.0, -np.pi / 4.0, 0.0, 0.0, 0.0],
         time_step=time_step,
         show_collision_geometries=True,
     )

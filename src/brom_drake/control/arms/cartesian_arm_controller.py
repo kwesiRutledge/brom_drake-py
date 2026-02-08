@@ -5,16 +5,22 @@ Description:
     This file defines the CartesianArmController class. This class is used to control different manipulators and generates
     torque based control commands for the targeted arm.
 """
+
 # External Imports
 from pydrake.all import DifferentialInverseKinematicsStatus
 from pydrake.common.value import AbstractValue
 from pydrake.math import RollPitchYaw, RigidTransform, RotationMatrix
 from pydrake.multibody.inverse_kinematics import (
     DifferentialInverseKinematicsParameters,
-    DoDifferentialInverseKinematics, InverseKinematics
+    DoDifferentialInverseKinematics,
+    InverseKinematics,
 )
 from pydrake.multibody.plant import MultibodyPlant
-from pydrake.multibody.tree import MultibodyForces, JacobianWrtVariable, ModelInstanceIndex
+from pydrake.multibody.tree import (
+    MultibodyForces,
+    JacobianWrtVariable,
+    ModelInstanceIndex,
+)
 from pydrake.solvers import Solve
 from pydrake.systems.framework import BasicVector
 
@@ -28,7 +34,7 @@ from .base_arm_controller import BaseArmController
 class CartesianArmController(BaseArmController):
     """
     *Description*
-    
+
     .. warning::
         This controller appears to be only partially tested/implemented.
         Use at your own risk.
@@ -75,7 +81,8 @@ class CartesianArmController(BaseArmController):
         self.DeclareVectorOutputPort(
             "applied_arm_torque",
             BasicVector(self.plant.num_actuators()),
-            self.CalcArmTorques)
+            self.CalcArmTorques,
+        )
 
         # Store desired end-effector pose and corresponding joint
         # angles so we only run full IK when we need to
@@ -85,21 +92,23 @@ class CartesianArmController(BaseArmController):
     def define_cartesian_target_input_ports(self):
         """
         *Description*
-        
+
         Define the input ports for the CartesianArmController system
-        
+
         This method should instantiate the following input ports:
-        
+
         - ee_target: A vector input port of size 7 representing the desired end-effector target. It's a bit strange that this is always 7 dimensional, given the types of targets that are possible.
         - ee_target_type: An abstract input port representing the type of end-effector target. Recall the types of targets are defined in the EndEffectorTarget class.
         - arm_joint_position: A vector input port representing the current joint positions of the arm.
         - arm_joint_velocity: A vector input port representing the current joint velocities of the arm.
         """
         # Input Processing
-        plant : MultibodyPlant = self.plant
+        plant: MultibodyPlant = self.plant
         if not plant.is_finalized():
-            raise RuntimeError("The plant must be finalized before defining input ports.")
-        
+            raise RuntimeError(
+                "The plant must be finalized before defining input ports."
+            )
+
         # Setup
         n_dof = self.plant.num_positions()
 
@@ -141,7 +150,8 @@ class CartesianArmController(BaseArmController):
                 self.ee_frame,
                 np.zeros(3),
                 self.world_frame,
-                self.world_frame)
+                self.world_frame,
+            )
 
             tau = tau_g + J.T @ wrench_des
 
@@ -152,17 +162,16 @@ class CartesianArmController(BaseArmController):
             twist_des = self.ee_target_port.Eval(context)
 
             # Use DoDifferentialInverseKinematics to determine desired qd
-            params = DifferentialInverseKinematicsParameters(self.plant.num_positions(),
-                                                             self.plant.num_velocities())
+            params = DifferentialInverseKinematicsParameters(
+                self.plant.num_positions(), self.plant.num_velocities()
+            )
             params.set_time_step(0.005)
             params.set_joint_velocity_limits((self.qd_min, self.qd_max))
             params.set_joint_position_limits((self.q_min, self.q_max))
 
-            result = DoDifferentialInverseKinematics(self.plant,
-                                                     self.context,
-                                                     twist_des,
-                                                     self.ee_frame,
-                                                     params)
+            result = DoDifferentialInverseKinematics(
+                self.plant, self.context, twist_des, self.ee_frame, params
+            )
 
             if result.status == DifferentialInverseKinematicsStatus.kSolutionFound:
                 qd_nom = result.joint_velocities
@@ -194,16 +203,20 @@ class CartesianArmController(BaseArmController):
                 # This sets up a nonconvex optimization problem to find joint angles consistent
                 # with the given constraints
                 ik = InverseKinematics(self.plant, self.context)
-                ik.AddPositionConstraint(self.ee_frame,
-                                         [0, 0, 0],
-                                         self.world_frame,
-                                         X_WE_des.translation(),
-                                         X_WE_des.translation())
-                ik.AddOrientationConstraint(self.ee_frame,
-                                            RotationMatrix(),
-                                            self.world_frame,
-                                            X_WE_des.rotation(),
-                                            0.001)
+                ik.AddPositionConstraint(
+                    self.ee_frame,
+                    [0, 0, 0],
+                    self.world_frame,
+                    X_WE_des.translation(),
+                    X_WE_des.translation(),
+                )
+                ik.AddOrientationConstraint(
+                    self.ee_frame,
+                    RotationMatrix(),
+                    self.world_frame,
+                    X_WE_des.rotation(),
+                    0.001,
+                )
 
                 prog = ik.get_mutable_prog()
                 q_var = ik.q()

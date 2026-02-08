@@ -1,4 +1,3 @@
-
 from importlib import resources as impresources
 import networkx as nx
 import numpy as np
@@ -24,9 +23,13 @@ from brom_drake.control import (
 )
 from brom_drake.file_manipulation.urdf import drakeify_my_urdf
 from brom_drake.file_manipulation.urdf.shapes.box import BoxDefinition
-from brom_drake.file_manipulation.urdf.simple_writer.urdf_definition import SimpleShapeURDFDefinition, \
-    InertiaDefinition
-from brom_drake.motion_planning.systems.open_loop_dispensers.open_loop_plan_dispenser import OpenLoopPlanDispenser
+from brom_drake.file_manipulation.urdf.simple_writer.urdf_definition import (
+    SimpleShapeURDFDefinition,
+    InertiaDefinition,
+)
+from brom_drake.motion_planning.systems.open_loop_dispensers.open_loop_plan_dispenser import (
+    OpenLoopPlanDispenser,
+)
 import brom_drake.robots as robots
 from brom_drake.robots.gripper_type import GripperType
 from brom_drake.stations.kinematic import UR10eStation as KinematicUR10eStation
@@ -43,7 +46,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
     This production is the first in the chemistry lab series.
     It is used to test the motion planning capabilities of the robot
     in a chemistry lab setting with minimal constraints.
-    
+
     *Parameters*
 
     time_step: float, optional
@@ -115,9 +118,10 @@ class ChemLab1(KinematicMotionPlanningProduction):
         # Advance to the end of the simulation
         simulator.AdvanceTo(planned_trajectory.end_time()+1.0)
     """
+
     def __init__(
         self,
-        time_step: float =1e-3,
+        time_step: float = 1e-3,
         meshcat_port_number: int = 7000,
         plan_execution_speed: float = 0.2,
         table_length: float = 0.6,
@@ -128,7 +132,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
     ):
         """
         *Description*
-            
+
         Constructor for the ChemLab1Scene class.
 
         *Parameters*
@@ -156,7 +160,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
 
         shelf_pose: RigidTransform, optional
             The pose of the shelf in the world frame, by default None.
-        
+
         """
         # Superclass constructor
         super().__init__(**kwargs)
@@ -172,20 +176,26 @@ class ChemLab1(KinematicMotionPlanningProduction):
         self.shelf_pose = shelf_pose
         if self.shelf_pose is None:
             self.pose_WorldShelf = RigidTransform(
-                RollPitchYaw(0.0, 0.0, -np.pi/2.0).ToQuaternion(),
+                RollPitchYaw(0.0, 0.0, -np.pi / 2.0).ToQuaternion(),
                 np.array([0.0, 0.75, 0.66]),
             )
 
         # Set Beaker Pose
         self.pose_WorldBeaker = RigidTransform(
-            RollPitchYaw(np.pi/2.0, 0.0, 0.0).ToQuaternion(),
+            RollPitchYaw(np.pi / 2.0, 0.0, 0.0).ToQuaternion(),
             np.array([-0.6, 0.45, 0.075]),
         )
 
         # Set Holder Pose
         self.pose_WorldHolder = RigidTransform(
-            RollPitchYaw(np.pi/2.0, 0.0, 0.0).ToQuaternion(),
-            np.array([self.table_width*0.5*0.7, 0.6+self.table_length/4., self.table_height-0.015]),
+            RollPitchYaw(np.pi / 2.0, 0.0, 0.0).ToQuaternion(),
+            np.array(
+                [
+                    self.table_width * 0.5 * 0.7,
+                    0.6 + self.table_length / 4.0,
+                    self.table_height - 0.015,
+                ]
+            ),
         )
 
         # Set station
@@ -212,16 +222,16 @@ class ChemLab1(KinematicMotionPlanningProduction):
     def add_supporting_cast(self):
         """
         *Description*
-        
+
         This method adds all secondary cast members to the builder.
         The secondary cast members in the production are the:
-        
+
         - Table, where the robot exists
         - Test Tube Holders
         - Component which share's the robot model reference
         - Motion Planning components (e.g., dispensers, etc.)
         - Start and Goal sources
-        
+
         """
         # Call the superclass method
         super().add_supporting_cast()
@@ -259,7 +269,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
     def add_beaker(self):
         """
         *Description*
-        
+
         This method adds a model of a beaker to the production.
         The beaker is welded in place at the pose pose_WorldBeaker
         with respect to the world origin.
@@ -269,9 +279,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
         """
         # Setup
         plant = self.plant
-        urdf_file_path = str(
-            impresources.files(robots) / "models/beaker/beaker.urdf"
-        )
+        urdf_file_path = str(impresources.files(robots) / "models/beaker/beaker.urdf")
 
         # Use Drakeify my urdf to create the beaker
         new_beaker_urdf = drakeify_my_urdf(urdf_file_path)
@@ -295,7 +303,9 @@ class ChemLab1(KinematicMotionPlanningProduction):
         """
         # Setup
         arm = self.arm
-        n_actuated_dof = self.plant.num_actuated_dofs(arm) # Number of actuated DOF in arm
+        n_actuated_dof = self.plant.num_actuated_dofs(
+            arm
+        )  # Number of actuated DOF in arm
 
         # Add the Plan Dispenser and connect it to the station
         self.plan_dispenser = self.builder.AddSystem(
@@ -336,7 +346,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
     def add_table(self):
         """
         *Description*
-        
+
         This method adds a model of a table to the production's plant.
         The table will be a simple shape that the robot will interact with.
         The table is fixed in a pose with respect to the origin (pose chosen in this function).
@@ -349,7 +359,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
             shape=BoxDefinition(
                 size=(self.table_width, self.table_length, self.table_height),
             ),
-            mass=100.0, # kg
+            mass=100.0,  # kg
             inertia=InertiaDefinition(
                 ixx=10.0,
                 iyy=10.0,
@@ -377,7 +387,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
     def add_test_tube_holders(self):
         """
         *Description*
-        
+
         This method adds the test tube holders to the production.
         The test tube holder is fixed at pose ``self.pose_WorldHolder``
         with respect to the world origin.
@@ -397,10 +407,11 @@ class ChemLab1(KinematicMotionPlanningProduction):
         # Weld the test tube holders to the world frame
         self.plant.WeldFrames(
             self.plant.world_frame(),
-            self.plant.GetFrameByName("test_tube_holder_base_link", self.test_tube_holder1),
+            self.plant.GetFrameByName(
+                "test_tube_holder_base_link", self.test_tube_holder1
+            ),
             self.pose_WorldHolder,
         )
-
 
     def add_cast_and_build(
         self,
@@ -409,27 +420,27 @@ class ChemLab1(KinematicMotionPlanningProduction):
     ) -> Tuple[Diagram, Context]:
         """
         *Description*
-        
+
         Modifies the normal add_cast_and_build, so that
         we share the context of the plant with the appropriate
         parts of the system.
 
         In addition to using the parent class's implementation of add_cast_and_build, this:
-        - Configures the collision filter to avoid spurious collisions between the cupboard's 
+        - Configures the collision filter to avoid spurious collisions between the cupboard's
         various parts and itself
         - Insert the motion planner role into the diagram and connect it properly
-        
+
         *Parameters*
 
         cast: List[Tuple[Role, Performer]], optional
             The main cast members that we would like to assign to the production.
             Default is None.
             TODO(Kwesi): Will using the default lead to errors? Should we even allow that?
-        
+
         with_watcher: bool, optional
             A Boolean that determines whether to add a watcher to the diagram.
             Default is False.
-        
+
         *Returns*
 
         diagram: pydrake.systems.framework.Diagram
@@ -442,7 +453,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
 
             This method returns a `pydrake.systems.framework.Diagram` and its associated `pydrake.systems.framework.Context`.
             When constructing a Drake simulation of this, you should use these objects to create the `pydrake.systems.analysis.Simulator`.
-            
+
         """
         diagram, diagram_context = super().add_cast_and_build(
             main_cast_members=cast,
@@ -452,31 +463,31 @@ class ChemLab1(KinematicMotionPlanningProduction):
         # Configure the scene graph for collision detection
         self.configure_collision_filter(
             diagram.GetSubsystemContext(
-                self.scene_graph, diagram_context,
+                self.scene_graph,
+                diagram_context,
             )
         )
 
         # Connect arm controller to the appropriate plant_context
         self.station.arm_controller.plant_context = diagram.GetSubsystemContext(
-            self.station.arm_controller.plant, diagram_context,
+            self.station.arm_controller.plant,
+            diagram_context,
         )
 
         for role_ii, performer_ii in cast:
             if role_ii.name == "OfflineMotionPlanner":
-                performer_ii.set_internal_root_context(
-                    diagram_context
-                )
+                performer_ii.set_internal_root_context(diagram_context)
 
         return diagram, diagram_context
-    
+
     def configure_collision_filter(self, scene_graph_context: Context):
         """
         *Description*
-        
+
         This method configures the collision filter, so that:
-        
+
         - self collisions between the shelf's pieces,
-        
+
         are ignored during simulation.
 
         *Parameters*
@@ -529,7 +540,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
         #         GeometrySet(self.arm_geometry_ids)
         #     )
         # )
-    
+
     def easy_cast_and_build(
         self,
         planning_algorithm: Callable[
@@ -540,7 +551,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
     ) -> Tuple[Diagram, Context]:
         """
         *Description*
-        
+
         This function is used to easily cast and build the production.
 
         *Parameters*
@@ -552,7 +563,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
         with_watcher: bool, optional
             A Boolean that determines whether to add a watcher to the diagram.
             Default is False.
-        
+
         *Returns*
 
         diagram: pydrake.systems.framework.Diagram
@@ -579,18 +590,18 @@ class ChemLab1(KinematicMotionPlanningProduction):
         # Configure the scene graph for collision detection
         self.configure_collision_filter(
             diagram.GetSubsystemContext(
-                self.scene_graph, diagram_context,
+                self.scene_graph,
+                diagram_context,
             )
         )
 
         # Connect arm controller to the appropriate plant_context
         self.station.arm_controller.plant_context = diagram.GetSubsystemContext(
-            self.station.arm_controller.plant, diagram_context,
+            self.station.arm_controller.plant,
+            diagram_context,
         )
 
-        self.performers[0].set_internal_root_context(
-            diagram_context
-        )
+        self.performers[0].set_internal_root_context(diagram_context)
 
         return diagram, diagram_context
 
@@ -610,19 +621,19 @@ class ChemLab1(KinematicMotionPlanningProduction):
         """
         # Setup
         hardcoded_robot_joint_names = [
-            'ur10e-test_shoulder_pan_joint_q',
-            'ur10e-test_shoulder_lift_joint_q',
-            'ur10e-test_elbow_joint_q',
-            'ur10e-test_wrist_1_joint_q',
-            'ur10e-test_wrist_2_joint_q',
-            'ur10e-test_wrist_3_joint_q',
+            "ur10e-test_shoulder_pan_joint_q",
+            "ur10e-test_shoulder_lift_joint_q",
+            "ur10e-test_elbow_joint_q",
+            "ur10e-test_wrist_1_joint_q",
+            "ur10e-test_wrist_2_joint_q",
+            "ur10e-test_wrist_3_joint_q",
         ]
 
         # Retrieve goal_configuraiton value
         if self._goal_config is None:
-            beaker_to_goal_translation = np.array([+0.0, 0.2, 0.0]) 
-            beaker_to_goal_orientation = RollPitchYaw(0., 0., 0.0).ToQuaternion()
-            X_BeakerGoal = RigidTransform(  
+            beaker_to_goal_translation = np.array([+0.0, 0.2, 0.0])
+            beaker_to_goal_orientation = RollPitchYaw(0.0, 0.0, 0.0).ToQuaternion()
+            X_BeakerGoal = RigidTransform(
                 beaker_to_goal_orientation,
                 beaker_to_goal_translation,
             )
@@ -643,11 +654,11 @@ class ChemLab1(KinematicMotionPlanningProduction):
     def goal_pose(self) -> RigidTransform:
         """
         *Description*
-        
+
         Get the goal pose of the end effector frame.
 
         *Returns*
-        
+
         goal_pose: RigidTransform
             The goal pose of the robot.
         """
@@ -659,9 +670,9 @@ class ChemLab1(KinematicMotionPlanningProduction):
             return self._goal_pose
         elif (self._goal_pose is None) and (self._goal_config is None):
             # If we have no guidance on where goal is, then we will use the default goal pose
-            beaker_to_goal_translation = np.array([+0.0, 0.2, 0.0]) 
-            beaker_to_goal_orientation = RollPitchYaw(0., 0., 0.0).ToQuaternion()
-            X_BeakerGoal = RigidTransform(  
+            beaker_to_goal_translation = np.array([+0.0, 0.2, 0.0])
+            beaker_to_goal_orientation = RollPitchYaw(0.0, 0.0, 0.0).ToQuaternion()
+            X_BeakerGoal = RigidTransform(
                 beaker_to_goal_orientation,
                 beaker_to_goal_translation,
             )
@@ -670,17 +681,17 @@ class ChemLab1(KinematicMotionPlanningProduction):
             self._goal_pose = pose_WorldGoal
 
             return self._goal_pose
-        
+
         elif (self._goal_pose is None) and (self._goal_config is not None):
             # Use the goal configuration to get the goal pose
             # Using a "forward kinematics solver"
-            self._goal_pose = self.solve_forward_kinematics_problem_for_arm(self._goal_config)
-            return self._goal_pose
-        
-        else:
-            raise ValueError(
-                f"Unexpected behavior. This should never happen."
+            self._goal_pose = self.solve_forward_kinematics_problem_for_arm(
+                self._goal_config
             )
+            return self._goal_pose
+
+        else:
+            raise ValueError(f"Unexpected behavior. This should never happen.")
 
     @property
     def id(self) -> ProductionID:
@@ -688,7 +699,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
         Always returns ``ProductionID.kChemLab1``.
         """
         return ProductionID.kChemLab1
-        
+
     def solve_forward_kinematics_problem_for_arm(
         self,
         robot_joint_positions: np.ndarray,
@@ -696,7 +707,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
     ) -> RigidTransform:
         """
         *Description*
-        
+
         This method solves the forward kinematics problem for the UR10e arm
         by itself.
 
@@ -708,9 +719,9 @@ class ChemLab1(KinematicMotionPlanningProduction):
         target_frame_name: str, optional
             The frame that we compute the pose of with respect to the world origin frame.
             Default is "ft_frame"
-        
+
         *Returns*
-        
+
         pose_WorldTarget: RigidTransform
             The end effector pose of the robot expressed in the world frame.
         """
@@ -725,7 +736,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
 
         # Use station's plant to solve the forward kinematics problem
         shadow_plant = shadow_station.plant
-        
+
         temp_context = shadow_plant.CreateDefaultContext()
         shadow_plant.SetPositions(
             temp_context,
@@ -750,7 +761,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
 
         This may be computed using inverse kinematics on the first time it is requested,
         depending on the construction of the production.
-        
+
         *Returns*
 
         q_start: np.ndarray of shape(6,)
@@ -758,12 +769,12 @@ class ChemLab1(KinematicMotionPlanningProduction):
         """
         # Setup
         hardcoded_robot_joint_names = [
-            'ur10e-test_shoulder_pan_joint_q',
-            'ur10e-test_shoulder_lift_joint_q',
-            'ur10e-test_elbow_joint_q',
-            'ur10e-test_wrist_1_joint_q',
-            'ur10e-test_wrist_2_joint_q',
-            'ur10e-test_wrist_3_joint_q',
+            "ur10e-test_shoulder_pan_joint_q",
+            "ur10e-test_shoulder_lift_joint_q",
+            "ur10e-test_elbow_joint_q",
+            "ur10e-test_wrist_1_joint_q",
+            "ur10e-test_wrist_2_joint_q",
+            "ur10e-test_wrist_3_joint_q",
         ]
 
         # Algorithm
@@ -785,9 +796,9 @@ class ChemLab1(KinematicMotionPlanningProduction):
     def start_pose(self) -> RigidTransform:
         """
         *Description*
-        
+
         Get the start pose.
-        
+
         *Returns*
 
         pose_WorldStart: RigidTransform
@@ -799,7 +810,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
         if self._start_pose is not None:
             # If the start pose is already defined, return it
             return self._start_pose
-        
+
         elif (self._start_pose is None) and (self._start_config is None):
             # If we have no guidance on how to start, then we will use the default start pose
             holder_to_start_translation = np.array([+0.0, 0.2, 0.025])
@@ -811,15 +822,14 @@ class ChemLab1(KinematicMotionPlanningProduction):
             pose_WorldStart = self.pose_WorldHolder.multiply(X_HolderStart)
             self._start_pose = pose_WorldStart
             return self._start_pose
-        
+
         elif (self._start_pose is None) and (self._start_config is not None):
             # Use the start configuration to get the starting pose
             # Using a "forward kinematics solver"
-            self._start_pose = self.solve_forward_kinematics_problem_for_arm(self._start_config)
-            return self._start_pose
-        
-        else:
-            raise ValueError(
-                f"Unexpected behavior. This should never happen."
+            self._start_pose = self.solve_forward_kinematics_problem_for_arm(
+                self._start_config
             )
+            return self._start_pose
 
+        else:
+            raise ValueError(f"Unexpected behavior. This should never happen.")

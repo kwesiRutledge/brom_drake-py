@@ -38,11 +38,10 @@ from brom_drake.motion_planning.systems import OpenLoopPlanDispenser
 from brom_drake.productions.types.debug import BasicGraspingDebuggingProduction
 from brom_drake.productions.ids import ProductionID
 from brom_drake.productions.roles.role import Role
-from brom_drake.systems.all import (
-    NetworkXFSM, FlexiblePortSwitch
-)
+from brom_drake.systems.all import NetworkXFSM, FlexiblePortSwitch
 from brom_drake.utils import (
-    Performer, collision_checking,
+    Performer,
+    collision_checking,
 )
 from brom_drake.utils.model_instances import (
     get_name_of_first_body_in_urdf,
@@ -52,6 +51,7 @@ from brom_drake.productions.debug.show_me.show_me_system import ShowMeSystem
 from .config import Configuration
 from .phases import AttemptGraspWithStaticWristPhase
 from .script import Script as AttemptGraspWithStaticWristScript
+
 
 class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
     # Member functions
@@ -68,16 +68,21 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
         # Use the enum to choose the gripper URDF from a set of supported grippers
         if gripper_choice == GripperType.Robotiq_2f_85:
             path_to_gripper = str(
-                impresources.files(robots) / "models/robotiq/2f_85_gripper/urdf/robotiq_2f_85.urdf"
+                impresources.files(robots)
+                / "models/robotiq/2f_85_gripper/urdf/robotiq_2f_85.urdf"
             )
         else:
-            raise ValueError(f"Gripper type {gripper_choice} not supported for this scene! Create an issue on GitHub if you want it to be!")
+            raise ValueError(
+                f"Gripper type {gripper_choice} not supported for this scene! Create an issue on GitHub if you want it to be!"
+            )
 
         # Handle config
         if meshcat_port_number is not None:
             config.base.meshcat_port_number = meshcat_port_number
-        
-        if script is not None: # If the user provided a "script" for this production, then use it!
+
+        if (
+            script is not None
+        ):  # If the user provided a "script" for this production, then use it!
             config.script = script
 
         # Call the parent constructor
@@ -107,19 +112,23 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
 
         # TODO(kwesi): Figure out a better way to handle the initial joint positions
         # Create INITIAL joint position array
-        n_gripper_positions = find_number_of_positions_in_welded_model(self.path_to_gripper)
+        n_gripper_positions = find_number_of_positions_in_welded_model(
+            self.path_to_gripper
+        )
         # if initial_gripper_joint_positions is None:
         #     initial_gripper_joint_positions = [0.0] * n_gripper_positions
-        self.initial_gripper_joint_positions = np.zeros(grasp_joint_positions.shape)# initial_gripper_joint_positions
+        self.initial_gripper_joint_positions = np.zeros(
+            grasp_joint_positions.shape
+        )  # initial_gripper_joint_positions
 
         # Save target joint position array
         # assert len(grasp_joint_positions) != n_gripper_positions, \
         #     f"Expected for the \"grasp_joint_positions\" array to contain {n_gripper_positions} values (the number of positions)" + \
         #     f"in the model, but received length {len(grasp_joint_positions)} array."
-        
+
         self.grasp_joint_positions = grasp_joint_positions
         self.config = config
-        
+
         # Add Name to plantPlant and Scene Graph for easy simulation
         self.plant.set_name("DemonstrateStaticGrasp_plant")
 
@@ -131,14 +140,18 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
         self.floor_shape = None
 
         # Create an executive/brain
-        self.executive = self.create_executive_system() # The executive system that coordinates ALL the systems
+        self.executive = (
+            self.create_executive_system()
+        )  # The executive system that coordinates ALL the systems
 
     def add_cast_and_build(
         self,
         cast: Tuple[Role, Performer] = [],
         figure_naming_convention: FigureNamingConvention = FigureNamingConvention.kHierarchical,
     ) -> Tuple[Diagram, Context]:
-        super().add_cast_and_build(cast, with_watcher=True, figure_naming_convention=figure_naming_convention)
+        super().add_cast_and_build(
+            cast, with_watcher=True, figure_naming_convention=figure_naming_convention
+        )
 
         return self.diagram, self.diagram_context
 
@@ -146,9 +159,7 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
         self,
         floor_mass: float = 100.0,
         plant: MultibodyPlant = None,
-    ) -> Tuple[
-        float, List[float], ModelInstanceIndex, JointActuator
-    ]:
+    ) -> Tuple[float, List[float], ModelInstanceIndex, JointActuator]:
         """
         Description
         -----------
@@ -159,7 +170,7 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
             plant: MultibodyPlant = self.plant
 
         # Create a box urdf for the floor
-        floor_shape = [10.0, 10.0, 0.1] # Length, Width, Height
+        floor_shape = [10.0, 10.0, 0.1]  # Length, Width, Height
         floor_geometry_defn = BoxDefinition(size=floor_shape)
 
         # Create a urdf for the floor
@@ -167,7 +178,7 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
             name="floor",
             shape=floor_geometry_defn,
             mass=floor_mass,
-        ) 
+        )
         floor_urdf = floor_urdf_defn.write_to_file()
 
         # Add the floor to the plant
@@ -179,7 +190,9 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
             PrismaticJoint(
                 name="floor_joint",
                 frame_on_parent=plant.world_frame(),
-                frame_on_child=plant.GetFrameByName(get_name_of_first_body_in_urdf(floor_urdf)),
+                frame_on_child=plant.GetFrameByName(
+                    get_name_of_first_body_in_urdf(floor_urdf)
+                ),
                 axis=[0, 0, 1],
             )
         )
@@ -218,7 +231,9 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
         )
 
         # Add the floor
-        floor_mass, self.floor_shape, self.floor_model_index, self.floor_actuator = self.add_floor_to_plant()
+        floor_mass, self.floor_shape, self.floor_model_index, self.floor_actuator = (
+            self.add_floor_to_plant()
+        )
 
         # Connect the plant to the meshcat, if requested
         if self.meshcat_port_number is not None:
@@ -253,7 +268,9 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
 
         # Create a piecewise trajectory for the gripper to follow'
         joint_position_samples = []
-        joint_position_samples.append(p_gripper0.reshape(-1, 1).tolist()) # This wild compression is needed because of bugs in Drake. :'(
+        joint_position_samples.append(
+            p_gripper0.reshape(-1, 1).tolist()
+        )  # This wild compression is needed because of bugs in Drake. :'(
         joint_position_samples.append(p_gripper0.reshape(-1, 1).tolist())
         joint_position_samples.append(p_gripper_final.reshape(-1, 1).tolist())
         gripper_trajectory = PiecewisePolynomial.FirstOrderHold(
@@ -267,7 +284,6 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
         )
         gripper_trajectory_source.set_name("[Gripper] Trajectory Source")
         return gripper_trajectory_source
-
 
     def add_gripper_controller_and_connect(self):
         # Setup
@@ -316,7 +332,6 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
             gripper_controller.GetInputPort("gripper_state"),
         )
 
-
     def add_floor_controller_and_connect(self, floor_mass: float):
         # Setup
         plant: MultibodyPlant = self.plant
@@ -325,8 +340,8 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
         z_floor = self.find_floor_z_via_line_search()
 
         # Connect a PID Controller to the floor actuator
-        kp = np.array([[floor_mass * 9.81 * 1.0e0]]) #Idk how I'm picking this number.
-        ki = np.zeros(kp.shape) # 0.1 * np.sqrt(kp)
+        kp = np.array([[floor_mass * 9.81 * 1.0e0]])  # Idk how I'm picking this number.
+        ki = np.zeros(kp.shape)  # 0.1 * np.sqrt(kp)
         kd = 4.0 * np.sqrt(kp)
         floor_controller = self.builder.AddSystem(
             PidController(kp=kp, ki=ki, kd=kd),
@@ -337,7 +352,9 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
         # output to keep the floor at a constant height
         # (i.e., the weight of the object)
         feedforward_term = self.builder.AddSystem(
-            ConstantVectorSource(np.array([[floor_mass * 9.81]])),  # Weight of the object
+            ConstantVectorSource(
+                np.array([[floor_mass * 9.81]])
+            ),  # Weight of the object
         )
         feedforward_term.set_name("[Floor] Feedforward")
 
@@ -388,26 +405,22 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
         return executive
 
     def create_floor_trajectory_source(
-        self,
-        z_floor: float
+        self, z_floor: float
     ) -> Tuple[FlexiblePortSwitch]:
         # Setup
         builder: DiagramBuilder = self.builder
 
-        #Create a proper trajectory source for the floor so that it slowly falls away
+        # Create a proper trajectory source for the floor so that it slowly falls away
         floor_target_height_source = builder.AddSystem(
             OpenLoopPlanDispenser(2, speed=0.25),
         )
 
         # Create the trajectory that will be run
-        simple_plan = np.array([
-            [z_floor, 0.0],
-            [z_floor - 10.0, 0.0]
-        ])
+        simple_plan = np.array([[z_floor, 0.0], [z_floor - 10.0, 0.0]])
         floor_trajectory_source = builder.AddSystem(
             ConstantValueSource(AbstractValue.Make(simple_plan))
         )
-        
+
         builder.Connect(
             floor_trajectory_source.get_output_port(),
             floor_target_height_source.GetInputPort("plan"),
@@ -447,7 +460,9 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
 
         # Add the object to the shadow plant
         model_idcs = Parser(plant=shadow_plant).AddModels(self.path_to_object)
-        assert len(model_idcs) == 1, f"Only one model should be added; received {len(model_idcs)}"
+        assert (
+            len(model_idcs) == 1
+        ), f"Only one model should be added; received {len(model_idcs)}"
         model_idx = model_idcs[0]
         model_name = shadow_plant.GetModelInstanceName(model_idx)
 
@@ -498,15 +513,17 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
             if lower_left[2] < objects_minimum_z:
                 objects_minimum_z = lower_left[2]
                 print(f"  + New z_out: {objects_minimum_z}")
-        
+
         # If we didn't find any geometry, raise an error
         if objects_minimum_z == 1_000.0:
             raise ValueError("Unable to find geometry for the manipuland.")
-        
+
         # If we found a geometry, then we need to set the floor height
         # using the known shape of the table
 
-        return objects_minimum_z - self.floor_shape[2]*0.5  # Subtract the height of the floor
+        return (
+            objects_minimum_z - self.floor_shape[2] * 0.5
+        )  # Subtract the height of the floor
 
     def find_floor_z_via_line_search(
         self,
@@ -531,10 +548,10 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
         if not collision_detected:
             # If no collision detected, return the initial guess
             return z_floor
-        
+
         # If we have a collision, then we need to perform a line search
         # to find the height that is collision free
-        
+
         # Start with a small step size
         step_size = floor_shape[2] * 0.25  # 25% of the floor height
 
@@ -550,7 +567,6 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
                 # If no collision detected, return the current height
                 print(f"Found collision-free height: {candidate_z_floor}")
                 return candidate_z_floor
-            
 
             print(f"Collision detected at height: {candidate_z_floor}")
             # If we have a collision, then increase the height
@@ -558,8 +574,8 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
 
             # If we exceed a certain height, break out of the loop
             if candidate_z_floor < -10.0:
-                break        
-                
+                break
+
         raise ValueError("Unable to find a collision-free height for the floor.")
 
     def find_X_WorldGripper(
@@ -580,9 +596,11 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
         shadow_plant = MultibodyPlant(self.time_step)
         model_idcs = Parser(plant=shadow_plant).AddModels(self.path_to_gripper)
         shadow_model_idx = model_idcs[0]
-        
+
         # Get the first body on the gripper
-        name_of_first_body_in_gripper = get_name_of_first_body_in_urdf(self.path_to_gripper)
+        name_of_first_body_in_gripper = get_name_of_first_body_in_urdf(
+            self.path_to_gripper
+        )
 
         # Weld the base link to the world frame
         shadow_plant.WeldFrames(
@@ -637,7 +655,9 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
 
         # Add the object to the shadow plant
         model_idcs = Parser(plant=shadow_plant).AddModels(self.path_to_object)
-        assert len(model_idcs) == 1, f"Only one model should be added; received {len(model_idcs)}"
+        assert (
+            len(model_idcs) == 1
+        ), f"Only one model should be added; received {len(model_idcs)}"
         model_idx = model_idcs[0]
         model_name = shadow_plant.GetModelInstanceName(model_idx)
 
@@ -664,7 +684,9 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
         )
 
         return collision_checking.using_point_pair_penetration(
-            shadow_plant, shadow_scene_graph, shadow_diagram_context,
+            shadow_plant,
+            shadow_scene_graph,
+            shadow_diagram_context,
         )
 
     @property
@@ -689,7 +711,9 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
             np.array([z_floor]),
         )
 
-        n_gripper_positions = find_number_of_positions_in_welded_model(self.path_to_gripper)
+        n_gripper_positions = find_number_of_positions_in_welded_model(
+            self.path_to_gripper
+        )
         plant.SetDefaultPositions(
             self.gripper_model_index,
             np.zeros((n_gripper_positions,)),
@@ -698,5 +722,3 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
     @property
     def suggested_roles(self) -> List[Role]:
         return []
-    
-    

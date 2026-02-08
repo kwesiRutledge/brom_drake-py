@@ -1,8 +1,7 @@
 from dataclasses import dataclass
 import numpy as np
-from pydrake.all import (
-    Frame
-)
+from pydrake.all import Frame
+
 
 @dataclass
 class Configuration:

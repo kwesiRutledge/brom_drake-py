@@ -1,4 +1,7 @@
-from brom_drake.utils.angles import RollPitchYawAngle, rpy_equivalent_body_rotation_order
+from brom_drake.utils.angles import (
+    RollPitchYawAngle,
+    rpy_equivalent_body_rotation_order,
+)
 from dataclasses import dataclass
 import numpy as np
 from pydrake.all import (
@@ -21,12 +24,18 @@ from pydrake.multibody.plant import MultibodyPlant
 from pydrake.multibody.tree import ModelInstanceIndex
 from typing import List, Tuple
 
-from brom_drake.systems.named_vector_selection_system import define_named_vector_selection_system
+from brom_drake.systems.named_vector_selection_system import (
+    define_named_vector_selection_system,
+)
 from brom_drake.utils.model_instances import get_all_bodies_in
 
 # Internal Imports
 from .configuration import Configuration as PuppetmakerConfiguration
-from .puppet_signature import PuppetSignature, PuppeteerJointSignature, AllJointSignatures
+from .puppet_signature import (
+    PuppetSignature,
+    PuppeteerJointSignature,
+    AllJointSignatures,
+)
 from brom_drake.file_manipulation.urdf import SimpleShapeURDFDefinition
 from brom_drake.file_manipulation.urdf.shapes import SphereDefinition
 from brom_drake.systems.conversion.rigid_transform_to_vector_system import (
@@ -34,15 +43,16 @@ from brom_drake.systems.conversion.rigid_transform_to_vector_system import (
     RigidTransformToVectorSystemConfiguration,
 )
 
+
 class Puppetmaker:
     """
     **Description**
-    
+
     This class turns a "free body" in Drake into a "puppet" whose pose and orientation
     can be controlled using 6 actuated joints (3 prismatic and 3 revolute).
 
     This object is used to:
-    
+
     - Add "invisible" actuators for moving a free body (i.e., `add_strings_for` or `add_actuators_for`), and
     - Control actuate a free body that has been added with the expected "puppet" actuators (i.e., `add_puppet_controller_for`).
 
@@ -51,13 +61,14 @@ class Puppetmaker:
         The 2 functions of the puppetmaker are designed to be used at different times.
         The `add_strings_for` or `add_actuators_for` methods MUST be called BEFORE finalizing the plant.
         The `add_puppet_controller_for` method MUST be called AFTER finalizing the plant.
-    
+
     **Notes**
-    
+
     - The puppet is assumed to be a free body (i.e., it has no existing joints connecting it to the world).
       After adding the puppet actuators, the puppet will NO LONGER be a free body.
     - You must call add_strings_for or add_actuators_for BEFORE finalizing the plant.
     """
+
     def __init__(
         self,
         plant: MultibodyPlant,
@@ -88,12 +99,12 @@ class Puppetmaker:
     ) -> Tuple[PrismaticJoint, JointActuator]:
         """
         **Description**
-        
+
         This method will add an prismatic joint in the direction `axis_dimension`
         between `previous_frame` and `next_frame`, along with an actuator to control it.
-        
+
         **Parameters**
-        
+
         axis_dimension: int
             The axis to translate in (0 for X, 1 for Y, 2 for Z).
 
@@ -107,12 +118,12 @@ class Puppetmaker:
             The name of the joint we are creating.
 
         **Returns**
-        
+
         translation_joint_ii: PrismaticJoint
             The created prismatic joint.
 
         translation_actuator_ii: JointActuator
-            The created actuator for the prismatic joint.        
+            The created actuator for the prismatic joint.
         """
         # Setup
         plant: MultibodyPlant = self.plant
@@ -154,7 +165,7 @@ class Puppetmaker:
         *Parameters*
 
         axis_dimension: int
-            The axis to rotate about 
+            The axis to rotate about
         """
         # Setup
         plant: MultibodyPlant = self.plant
@@ -188,7 +199,7 @@ class Puppetmaker:
             joint_name + "_actuator",
             rotation_joint_ii,
         )
-        
+
         # Return
         return rotation_joint_ii, rotation_actuator_ii
 
@@ -215,7 +226,7 @@ class Puppetmaker:
             sphere_ii_bodies = plant.GetBodyIndices(sphere_ii)
             sphere_ii_frame = plant.get_body(sphere_ii_bodies[0]).body_frame()
 
-            joint_ii, joint_actuator_ii =self.add_actuated_prismatic_joint(
+            joint_ii, joint_actuator_ii = self.add_actuated_prismatic_joint(
                 axis_dimension=axis_dimension,
                 previous_frame=previous_frame,
                 next_frame=sphere_ii_frame,
@@ -231,8 +242,7 @@ class Puppetmaker:
 
         return [
             PuppeteerJointSignature(
-                joint=joints[ii],
-                joint_actuator=joint_actuators[ii]
+                joint=joints[ii], joint_actuator=joint_actuators[ii]
             )
             for ii in range(len(joints))
         ]
@@ -251,12 +261,12 @@ class Puppetmaker:
         Because the puppet's orientation is controlled using roll-pitch-yaw angles,
         the order of the revolute joints will correspond to the standard body rotation
         order for roll-pitch-yaw (note this is not roll first, then pitch, then yaw).
-        
+
 
         *Notes*
 
         This function expects 3 massless sphere inputs.
-        The first sphere in the list should be the one representing the last 
+        The first sphere in the list should be the one representing the last
         translation sphere (i.e., the one we should connect the first revolute sphere to.)
         """
         # Setup
@@ -280,10 +290,10 @@ class Puppetmaker:
                 target_model=target_model,
                 rpy_selection=rpy_angle,
             )
-            
+
             # Compute the next frame to connect to from sphere_ii
             # It will be the only frame in the sphere model
-            sphere_ii = massless_sphere_indices[axis_dimension+1]
+            sphere_ii = massless_sphere_indices[axis_dimension + 1]
             sphere_ii_bodies = plant.GetBodyIndices(sphere_ii)
             sphere_ii_frame = plant.get_body(sphere_ii_bodies[0]).body_frame()
 
@@ -320,8 +330,7 @@ class Puppetmaker:
 
         return [
             PuppeteerJointSignature(
-                joint=joints[ii],
-                joint_actuator=joint_actuators[ii]
+                joint=joints[ii], joint_actuator=joint_actuators[ii]
             )
             for ii in range(len(joints))
         ]
@@ -334,9 +343,9 @@ class Puppetmaker:
         *Description*
 
         Adds the necessary actuators for the puppet's joints.
-        
+
         *Parameters*
-        
+
         target_model: pydrake.multibody.tree.ModelInstanceIndex
             The model instance index of the puppet to add actuators for.
         """
@@ -348,7 +357,7 @@ class Puppetmaker:
     ) -> PuppetSignature:
         """
         *Description*
-        
+
         Creates actuated joints on the object we want to be the "puppet" so that we can control
         its entire pose. This will be 6 joints:
 
@@ -375,7 +384,9 @@ class Puppetmaker:
             )
 
         # Create some fictitious bodies which will be used to connect some new actuators
-        translation_ghost_models, revolute_ghost_models = self.create_ghost_bodies_for_actuators()
+        translation_ghost_models, revolute_ghost_models = (
+            self.create_ghost_bodies_for_actuators()
+        )
 
         # Create Three Translation Joints
         prismatic_signatures = self.add_all_actuated_prismatic_joints(
@@ -386,7 +397,8 @@ class Puppetmaker:
         # Create the rotational joints
         revolute_signatures = self.add_all_actuated_revolute_joints(
             target_model=target_model,
-            massless_sphere_indices=[translation_ghost_models[-1]] + revolute_ghost_models,
+            massless_sphere_indices=[translation_ghost_models[-1]]
+            + revolute_ghost_models,
         )
 
         # Return
@@ -418,7 +430,7 @@ class Puppetmaker:
 
         # Create the adder system
         feedforward_adder = builder.AddNamedSystem(
-            name=f"[{self.config.name}] Feedforward Adder for puppeteering \"{signature.name}\"",
+            name=f'[{self.config.name}] Feedforward Adder for puppeteering "{signature.name}"',
             system=Adder(
                 num_inputs=2,
                 size=n_actuators_for_puppet,
@@ -428,20 +440,20 @@ class Puppetmaker:
         # Create a constant vector source to provide feedforward gravity compensation
         # for the linear actuators
         gravity_field = plant.gravity_field()
-        gravity_vector = gravity_field.gravity_vector() # Returns the gravity vector in world frame in units of m/s^2
+        gravity_vector = (
+            gravity_field.gravity_vector()
+        )  # Returns the gravity vector in world frame in units of m/s^2
 
         # Calculate mass of the puppet
         bodies_in_puppet = get_all_bodies_in(plant, signature.model_instance_index)
-        total_mass = np.sum(
-            [body_ii.default_mass() for body_ii in bodies_in_puppet]
-        )
+        total_mass = np.sum([body_ii.default_mass() for body_ii in bodies_in_puppet])
 
         gravity_compensation = np.zeros((n_actuators_for_puppet,))
         gravity_compensation[:3] = -total_mass * gravity_vector
 
         # Create the constant vector source
         gravity_compensation_source = builder.AddNamedSystem(
-            name=f"[{self.config.name}] Gravity Compensation for puppeteering \"{signature.name}\"",
+            name=f'[{self.config.name}] Gravity Compensation for puppeteering "{signature.name}"',
             system=ConstantVectorSource(gravity_compensation),
         )
 
@@ -459,15 +471,15 @@ class Puppetmaker:
         builder: DiagramBuilder,
         Kp: np.ndarray = None,
         Kd: np.ndarray = None,
-    ) -> Tuple[RigidTransformToVectorSystem, PassThrough|None]:
+    ) -> Tuple[RigidTransformToVectorSystem, PassThrough | None]:
         """
         *Description*
-        
+
         This method will create a simple PID controller to actuate the puppet
         to a desired pose.
 
         *Parameters*
-        
+
         signature : PuppetSignature
             The signature of the puppet to be controlled.
 
@@ -476,12 +488,12 @@ class Puppetmaker:
 
         Kp : np.ndarray, optional
             The proportional gain for the PID controller. If not provided, a default value will be used.
-            
+
         Kd : np.ndarray, optional
             The derivative gain for the PID controller. If not provided, a default value will be used.
 
         *Returns*
-        
+
         pose_to_vector_system : RigidTransformToVectorSystem
             The system that converts the desired pose to a vector format.
             This system is what provides the target to the PID controller.
@@ -499,7 +511,9 @@ class Puppetmaker:
         # Input Processing
         # - Verify that plant is finalized already
         if not self.plant.is_finalized():
-            raise ValueError("Plant is not finalized yet.\nPlant must be finalized before calling this method!")
+            raise ValueError(
+                "Plant is not finalized yet.\nPlant must be finalized before calling this method!"
+            )
 
         if Kp is None:
             bodies_in_puppet = plant.GetBodyIndices(signature.model_instance_index)
@@ -507,14 +521,16 @@ class Puppetmaker:
             for body_ii in bodies_in_puppet:
                 m += plant.get_body(body_ii).default_mass()
             Kp = np.zeros((n_actuators_for_puppet,))
-            Kp[:3] = np.array([1e2*m*gravity]*3)
-            Kp[3:] = np.array([1e0*m*gravity]*3)
+            Kp[:3] = np.array([1e2 * m * gravity] * 3)
+            Kp[3:] = np.array([1e0 * m * gravity] * 3)
 
         if Kd is None:
             Kd = np.sqrt(Kp)
 
         # Create a demultiplexer to combine all actuator inputs
-        actuator_demux, pass_through_system = self.create_actuator_demux(signature, builder)
+        actuator_demux, pass_through_system = self.create_actuator_demux(
+            signature, builder
+        )
 
         # Create the PID Controller
         controller: PidController = builder.AddSystem(
@@ -545,21 +561,17 @@ class Puppetmaker:
         # Connect a PoseToVector System to the PID controller
         # as reference.
         p2v_config = RigidTransformToVectorSystemConfiguration(
-            name=f"[{self.config.name}]Pose to vector for puppeteering \"{signature.name}\"",
+            name=f'[{self.config.name}]Pose to vector for puppeteering "{signature.name}"',
             output_format="vector_xyz_euler(rpy)",
         )
-        pose_to_vector = builder.AddSystem(
-            RigidTransformToVectorSystem(p2v_config)
-        )
+        pose_to_vector = builder.AddSystem(RigidTransformToVectorSystem(p2v_config))
 
         # Reference signal is a state which contains two pieces: a pose and a twist
         # - Target Twist is zero
-        zero_twist_source = builder.AddSystem(
-            ConstantVectorSource(np.zeros((6,)))
-        )
+        zero_twist_source = builder.AddSystem(ConstantVectorSource(np.zeros((6,))))
 
         target_state_mux = builder.AddNamedSystem(
-            name=f"[{self.config.name}] Target State Mux for puppeteering \"{signature.name}\"",
+            name=f'[{self.config.name}] Target State Mux for puppeteering "{signature.name}"',
             system=Multiplexer(input_sizes=[6, 6]),
         )
 
@@ -573,7 +585,7 @@ class Puppetmaker:
             sequence_of_names_for_output=["x", "y", "z", "yaw", "pitch", "roll"],
         )
         builder.AddNamedSystem(
-            name=f"[{self.config.name}] RPY Ordering Selection for puppeteering \"{signature.name}\"",
+            name=f'[{self.config.name}] RPY Ordering Selection for puppeteering "{signature.name}"',
             system=rpy_ordering_selection_system,
         )
 
@@ -590,7 +602,7 @@ class Puppetmaker:
             zero_twist_source.get_output_port(0),
             target_state_mux.get_input_port(1),
         )
-        
+
         # Connect mux output (i.e., the desired state) to PID
         builder.Connect(
             target_state_mux.get_output_port(0),
@@ -625,16 +637,16 @@ class Puppetmaker:
 
     def config_from_initialization_params(
         self,
-        puppet_anchored_to: Frame|None,
-        frame_on_puppet: Frame|None,
-        name: str|None,
+        puppet_anchored_to: Frame | None,
+        frame_on_puppet: Frame | None,
+        name: str | None,
         sphere_radius: float = None,
         config: PuppetmakerConfiguration = None,
     ) -> PuppetmakerConfiguration:
         # Input Checking
         if config is not None:
-            return config # If the config was provided, then simply return that.
-        
+            return config  # If the config was provided, then simply return that.
+
         # If config is not given, then we will try to create it.
 
         # Setup
@@ -683,8 +695,8 @@ class Puppetmaker:
 
         # - Create a massive multiplexer to combine all of the states (2 each) of the models (there should be 6) in the puppet
         state_mux = builder.AddNamedSystem(
-            name=f"[{self.config.name}] State Mux for puppeteering \"{signature.name}\"",
-            system=Multiplexer(num_scalar_inputs=2*signature.n_models),
+            name=f'[{self.config.name}] State Mux for puppeteering "{signature.name}"',
+            system=Multiplexer(num_scalar_inputs=2 * signature.n_models),
         )
 
         # - Create connections from the state of each puppet model (comes from the plant)
@@ -742,10 +754,10 @@ class Puppetmaker:
         self,
         signature: PuppetSignature,
         builder: DiagramBuilder,
-    ) -> Tuple[Demultiplexer, PassThrough|None]:
+    ) -> Tuple[Demultiplexer, PassThrough | None]:
         """
         *Description*
-        
+
         This method creates a demultiplexer to split the actuator inputs
         to the puppet's various models.
         """
@@ -759,21 +771,23 @@ class Puppetmaker:
         )
 
         # Connect demultiplexer to each of the actuators
-        pass_through_system = None # Default output, if the puppet has no actuators
+        pass_through_system = None  # Default output, if the puppet has no actuators
 
         for ii, model_ii in enumerate(signature.all_models):
             if plant.num_actuators(model_ii) == 0:
                 continue
 
-            print(f"n_actuators for model {plant.GetModelInstanceName(model_ii)}: {plant.num_actuators(model_ii)}")
+            print(
+                f"n_actuators for model {plant.GetModelInstanceName(model_ii)}: {plant.num_actuators(model_ii)}"
+            )
             # print(f"Model #{ii}'s actuators: {plant.GetActuatorNames(model_ii)}")
 
             # for port_jj in plant.GetActuatorNames(model_ii):
             #     print(f"Actuator on model {plant.GetModelInstanceName(model_ii)}: {port_jj}")
-                
+
             if plant.num_actuators(model_ii) == 1:
                 # If there is only one actuator for this model,
-                # then it is the actuator that we created and 
+                # then it is the actuator that we created and
                 # we can connect it directly to the demux input
 
                 builder.Connect(
@@ -785,10 +799,12 @@ class Puppetmaker:
                 # then we will need to create a passthrough system to
                 # pass the "default" actuator inputs for the puppet's (default) actuated joints
                 # and a separate passthrough system to pass the "puppet" actuator input for puppeteering.
-                
-                default_actuator_pass_through, puppeteer_pass_through = self.create_actuator_passthrough_for_puppet_with_actuated_joints(
-                    signature=signature,
-                    builder=builder,
+
+                default_actuator_pass_through, puppeteer_pass_through = (
+                    self.create_actuator_passthrough_for_puppet_with_actuated_joints(
+                        signature=signature,
+                        builder=builder,
+                    )
                 )
                 pass_through_system = default_actuator_pass_through
 
@@ -796,10 +812,10 @@ class Puppetmaker:
                 builder.Connect(
                     actuator_demux.get_output_port(ii),
                     puppeteer_pass_through.get_input_port(),
-                )                
+                )
 
         return actuator_demux, pass_through_system
-    
+
     def create_actuator_passthrough_for_puppet_with_actuated_joints(
         self,
         signature: PuppetSignature,
@@ -807,7 +823,7 @@ class Puppetmaker:
     ) -> Tuple[PassThrough, PassThrough]:
         """
         *Description*
-        
+
         This method creates two passthrough systems:
         1. passes the "default" actuator inputs for the puppet's (default) actuated joints,
         2. passes the "puppet" actuator input for puppeteering.
@@ -825,16 +841,16 @@ class Puppetmaker:
         plant: MultibodyPlant = self.plant
         puppet_model_idx = signature.model_instance_index
         n_default_actuators_in_puppet = plant.num_actuators(puppet_model_idx)
-        
+
         # Create a Multiplexer system to combine all actuator inputs
         passthrough_mux = builder.AddNamedSystem(
-            name=f"[{self.config.name}] Total Actuation Mux for puppeteering \"{signature.name}\" WITH default inputs needed",
-            system=Multiplexer(input_sizes=[n_default_actuators_in_puppet-1,1]),
+            name=f'[{self.config.name}] Total Actuation Mux for puppeteering "{signature.name}" WITH default inputs needed',
+            system=Multiplexer(input_sizes=[n_default_actuators_in_puppet - 1, 1]),
         )
 
         # Create a passthrough system to pass the combined actuator inputs to the puppet
         default_actuator_inputs_passthrough = builder.AddSystem(
-            PassThrough(value=np.zeros((n_default_actuators_in_puppet-1,))),
+            PassThrough(value=np.zeros((n_default_actuators_in_puppet - 1,))),
         )
 
         # Connect the default actuator inputs to the multiplexer
@@ -915,18 +931,20 @@ class Puppetmaker:
 
         return translation_ghost_models, revolute_ghost_models
 
-    def add_massless_sphere_to_plant_with_name(self, name: str, color: np.ndarray = None) -> ModelInstanceIndex:
+    def add_massless_sphere_to_plant_with_name(
+        self, name: str, color: np.ndarray = None
+    ) -> ModelInstanceIndex:
         """
         *Description*
-        
+
         This method adds a sphere with:
 
         - nearly zero mass
         - no collision geometry,
         - and an associated color
-        
-        to the Puppeteer's plant. 
-        
+
+        to the Puppeteer's plant.
+
         The sphere's name will be assigned by the input to the function.
         """
         # Setup
@@ -974,7 +992,7 @@ class Puppetmaker:
         self,
         model_instance_index: ModelInstanceIndex,
         signature: PuppetSignature,
-    ) -> int|None:
+    ) -> int | None:
         """
         Description
         -----------
@@ -990,29 +1008,36 @@ class Puppetmaker:
             print("state name: ", state_name_ii)
             # Check to see if name is either:
             # - A Translational joint state name (for the target model)
-            for translation_joint_name_jj in self.translation_joint_names(target_model, remove_puppeteer_prefix=True):
+            for translation_joint_name_jj in self.translation_joint_names(
+                target_model, remove_puppeteer_prefix=True
+            ):
                 print("- translation_joint_name: ", translation_joint_name_jj)
-                if (translation_joint_name_jj in state_name_ii) and ("_x" in state_name_ii):
+                if (translation_joint_name_jj in state_name_ii) and (
+                    "_x" in state_name_ii
+                ):
                     return ii
-                
+
             # - A Rotational Joint state name
-            for rotational_joint_name_jj in self.rotation_joint_names(target_model, remove_puppeteer_prefix=True):
+            for rotational_joint_name_jj in self.rotation_joint_names(
+                target_model, remove_puppeteer_prefix=True
+            ):
                 print("- rotational_joint_name: ", rotational_joint_name_jj)
-                if (rotational_joint_name_jj in state_name_ii) and ("_q" in state_name_ii):
+                if (rotational_joint_name_jj in state_name_ii) and (
+                    "_q" in state_name_ii
+                ):
                     return ii
-                
+
         # If none of the states contained a joint name, then return None
         return None
-
 
     def find_index_of_velocity_state_in(
         self,
         model_instance_index: ModelInstanceIndex,
         signature: PuppetSignature,
-    ) -> int|None:
+    ) -> int | None:
         """
         *Description*
-        
+
         This method finds the names of the "velocity" component for the
         state of the joint connected to model_instance_index.
 
@@ -1032,15 +1057,23 @@ class Puppetmaker:
         for ii, state_name_ii in enumerate(plant.GetStateNames(model_instance_index)):
             # Check to see if name is either:
             # - A Translational joint state name
-            for translation_joint_name_jj in self.translation_joint_names(target_model, remove_puppeteer_prefix=True):
-                if (translation_joint_name_jj in state_name_ii) and ("_v" in state_name_ii):
+            for translation_joint_name_jj in self.translation_joint_names(
+                target_model, remove_puppeteer_prefix=True
+            ):
+                if (translation_joint_name_jj in state_name_ii) and (
+                    "_v" in state_name_ii
+                ):
                     return ii
-                
+
             # - A Rotational Joint state name
-            for rotational_joint_name_jj in self.rotation_joint_names(target_model, remove_puppeteer_prefix=True):
-                if (rotational_joint_name_jj in state_name_ii) and ("_w" in state_name_ii):
+            for rotational_joint_name_jj in self.rotation_joint_names(
+                target_model, remove_puppeteer_prefix=True
+            ):
+                if (rotational_joint_name_jj in state_name_ii) and (
+                    "_w" in state_name_ii
+                ):
                     return ii
-                
+
         # If none of the states contained a joint name, then return None
         return None
 
@@ -1052,7 +1085,7 @@ class Puppetmaker:
     ) -> str:
         """
         *Description*
-        
+
         This method returns the name of a specific rotation joint created for the puppet.
 
         *Parameters*
@@ -1075,7 +1108,9 @@ class Puppetmaker:
         target_model_name = plant.GetModelInstanceName(target_model)
         puppeteer_prefix = "" if remove_puppeteer_prefix else f"[{config.name}]"
 
-        return f"{puppeteer_prefix}{target_model_name}_rotation_joint_{str(rpy_selection)}"
+        return (
+            f"{puppeteer_prefix}{target_model_name}_rotation_joint_{str(rpy_selection)}"
+        )
 
     def rotation_joint_names(
         self,
@@ -1084,7 +1119,7 @@ class Puppetmaker:
     ) -> List[str]:
         """
         *Description*
-        
+
         This method returns the names of all rotation joints created for the puppet.
 
         *Parameters*

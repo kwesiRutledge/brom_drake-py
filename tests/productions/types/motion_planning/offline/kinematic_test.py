@@ -16,8 +16,8 @@ class OfflineKinematicMotionPlanningProductionTest(unittest.TestCase):
     def test_easy_cast_and_build1(self):
         """
         Description:
-            This test checks the easy_cast_and_build method of the OfflineMotionPlanning 
-            production class. We will provide a single function as input to the function 
+            This test checks the easy_cast_and_build method of the OfflineMotionPlanning
+            production class. We will provide a single function as input to the function
             and it will define the cast for us.
         :return:
         """
@@ -41,5 +41,6 @@ class OfflineKinematicMotionPlanningProductionTest(unittest.TestCase):
 
         self.assertTrue(True)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

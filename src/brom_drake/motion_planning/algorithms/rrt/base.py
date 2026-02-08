@@ -1,6 +1,7 @@
 """
 base.py
 """
+
 from dataclasses import dataclass
 from typing import Tuple, Callable
 
@@ -9,8 +10,10 @@ import numpy as np
 from pydrake.geometry import SceneGraph
 from pydrake.multibody.plant import MultibodyPlant
 from pydrake.multibody.tree import ModelInstanceIndex
+
 # Internal Imports
 from brom_drake.motion_planning.algorithms.motion_planner import MotionPlanner
+
 
 @dataclass
 class BaseRRTPlannerConfig:
@@ -19,6 +22,7 @@ class BaseRRTPlannerConfig:
     prob_sample_goal: float = 0.25
     max_iterations: int = int(1e4)
     convergence_threshold: float = 1e-3
+
 
 class BaseRRTPlanner(MotionPlanner):
     def __init__(
@@ -39,24 +43,24 @@ class BaseRRTPlanner(MotionPlanner):
 
         # Use the parent class constructor
         super().__init__(
-            robot_model_idx, plant, scene_graph, 
+            robot_model_idx,
+            plant,
+            scene_graph,
             random_seed=self.config.random_seed,
         )
 
     def find_nearest_node(
-        self,
-        rrt: nx.DiGraph,
-        q_random: np.ndarray
+        self, rrt: nx.DiGraph, q_random: np.ndarray
     ) -> Tuple[nx.classes.reportviews.NodeView, int]:
         """
         Description:
             This function finds the nearest node in the RRT to the random configuration.
         """
         nearest_node = None
-        min_distance = float('inf')
+        min_distance = float("inf")
 
         for node in rrt.nodes:
-            distance = np.linalg.norm(rrt.nodes[node]['q'] - q_random)
+            distance = np.linalg.norm(rrt.nodes[node]["q"] - q_random)
             if distance < min_distance:
                 min_distance = distance
                 nearest_node_idx = node
@@ -79,16 +83,16 @@ class BaseRRTPlanner(MotionPlanner):
         q_goal = q_goal.flatten()
         if q_start.shape[0] != self.dim_q or q_goal.shape[0] != self.dim_q:
             raise ValueError(
-                f"Start configuration shape ({q_start.shape}) and goal configuration " +
-                f"shape ({q_goal.shape}) must match the dimension of the robot ({self.dim_q})."
+                f"Start configuration shape ({q_start.shape}) and goal configuration "
+                + f"shape ({q_goal.shape}) must match the dimension of the robot ({self.dim_q})."
             )
 
         if collision_check_fcn is None:
-            collision_check_fcn =  self.check_collision_in_config
+            collision_check_fcn = self.check_collision_in_config
 
         # Setup
         rrt = nx.DiGraph()
-        rrt.add_node(0, q=q_start) # Make this graph contain all configurations
+        rrt.add_node(0, q=q_start)  # Make this graph contain all configurations
         prob_sample_goal = self.config.prob_sample_goal
 
         # RRT Planner
@@ -103,7 +107,7 @@ class BaseRRTPlanner(MotionPlanner):
             nearest_node, nearest_node_idx = self.find_nearest_node(rrt, q_random)
 
             # Steer from nearest node to random configuration
-            q_new = self.steer(nearest_node['q'], q_random)
+            q_new = self.steer(nearest_node["q"], q_random)
 
             # Check for collisions
             if collision_check_fcn(q_new):
@@ -111,7 +115,7 @@ class BaseRRTPlanner(MotionPlanner):
 
             # Add new node to the tree
             rrt.add_node(rrt.number_of_nodes(), q=q_new)
-            rrt.add_edge(nearest_node_idx, rrt.number_of_nodes()-1)
+            rrt.add_edge(nearest_node_idx, rrt.number_of_nodes() - 1)
 
             # Check if we have reached the goal
             if np.linalg.norm(q_new - q_goal) < self.config.convergence_threshold:
@@ -119,21 +123,19 @@ class BaseRRTPlanner(MotionPlanner):
                 print(f"Check all points in path: {rrt.nodes}")
                 for node in rrt.nodes:
                     print(f"Node {node}: {rrt.nodes[node]}")
-                    collision_check_value = collision_check_fcn(rrt.nodes[node]['q'])
+                    collision_check_value = collision_check_fcn(rrt.nodes[node]["q"])
                     if collision_check_value:
-                        print(f"Collision check node: {collision_check_fcn(rrt.nodes[node]['q'])}")
-                return rrt, rrt.number_of_nodes()-1
+                        print(
+                            f"Collision check node: {collision_check_fcn(rrt.nodes[node]['q'])}"
+                        )
+                return rrt, rrt.number_of_nodes() - 1
 
         # If we exit the loop without finding a path to the goal,
         # return the RRT and indicate failure
         print("Max iterations reached without finding a path to the goal.")
         return rrt, -1
 
-    def steer(
-        self,
-        nearest_node,
-        q_random: np.ndarray
-    ) -> np.ndarray:
+    def steer(self, nearest_node, q_random: np.ndarray) -> np.ndarray:
         """
         Description
         -----------

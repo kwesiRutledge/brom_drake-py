@@ -3,9 +3,13 @@ import networkx as nx
 
 # Internal Imports
 from brom_drake.systems.network_fsm import (
-    NetworkXFSM, FSMOutputDefinition, FSMTransitionCondition, FSMTransitionConditionType
+    NetworkXFSM,
+    FSMOutputDefinition,
+    FSMTransitionCondition,
+    FSMTransitionConditionType,
 )
 from .phases import AttemptGraspWithStaticWristPhase
+
 
 # Define some internal classes/enums
 @dataclass
@@ -16,6 +20,7 @@ class Script:
     This class defines the "script" or the sequence of events that is meant to happen in the
     AttemptGrasp production.
     """
+
     settling_time_on_floor: float = 2.0
     grasp_closing_time: float = 5.0
     post_grasp_settling_time: float = 1.0
@@ -30,7 +35,7 @@ class Script:
             outputs=[
                 FSMOutputDefinition("start_floor", False),  # Floor trigger
                 FSMOutputDefinition("start_gripper", False),  # Gripper trigger
-            ]
+            ],
         )
 
         # Third State: Close gripper
@@ -38,7 +43,7 @@ class Script:
             AttemptGraspWithStaticWristPhase.kGripperClosing,
             outputs=[
                 FSMOutputDefinition("start_gripper", True),
-            ]
+            ],
         )
 
         # Fourth State: Drop the floor
@@ -46,7 +51,7 @@ class Script:
             AttemptGraspWithStaticWristPhase.kFloorDrop,
             outputs=[
                 FSMOutputDefinition("start_floor", True),
-            ]
+            ],
         )
 
     def start_time_of_phase(self, phase: AttemptGraspWithStaticWristPhase) -> float:
@@ -57,7 +62,11 @@ class Script:
         elif phase == AttemptGraspWithStaticWristPhase.kObjectSettlingInGrasp:
             return self.settling_time_on_floor + self.grasp_closing_time
         elif phase == AttemptGraspWithStaticWristPhase.kFloorDrop:
-            return self.settling_time_on_floor + self.grasp_closing_time + self.post_grasp_settling_time
+            return (
+                self.settling_time_on_floor
+                + self.grasp_closing_time
+                + self.post_grasp_settling_time
+            )
         else:
             raise ValueError(f"Phase {phase} not recognized!")
 
@@ -74,13 +83,13 @@ class Script:
         # Create time from init -> Let object settle
         graph.add_edge(
             AttemptGraspWithStaticWristPhase.kObjectSettlingOnFloor,
-            AttemptGraspWithStaticWristPhase.kGripperClosing, 
+            AttemptGraspWithStaticWristPhase.kGripperClosing,
             conditions=[
                 FSMTransitionCondition(
                     condition_type=FSMTransitionConditionType.kAfterThisManySeconds,
                     condition_value=self.settling_time_on_floor,
                 )
-            ]
+            ],
         )
 
         if self.post_grasp_settling_time > 0.0:
@@ -93,7 +102,7 @@ class Script:
                         condition_type=FSMTransitionConditionType.kAfterThisManySeconds,
                         condition_value=self.grasp_closing_time,
                     )
-                ]
+                ],
             )
 
             # Create time from end of grasp closing to floor drop start
@@ -105,7 +114,7 @@ class Script:
                         condition_type=FSMTransitionConditionType.kAfterThisManySeconds,
                         condition_value=self.post_grasp_settling_time,
                     )
-                ]
+                ],
             )
 
         else:
@@ -118,11 +127,15 @@ class Script:
                         condition_type=FSMTransitionConditionType.kAfterThisManySeconds,
                         condition_value=self.grasp_closing_time,
                     )
-                ]
+                ],
             )
 
         return graph
 
     def total_time(self) -> float:
-        return self.settling_time_on_floor + self.grasp_closing_time + self.post_grasp_settling_time + self.drop_time
-    
+        return (
+            self.settling_time_on_floor
+            + self.grasp_closing_time
+            + self.post_grasp_settling_time
+            + self.drop_time
+        )

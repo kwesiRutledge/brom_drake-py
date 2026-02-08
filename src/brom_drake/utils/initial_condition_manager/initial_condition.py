@@ -5,24 +5,23 @@ from pydrake.all import (
     ModelInstanceIndex,
     MultibodyPlant,
     RigidTransform,
-    SpatialVelocity
+    SpatialVelocity,
 )
+
 
 @dataclass
 class InitialCondition:
     model_instance_index: ModelInstanceIndex
-    pose_wrt_parent: RigidTransform = None # Is parent always world?
+    pose_wrt_parent: RigidTransform = None  # Is parent always world?
     configuration: np.ndarray = None
     target_body_index: int = 0
 
     def set_initial_configuration(
-        self,
-        plant: MultibodyPlant,
-        diagram_context: Context = None
+        self, plant: MultibodyPlant, diagram_context: Context = None
     ):
         """
         *Description*
-        
+
         Set the initial configuration for the given model instance in the plant.
 
         Note: Defining the default positions will fail, if the context for the plant
@@ -36,20 +35,26 @@ class InitialCondition:
 
         # - If the plant is not yet finalized, then raise an exception!
         if not plant.is_finalized():
-            raise RuntimeError("Plant is not yet finalized! Finalize before calling set_initial_configuration()!")
+            raise RuntimeError(
+                "Plant is not yet finalized! Finalize before calling set_initial_configuration()!"
+            )
 
         # - If the configuration value exists, then verify that it has the correct size
         if len(self.configuration) != plant.num_positions(self.model_instance_index):
-            raise ValueError(f"Configuration size {len(self.configuration)} does not match plant's num_positions {plant.num_positions(self.model_instance_index)}")
+            raise ValueError(
+                f"Configuration size {len(self.configuration)} does not match plant's num_positions {plant.num_positions(self.model_instance_index)}"
+            )
 
         # Set initial configuration
         plant.SetDefaultPositions(self.model_instance_index, self.configuration)
-        print(f"Set default positions for model instance {self.model_instance_index} to {self.configuration}")
+        print(
+            f"Set default positions for model instance {self.model_instance_index} to {self.configuration}"
+        )
         if diagram_context is not None:
             plant.SetPositions(
                 plant.GetMyMutableContextFromRoot(diagram_context),
                 self.model_instance_index,
-                self.configuration
+                self.configuration,
             )
 
     def set_initial_pose(self, plant: MultibodyPlant, diagram_context: Context = None):
@@ -69,18 +74,18 @@ class InitialCondition:
 
         # Set initial pose
         plant.SetDefaultFreeBodyPose(
-            plant.get_body(target_body_index),
-            self.pose_wrt_parent)
-        
+            plant.get_body(target_body_index), self.pose_wrt_parent
+        )
+
         if diagram_context is not None:
             plant.SetFreeBodyPose(
                 plant.GetMyMutableContextFromRoot(diagram_context),
                 plant.get_body(target_body_index),
-                self.pose_wrt_parent)
-            
+                self.pose_wrt_parent,
+            )
+
             plant.SetFreeBodySpatialVelocity(
                 body=plant.get_body(target_body_index),
                 V_PB=SpatialVelocity.Zero(),
                 context=plant.GetMyMutableContextFromRoot(diagram_context),
             )
-        

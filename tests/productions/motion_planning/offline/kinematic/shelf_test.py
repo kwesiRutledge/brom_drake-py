@@ -4,7 +4,9 @@ from pydrake.systems.framework import DiagramBuilder
 import unittest
 
 from brom_drake.productions.ids import ProductionID
-from brom_drake.productions.motion_planning.offline.kinematic.shelf import ShelfPlanning1
+from brom_drake.productions.motion_planning.offline.kinematic.shelf import (
+    ShelfPlanning1,
+)
 from brom_drake.productions.roles.all import kKinematicMotionPlanner
 
 
@@ -20,14 +22,16 @@ class ShelfTest(unittest.TestCase):
 
         # Check that defaults are in place
         self.assertEqual(shelf_planning_production.id, ProductionID.kShelfPlanning1)
-        self.assertEqual(shelf_planning_production.suggested_roles(), [kKinematicMotionPlanner])
+        self.assertEqual(
+            shelf_planning_production.suggested_roles(), [kKinematicMotionPlanner]
+        )
 
         # Populate production with builder
         shelf_planning_production.add_supporting_cast()
         self.assertTrue(True)
 
     def test_add_cast_and_build1(self):
-        pass # TODO(kwesi) Implement this test
+        pass  # TODO(kwesi) Implement this test
 
     def test_goal_pose1(self):
         """
@@ -81,5 +85,6 @@ class ShelfTest(unittest.TestCase):
         # Return true if we get here
         self.assertTrue(True)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

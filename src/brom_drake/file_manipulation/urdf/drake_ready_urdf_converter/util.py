@@ -5,32 +5,34 @@ from typing import Union
 URDF_CONVERSION_LOG_LEVEL_NAME = "BROM_URDF_CONVERSION"
 URDF_CONVERSION_LEVEL = 21
 
+
 def does_drake_parser_support(filename: str) -> bool:
     """
     *Description*
-    
+
     This function cleanly answers whether the given 3d object
     file is supported by Drake.
-    
+
     *Parameters*
 
     filename: str
         The name of the file to check.
-    
+
     *Returns*
 
     does_support: bool
         True if the file is supported by Drake, False otherwise.
-    
+
     """
-    return ".obj" in filename # TODO(kwesi): Determine if .sdf should be put here.
+    return ".obj" in filename  # TODO(kwesi): Determine if .sdf should be put here.
+
 
 def create_transmission_element_for_joint(
     actuated_joint_name: str,
 ) -> ET.Element:
     """
     *Description*
-    
+
     This function creates a transmission element for the given joint.
 
     *Parameters*
@@ -66,13 +68,14 @@ def create_transmission_element_for_joint(
 
     return transmission
 
+
 def tree_contains_transmission_for_joint(
     tree: ET.ElementTree,
     actuated_joint_name: str,
 ) -> bool:
     """
     *Description*
-    
+
     This function determines if the given tree contains a transmission
     element for the given actuated joint.
 
@@ -101,9 +104,11 @@ def tree_contains_transmission_for_joint(
 
     # Check each of the tree's children to see if there is a transmission element
     for child in root:
-        child_tree_contains_transmission_for_joint = tree_contains_transmission_for_joint(
-            ET.ElementTree(child),
-            actuated_joint_name,
+        child_tree_contains_transmission_for_joint = (
+            tree_contains_transmission_for_joint(
+                ET.ElementTree(child),
+                actuated_joint_name,
+            )
         )
         if child_tree_contains_transmission_for_joint:
             return True
@@ -112,19 +117,20 @@ def tree_contains_transmission_for_joint(
     # then we return False
     return False
 
+
 def get_mesh_element_in(collision_element: ET.Element) -> Union[ET.Element, None]:
     """
     *Description*
-    
+
     This function finds the mesh element in the given collision element.
 
     *Parameters*
-    
+
     collision_element: ET.Element
         The collision element to search for a mesh element
-    
+
     *Returns*
-   
+
     new_element: ET.Element or None
         The mesh element if found, otherwise None
     """
@@ -135,23 +141,24 @@ def get_mesh_element_in(collision_element: ET.Element) -> Union[ET.Element, None
         mesh = geometry.find("mesh")
         if mesh is not None:
             return mesh
-    
+
     # If no mesh element is found, return None
     return None
+
 
 def find_mesh_file_path_in(collision_element: ET.Element) -> Union[Path, None]:
     """
     *Description*
-    
+
     This function finds the mesh filename in the given collision element.
 
     *Parameters*
-    
+
     collision_element: ET.Element
         The collision element to search for a mesh filename
-    
+
     *Returns*
-    
+
     mesh_file_path: Path|None
         The mesh filename if found, otherwise None
     """
@@ -161,9 +168,7 @@ def find_mesh_file_path_in(collision_element: ET.Element) -> Union[Path, None]:
     mesh_elt = get_mesh_element_in(collision_element)
     if mesh_elt is not None:
         # Return the filename attribute of the mesh element
-        return Path(
-            mesh_elt.attrib.get("filename", None)
-        )
-    
+        return Path(mesh_elt.attrib.get("filename", None))
+
     # If no mesh filename is found, return None
     return None

@@ -10,6 +10,7 @@ from brom_drake.utils import Performer
 from brom_drake.watchers.diagram_watcher.add_watcher import add_watcher_and_build
 from brom_drake.utils.initial_condition_manager import InitialConditionManager
 
+
 class BaseProduction:
     """
     *Description*
@@ -47,8 +48,9 @@ class BaseProduction:
     initial_condition_manager : InitialConditionManager
         The InitialConditionManager used to manage initial conditions
         for the production.
-        
+
     """
+
     def __init__(self, **kwargs):
         # Create a builder for the production
         self.builder = DiagramBuilder()
@@ -72,21 +74,21 @@ class BaseProduction:
     def add_supporting_cast(self):
         """
         *Description*
-        
+
         This method must be implemented by the subclass.
         It should add all "secondary" elements to the builder (i.e., the
         cast members that the user doesn't need to worry about).
-        
+
         """
         pass
 
     def suggested_roles(self) -> List[Role]:
         """
         *Description*
-        
+
         This method should be implemented by the subclass.
         It should return a list of roles that are suggested for the production.
-        
+
         *Returns*
 
         suggested_roles: List[Role]
@@ -101,10 +103,10 @@ class BaseProduction:
     ):
         """
         *Description*
-        
+
         This method should be implemented by the subclass. It should add the
         system to the role.
-        
+
         *Parameters*
 
         role: Role
@@ -139,10 +141,10 @@ class BaseProduction:
     ) -> Tuple[Diagram, Context]:
         """
         *Description*
-        
+
         This method builds the production.
         It assumes that all components have been added to the builder.
-        
+
         *Parameters*
 
         with_watcher: bool, optional
@@ -175,8 +177,7 @@ class BaseProduction:
         # Build the diagram
         if with_watcher:
             self.watcher, self.diagram, self.diagram_context = add_watcher_and_build(
-                builder,
-                figure_naming_convention=figure_naming_convention
+                builder, figure_naming_convention=figure_naming_convention
             )
         else:
             self.diagram = builder.Build()
@@ -205,13 +206,13 @@ class BaseProduction:
     def id(self) -> ProductionID:
         """
         *Description*
-        
+
         The unique identifier for the production.
 
         If not defined, returns ProductionID.kNotDefined.
-        
+
         *Returns*
-        
+
         ProductionID
             The unique identifier for the production.
         """

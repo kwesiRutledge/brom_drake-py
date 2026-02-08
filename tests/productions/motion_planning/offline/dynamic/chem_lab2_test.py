@@ -11,6 +11,7 @@ from brom_drake.motion_planning.algorithms.rrt.bidirectional_connect import (
 from brom_drake.productions.motion_planning.offline.dynamic.chem_lab2 import ChemLab2
 from brom_drake.productions.ids import ProductionID
 
+
 class ChemLab2Test(unittest.TestCase):
     def test_init1(self):
         """
@@ -32,10 +33,10 @@ class ChemLab2Test(unittest.TestCase):
         This test verifies that we can build the ChemLab2 without any errors.
         """
         # Setup
-        
+
         # Create the production
         production = ChemLab2(
-            meshcat_port_number=None, # Use None for CI
+            meshcat_port_number=None,  # Use None for CI
         )
 
         # Create a planner object which will be used to plan the motion
@@ -115,6 +116,7 @@ class ChemLab2Test(unittest.TestCase):
 
         # Return true if we get here
         self.assertTrue(True)
+
 
 if __name__ == "__main__":
     unittest.main()

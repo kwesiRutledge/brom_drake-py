@@ -3,14 +3,17 @@ Description:
     This file defines a Role class that is used to populate the
     production with ONLY systems that match the appropriate structure/signature.
 """
+
 from dataclasses import dataclass
 from typing import List
 
 from pydrake.systems.framework import DiagramBuilder
 
 from brom_drake.productions.roles.role_port_assignment import RolePortAssignment
+
 # Internal Imports
 from brom_drake.utils import Performer
+
 
 @dataclass
 class Role:
@@ -32,7 +35,7 @@ class Role:
 
     port_assignments: List[RolePortAssigment]
         Each element of this list describes:
-        
+
         - an external target (e.g., `LeafSystems`) that the role expects to connect to
         - the port on the ``LeafSystem`` that fills this role that should connect to that target.
 
@@ -82,7 +85,7 @@ class Role:
             ]
         )
 
-    
+
     The above example defines a Role with:
 
     - name: ``"Confirm-When-Grasp-Worked"``
@@ -107,6 +110,7 @@ class Role:
     role.
 
     """
+
     name: str
     description: str
     port_assignments: List[RolePortAssignment]
@@ -129,7 +133,7 @@ class Role:
 
             The ``.Build()`` method should not have been called on ``builder``
             before invoking this method.
-        
+
         *Parameters*
 
         builder: DiagramBuilder

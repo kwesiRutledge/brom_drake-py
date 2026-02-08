@@ -7,7 +7,7 @@ from pydrake.all import (
     MeshcatVisualizerParams,
     MultibodyPlant,
     Parser,
-    RigidTransform
+    RigidTransform,
 )
 from pydrake.all import Role as DrakeRole
 from typing import List
@@ -21,15 +21,17 @@ from brom_drake.utils.model_instances import (
 )
 from brom_drake.utils.triads import AddMultibodyTriad
 
+
 class BasicGraspingDebuggingProduction(BaseProduction):
     """
     **Description**
-    
+
     This base class is used to define several functions that are useful
     for any production that is used for basic grasping tasks.
     """
+
     def __init__(
-        self, 
+        self,
         path_to_object: str,
         path_to_gripper: str,
         X_ObjectGrasp: RigidTransform,
@@ -44,7 +46,7 @@ class BasicGraspingDebuggingProduction(BaseProduction):
         **Description**
 
         Defines the following fields for the production:
-        
+
         **Arguments**
 
         path_to_object: str
@@ -82,21 +84,23 @@ class BasicGraspingDebuggingProduction(BaseProduction):
         self.time_step = time_step
         self.gripper_color = gripper_color
         self.show_gripper_base_frame = show_gripper_base_frame
-        
+
         if X_ObjectGrasp is None:
             X_ObjectGrasp = RigidTransform()
         self.X_ObjectGripper = X_ObjectGrasp
-        
+
         self.meshcat_port_number = meshcat_port_number
         self.show_collision_geometries = show_collision_geometries
 
         # Assign the target frame on the gripper to the variable
         if target_body_on_gripper is None:
-            target_body_on_gripper = get_name_of_first_body_in_urdf(self.path_to_gripper)
+            target_body_on_gripper = get_name_of_first_body_in_urdf(
+                self.path_to_gripper
+            )
         else:
-            assert target_body_on_gripper in get_name_of_all_bodies_in_urdf(self.path_to_gripper), \
-                f"Target body \"{target_body_on_gripper}\" not found in gripper model; Valid body names are: {self.get_all_body_names_in_gripper()}."
-
+            assert target_body_on_gripper in get_name_of_all_bodies_in_urdf(
+                self.path_to_gripper
+            ), f'Target body "{target_body_on_gripper}" not found in gripper model; Valid body names are: {self.get_all_body_names_in_gripper()}.'
 
         self.target_body_name_on_gripper = target_body_on_gripper
 
@@ -111,7 +115,9 @@ class BasicGraspingDebuggingProduction(BaseProduction):
         self.manipuland_index, self.manipuland_name = None, None
         self.gripper_model_index, self.gripper_model_name = None, None
 
-    def add_gripper_to_plant(self, and_weld_to: Frame = None, with_X_WorldGripper: RigidTransform = None):
+    def add_gripper_to_plant(
+        self, and_weld_to: Frame = None, with_X_WorldGripper: RigidTransform = None
+    ):
         """
         **Description**
 
@@ -119,16 +125,16 @@ class BasicGraspingDebuggingProduction(BaseProduction):
         and then weld it to the origin.
         """
         # Setup
-        assert self.gripper_model_index is None, \
-            "The gripper model index is already set. Please DO NOT add the gripper to the plant before this function."
+        assert (
+            self.gripper_model_index is None
+        ), "The gripper model index is already set. Please DO NOT add the gripper to the plant before this function."
 
-        plant : MultibodyPlant = self.plant
+        plant: MultibodyPlant = self.plant
         gripper_color = self.gripper_color
 
         show_gripper_base_frame = self.show_gripper_base_frame
         if with_X_WorldGripper is None:
             with_X_WorldGripper = RigidTransform()
-        
 
         # Input Processing
         if gripper_color is not None:
@@ -145,9 +151,13 @@ class BasicGraspingDebuggingProduction(BaseProduction):
         temp_idcs = Parser(plant=self.plant).AddModels(
             self.path_to_gripper,
         )
-        assert len(temp_idcs) == 1, f"Only one model should be added; received {len(temp_idcs)}"
+        assert (
+            len(temp_idcs) == 1
+        ), f"Only one model should be added; received {len(temp_idcs)}"
         self.gripper_model_index = temp_idcs[0]
-        self.gripper_model_name = self.plant.GetModelInstanceName(self.gripper_model_index)
+        self.gripper_model_name = self.plant.GetModelInstanceName(
+            self.gripper_model_index
+        )
 
         # Draw the MultibodyTriad for the
         # - Target Frame on the Gripper
@@ -164,14 +174,15 @@ class BasicGraspingDebuggingProduction(BaseProduction):
         )
 
         # Add the gripper triad to the builder
-        target_is_different_from_gripper_base = target_frame.body().name() != gripper_base_frame.body().name()
+        target_is_different_from_gripper_base = (
+            target_frame.body().name() != gripper_base_frame.body().name()
+        )
         if show_gripper_base_frame and target_is_different_from_gripper_base:
             AddMultibodyTriad(
                 gripper_base_frame,
                 self.scene_graph,
                 # scale=0.1,
             )
-            
 
         # Weld the gripper to the manipuland
         if and_weld_to is not None:
@@ -189,27 +200,32 @@ class BasicGraspingDebuggingProduction(BaseProduction):
         and then weld it to the origin.
         """
         # Setup
-        assert self.manipuland_index is None, \
-            "The manipuland index is already set. Please DO NOT add the manipuland to the plant before this function."
+        assert (
+            self.manipuland_index is None
+        ), "The manipuland index is already set. Please DO NOT add the manipuland to the plant before this function."
 
-        plant : MultibodyPlant = self.plant
+        plant: MultibodyPlant = self.plant
 
         # Add the manipuland to the plant
         temp_idcs = Parser(plant=self.plant).AddModels(
             self.path_to_object,
         )
-        assert len(temp_idcs) == 1, f"Only one model should be added; received {len(temp_idcs)}"
+        assert (
+            len(temp_idcs) == 1
+        ), f"Only one model should be added; received {len(temp_idcs)}"
         self.manipuland_index = temp_idcs[0]
         self.manipuland_name = self.plant.GetModelInstanceName(self.manipuland_index)
 
         if and_weld_to is not None:
             # Weld the first frame in the model to the frame given by and_weld_to
-            assert isinstance(and_weld_to, Frame), \
-                f"and_weld_to must be a Frame; received {type(and_weld_to)}"
-            
+            assert isinstance(
+                and_weld_to, Frame
+            ), f"and_weld_to must be a Frame; received {type(and_weld_to)}"
+
             manipuland_body_idcs = plant.GetBodyIndices(self.manipuland_index)
-            assert len(manipuland_body_idcs) > 0, \
-                f"Expected at least one body in the manipuland; received {len(manipuland_body_idcs)}"
+            assert (
+                len(manipuland_body_idcs) > 0
+            ), f"Expected at least one body in the manipuland; received {len(manipuland_body_idcs)}"
             manipuland_body = plant.get_body(manipuland_body_idcs[0])
             frame0 = manipuland_body.body_frame()
 
@@ -231,7 +247,9 @@ class BasicGraspingDebuggingProduction(BaseProduction):
         # Setup
 
         # Create meshcat object
-        self.meshcat = Meshcat(port=self.meshcat_port_number)  # Object provides an interface to Meshcat
+        self.meshcat = Meshcat(
+            port=self.meshcat_port_number
+        )  # Object provides an interface to Meshcat
         m_visualizer = MeshcatVisualizer(
             self.meshcat,
         )
@@ -244,6 +262,8 @@ class BasicGraspingDebuggingProduction(BaseProduction):
             )
 
         m_visualizer.AddToBuilder(
-            self.builder, self.scene_graph, self.meshcat,
+            self.builder,
+            self.scene_graph,
+            self.meshcat,
             params=params,
         )
