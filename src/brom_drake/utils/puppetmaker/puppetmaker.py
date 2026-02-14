@@ -421,9 +421,9 @@ class Puppetmaker:
     ) -> Tuple[Adder, ConstantVectorSource]:
         """
         **Description**
-        
+
         This method attempts to compensate for gravity by:
-        - Creating a simple Adder system to the diagram, 
+        - Creating a simple Adder system to the diagram,
         - adds a feedforward term which includes the gravity on the puppet, and
         - connects the feedforward term to one input of the adder.
         """
@@ -545,8 +545,10 @@ class Puppetmaker:
         )
 
         # The signal that we send to the joints will be the sum of:
-        # - A feedforward term which i ncludes the gravity on the puppet, and
-        adder_with_gravity_compensation, _ = self.add_gravity_compensation_sum_system_for(signature, builder)
+        # - A feedforward term which includes the gravity on the puppet, and
+        adder_with_gravity_compensation, _ = (
+            self.add_gravity_compensation_sum_system_for(signature, builder)
+        )
 
         # - The PID controller output.
         builder.Connect(
@@ -574,7 +576,7 @@ class Puppetmaker:
             target_state_mux.get_output_port(0),
             controller.get_input_port_desired_state(),
         )
-        
+
         # - The estimated state signal (which includes the current pose and twist of the puppet)
         self.connect_plant_to_controller(builder, controller, signature)
 
@@ -627,7 +629,7 @@ class Puppetmaker:
         """
         **Description**
 
-        Connect the plant to the controller. 
+        Connect the plant to the controller.
         This is non-trivial because we:
         1. use a multiplexer to combine the state of each of the models in the puppet into one signal, and
         2. we use a special integrator to produce the rotational states.
@@ -698,8 +700,8 @@ class Puppetmaker:
         # 1. Create a system that will create the final integrated state signal for the controller by integrating the rotational states and muxing them together with the translational states.
         integrated_state_mux = builder.AddNamedSystem(
             name=f'[{self.config.name}] Integrated State Mux for puppeteering "{signature.name}"',
-            system=Multiplexer(input_sizes=[3, 3, 6]), 
-        ) # First 3 inputs are xyz; won't change. Second 3 inputs are the roll-pitch-yaw angles; these will be integrated. Last 6 inputs are the velocities; won't change.
+            system=Multiplexer(input_sizes=[3, 3, 6]),
+        )  # First 3 inputs are xyz; won't change. Second 3 inputs are the roll-pitch-yaw angles; these will be integrated. Last 6 inputs are the velocities; won't change.
 
         # 2. Create an integrator to integrate the rotational states
         rotational_state_integrator: RPYIntegrator = builder.AddNamedSystem(
@@ -712,7 +714,20 @@ class Puppetmaker:
         rpy_selector = builder.AddNamedSystem(
             name=f'[{self.config.name}] RPY State Selector for puppeteering "{signature.name}"',
             system=define_named_vector_selection_system(
-                all_element_names=["x", "y", "z", "yaw", "pitch", "roll", "vx", "vy", "vz", "v_yaw", "v_pitch", "v_roll"],
+                all_element_names=[
+                    "x",
+                    "y",
+                    "z",
+                    "yaw",
+                    "pitch",
+                    "roll",
+                    "vx",
+                    "vy",
+                    "vz",
+                    "v_yaw",
+                    "v_pitch",
+                    "v_roll",
+                ],
                 sequence_of_names_for_output=["yaw", "pitch", "roll"],
             ),
         )
@@ -731,7 +746,20 @@ class Puppetmaker:
         rpy_velocity_selector = builder.AddNamedSystem(
             name=f'[{self.config.name}] RPY Velocity Selector for puppeteering "{signature.name}"',
             system=define_named_vector_selection_system(
-                all_element_names=["x", "y", "z", "yaw", "pitch", "roll", "vx", "vy", "vz", "v_yaw", "v_pitch", "v_roll"],
+                all_element_names=[
+                    "x",
+                    "y",
+                    "z",
+                    "yaw",
+                    "pitch",
+                    "roll",
+                    "vx",
+                    "vy",
+                    "vz",
+                    "v_yaw",
+                    "v_pitch",
+                    "v_roll",
+                ],
                 sequence_of_names_for_output=["v_yaw", "v_pitch", "v_roll"],
             ),
         )
@@ -756,7 +784,20 @@ class Puppetmaker:
         translational_state_selector = builder.AddNamedSystem(
             name=f'[{self.config.name}] Translational State Selector for puppeteering "{signature.name}"',
             system=define_named_vector_selection_system(
-                all_element_names=["x", "y", "z", "yaw", "pitch", "roll", "vx", "vy", "vz", "v_yaw", "v_pitch", "v_roll"],
+                all_element_names=[
+                    "x",
+                    "y",
+                    "z",
+                    "yaw",
+                    "pitch",
+                    "roll",
+                    "vx",
+                    "vy",
+                    "vz",
+                    "v_yaw",
+                    "v_pitch",
+                    "v_roll",
+                ],
                 sequence_of_names_for_output=["x", "y", "z"],
             ),
         )
@@ -775,8 +816,28 @@ class Puppetmaker:
         velocity_selector = builder.AddNamedSystem(
             name=f'[{self.config.name}] Velocity Selector for puppeteering "{signature.name}"',
             system=define_named_vector_selection_system(
-                all_element_names=["x", "y", "z", "yaw", "pitch", "roll", "vx", "vy", "vz", "v_yaw", "v_pitch", "v_roll"],
-                sequence_of_names_for_output=["vx", "vy", "vz", "v_yaw", "v_pitch", "v_roll"],
+                all_element_names=[
+                    "x",
+                    "y",
+                    "z",
+                    "yaw",
+                    "pitch",
+                    "roll",
+                    "vx",
+                    "vy",
+                    "vz",
+                    "v_yaw",
+                    "v_pitch",
+                    "v_roll",
+                ],
+                sequence_of_names_for_output=[
+                    "vx",
+                    "vy",
+                    "vz",
+                    "v_yaw",
+                    "v_pitch",
+                    "v_roll",
+                ],
             ),
         )
 
@@ -987,7 +1048,9 @@ class Puppetmaker:
             name=f'[{self.config.name}]Pose to vector for puppeteering "{signature.name}"',
             output_format="vector_xyz_euler(rpy)",
         )
-        desired_pose_to_vector = builder.AddSystem(RigidTransformToVectorSystem(p2v_config))
+        desired_pose_to_vector = builder.AddSystem(
+            RigidTransformToVectorSystem(p2v_config)
+        )
 
         # Reference signal is a state which contains two pieces: a pose and a twist
         # - Target Twist is zero

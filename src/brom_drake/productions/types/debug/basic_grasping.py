@@ -193,7 +193,7 @@ class BasicGraspingDebuggingProduction(BaseProduction):
     def add_manipuland_to_plant(self, and_weld_to: Frame = None):
         """
         **Description**
-        
+
         This method will add the manipuland to the plant
         and then weld it to the origin.
         """
@@ -230,11 +230,11 @@ class BasicGraspingDebuggingProduction(BaseProduction):
     def connect_to_meshcat(self):
         """
         **Description**
-        
+
         This method will connect the plant to the meshcat.
 
         **Assumptions**
-        
+
         - meshcat_port_number is a positive integer
         """
         # Setup
@@ -264,11 +264,11 @@ class BasicGraspingDebuggingProduction(BaseProduction):
     def get_gripper_base_frame(self) -> Frame:
         """
         **Description**
-        
+
         This method will return the base frame of the gripper.
 
         **Returns**
-        
+
         gripper_base_frame: Frame
             The base frame of the gripper.
         """
@@ -276,20 +276,22 @@ class BasicGraspingDebuggingProduction(BaseProduction):
         plant: MultibodyPlant = self.plant
 
         # Verify that the gripper model has been initialized
-        assert self.gripper_model_index is not None, "Gripper model index is not set. Please add the gripper to the plant before calling this function."
-        
+        assert (
+            self.gripper_model_index is not None
+        ), "Gripper model index is not set. Please add the gripper to the plant before calling this function."
+
         gripper_base_frame = plant.GetFrameByName(
             get_name_of_first_body_in_urdf(self.path_to_gripper),
             self.gripper_model_index,
         )
         return gripper_base_frame
-    
+
     def get_manipuland_targeted_frame(self, target_body_index: int = 0) -> Frame:
         """
         **Description**
 
         This method will return the targeted frame on the manipuland.
-        In our initial use cases, this will just be the first body in the urdf, 
+        In our initial use cases, this will just be the first body in the urdf,
         but this function allows for more flexibility in case we want to target a different frame on the manipuland in the future.
 
         **Arguments**
@@ -309,15 +311,19 @@ class BasicGraspingDebuggingProduction(BaseProduction):
         plant: MultibodyPlant = self.plant
 
         # Verify that the manipuland model has been initialized
-        assert self.manipuland_index is not None, "Manipuland index is not set. Please add the manipuland to the plant before calling this function."
-        
+        assert (
+            self.manipuland_index is not None
+        ), "Manipuland index is not set. Please add the manipuland to the plant before calling this function."
+
         manipuland_body_idcs = plant.GetBodyIndices(self.manipuland_index)
-        
+
         assert (
             len(manipuland_body_idcs) > 0
         ), f"Expected at least one body in the manipuland; received {len(manipuland_body_idcs)}"
-        
-        assert len(manipuland_body_idcs) > target_body_index, f"Target body index {target_body_index} is out of range for the manipuland; received {len(manipuland_body_idcs)} bodies in the manipuland."
+
+        assert (
+            len(manipuland_body_idcs) > target_body_index
+        ), f"Target body index {target_body_index} is out of range for the manipuland; received {len(manipuland_body_idcs)} bodies in the manipuland."
 
         manipuland_body = plant.get_body(manipuland_body_idcs[target_body_index])
         targeted_frame_on_manipuland = manipuland_body.body_frame()
@@ -327,11 +333,11 @@ class BasicGraspingDebuggingProduction(BaseProduction):
     def get_target_frame_on_gripper(self) -> Frame:
         """
         **Description**
-        
+
         This method will return the target frame on the gripper.
 
         **Returns**
-        
+
         target_frame_on_gripper: Frame
             The target frame on the gripper.
         """
@@ -339,8 +345,10 @@ class BasicGraspingDebuggingProduction(BaseProduction):
         plant: MultibodyPlant = self.plant
 
         # Verify that the gripper model has been initialized
-        assert self.gripper_model_index is not None, "Gripper model index is not set. Please add the gripper to the plant before calling this function."
-        
+        assert (
+            self.gripper_model_index is not None
+        ), "Gripper model index is not set. Please add the gripper to the plant before calling this function."
+
         target_frame_on_gripper = plant.GetFrameByName(
             self.target_body_name_on_gripper,
             self.gripper_model_index,

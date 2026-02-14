@@ -446,7 +446,7 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
             TODO(Kwesi): Change the name of this parameter to include frame information.
         """
         # Collect the parent frame
-        targeted_manipuland_frame = self.get_manipuland_targeted_frame()  
+        targeted_manipuland_frame = self.get_manipuland_targeted_frame()
 
         # Create frames for each pose in the trajectory
         gripper_base_frames = []
@@ -787,7 +787,7 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
 
         # Add the gripper to the builder
         self.add_gripper_to_plant()
-        
+
         # Add the puppeteer for the gripper and get the puppet signature
         maker0, self.puppet_signature = self.add_puppeteer_for_gripper()
 

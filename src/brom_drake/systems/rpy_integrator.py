@@ -35,16 +35,16 @@ class RPYIntegrator(LeafSystem):
         import numpy as np
 
         builder = DiagramBuilder()
-        
+
         # Create the integrator
         rpy_integrator = builder.AddSystem(RPYIntegrator())
-        
+
         # Connect current RPY to set initial state
-        # builder.Connect(current_rpy_source.get_output_port(), 
+        # builder.Connect(current_rpy_source.get_output_port(),
         #                 rpy_integrator.get_input_port(0))
-        
+
         # Connect velocity source to integrator
-        # builder.Connect(velocity_source.get_output_port(), 
+        # builder.Connect(velocity_source.get_output_port(),
         #                 rpy_integrator.get_input_port(1))
     """
 
@@ -55,26 +55,18 @@ class RPYIntegrator(LeafSystem):
         LeafSystem.__init__(self)
 
         # Declare input port for current RPY (used to set initial state)
-        self._rpy_port: InputPort = self.DeclareVectorInputPort(
-            "rpy",
-            BasicVector(3)
-        )
+        self._rpy_port: InputPort = self.DeclareVectorInputPort("rpy", BasicVector(3))
 
         # Declare input port for RPY velocities
         self._rpy_velocity_port: InputPort = self.DeclareVectorInputPort(
-            "rpy_velocity",
-            BasicVector(3)
+            "rpy_velocity", BasicVector(3)
         )
 
         # Declare continuous state for integrated RPY values
         self.DeclareContinuousState(3)
 
         # Declare output port for integrated RPY
-        self.DeclareVectorOutputPort(
-            "rpy",
-            BasicVector(3),
-            self.CalcOutput
-        )
+        self.DeclareVectorOutputPort("rpy", BasicVector(3), self.CalcOutput)
 
     def get_rpy_input_port(self):
         """
@@ -102,7 +94,7 @@ class RPYIntegrator(LeafSystem):
         """
         # Get the input velocities (from port 1)
         rpy_velocity = self._rpy_velocity_port.Eval(context)
-        
+
         # Set the derivatives equal to the input velocities
         derivatives.get_mutable_vector().SetFromVector(rpy_velocity)
 
@@ -112,6 +104,6 @@ class RPYIntegrator(LeafSystem):
         """
         # Get the current state (integrated RPY)
         rpy = context.get_continuous_state_vector().CopyToVector()
-        
+
         # Set the output
         output.SetFromVector(rpy)
