@@ -258,7 +258,8 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
 
         # Save the trajectory of the gripper frame
         self.X_ObjectGripper_trajectory = X_ObjectGripper_trajectory
-        self.add_frames_for_gripper_base_trajectory(self.X_ObjectGripper_trajectory)
+        # - These will be visualized as frames in the world AFTER
+        #   the manipuland is initialized (because the frames are defined relative to the object)
 
         self.grasp_joint_positions = grasp_joint_positions
         self.config = config
@@ -444,12 +445,15 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
             with respect to the object being grasped.
             TODO(Kwesi): Change the name of this parameter to include frame information.
         """
+        # Collect the parent frame
+        targeted_manipuland_frame = self.get_manipuland_targeted_frame()  
+
         # Create frames for each pose in the trajectory
         gripper_base_frames = []
         for i, pose_i in enumerate(pose_trajectory):
             frame_i = FixedOffsetFrame(
                 name="Gripper Base Frame Traj Pt " + str(i),
-                P=self.plant.world_frame(),  # Parent Frame
+                P=targeted_manipuland_frame,  # Parent Frame
                 X_PF=pose_i,
             )
             frame_i_added = self.plant.AddFrame(frame_i)
@@ -779,9 +783,12 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
 
         # Add the object to the builder
         self.add_manipuland_to_plant()
+        self.add_frames_for_gripper_base_trajectory(self.X_ObjectGripper_trajectory)
 
         # Add the gripper to the builder
         self.add_gripper_to_plant()
+        
+        # Add the puppeteer for the gripper and get the puppet signature
         maker0, self.puppet_signature = self.add_puppeteer_for_gripper()
 
         # Add the floor
