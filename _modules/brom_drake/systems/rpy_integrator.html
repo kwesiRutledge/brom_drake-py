@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.systems.end_effector_wrench_calculator - brom_drake-py 0.5.2 documentation</title>
+        <title>brom_drake.systems.rpy_integrator - brom_drake-py 0.5.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -550,93 +550,132 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <h1>Source code for brom_drake.systems.end_effector_wrench_calculator</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">pydrake.multibody.tree</span> <span class="kn">import</span> <span class="n">JacobianWrtVariable</span>
-<span class="kn">from</span> <span class="nn">pydrake.systems.framework</span> <span class="kn">import</span> <span class="n">LeafSystem</span><span class="p">,</span> <span class="n">BasicVector</span>
+          <h1>Source code for brom_drake.systems.rpy_integrator</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Extended Integrator System</span>
+
+<span class="sd">This module provides an integrator system that extends the basic Drake Integrator</span>
+<span class="sd">with additional functionality for integration without wrap-around.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">pydrake.systems.framework</span> <span class="kn">import</span> <span class="n">LeafSystem</span><span class="p">,</span> <span class="n">BasicVector</span><span class="p">,</span> <span class="n">InputPort</span>
 
 
-<div class="viewcode-block" id="EndEffectorWrenchCalculator">
-<a class="viewcode-back" href="../../../generated/systems/systems.html#brom_drake.systems.end_effector_wrench_calculator.EndEffectorWrenchCalculator">[docs]</a>
-<span class="k">class</span> <span class="nc">EndEffectorWrenchCalculator</span><span class="p">(</span><span class="n">LeafSystem</span><span class="p">):</span>
+<div class="viewcode-block" id="RPYIntegrator">
+<a class="viewcode-back" href="../../../generated/systems/systems.html#brom_drake.systems.rpy_integrator.RPYIntegrator">[docs]</a>
+<span class="k">class</span> <span class="nc">RPYIntegrator</span><span class="p">(</span><span class="n">LeafSystem</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    **Description**</span>
 
-<span class="sd">    A simple system which takes as input joint torques and outputs the corresponding</span>
-<span class="sd">    wrench applied to the end-effector.</span>
+<span class="sd">    A system that integrates roll, pitch, and yaw velocity signals to produce</span>
+<span class="sd">    roll, pitch, and yaw position estimates without angle wrap-around.</span>
 
-<span class="sd">    **Diagram**</span>
+<span class="sd">    This system is useful when you want to track cumulative rotation angles</span>
+<span class="sd">    beyond the typical [-π, π] range, allowing for unbounded angle tracking</span>
+<span class="sd">    (e.g., roll = 10π is valid).</span>
 
-<span class="sd">    The system can be illustrated with the following block: ::</span>
+<span class="sd">    **Notes**</span>
 
-<span class="sd">                            ---------------------------------</span>
-<span class="sd">                            |                               |</span>
-<span class="sd">                            |                               |</span>
-<span class="sd">                            |                               |</span>
-<span class="sd">        joint_positions --&gt; |  EndEffectorWrenchCalculator  | ---&gt; end_effector_wrench</span>
-<span class="sd">        joint_angles -----&gt; |                               |</span>
-<span class="sd">        joint_torques ----&gt; |                               |</span>
-<span class="sd">                            |                               |</span>
-<span class="sd">                            |                               |</span>
-<span class="sd">                            ---------------------------------</span>
+<span class="sd">    - This system integrates the time derivatives of RPY angles (ṙoll, ṗitch, ẏaw).</span>
+<span class="sd">    - If you have body-frame angular velocities (ωx, ωy, ωz), you must convert them</span>
+<span class="sd">      to RPY rates first using the appropriate transformation matrix.</span>
+<span class="sd">    - Initial conditions can be set through the context&#39;s continuous state.</span>
+
+<span class="sd">    **Example**</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        from pydrake.all import DiagramBuilder</span>
+<span class="sd">        import numpy as np</span>
+
+<span class="sd">        builder = DiagramBuilder()</span>
+
+<span class="sd">        # Create the integrator</span>
+<span class="sd">        rpy_integrator = builder.AddSystem(RPYIntegrator())</span>
+
+<span class="sd">        # Connect current RPY to set initial state</span>
+<span class="sd">        # builder.Connect(current_rpy_source.get_output_port(),</span>
+<span class="sd">        #                 rpy_integrator.get_input_port(0))</span>
+
+<span class="sd">        # Connect velocity source to integrator</span>
+<span class="sd">        # builder.Connect(velocity_source.get_output_port(),</span>
+<span class="sd">        #                 rpy_integrator.get_input_port(1))</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plant</span><span class="p">,</span> <span class="n">end_effector_frame</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the RPY integrator system.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">LeafSystem</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">plant</span> <span class="o">=</span> <span class="n">plant</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">CreateDefaultContext</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ee_frame</span> <span class="o">=</span> <span class="n">end_effector_frame</span>
+        <span class="c1"># Declare input port for current RPY (used to set initial state)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rpy_port</span><span class="p">:</span> <span class="n">InputPort</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DeclareVectorInputPort</span><span class="p">(</span><span class="s2">&quot;rpy&quot;</span><span class="p">,</span> <span class="n">BasicVector</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
 
-        <span class="c1"># Inputs are joint positions, angles and torques</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">q_port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DeclareVectorInputPort</span><span class="p">(</span>
-            <span class="s2">&quot;joint_positions&quot;</span><span class="p">,</span> <span class="n">BasicVector</span><span class="p">(</span><span class="n">plant</span><span class="o">.</span><span class="n">num_positions</span><span class="p">())</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">v_port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DeclareVectorInputPort</span><span class="p">(</span>
-            <span class="s2">&quot;joint_velocities&quot;</span><span class="p">,</span> <span class="n">BasicVector</span><span class="p">(</span><span class="n">plant</span><span class="o">.</span><span class="n">num_velocities</span><span class="p">())</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tau_port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DeclareVectorInputPort</span><span class="p">(</span>
-            <span class="s2">&quot;joint_torques&quot;</span><span class="p">,</span> <span class="n">BasicVector</span><span class="p">(</span><span class="n">plant</span><span class="o">.</span><span class="n">num_actuators</span><span class="p">())</span>
+        <span class="c1"># Declare input port for RPY velocities</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rpy_velocity_port</span><span class="p">:</span> <span class="n">InputPort</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DeclareVectorInputPort</span><span class="p">(</span>
+            <span class="s2">&quot;rpy_velocity&quot;</span><span class="p">,</span> <span class="n">BasicVector</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
         <span class="p">)</span>
 
-        <span class="c1"># Output is applied wrench at the end-effector</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">DeclareVectorOutputPort</span><span class="p">(</span>
-            <span class="s2">&quot;end_effector_wrench&quot;</span><span class="p">,</span> <span class="n">BasicVector</span><span class="p">(</span><span class="mi">6</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">CalcEndEffectorWrench</span>
-        <span class="p">)</span>
+        <span class="c1"># Declare continuous state for integrated RPY values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">DeclareContinuousState</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">CalcEndEffectorWrench</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
-        <span class="c1"># Gather inputs</span>
-        <span class="n">q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_port</span><span class="o">.</span><span class="n">Eval</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
-        <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">v_port</span><span class="o">.</span><span class="n">Eval</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
-        <span class="n">tau</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tau_port</span><span class="o">.</span><span class="n">Eval</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+        <span class="c1"># Declare output port for integrated RPY</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">DeclareVectorOutputPort</span><span class="p">(</span><span class="s2">&quot;rpy&quot;</span><span class="p">,</span> <span class="n">BasicVector</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">CalcOutput</span><span class="p">)</span>
 
-        <span class="c1"># Set internal model state</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">SetPositions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">SetVelocities</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+<div class="viewcode-block" id="RPYIntegrator.get_rpy_input_port">
+<a class="viewcode-back" href="../../../generated/systems/systems.html#brom_drake.systems.rpy_integrator.RPYIntegrator.get_rpy_input_port">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_rpy_input_port</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the input port for current RPY values (used to set initial state).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rpy_port</span></div>
 
-        <span class="c1"># Some dynamics computations</span>
-        <span class="n">M</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">CalcMassMatrixViaInverseDynamics</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">)</span>
-        <span class="n">tau_g</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">CalcGravityGeneralizedForces</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">)</span>
 
-        <span class="c1"># Compute end-effector jacobian</span>
-        <span class="n">J</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">CalcJacobianSpatialVelocity</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span>
-            <span class="n">JacobianWrtVariable</span><span class="o">.</span><span class="n">kV</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">ee_frame</span><span class="p">,</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">world_frame</span><span class="p">(),</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">world_frame</span><span class="p">(),</span>
-        <span class="p">)</span>
+<div class="viewcode-block" id="RPYIntegrator.get_rpy_velocity_input_port">
+<a class="viewcode-back" href="../../../generated/systems/systems.html#brom_drake.systems.rpy_integrator.RPYIntegrator.get_rpy_velocity_input_port">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_rpy_velocity_input_port</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the input port for RPY velocity values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rpy_velocity_port</span></div>
 
-        <span class="c1"># Compute jacobian pseudoinverse</span>
-        <span class="n">Minv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">M</span><span class="p">)</span>
-        <span class="n">Lambda</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">J</span> <span class="o">@</span> <span class="n">Minv</span> <span class="o">@</span> <span class="n">J</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
-        <span class="n">Jbar</span> <span class="o">=</span> <span class="n">Lambda</span> <span class="o">@</span> <span class="n">J</span> <span class="o">@</span> <span class="n">Minv</span>
 
-        <span class="c1"># Compute wrench (spatial force) applied at end-effector</span>
-        <span class="n">w</span> <span class="o">=</span> <span class="n">Jbar</span> <span class="o">@</span> <span class="p">(</span><span class="n">tau</span> <span class="o">-</span> <span class="n">tau_g</span><span class="p">)</span>
+<div class="viewcode-block" id="RPYIntegrator.SetDefaultState">
+<a class="viewcode-back" href="../../../generated/systems/systems.html#brom_drake.systems.rpy_integrator.RPYIntegrator.SetDefaultState">[docs]</a>
+    <span class="k">def</span> <span class="nf">SetDefaultState</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the default initial state for the integrator from the RPY input port.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Get the initial RPY from the input port</span>
+        <span class="n">initial_rpy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rpy_port</span><span class="o">.</span><span class="n">Eval</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+        <span class="n">state</span><span class="o">.</span><span class="n">get_mutable_continuous_state</span><span class="p">()</span><span class="o">.</span><span class="n">SetFromVector</span><span class="p">(</span><span class="n">initial_rpy</span><span class="p">)</span></div>
 
-        <span class="n">output</span><span class="o">.</span><span class="n">SetFromVector</span><span class="p">(</span><span class="n">w</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RPYIntegrator.DoCalcTimeDerivatives">
+<a class="viewcode-back" href="../../../generated/systems/systems.html#brom_drake.systems.rpy_integrator.RPYIntegrator.DoCalcTimeDerivatives">[docs]</a>
+    <span class="k">def</span> <span class="nf">DoCalcTimeDerivatives</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">derivatives</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the time derivatives (which are just the input velocities).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Get the input velocities (from port 1)</span>
+        <span class="n">rpy_velocity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rpy_velocity_port</span><span class="o">.</span><span class="n">Eval</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+
+        <span class="c1"># Set the derivatives equal to the input velocities</span>
+        <span class="n">derivatives</span><span class="o">.</span><span class="n">get_mutable_vector</span><span class="p">()</span><span class="o">.</span><span class="n">SetFromVector</span><span class="p">(</span><span class="n">rpy_velocity</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RPYIntegrator.CalcOutput">
+<a class="viewcode-back" href="../../../generated/systems/systems.html#brom_drake.systems.rpy_integrator.RPYIntegrator.CalcOutput">[docs]</a>
+    <span class="k">def</span> <span class="nf">CalcOutput</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Output the current integrated RPY values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Get the current state (integrated RPY)</span>
+        <span class="n">rpy</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get_continuous_state_vector</span><span class="p">()</span><span class="o">.</span><span class="n">CopyToVector</span><span class="p">()</span>
+
+        <span class="c1"># Set the output</span>
+        <span class="n">output</span><span class="o">.</span><span class="n">SetFromVector</span><span class="p">(</span><span class="n">rpy</span><span class="p">)</span></div>
+</div>
 
 </pre></div>
         </article>

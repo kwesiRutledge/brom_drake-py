@@ -20,6 +20,8 @@ Classes
    :members:
 .. autoclass:: brom_drake.systems.pose_composition.PoseCompositionSystem
    :members:
+.. autoclass:: brom_drake.systems.rpy_integrator.RPYIntegrator
+   :members:
 
 Functions
 ---------

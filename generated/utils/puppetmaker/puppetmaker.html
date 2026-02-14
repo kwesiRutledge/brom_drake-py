@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html"><link rel="next" title="watchers" href="../../watchers/watchers.html"><link rel="prev" title="pick_and_place" href="../pick_and_place/pick_and_place.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>puppetmaker - brom_drake-py 0.5.1-1 documentation</title>
+        <title>puppetmaker - brom_drake-py 0.5.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -162,7 +162,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">brom_drake-py 0.5.1-1 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">brom_drake-py 0.5.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +183,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.1-1 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 0.5.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -685,13 +685,13 @@ translation sphere (i.e., the one we should connect the first revolute sphere to
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="brom_drake.utils.puppetmaker.puppetmaker.Puppetmaker.add_feedforward_sum_system_for">
-<span class="sig-name descname"><span class="pre">add_feedforward_sum_system_for</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signature</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#brom_drake.utils.puppetmaker.puppet_signature.PuppetSignature" title="brom_drake.utils.puppetmaker.puppet_signature.PuppetSignature"><span class="pre">PuppetSignature</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">builder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DiagramBuilder</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Adder</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ConstantVectorSource</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/brom_drake/utils/puppetmaker/puppetmaker.html#Puppetmaker.add_feedforward_sum_system_for"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.utils.puppetmaker.puppetmaker.Puppetmaker.add_feedforward_sum_system_for" title="Link to this definition">¶</a></dt>
-<dd><section id="description">
-<h3>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h3>
-<p>This method will create a simple Adder system to add feedforward
-inputs to the PID controller output.</p>
-</section>
+<dt class="sig sig-object py" id="brom_drake.utils.puppetmaker.puppetmaker.Puppetmaker.add_gravity_compensation_sum_system_for">
+<span class="sig-name descname"><span class="pre">add_gravity_compensation_sum_system_for</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signature</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#brom_drake.utils.puppetmaker.puppet_signature.PuppetSignature" title="brom_drake.utils.puppetmaker.puppet_signature.PuppetSignature"><span class="pre">PuppetSignature</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">builder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DiagramBuilder</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Adder</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ConstantVectorSource</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/brom_drake/utils/puppetmaker/puppetmaker.html#Puppetmaker.add_gravity_compensation_sum_system_for"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.utils.puppetmaker.puppetmaker.Puppetmaker.add_gravity_compensation_sum_system_for" title="Link to this definition">¶</a></dt>
+<dd><p><strong>Description</strong></p>
+<p>This method attempts to compensate for gravity by:
+- Creating a simple Adder system to the diagram,
+- adds a feedforward term which includes the gravity on the puppet, and
+- connects the feedforward term to one input of the adder.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -751,20 +751,13 @@ If the puppet does not contain any actuated joints, then this will be None.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="brom_drake.utils.puppetmaker.puppetmaker.Puppetmaker.combine_feedforward_and_controller_for">
-<span class="sig-name descname"><span class="pre">combine_feedforward_and_controller_for</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">builder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DiagramBuilder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feedforward_adder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Adder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controller</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PidController</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Adder</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ConstantVectorSource</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/brom_drake/utils/puppetmaker/puppetmaker.html#Puppetmaker.combine_feedforward_and_controller_for"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.utils.puppetmaker.puppetmaker.Puppetmaker.combine_feedforward_and_controller_for" title="Link to this definition">¶</a></dt>
-<dd><section id="id1">
-<h3>Description<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
-<p>This method will connect the output of the PID controller to one input
-of the feedforward adder.</p>
-</section>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.utils.puppetmaker.puppetmaker.Puppetmaker.connect_plant_to_controller">
 <span class="sig-name descname"><span class="pre">connect_plant_to_controller</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">builder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DiagramBuilder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controller</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PidController</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">signature</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#brom_drake.utils.puppetmaker.puppet_signature.PuppetSignature" title="brom_drake.utils.puppetmaker.puppet_signature.PuppetSignature"><span class="pre">PuppetSignature</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/brom_drake/utils/puppetmaker/puppetmaker.html#Puppetmaker.connect_plant_to_controller"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.utils.puppetmaker.puppetmaker.Puppetmaker.connect_plant_to_controller" title="Link to this definition">¶</a></dt>
-<dd><p><em>Description</em></p>
-<p>Connect the plant to the controller.</p>
+<dd><p><strong>Description</strong></p>
+<p>Connect the plant to the controller.
+This is non-trivial because we:
+1. use a multiplexer to combine the state of each of the models in the puppet into one signal, and
+2. we use a special integrator to produce the rotational states.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -795,8 +788,8 @@ actuated joints.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.utils.puppetmaker.puppetmaker.Puppetmaker.create_ghost_bodies_for_actuators">
 <span class="sig-name descname"><span class="pre">create_ghost_bodies_for_actuators</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">ModelInstanceIndex</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">ModelInstanceIndex</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/brom_drake/utils/puppetmaker/puppetmaker.html#Puppetmaker.create_ghost_bodies_for_actuators"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.utils.puppetmaker.puppetmaker.Puppetmaker.create_ghost_bodies_for_actuators" title="Link to this definition">¶</a></dt>
-<dd><section id="id2">
-<h3>Description<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h3>
+<dd><section id="description">
+<h3>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h3>
 <p>This method creates a set of simple spheres which we will use to connect
 actuators to the “puppet”. We will reuse the simple shape API’s in Brom
 to create a set of new URDFs that will have (i) no mass, and
@@ -807,8 +800,8 @@ to create a set of new URDFs that will have (i) no mass, and
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.utils.puppetmaker.puppetmaker.Puppetmaker.find_index_of_position_state_in">
 <span class="sig-name descname"><span class="pre">find_index_of_position_state_in</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_instance_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ModelInstanceIndex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">signature</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#brom_drake.utils.puppetmaker.puppet_signature.PuppetSignature" title="brom_drake.utils.puppetmaker.puppet_signature.PuppetSignature"><span class="pre">PuppetSignature</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/brom_drake/utils/puppetmaker/puppetmaker.html#Puppetmaker.find_index_of_position_state_in"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.utils.puppetmaker.puppetmaker.Puppetmaker.find_index_of_position_state_in" title="Link to this definition">¶</a></dt>
-<dd><section id="id3">
-<h3>Description<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h3>
+<dd><section id="id1">
+<h3>Description<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
 <p>This method finds the names of the “position” component for the
 state of the joint connected to model_instance_index.</p>
 </section>
@@ -864,8 +857,8 @@ Default is False.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.utils.puppetmaker.puppetmaker.Puppetmaker.translation_joint_names">
 <span class="sig-name descname"><span class="pre">translation_joint_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ModelInstanceIndex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_puppeteer_prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/brom_drake/utils/puppetmaker/puppetmaker.html#Puppetmaker.translation_joint_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.utils.puppetmaker.puppetmaker.Puppetmaker.translation_joint_names" title="Link to this definition">¶</a></dt>
-<dd><section id="id4">
-<h3>Description<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h3>
+<dd><section id="id2">
+<h3>Description<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h3>
 <p>This method returns the names of all translation joints created for the puppet.</p>
 </section>
 </dd></dl>
@@ -950,11 +943,10 @@ Default is False.</p>
 <li><a class="reference internal" href="#brom_drake.utils.puppetmaker.puppetmaker.Puppetmaker.add_actuated_revolute_joint"><code class="docutils literal notranslate"><span class="pre">Puppetmaker.add_actuated_revolute_joint()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.utils.puppetmaker.puppetmaker.Puppetmaker.add_actuators_for"><code class="docutils literal notranslate"><span class="pre">Puppetmaker.add_actuators_for()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.utils.puppetmaker.puppetmaker.Puppetmaker.add_all_actuated_revolute_joints"><code class="docutils literal notranslate"><span class="pre">Puppetmaker.add_all_actuated_revolute_joints()</span></code></a></li>
-<li><a class="reference internal" href="#brom_drake.utils.puppetmaker.puppetmaker.Puppetmaker.add_feedforward_sum_system_for"><code class="docutils literal notranslate"><span class="pre">Puppetmaker.add_feedforward_sum_system_for()</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.utils.puppetmaker.puppetmaker.Puppetmaker.add_gravity_compensation_sum_system_for"><code class="docutils literal notranslate"><span class="pre">Puppetmaker.add_gravity_compensation_sum_system_for()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.utils.puppetmaker.puppetmaker.Puppetmaker.add_massless_sphere_to_plant_with_name"><code class="docutils literal notranslate"><span class="pre">Puppetmaker.add_massless_sphere_to_plant_with_name()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.utils.puppetmaker.puppetmaker.Puppetmaker.add_puppet_controller_for"><code class="docutils literal notranslate"><span class="pre">Puppetmaker.add_puppet_controller_for()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.utils.puppetmaker.puppetmaker.Puppetmaker.add_strings_for"><code class="docutils literal notranslate"><span class="pre">Puppetmaker.add_strings_for()</span></code></a></li>
-<li><a class="reference internal" href="#brom_drake.utils.puppetmaker.puppetmaker.Puppetmaker.combine_feedforward_and_controller_for"><code class="docutils literal notranslate"><span class="pre">Puppetmaker.combine_feedforward_and_controller_for()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.utils.puppetmaker.puppetmaker.Puppetmaker.connect_plant_to_controller"><code class="docutils literal notranslate"><span class="pre">Puppetmaker.connect_plant_to_controller()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.utils.puppetmaker.puppetmaker.Puppetmaker.create_actuator_demux"><code class="docutils literal notranslate"><span class="pre">Puppetmaker.create_actuator_demux()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.utils.puppetmaker.puppetmaker.Puppetmaker.create_actuator_passthrough_for_puppet_with_actuated_joints"><code class="docutils literal notranslate"><span class="pre">Puppetmaker.create_actuator_passthrough_for_puppet_with_actuated_joints()</span></code></a></li>
@@ -981,7 +973,7 @@ Default is False.</p>
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=fc52f51e"></script>
+</div><script src="../../../_static/documentation_options.js?v=8e576371"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>

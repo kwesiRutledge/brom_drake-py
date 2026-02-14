@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html"><link rel="next" title="motion_planning" href="../motion_planning/motion_planning.html"><link rel="prev" title="base" href="../base/base.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>debug - brom_drake-py 0.5.1-1 documentation</title>
+        <title>debug - brom_drake-py 0.5.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -162,7 +162,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">brom_drake-py 0.5.1-1 documentation</div></a>
+      <a href="../../../../index.html"><div class="brand">brom_drake-py 0.5.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +183,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.1-1 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 0.5.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -583,26 +583,65 @@ and then weld it to the origin.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.types.debug.basic_grasping.BasicGraspingDebuggingProduction.add_manipuland_to_plant">
 <span class="sig-name descname"><span class="pre">add_manipuland_to_plant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">and_weld_to</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Frame</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/brom_drake/productions/types/debug/basic_grasping.html#BasicGraspingDebuggingProduction.add_manipuland_to_plant"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.debug.basic_grasping.BasicGraspingDebuggingProduction.add_manipuland_to_plant" title="Link to this definition">¶</a></dt>
-<dd><section id="description">
-<h3>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h3>
+<dd><p><strong>Description</strong></p>
 <p>This method will add the manipuland to the plant
 and then weld it to the origin.</p>
-</section>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.types.debug.basic_grasping.BasicGraspingDebuggingProduction.connect_to_meshcat">
 <span class="sig-name descname"><span class="pre">connect_to_meshcat</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/brom_drake/productions/types/debug/basic_grasping.html#BasicGraspingDebuggingProduction.connect_to_meshcat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.debug.basic_grasping.BasicGraspingDebuggingProduction.connect_to_meshcat" title="Link to this definition">¶</a></dt>
-<dd><section id="id1">
-<h3>Description<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
+<dd><p><strong>Description</strong></p>
 <p>This method will connect the plant to the meshcat.</p>
-</section>
-<section id="assumptions">
-<h3>Assumptions<a class="headerlink" href="#assumptions" title="Link to this heading">¶</a></h3>
+<p><strong>Assumptions</strong></p>
 <ul class="simple">
 <li><p>meshcat_port_number is a positive integer</p></li>
 </ul>
-</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brom_drake.productions.types.debug.basic_grasping.BasicGraspingDebuggingProduction.get_gripper_base_frame">
+<span class="sig-name descname"><span class="pre">get_gripper_base_frame</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Frame</span></span></span><a class="reference internal" href="../../../../_modules/brom_drake/productions/types/debug/basic_grasping.html#BasicGraspingDebuggingProduction.get_gripper_base_frame"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.debug.basic_grasping.BasicGraspingDebuggingProduction.get_gripper_base_frame" title="Link to this definition">¶</a></dt>
+<dd><p><strong>Description</strong></p>
+<p>This method will return the base frame of the gripper.</p>
+<p><strong>Returns</strong></p>
+<dl class="simple">
+<dt>gripper_base_frame: Frame</dt><dd><p>The base frame of the gripper.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brom_drake.productions.types.debug.basic_grasping.BasicGraspingDebuggingProduction.get_manipuland_targeted_frame">
+<span class="sig-name descname"><span class="pre">get_manipuland_targeted_frame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_body_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Frame</span></span></span><a class="reference internal" href="../../../../_modules/brom_drake/productions/types/debug/basic_grasping.html#BasicGraspingDebuggingProduction.get_manipuland_targeted_frame"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.debug.basic_grasping.BasicGraspingDebuggingProduction.get_manipuland_targeted_frame" title="Link to this definition">¶</a></dt>
+<dd><p><strong>Description</strong></p>
+<p>This method will return the targeted frame on the manipuland.
+In our initial use cases, this will just be the first body in the urdf,
+but this function allows for more flexibility in case we want to target a different frame on the manipuland in the future.</p>
+<p><strong>Arguments</strong></p>
+<dl class="simple">
+<dt>target_body_index: int</dt><dd><p>An integer representing the index of the body in the manipuland urdf that we want to
+target (i.e. the frame that will be used for welding the gripper to the manipuland and for defining the grasp pose).
+By default, this is set to 0, which means the first body in the model.</p>
+</dd>
+</dl>
+<p><strong>Returns</strong></p>
+<dl class="simple">
+<dt>targeted_frame_on_manipuland: Frame</dt><dd><p>The frame on the manipuland that we want to target</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brom_drake.productions.types.debug.basic_grasping.BasicGraspingDebuggingProduction.get_target_frame_on_gripper">
+<span class="sig-name descname"><span class="pre">get_target_frame_on_gripper</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Frame</span></span></span><a class="reference internal" href="../../../../_modules/brom_drake/productions/types/debug/basic_grasping.html#BasicGraspingDebuggingProduction.get_target_frame_on_gripper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.debug.basic_grasping.BasicGraspingDebuggingProduction.get_target_frame_on_gripper" title="Link to this definition">¶</a></dt>
+<dd><p><strong>Description</strong></p>
+<p>This method will return the target frame on the gripper.</p>
+<p><strong>Returns</strong></p>
+<dl class="simple">
+<dt>target_frame_on_gripper: Frame</dt><dd><p>The target frame on the gripper.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -680,6 +719,9 @@ and then weld it to the origin.</p>
 <li><a class="reference internal" href="#brom_drake.productions.types.debug.basic_grasping.BasicGraspingDebuggingProduction.add_gripper_to_plant"><code class="docutils literal notranslate"><span class="pre">BasicGraspingDebuggingProduction.add_gripper_to_plant()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.types.debug.basic_grasping.BasicGraspingDebuggingProduction.add_manipuland_to_plant"><code class="docutils literal notranslate"><span class="pre">BasicGraspingDebuggingProduction.add_manipuland_to_plant()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.types.debug.basic_grasping.BasicGraspingDebuggingProduction.connect_to_meshcat"><code class="docutils literal notranslate"><span class="pre">BasicGraspingDebuggingProduction.connect_to_meshcat()</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.productions.types.debug.basic_grasping.BasicGraspingDebuggingProduction.get_gripper_base_frame"><code class="docutils literal notranslate"><span class="pre">BasicGraspingDebuggingProduction.get_gripper_base_frame()</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.productions.types.debug.basic_grasping.BasicGraspingDebuggingProduction.get_manipuland_targeted_frame"><code class="docutils literal notranslate"><span class="pre">BasicGraspingDebuggingProduction.get_manipuland_targeted_frame()</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.productions.types.debug.basic_grasping.BasicGraspingDebuggingProduction.get_target_frame_on_gripper"><code class="docutils literal notranslate"><span class="pre">BasicGraspingDebuggingProduction.get_target_frame_on_gripper()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -697,7 +739,7 @@ and then weld it to the origin.</p>
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=fc52f51e"></script>
+</div><script src="../../../../_static/documentation_options.js?v=8e576371"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>

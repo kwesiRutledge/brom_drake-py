@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.productions.types.debug.basic_grasping - brom_drake-py 0.5.1-1 documentation</title>
+        <title>brom_drake.productions.types.debug.basic_grasping - brom_drake-py 0.5.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../index.html"><div class="brand">brom_drake-py 0.5.1-1 documentation</div></a>
+      <a href="../../../../../index.html"><div class="brand">brom_drake-py 0.5.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.1-1 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 0.5.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -719,10 +719,8 @@
         <span class="c1"># Draw the MultibodyTriad for the</span>
         <span class="c1"># - Target Frame on the Gripper</span>
         <span class="c1"># - Base Link of the Gripper</span>
-        <span class="n">target_frame</span> <span class="o">=</span> <span class="n">plant</span><span class="o">.</span><span class="n">GetFrameByName</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_body_name_on_gripper</span><span class="p">)</span>
-        <span class="n">gripper_base_frame</span> <span class="o">=</span> <span class="n">plant</span><span class="o">.</span><span class="n">GetFrameByName</span><span class="p">(</span>
-            <span class="n">get_name_of_first_body_in_urdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path_to_gripper</span><span class="p">)</span>
-        <span class="p">)</span>
+        <span class="n">target_frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_target_frame_on_gripper</span><span class="p">()</span>
+        <span class="n">gripper_base_frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_gripper_base_frame</span><span class="p">()</span>
 
         <span class="c1"># Add the target triad to the builder</span>
         <span class="n">AddMultibodyTriad</span><span class="p">(</span>
@@ -754,8 +752,8 @@
 <a class="viewcode-back" href="../../../../../generated/productions/types/debug/debug.html#brom_drake.productions.types.debug.basic_grasping.BasicGraspingDebuggingProduction.add_manipuland_to_plant">[docs]</a>
     <span class="k">def</span> <span class="nf">add_manipuland_to_plant</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">and_weld_to</span><span class="p">:</span> <span class="n">Frame</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Description</span>
-<span class="sd">        -----------</span>
+<span class="sd">        **Description**</span>
+
 <span class="sd">        This method will add the manipuland to the plant</span>
 <span class="sd">        and then weld it to the origin.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -782,12 +780,7 @@
                 <span class="n">and_weld_to</span><span class="p">,</span> <span class="n">Frame</span>
             <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;and_weld_to must be a Frame; received </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">and_weld_to</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
 
-            <span class="n">manipuland_body_idcs</span> <span class="o">=</span> <span class="n">plant</span><span class="o">.</span><span class="n">GetBodyIndices</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">manipuland_index</span><span class="p">)</span>
-            <span class="k">assert</span> <span class="p">(</span>
-                <span class="nb">len</span><span class="p">(</span><span class="n">manipuland_body_idcs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
-            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expected at least one body in the manipuland; received </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">manipuland_body_idcs</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="n">manipuland_body</span> <span class="o">=</span> <span class="n">plant</span><span class="o">.</span><span class="n">get_body</span><span class="p">(</span><span class="n">manipuland_body_idcs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-            <span class="n">frame0</span> <span class="o">=</span> <span class="n">manipuland_body</span><span class="o">.</span><span class="n">body_frame</span><span class="p">()</span>
+            <span class="n">frame0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_manipuland_targeted_frame</span><span class="p">()</span>
 
             <span class="n">plant</span><span class="o">.</span><span class="n">WeldFrames</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">world_frame</span><span class="p">(),</span>
@@ -799,12 +792,12 @@
 <a class="viewcode-back" href="../../../../../generated/productions/types/debug/debug.html#brom_drake.productions.types.debug.basic_grasping.BasicGraspingDebuggingProduction.connect_to_meshcat">[docs]</a>
     <span class="k">def</span> <span class="nf">connect_to_meshcat</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Description</span>
-<span class="sd">        -----------</span>
+<span class="sd">        **Description**</span>
+
 <span class="sd">        This method will connect the plant to the meshcat.</span>
 
-<span class="sd">        Assumptions</span>
-<span class="sd">        -----------</span>
+<span class="sd">        **Assumptions**</span>
+
 <span class="sd">        - meshcat_port_number is a positive integer</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Setup</span>
@@ -830,6 +823,109 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">meshcat</span><span class="p">,</span>
             <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
         <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BasicGraspingDebuggingProduction.get_gripper_base_frame">
+<a class="viewcode-back" href="../../../../../generated/productions/types/debug/debug.html#brom_drake.productions.types.debug.basic_grasping.BasicGraspingDebuggingProduction.get_gripper_base_frame">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_gripper_base_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Frame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        **Description**</span>
+
+<span class="sd">        This method will return the base frame of the gripper.</span>
+
+<span class="sd">        **Returns**</span>
+
+<span class="sd">        gripper_base_frame: Frame</span>
+<span class="sd">            The base frame of the gripper.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Annotate plant as being of type MultibodyPlant for better autocompletion in this function</span>
+        <span class="n">plant</span><span class="p">:</span> <span class="n">MultibodyPlant</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span>
+
+        <span class="c1"># Verify that the gripper model has been initialized</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gripper_model_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">),</span> <span class="s2">&quot;Gripper model index is not set. Please add the gripper to the plant before calling this function.&quot;</span>
+
+        <span class="n">gripper_base_frame</span> <span class="o">=</span> <span class="n">plant</span><span class="o">.</span><span class="n">GetFrameByName</span><span class="p">(</span>
+            <span class="n">get_name_of_first_body_in_urdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path_to_gripper</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gripper_model_index</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">gripper_base_frame</span></div>
+
+
+<div class="viewcode-block" id="BasicGraspingDebuggingProduction.get_manipuland_targeted_frame">
+<a class="viewcode-back" href="../../../../../generated/productions/types/debug/debug.html#brom_drake.productions.types.debug.basic_grasping.BasicGraspingDebuggingProduction.get_manipuland_targeted_frame">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_manipuland_targeted_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_body_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Frame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        **Description**</span>
+
+<span class="sd">        This method will return the targeted frame on the manipuland.</span>
+<span class="sd">        In our initial use cases, this will just be the first body in the urdf,</span>
+<span class="sd">        but this function allows for more flexibility in case we want to target a different frame on the manipuland in the future.</span>
+
+<span class="sd">        **Arguments**</span>
+
+<span class="sd">        target_body_index: int</span>
+<span class="sd">            An integer representing the index of the body in the manipuland urdf that we want to</span>
+<span class="sd">            target (i.e. the frame that will be used for welding the gripper to the manipuland and for defining the grasp pose).</span>
+<span class="sd">            By default, this is set to 0, which means the first body in the model.</span>
+
+<span class="sd">        **Returns**</span>
+
+<span class="sd">        targeted_frame_on_manipuland: Frame</span>
+<span class="sd">            The frame on the manipuland that we want to target</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Annotate plant as being of type MultibodyPlant for better autocompletion in this function</span>
+        <span class="n">plant</span><span class="p">:</span> <span class="n">MultibodyPlant</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span>
+
+        <span class="c1"># Verify that the manipuland model has been initialized</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">manipuland_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">),</span> <span class="s2">&quot;Manipuland index is not set. Please add the manipuland to the plant before calling this function.&quot;</span>
+
+        <span class="n">manipuland_body_idcs</span> <span class="o">=</span> <span class="n">plant</span><span class="o">.</span><span class="n">GetBodyIndices</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">manipuland_index</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">manipuland_body_idcs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expected at least one body in the manipuland; received </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">manipuland_body_idcs</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">manipuland_body_idcs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">target_body_index</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Target body index </span><span class="si">{</span><span class="n">target_body_index</span><span class="si">}</span><span class="s2"> is out of range for the manipuland; received </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">manipuland_body_idcs</span><span class="p">)</span><span class="si">}</span><span class="s2"> bodies in the manipuland.&quot;</span>
+
+        <span class="n">manipuland_body</span> <span class="o">=</span> <span class="n">plant</span><span class="o">.</span><span class="n">get_body</span><span class="p">(</span><span class="n">manipuland_body_idcs</span><span class="p">[</span><span class="n">target_body_index</span><span class="p">])</span>
+        <span class="n">targeted_frame_on_manipuland</span> <span class="o">=</span> <span class="n">manipuland_body</span><span class="o">.</span><span class="n">body_frame</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">targeted_frame_on_manipuland</span></div>
+
+
+<div class="viewcode-block" id="BasicGraspingDebuggingProduction.get_target_frame_on_gripper">
+<a class="viewcode-back" href="../../../../../generated/productions/types/debug/debug.html#brom_drake.productions.types.debug.basic_grasping.BasicGraspingDebuggingProduction.get_target_frame_on_gripper">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_target_frame_on_gripper</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Frame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        **Description**</span>
+
+<span class="sd">        This method will return the target frame on the gripper.</span>
+
+<span class="sd">        **Returns**</span>
+
+<span class="sd">        target_frame_on_gripper: Frame</span>
+<span class="sd">            The target frame on the gripper.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Annotate plant as being of type MultibodyPlant for better autocompletion in this function</span>
+        <span class="n">plant</span><span class="p">:</span> <span class="n">MultibodyPlant</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span>
+
+        <span class="c1"># Verify that the gripper model has been initialized</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gripper_model_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">),</span> <span class="s2">&quot;Gripper model index is not set. Please add the gripper to the plant before calling this function.&quot;</span>
+
+        <span class="n">target_frame_on_gripper</span> <span class="o">=</span> <span class="n">plant</span><span class="o">.</span><span class="n">GetFrameByName</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">target_body_name_on_gripper</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gripper_model_index</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">target_frame_on_gripper</span></div>
 </div>
 
 </pre></div>
@@ -864,7 +960,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../_static/documentation_options.js?v=fc52f51e"></script>
+</div><script src="../../../../../_static/documentation_options.js?v=8e576371"></script>
     <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

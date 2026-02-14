@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.productions.debug.grasping.attempt_grasp.with_puppeteer_wrist.production - brom_drake-py 0.5.1-1 documentation</title>
+        <title>brom_drake.productions.debug.grasping.attempt_grasp.with_puppeteer_wrist.production - brom_drake-py 0.5.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../../../index.html"><div class="brand">brom_drake-py 0.5.1-1 documentation</div></a>
+      <a href="../../../../../../../index.html"><div class="brand">brom_drake-py 0.5.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.1-1 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 0.5.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -813,7 +813,8 @@
 
         <span class="c1"># Save the trajectory of the gripper frame</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">X_ObjectGripper_trajectory</span> <span class="o">=</span> <span class="n">X_ObjectGripper_trajectory</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">add_frames_for_gripper_base_trajectory</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_ObjectGripper_trajectory</span><span class="p">)</span>
+        <span class="c1"># - These will be visualized as frames in the world AFTER</span>
+        <span class="c1">#   the manipuland is initialized (because the frames are defined relative to the object)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">grasp_joint_positions</span> <span class="o">=</span> <span class="n">grasp_joint_positions</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
@@ -1007,12 +1008,15 @@
 <span class="sd">            with respect to the object being grasped.</span>
 <span class="sd">            TODO(Kwesi): Change the name of this parameter to include frame information.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Collect the parent frame</span>
+        <span class="n">targeted_manipuland_frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_manipuland_targeted_frame</span><span class="p">()</span>
+
         <span class="c1"># Create frames for each pose in the trajectory</span>
         <span class="n">gripper_base_frames</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">pose_i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pose_trajectory</span><span class="p">):</span>
             <span class="n">frame_i</span> <span class="o">=</span> <span class="n">FixedOffsetFrame</span><span class="p">(</span>
                 <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Gripper Base Frame Traj Pt &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span>
-                <span class="n">P</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">world_frame</span><span class="p">(),</span>  <span class="c1"># Parent Frame</span>
+                <span class="n">P</span><span class="o">=</span><span class="n">targeted_manipuland_frame</span><span class="p">,</span>  <span class="c1"># Parent Frame</span>
                 <span class="n">X_PF</span><span class="o">=</span><span class="n">pose_i</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">frame_i_added</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">AddFrame</span><span class="p">(</span><span class="n">frame_i</span><span class="p">)</span>
@@ -1351,9 +1355,12 @@
 
         <span class="c1"># Add the object to the builder</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_manipuland_to_plant</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_frames_for_gripper_base_trajectory</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_ObjectGripper_trajectory</span><span class="p">)</span>
 
         <span class="c1"># Add the gripper to the builder</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_gripper_to_plant</span><span class="p">()</span>
+
+        <span class="c1"># Add the puppeteer for the gripper and get the puppet signature</span>
         <span class="n">maker0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">puppet_signature</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_puppeteer_for_gripper</span><span class="p">()</span>
 
         <span class="c1"># Add the floor</span>
@@ -1963,7 +1970,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../../../_static/documentation_options.js?v=fc52f51e"></script>
+</div><script src="../../../../../../../_static/documentation_options.js?v=8e576371"></script>
     <script src="../../../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html"><link rel="next" title="conversion" href="conversion/conversion.html"><link rel="prev" title="kinematic" href="../stations/kinematic/kinematic.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>systems - brom_drake-py 0.5.1-1 documentation</title>
+        <title>systems - brom_drake-py 0.5.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -162,7 +162,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">brom_drake-py 0.5.1-1 documentation</div></a>
+      <a href="../../index.html"><div class="brand">brom_drake-py 0.5.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +183,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.1-1 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 0.5.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -648,6 +648,72 @@ from the two inputs <code class="docutils literal notranslate"><span class="pre"
 
 </dd></dl>
 
+<dl class="py class">
+<dt class="sig sig-object py" id="brom_drake.systems.rpy_integrator.RPYIntegrator">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brom_drake.systems.rpy_integrator.</span></span><span class="sig-name descname"><span class="pre">RPYIntegrator</span></span><a class="reference internal" href="../../_modules/brom_drake/systems/rpy_integrator.html#RPYIntegrator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.systems.rpy_integrator.RPYIntegrator" title="Link to this definition">¶</a></dt>
+<dd><p><strong>Description</strong></p>
+<p>A system that integrates roll, pitch, and yaw velocity signals to produce
+roll, pitch, and yaw position estimates without angle wrap-around.</p>
+<p>This system is useful when you want to track cumulative rotation angles
+beyond the typical [-π, π] range, allowing for unbounded angle tracking
+(e.g., roll = 10π is valid).</p>
+<p><strong>Notes</strong></p>
+<ul class="simple">
+<li><p>This system integrates the time derivatives of RPY angles (ṙoll, ṗitch, ẏaw).</p></li>
+<li><p>If you have body-frame angular velocities (ωx, ωy, ωz), you must convert them
+to RPY rates first using the appropriate transformation matrix.</p></li>
+<li><p>Initial conditions can be set through the context’s continuous state.</p></li>
+</ul>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pydrake.all</span> <span class="kn">import</span> <span class="n">DiagramBuilder</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">builder</span> <span class="o">=</span> <span class="n">DiagramBuilder</span><span class="p">()</span>
+
+<span class="c1"># Create the integrator</span>
+<span class="n">rpy_integrator</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">AddSystem</span><span class="p">(</span><span class="n">RPYIntegrator</span><span class="p">())</span>
+
+<span class="c1"># Connect current RPY to set initial state</span>
+<span class="c1"># builder.Connect(current_rpy_source.get_output_port(),</span>
+<span class="c1">#                 rpy_integrator.get_input_port(0))</span>
+
+<span class="c1"># Connect velocity source to integrator</span>
+<span class="c1"># builder.Connect(velocity_source.get_output_port(),</span>
+<span class="c1">#                 rpy_integrator.get_input_port(1))</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="brom_drake.systems.rpy_integrator.RPYIntegrator.CalcOutput">
+<span class="sig-name descname"><span class="pre">CalcOutput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/brom_drake/systems/rpy_integrator.html#RPYIntegrator.CalcOutput"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.systems.rpy_integrator.RPYIntegrator.CalcOutput" title="Link to this definition">¶</a></dt>
+<dd><p>Output the current integrated RPY values.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brom_drake.systems.rpy_integrator.RPYIntegrator.DoCalcTimeDerivatives">
+<span class="sig-name descname"><span class="pre">DoCalcTimeDerivatives</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">derivatives</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/brom_drake/systems/rpy_integrator.html#RPYIntegrator.DoCalcTimeDerivatives"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.systems.rpy_integrator.RPYIntegrator.DoCalcTimeDerivatives" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate the time derivatives (which are just the input velocities).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brom_drake.systems.rpy_integrator.RPYIntegrator.SetDefaultState">
+<span class="sig-name descname"><span class="pre">SetDefaultState</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/brom_drake/systems/rpy_integrator.html#RPYIntegrator.SetDefaultState"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.systems.rpy_integrator.RPYIntegrator.SetDefaultState" title="Link to this definition">¶</a></dt>
+<dd><p>Set the default initial state for the integrator from the RPY input port.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brom_drake.systems.rpy_integrator.RPYIntegrator.get_rpy_input_port">
+<span class="sig-name descname"><span class="pre">get_rpy_input_port</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/brom_drake/systems/rpy_integrator.html#RPYIntegrator.get_rpy_input_port"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.systems.rpy_integrator.RPYIntegrator.get_rpy_input_port" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the input port for current RPY values (used to set initial state).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brom_drake.systems.rpy_integrator.RPYIntegrator.get_rpy_velocity_input_port">
+<span class="sig-name descname"><span class="pre">get_rpy_velocity_input_port</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/brom_drake/systems/rpy_integrator.html#RPYIntegrator.get_rpy_velocity_input_port"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.systems.rpy_integrator.RPYIntegrator.get_rpy_velocity_input_port" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the input port for RPY velocity values.</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="functions">
 <h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
@@ -749,6 +815,14 @@ specified in <cite>desired_inputs</cite>.</p>
 <li><a class="reference internal" href="#brom_drake.systems.pose_composition.PoseCompositionSystem.CalcOutputPose"><code class="docutils literal notranslate"><span class="pre">PoseCompositionSystem.CalcOutputPose()</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#brom_drake.systems.rpy_integrator.RPYIntegrator"><code class="docutils literal notranslate"><span class="pre">RPYIntegrator</span></code></a><ul>
+<li><a class="reference internal" href="#brom_drake.systems.rpy_integrator.RPYIntegrator.CalcOutput"><code class="docutils literal notranslate"><span class="pre">RPYIntegrator.CalcOutput()</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.systems.rpy_integrator.RPYIntegrator.DoCalcTimeDerivatives"><code class="docutils literal notranslate"><span class="pre">RPYIntegrator.DoCalcTimeDerivatives()</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.systems.rpy_integrator.RPYIntegrator.SetDefaultState"><code class="docutils literal notranslate"><span class="pre">RPYIntegrator.SetDefaultState()</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.systems.rpy_integrator.RPYIntegrator.get_rpy_input_port"><code class="docutils literal notranslate"><span class="pre">RPYIntegrator.get_rpy_input_port()</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.systems.rpy_integrator.RPYIntegrator.get_rpy_velocity_input_port"><code class="docutils literal notranslate"><span class="pre">RPYIntegrator.get_rpy_velocity_input_port()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a class="reference internal" href="#functions">Functions</a><ul>
@@ -767,7 +841,7 @@ specified in <cite>desired_inputs</cite>.</p>
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=fc52f51e"></script>
+</div><script src="../../_static/documentation_options.js?v=8e576371"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>
