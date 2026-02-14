@@ -6,7 +6,6 @@ with additional functionality for integration without wrap-around.
 """
 
 from pydrake.systems.framework import LeafSystem, BasicVector, InputPort
-import numpy as np
 
 
 class RPYIntegrator(LeafSystem):
