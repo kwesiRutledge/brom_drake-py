@@ -27,6 +27,7 @@ from typing import List, Tuple
 from brom_drake.systems.named_vector_selection_system import (
     define_named_vector_selection_system,
 )
+from brom_drake.systems.rpy_integrator import RPYIntegrator
 from brom_drake.utils.model_instances import get_all_bodies_in
 
 # Internal Imports
@@ -413,16 +414,18 @@ class Puppetmaker:
             ),
         )
 
-    def add_feedforward_sum_system_for(
+    def add_gravity_compensation_sum_system_for(
         self,
         signature: PuppetSignature,
         builder: DiagramBuilder,
     ) -> Tuple[Adder, ConstantVectorSource]:
         """
-        Description
-        -----------
-        This method will create a simple Adder system to add feedforward
-        inputs to the PID controller output.
+        **Description**
+
+        This method attempts to compensate for gravity by:
+        - Creating a simple Adder system to the diagram,
+        - adds a feedforward term which includes the gravity on the puppet, and
+        - connects the feedforward term to one input of the adder.
         """
         # Setup
         plant: MultibodyPlant = self.plant
@@ -541,99 +544,43 @@ class Puppetmaker:
             )
         )
 
-        # Create the feedforward adder system
-        feedforward_adder, _ = self.add_feedforward_sum_system_for(signature, builder)
+        # The signal that we send to the joints will be the sum of:
+        # - A feedforward term which includes the gravity on the puppet, and
+        adder_with_gravity_compensation, _ = (
+            self.add_gravity_compensation_sum_system_for(signature, builder)
+        )
 
-        # Connect the feedforward adder to the controller
-        self.combine_feedforward_and_controller_for(
-            builder=builder,
-            feedforward_adder=feedforward_adder,
-            controller=controller,
+        # - The PID controller output.
+        builder.Connect(
+            controller.get_output_port(0),
+            adder_with_gravity_compensation.get_input_port(1),
         )
 
         # Connect the adder (which combines the PID Controller and the feedforward term)
-        # to the demultiplexer
+        # to the actuators
         builder.Connect(
-            feedforward_adder.get_output_port(0),
+            adder_with_gravity_compensation.get_output_port(0),
             actuator_demux.get_input_port(0),
         )
 
-        # Connect a PoseToVector System to the PID controller
-        # as reference.
-        p2v_config = RigidTransformToVectorSystemConfiguration(
-            name=f'[{self.config.name}]Pose to vector for puppeteering "{signature.name}"',
-            output_format="vector_xyz_euler(rpy)",
-        )
-        pose_to_vector = builder.AddSystem(RigidTransformToVectorSystem(p2v_config))
-
         # Reference signal is a state which contains two pieces: a pose and a twist
-        # - Target Twist is zero
-        zero_twist_source = builder.AddSystem(ConstantVectorSource(np.zeros((6,))))
-
-        target_state_mux = builder.AddNamedSystem(
-            name=f'[{self.config.name}] Target State Mux for puppeteering "{signature.name}"',
-            system=Multiplexer(input_sizes=[6, 6]),
+        target_state_mux, desired_pose_input = self.create_puppet_reference_signal(
+            signature=signature,
+            builder=builder,
         )
 
-        # Connect target state mux inputs
-        # - Pose from pose_to_vector (transformed so that the order of its
-        #   output matches the expected input of the controller; controller
-        #   expects [x, y, z, yaw, pitch, roll])
-
-        rpy_ordering_selection_system = define_named_vector_selection_system(
-            all_element_names=["x", "y", "z", "roll", "pitch", "yaw"],
-            sequence_of_names_for_output=["x", "y", "z", "yaw", "pitch", "roll"],
-        )
-        builder.AddNamedSystem(
-            name=f'[{self.config.name}] RPY Ordering Selection for puppeteering "{signature.name}"',
-            system=rpy_ordering_selection_system,
-        )
-
-        builder.Connect(
-            pose_to_vector.get_output_port(0),
-            rpy_ordering_selection_system.get_input_port(0),
-        )
-        builder.Connect(
-            rpy_ordering_selection_system.get_output_port(0),
-            target_state_mux.get_input_port(0),
-        )
-        # - Twist from zero_twist_source
-        builder.Connect(
-            zero_twist_source.get_output_port(0),
-            target_state_mux.get_input_port(1),
-        )
-
-        # Connect mux output (i.e., the desired state) to PID
+        # Connect the final two inputs to the PID controller:
+        # - The reference signal (which includes the desired pose and twist)
+        #   (Note: the pose and twist are converted to vector form by the `create_puppet_reference_signal` method.)
         builder.Connect(
             target_state_mux.get_output_port(0),
             controller.get_input_port_desired_state(),
         )
 
+        # - The estimated state signal (which includes the current pose and twist of the puppet)
         self.connect_plant_to_controller(builder, controller, signature)
 
-        return pose_to_vector, pass_through_system
-
-    def combine_feedforward_and_controller_for(
-        self,
-        builder: DiagramBuilder,
-        feedforward_adder: Adder,
-        controller: PidController,
-    ) -> Tuple[Adder, ConstantVectorSource]:
-        """
-        Description
-        -----------
-        This method will connect the output of the PID controller to one input
-        of the feedforward adder.
-        """
-        # Setup
-
-        # Connect the output of the controller to one input of the adder
-        builder.Connect(
-            controller.get_output_port(0),
-            feedforward_adder.get_input_port(1),
-        )
-
-        return feedforward_adder, None
+        return desired_pose_input, pass_through_system
 
     def config_from_initialization_params(
         self,
@@ -680,9 +627,12 @@ class Puppetmaker:
         signature: PuppetSignature,
     ) -> None:
         """
-        *Description*
+        **Description**
 
         Connect the plant to the controller.
+        This is non-trivial because we:
+        1. use a multiplexer to combine the state of each of the models in the puppet into one signal, and
+        2. we use a special integrator to produce the rotational states.
 
 
         """
@@ -744,9 +694,128 @@ class Puppetmaker:
                 state_mux.get_input_port(signature.n_models + ii),
             )
 
-        # Connect the output of the state demux to the controller
+        # Perform integration on the rotational states so that the controller can use them as part of its state feedback
+        # (Note: the controller needs the integrated rotation states to be able to compute the error between the current and desired pose of the puppet.)
+
+        # 1. Create a system that will make the final integrated state signal for the controller by integrating the rotational states and muxing them together with the translational states.
+        integrated_state_mux = builder.AddNamedSystem(
+            name=f'[{self.config.name}] Integrated State Mux for puppeteering "{signature.name}"',
+            system=Multiplexer(input_sizes=[3, 3, 6]),
+        )  # First 3 inputs are xyz; won't change. Second 3 inputs are the yaw-pitch-roll angles; these will be integrated. Last 6 inputs are the velocities; won't change.
+
+        # 2. Create an integrator to integrate the rotational states
+        rotational_state_integrator: RPYIntegrator = builder.AddNamedSystem(
+            name=f'[{self.config.name}] Rotational State Integrator for puppeteering "{signature.name}"',
+            system=RPYIntegrator(),
+        )
+
+        # 2a. Connect the rotational states + velocities from the state_mux to the integrator
+        # 2a-i. Select the RPY angles
+        all_state_names = [
+            "x",
+            "y",
+            "z",
+            "yaw",
+            "pitch",
+            "roll",
+            "vx",
+            "vy",
+            "vz",
+            "v_yaw",
+            "v_pitch",
+            "v_roll",
+        ]
+        rpy_selector = builder.AddNamedSystem(
+            name=f'[{self.config.name}] RPY State Selector for puppeteering "{signature.name}"',
+            system=define_named_vector_selection_system(
+                all_element_names=all_state_names,
+                sequence_of_names_for_output=["yaw", "pitch", "roll"],
+            ),
+        )
+
         builder.Connect(
             state_mux.get_output_port(0),
+            rpy_selector.get_input_port(0),
+        )
+
+        builder.Connect(
+            rpy_selector.get_output_port(0),
+            rotational_state_integrator.get_rpy_input_port(),
+        )
+
+        # 2a-ii. Select the RPY velocities
+        rpy_velocity_selector = builder.AddNamedSystem(
+            name=f'[{self.config.name}] RPY Velocity Selector for puppeteering "{signature.name}"',
+            system=define_named_vector_selection_system(
+                all_element_names=all_state_names,
+                sequence_of_names_for_output=["v_yaw", "v_pitch", "v_roll"],
+            ),
+        )
+
+        builder.Connect(
+            state_mux.get_output_port(0),
+            rpy_velocity_selector.get_input_port(0),
+        )
+
+        builder.Connect(
+            rpy_velocity_selector.get_output_port(0),
+            rotational_state_integrator.get_rpy_velocity_input_port(),
+        )
+
+        # 2a-iii. Connect the integrated RPY angles to the integrated state mux
+        builder.Connect(
+            rotational_state_integrator.get_output_port(),
+            integrated_state_mux.get_input_port(1),
+        )
+
+        # 2b. Select the translation states and connect them to the output
+        translational_state_selector = builder.AddNamedSystem(
+            name=f'[{self.config.name}] Translational State Selector for puppeteering "{signature.name}"',
+            system=define_named_vector_selection_system(
+                all_element_names=all_state_names,
+                sequence_of_names_for_output=["x", "y", "z"],
+            ),
+        )
+
+        builder.Connect(
+            state_mux.get_output_port(0),
+            translational_state_selector.get_input_port(0),
+        )
+
+        builder.Connect(
+            translational_state_selector.get_output_port(0),
+            integrated_state_mux.get_input_port(0),
+        )
+
+        # 2c. Connect the velocities (which don't need to be integrated) to the output
+        velocity_selector = builder.AddNamedSystem(
+            name=f'[{self.config.name}] Velocity Selector for puppeteering "{signature.name}"',
+            system=define_named_vector_selection_system(
+                all_element_names=all_state_names,
+                sequence_of_names_for_output=[
+                    "vx",
+                    "vy",
+                    "vz",
+                    "v_yaw",
+                    "v_pitch",
+                    "v_roll",
+                ],
+            ),
+        )
+
+        builder.Connect(
+            state_mux.get_output_port(0),
+            velocity_selector.get_input_port(0),
+        )
+
+        builder.Connect(
+            velocity_selector.get_output_port(0),
+            integrated_state_mux.get_input_port(2),
+        )
+
+        # Connect the output of the state demux to the controller
+        builder.Connect(
+            integrated_state_mux.get_output_port(0),
             controller.get_input_port_estimated_state(),
         )
 
@@ -930,6 +999,59 @@ class Puppetmaker:
             )
 
         return translation_ghost_models, revolute_ghost_models
+
+    def create_puppet_reference_signal(
+        self,
+        signature: PuppetSignature,
+        builder: DiagramBuilder,
+    ) -> Tuple[Multiplexer, RigidTransformToVectorSystem]:
+        # Create the system where the desired pose should be connected
+        p2v_config = RigidTransformToVectorSystemConfiguration(
+            name=f'[{self.config.name}]Pose to vector for puppeteering "{signature.name}"',
+            output_format="vector_xyz_euler(rpy)",
+        )
+        desired_pose_to_vector = builder.AddSystem(
+            RigidTransformToVectorSystem(p2v_config)
+        )
+
+        # Reference signal is a state which contains two pieces: a pose and a twist
+        # - Target Twist is zero
+        zero_twist_source = builder.AddSystem(ConstantVectorSource(np.zeros((6,))))
+
+        target_state_mux = builder.AddNamedSystem(
+            name=f'[{self.config.name}] Target State Mux for puppeteering "{signature.name}"',
+            system=Multiplexer(input_sizes=[6, 6]),
+        )
+
+        # Connect target state mux inputs
+        # - Pose from pose_to_vector (transformed so that the order of its
+        #   output matches the expected input of the controller; controller
+        #   expects [x, y, z, yaw, pitch, roll])
+
+        rpy_ordering_selection_system = define_named_vector_selection_system(
+            all_element_names=["x", "y", "z", "roll", "pitch", "yaw"],
+            sequence_of_names_for_output=["x", "y", "z", "yaw", "pitch", "roll"],
+        )
+        builder.AddNamedSystem(
+            name=f'[{self.config.name}] RPY Ordering Selection for puppeteering "{signature.name}"',
+            system=rpy_ordering_selection_system,
+        )
+
+        builder.Connect(
+            desired_pose_to_vector.get_output_port(0),
+            rpy_ordering_selection_system.get_input_port(0),
+        )
+        builder.Connect(
+            rpy_ordering_selection_system.get_output_port(0),
+            target_state_mux.get_input_port(0),
+        )
+
+        # - Twist from zero_twist_source
+        builder.Connect(
+            zero_twist_source.get_output_port(0),
+            target_state_mux.get_input_port(1),
+        )
+        return target_state_mux, desired_pose_to_vector
 
     def add_massless_sphere_to_plant_with_name(
         self, name: str, color: np.ndarray = None
