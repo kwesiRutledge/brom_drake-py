@@ -46,7 +46,7 @@ def main():
     # - The Grasp Pose (i.e. the target pose of the gripper wrist when grasping the object)
     X_ObjectTarget = RigidTransform(
         p=np.array([-0.08, 0.05, 0.15]),
-        rpy=RollPitchYaw(0.1, (11.0 / 20.0) * np.pi, 0.1),
+        rpy=RollPitchYaw(0.1, (14.0 / 20.0) * np.pi, 0.1),
     )
 
     # - The Pre-Grasp Pose (i.e. the pose of the gripper wrist just before reaching to grasp the object)
@@ -76,7 +76,7 @@ def main():
     simulator.set_target_realtime_rate(1.0)
     simulator.set_publish_every_time_step(False)
     simulator.Initialize()
-    simulator.AdvanceTo(60.0)
+    simulator.AdvanceTo(30.0)
 
 
 if __name__ == "__main__":
