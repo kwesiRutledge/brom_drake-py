@@ -11,7 +11,7 @@ from brom_drake.all import DiagramTarget
 from brom_drake.watchers.diagram_watcher.errors import (
     PortIsNotFoundInDiagramError,
     PortIsNotBeingWatchedError,
-    SystemIsNotFoundInDiagramError, 
+    SystemIsNotFoundInDiagramError,
     SystemIsNotBeingWatchedError,
 )
 
@@ -23,7 +23,7 @@ class TestErrors(unittest.TestCase):
         self.assertEqual(error.target, target)
         self.assertEqual(error.port_reference, 0)
         self.assertIn(
-            "Port \"0\" on system with name test was not found in the Diagram.\n",
+            'Port "0" on system with name test was not found in the Diagram.\n',
             error.message,
         )
 
@@ -32,7 +32,7 @@ class TestErrors(unittest.TestCase):
         error = PortIsNotBeingWatchedError(target, port_reference=0)
         self.assertEqual(error.target, target)
         self.assertIn(
-            "Port \"0\" on system with name test is not being watched by the DiagramWatcher.\n",
+            'Port "0" on system with name test is not being watched by the DiagramWatcher.\n',
             error.message,
         )
 
@@ -41,7 +41,7 @@ class TestErrors(unittest.TestCase):
         error = SystemIsNotFoundInDiagramError(target)
         self.assertEqual(error.target, target)
         self.assertIn(
-            "System with name \"test\" was not found in the Diagram.\n",
+            'System with name "test" was not found in the Diagram.\n',
             error.message,
         )
 
@@ -50,10 +50,9 @@ class TestErrors(unittest.TestCase):
         error = SystemIsNotBeingWatchedError(target)
         self.assertEqual(error.target, target)
         self.assertIn(
-            "System with name \"test\" is not being watched by the DiagramWatcher.\n",
+            'System with name "test" is not being watched by the DiagramWatcher.\n',
             error.message,
         )
-    
 
 
 if __name__ == "__main__":

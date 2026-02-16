@@ -26,7 +26,7 @@ def main(version: str):
         lines = content.split("\n")
         for i, line in enumerate(lines):
             if line.strip().startswith("release ="):
-                lines[i] = f"release = \"{version}\""
+                lines[i] = f'release = "{version}"'
         content = "\n".join(lines)
 
         # Write the updated content back to the file

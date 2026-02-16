@@ -132,11 +132,11 @@ class PortWatcher:
         .. warning::
 
             The data in the dictionary is only available after the diagram has been simulated and the VectorLogSinks have recorded data.
-        
+
 
         The keys of the dictionary are the names of the output ports being watched, and the values are the corresponding data as numpy arrays.
-        Importantly, most of the time this data dictionary contains only one key-value pair, since most ports being watched are not list-valued (i.e., they do not have "components" that require multiple VectorLogSinks to monitor). 
-        However, in the case of list-valued ports, there will be multiple key-value pairs in the dictionary, where each key corresponds to a different component of the port (e.g., "element_0_out", "element_1_out", etc.). 
+        Importantly, most of the time this data dictionary contains only one key-value pair, since most ports being watched are not list-valued (i.e., they do not have "components" that require multiple VectorLogSinks to monitor).
+        However, in the case of list-valued ports, there will be multiple key-value pairs in the dictionary, where each key corresponds to a different component of the port (e.g., "element_0_out", "element_1_out", etc.).
         In this case, the user can use the output port name (which is included in the keys) to determine which component of the port each key-value pair corresponds to.
 
         .. note::
@@ -183,7 +183,7 @@ class PortWatcher:
             raise ValueError(
                 "Cannot get timing data because no VectorLogSinks were created for this PortWatcher."
             )
-        
+
         # Pull timing data from the first VectorLogSink (they should all have the same timing)
         first_log_sink = list(self._drake_vector_logs.values())[0]
         log = first_log_sink.FindLog(diagram_context)

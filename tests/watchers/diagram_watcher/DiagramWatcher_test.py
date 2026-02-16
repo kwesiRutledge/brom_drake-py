@@ -18,24 +18,25 @@ from pydrake.all import (
 from brom_drake.watchers.diagram_target import DiagramTarget
 from brom_drake.watchers.diagram_watcher.diagram_watcher import DiagramWatcher
 from brom_drake.watchers.diagram_watcher.errors import (
-    PortIsNotBeingWatchedError, SystemIsNotBeingWatchedError
+    PortIsNotBeingWatchedError,
+    SystemIsNotBeingWatchedError,
 )
 import numpy as np
 from typing import Tuple
 import unittest
 
 
-
-
 class TestDiagramWatcher(unittest.TestCase):
-    def create_simple_affine_with_integrator_diagram(self) -> Tuple[DiagramBuilder, AffineSystem, Integrator]:
+    def create_simple_affine_with_integrator_diagram(
+        self,
+    ) -> Tuple[DiagramBuilder, AffineSystem, Integrator]:
         """
         **Description**
-        
+
         This helper function creates a simple DiagramBuilder with two systems and a connection between them.
         1. The first system is an AffineSystem that outputs a slowly updating value of the pose of the block.
         2. The second system is an Integrator that integrates the output of the first system, just to make things a little more interesting.
-        
+
         **Returns**
 
         builder: DiagramBuilder
@@ -62,8 +63,7 @@ class TestDiagramWatcher(unittest.TestCase):
 
         # Add an integrator to integrate the output of the first system, just to make things a little more interesting
         integrator = builder.AddNamedSystem(
-            system=Integrator(size=6),
-            name="test_integrator"
+            system=Integrator(size=6), name="test_integrator"
         )
 
         # Connect the systems
@@ -96,13 +96,13 @@ class TestDiagramWatcher(unittest.TestCase):
     def test_get_port_watcher1(self):
         """
         Description:
-        
+
             This test verifies that the get_port_watcher() method of the DiagramWatcher correctly raises an error
             when the specified system name is not found in the Diagram.
         """
         # Setup a simple Diagram with one system
         builder, _, _ = self.create_simple_affine_with_integrator_diagram()
-        
+
         # Create watcher and build the diagram
         watcher = DiagramWatcher(builder)
         diagram = builder.Build()
@@ -118,7 +118,7 @@ class TestDiagramWatcher(unittest.TestCase):
         except SystemIsNotBeingWatchedError as e:
             expectedError = SystemIsNotBeingWatchedError(
                 target=DiagramTarget(bad_target_name),
-                system_names=[system_name for system_name in watcher._port_watchers]
+                system_names=[system_name for system_name in watcher._port_watchers],
             )
             self.assertEqual(str(e), str(expectedError))
         else:
@@ -127,13 +127,13 @@ class TestDiagramWatcher(unittest.TestCase):
     def test_get_port_watcher2(self):
         """
         **Description**
-        
+
         This test verifies that the get_port_watcher() method of the DiagramWatcher correctly raises an error
         when the specified PORT NAME/INDEX is not being watched by the DiagramWatcher.
         """
         # Setup a simple Diagram with one system
         builder, _, integrator = self.create_simple_affine_with_integrator_diagram()
-        
+
         # Create watcher and build the diagram
         watcher = DiagramWatcher(builder)
         diagram = builder.Build()
@@ -151,7 +151,10 @@ class TestDiagramWatcher(unittest.TestCase):
             expectedError = PortIsNotBeingWatchedError(
                 target=DiagramTarget(target_system_name, ports=[bad_port_name]),
                 port_reference=bad_port_name,
-                port_names=[port_name for port_name in watcher._port_watchers[target_system_name]]
+                port_names=[
+                    port_name
+                    for port_name in watcher._port_watchers[target_system_name]
+                ],
             )
             self.assertEqual(str(e), str(expectedError))
         else:
@@ -160,13 +163,13 @@ class TestDiagramWatcher(unittest.TestCase):
     def test_get_port_watcher3(self):
         """
         **Description**
-        
+
         This test verifies that the get_port_watcher() method of the DiagramWatcher correctly returns the PortWatcher
         object for a valid system name and port name.
         """
         # Setup a simple Diagram with one system
         builder, _, integrator = self.create_simple_affine_with_integrator_diagram()
-        
+
         # Create watcher and build the diagram
         watcher = DiagramWatcher(builder)
         diagram = builder.Build()
@@ -183,13 +186,13 @@ class TestDiagramWatcher(unittest.TestCase):
     def test_get_all_port_watchers_for_system1(self):
         """
         **Description**
-        
+
         This test verifies that the get_all_port_watchers_for_system() method of the DiagramWatcher correctly raises an error
         when the specified system name is not found in the Diagram.
         """
         # Setup a simple Diagram with one system
         builder, _, _ = self.create_simple_affine_with_integrator_diagram()
-        
+
         # Create watcher and build the diagram
         watcher = DiagramWatcher(builder)
         diagram = builder.Build()
@@ -205,7 +208,7 @@ class TestDiagramWatcher(unittest.TestCase):
         except SystemIsNotBeingWatchedError as e:
             expectedError = SystemIsNotBeingWatchedError(
                 target=DiagramTarget(bad_target_name),
-                system_names=[system_name for system_name in watcher._port_watchers]
+                system_names=[system_name for system_name in watcher._port_watchers],
             )
             self.assertEqual(str(e), str(expectedError))
         else:
@@ -214,12 +217,12 @@ class TestDiagramWatcher(unittest.TestCase):
     def test_get_all_port_watchers_for_system2(self):
         """
         **Description**
-        
+
         This test verifies that the get_all_port_watchers_for_system() method of the DiagramWatcher correctly returns the dictionary of port name to PortWatcher object for a valid system name.
         """
         # Setup a simple Diagram with one system
         builder, _, integrator = self.create_simple_affine_with_integrator_diagram()
-        
+
         # Create watcher and build the diagram
         watcher = DiagramWatcher(builder)
         diagram = builder.Build()
@@ -229,17 +232,17 @@ class TestDiagramWatcher(unittest.TestCase):
 
         # Get the dictionary of port name to PortWatcher object for the integrator and check that it is correct
         target_system_name = integrator.get_name()
-        port_watchers_dict = watcher.get_all_port_watchers_for_system(target_system_name)
+        port_watchers_dict = watcher.get_all_port_watchers_for_system(
+            target_system_name
+        )
         self.assertIsNotNone(port_watchers_dict)
         self.assertIn(integrator.get_output_port(0).get_name(), port_watchers_dict)
         self.assertEqual(
             len(list(port_watchers_dict.keys())),
             1,
-            f"Expected 1 port to be watched for integrator system \"{target_system_name}\", but found {len(list(port_watchers_dict.keys()))} ports being watched.",
+            f'Expected 1 port to be watched for integrator system "{target_system_name}", but found {len(list(port_watchers_dict.keys()))} ports being watched.',
         )
+
 
 if __name__ == "__main__":
     unittest.main()
-
-
-

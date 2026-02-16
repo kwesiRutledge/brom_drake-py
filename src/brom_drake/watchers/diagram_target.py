@@ -43,4 +43,4 @@ class DiagramTarget(NamedTuple):
     name: str  #: Name of the LeafSystem to monitor
 
     #: List of port indices to monitor. If None, all ports are monitored
-    ports: Union[None, List[int|str]] = None 
+    ports: Union[None, List[int | str]] = None

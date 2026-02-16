@@ -38,7 +38,7 @@ from brom_drake.watchers.diagram_watcher import constants
 from brom_drake.watchers.diagram_watcher.errors import (
     PortIsNotFoundInDiagramError,
     PortIsNotBeingWatchedError,
-    SystemIsNotFoundInDiagramError, 
+    SystemIsNotFoundInDiagramError,
     SystemIsNotBeingWatchedError,
 )
 
@@ -302,7 +302,9 @@ class DiagramWatcher:
         for target in targets:
             # Check if the target name is in the eligible systems
             if target.name not in eligible_system_dict.keys():
-                raise SystemIsNotFoundInDiagramError(target, eligible_system_dict.keys())
+                raise SystemIsNotFoundInDiagramError(
+                    target, eligible_system_dict.keys()
+                )
 
             # If it is, then also check that the port index is correct
             if target.ports is None:
@@ -315,11 +317,14 @@ class DiagramWatcher:
                         target=target,
                         port_reference=port_index,
                         port_names=[
-                            eligible_system_dict[target.name].get_output_port(port_idx).get_name()
-                            for port_idx in range(eligible_system_dict[target.name].num_output_ports())
-                        ]
+                            eligible_system_dict[target.name]
+                            .get_output_port(port_idx)
+                            .get_name()
+                            for port_idx in range(
+                                eligible_system_dict[target.name].num_output_ports()
+                            )
+                        ],
                     )
-
 
         # All checks passed!
         pass
@@ -360,7 +365,9 @@ class DiagramWatcher:
 
         return eligible_systems
 
-    def get_all_port_watchers_for_system(self, system_name: str) -> Dict[str, PortWatcher]:
+    def get_all_port_watchers_for_system(
+        self, system_name: str
+    ) -> Dict[str, PortWatcher]:
         """
         **Description**
 
@@ -378,7 +385,7 @@ class DiagramWatcher:
         if system_name not in self._port_watchers:
             raise SystemIsNotBeingWatchedError(
                 target=DiagramTarget(system_name),
-                system_names=[system_name for system_name in self._port_watchers]
+                system_names=[system_name for system_name in self._port_watchers],
             )
 
         return self._port_watchers[system_name]
@@ -405,14 +412,16 @@ class DiagramWatcher:
         if system_name not in self._port_watchers:
             raise SystemIsNotBeingWatchedError(
                 target=DiagramTarget(system_name),
-                system_names=[system_name for system_name in self._port_watchers]
+                system_names=[system_name for system_name in self._port_watchers],
             )
 
         if port_name not in self._port_watchers[system_name]:
             raise PortIsNotBeingWatchedError(
                 target=DiagramTarget(system_name, ports=[port_name]),
                 port_reference=port_name,
-                port_names=[port_name for port_name in self._port_watchers[system_name]]
+                port_names=[
+                    port_name for port_name in self._port_watchers[system_name]
+                ],
             )
 
         return self._port_watchers[system_name][port_name]
@@ -436,7 +445,7 @@ class DiagramWatcher:
             "The 'port_watchers' property is deprecated. "
             "Use 'get_all_port_watchers_for_system()' or 'get_port_watcher()' instead.",
             DeprecationWarning,
-            stacklevel=2
+            stacklevel=2,
         )
         return self._port_watchers
 
