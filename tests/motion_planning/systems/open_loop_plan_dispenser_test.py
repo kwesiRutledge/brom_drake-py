@@ -130,7 +130,7 @@ class OpenLoopPlanDispenserTest(unittest.TestCase):
         # Check if the output of the dispenser is as expected (the last point should be
         # the last point of the simple_plan)
         first_key = dispenser.get_name()
-        point_in_plan_watcher = watcher.port_watchers[first_key][
+        point_in_plan_watcher = watcher._port_watchers[first_key][
             dispenser.get_output_port(0).get_name()
         ]
         temp_log = point_in_plan_watcher.get_vector_log_sink().FindLog(diagram_context)
@@ -219,7 +219,7 @@ class OpenLoopPlanDispenserTest(unittest.TestCase):
         # Check if the output of the dispenser is as expected (the last point should be
         # the last point of the simple_plan)
         first_key = dispenser.get_name()
-        point_in_plan_watcher = watcher.port_watchers[first_key][
+        point_in_plan_watcher = watcher._port_watchers[first_key][
             dispenser.get_output_port(0).get_name()
         ]
         temp_log = point_in_plan_watcher.get_vector_log_sink().FindLog(diagram_context)

@@ -111,7 +111,7 @@ class PortWatcher:
 
         # Preparing LogVectorSink
         self._drake_vector_logs: Dict[OutputPortNameLike, VectorLogSink] = {}
-        self.prepare_vector_logs(builder)
+        self._prepare_vector_logs(builder)
 
         # Prepare optional members
         self.plotter = None
@@ -123,16 +123,84 @@ class PortWatcher:
                 file_manager=self.file_manager,
             )
 
+    def get_data_dictionary(self, diagram_context: Context) -> Dict[str, np.ndarray]:
+        """
+        **Description**
+
+        Returns the data recorded by this PortWatcher as a dictionary.
+
+        .. warning::
+
+            The data in the dictionary is only available after the diagram has been simulated and the VectorLogSinks have recorded data.
+
+
+        The keys of the dictionary are the names of the output ports being watched, and the values are the corresponding data as numpy arrays.
+        Importantly, most of the time this data dictionary contains only one key-value pair, since most ports being watched are not list-valued (i.e., they do not have "components" that require multiple VectorLogSinks to monitor).
+        However, in the case of list-valued ports, there will be multiple key-value pairs in the dictionary, where each key corresponds to a different component of the port (e.g., "element_0_out", "element_1_out", etc.).
+        In this case, the user can use the output port name (which is included in the keys) to determine which component of the port each key-value pair corresponds to.
+
+        .. note::
+
+            The dimensions of the data will always be (n_data_dim, n_timesteps).
+            In other words, there will be one row for each dimension of the data, and one column for each time step recorded by the VectorLogSinks.
+
+        **Parameters**
+
+        diagram_context: Context
+            The context of the diagram.
+
+        **Returns**
+
+        data: Dict[str, np.ndarray]
+            A dictionary containing the data from all of the VectorLogSinks
+            associated with this PortWatcher. The keys are the names of the output ports being watched.
+        """
+        data = {}
+        for output_port_name, log_sink in self._drake_vector_logs.items():
+            log = log_sink.FindLog(diagram_context)
+            data[output_port_name] = log.data()
+
+        return data
+
+    def get_timing_array(self, diagram_context: Context) -> np.ndarray:
+        """
+        **Description**
+
+        Returns the timing data recorded by this PortWatcher as a numpy array.
+
+        **Parameters**
+
+        diagram_context: Context
+            The context of the diagram.
+
+        **Returns**
+        timing: np.ndarray
+            A numpy array containing the timing data from one of the VectorLogSinks
+            associated with this PortWatcher. Since all of the VectorLogSinks should have the same timing, it does not matter which one we pull the timing data from.
+        """
+        # Check to see if we have any VectorLogSinks
+        if len(self._drake_vector_logs) == 0:
+            raise ValueError(
+                "Cannot get timing data because no VectorLogSinks were created for this PortWatcher."
+            )
+
+        # Pull timing data from the first VectorLogSink (they should all have the same timing)
+        first_log_sink = list(self._drake_vector_logs.values())[0]
+        log = first_log_sink.FindLog(diagram_context)
+        timing = log.sample_times()
+
+        return timing
+
     def get_vector_log_sink(
         self, with_index: int = None, with_output_port_name: str = None
     ) -> VectorLogSink:
         """
-        *Description*
+        **Description**
 
         Returns the VectorLogSink corresponding to the given index or output port name.
         By default, this returns the first VectorLogSink in the internal dictionary.
 
-        *Parameters*
+        **Parameters**
 
         with_index: int, optional
             The index of the VectorLogSink to return.
@@ -142,7 +210,7 @@ class PortWatcher:
             The name of the output port of the VectorLogSink to return.
             By default, None.
 
-        *Returns*
+        **Returns**
 
         vector_log_sink: VectorLogSink
             The VectorLogSink corresponding to the given index or output port name.
@@ -163,12 +231,12 @@ class PortWatcher:
                 "Either with_index or with_output_port_name must be provided."
             )
 
-    def name_vector_log_sink(
+    def _name_vector_log_sink(
         self,
         current_output_port: OutputPort,
     ):
         """
-        *Description*
+        **Description**
 
         Provides a name to the VectorLogSink stored in `self.drake_vector_logs`
         that corresponds to the given system and output_port.
@@ -184,7 +252,7 @@ class PortWatcher:
 
         self._drake_vector_logs[current_output_port.get_name()].set_name(name)
 
-    def prepare_vector_log_for_rigid_transform_port(
+    def _prepare_vector_log_for_rigid_transform_port(
         self,
         current_output_port: OutputPort,
         builder: DiagramBuilder,
@@ -224,9 +292,9 @@ class PortWatcher:
         )
 
         # And finally, name the vector log sink (must have unique names to compile the diagram)
-        self.name_vector_log_sink(current_output_port=current_output_port)
+        self._name_vector_log_sink(current_output_port=current_output_port)
 
-    def prepare_vector_log_for_abstract_valued_port(
+    def _prepare_vector_log_for_abstract_valued_port(
         self,
         current_output_port: OutputPort,
         builder: DiagramBuilder,
@@ -298,7 +366,7 @@ class PortWatcher:
                 builder.Connect(current_output_port, selection_i.get_input_port())
 
                 # Use recursion to assign the proper logger to the output of selection_i
-                self.prepare_vector_log_for_abstract_valued_port(
+                self._prepare_vector_log_for_abstract_valued_port(
                     current_output_port=selection_i.get_output_port(),
                     builder=builder,
                 )
@@ -308,11 +376,11 @@ class PortWatcher:
 
         # Non-list types
         if is_rigid_transform(example_value):
-            self.prepare_vector_log_for_rigid_transform_port(
+            self._prepare_vector_log_for_rigid_transform_port(
                 current_output_port,
                 builder,
             )
-            self.name_vector_log_sink(current_output_port=current_output_port)
+            self._name_vector_log_sink(current_output_port=current_output_port)
 
         elif type(example_value) == bool:
             # If the value is a boolean,
@@ -331,14 +399,14 @@ class PortWatcher:
                 converter_system.get_output_port(),
                 builder,
             )
-            self.name_vector_log_sink(current_output_port=current_output_port)
+            self._name_vector_log_sink(current_output_port=current_output_port)
 
         else:
             raise NotImplementedError(
                 f"PortWatcher does not support the type of data ({type(example_value)}) contained in the port."
             )
 
-    def prepare_vector_logs(self, builder: DiagramBuilder):
+    def _prepare_vector_logs(self, builder: DiagramBuilder):
         """
         *Description*
 
@@ -357,10 +425,10 @@ class PortWatcher:
             self._drake_vector_logs[self.port.get_name()] = LogVectorOutput(
                 self.port, builder
             )
-            self.name_vector_log_sink(current_output_port=self.port)
+            self._name_vector_log_sink(current_output_port=self.port)
         else:
             # Port must be abstract valued
-            self.prepare_vector_log_for_abstract_valued_port(self.port, builder)
+            self._prepare_vector_log_for_abstract_valued_port(self.port, builder)
 
         # Announce the preparation of the VectorLogSink's
         # with the logger
@@ -433,14 +501,18 @@ class PortWatcher:
 
     def save_raw_data(self, diagram_context: Context):
         """
-        *Description*
+        **Description**
 
-        Saves the raw data to a file.
+        Saves the raw data to file(s). The number of files depends on the components in the data AND the options of the PortWatcher (i.e., whether to save each component in a separate file or all in one file).
 
-        *Arguments*
+        **Arguments**
 
         diagram_context: Context
             The context of the diagram.
+
+        **Notes**
+
+        TODO(Kwesi): Take advantage of get_data_dictionary function to clean up this code.
         """
         # Test to see the number of logs we have to save data for
         n_vector_logs = len(list(self._drake_vector_logs))
@@ -484,3 +556,4 @@ class PortWatcher:
             np.save(raw_data_file, log_data)
 
             # Announce the saving of the raw data
+            # TODO(Kwesi): Include the file name in the log message

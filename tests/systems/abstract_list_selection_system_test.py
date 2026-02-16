@@ -58,7 +58,7 @@ class TestAbstractListSelectionSystem(unittest.TestCase):
         simulator.AdvanceTo(1.0)
 
         # Retrieve the output from the watcher
-        selector_dict_of_port_watchers = watcher.port_watchers["list_selector"]
+        selector_dict_of_port_watchers = watcher._port_watchers["list_selector"]
         output_pose_port_watcher: PortWatcher = selector_dict_of_port_watchers[
             "element_out"
         ]

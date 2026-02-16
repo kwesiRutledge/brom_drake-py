@@ -1,4 +1,5 @@
 [![codecov](https://codecov.io/gh/kwesiRutledge/brom_drake-py/graph/badge.svg?token=0TI5PV2HUD)](https://codecov.io/gh/kwesiRutledge/brom_drake-py)
+[![sphinx](https://img.shields.io/badge/docs-sphinx-blue.svg)](https://kwesirutledge.github.io/brom_drake-py/)
 
 # brom_drake-py
 Brom is a helper library for the [Drake](https://drake.mit.edu/) robotics simulation and verification library.
@@ -11,10 +12,10 @@ Feature                    |  Code | Results
 :-------------------------:|:-------------------------:|:-------------------------:
 The Diagram Watcher (the `DiagramWatcher` will log + plot all output ports of your `Diagram` automatically) |`add_watcher_and_build()`| ![Creation of Brom Directory](./promo/BromWatcher0.gif)
 The Drake-ify feature (converts your URDF file into a form that Drake can consume) | `drakeify_my_urdf()` | ![Drakeify Example](./promo/BromDrakeifyURDF0.gif)
-Productions (partially complete robot scenarios to test your algorithms) | (See [Examples Directory](https://github.com/kwesiRutledge/brom_drake-py/tree/main/examples/productions) or [the Wiki](https://github.com/kwesiRutledge/brom_drake-py/wiki/Productions)) | ![Kinematic Motion Planning Example](./promo/productions/motion_planning/kinematic/Chem-Lab-Demo.gif)
+Productions (partially complete robot scenarios to test your algorithms) | (See [Examples Directory](https://github.com/kwesiRutledge/brom_drake-py/tree/main/examples/productions) or [the Docs](https://kwesirutledge.github.io/brom_drake-py/)) | ![Kinematic Motion Planning Example](./promo/productions/motion_planning/kinematic/Chem-Lab-Demo.gif)
 Puppeteer (Move free bodies in drake with a `RigidTransform` input) | `Puppetmaker` class's methods | ![A cube being moved using the Puppetmaker's methods.](./promo/utils/puppetmaker-demo1.gif)
 
-To learn more, look through our documentation/Wiki [here](https://kwesirutledge.github.io/brom_drake-py/).
+To learn more, look through our documentation [here](https://kwesirutledge.github.io/brom_drake-py/).
 
 ## Installation
 

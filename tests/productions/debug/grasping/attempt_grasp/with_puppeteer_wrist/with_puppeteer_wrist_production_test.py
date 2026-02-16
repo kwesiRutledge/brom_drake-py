@@ -134,7 +134,7 @@ class TestAttemptGraspWithPuppeteerWristProduction(unittest.TestCase):
         flask_name = production.manipuland_name
         flask_state_port_name = f"{flask_name}_state"
 
-        flask_state_logger: PortWatcher = watcher.port_watchers[plant_name][
+        flask_state_logger: PortWatcher = watcher._port_watchers[plant_name][
             flask_state_port_name
         ]
         flask_state_log = flask_state_logger.get_vector_log_sink().FindLog(

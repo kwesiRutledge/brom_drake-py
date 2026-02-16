@@ -314,11 +314,11 @@ class TestNetworkXFSM(unittest.TestCase):
         simulator.AdvanceTo(0.50)
 
         # Extract the FSM state data
-        watcher_keys = list(watcher.port_watchers.keys())
+        watcher_keys = list(watcher._port_watchers.keys())
         first_key = watcher_keys[0]
 
         fsm_state_log = (
-            watcher.port_watchers[first_key]["fsm_state"]
+            watcher._port_watchers[first_key]["fsm_state"]
             .get_vector_log_sink()
             .FindLog(diagram_context)
         )
@@ -373,12 +373,12 @@ class TestNetworkXFSM(unittest.TestCase):
         simulator = Simulator(diagram, diagram_context)
 
         # Get key needed to extract watcher data for fsm state
-        watcher_keys = list(watcher.port_watchers.keys())
+        watcher_keys = list(watcher._port_watchers.keys())
         first_key = watcher_keys[0]
-        fsm_state_logger = watcher.port_watchers[first_key][
+        fsm_state_logger = watcher._port_watchers[first_key][
             "fsm_state"
         ].get_vector_log_sink()
-        output1_logger = watcher.port_watchers[first_key][
+        output1_logger = watcher._port_watchers[first_key][
             "output1"
         ].get_vector_log_sink()
 
@@ -471,12 +471,12 @@ class TestNetworkXFSM(unittest.TestCase):
         simulator = Simulator(diagram, diagram_context)
 
         # Collect data for the fsm state
-        watcher_keys = list(watcher.port_watchers.keys())
+        watcher_keys = list(watcher._port_watchers.keys())
         first_key = watcher_keys[0]
-        fsm_state_logger = watcher.port_watchers[first_key][
+        fsm_state_logger = watcher._port_watchers[first_key][
             "fsm_state"
         ].get_vector_log_sink()
-        output1_logger = watcher.port_watchers[first_key][
+        output1_logger = watcher._port_watchers[first_key][
             "output1"
         ].get_vector_log_sink()
 

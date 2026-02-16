@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from pathlib import Path
 import logging
+import warnings
 
 from pydrake.multibody.plant import MultibodyPlant
 from pydrake.systems.framework import Diagram, DiagramBuilder, LeafSystem, PortDataType
@@ -34,17 +35,22 @@ from brom_drake.watchers.diagram_watcher.diagram_watcher_options import (
     DiagramWatcherOptions,
 )
 from brom_drake.watchers.diagram_watcher import constants
-from brom_drake.watchers.diagram_watcher.errors import UnrecognizedTargetError
+from brom_drake.watchers.diagram_watcher.errors import (
+    PortIsNotFoundInDiagramError,
+    PortIsNotBeingWatchedError,
+    SystemIsNotFoundInDiagramError,
+    SystemIsNotBeingWatchedError,
+)
 
 
 class DiagramWatcher:
     """
-    *Description*
+    **Description**
 
     An object that will iterate through all elements of a partially built
     Drake Diagram (via the DiagramBuilder) and add PortWatchers to the specified targets.
 
-    *Parameters*
+    **Parameters**
 
     subject: DiagramBuilder
         We will search through the subject (a diagram builder)
@@ -65,11 +71,11 @@ class DiagramWatcher:
         options: DiagramWatcherOptions = DiagramWatcherOptions(),
     ):
         """
-        *Description*
+        **Description**
 
         Initializes the DiagramWatcher class.
 
-        *Parameters*
+        **Parameters**
 
         subject : DiagramBuilder
             We will search through the subject (a diagram builder)
@@ -103,18 +109,18 @@ class DiagramWatcher:
 
         # Create directory to plot in
         os.makedirs(self.options.base_directory, exist_ok=True)
-        self.logger = self.create_logger()  # Create an "activity summary" log
+        self.logger = self._create_logging_logger()  # Create an "activity summary" log
         # which details what the
         # DiagramWatcher is doing.
 
         # Collect All the Connections and Systems
-        self.eligible_systems = self.find_eligible_systems(subject)
+        self.eligible_systems = self._find_eligible_systems(subject)
         if targets is None:
             targets = [
                 DiagramTarget(system.get_name()) for system in self.eligible_systems
             ]
         else:
-            self.check_targets(targets, self.eligible_systems)
+            self._check_targets(targets, self.eligible_systems)
 
         # Log the list of eligible systems
         self.logger.info(
@@ -125,11 +131,11 @@ class DiagramWatcher:
 
         # For Each Target with None ports, we will try to
         # "smartly" create the targets that we want to monitor
-        inferred_targets = self.get_smart_targets(subject, targets)
+        inferred_targets = self._get_smart_targets(subject, targets)
         self.inferred_targets = inferred_targets
 
         # For each target's port, we will add a logger
-        self.port_watchers: Dict[str, Dict[str, PortWatcher]] = {
+        self._port_watchers: Dict[str, Dict[str, PortWatcher]] = {
             target.name: {} for target in inferred_targets
         }
         self.logger.info("Adding loggers to the diagram... (via PortWatcher objects)")
@@ -141,7 +147,7 @@ class DiagramWatcher:
 
                 try:
                     # Configure PortWatcher
-                    self.port_watchers[target.name][target_port.get_name()] = (
+                    self._port_watchers[target.name][target_port.get_name()] = (
                         PortWatcher(
                             target_port,
                             subject,
@@ -162,7 +168,7 @@ class DiagramWatcher:
                         exc_info=False,
                     )
 
-                if target_port.get_name() in self.port_watchers[target.name]:
+                if target_port.get_name() in self._port_watchers[target.name]:
                     # Announce that we successfully added logger
                     self.logger.info(
                         f"Added logger to port {target_port.get_name()} of system {target.name}"
@@ -173,82 +179,40 @@ class DiagramWatcher:
                         f"Unable to add logger to port {target_port.get_name()} of system {target.name}",
                     )
 
-    def create_new_port_watcher_options(
-        self,
-        options: PortWatcherOptions,
-        plot_dir: str = None,
-        raw_data_dir: str = None,
-    ) -> PortWatcherOptions:
-        """
-        *Description*
-
-        Creates a new set of PortWatcherOptions with the given options.
-
-        *Parameters*
-
-        options : PortWatcherOptions
-            The options to use as a base.
-        plot_dir : str, optional
-            The directory to save the plots in, by default None
-        raw_data_dir : str, optional
-            The directory to save the raw data in, by default None
-        """
-        # Setup
-        new_plot_dir = options.plotting.base_directory
-        if plot_dir is not None:
-            new_plot_dir = plot_dir
-
-        new_raw_data_dir = options.raw_data.base_directory
-        if raw_data_dir is not None:
-            new_raw_data_dir = raw_data_dir
-
-        # Return the new options
-        return PortWatcherOptions(
-            plotting=PortWatcherPlottingOptions(
-                plot_arrangement=options.plotting.plot_arrangement,
-                plot_dpi=options.plotting.plot_dpi,
-                save_to_file=options.plotting.save_to_file,
-                file_format=options.plotting.file_format,
-                figure_naming_convention=options.plotting.figure_naming_convention,
-            ),
-            raw_data=PortWatcherRawDataOptions(
-                save_to_file=options.raw_data.save_to_file,
-                base_directory=new_raw_data_dir,
-                file_format=options.raw_data.file_format,
-            ),
-        )
-
     def __del__(self):
         """
-        *Description*
+        **Description**
 
-        Destructor for the Diagram Watcher.
-        Will plot the data from all of our loggers if we have access to the diagram context.
+        During destruction of the DiagramWatcher object, we will try to:
+        - Save all the figures from the PortWatchers
+        - Save all the raw data from the PortWatchers
+        - Close all logging handlers in the logger and the remove them
         """
         # Setup
 
         is_ready_to_plot = self.diagram is not None
+        is_ready_to_plot = is_ready_to_plot and self.diagram_context is not None
 
         if not is_ready_to_plot:
             return  # Return early if we don't have access to the diagram context
 
         # Upon deletion, we will PLOT the data from all of our loggers
         # if we have access to the diagram context
-        self.save_figures()
-        self.save_raw_data()
+        self._save_figures()
+        self._save_raw_data()
 
-        # Close all handlers in the logger and the remove them
+        # Close all logging handlers in the logger and the remove them
         for handler in self.logger.handlers:
             handler.close()
             self.logger.removeHandler(handler)
 
-    def create_logger(self) -> logging.Logger:
+    def _create_logging_logger(self) -> logging.Logger:
         """
-        *Description*
+        **Description**
 
         Configures the "activity summary" a log of brom's activity.
 
-        *Returns*
+        **Returns**
 
         logger: logging.Logger
             The configured logger for LOG MESSAGES.
@@ -302,25 +266,27 @@ class DiagramWatcher:
 
         return logger
 
-    def check_targets(
+    def _check_targets(
         self,
         targets: List[DiagramTarget],
         eligible_systems: List[Union[MultibodyPlant, AffineSystem, LeafSystem]],
     ) -> List[Union[MultibodyPlant, AffineSystem, LeafSystem]]:
         """
-        *Description*
+        **Description**
 
-        Finds the systems specified by the targets list that
-        we want to watch/monitor.
+        Finds the systems specified by the targets list (i.e., what we want to watch/monitor)
+        in the list of eligible systems (i.e., the systems that are in the diagram and are of eligible types).
+
         We will try to ignore all systems that are:
         - Scene Graphs
         - Loggers
         and raise an error if the target is not found in the eligible systems.
 
-        *Parameters*
+        **Parameters**
 
         targets : List[DiagramTarget]
             The targets that we want to monitor.
+
         eligible_systems : List[Union[MultibodyPlant, AffineSystem, LeafSystem]]
             The systems that are eligible for monitoring.
 
@@ -336,7 +302,9 @@ class DiagramWatcher:
         for target in targets:
             # Check if the target name is in the eligible systems
             if target.name not in eligible_system_dict.keys():
-                raise UnrecognizedTargetError(target, eligible_system_dict.keys())
+                raise SystemIsNotFoundInDiagramError(
+                    target, eligible_system_dict.keys()
+                )
 
             # If it is, then also check that the port index is correct
             if target.ports is None:
@@ -345,20 +313,32 @@ class DiagramWatcher:
             num_ports_in_target = eligible_system_dict[target.name].num_output_ports()
             for port_index in target.ports:
                 if port_index < 0 or port_index >= num_ports_in_target:
-                    raise ValueError(
-                        f"Port index {port_index} is out of bounds for system {target.name} (only {num_ports_in_target} ports exist)"
+                    raise PortIsNotFoundInDiagramError(
+                        target=target,
+                        port_reference=port_index,
+                        port_names=[
+                            eligible_system_dict[target.name]
+                            .get_output_port(port_idx)
+                            .get_name()
+                            for port_idx in range(
+                                eligible_system_dict[target.name].num_output_ports()
+                            )
+                        ],
                     )
 
         # All checks passed!
         pass
 
-    def find_eligible_systems(
+    def _find_eligible_systems(
         self, builder: DiagramBuilder
     ) -> List[Union[MultibodyPlant, AffineSystem, LeafSystem]]:
         """
-        *Description*
+        **Description**
 
-        Finds all the systems that are eligible for logging.
+        Finds all the systems that are eligible for logging with either:
+        - Drake's VectorLog object, or
+        - Brom_drake's special logging utilities.
+
         We want to ignore all systems that are:
 
         - Scene Graphs
@@ -385,18 +365,102 @@ class DiagramWatcher:
 
         return eligible_systems
 
-    def get_smart_targets(
+    def get_all_port_watchers_for_system(
+        self, system_name: str
+    ) -> Dict[str, PortWatcher]:
+        """
+        **Description**
+
+        Gets all the PortWatcher objects for a given system name.
+
+        **Parameters**
+
+        system_name : str
+            The name of the system.
+
+        **Returns**
+        port_watchers : Dict[str, PortWatcher]
+            A dictionary of port name to PortWatcher object for the given system name.
+        """
+        if system_name not in self._port_watchers:
+            raise SystemIsNotBeingWatchedError(
+                target=DiagramTarget(system_name),
+                system_names=[system_name for system_name in self._port_watchers],
+            )
+
+        return self._port_watchers[system_name]
+
+    def get_port_watcher(self, system_name: str, port_name: str) -> PortWatcher:
+        """
+        **Description**
+
+        Gets the PortWatcher object for a given system name and port name.
+
+        **Parameters**
+
+        system_name : str
+            The name of the system.
+
+        port_name : str
+            The name of the port.
+
+        **Returns**
+
+        port_watcher : PortWatcher
+            The PortWatcher object for the given system name and port name.
+        """
+        if system_name not in self._port_watchers:
+            raise SystemIsNotBeingWatchedError(
+                target=DiagramTarget(system_name),
+                system_names=[system_name for system_name in self._port_watchers],
+            )
+
+        if port_name not in self._port_watchers[system_name]:
+            raise PortIsNotBeingWatchedError(
+                target=DiagramTarget(system_name, ports=[port_name]),
+                port_reference=port_name,
+                port_names=[
+                    port_name for port_name in self._port_watchers[system_name]
+                ],
+            )
+
+        return self._port_watchers[system_name][port_name]
+
+    @property
+    def port_watchers(self) -> Dict[str, Dict[str, PortWatcher]]:
+        """
+        **Description**
+
+        Returns the internal dictionary of port watchers.
+
+        .. deprecated::
+            Use `get_all_port_watchers_for_system()` or `get_port_watcher()` instead.
+
+        **Returns**
+
+        port_watchers : Dict[str, Dict[str, PortWatcher]]
+            A nested dictionary of system names to port names to PortWatcher objects.
+        """
+        warnings.warn(
+            "The 'port_watchers' property is deprecated. "
+            "Use 'get_all_port_watchers_for_system()' or 'get_port_watcher()' instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self._port_watchers
+
+    def _get_smart_targets(
         self,
         subject: DiagramBuilder,
         targets: List[DiagramTarget],
     ) -> List[DiagramTarget]:
         """
-        *Description*
+        **Description**
 
         For each target with None ports, we will try to
         "smartly" create the targets that we want to monitor.
 
-        *Parameters*
+        **Parameters**
 
         subject : DiagramBuilder
             The diagram builder that contains the systems.
@@ -404,7 +468,7 @@ class DiagramWatcher:
         targets : List[DiagramTarget]
             The targets that we want to monitor.
 
-        *Returns*
+        **Returns**
 
         List[DiagramTarget]
             The list of targets with inferred ports.
@@ -442,9 +506,9 @@ class DiagramWatcher:
 
         return smart_targets
 
-    def save_figures(self):
+    def _save_figures(self):
         """
-        *Description*
+        **Description**
 
         Saves all the figures made from plotting data
         currently saved in the known port watchers.
@@ -453,9 +517,9 @@ class DiagramWatcher:
         self.logger.info("Saving figures...")
 
         # Algorithm
-        for system_name in self.port_watchers:
+        for system_name in self._port_watchers:
             system_ii = self.diagram.GetSubsystemByName(system_name)
-            ports_on_ii = self.port_watchers[system_name]
+            ports_on_ii = self._port_watchers[system_name]
 
             self.logger.info(f"Saving figures for system {system_name}...")
 
@@ -479,9 +543,9 @@ class DiagramWatcher:
                         f"Skipped plotting for port {port_name} on system {system_name} (flag not set)"
                     )
 
-    def save_raw_data(self):
+    def _save_raw_data(self):
         """
-        *Description*
+        **Description**
 
         Saves all the raw data from the port watchers.
         """
@@ -489,9 +553,9 @@ class DiagramWatcher:
         self.logger.info("Saving raw data...")
 
         # Algorithm
-        for system_name in self.port_watchers:
+        for system_name in self._port_watchers:
             system_ii = self.diagram.GetSubsystemByName(system_name)
-            ports_on_ii = self.port_watchers[system_name]
+            ports_on_ii = self._port_watchers[system_name]
 
             self.logger.info(f"Saving raw data for system {system_name}...")
 

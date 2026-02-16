@@ -383,7 +383,7 @@ class AddWatcherTest(unittest.TestCase):
         )
 
         # Verify that the watcher is connected to the correct ports
-        self.assertEqual(len(watcher.port_watchers), 2)
+        self.assertEqual(len(watcher._port_watchers), 2)
 
     def test_add_watcher2(self):
         """
@@ -418,8 +418,8 @@ class AddWatcherTest(unittest.TestCase):
         # Verify that the watcher is connected to the correct ports
         self.assertEqual(
             3,
-            len(watcher.port_watchers["my_plant"])
-            + len(watcher.port_watchers["my_controller"]),
+            len(watcher._port_watchers["my_plant"])
+            + len(watcher._port_watchers["my_controller"]),
         )
 
     def test_add_watcher3(self):
@@ -455,13 +455,13 @@ class AddWatcherTest(unittest.TestCase):
         # Verify that the watcher is connected to the correct ports
         self.assertLessEqual(
             4,
-            len(watcher.port_watchers["my_plant"])
-            + len(watcher.port_watchers["my_controller"]),
+            len(watcher._port_watchers["my_plant"])
+            + len(watcher._port_watchers["my_controller"]),
         )
-        self.assertEqual(1, len(watcher.port_watchers["my_controller"]))
+        self.assertEqual(1, len(watcher._port_watchers["my_controller"]))
         self.assertLess(
             2,
-            len(watcher.port_watchers["my_plant"]),
+            len(watcher._port_watchers["my_plant"]),
         )
 
     def test_add_watcher_and_build1(self):

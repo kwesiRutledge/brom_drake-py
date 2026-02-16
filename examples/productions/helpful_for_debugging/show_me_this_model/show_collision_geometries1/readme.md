@@ -5,4 +5,4 @@ then you can simply give it to this Production and it will quickly display it fo
 
 ## Resources
 
-For more details, see [this section of the Wiki](https://github.com/kwesiRutledge/brom_drake-py/wiki/Productions-%E2%80%90-ShowMeThisModel).
+For more details, see the `Features > Productions` section of the [docs](https://kwesirutledge.github.io/brom_drake-py/).
