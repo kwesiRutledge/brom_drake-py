@@ -1,5 +1,5 @@
 [![codecov](https://codecov.io/gh/kwesiRutledge/brom_drake-py/graph/badge.svg?token=0TI5PV2HUD)](https://codecov.io/gh/kwesiRutledge/brom_drake-py)
-[![sphinx]](https://kwesirutledge.github.io/brom_drake-py/)
+[![sphinx](https://img.shields.io/badge/docs-sphinx-blue.svg)](https://kwesirutledge.github.io/brom_drake-py/)
 
 # brom_drake-py
 Brom is a helper library for the [Drake](https://drake.mit.edu/) robotics simulation and verification library.
