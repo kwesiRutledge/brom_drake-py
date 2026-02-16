@@ -299,10 +299,6 @@ class PortWatcherTest(unittest.TestCase):
             set(expected_keys),
         )
 
-        print(
-            pw0.get_timing_array(diagram_context),
-        )
-
         self.assertGreater(
             pw0.get_timing_array(diagram_context).shape[0],
             0,
