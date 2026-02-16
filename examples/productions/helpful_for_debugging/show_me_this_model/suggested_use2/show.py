@@ -3,8 +3,8 @@ Description
 -----------
 This script contains an example of how to show
 a given urdf at some (optional) specified joint positions.
-For more info, refer to the README or the Wiki:
-https://github.com/kwesiRutledge/brom_drake-py/wiki/Productions-%E2%80%90-ShowMeThisModel
+For more info, refer to the README or the Features > Productions section of the docs:
+https://kwesirutledge.github.io/brom_drake-py/
 """
 
 from importlib import resources as impresources
