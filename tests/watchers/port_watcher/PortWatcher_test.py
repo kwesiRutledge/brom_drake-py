@@ -158,7 +158,6 @@ class PortWatcherTest(unittest.TestCase):
         plant.Finalize()
 
         plant_test_port = plant.GetOutputPort("contact_results")
-        print(plant_test_port.get_name())
 
         try:
             pw0 = PortWatcher(
@@ -254,6 +253,59 @@ class PortWatcherTest(unittest.TestCase):
         # Verify that there is at least one file in the directory
         self.assertTrue(
             len(os.listdir(pw0.file_manager.raw_data_dir)) > 0,
+        )
+
+    def test_get_data_dictionary1(self):
+        """
+        Description
+
+        This test verifies that the get_data_dictionary method
+        correctly returns the data dictionary with the expected keys and values.
+        """
+        # Setup
+        builder = DiagramBuilder()
+
+        # Setup Diagram
+        pose_source = builder.AddSystem(
+            ConstantValueSource(AbstractValue.Make(RigidTransform()))
+        )
+
+        # Create PortWatcher object
+        pw0 = PortWatcher(
+            pose_source.get_output_port(),
+            builder,
+            python_logger=self.create_dummy_logger(
+                "PortWatcherTest_get_data_dictionary1.log"
+            ),
+        )
+
+        # Build Diagram
+        diagram = builder.Build()
+        diagram_context = diagram.CreateDefaultContext()
+
+        # Create simulator and simulate for a few seconds
+        simulator = Simulator(diagram, diagram_context)
+        simulator.set_publish_every_time_step(False)
+        simulator.AdvanceTo(1.0)
+        simulator.AdvanceTo(2.0)
+
+        # Get data dictionary
+        data_dict = pw0.get_data_dictionary(diagram_context)
+
+        # Verify that the data dictionary has the expected keys and values
+        expected_keys = ["y0"]
+        self.assertEqual(
+            set(data_dict.keys()),
+            set(expected_keys),
+        )
+
+        print(
+            pw0.get_timing_array(diagram_context),
+        )
+
+        self.assertGreater(
+            pw0.get_timing_array(diagram_context).shape[0],
+            0,
         )
 
 
