@@ -5,4 +5,4 @@ Sometimes, you just want to see what a given model looks like in Drake. For the 
 
 ## Resources
 
-For more details, see the production of the [docs](https://kwesirutledge.github.io/brom_drake-py/).
+For more details, see the `Features > Productions` section of the [docs](https://kwesirutledge.github.io/brom_drake-py/).
