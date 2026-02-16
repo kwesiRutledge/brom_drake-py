@@ -34,17 +34,22 @@ from brom_drake.watchers.diagram_watcher.diagram_watcher_options import (
     DiagramWatcherOptions,
 )
 from brom_drake.watchers.diagram_watcher import constants
-from brom_drake.watchers.diagram_watcher.errors import UnrecognizedTargetError
+from brom_drake.watchers.diagram_watcher.errors import (
+    PortIsNotFoundInDiagramError,
+    PortIsNotBeingWatchedError,
+    SystemIsNotFoundInDiagramError, 
+    SystemIsNotBeingWatchedError,
+)
 
 
 class DiagramWatcher:
     """
-    *Description*
+    **Description**
 
     An object that will iterate through all elements of a partially built
     Drake Diagram (via the DiagramBuilder) and add PortWatchers to the specified targets.
 
-    *Parameters*
+    **Parameters**
 
     subject: DiagramBuilder
         We will search through the subject (a diagram builder)
@@ -65,11 +70,11 @@ class DiagramWatcher:
         options: DiagramWatcherOptions = DiagramWatcherOptions(),
     ):
         """
-        *Description*
+        **Description**
 
         Initializes the DiagramWatcher class.
 
-        *Parameters*
+        **Parameters**
 
         subject : DiagramBuilder
             We will search through the subject (a diagram builder)
@@ -129,7 +134,7 @@ class DiagramWatcher:
         self.inferred_targets = inferred_targets
 
         # For each target's port, we will add a logger
-        self.port_watchers: Dict[str, Dict[str, PortWatcher]] = {
+        self._port_watchers: Dict[str, Dict[str, PortWatcher]] = {
             target.name: {} for target in inferred_targets
         }
         self.logger.info("Adding loggers to the diagram... (via PortWatcher objects)")
@@ -141,7 +146,7 @@ class DiagramWatcher:
 
                 try:
                     # Configure PortWatcher
-                    self.port_watchers[target.name][target_port.get_name()] = (
+                    self._port_watchers[target.name][target_port.get_name()] = (
                         PortWatcher(
                             target_port,
                             subject,
@@ -162,7 +167,7 @@ class DiagramWatcher:
                         exc_info=False,
                     )
 
-                if target_port.get_name() in self.port_watchers[target.name]:
+                if target_port.get_name() in self._port_watchers[target.name]:
                     # Announce that we successfully added logger
                     self.logger.info(
                         f"Added logger to port {target_port.get_name()} of system {target.name}"
@@ -180,18 +185,25 @@ class DiagramWatcher:
         raw_data_dir: str = None,
     ) -> PortWatcherOptions:
         """
-        *Description*
+        **Description**
 
         Creates a new set of PortWatcherOptions with the given options.
 
-        *Parameters*
+        **Parameters**
 
         options : PortWatcherOptions
             The options to use as a base.
+
         plot_dir : str, optional
             The directory to save the plots in, by default None
+
         raw_data_dir : str, optional
             The directory to save the raw data in, by default None
+
+        **Returns**
+
+        PortWatcherOptions
+            The new PortWatcherOptions with the given options.
         """
         # Setup
         new_plot_dir = options.plotting.base_directory
@@ -220,10 +232,12 @@ class DiagramWatcher:
 
     def __del__(self):
         """
-        *Description*
+        **Description**
 
-        Destructor for the Diagram Watcher.
-        Will plot the data from all of our loggers if we have access to the diagram context.
+        During destruction of the DiagramWatcher object, we will try to:
+        - Save all the figures from the PortWatchers
+        - Save all the raw data from the PortWatchers
+        - Close all logging handlers in the logger and the remove them
         """
         # Setup
 
@@ -237,18 +251,18 @@ class DiagramWatcher:
         self.save_figures()
         self.save_raw_data()
 
-        # Close all handlers in the logger and the remove them
+        # Close all logging handlers in the logger and the remove them
         for handler in self.logger.handlers:
             handler.close()
             self.logger.removeHandler(handler)
 
     def create_logger(self) -> logging.Logger:
         """
-        *Description*
+        **Description**
 
         Configures the "activity summary" a log of brom's activity.
 
-        *Returns*
+        **Returns**
 
         logger: logging.Logger
             The configured logger for LOG MESSAGES.
@@ -308,7 +322,7 @@ class DiagramWatcher:
         eligible_systems: List[Union[MultibodyPlant, AffineSystem, LeafSystem]],
     ) -> List[Union[MultibodyPlant, AffineSystem, LeafSystem]]:
         """
-        *Description*
+        **Description**
 
         Finds the systems specified by the targets list that
         we want to watch/monitor.
@@ -317,10 +331,11 @@ class DiagramWatcher:
         - Loggers
         and raise an error if the target is not found in the eligible systems.
 
-        *Parameters*
+        **Parameters**
 
         targets : List[DiagramTarget]
             The targets that we want to monitor.
+
         eligible_systems : List[Union[MultibodyPlant, AffineSystem, LeafSystem]]
             The systems that are eligible for monitoring.
 
@@ -336,7 +351,7 @@ class DiagramWatcher:
         for target in targets:
             # Check if the target name is in the eligible systems
             if target.name not in eligible_system_dict.keys():
-                raise UnrecognizedTargetError(target, eligible_system_dict.keys())
+                raise SystemIsNotFoundInDiagramError(target, eligible_system_dict.keys())
 
             # If it is, then also check that the port index is correct
             if target.ports is None:
@@ -345,9 +360,12 @@ class DiagramWatcher:
             num_ports_in_target = eligible_system_dict[target.name].num_output_ports()
             for port_index in target.ports:
                 if port_index < 0 or port_index >= num_ports_in_target:
-                    raise ValueError(
-                        f"Port index {port_index} is out of bounds for system {target.name} (only {num_ports_in_target} ports exist)"
+                    raise PortIsNotFoundInDiagramError(
+                        target=target,
+                        port_reference=port_index,
+                        port_names=[port.get_name() for port in eligible_system_dict[target.name].get_output_ports()]
                     )
+
 
         # All checks passed!
         pass
@@ -356,7 +374,7 @@ class DiagramWatcher:
         self, builder: DiagramBuilder
     ) -> List[Union[MultibodyPlant, AffineSystem, LeafSystem]]:
         """
-        *Description*
+        **Description**
 
         Finds all the systems that are eligible for logging.
         We want to ignore all systems that are:
@@ -385,18 +403,75 @@ class DiagramWatcher:
 
         return eligible_systems
 
+    def get_all_port_watchers_for_system(self, system_name: str) -> Dict[str, PortWatcher]:
+        """
+        **Description**
+
+        Gets all the PortWatcher objects for a given system name.
+
+        **Parameters**
+
+        system_name : str
+            The name of the system.
+
+        **Returns**
+        port_watchers : Dict[str, PortWatcher]
+            A dictionary of port name to PortWatcher object for the given system name.
+        """
+        if system_name not in self._port_watchers:
+            raise SystemIsNotBeingWatchedError(
+                target=DiagramTarget(system_name),
+                system_names=[system_name for system_name in self._port_watchers]
+            )
+
+        return self._port_watchers[system_name]
+
+    def get_port_watcher(self, system_name: str, port_name: str) -> PortWatcher:
+        """
+        **Description**
+
+        Gets the PortWatcher object for a given system name and port name.
+
+        **Parameters**
+
+        system_name : str
+            The name of the system.
+
+        port_name : str
+            The name of the port.
+
+        **Returns**
+
+        port_watcher : PortWatcher
+            The PortWatcher object for the given system name and port name.
+        """
+        if system_name not in self._port_watchers:
+            raise SystemIsNotBeingWatchedError(
+                target=DiagramTarget(system_name),
+                system_names=[system_name for system_name in self._port_watchers]
+            )
+
+        if port_name not in self._port_watchers[system_name]:
+            raise PortIsNotBeingWatchedError(
+                target=DiagramTarget(system_name, ports=[port_name]),
+                port_reference=port_name,
+                port_names=[port_name for port_name in self._port_watchers[system_name]]
+            )
+
+        return self._port_watchers[system_name][port_name]
+
     def get_smart_targets(
         self,
         subject: DiagramBuilder,
         targets: List[DiagramTarget],
     ) -> List[DiagramTarget]:
         """
-        *Description*
+        **Description**
 
         For each target with None ports, we will try to
         "smartly" create the targets that we want to monitor.
 
-        *Parameters*
+        **Parameters**
 
         subject : DiagramBuilder
             The diagram builder that contains the systems.
@@ -404,7 +479,7 @@ class DiagramWatcher:
         targets : List[DiagramTarget]
             The targets that we want to monitor.
 
-        *Returns*
+        **Returns**
 
         List[DiagramTarget]
             The list of targets with inferred ports.
@@ -444,7 +519,7 @@ class DiagramWatcher:
 
     def save_figures(self):
         """
-        *Description*
+        **Description**
 
         Saves all the figures made from plotting data
         currently saved in the known port watchers.
@@ -453,9 +528,9 @@ class DiagramWatcher:
         self.logger.info("Saving figures...")
 
         # Algorithm
-        for system_name in self.port_watchers:
+        for system_name in self._port_watchers:
             system_ii = self.diagram.GetSubsystemByName(system_name)
-            ports_on_ii = self.port_watchers[system_name]
+            ports_on_ii = self._port_watchers[system_name]
 
             self.logger.info(f"Saving figures for system {system_name}...")
 
@@ -481,7 +556,7 @@ class DiagramWatcher:
 
     def save_raw_data(self):
         """
-        *Description*
+        **Description**
 
         Saves all the raw data from the port watchers.
         """
@@ -489,9 +564,9 @@ class DiagramWatcher:
         self.logger.info("Saving raw data...")
 
         # Algorithm
-        for system_name in self.port_watchers:
+        for system_name in self._port_watchers:
             system_ii = self.diagram.GetSubsystemByName(system_name)
-            ports_on_ii = self.port_watchers[system_name]
+            ports_on_ii = self._port_watchers[system_name]
 
             self.logger.info(f"Saving raw data for system {system_name}...")
 

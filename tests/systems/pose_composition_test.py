@@ -68,7 +68,7 @@ class TestPoseComposition(unittest.TestCase):
         simulator.AdvanceTo(1.0)
 
         # Extract the values in the data field
-        composition_system_port_watchers = watcher.port_watchers[
+        composition_system_port_watchers = watcher._port_watchers[
             composition_system.get_name()
         ]
 
@@ -141,7 +141,7 @@ class TestPoseComposition(unittest.TestCase):
         simulator.AdvanceTo(1.0)
 
         # Extract the values in the data field
-        composition_system_port_watchers = watcher.port_watchers[
+        composition_system_port_watchers = watcher._port_watchers[
             composition_system.get_name()
         ]
 
