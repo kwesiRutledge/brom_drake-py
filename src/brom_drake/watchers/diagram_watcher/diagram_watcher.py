@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from pathlib import Path
 import logging
+import warnings
 
 from pydrake.multibody.plant import MultibodyPlant
 from pydrake.systems.framework import Diagram, DiagramBuilder, LeafSystem, PortDataType
@@ -190,6 +191,7 @@ class DiagramWatcher:
         # Setup
 
         is_ready_to_plot = self.diagram is not None
+        is_ready_to_plot = is_ready_to_plot and self.diagram_context is not None
 
         if not is_ready_to_plot:
             return  # Return early if we don't have access to the diagram context
@@ -414,6 +416,29 @@ class DiagramWatcher:
             )
 
         return self._port_watchers[system_name][port_name]
+
+    @property
+    def port_watchers(self) -> Dict[str, Dict[str, PortWatcher]]:
+        """
+        **Description**
+
+        Returns the internal dictionary of port watchers.
+
+        .. deprecated::
+            Use `get_all_port_watchers_for_system()` or `get_port_watcher()` instead.
+
+        **Returns**
+
+        port_watchers : Dict[str, Dict[str, PortWatcher]]
+            A nested dictionary of system names to port names to PortWatcher objects.
+        """
+        warnings.warn(
+            "The 'port_watchers' property is deprecated. "
+            "Use 'get_all_port_watchers_for_system()' or 'get_port_watcher()' instead.",
+            DeprecationWarning,
+            stacklevel=2
+        )
+        return self._port_watchers
 
     def _get_smart_targets(
         self,
