@@ -5,4 +5,4 @@ then you can simply give it to this Production and it will quickly display it fo
 
 ## Resources
 
-For more details, see the Features/Production section of the [docs](https://kwesirutledge.github.io/brom_drake-py/).
+For more details, see the `Features > Productions` section of the [docs](https://kwesirutledge.github.io/brom_drake-py/).
