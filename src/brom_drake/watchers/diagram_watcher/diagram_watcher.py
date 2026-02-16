@@ -312,7 +312,10 @@ class DiagramWatcher:
                     raise PortIsNotFoundInDiagramError(
                         target=target,
                         port_reference=port_index,
-                        port_names=[port.get_name() for port in eligible_system_dict[target.name].get_output_ports()]
+                        port_names=[
+                            eligible_system_dict[target.name].get_output_port(port_idx).get_name()
+                            for port_idx in range(eligible_system_dict[target.name].num_output_ports())
+                        ]
                     )
 
 
