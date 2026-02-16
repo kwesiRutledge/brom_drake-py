@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html"><link rel="prev" title="diagram_watcher" href="../diagram_watcher/diagram_watcher.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>port_watcher - brom_drake-py 0.5.2 documentation</title>
+        <title>port_watcher - brom_drake-py 0.5.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -162,7 +162,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">brom_drake-py 0.5.2 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">brom_drake-py 0.5.3 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +183,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.2 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 0.5.3 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -868,12 +868,61 @@ the data from the <code class="xref py py-class docutils literal notranslate"><s
 This class adds the elements to the drake diagram that will monitor a given
 system’s output port (<strong>output_port</strong>), if possible.</p>
 <dl class="py method">
+<dt class="sig sig-object py" id="brom_drake.watchers.port_watcher.port_watcher.PortWatcher.get_data_dictionary">
+<span class="sig-name descname"><span class="pre">get_data_dictionary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">diagram_context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Context</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/brom_drake/watchers/port_watcher/port_watcher.html#PortWatcher.get_data_dictionary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.watchers.port_watcher.port_watcher.PortWatcher.get_data_dictionary" title="Link to this definition">¶</a></dt>
+<dd><p><strong>Description</strong></p>
+<p>Returns the data recorded by this PortWatcher as a dictionary.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The data in the dictionary is only available after the diagram has been simulated and the VectorLogSinks have recorded data.</p>
+</div>
+<p>The keys of the dictionary are the names of the output ports being watched, and the values are the corresponding data as numpy arrays.
+Importantly, most of the time this data dictionary contains only one key-value pair, since most ports being watched are not list-valued (i.e., they do not have “components” that require multiple VectorLogSinks to monitor).
+However, in the case of list-valued ports, there will be multiple key-value pairs in the dictionary, where each key corresponds to a different component of the port (e.g., “element_0_out”, “element_1_out”, etc.).
+In this case, the user can use the output port name (which is included in the keys) to determine which component of the port each key-value pair corresponds to.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The dimensions of the data will always be (n_data_dim, n_timesteps).
+In other words, there will be one row for each dimension of the data, and one column for each time step recorded by the VectorLogSinks.</p>
+</div>
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt>diagram_context: Context</dt><dd><p>The context of the diagram.</p>
+</dd>
+</dl>
+<p><strong>Returns</strong></p>
+<dl class="simple">
+<dt>data: Dict[str, np.ndarray]</dt><dd><p>A dictionary containing the data from all of the VectorLogSinks
+associated with this PortWatcher. The keys are the names of the output ports being watched.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brom_drake.watchers.port_watcher.port_watcher.PortWatcher.get_timing_array">
+<span class="sig-name descname"><span class="pre">get_timing_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">diagram_context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Context</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../../../_modules/brom_drake/watchers/port_watcher/port_watcher.html#PortWatcher.get_timing_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.watchers.port_watcher.port_watcher.PortWatcher.get_timing_array" title="Link to this definition">¶</a></dt>
+<dd><p><strong>Description</strong></p>
+<p>Returns the timing data recorded by this PortWatcher as a numpy array.</p>
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt>diagram_context: Context</dt><dd><p>The context of the diagram.</p>
+</dd>
+</dl>
+<p><strong>Returns</strong>
+timing: np.ndarray</p>
+<blockquote>
+<div><p>A numpy array containing the timing data from one of the VectorLogSinks
+associated with this PortWatcher. Since all of the VectorLogSinks should have the same timing, it does not matter which one we pull the timing data from.</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.watchers.port_watcher.port_watcher.PortWatcher.get_vector_log_sink">
 <span class="sig-name descname"><span class="pre">get_vector_log_sink</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">with_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_output_port_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">VectorLogSink</span></span></span><a class="reference internal" href="../../../_modules/brom_drake/watchers/port_watcher/port_watcher.html#PortWatcher.get_vector_log_sink"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.watchers.port_watcher.port_watcher.PortWatcher.get_vector_log_sink" title="Link to this definition">¶</a></dt>
-<dd><p><em>Description</em></p>
+<dd><p><strong>Description</strong></p>
 <p>Returns the VectorLogSink corresponding to the given index or output port name.
 By default, this returns the first VectorLogSink in the internal dictionary.</p>
-<p><em>Parameters</em></p>
+<p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt>with_index: int, optional</dt><dd><p>The index of the VectorLogSink to return.
 By default, None.</p>
@@ -882,54 +931,9 @@ By default, None.</p>
 By default, None.</p>
 </dd>
 </dl>
-<p><em>Returns</em></p>
+<p><strong>Returns</strong></p>
 <dl class="simple">
 <dt>vector_log_sink: VectorLogSink</dt><dd><p>The VectorLogSink corresponding to the given index or output port name.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="brom_drake.watchers.port_watcher.port_watcher.PortWatcher.name_vector_log_sink">
-<span class="sig-name descname"><span class="pre">name_vector_log_sink</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_output_port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">OutputPort</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/brom_drake/watchers/port_watcher/port_watcher.html#PortWatcher.name_vector_log_sink"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.watchers.port_watcher.port_watcher.PortWatcher.name_vector_log_sink" title="Link to this definition">¶</a></dt>
-<dd><p><em>Description</em></p>
-<p>Provides a name to the VectorLogSink stored in <cite>self.drake_vector_logs</cite>
-that corresponds to the given system and output_port.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="brom_drake.watchers.port_watcher.port_watcher.PortWatcher.prepare_vector_log_for_abstract_valued_port">
-<span class="sig-name descname"><span class="pre">prepare_vector_log_for_abstract_valued_port</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_output_port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">OutputPort</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">builder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DiagramBuilder</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/brom_drake/watchers/port_watcher/port_watcher.html#PortWatcher.prepare_vector_log_for_abstract_valued_port"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.watchers.port_watcher.port_watcher.PortWatcher.prepare_vector_log_for_abstract_valued_port" title="Link to this definition">¶</a></dt>
-<dd><p><em>Description</em></p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>While this is usually called with the port <code class="docutils literal notranslate"><span class="pre">self.port</span></code>,
-it can be called with other ports (as is done with list[T] inputs).</p>
-</div>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="brom_drake.watchers.port_watcher.port_watcher.PortWatcher.prepare_vector_log_for_rigid_transform_port">
-<span class="sig-name descname"><span class="pre">prepare_vector_log_for_rigid_transform_port</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_output_port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">OutputPort</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">builder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DiagramBuilder</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/brom_drake/watchers/port_watcher/port_watcher.html#PortWatcher.prepare_vector_log_for_rigid_transform_port"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.watchers.port_watcher.port_watcher.PortWatcher.prepare_vector_log_for_rigid_transform_port" title="Link to this definition">¶</a></dt>
-<dd><p><em>Description</em></p>
-<p>Adds to the current Drake Diagram a VectorLogSink (and helper system) to measure the value of the RigidTransform
-value coming from the <strong>PortWatcher</strong>’s target output port.</p>
-<p><em>Parameters</em></p>
-<dl class="simple">
-<dt>builder: DiagramBuilder</dt><dd><p>The diagram builder that is used to create the VectorLogSink.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="brom_drake.watchers.port_watcher.port_watcher.PortWatcher.prepare_vector_logs">
-<span class="sig-name descname"><span class="pre">prepare_vector_logs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">builder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DiagramBuilder</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/brom_drake/watchers/port_watcher/port_watcher.html#PortWatcher.prepare_vector_logs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.watchers.port_watcher.port_watcher.PortWatcher.prepare_vector_logs" title="Link to this definition">¶</a></dt>
-<dd><p><em>Description</em></p>
-<p>Prepares any VectorLogSink’s needed to measure the current port.
-In most cases, only one VectorLogSink is needed.</p>
-<p><em>Parameters</em></p>
-<dl class="simple">
-<dt>builder: DiagramBuilder</dt><dd><p>The diagram builder that is used to create the logger.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -963,13 +967,15 @@ or just one figure for the entire port.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.watchers.port_watcher.port_watcher.PortWatcher.save_raw_data">
 <span class="sig-name descname"><span class="pre">save_raw_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">diagram_context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Context</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/brom_drake/watchers/port_watcher/port_watcher.html#PortWatcher.save_raw_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.watchers.port_watcher.port_watcher.PortWatcher.save_raw_data" title="Link to this definition">¶</a></dt>
-<dd><p><em>Description</em></p>
-<p>Saves the raw data to a file.</p>
-<p><em>Arguments</em></p>
+<dd><p><strong>Description</strong></p>
+<p>Saves the raw data to file(s). The number of files depends on the components in the data AND the options of the PortWatcher (i.e., whether to save each component in a separate file or all in one file).</p>
+<p><strong>Arguments</strong></p>
 <dl class="simple">
 <dt>diagram_context: Context</dt><dd><p>The context of the diagram.</p>
 </dd>
 </dl>
+<p><strong>Notes</strong></p>
+<p>TODO(Kwesi): Take advantage of get_data_dictionary function to clean up this code.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1232,11 +1238,9 @@ errors defaults to ‘strict’.</p>
 </li>
 <li><a class="reference internal" href="#brom_drake.watchers.port_watcher.port_figure_arrangement.PortFigureArrangement"><code class="docutils literal notranslate"><span class="pre">PortFigureArrangement</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.watchers.port_watcher.port_watcher.PortWatcher"><code class="docutils literal notranslate"><span class="pre">PortWatcher</span></code></a><ul>
+<li><a class="reference internal" href="#brom_drake.watchers.port_watcher.port_watcher.PortWatcher.get_data_dictionary"><code class="docutils literal notranslate"><span class="pre">PortWatcher.get_data_dictionary()</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.watchers.port_watcher.port_watcher.PortWatcher.get_timing_array"><code class="docutils literal notranslate"><span class="pre">PortWatcher.get_timing_array()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.watchers.port_watcher.port_watcher.PortWatcher.get_vector_log_sink"><code class="docutils literal notranslate"><span class="pre">PortWatcher.get_vector_log_sink()</span></code></a></li>
-<li><a class="reference internal" href="#brom_drake.watchers.port_watcher.port_watcher.PortWatcher.name_vector_log_sink"><code class="docutils literal notranslate"><span class="pre">PortWatcher.name_vector_log_sink()</span></code></a></li>
-<li><a class="reference internal" href="#brom_drake.watchers.port_watcher.port_watcher.PortWatcher.prepare_vector_log_for_abstract_valued_port"><code class="docutils literal notranslate"><span class="pre">PortWatcher.prepare_vector_log_for_abstract_valued_port()</span></code></a></li>
-<li><a class="reference internal" href="#brom_drake.watchers.port_watcher.port_watcher.PortWatcher.prepare_vector_log_for_rigid_transform_port"><code class="docutils literal notranslate"><span class="pre">PortWatcher.prepare_vector_log_for_rigid_transform_port()</span></code></a></li>
-<li><a class="reference internal" href="#brom_drake.watchers.port_watcher.port_watcher.PortWatcher.prepare_vector_logs"><code class="docutils literal notranslate"><span class="pre">PortWatcher.prepare_vector_logs()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.watchers.port_watcher.port_watcher.PortWatcher.safe_system_name"><code class="docutils literal notranslate"><span class="pre">PortWatcher.safe_system_name()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.watchers.port_watcher.port_watcher.PortWatcher.save_all_figures"><code class="docutils literal notranslate"><span class="pre">PortWatcher.save_all_figures()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.watchers.port_watcher.port_watcher.PortWatcher.save_raw_data"><code class="docutils literal notranslate"><span class="pre">PortWatcher.save_raw_data()</span></code></a></li>
@@ -1288,7 +1292,7 @@ errors defaults to ‘strict’.</p>
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=8e576371"></script>
+</div><script src="../../../_static/documentation_options.js?v=2a2fe768"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>

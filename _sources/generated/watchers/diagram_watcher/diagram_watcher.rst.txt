@@ -17,7 +17,13 @@ Classes
    :members:
 .. autoclass:: brom_drake.watchers.diagram_watcher.diagram_watcher_options.SuppressDiagramWatcherRules
    :members:
-.. autoclass:: brom_drake.watchers.diagram_watcher.errors.UnrecognizedTargetError
+.. autoclass:: brom_drake.watchers.diagram_watcher.errors.PortIsNotBeingWatchedError
+   :members:
+.. autoclass:: brom_drake.watchers.diagram_watcher.errors.PortIsNotFoundInDiagramError
+   :members:
+.. autoclass:: brom_drake.watchers.diagram_watcher.errors.SystemIsNotBeingWatchedError
+   :members:
+.. autoclass:: brom_drake.watchers.diagram_watcher.errors.SystemIsNotFoundInDiagramError
    :members:
 
 Functions

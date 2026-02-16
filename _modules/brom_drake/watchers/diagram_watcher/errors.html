@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.watchers.diagram_watcher.errors - brom_drake-py 0.5.2 documentation</title>
+        <title>brom_drake.watchers.diagram_watcher.errors - brom_drake-py 0.5.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">brom_drake-py 0.5.2 documentation</div></a>
+      <a href="../../../../index.html"><div class="brand">brom_drake-py 0.5.3 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.2 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 0.5.3 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -564,24 +564,100 @@
 <span class="kn">from</span> <span class="nn">brom_drake.watchers.diagram_target</span> <span class="kn">import</span> <span class="n">DiagramTarget</span>
 
 
-<div class="viewcode-block" id="UnrecognizedTargetError">
-<a class="viewcode-back" href="../../../../generated/watchers/diagram_watcher/diagram_watcher.html#brom_drake.watchers.diagram_watcher.errors.UnrecognizedTargetError">[docs]</a>
-<span class="k">class</span> <span class="nc">UnrecognizedTargetError</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+<div class="viewcode-block" id="PortIsNotFoundInDiagramError">
+<a class="viewcode-back" href="../../../../generated/watchers/diagram_watcher/diagram_watcher.html#brom_drake.watchers.diagram_watcher.errors.PortIsNotFoundInDiagramError">[docs]</a>
+<span class="k">class</span> <span class="nc">PortIsNotFoundInDiagramError</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    *Description*</span>
+<span class="sd">    **Description**</span>
 
-<span class="sd">    Raised when a system is not recognized by the DiagramWatcher.</span>
+<span class="sd">    Raised when the DiagramWatcher is attempting to add a port to its tracking but does not find it in the Diagram.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">target</span><span class="p">:</span> <span class="n">DiagramTarget</span><span class="p">,</span>
+        <span class="n">port_reference</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">port_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="n">target</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">port_reference</span> <span class="o">=</span> <span class="n">port_reference</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Port &quot;</span><span class="si">{</span><span class="n">port_reference</span><span class="si">}</span><span class="s1">&quot; on system with name </span><span class="si">{</span><span class="n">target</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1"> was not found in the Diagram.</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="k">if</span> <span class="n">port_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Available ports are:</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">for</span> <span class="n">port_index</span><span class="p">,</span> <span class="n">port_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">port_names</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">- </span><span class="si">{</span><span class="n">port_index</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">port_name</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="SystemIsNotFoundInDiagramError">
+<a class="viewcode-back" href="../../../../generated/watchers/diagram_watcher/diagram_watcher.html#brom_drake.watchers.diagram_watcher.errors.SystemIsNotFoundInDiagramError">[docs]</a>
+<span class="k">class</span> <span class="nc">SystemIsNotFoundInDiagramError</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    **Description**</span>
+
+<span class="sd">    Raised when the DiagramWatcher is attempting to add a system to its tracking but does not find it in the Diagram.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">DiagramTarget</span><span class="p">,</span> <span class="n">system_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="n">target</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Target with name </span><span class="si">{</span><span class="n">target</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> is not recognized by the DiagramWatcher.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s1">&#39;System with name &quot;</span><span class="si">{</span><span class="n">target</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&quot; was not found in the Diagram.</span><span class="se">\n</span><span class="s1">&#39;</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="n">system_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;(Available systems are </span><span class="si">{</span><span class="n">system_names</span><span class="si">}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Available systems are:</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">for</span> <span class="n">system_index</span><span class="p">,</span> <span class="n">system_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">system_names</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">- </span><span class="si">{</span><span class="n">system_index</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;If system with name </span><span class="si">{</span><span class="n">target</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> does exist, it may be one of the ineligible types:</span><span class="se">\n</span><span class="s2"> &quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="PortIsNotBeingWatchedError">
+<a class="viewcode-back" href="../../../../generated/watchers/diagram_watcher/diagram_watcher.html#brom_drake.watchers.diagram_watcher.errors.PortIsNotBeingWatchedError">[docs]</a>
+<span class="k">class</span> <span class="nc">PortIsNotBeingWatchedError</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    **Description**</span>
+
+<span class="sd">    Raised when someone requests a port&#39;s information from the DiagramWatcher and that port is not being watched.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">target</span><span class="p">:</span> <span class="n">DiagramTarget</span><span class="p">,</span>
+        <span class="n">port_reference</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">port_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="n">target</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Port &quot;</span><span class="si">{</span><span class="n">port_reference</span><span class="si">}</span><span class="s1">&quot; on system with name </span><span class="si">{</span><span class="n">target</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1"> is not being watched by the DiagramWatcher.</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="k">if</span> <span class="n">port_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Available ports are:</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">for</span> <span class="n">port_index</span><span class="p">,</span> <span class="n">port_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">port_names</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">- </span><span class="si">{</span><span class="n">port_index</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">port_name</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="SystemIsNotBeingWatchedError">
+<a class="viewcode-back" href="../../../../generated/watchers/diagram_watcher/diagram_watcher.html#brom_drake.watchers.diagram_watcher.errors.SystemIsNotBeingWatchedError">[docs]</a>
+<span class="k">class</span> <span class="nc">SystemIsNotBeingWatchedError</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    **Description**</span>
+
+<span class="sd">    Raised when someone requests a system&#39;s information from the DiagramWatcher and that system is not being watched.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">DiagramTarget</span><span class="p">,</span> <span class="n">system_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="n">target</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;System with name &quot;</span><span class="si">{</span><span class="n">target</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&quot; is not being watched by the DiagramWatcher.</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="k">if</span> <span class="n">system_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Available systems are:</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">for</span> <span class="n">system_index</span><span class="p">,</span> <span class="n">system_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">system_names</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">- </span><span class="si">{</span><span class="n">system_index</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">system_name</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;If system with name &quot;</span><span class="si">{</span><span class="n">target</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&quot; does exist, it may be one of the ineligible types:</span><span class="se">\n</span><span class="s1"> &#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{</span><span class="n">constants</span><span class="o">.</span><span class="n">INELIGIBLE_SYSTEM_TYPES</span><span class="si">}</span><span class="s2">.</span><span class="se">\n</span><span class="s2">&quot;</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">)</span></div>
@@ -618,7 +694,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=8e576371"></script>
+</div><script src="../../../../_static/documentation_options.js?v=2a2fe768"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>
