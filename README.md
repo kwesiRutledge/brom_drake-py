@@ -25,6 +25,19 @@ To learn more, look through our documentation [here](https://kwesirutledge.githu
 pip install brom-drake
 ```
 
+### ROS 2-capable install
+
+If you use ROS 2 package URIs (for example, `package://...`) and want
+`brom_drake` to resolve package share directories via `ament_index_python`,
+install the optional ROS 2 extra:
+
+```shell
+pip install "brom-drake[ros2]"
+```
+
+In most ROS 2 workflows, make sure your ROS 2 environment is sourced before
+running your scripts so package discovery works as expected.
+
 ### Developer install
 
 You can also install the package during local development by cloning
