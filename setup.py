@@ -36,6 +36,7 @@ if __name__ == "__main__":
                 "pytest-cov",
             ],
             "dev": ["ipdb", "typer", "black"],
+            "ros2": ["ament-index-python"],
         },
         keywords=["drake", "robotics", "testing", "logging"],
         classifiers=[
