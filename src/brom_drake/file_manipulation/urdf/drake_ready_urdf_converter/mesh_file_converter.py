@@ -6,6 +6,12 @@ import xml.etree.ElementTree as ET
 
 import trimesh
 
+try:
+    from ament_index_python.packages import get_package_share_directory
+    _AMENT_INDEX_AVAILABLE = True
+except ImportError:
+    _AMENT_INDEX_AVAILABLE = False
+
 # Internal imports
 from brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.util import (
     URDF_CONVERSION_LOG_LEVEL_NAME,
@@ -192,17 +198,23 @@ class MeshFileConverter:
         self,
         max_depth: int = 10,
     ) -> Tuple[Path, str]:
-        # Setup
+        # If ament_index_python is available (ROS 2 environment), use it directly.
+        if _AMENT_INDEX_AVAILABLE:
+            # Extract the package name from "package://pkg_name/..."
+            package_name = self.mesh_file.split("/")[2]
+            package_dir = Path(get_package_share_directory(package_name))
+            self.logger.info(
+                f"[MeshFileConverter] Resolved package '{package_name}' via ament index at {package_dir}."
+            )
+            return package_dir, package_name
+
+        # Fallback: walk up the directory tree looking for package.xml.
         original_urdf_dir = Path(self.urdf_dir)
 
-        # Find the path to the package
         package_found = False
         candidate_path = original_urdf_dir
         search_depth = 1
         while not package_found:
-            # print(f"candidate_path: {candidate_path}")
-
-            # Check to see if "package.xml" exists in the directory
             if (candidate_path / "package.xml").exists():
                 self.logger.info(
                     f"[MeshFileConverter] Found package path at {candidate_path}."
@@ -235,24 +247,17 @@ class MeshFileConverter:
         # Algorithm
         mesh_file = self.mesh_file
 
-        # Check to see if file path starts with "./"
-        if mesh_file.startswith("./"):
-            return True
-
         # Ignore this if the mesh file contains a package prefix
         if mesh_file.startswith("package:"):
             return False
 
-        # Check to see if the first part of the path contains a folder or file
-        # in the current directory
+        # Handle file:// URIs by checking whether the URI payload is absolute.
         if mesh_file.startswith("file://"):
             mesh_file = mesh_file.replace("file://", "")
             return not os.path.isabs(mesh_file)
 
-        # Now, check to see if the target file exists
-        complete_file_path = self.urdf_dir / Path(mesh_file)
-        exists = complete_file_path.exists()
-        return exists
+        # Treat any non-package, non-absolute path (including ../...) as relative.
+        return not os.path.isabs(mesh_file)
 
         # raise FileNotFoundError(
         #     f"File {complete_file_path} does not exist in directory {os.getcwd()}!"
