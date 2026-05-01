@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.mesh_file_converter - brom_drake-py 0.5.3 documentation</title>
+        <title>brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.mesh_file_converter - brom_drake-py 0.5.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../index.html"><div class="brand">brom_drake-py 0.5.3 documentation</div></a>
+      <a href="../../../../../index.html"><div class="brand">brom_drake-py 0.5.4 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.3 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 0.5.4 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -559,6 +559,13 @@
 
 <span class="kn">import</span> <span class="nn">trimesh</span>
 
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">ament_index_python.packages</span> <span class="kn">import</span> <span class="n">get_package_share_directory</span>
+
+    <span class="n">_AMENT_INDEX_AVAILABLE</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">_AMENT_INDEX_AVAILABLE</span> <span class="o">=</span> <span class="kc">False</span>
+
 <span class="c1"># Internal imports</span>
 <span class="kn">from</span> <span class="nn">brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.util</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">URDF_CONVERSION_LOG_LEVEL_NAME</span><span class="p">,</span>
@@ -753,17 +760,23 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">max_depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-        <span class="c1"># Setup</span>
+        <span class="c1"># If ament_index_python is available (ROS 2 environment), use it directly.</span>
+        <span class="k">if</span> <span class="n">_AMENT_INDEX_AVAILABLE</span><span class="p">:</span>
+            <span class="c1"># Extract the package name from &quot;package://pkg_name/...&quot;</span>
+            <span class="n">package_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mesh_file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">package_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">get_package_share_directory</span><span class="p">(</span><span class="n">package_name</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;[MeshFileConverter] Resolved package &#39;</span><span class="si">{</span><span class="n">package_name</span><span class="si">}</span><span class="s2">&#39; via ament index at </span><span class="si">{</span><span class="n">package_dir</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">package_dir</span><span class="p">,</span> <span class="n">package_name</span>
+
+        <span class="c1"># Fallback: walk up the directory tree looking for package.xml.</span>
         <span class="n">original_urdf_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">urdf_dir</span><span class="p">)</span>
 
-        <span class="c1"># Find the path to the package</span>
         <span class="n">package_found</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="n">candidate_path</span> <span class="o">=</span> <span class="n">original_urdf_dir</span>
         <span class="n">search_depth</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="k">while</span> <span class="ow">not</span> <span class="n">package_found</span><span class="p">:</span>
-            <span class="c1"># print(f&quot;candidate_path: {candidate_path}&quot;)</span>
-
-            <span class="c1"># Check to see if &quot;package.xml&quot; exists in the directory</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">candidate_path</span> <span class="o">/</span> <span class="s2">&quot;package.xml&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;[MeshFileConverter] Found package path at </span><span class="si">{</span><span class="n">candidate_path</span><span class="si">}</span><span class="s2">.&quot;</span>
@@ -798,24 +811,17 @@
         <span class="c1"># Algorithm</span>
         <span class="n">mesh_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mesh_file</span>
 
-        <span class="c1"># Check to see if file path starts with &quot;./&quot;</span>
-        <span class="k">if</span> <span class="n">mesh_file</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;./&quot;</span><span class="p">):</span>
-            <span class="k">return</span> <span class="kc">True</span>
-
         <span class="c1"># Ignore this if the mesh file contains a package prefix</span>
         <span class="k">if</span> <span class="n">mesh_file</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;package:&quot;</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">False</span>
 
-        <span class="c1"># Check to see if the first part of the path contains a folder or file</span>
-        <span class="c1"># in the current directory</span>
+        <span class="c1"># Handle file:// URIs by checking whether the URI payload is absolute.</span>
         <span class="k">if</span> <span class="n">mesh_file</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;file://&quot;</span><span class="p">):</span>
             <span class="n">mesh_file</span> <span class="o">=</span> <span class="n">mesh_file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;file://&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">mesh_file</span><span class="p">)</span>
 
-        <span class="c1"># Now, check to see if the target file exists</span>
-        <span class="n">complete_file_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">urdf_dir</span> <span class="o">/</span> <span class="n">Path</span><span class="p">(</span><span class="n">mesh_file</span><span class="p">)</span>
-        <span class="n">exists</span> <span class="o">=</span> <span class="n">complete_file_path</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">exists</span></div>
+        <span class="c1"># Treat any non-package, non-absolute path (including ../...) as relative.</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">mesh_file</span><span class="p">)</span></div>
 
 
         <span class="c1"># raise FileNotFoundError(</span>
@@ -882,7 +888,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../_static/documentation_options.js?v=2a2fe768"></script>
+</div><script src="../../../../../_static/documentation_options.js?v=e1a677a5"></script>
     <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>
