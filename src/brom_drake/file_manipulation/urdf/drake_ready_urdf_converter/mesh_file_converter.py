@@ -8,6 +8,7 @@ import trimesh
 
 try:
     from ament_index_python.packages import get_package_share_directory
+
     _AMENT_INDEX_AVAILABLE = True
 except ImportError:
     _AMENT_INDEX_AVAILABLE = False

@@ -23,12 +23,12 @@ from brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.mesh_file_conv
 )
 
 # Module path used for patching
-_MODULE = "brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.mesh_file_converter"
+_MODULE = (
+    "brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.mesh_file_converter"
+)
 
 # Shared test data
-_TEST_PACKAGE_DIR = Path(
-    str(impresources.files(resources_dir) / "test_package")
-)
+_TEST_PACKAGE_DIR = Path(str(impresources.files(resources_dir) / "test_package"))
 _PACKAGE_NAME = "baxter_description"
 _MESH_URI = f"package://{_PACKAGE_NAME}/meshes/torso/base_link.DAE"
 _EXPECTED_RELATIVE_MESH_PATH = Path("meshes/torso/base_link.DAE")
