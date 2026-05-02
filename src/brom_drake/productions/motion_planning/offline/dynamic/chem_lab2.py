@@ -399,8 +399,9 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         )
         table_urdf_path = DEFAULT_BROM_MODELS_DIR / "table" / "table.urdf"
         table_defn.write_to_file(table_urdf_path)
+
         # Add the table to the production
-        table_model_index = Parser(self.plant).AddModels(table_urdf_path)[0]
+        table_model_index = Parser(self.plant).AddModels(str(table_urdf_path))[0]
 
         # Weld the table to the world frame
         table_pose = RigidTransform(
