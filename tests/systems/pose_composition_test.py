@@ -2,6 +2,7 @@ from brom_drake.systems.pose_composition import PoseCompositionSystem
 from brom_drake.watchers.port_watcher.port_watcher import PortWatcher
 from brom_drake.watchers.diagram_watcher.add_watcher import add_watcher_and_build
 import numpy as np
+from pathlib import Path
 from pydrake.all import (
     AbstractValue,
     ConstantValueSource,
@@ -59,7 +60,7 @@ class TestPoseComposition(unittest.TestCase):
 
         # Add a diagram watcher and log the signals
         watcher, diagram, diagram_context = add_watcher_and_build(
-            builder, watcher_dir="brom/pose_composition_test/test_correctness1"
+            builder, watcher_dir=Path("brom/pose_composition_test/test_correctness1")
         )
 
         # Simulate
@@ -132,7 +133,7 @@ class TestPoseComposition(unittest.TestCase):
 
         # Add a diagram watcher and log the signals
         watcher, diagram, diagram_context = add_watcher_and_build(
-            builder, watcher_dir="brom/pose_composition_test/test_correctness2"
+            builder, watcher_dir=Path("brom/pose_composition_test/test_correctness2")
         )
 
         # Simulate

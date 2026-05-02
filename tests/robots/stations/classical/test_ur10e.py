@@ -6,6 +6,7 @@ for the UR10e robot.
 """
 
 import numpy as np
+from pathlib import Path
 from pydrake.all import (
     AbstractValue,
     ConstantValueSource,
@@ -97,7 +98,7 @@ class TestUR10e(unittest.TestCase):
         # Build the diagram with watcher
         watcher, diagram, diagram_context = add_watcher_and_build(
             builder,
-            watcher_dir="brom/watcher_testur10e_test_diagram1",
+            watcher_dir=Path("brom/watcher_testur10e_test_diagram1"),
         )
 
         # Simulate the diagram

@@ -1088,7 +1088,7 @@ class Puppetmaker:
             mass=config.sphere_mass,
             color=color,
         )
-        sphere_urdf = sphere_urdf_defn.write_to_file()
+        sphere_urdf = str(sphere_urdf_defn.write_to_file())
 
         # Add the sphere to the plant
         sphere_model_index = Parser(plant=plant).AddModels(sphere_urdf)[0]

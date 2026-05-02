@@ -43,7 +43,7 @@ class InitialConditionTest(unittest.TestCase):
             shape=simple_cube,
             color=[0.1, 0.1, 0.5, 1.0],
         )
-        cube_urdf_path = cube_urdf_defn.write_to_file()
+        cube_urdf_path = str(cube_urdf_defn.write_to_file())
 
         # Add cube urdf to plant
         cube_model = Parser(plant=self.plant).AddModels(cube_urdf_path)[0]

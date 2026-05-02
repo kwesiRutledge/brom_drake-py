@@ -896,7 +896,7 @@ class PortWatcherPlotterTest(unittest.TestCase):
         pw0.save_figures(log_sink0, diagram_context)
 
         # Check that there are n_state - 1 png files in the plot_dir
-        files = os.listdir(plot_dir + "/plots")
+        files = os.listdir(plot_dir / "plots")
         png_files = [f for f in files if f.endswith(".png")]
         state_dim = plant.get_state_output_port().size()
         self.assertEqual(len(png_files), state_dim)

@@ -52,7 +52,7 @@ class TestCylinder(unittest.TestCase):
         Test the in_urdf method.
         """
         # Setup
-        urdf_location = DEFAULT_BROM_MODELS_DIR + "/test_cylinder.urdf"
+        urdf_location = DEFAULT_BROM_MODELS_DIR / "test_cylinder.urdf"
 
         # Create cylinder
         cylinder = CylinderDefinition(1, 2)
@@ -67,7 +67,7 @@ class TestCylinder(unittest.TestCase):
             ),
         )
         defn1.write_to_file(urdf_location)
-
+        
         # Try to load this into a simple simulation
         production = ShowMeThisModel(urdf_location, meshcat_port_number=None)
         diagram, diagram_context = production.add_cast_and_build()

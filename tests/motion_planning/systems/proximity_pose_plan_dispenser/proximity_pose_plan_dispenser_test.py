@@ -3,6 +3,7 @@ proximity_pose_plan_dispenser_test.py: Tests for the proximity_pose_plan_dispens
 """
 
 import numpy as np
+from pathlib import Path
 from pydrake.all import (
     AbstractValue,
     Diagram,
@@ -121,7 +122,7 @@ class TestProximityPosePlanDispenser(unittest.TestCase):
         )
 
         # Build the diagram
-        test_watcher_dir = ".brom/proximity_necessary1"
+        test_watcher_dir = Path(".brom/proximity_necessary1")
         watcher, diagram, diagram_context = add_watcher_and_build(
             builder,
             watcher_dir=test_watcher_dir,
