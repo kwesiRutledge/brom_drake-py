@@ -218,7 +218,17 @@ class PortWatcherFileManager:
 
         paths_out: List[Path]
             Each path in this list is a file path for an associated figure.
+
+        .. deprecated::
+            Use :meth:`compute_path_for_each_figure` instead.
+            This method will be removed in a future release.
         """
+        warnings.warn(
+            "figure_names_under_hierarchical_convention is deprecated and will be removed in a future release. "
+            "Use compute_path_for_each_figure instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         # Setup
         plotting_options = self.plotting_options
         format = plotting_options.file_format
