@@ -397,9 +397,8 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
             ),
             color=np.array([0.1, 0.1, 0.1, 1.0]),
         )
-        table_urdf_path = DEFAULT_BROM_MODELS_DIR + "/table/table.urdf"
+        table_urdf_path = DEFAULT_BROM_MODELS_DIR / "table" / "table.urdf"
         table_defn.write_to_file(table_urdf_path)
-
         # Add the table to the production
         table_model_index = Parser(self.plant).AddModels(table_urdf_path)[0]
 

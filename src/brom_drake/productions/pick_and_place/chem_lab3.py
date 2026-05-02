@@ -342,7 +342,7 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
         )
         table_urdf_path = DEFAULT_BROM_MODELS_DIR + "/table/table_half2.urdf"
         half2_defn.write_to_file(table_urdf_path)
-
+        
         # Add the table to the production
         table_half2_model_index = Parser(self.plant).AddModels(table_urdf_path)[0]
 

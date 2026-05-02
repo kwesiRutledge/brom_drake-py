@@ -367,7 +367,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
             ),
             color=np.array([0.1, 0.1, 0.1, 0.5]),
         )
-        table_urdf_path = DEFAULT_BROM_MODELS_DIR + "/table/table.urdf"
+        table_urdf_path = DEFAULT_BROM_MODELS_DIR / "table" / "table.urdf"
         table_defn.write_to_file(table_urdf_path)
 
         # Add the table to the production

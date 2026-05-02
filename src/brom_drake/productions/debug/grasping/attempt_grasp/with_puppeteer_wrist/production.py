@@ -403,7 +403,7 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
             shape=floor_geometry_defn,
             mass=floor_mass,
         )
-        floor_urdf = floor_urdf_defn.write_to_file()
+        floor_urdf = str(floor_urdf_defn.write_to_file())
 
         # Add the floor to the plant
         floor_model_idcs = Parser(plant=plant).AddModels(floor_urdf)

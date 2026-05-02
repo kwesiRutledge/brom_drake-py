@@ -198,7 +198,7 @@ class MotionPlanningAndGraspingProduction(BaseProduction):
 
         # Create URDF file for the sphere
         sphere_shape_defn.write_to_file(sphere_urdf_location)
-
+        
         # Load the start sphere into the plant and rigidly attach it at the start_pose
         goal_sphere_model_idx = Parser(plant).AddModels(str(sphere_urdf_location))[0]
         plant.WeldFrames(
