@@ -3,6 +3,7 @@ from brom_drake.watchers.port_watcher.port_watcher_options import (
     PortFigureArrangement,
     FigureNamingConvention,
     PortWatcherPlottingOptions,
+    PortWatcherRawDataOptions,
 )
 from dataclasses import dataclass
 import warnings
@@ -24,7 +25,7 @@ class PortWatcherFileManager:
 
     base_directory: Path
     plotting_options: PortWatcherPlottingOptions
-    raw_data_file_format: str = "npy"
+    raw_data_options: PortWatcherRawDataOptions = PortWatcherRawDataOptions()
 
     def compute_path_for_each_figure(
         self,
@@ -386,18 +387,13 @@ class PortWatcherFileManager:
         raw_data_file_name: Path
             The file name for saving raw data.
         """
-        system_name = output_port.get_system().get_name()
-        
-        dimension_name = None
-        if port_component_name is not None:
-            dimension_name = f"{port_component_name}"
 
         return (
             self.raw_data_dir
             / file_path_for_port_data_dimension(
                 output_port=output_port,
-                file_format=self.raw_data_file_format,
-                organization_convention=PathOrganizationConvention.kHierarchical,
+                file_format=self.raw_data_options.file_format,
+                organization_convention=self.raw_data_options.file_organization_convention,
                 component_name=port_component_name,
             )
         )
@@ -419,8 +415,8 @@ class PortWatcherFileManager:
             self.raw_data_dir
             / file_path_for_port_data_dimension(
                 output_port=output_port,
-                file_format="npy",
-                organization_convention=PathOrganizationConvention.kHierarchical,
+                file_format=self.raw_data_options.file_format,
+                organization_convention=self.raw_data_options.file_organization_convention,
                 dimension_name=port_name + "_times",
             )
         )

@@ -38,6 +38,8 @@ def compute_safe_system_name(system_name: str) -> str:
     # Second, replace all spaces with underscores
     system_name = system_name.replace(" ", "_")
 
+    return system_name
+
 def generate_all_file_paths_for_ports_data(
     output_port: OutputPort,
     file_format: str,

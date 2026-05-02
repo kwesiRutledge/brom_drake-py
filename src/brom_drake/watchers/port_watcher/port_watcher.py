@@ -95,7 +95,7 @@ class PortWatcher:
         self.file_manager = PortWatcherFileManager(
             base_directory=Path(base_watcher_dir),
             plotting_options=self.options.plotting,
-            raw_data_file_format=self.options.raw_data.file_format,
+            raw_data_options=self.options.raw_data,
         )
         self.python_logger = python_logger
 
