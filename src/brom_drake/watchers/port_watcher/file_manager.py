@@ -73,24 +73,18 @@ class PortWatcherFileManager:
                         file_format=file_format,
                         dimension_name=port_component_name, 
                         organization_convention=file_organization_convention,
+                        component_name=port_component_name,
                     )
                 ]
             
             case PortFigureArrangement.OnePlotPerDim:
                 # If there is a sub-component name, then we will
                 # create a sub-directory for it
-                dimension_names = None
-                if port_component_name is not None:
-                    dimension_names = {
-                        dimension: f"{port_component_name}_dim{dimension}"
-                        for dimension in range(log_sink_size)
-                    }
-
                 relative_file_paths = generate_all_file_paths_for_ports_data(
                     output_port=output_port,
                     file_format=file_format,
-                    dimension_names=dimension_names,
                     organization_convention=file_organization_convention,
+                    component_name=port_component_name,
                 )
                 return [
                     self.plot_dir / relative_file_path for relative_file_path in relative_file_paths
@@ -370,7 +364,9 @@ class PortWatcherFileManager:
         return self.base_directory / "raw_data"
 
     def raw_data_file_path(
-        self, system_name: str, port_name: str, port_component_name: str = None
+        self, 
+        output_port: OutputPort, 
+        port_component_name: str = None
     ) -> Path:
         """
         *Description*
@@ -378,6 +374,9 @@ class PortWatcherFileManager:
         This function returns the file name for saving raw data.
 
         *Parameters*
+
+        output_port: OutputPort
+            The output port for which to generate the file path.
 
         port_component_name: str
             A "sub-component" of the port that we wish to give a unique name in the data.
@@ -387,21 +386,23 @@ class PortWatcherFileManager:
         raw_data_file_name: Path
             The file name for saving raw data.
         """
-        safe_system_name = compute_safe_system_name(system_name)
+        system_name = output_port.get_system().get_name()
+        
+        dimension_name = None
+        if port_component_name is not None:
+            dimension_name = f"{port_component_name}"
 
-        if port_component_name is None:
-            return (
-                self.raw_data_dir
-                / f"system_{safe_system_name}_port_{port_name}_data.{self.raw_data_file_format}"
+        return (
+            self.raw_data_dir
+            / file_path_for_port_data_dimension(
+                output_port=output_port,
+                file_format=self.raw_data_file_format,
+                organization_convention=PathOrganizationConvention.kHierarchical,
+                component_name=port_component_name,
             )
-        else:
-            return (
-                self.raw_data_dir
-                / f"system_{safe_system_name}_port_{port_name}"
-                / f"{port_component_name}.{self.raw_data_file_format}"
-            )
+        )
 
-    def time_data_file_path(self, system_name: str, port_name: str) -> Path:
+    def time_data_file_path(self, output_port: OutputPort) -> Path:
         """
         *Description*
 
@@ -412,8 +413,14 @@ class PortWatcherFileManager:
         time_data_file_path: Path
             The file name for saving time data.
         """
-        safe_system_name = compute_safe_system_name(system_name)
+        port_name = output_port.get_name()
+
         return (
             self.raw_data_dir
-            / f"system_{safe_system_name}_port_{port_name}_times.{self.raw_data_file_format}"
+            / file_path_for_port_data_dimension(
+                output_port=output_port,
+                file_format="npy",
+                organization_convention=PathOrganizationConvention.kHierarchical,
+                dimension_name=port_name + "_times",
+            )
         )

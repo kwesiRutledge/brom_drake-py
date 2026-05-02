@@ -43,6 +43,7 @@ def generate_all_file_paths_for_ports_data(
     file_format: str,
     organization_convention: PathOrganizationConvention,
     dimension_names: dict[int, str] = None,
+    component_name: str = None,
 ) -> List[Path]:
     """
     *Description*
@@ -58,6 +59,10 @@ def generate_all_file_paths_for_ports_data(
         The output port for which to generate the file path.
     file_format: str
         The file format for the data (e.g., "npy", "csv", etc.).
+    
+    component_name: str, optional
+        The name of the COMPONENT of the output port for which to generate the file path.
+        This is used because some output ports produce dictionaries of data, where each component of the dictionary has a different name.
     """
     # Identify the number of dimensions of the output port
     if output_port.get_data_type() == PortDataType.kVectorValued:
@@ -77,6 +82,7 @@ def generate_all_file_paths_for_ports_data(
             file_format=file_format,
             organization_convention=organization_convention,
             dimension_name=dimension_name,
+            component_name=component_name,
         )
         file_paths.append(file_path)
 
@@ -87,6 +93,7 @@ def file_path_for_port_data_dimension(
     file_format: str,
     dimension_name: str = None,
     organization_convention: PathOrganizationConvention = PathOrganizationConvention.kFlat,
+    component_name: str = None,
 ) -> Path:
     """
     *Description*
@@ -109,7 +116,8 @@ def file_path_for_port_data_dimension(
         The organization convention for the file paths. Defaults to PathOrganizationConvention.kFlat.
     """
     # Setup
-    name_is_empty = dimension_name is None or dimension_name == ""
+    dimension_name_is_empty = dimension_name is None or dimension_name == ""
+    component_name_is_empty = component_name is None or component_name == ""
 
     # Collect System and Port Names
     # - System Name
@@ -122,18 +130,24 @@ def file_path_for_port_data_dimension(
 
     # Generate File Path
     if organization_convention == PathOrganizationConvention.kFlat:
-        file_path = f"{safe_system_name}_{port_name}_{dimension_name}.{file_format}"
+        file_path = f"{safe_system_name}_{port_name}_{component_name}_{dimension_name}.{file_format}"
         file_path = file_path.replace("/", "_")  # Replace any "/" in the system or port names with "_"
 
         # Remove the dimension part of the file path if the output port is not vector-valued (i.e., if it only has one dimension)
-        if name_is_empty:
+        if component_name_is_empty:
+            file_path = file_path.replace(f"_{component_name}", "")
+
+        if dimension_name_is_empty:
             file_path = file_path.replace(f"_{dimension_name}", "")
 
     elif organization_convention == PathOrganizationConvention.kHierarchical:
-        file_path = f"system_{safe_system_name}/port_{port_name}/{dimension_name}.{file_format}"
+        file_path = f"system_{safe_system_name}/port_{port_name}/{component_name}/{dimension_name}.{file_format}"
 
         # Remove the dimension part of the file path if the output port is not vector-valued (i.e., if it only has one dimension)
-        if name_is_empty:
+        if component_name_is_empty:
+            file_path = file_path.replace(f"/{component_name}", "")
+
+        if dimension_name_is_empty:
             file_path = file_path.replace(f"/{dimension_name}", "")
 
     else:

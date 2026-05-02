@@ -526,7 +526,7 @@ class PortWatcher:
             # Write the data to file
             # - time data
             time_data_file_name = self.file_manager.time_data_file_path(
-                system_name=system_containing_port.get_name(), port_name=port.get_name()
+                output_port=port,
             )
 
             log_times = log.sample_times()
@@ -537,13 +537,11 @@ class PortWatcher:
             raw_data_file: Path = None
             if n_vector_logs == 1:
                 raw_data_file = self.file_manager.raw_data_file_path(
-                    system_name=system_containing_port.get_name(),
-                    port_name=port.get_name(),
+                    output_port=port,
                 )
             else:
                 raw_data_file = self.file_manager.raw_data_file_path(
-                    system_name=system_containing_port.get_name(),
-                    port_name=port.get_name(),
+                    output_port=port,
                     port_component_name=output_port_name,
                 )
 
