@@ -447,8 +447,9 @@ class PortWatcher:
 
         *Returns*
 
-        name: str
-            System's name
+        system: LeafSystem, optional
+            The system for which to generate a safe name. If None, uses the system of the
+            PortWatcher\'s target port.
         """
         # Setup
         if system is None:

@@ -4,6 +4,7 @@ from brom_drake.watchers.port_watcher.port_watcher_options import (
     PortWatcherPlottingOptions,
 )
 from dataclasses import dataclass
+import warnings
 from pathlib import Path
 from pydrake.multibody.plant import MultibodyPlant
 from pydrake.systems.framework import OutputPort
@@ -65,7 +66,17 @@ class PortWatcherFileManager:
         figure_paths_out: List[Path]
             The paths of all of the figures that will be produced by
             this PortWatcherPlotter object.
+
+        .. deprecated::
+            Use :func:`brom_drake.watchers.port_watcher.file_naming_convention.generate_all_file_paths_for_ports_data` instead.
+            This method will be removed in a future release.
         """
+        warnings.warn(
+            "compute_path_for_each_figure is deprecated and will be removed in a future release. "
+            "Use generate_all_file_paths_for_ports_data from brom_drake.watchers.port_watcher.file_naming_convention instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         # Setup
         plotting_options = self.plotting_options
 
