@@ -104,11 +104,12 @@ class DiagramWatcher:
         # Create the .brom directory, to store:
         # - activity_summary.log
         # - all plots
-        if os.path.exists(self.options.base_directory):
-            os.system(f"rm -r {self.options.base_directory}")
+        if self.options.base_directory.exists():
+            import shutil
+            shutil.rmtree(self.options.base_directory)
 
         # Create directory to plot in
-        os.makedirs(self.options.base_directory, exist_ok=True)
+        self.options.base_directory.mkdir(parents=True, exist_ok=True)
         self.logger = self._create_logging_logger()  # Create an "activity summary" log
         # which details what the
         # DiagramWatcher is doing.
@@ -230,12 +231,11 @@ class DiagramWatcher:
         # Create a file handler, if none exists
 
         # Create a logging directory if it does not exist
-        watcher_outputs_base_directory = Path(options.base_directory)
-        watcher_outputs_base_directory.mkdir(parents=True, exist_ok=True)
+        options.base_directory.mkdir(parents=True, exist_ok=True)
 
         # Create a file handler
         file_handler = logging.FileHandler(
-            filename=options.base_directory + "/activity_summary.log",
+            filename=options.base_directory / "activity_summary.log",
             mode="w",  # Append mode
         )
         file_handler.setLevel(logging.DEBUG)
