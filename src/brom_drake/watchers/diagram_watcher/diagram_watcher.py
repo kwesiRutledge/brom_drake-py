@@ -106,6 +106,7 @@ class DiagramWatcher:
         # - all plots
         if self.options.base_directory.exists():
             import shutil
+
             shutil.rmtree(self.options.base_directory)
 
         # Create directory to plot in

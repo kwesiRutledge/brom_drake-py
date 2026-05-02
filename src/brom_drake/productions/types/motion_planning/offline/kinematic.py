@@ -182,7 +182,7 @@ class KinematicMotionPlanningProduction(BaseProduction):
         os.makedirs(start_sphere_urdf_location.parent, exist_ok=True)
 
         start_sphere_defn.write_to_file(start_sphere_urdf_location)
-        
+
         # Load the start sphere into the plant and rigidly attach it at the start_pose
         start_sphere_model_idx = Parser(plant).AddModels(
             str(start_sphere_urdf_location)

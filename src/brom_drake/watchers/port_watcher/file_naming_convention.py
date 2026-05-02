@@ -7,6 +7,7 @@ from pydrake.systems.framework import (
     PortDataType,
 )
 
+
 class PathOrganizationConvention(IntEnum):
     """
     **Description**
@@ -16,6 +17,7 @@ class PathOrganizationConvention(IntEnum):
 
     kFlat = 0  # e.g. "plant_generalized_output_dim_0.png"
     kHierarchical = 1  # e.g. "system_plant/port_generalized_output/dim_0.png"
+
 
 def compute_safe_system_name(system_name: str) -> str:
     """
@@ -40,6 +42,7 @@ def compute_safe_system_name(system_name: str) -> str:
 
     return system_name
 
+
 def generate_all_file_paths_for_ports_data(
     output_port: OutputPort,
     file_format: str,
@@ -61,7 +64,7 @@ def generate_all_file_paths_for_ports_data(
         The output port for which to generate the file path.
     file_format: str
         The file format for the data (e.g., "npy", "csv", etc.).
-    
+
     component_name: str, optional
         The name of the COMPONENT of the output port for which to generate the file path.
         This is used because some output ports produce dictionaries of data, where each component of the dictionary has a different name.
@@ -70,11 +73,15 @@ def generate_all_file_paths_for_ports_data(
     if output_port.get_data_type() == PortDataType.kVectorValued:
         num_dimensions = output_port.size()
     else:
-        raise ValueError(f"Unsupported output port data type: {output_port.get_data_type()}")
-    
+        raise ValueError(
+            f"Unsupported output port data type: {output_port.get_data_type()}"
+        )
+
     # Create dimension names dict, if it is not provided
     if dimension_names is None:
-        dimension_names = {dimension: f"dim{dimension}" for dimension in range(num_dimensions)}
+        dimension_names = {
+            dimension: f"dim{dimension}" for dimension in range(num_dimensions)
+        }
 
     # Generate file paths for each dimension
     file_paths = []
@@ -89,6 +96,7 @@ def generate_all_file_paths_for_ports_data(
         file_paths.append(file_path)
 
     return file_paths
+
 
 def file_path_for_port_data_dimension(
     output_port: OutputPort,
@@ -133,7 +141,9 @@ def file_path_for_port_data_dimension(
     # Generate File Path
     if organization_convention == PathOrganizationConvention.kFlat:
         file_path = f"{safe_system_name}_{port_name}_{component_name}_{dimension_name}.{file_format}"
-        file_path = file_path.replace("/", "_")  # Replace any "/" in the system or port names with "_"
+        file_path = file_path.replace(
+            "/", "_"
+        )  # Replace any "/" in the system or port names with "_"
 
         # Remove the dimension part of the file path if the output port is not vector-valued (i.e., if it only has one dimension)
         if component_name_is_empty:
@@ -153,6 +163,8 @@ def file_path_for_port_data_dimension(
             file_path = file_path.replace(f"/{dimension_name}", "")
 
     else:
-        raise ValueError(f"Unsupported organization convention: {organization_convention}")
+        raise ValueError(
+            f"Unsupported organization convention: {organization_convention}"
+        )
 
     return Path(file_path)
