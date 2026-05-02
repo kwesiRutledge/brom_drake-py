@@ -14,7 +14,6 @@ from typing import List, Tuple
 
 # Internal Imports
 from brom_drake.watchers.port_watcher.file_manager import PortWatcherFileManager
-from brom_drake.watchers.port_watcher.file_naming_convention import PathOrganizationConvention, generate_all_file_paths_for_ports_data
 from brom_drake.watchers.port_watcher.port_figure_arrangement import (
     PortFigureArrangement,
 )
@@ -319,21 +318,10 @@ class PortWatcherPlotter:
             return  # Do nothing
 
         # Save the figures
-        file_path_organization_convention = None
-        match plotting_options.figure_naming_convention:
-            case FigureNamingConvention.kFlat:
-                file_path_organization_convention = PathOrganizationConvention.kFlat
-            case FigureNamingConvention.kHierarchical:
-                file_path_organization_convention = PathOrganizationConvention.kHierarchical
-            case _:
-                raise ValueError(
-                    f"Unsupported figure naming convention: {plotting_options.figure_naming_convention}"
-                )
-            
-        figure_paths = generate_all_file_paths_for_ports_data(
+        figure_paths = self.file_manager.compute_path_for_each_figure(
             output_port=self.port,
-            file_format=self.plotting_options.file_format,
-            organization_convention=file_path_organization_convention,
+            associated_log_sink=vector_log_sink,
+            port_component_name=port_component_name,
         )
 
         if len(figs) == 1:

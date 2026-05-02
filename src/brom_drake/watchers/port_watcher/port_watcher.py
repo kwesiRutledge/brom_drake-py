@@ -28,9 +28,6 @@ from .file_manager import PortWatcherFileManager
 from brom_drake.watchers.port_watcher.support_types import assert_port_is_supported
 from .port_watcher_options import (
     PortWatcherOptions,
-    FigureNamingConvention,
-    PortWatcherPlottingOptions,
-    PortWatcherRawDataOptions,
 )
 from .plotter import PortWatcherPlotter
 from brom_drake.systems.abstract_list_selection_system import (
