@@ -59,7 +59,7 @@ class PortWatcher:
         python_logger: logging.Logger,
         logger_name: str = None,
         options: PortWatcherOptions = PortWatcherOptions(),
-        base_watcher_dir: str = DEFAULT_BROM_DIR,
+        base_watcher_dir: Path = DEFAULT_BROM_DIR,
     ):
         """
         *Description*
@@ -93,7 +93,7 @@ class PortWatcher:
         self.plot_handles = {}
         self.plot_handles = None
         self.file_manager = PortWatcherFileManager(
-            base_directory=Path(base_watcher_dir),
+            base_directory=base_watcher_dir,
             plotting_options=self.options.plotting,
             raw_data_options=self.options.raw_data,
         )
