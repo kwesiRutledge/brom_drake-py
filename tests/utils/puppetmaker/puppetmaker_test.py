@@ -37,7 +37,7 @@ class PuppetmakerTest(unittest.TestCase):
             shape=sphere_geometry_defn,
             mass=0.2,
         )
-        sphere_urdf = sphere_urdf_defn.write_to_file()
+        sphere_urdf = str(sphere_urdf_defn.write_to_file())
 
         # Add the test sphere to the plant
         sphere_model_idcs = Parser(plant=plant).AddModels(sphere_urdf)
@@ -77,7 +77,7 @@ class PuppetmakerTest(unittest.TestCase):
             shape=sphere_geometry_defn,
             mass=0.2,
         )
-        sphere_urdf = sphere_urdf_defn.write_to_file()
+        sphere_urdf = str(sphere_urdf_defn.write_to_file())
 
         # Add the test sphere to the plant
         sphere_model_idcs = Parser(plant=plant).AddModels(sphere_urdf)
@@ -116,7 +116,7 @@ class PuppetmakerTest(unittest.TestCase):
             shape=sphere_geometry_defn,
             mass=0.2,
         )
-        sphere_urdf = sphere_urdf_defn.write_to_file()
+        sphere_urdf = str(sphere_urdf_defn.write_to_file())
 
         # Add the test sphere to the plant
         sphere_model_idcs = Parser(plant=plant).AddModels(sphere_urdf)
@@ -162,7 +162,7 @@ class PuppetmakerTest(unittest.TestCase):
             shape=sphere_geometry_defn,
             mass=0.2,
         )
-        sphere_urdf = sphere_urdf_defn.write_to_file()
+        sphere_urdf = str(sphere_urdf_defn.write_to_file())
 
         # Add the test sphere to the plant
         sphere_model_idcs = Parser(plant=plant).AddModels(sphere_urdf)
@@ -206,7 +206,7 @@ class PuppetmakerTest(unittest.TestCase):
             shape=sphere_geometry_defn,
             mass=0.2,
         )
-        sphere_urdf = sphere_urdf_defn.write_to_file()
+        sphere_urdf = str(sphere_urdf_defn.write_to_file())
 
         # Add the test sphere to the plant
         sphere_model_idcs = Parser(plant=plant).AddModels(sphere_urdf)

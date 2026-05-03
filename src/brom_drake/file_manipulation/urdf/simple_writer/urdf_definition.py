@@ -288,7 +288,7 @@ class SimpleShapeURDFDefinition:
         """
         return self.name + "_base_link"
 
-    def write_to_file(self, file_path: str = None) -> str:
+    def write_to_file(self, file_path: str = None) -> Path:
         """
         *Description*
 
@@ -301,7 +301,7 @@ class SimpleShapeURDFDefinition:
 
         *Returns*
 
-        str
+        Path
             The path to the file where the URDF was written.
         """
         # Setup
@@ -311,7 +311,7 @@ class SimpleShapeURDFDefinition:
 
         # Input Processing
         if file_path is None:
-            file_path = DEFAULT_BROM_MODELS_DIR + "/shapes/" + self.name + ".urdf"
+            file_path = DEFAULT_BROM_MODELS_DIR / "shapes" / f"{self.name}.urdf"
 
         # Create the directory if it doesn't exist
         fp_as_path = Path(file_path)

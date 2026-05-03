@@ -59,7 +59,7 @@ class PortWatcherTest(unittest.TestCase):
             python_logger.removeHandler(handler)
 
         # Add a single file handler to the logger
-        parent_dir = Path(DEFAULT_BROM_DIR + "/PortWatcherTest/" + log_file_name).parent
+        parent_dir = (DEFAULT_BROM_DIR / "PortWatcherTest" / log_file_name).parent
         if not parent_dir.exists():
             # Create the parent directory if it does not exist
             parent_dir.mkdir(parents=True, exist_ok=True)
@@ -229,7 +229,7 @@ class PortWatcherTest(unittest.TestCase):
                 "PortWatcherTest_save_raw_data1.log"
             ),
             options=pw_options0,
-            base_watcher_dir="./brom/test_save_raw_data1/watcher",
+            base_watcher_dir=Path("./brom/test_save_raw_data1/watcher"),
         )
 
         # Build Diagram
@@ -247,12 +247,12 @@ class PortWatcherTest(unittest.TestCase):
 
         # Verify that the raw_data directory exists
         self.assertTrue(
-            os.path.exists(pw0.file_manager.raw_data_dir),
+            pw0.file_manager.raw_data_dir.exists(),
         )
 
         # Verify that there is at least one file in the directory
         self.assertTrue(
-            len(os.listdir(pw0.file_manager.raw_data_dir)) > 0,
+            len(list(pw0.file_manager.raw_data_dir.iterdir())) > 0,
         )
 
     def test_get_data_dictionary1(self):

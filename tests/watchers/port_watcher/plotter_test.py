@@ -41,7 +41,7 @@ from brom_drake.directories import DEFAULT_BROM_DIR
 
 
 class PortWatcherPlotterTest(unittest.TestCase):
-    def get_brom_drake_dir(self):
+    def get_brom_drake_dir(self) -> str:
         """
         Description:
 
@@ -66,7 +66,7 @@ class PortWatcherPlotterTest(unittest.TestCase):
 
         # Default file manager for PortWatcher tests
         self.basic_file_manager = PortWatcherFileManager(
-            base_directory=Path(DEFAULT_BROM_DIR),
+            base_directory=DEFAULT_BROM_DIR,
             plotting_options=PortWatcherPlottingOptions(),
         )
 
@@ -78,7 +78,7 @@ class PortWatcherPlotterTest(unittest.TestCase):
 
         # Add a single file handler to the logger
         parent_dir = Path(
-            DEFAULT_BROM_DIR + "/PortWatcherPlotterTest/" + log_file_name
+            DEFAULT_BROM_DIR / "PortWatcherPlotterTest" / log_file_name
         ).parent
         if not parent_dir.exists():
             # Create the parent directory if it does not exist
@@ -635,7 +635,7 @@ class PortWatcherPlotterTest(unittest.TestCase):
         self,
         time_step: float = 0.01,
         plotting_options: PortWatcherPlottingOptions = PortWatcherPlottingOptions(),
-        base_watcher_dir: str = "./.brom",
+        base_watcher_dir: Path = Path("./.brom"),
     ) -> Tuple[Diagram, Context, PortWatcherPlotter, MultibodyPlant, VectorLogSink]:
         """
         Description:
@@ -653,7 +653,7 @@ class PortWatcherPlotterTest(unittest.TestCase):
         # 1. the desired base directory
         # 2. the desired plotting options
         updated_file_manager = self.basic_file_manager
-        updated_file_manager.base_directory = Path(base_watcher_dir)
+        updated_file_manager.base_directory = base_watcher_dir
         updated_file_manager.plotting_options = plotting_options
 
         # Setup Diagram
@@ -737,7 +737,7 @@ class PortWatcherPlotterTest(unittest.TestCase):
         # Setup
 
         # Set up a simple diagram with an included watcher
-        test_brom_dir = "./.brom2"
+        test_brom_dir = Path("./.brom2")
         options = PortWatcherPlottingOptions()
         diagram, diagram_context, pw0, _, log_sink0 = self.build_example_diagram(
             plotting_options=options,
@@ -774,7 +774,7 @@ class PortWatcherPlotterTest(unittest.TestCase):
         The figures should not be within the main plot_dir, but in a directory below it.
         """
         # Setup
-        plot_dir = "./.brom3"
+        plot_dir = Path("./.brom3")
         pw_options = PortWatcherPlottingOptions(
             plot_arrangement=PortFigureArrangement.OnePlotPerDim,
             figure_naming_convention=FigureNamingConvention.kHierarchical,
@@ -824,7 +824,7 @@ class PortWatcherPlotterTest(unittest.TestCase):
         :return:
         """
         # Setup
-        plot_dir = "./.brom4"
+        plot_dir = Path("./.brom4")
         pw_options = PortWatcherPlottingOptions(
             plot_arrangement=PortFigureArrangement.OnePlotPerDim,
             figure_naming_convention=FigureNamingConvention.kHierarchical,
@@ -873,7 +873,7 @@ class PortWatcherPlotterTest(unittest.TestCase):
         :return:
         """
         # Setup
-        plot_dir = "./.brom5"
+        plot_dir = Path("./.brom5")
         pw_options = PortWatcherPlottingOptions(
             plot_arrangement=PortFigureArrangement.OnePlotPerDim,
             figure_naming_convention=FigureNamingConvention.kFlat,
@@ -896,7 +896,7 @@ class PortWatcherPlotterTest(unittest.TestCase):
         pw0.save_figures(log_sink0, diagram_context)
 
         # Check that there are n_state - 1 png files in the plot_dir
-        files = os.listdir(plot_dir + "/plots")
+        files = os.listdir(plot_dir / "plots")
         png_files = [f for f in files if f.endswith(".png")]
         state_dim = plant.get_state_output_port().size()
         self.assertEqual(len(png_files), state_dim)
@@ -914,7 +914,7 @@ class PortWatcherPlotterTest(unittest.TestCase):
         :return:
         """
         # Setup
-        test_brom_watcher_dir = "./.brom6"
+        test_brom_watcher_dir = Path("./.brom6")
         plotting_options = PortWatcherPlottingOptions(
             plot_arrangement=PortFigureArrangement.OnePlotPerPort,
             figure_naming_convention=FigureNamingConvention.kHierarchical,
@@ -942,7 +942,7 @@ class PortWatcherPlotterTest(unittest.TestCase):
         self.assertEqual(0, len(png_files))
 
         # Check that there are 0 png files in the plot_dir
-        files = os.listdir(test_brom_watcher_dir + "/plots/system_plant")
+        files = os.listdir(test_brom_watcher_dir / "plots" / "system_plant")
         png_files = [f for f in files if f.endswith(".png")]
 
         expected_n_plots = 1  # Because we are targeting only one port in the system
@@ -959,7 +959,7 @@ class PortWatcherPlotterTest(unittest.TestCase):
         :return:
         """
         # Setup
-        temp_brom_dir = "./.brom7"
+        temp_brom_dir = Path("./.brom7")
         test_file_format = "svg"
         plotting_options = PortWatcherPlottingOptions(
             plot_arrangement=PortFigureArrangement.OnePlotPerPort,
@@ -991,7 +991,7 @@ class PortWatcherPlotterTest(unittest.TestCase):
         self.assertEqual(0, len(png_files))
 
         # Check that there are 0 png files in the plot_dir
-        files = os.listdir(temp_brom_dir + "/plots/system_plant")
+        files = os.listdir(temp_brom_dir / "plots" / "system_plant")
         png_files = [f for f in files if f.endswith(f".{test_file_format}")]
 
         expected_n_plots = 1  # Because we are targeting only one port in the system
@@ -1024,7 +1024,7 @@ class PortWatcherPlotterTest(unittest.TestCase):
                 "PortWatcherPlotterTest_save_figures8.log"
             ),
             options=pw_options0,
-            base_watcher_dir="./brom/test_save_figures8/watcher",
+            base_watcher_dir=Path("./brom/test_save_figures8/watcher"),
         )
 
         # Build Diagram
@@ -1049,12 +1049,12 @@ class PortWatcherPlotterTest(unittest.TestCase):
 
         # Verify that the raw_data directory exists
         self.assertTrue(
-            os.path.exists(pw0.file_manager.plot_dir),
+            pw0.file_manager.plot_dir.exists(),
         )
 
         # Verify that there is at least one file in the directory
         self.assertTrue(
-            len(os.listdir(pw0.file_manager.plot_dir)) > 0,
+            len(list(pw0.file_manager.plot_dir.iterdir())) > 0,
         )
 
     def test_system_is_multibody_plant1(self):

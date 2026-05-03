@@ -141,8 +141,7 @@ class PortWatcherFileManagerTest(unittest.TestCase):
         # Verify that the path names for one of the ports
         # is correct.
         time_data_path = test_file_manager.time_data_file_path(
-            system_name=plant.get_name(),
-            port_name=plant.GetOutputPort("state").get_name(),
+            output_port=plant.GetOutputPort("state"),
         )
         self.assertIn("times", str(time_data_path))
 
@@ -199,8 +198,7 @@ class PortWatcherFileManagerTest(unittest.TestCase):
         # Verify that the path names for one of the ports
         # is correct.
         test_raw_data_path = test_file_manager.raw_data_file_path(
-            system_name=plant.get_name(),
-            port_name=plant.GetOutputPort("state").get_name(),
+            output_port=plant.GetOutputPort("state"),
         )
 
         self.assertIn(plant.get_name(), str(test_raw_data_path))

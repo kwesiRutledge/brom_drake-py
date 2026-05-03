@@ -1,3 +1,4 @@
+from pathlib import Path
 import unittest
 from typing import Tuple
 
@@ -201,7 +202,7 @@ class OpenLoopPlanDispenserTest(unittest.TestCase):
 
         # Build the diagram with watcher and simulate
         watcher, diagram, diagram_context = add_watcher_and_build(
-            builder, watcher_dir="../brom/watcher_plots3"
+            builder, watcher_dir=Path("../brom/watcher_plots3")
         )
 
         # Create a context for the diagram

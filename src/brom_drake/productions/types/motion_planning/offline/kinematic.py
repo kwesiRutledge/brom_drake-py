@@ -203,8 +203,7 @@ class KinematicMotionPlanningProduction(BaseProduction):
         goal_sphere_urdf_location = Path("brom/models/spheres/end.urdf")
         os.makedirs(goal_sphere_urdf_location.parent, exist_ok=True)
 
-        goal_sphere_defn.write_to_file(goal_sphere_urdf_location)
-
+        str(goal_sphere_defn.write_to_file(goal_sphere_urdf_location))
         # Load the start sphere into the plant and rigidly attach it at the start_pose
         goal_sphere_model_idx = Parser(plant).AddModels(str(goal_sphere_urdf_location))[
             0

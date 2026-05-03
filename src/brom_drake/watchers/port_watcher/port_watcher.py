@@ -28,9 +28,6 @@ from .file_manager import PortWatcherFileManager
 from brom_drake.watchers.port_watcher.support_types import assert_port_is_supported
 from .port_watcher_options import (
     PortWatcherOptions,
-    FigureNamingConvention,
-    PortWatcherPlottingOptions,
-    PortWatcherRawDataOptions,
 )
 from .plotter import PortWatcherPlotter
 from brom_drake.systems.abstract_list_selection_system import (
@@ -62,7 +59,7 @@ class PortWatcher:
         python_logger: logging.Logger,
         logger_name: str = None,
         options: PortWatcherOptions = PortWatcherOptions(),
-        base_watcher_dir: str = DEFAULT_BROM_DIR,
+        base_watcher_dir: Path = DEFAULT_BROM_DIR,
     ):
         """
         *Description*
@@ -96,9 +93,9 @@ class PortWatcher:
         self.plot_handles = {}
         self.plot_handles = None
         self.file_manager = PortWatcherFileManager(
-            base_directory=Path(base_watcher_dir),
+            base_directory=base_watcher_dir,
             plotting_options=self.options.plotting,
-            raw_data_file_format=self.options.raw_data.file_format,
+            raw_data_options=self.options.raw_data,
         )
         self.python_logger = python_logger
 
@@ -447,8 +444,9 @@ class PortWatcher:
 
         *Returns*
 
-        name: str
-            System's name
+        system: LeafSystem, optional
+            The system for which to generate a safe name. If None, uses the system of the
+            PortWatcher\'s target port.
         """
         # Setup
         if system is None:
@@ -528,7 +526,8 @@ class PortWatcher:
             # Write the data to file
             # - time data
             time_data_file_name = self.file_manager.time_data_file_path(
-                system_name=system_containing_port.get_name(), port_name=port.get_name()
+                output_port=port,
+                component_name=output_port_name if n_vector_logs > 1 else None,
             )
 
             log_times = log.sample_times()
@@ -537,20 +536,13 @@ class PortWatcher:
 
             # - data values
             raw_data_file: Path = None
-            if n_vector_logs == 1:
-                raw_data_file = self.file_manager.raw_data_file_path(
-                    system_name=system_containing_port.get_name(),
-                    port_name=port.get_name(),
-                )
-            else:
-                raw_data_file = self.file_manager.raw_data_file_path(
-                    system_name=system_containing_port.get_name(),
-                    port_name=port.get_name(),
-                    port_component_name=output_port_name,
-                )
+            raw_data_file = self.file_manager.raw_data_file_path(
+                output_port=port,
+                port_component_name=output_port_name if n_vector_logs > 1 else None,
+            )
 
-                if raw_data_file.parent.exists() is False:
-                    raw_data_file.parent.mkdir(parents=True, exist_ok=True)
+            if raw_data_file.parent.exists() is False:
+                raw_data_file.parent.mkdir(parents=True, exist_ok=True)
 
             log_data = log.data()
             np.save(raw_data_file, log_data)

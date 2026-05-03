@@ -29,7 +29,7 @@ def add_cube_model_to_plant(
         shape=simple_cube,
         color=[0.1, 0.1, 0.5, 1.0],
     )
-    cube_urdf_path = cube_urdf_defn.write_to_file()
+    cube_urdf_path = str(cube_urdf_defn.write_to_file())
 
     # Add cube urdf to plant
     cube_model = Parser(plant=plant).AddModels(cube_urdf_path)[0]
@@ -47,7 +47,7 @@ def add_floor_model_to_plant(
         shape=simple_floor,
         color=[0.5, 0.5, 0.5, 1.0],
     )
-    floor_urdf_path = floor_urdf_defn.write_to_file()
+    floor_urdf_path = str(floor_urdf_defn.write_to_file())
 
     # Add floor urdf to plant
     floor_model = Parser(plant=plant).AddModels(floor_urdf_path)[0]

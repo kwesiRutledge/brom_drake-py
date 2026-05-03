@@ -1,9 +1,17 @@
+from brom_drake.watchers.port_watcher.file_naming_convention import (
+    compute_safe_system_name,
+    PathOrganizationConvention,
+    file_path_for_port_data_dimension,
+    generate_all_file_paths_for_ports_data,
+)
 from brom_drake.watchers.port_watcher.port_watcher_options import (
     PortFigureArrangement,
     FigureNamingConvention,
     PortWatcherPlottingOptions,
+    PortWatcherRawDataOptions,
 )
 from dataclasses import dataclass
+import warnings
 from pathlib import Path
 from pydrake.multibody.plant import MultibodyPlant
 from pydrake.systems.framework import OutputPort
@@ -22,31 +30,7 @@ class PortWatcherFileManager:
 
     base_directory: Path
     plotting_options: PortWatcherPlottingOptions
-    raw_data_file_format: str = "npy"
-
-    @staticmethod
-    def compute_safe_system_name(system_name: str) -> str:
-        """
-        *Description*
-
-        This function returns a filesystem-safe version of the system name.
-
-        *Returns*
-
-        safe_system_name: str
-            The filesystem-safe version of the system name.
-        """
-        # First, let's check to see how many "/" exist in the name
-        slash_occurences = [i for i, letter in enumerate(system_name) if letter == "/"]
-        if len(slash_occurences) > 0:
-            system_name = system_name[
-                slash_occurences[-1] + 1 :
-            ]  # truncrate string based on the last slash
-
-        # Second, replace all spaces with underscores
-        system_name = system_name.replace(" ", "_")
-
-        return system_name
+    raw_data_options: PortWatcherRawDataOptions = PortWatcherRawDataOptions()
 
     def compute_path_for_each_figure(
         self,
@@ -65,26 +49,56 @@ class PortWatcherFileManager:
         figure_paths_out: List[Path]
             The paths of all of the figures that will be produced by
             this PortWatcherPlotter object.
+
         """
         # Setup
         plotting_options = self.plotting_options
+        file_format = plotting_options.file_format
+        log_sink_size = associated_log_sink.get_input_port().size()
 
         # Create the figure paths based on the naming convention given to the
         # PortWatcherPlotter.
+        file_organization_convention: PathOrganizationConvention = None
         match plotting_options.figure_naming_convention:
             case FigureNamingConvention.kFlat:
-                return self.figure_names_under_flat_convention(
-                    output_port, associated_log_sink, port_component_name
-                )
-
+                file_organization_convention = PathOrganizationConvention.kFlat
             case FigureNamingConvention.kHierarchical:
-                return self.figure_names_under_hierarchical_convention(
-                    output_port, associated_log_sink, port_component_name
-                )
-
+                file_organization_convention = PathOrganizationConvention.kHierarchical
             case _:
                 raise NotImplementedError(
                     f"Invalid figure naming convention for figure_names(): {plotting_options.figure_naming_convention}."
+                )
+
+        # Now define names
+        match plotting_options.plot_arrangement:
+            case PortFigureArrangement.OnePlotPerPort:
+                return [
+                    self.plot_dir
+                    / file_path_for_port_data_dimension(
+                        output_port=output_port,
+                        file_format=file_format,
+                        organization_convention=file_organization_convention,
+                        component_name=port_component_name,
+                    )
+                ]
+
+            case PortFigureArrangement.OnePlotPerDim:
+                # If there is a sub-component name, then we will
+                # create a sub-directory for it
+                relative_file_paths = generate_all_file_paths_for_ports_data(
+                    output_port=output_port,
+                    file_format=file_format,
+                    organization_convention=file_organization_convention,
+                    component_name=port_component_name,
+                )
+                return [
+                    self.plot_dir / relative_file_path
+                    for relative_file_path in relative_file_paths
+                ]
+
+            case _:
+                raise NotImplementedError(
+                    f"Invalid plot arrangement for figure naming convention {plotting_options.figure_naming_convention}: {plotting_options.plot_arrangement}."
                 )
 
     def figure_names_under_flat_convention(
@@ -113,7 +127,17 @@ class PortWatcherFileManager:
 
         figure_names: List[Path]
             List of paths where each path is a file name for an associated figure.
+
+        .. deprecated::
+            Use :meth:`compute_path_for_each_figure` instead.
+            This method will be removed in a future release.
         """
+        warnings.warn(
+            "figure_names_under_flat_convention is deprecated and will be removed in a future release. "
+            "Use compute_path_for_each_figure instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         # Setup
         plotting_options = self.plotting_options
         format = plotting_options.file_format
@@ -123,47 +147,52 @@ class PortWatcherFileManager:
         # (i.e., if there is one plot per port, or one plot per dimension)
         system = output_port.get_system()
         system_name = system.get_name()
-        safe_system_name = self.compute_safe_system_name(system_name)
+        safe_system_name = compute_safe_system_name(system_name)
 
         port_name = output_port.get_name()
         log_sink_size = associated_log_sink.get_input_port().size()
 
         match plotting_options.plot_arrangement:
             case PortFigureArrangement.OnePlotPerPort:
-                if port_component_name is None:
-                    # If there is no sub-component name, then we just
-                    # create the file in the main plot directory
-                    return [
-                        plot_dir
-                        / f"system_{safe_system_name}_port_{port_name}.{format}"
-                    ]
-                else:
-                    # If there is a sub-component name, then we will
-                    # create a sub-directory for it
-                    return [
-                        plot_dir
-                        / f"system_{safe_system_name}_port_{port_name}"
-                        / f"{port_component_name}.{format}"
-                    ]
+                return [
+                    plot_dir
+                    / file_path_for_port_data_dimension(
+                        output_port=output_port,
+                        file_format=format,
+                        dimension_name=port_component_name,
+                    )
+                ]
 
             case PortFigureArrangement.OnePlotPerDim:
 
                 if port_component_name is None:
                     # If there is no sub-component name, then we just
                     # create the files in the main plot directory
+                    relative_file_paths = generate_all_file_paths_for_ports_data(
+                        output_port=output_port,
+                        file_format=format,
+                        organization_convention=PathOrganizationConvention.kFlat,
+                    )
                     return [
-                        plot_dir
-                        / f"system_{safe_system_name}_port_{port_name}_dim{ii}.{format}"
-                        for ii in range(log_sink_size)
+                        plot_dir / relative_file_path
+                        for relative_file_path in relative_file_paths
                     ]
                 else:
                     # If there is a sub-component name, then we will
                     # create a sub-directory for it
+                    dimension_names = {
+                        dimension: f"{port_component_name}/dim{dimension}"
+                        for dimension in range(log_sink_size)
+                    }
+                    relative_file_paths = generate_all_file_paths_for_ports_data(
+                        output_port=output_port,
+                        file_format=format,
+                        dimension_names=dimension_names,
+                        organization_convention=PathOrganizationConvention.kFlat,
+                    )
                     return [
-                        plot_dir
-                        / f"system_{safe_system_name}_port_{port_name}"
-                        / f"{port_component_name}_dim{ii}.{format}"
-                        for ii in range(log_sink_size)
+                        plot_dir / relative_file_path
+                        for relative_file_path in relative_file_paths
                     ]
             case _:
                 raise NotImplementedError(
@@ -195,7 +224,17 @@ class PortWatcherFileManager:
 
         paths_out: List[Path]
             Each path in this list is a file path for an associated figure.
+
+        .. deprecated::
+            Use :meth:`compute_path_for_each_figure` instead.
+            This method will be removed in a future release.
         """
+        warnings.warn(
+            "figure_names_under_hierarchical_convention is deprecated and will be removed in a future release. "
+            "Use compute_path_for_each_figure instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         # Setup
         plotting_options = self.plotting_options
         format = plotting_options.file_format
@@ -204,36 +243,35 @@ class PortWatcherFileManager:
         # (i.e., if there is one plot per port, or one plot per dimension
         system = output_port.get_system()
         system_name = system.get_name()
-        safe_system_name = self.compute_safe_system_name(system_name)
+        safe_system_name = compute_safe_system_name(system_name)
 
         port_name = output_port.get_name()
 
         log_sink_size = associated_log_sink.get_input_port().size()
 
         if plotting_options.plot_arrangement == PortFigureArrangement.OnePlotPerPort:
-            if port_component_name is None:
-                # If there is no sub-component name, then we just
-                # create the file in the main plot directory
-                return [
-                    self.plot_dir
-                    / f"system_{safe_system_name}/port_{port_name}.{format}"
-                ]
-            else:
-                # If there is a sub-component name, then we will
-                # create a sub-directory for it
-                return [
-                    self.plot_dir
-                    / f"system_{safe_system_name}/port_{port_name}/{port_component_name}.{format}"
-                ]
+            return [
+                self.plot_dir
+                / file_path_for_port_data_dimension(
+                    output_port=output_port,
+                    file_format=format,
+                    dimension_name=port_component_name,
+                    organization_convention=PathOrganizationConvention.kHierarchical,
+                )
+            ]
 
         elif plotting_options.plot_arrangement == PortFigureArrangement.OnePlotPerDim:
             if port_component_name is None:
                 # If there is no sub-component name, then we just
                 # create the files in the main plot directory
+                relative_file_paths = generate_all_file_paths_for_ports_data(
+                    output_port=output_port,
+                    file_format=format,
+                    organization_convention=PathOrganizationConvention.kHierarchical,
+                )
                 return [
-                    self.plot_dir
-                    / f"system_{safe_system_name}/port_{port_name}/dim_{self.name_of_data_at_index(ii, output_port, associated_log_sink, remove_spaces=True)}.{format}"
-                    for ii in range(log_sink_size)
+                    self.plot_dir / relative_file_path
+                    for relative_file_path in relative_file_paths
                 ]
             else:
                 # If there is a sub-component name, then we will
@@ -344,7 +382,7 @@ class PortWatcherFileManager:
         return self.base_directory / "raw_data"
 
     def raw_data_file_path(
-        self, system_name: str, port_name: str, port_component_name: str = None
+        self, output_port: OutputPort, port_component_name: str = None
     ) -> Path:
         """
         *Description*
@@ -352,6 +390,9 @@ class PortWatcherFileManager:
         This function returns the file name for saving raw data.
 
         *Parameters*
+
+        output_port: OutputPort
+            The output port for which to generate the file path.
 
         port_component_name: str
             A "sub-component" of the port that we wish to give a unique name in the data.
@@ -361,21 +402,18 @@ class PortWatcherFileManager:
         raw_data_file_name: Path
             The file name for saving raw data.
         """
-        safe_system_name = self.compute_safe_system_name(system_name)
 
-        if port_component_name is None:
-            return (
-                self.raw_data_dir
-                / f"system_{safe_system_name}_port_{port_name}_data.{self.raw_data_file_format}"
-            )
-        else:
-            return (
-                self.raw_data_dir
-                / f"system_{safe_system_name}_port_{port_name}"
-                / f"{port_component_name}.{self.raw_data_file_format}"
-            )
+        return self.raw_data_dir / file_path_for_port_data_dimension(
+            output_port=output_port,
+            file_format=self.raw_data_options.file_format,
+            organization_convention=self.raw_data_options.file_organization_convention,
+            component_name=port_component_name,
+            dimension_name=output_port.get_name() + "_data",
+        )
 
-    def time_data_file_path(self, system_name: str, port_name: str) -> Path:
+    def time_data_file_path(
+        self, output_port: OutputPort, component_name: str = None
+    ) -> Path:
         """
         *Description*
 
@@ -386,8 +424,12 @@ class PortWatcherFileManager:
         time_data_file_path: Path
             The file name for saving time data.
         """
-        safe_system_name = self.compute_safe_system_name(system_name)
-        return (
-            self.raw_data_dir
-            / f"system_{safe_system_name}_port_{port_name}_times.{self.raw_data_file_format}"
+        port_name = output_port.get_name()
+
+        return self.raw_data_dir / file_path_for_port_data_dimension(
+            output_port=output_port,
+            file_format=self.raw_data_options.file_format,
+            organization_convention=self.raw_data_options.file_organization_convention,
+            component_name=component_name,
+            dimension_name=port_name + "_times",
         )

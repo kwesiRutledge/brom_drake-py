@@ -296,7 +296,7 @@ class NetworkXFSM(LeafSystem):
 
             # Create a file handler
             file_handler = logging.FileHandler(
-                filename=DEFAULT_NETWORKX_FSM_DIR + "/" + config.log_file_name, mode="w"
+                filename=DEFAULT_NETWORKX_FSM_DIR / config.log_file_name, mode="w"
             )
             file_handler.setLevel(
                 logging.INFO

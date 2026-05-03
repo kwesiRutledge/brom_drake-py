@@ -14,6 +14,9 @@ from brom_drake.directories import (
     DEFAULT_RAW_DATA_DIR,
     DEFAULT_WATCHER_DIR,
 )
+from brom_drake.watchers.port_watcher.file_naming_convention import (
+    PathOrganizationConvention,
+)
 from .port_figure_arrangement import PortFigureArrangement
 
 
@@ -39,6 +42,9 @@ class PortWatcherPlottingOptions(NamedTuple):
 class PortWatcherRawDataOptions(NamedTuple):
     save_to_file: bool = True
     file_format: str = "npy"
+    file_organization_convention: PathOrganizationConvention = (
+        PathOrganizationConvention.kHierarchical
+    )
 
 
 class PortWatcherOptions(NamedTuple):

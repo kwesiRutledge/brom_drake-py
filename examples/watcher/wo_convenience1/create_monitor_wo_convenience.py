@@ -8,6 +8,8 @@ Description:
     the diagram yourself.
 """
 
+from pathlib import Path
+
 import numpy as np
 
 # Drake imports
@@ -73,7 +75,7 @@ def main():
     watcher = DiagramWatcher(
         builder,
         options=DiagramWatcherOptions(
-            base_directory="brom",
+            base_directory=Path("brom"),
         ),
     )
 

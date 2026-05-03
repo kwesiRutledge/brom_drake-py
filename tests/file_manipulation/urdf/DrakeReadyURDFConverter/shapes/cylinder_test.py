@@ -52,7 +52,7 @@ class TestCylinder(unittest.TestCase):
         Test the in_urdf method.
         """
         # Setup
-        urdf_location = DEFAULT_BROM_MODELS_DIR + "/test_cylinder.urdf"
+        urdf_location = DEFAULT_BROM_MODELS_DIR / "test_cylinder.urdf"
 
         # Create cylinder
         cylinder = CylinderDefinition(1, 2)

@@ -1,4 +1,5 @@
 from importlib import resources as impresources
+from pathlib import Path
 import numpy as np
 from pydrake.all import (
     DiagramBuilder,
@@ -96,7 +97,7 @@ class AttemptGraspWithStaticWristTest(unittest.TestCase):
             name="floor",
             shape=floor_geometry_defn,
         )
-        floor_urdf = floor_urdf_defn.write_to_file()
+        floor_urdf = str(floor_urdf_defn.write_to_file())
 
         # Add the floor to the plant
         floor_model_idcs = Parser(plant=plant).AddModels(floor_urdf)
@@ -124,7 +125,7 @@ class AttemptGraspWithStaticWristTest(unittest.TestCase):
         # Build the production and simulate it
         watcher, diagram, diagram_context = add_watcher_and_build(
             builder,
-            watcher_dir="./brom/watcher/attempt_grasp_test/controlling_floor1",
+            watcher_dir=Path("./brom/watcher/attempt_grasp_test/controlling_floor1"),
         )
 
         # Set up simulation
