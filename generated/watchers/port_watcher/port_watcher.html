@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html"><link rel="prev" title="diagram_watcher" href="../diagram_watcher/diagram_watcher.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>port_watcher - brom_drake-py 0.5.4 documentation</title>
+        <title>port_watcher - brom_drake-py 0.5.5 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -162,7 +162,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">brom_drake-py 0.5.4 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">brom_drake-py 0.5.5 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +183,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.4 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 0.5.5 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -568,7 +568,7 @@
 <h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="brom_drake.watchers.port_watcher.file_manager.PortWatcherFileManager">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brom_drake.watchers.port_watcher.file_manager.</span></span><span class="sig-name descname"><span class="pre">PortWatcherFileManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plotting_options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#brom_drake.watchers.port_watcher.port_watcher_options.PortWatcherPlottingOptions" title="brom_drake.watchers.port_watcher.port_watcher_options.PortWatcherPlottingOptions"><span class="pre">PortWatcherPlottingOptions</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw_data_file_format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'npy'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/brom_drake/watchers/port_watcher/file_manager.html#PortWatcherFileManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.watchers.port_watcher.file_manager.PortWatcherFileManager" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brom_drake.watchers.port_watcher.file_manager.</span></span><span class="sig-name descname"><span class="pre">PortWatcherFileManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plotting_options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#brom_drake.watchers.port_watcher.port_watcher_options.PortWatcherPlottingOptions" title="brom_drake.watchers.port_watcher.port_watcher_options.PortWatcherPlottingOptions"><span class="pre">PortWatcherPlottingOptions</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw_data_options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#brom_drake.watchers.port_watcher.port_watcher_options.PortWatcherRawDataOptions" title="brom_drake.watchers.port_watcher.port_watcher_options.PortWatcherRawDataOptions"><span class="pre">PortWatcherRawDataOptions</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(True,</span> <span class="pre">'npy',</span> <span class="pre">PathOrganizationConvention.kHierarchical)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/brom_drake/watchers/port_watcher/file_manager.html#PortWatcherFileManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.watchers.port_watcher.file_manager.PortWatcherFileManager" title="Link to this definition">¶</a></dt>
 <dd><p><em>Description</em></p>
 <p>This class manages file paths and directories for saving data
 collected by the PortWatcher system.</p>
@@ -581,18 +581,6 @@ collected by the PortWatcher system.</p>
 <dl class="simple">
 <dt>figure_paths_out: List[Path]</dt><dd><p>The paths of all of the figures that will be produced by
 this PortWatcherPlotter object.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="brom_drake.watchers.port_watcher.file_manager.PortWatcherFileManager.compute_safe_system_name">
-<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">compute_safe_system_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">system_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../_modules/brom_drake/watchers/port_watcher/file_manager.html#PortWatcherFileManager.compute_safe_system_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.watchers.port_watcher.file_manager.PortWatcherFileManager.compute_safe_system_name" title="Link to this definition">¶</a></dt>
-<dd><p><em>Description</em></p>
-<p>This function returns a filesystem-safe version of the system name.</p>
-<p><em>Returns</em></p>
-<dl class="simple">
-<dt>safe_system_name: str</dt><dd><p>The filesystem-safe version of the system name.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -617,6 +605,10 @@ figures.</p>
 <dt>figure_names: List[Path]</dt><dd><p>List of paths where each path is a file name for an associated figure.</p>
 </dd>
 </dl>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version Use: </span><a class="reference internal" href="#brom_drake.watchers.port_watcher.file_manager.PortWatcherFileManager.compute_path_for_each_figure" title="brom_drake.watchers.port_watcher.file_manager.PortWatcherFileManager.compute_path_for_each_figure"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_path_for_each_figure()</span></code></a> instead.
+This method will be removed in a future release.</p>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -638,6 +630,10 @@ We can extract the system name, port name, and port size from this.</p>
 <dt>paths_out: List[Path]</dt><dd><p>Each path in this list is a file path for an associated figure.</p>
 </dd>
 </dl>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version Use: </span><a class="reference internal" href="#brom_drake.watchers.port_watcher.file_manager.PortWatcherFileManager.compute_path_for_each_figure" title="brom_drake.watchers.port_watcher.file_manager.PortWatcherFileManager.compute_path_for_each_figure"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_path_for_each_figure()</span></code></a> instead.
+This method will be removed in a future release.</p>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -690,11 +686,13 @@ the file manager.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.watchers.port_watcher.file_manager.PortWatcherFileManager.raw_data_file_path">
-<span class="sig-name descname"><span class="pre">raw_data_file_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">system_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port_component_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="../../../_modules/brom_drake/watchers/port_watcher/file_manager.html#PortWatcherFileManager.raw_data_file_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.watchers.port_watcher.file_manager.PortWatcherFileManager.raw_data_file_path" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">raw_data_file_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">OutputPort</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port_component_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="../../../_modules/brom_drake/watchers/port_watcher/file_manager.html#PortWatcherFileManager.raw_data_file_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.watchers.port_watcher.file_manager.PortWatcherFileManager.raw_data_file_path" title="Link to this definition">¶</a></dt>
 <dd><p><em>Description</em></p>
 <p>This function returns the file name for saving raw data.</p>
 <p><em>Parameters</em></p>
 <dl class="simple">
+<dt>output_port: OutputPort</dt><dd><p>The output port for which to generate the file path.</p>
+</dd>
 <dt>port_component_name: str</dt><dd><p>A “sub-component” of the port that we wish to give a unique name in the data.</p>
 </dd>
 </dl>
@@ -707,7 +705,7 @@ the file manager.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.watchers.port_watcher.file_manager.PortWatcherFileManager.time_data_file_path">
-<span class="sig-name descname"><span class="pre">time_data_file_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">system_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="../../../_modules/brom_drake/watchers/port_watcher/file_manager.html#PortWatcherFileManager.time_data_file_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.watchers.port_watcher.file_manager.PortWatcherFileManager.time_data_file_path" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">time_data_file_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">OutputPort</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">component_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="../../../_modules/brom_drake/watchers/port_watcher/file_manager.html#PortWatcherFileManager.time_data_file_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.watchers.port_watcher.file_manager.PortWatcherFileManager.time_data_file_path" title="Link to this definition">¶</a></dt>
 <dd><p><em>Description</em></p>
 <p>This function returns the file name for saving time data.</p>
 <p><em>Returns</em></p>
@@ -717,6 +715,13 @@ the file manager.</p>
 </dl>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="brom_drake.watchers.port_watcher.file_naming_convention.PathOrganizationConvention">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brom_drake.watchers.port_watcher.file_naming_convention.</span></span><span class="sig-name descname"><span class="pre">PathOrganizationConvention</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/brom_drake/watchers/port_watcher/file_naming_convention.html#PathOrganizationConvention"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.watchers.port_watcher.file_naming_convention.PathOrganizationConvention" title="Link to this definition">¶</a></dt>
+<dd><p><strong>Description</strong></p>
+<p>This enum is used to define the organization convention for the file paths.</p>
 </dd></dl>
 
 <dl class="py class">
@@ -862,7 +867,7 @@ the data from the <code class="xref py py-class docutils literal notranslate"><s
 
 <dl class="py class">
 <dt class="sig sig-object py" id="brom_drake.watchers.port_watcher.port_watcher.PortWatcher">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brom_drake.watchers.port_watcher.port_watcher.</span></span><span class="sig-name descname"><span class="pre">PortWatcher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">OutputPort</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">builder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DiagramBuilder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">python_logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#brom_drake.watchers.port_watcher.port_watcher_options.PortWatcherOptions" title="brom_drake.watchers.port_watcher.port_watcher_options.PortWatcherOptions"><span class="pre">PortWatcherOptions</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">((PortFigureArrangement.OnePlotPerPort,</span> <span class="pre">300,</span> <span class="pre">True,</span> <span class="pre">'png',</span> <span class="pre">FigureNamingConvention.kFlat),</span> <span class="pre">(True,</span> <span class="pre">'npy'))</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_watcher_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'./brom'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/brom_drake/watchers/port_watcher/port_watcher.html#PortWatcher"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.watchers.port_watcher.port_watcher.PortWatcher" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brom_drake.watchers.port_watcher.port_watcher.</span></span><span class="sig-name descname"><span class="pre">PortWatcher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">OutputPort</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">builder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DiagramBuilder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">python_logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#brom_drake.watchers.port_watcher.port_watcher_options.PortWatcherOptions" title="brom_drake.watchers.port_watcher.port_watcher_options.PortWatcherOptions"><span class="pre">PortWatcherOptions</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">((PortFigureArrangement.OnePlotPerPort,</span> <span class="pre">300,</span> <span class="pre">True,</span> <span class="pre">'png',</span> <span class="pre">FigureNamingConvention.kFlat),</span> <span class="pre">(True,</span> <span class="pre">'npy',</span> <span class="pre">PathOrganizationConvention.kHierarchical))</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_watcher_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PosixPath('brom')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/brom_drake/watchers/port_watcher/port_watcher.html#PortWatcher"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.watchers.port_watcher.port_watcher.PortWatcher" title="Link to this definition">¶</a></dt>
 <dd><p><em>Description</em></p>
 <p>The real workhorse of the <a class="reference internal" href="../diagram_watcher/diagram_watcher.html#brom_drake.watchers.diagram_watcher.diagram_watcher.DiagramWatcher" title="brom_drake.watchers.diagram_watcher.diagram_watcher.DiagramWatcher"><code class="xref py py-class docutils literal notranslate"><span class="pre">DiagramWatcher</span></code></a> class.
 This class adds the elements to the drake diagram that will monitor a given
@@ -945,7 +950,8 @@ By default, None.</p>
 <p>Returns a safe name for the system.</p>
 <p><em>Returns</em></p>
 <dl class="simple">
-<dt>name: str</dt><dd><p>System’s name</p>
+<dt>system: LeafSystem, optional</dt><dd><p>The system for which to generate a safe name. If None, uses the system of the
+PortWatcher’s target port.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1041,11 +1047,17 @@ or just one figure for the entire port.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="brom_drake.watchers.port_watcher.port_watcher_options.PortWatcherRawDataOptions">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brom_drake.watchers.port_watcher.port_watcher_options.</span></span><span class="sig-name descname"><span class="pre">PortWatcherRawDataOptions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_to_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_format</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/brom_drake/watchers/port_watcher/port_watcher_options.html#PortWatcherRawDataOptions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.watchers.port_watcher.port_watcher_options.PortWatcherRawDataOptions" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brom_drake.watchers.port_watcher.port_watcher_options.</span></span><span class="sig-name descname"><span class="pre">PortWatcherRawDataOptions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_to_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_format</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_organization_convention</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/brom_drake/watchers/port_watcher/port_watcher_options.html#PortWatcherRawDataOptions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.watchers.port_watcher.port_watcher_options.PortWatcherRawDataOptions" title="Link to this definition">¶</a></dt>
 <dd><dl class="py attribute">
 <dt class="sig sig-object py" id="brom_drake.watchers.port_watcher.port_watcher_options.PortWatcherRawDataOptions.file_format">
 <span class="sig-name descname"><span class="pre">file_format</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#brom_drake.watchers.port_watcher.port_watcher_options.PortWatcherRawDataOptions.file_format" title="Link to this definition">¶</a></dt>
 <dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="brom_drake.watchers.port_watcher.port_watcher_options.PortWatcherRawDataOptions.file_organization_convention">
+<span class="sig-name descname"><span class="pre">file_organization_convention</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#brom_drake.watchers.port_watcher.file_naming_convention.PathOrganizationConvention" title="brom_drake.watchers.port_watcher.file_naming_convention.PathOrganizationConvention"><span class="pre">PathOrganizationConvention</span></a></span><a class="headerlink" href="#brom_drake.watchers.port_watcher.port_watcher_options.PortWatcherRawDataOptions.file_organization_convention" title="Link to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -1059,6 +1071,60 @@ or just one figure for the entire port.</p>
 </section>
 <section id="functions">
 <h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="brom_drake.watchers.port_watcher.file_naming_convention.compute_safe_system_name">
+<span class="sig-prename descclassname"><span class="pre">brom_drake.watchers.port_watcher.file_naming_convention.</span></span><span class="sig-name descname"><span class="pre">compute_safe_system_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">system_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../_modules/brom_drake/watchers/port_watcher/file_naming_convention.html#compute_safe_system_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.watchers.port_watcher.file_naming_convention.compute_safe_system_name" title="Link to this definition">¶</a></dt>
+<dd><p><em>Description</em></p>
+<p>This function returns a filesystem-safe version of the system name.</p>
+<p><em>Returns</em></p>
+<dl class="simple">
+<dt>safe_system_name: str</dt><dd><p>The filesystem-safe version of the system name.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brom_drake.watchers.port_watcher.file_naming_convention.file_path_for_port_data_dimension">
+<span class="sig-prename descclassname"><span class="pre">brom_drake.watchers.port_watcher.file_naming_convention.</span></span><span class="sig-name descname"><span class="pre">file_path_for_port_data_dimension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">OutputPort</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dimension_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">organization_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#brom_drake.watchers.port_watcher.file_naming_convention.PathOrganizationConvention" title="brom_drake.watchers.port_watcher.file_naming_convention.PathOrganizationConvention"><span class="pre">PathOrganizationConvention</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PathOrganizationConvention.kFlat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">component_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="../../../_modules/brom_drake/watchers/port_watcher/file_naming_convention.html#file_path_for_port_data_dimension"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.watchers.port_watcher.file_naming_convention.file_path_for_port_data_dimension" title="Link to this definition">¶</a></dt>
+<dd><p><em>Description</em></p>
+<p>Generates a file path for the data of the given output port and dimension.</p>
+<p><em>Parameters</em></p>
+<dl class="simple">
+<dt>output_port: OutputPort</dt><dd><p>The output port for which to generate the file path.</p>
+</dd>
+<dt>dimension_name: str, optional</dt><dd><p>The name of the dimension of the output port for which to generate the file path.
+By default, this is set to None, which means that the file path will be generated for the first dimension of the output port.</p>
+</dd>
+<dt>component_name: str, optional</dt><dd><p>The name of the COMPONENT of the output port for which to generate the file path.
+This is used because some output ports produce dictionaries of data, where each component of the dictionary has a different name.</p>
+</dd>
+<dt>file_format: str</dt><dd><p>The file format for the data (e.g., “npy”, “csv”, etc.).</p>
+</dd>
+<dt>organization_convention: PathOrganizationConvention, optional</dt><dd><p>The organization convention for the file paths. Defaults to PathOrganizationConvention.kFlat.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brom_drake.watchers.port_watcher.file_naming_convention.generate_all_file_paths_for_ports_data">
+<span class="sig-prename descclassname"><span class="pre">brom_drake.watchers.port_watcher.file_naming_convention.</span></span><span class="sig-name descname"><span class="pre">generate_all_file_paths_for_ports_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">OutputPort</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">organization_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#brom_drake.watchers.port_watcher.file_naming_convention.PathOrganizationConvention" title="brom_drake.watchers.port_watcher.file_naming_convention.PathOrganizationConvention"><span class="pre">PathOrganizationConvention</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dimension_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">component_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/brom_drake/watchers/port_watcher/file_naming_convention.html#generate_all_file_paths_for_ports_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.watchers.port_watcher.file_naming_convention.generate_all_file_paths_for_ports_data" title="Link to this definition">¶</a></dt>
+<dd><p><em>Description</em></p>
+<p>Generates ALL file path for the data of the given output port.
+For ports that have multiple dimensions, this will generate a file path for each dimension.
+For example, if the output port is a 3-dimensional vector, this function will generate 3 file paths,
+one for each dimension.</p>
+<p><em>Parameters</em></p>
+<dl class="simple">
+<dt>output_port: OutputPort</dt><dd><p>The output port for which to generate the file path.</p>
+</dd>
+<dt>file_format: str</dt><dd><p>The file format for the data (e.g., “npy”, “csv”, etc.).</p>
+</dd>
+<dt>component_name: str, optional</dt><dd><p>The name of the COMPONENT of the output port for which to generate the file path.
+This is used because some output ports produce dictionaries of data, where each component of the dictionary has a different name.</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="brom_drake.watchers.port_watcher.support_types.assert_abstract_value_ports_type_is_supported">
 <span class="sig-prename descclassname"><span class="pre">brom_drake.watchers.port_watcher.support_types.</span></span><span class="sig-name descname"><span class="pre">assert_abstract_value_ports_type_is_supported</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_port_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/brom_drake/watchers/port_watcher/support_types.html#assert_abstract_value_ports_type_is_supported"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.watchers.port_watcher.support_types.assert_abstract_value_ports_type_is_supported" title="Link to this definition">¶</a></dt>
@@ -1091,76 +1157,7 @@ or just one figure for the entire port.</p>
 </section>
 <section id="variables">
 <h2>Variables<a class="headerlink" href="#variables" title="Link to this heading">¶</a></h2>
-<dl class="py data">
-<dt class="sig sig-object py" id="brom_drake.watchers.port_watcher.plotter.DEFAULT_PLOT_DIR">
-<span class="sig-prename descclassname"><span class="pre">brom_drake.watchers.port_watcher.plotter.</span></span><span class="sig-name descname"><span class="pre">DEFAULT_PLOT_DIR</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'./brom/watcher/plots'</span></span><a class="headerlink" href="#brom_drake.watchers.port_watcher.plotter.DEFAULT_PLOT_DIR" title="Link to this definition">¶</a></dt>
-<dd><p>str(object=’’) -&gt; str
-str(bytes_or_buffer[, encoding[, errors]]) -&gt; str</p>
-<p>Create a new string object from the given object. If encoding or
-errors is specified, then the object must expose a data buffer
-that will be decoded using the given encoding and error handler.
-Otherwise, returns the result of object.__str__() (if defined)
-or repr(object).
-encoding defaults to sys.getdefaultencoding().
-errors defaults to ‘strict’.</p>
-</dd></dl>
-
-<dl class="py data">
-<dt class="sig sig-object py" id="brom_drake.watchers.port_watcher.port_watcher.DEFAULT_BROM_DIR">
-<span class="sig-prename descclassname"><span class="pre">brom_drake.watchers.port_watcher.port_watcher.</span></span><span class="sig-name descname"><span class="pre">DEFAULT_BROM_DIR</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'./brom'</span></span><a class="headerlink" href="#brom_drake.watchers.port_watcher.port_watcher.DEFAULT_BROM_DIR" title="Link to this definition">¶</a></dt>
-<dd><p>str(object=’’) -&gt; str
-str(bytes_or_buffer[, encoding[, errors]]) -&gt; str</p>
-<p>Create a new string object from the given object. If encoding or
-errors is specified, then the object must expose a data buffer
-that will be decoded using the given encoding and error handler.
-Otherwise, returns the result of object.__str__() (if defined)
-or repr(object).
-encoding defaults to sys.getdefaultencoding().
-errors defaults to ‘strict’.</p>
-</dd></dl>
-
-<dl class="py data">
-<dt class="sig sig-object py" id="brom_drake.watchers.port_watcher.port_watcher_options.DEFAULT_PLOT_DIR">
-<span class="sig-prename descclassname"><span class="pre">brom_drake.watchers.port_watcher.port_watcher_options.</span></span><span class="sig-name descname"><span class="pre">DEFAULT_PLOT_DIR</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'./brom/watcher/plots'</span></span><a class="headerlink" href="#brom_drake.watchers.port_watcher.port_watcher_options.DEFAULT_PLOT_DIR" title="Link to this definition">¶</a></dt>
-<dd><p>str(object=’’) -&gt; str
-str(bytes_or_buffer[, encoding[, errors]]) -&gt; str</p>
-<p>Create a new string object from the given object. If encoding or
-errors is specified, then the object must expose a data buffer
-that will be decoded using the given encoding and error handler.
-Otherwise, returns the result of object.__str__() (if defined)
-or repr(object).
-encoding defaults to sys.getdefaultencoding().
-errors defaults to ‘strict’.</p>
-</dd></dl>
-
-<dl class="py data">
-<dt class="sig sig-object py" id="brom_drake.watchers.port_watcher.port_watcher_options.DEFAULT_RAW_DATA_DIR">
-<span class="sig-prename descclassname"><span class="pre">brom_drake.watchers.port_watcher.port_watcher_options.</span></span><span class="sig-name descname"><span class="pre">DEFAULT_RAW_DATA_DIR</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'./brom/watcher/raw_data'</span></span><a class="headerlink" href="#brom_drake.watchers.port_watcher.port_watcher_options.DEFAULT_RAW_DATA_DIR" title="Link to this definition">¶</a></dt>
-<dd><p>str(object=’’) -&gt; str
-str(bytes_or_buffer[, encoding[, errors]]) -&gt; str</p>
-<p>Create a new string object from the given object. If encoding or
-errors is specified, then the object must expose a data buffer
-that will be decoded using the given encoding and error handler.
-Otherwise, returns the result of object.__str__() (if defined)
-or repr(object).
-encoding defaults to sys.getdefaultencoding().
-errors defaults to ‘strict’.</p>
-</dd></dl>
-
-<dl class="py data">
-<dt class="sig sig-object py" id="brom_drake.watchers.port_watcher.port_watcher_options.DEFAULT_WATCHER_DIR">
-<span class="sig-prename descclassname"><span class="pre">brom_drake.watchers.port_watcher.port_watcher_options.</span></span><span class="sig-name descname"><span class="pre">DEFAULT_WATCHER_DIR</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'./brom/watcher'</span></span><a class="headerlink" href="#brom_drake.watchers.port_watcher.port_watcher_options.DEFAULT_WATCHER_DIR" title="Link to this definition">¶</a></dt>
-<dd><p>str(object=’’) -&gt; str
-str(bytes_or_buffer[, encoding[, errors]]) -&gt; str</p>
-<p>Create a new string object from the given object. If encoding or
-errors is specified, then the object must expose a data buffer
-that will be decoded using the given encoding and error handler.
-Otherwise, returns the result of object.__str__() (if defined)
-or repr(object).
-encoding defaults to sys.getdefaultencoding().
-errors defaults to ‘strict’.</p>
-</dd></dl>
-
+<p>(None found)</p>
 </section>
 </section>
 
@@ -1216,7 +1213,6 @@ errors defaults to ‘strict’.</p>
 <li><a class="reference internal" href="#classes">Classes</a><ul>
 <li><a class="reference internal" href="#brom_drake.watchers.port_watcher.file_manager.PortWatcherFileManager"><code class="docutils literal notranslate"><span class="pre">PortWatcherFileManager</span></code></a><ul>
 <li><a class="reference internal" href="#brom_drake.watchers.port_watcher.file_manager.PortWatcherFileManager.compute_path_for_each_figure"><code class="docutils literal notranslate"><span class="pre">PortWatcherFileManager.compute_path_for_each_figure()</span></code></a></li>
-<li><a class="reference internal" href="#brom_drake.watchers.port_watcher.file_manager.PortWatcherFileManager.compute_safe_system_name"><code class="docutils literal notranslate"><span class="pre">PortWatcherFileManager.compute_safe_system_name()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.watchers.port_watcher.file_manager.PortWatcherFileManager.figure_names_under_flat_convention"><code class="docutils literal notranslate"><span class="pre">PortWatcherFileManager.figure_names_under_flat_convention()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.watchers.port_watcher.file_manager.PortWatcherFileManager.figure_names_under_hierarchical_convention"><code class="docutils literal notranslate"><span class="pre">PortWatcherFileManager.figure_names_under_hierarchical_convention()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.watchers.port_watcher.file_manager.PortWatcherFileManager.name_of_data_at_index"><code class="docutils literal notranslate"><span class="pre">PortWatcherFileManager.name_of_data_at_index()</span></code></a></li>
@@ -1226,6 +1222,7 @@ errors defaults to ‘strict’.</p>
 <li><a class="reference internal" href="#brom_drake.watchers.port_watcher.file_manager.PortWatcherFileManager.time_data_file_path"><code class="docutils literal notranslate"><span class="pre">PortWatcherFileManager.time_data_file_path()</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#brom_drake.watchers.port_watcher.file_naming_convention.PathOrganizationConvention"><code class="docutils literal notranslate"><span class="pre">PathOrganizationConvention</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.watchers.port_watcher.plotter.PortWatcherPlotter"><code class="docutils literal notranslate"><span class="pre">PortWatcherPlotter</span></code></a><ul>
 <li><a class="reference internal" href="#brom_drake.watchers.port_watcher.plotter.PortWatcherPlotter.add_to_python_report"><code class="docutils literal notranslate"><span class="pre">PortWatcherPlotter.add_to_python_report()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.watchers.port_watcher.plotter.PortWatcherPlotter.compute_plot_shape"><code class="docutils literal notranslate"><span class="pre">PortWatcherPlotter.compute_plot_shape()</span></code></a></li>
@@ -1262,25 +1259,22 @@ errors defaults to ‘strict’.</p>
 </li>
 <li><a class="reference internal" href="#brom_drake.watchers.port_watcher.port_watcher_options.PortWatcherRawDataOptions"><code class="docutils literal notranslate"><span class="pre">PortWatcherRawDataOptions</span></code></a><ul>
 <li><a class="reference internal" href="#brom_drake.watchers.port_watcher.port_watcher_options.PortWatcherRawDataOptions.file_format"><code class="docutils literal notranslate"><span class="pre">PortWatcherRawDataOptions.file_format</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.watchers.port_watcher.port_watcher_options.PortWatcherRawDataOptions.file_organization_convention"><code class="docutils literal notranslate"><span class="pre">PortWatcherRawDataOptions.file_organization_convention</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.watchers.port_watcher.port_watcher_options.PortWatcherRawDataOptions.save_to_file"><code class="docutils literal notranslate"><span class="pre">PortWatcherRawDataOptions.save_to_file</span></code></a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li><a class="reference internal" href="#functions">Functions</a><ul>
+<li><a class="reference internal" href="#brom_drake.watchers.port_watcher.file_naming_convention.compute_safe_system_name"><code class="docutils literal notranslate"><span class="pre">compute_safe_system_name()</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.watchers.port_watcher.file_naming_convention.file_path_for_port_data_dimension"><code class="docutils literal notranslate"><span class="pre">file_path_for_port_data_dimension()</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.watchers.port_watcher.file_naming_convention.generate_all_file_paths_for_ports_data"><code class="docutils literal notranslate"><span class="pre">generate_all_file_paths_for_ports_data()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.watchers.port_watcher.support_types.assert_abstract_value_ports_type_is_supported"><code class="docutils literal notranslate"><span class="pre">assert_abstract_value_ports_type_is_supported()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.watchers.port_watcher.support_types.assert_port_is_supported"><code class="docutils literal notranslate"><span class="pre">assert_port_is_supported()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.watchers.port_watcher.support_types.create_port_value_type_error"><code class="docutils literal notranslate"><span class="pre">create_port_value_type_error()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#variables">Variables</a><ul>
-<li><a class="reference internal" href="#brom_drake.watchers.port_watcher.plotter.DEFAULT_PLOT_DIR"><code class="docutils literal notranslate"><span class="pre">DEFAULT_PLOT_DIR</span></code></a></li>
-<li><a class="reference internal" href="#brom_drake.watchers.port_watcher.port_watcher.DEFAULT_BROM_DIR"><code class="docutils literal notranslate"><span class="pre">DEFAULT_BROM_DIR</span></code></a></li>
-<li><a class="reference internal" href="#brom_drake.watchers.port_watcher.port_watcher_options.DEFAULT_PLOT_DIR"><code class="docutils literal notranslate"><span class="pre">DEFAULT_PLOT_DIR</span></code></a></li>
-<li><a class="reference internal" href="#brom_drake.watchers.port_watcher.port_watcher_options.DEFAULT_RAW_DATA_DIR"><code class="docutils literal notranslate"><span class="pre">DEFAULT_RAW_DATA_DIR</span></code></a></li>
-<li><a class="reference internal" href="#brom_drake.watchers.port_watcher.port_watcher_options.DEFAULT_WATCHER_DIR"><code class="docutils literal notranslate"><span class="pre">DEFAULT_WATCHER_DIR</span></code></a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#variables">Variables</a></li>
 </ul>
 </li>
 </ul>
@@ -1292,7 +1286,7 @@ errors defaults to ‘strict’.</p>
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=e1a677a5"></script>
+</div><script src="../../../_static/documentation_options.js?v=45def3bc"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>

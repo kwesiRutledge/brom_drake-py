@@ -22,5 +22,5 @@ Functions
 Variables
 ---------
 
-.. autodata:: brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.DEFAULT_BROM_MODELS_DIR
+(None found)
 

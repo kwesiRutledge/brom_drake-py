@@ -42,5 +42,5 @@ Functions
 Variables
 ---------
 
-.. autodata:: brom_drake.systems.network_fsm.networkx_fsm.DEFAULT_NETWORKX_FSM_DIR
+(None found)
 

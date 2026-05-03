@@ -34,10 +34,4 @@ Variables
 .. autodata:: brom_drake.all.INELIGIBLE_SYSTEM_TYPES
 .. autodata:: brom_drake.all.URDF_CONVERSION_LEVEL
 .. autodata:: brom_drake.all.URDF_CONVERSION_LOG_LEVEL_NAME
-.. autodata:: brom_drake.directories.DEFAULT_BROM_DIR
-.. autodata:: brom_drake.directories.DEFAULT_BROM_MODELS_DIR
-.. autodata:: brom_drake.directories.DEFAULT_NETWORKX_FSM_DIR
-.. autodata:: brom_drake.directories.DEFAULT_PLOT_DIR
-.. autodata:: brom_drake.directories.DEFAULT_RAW_DATA_DIR
-.. autodata:: brom_drake.directories.DEFAULT_WATCHER_DIR
 

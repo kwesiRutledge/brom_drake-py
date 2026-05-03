@@ -26,5 +26,5 @@ Functions
 Variables
 ---------
 
-.. autodata:: brom_drake.file_manipulation.urdf.simple_writer.urdf_definition.DEFAULT_BROM_MODELS_DIR
+(None found)
 

@@ -22,5 +22,5 @@ Functions
 Variables
 ---------
 
-.. autodata:: brom_drake.productions.pick_and_place.chem_lab3.DEFAULT_BROM_MODELS_DIR
+(None found)
 

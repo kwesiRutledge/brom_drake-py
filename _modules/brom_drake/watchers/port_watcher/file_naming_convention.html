@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.utils.pick_and_place.target_description - brom_drake-py 0.5.5 documentation</title>
+        <title>brom_drake.watchers.port_watcher.file_naming_convention - brom_drake-py 0.5.5 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -550,37 +550,193 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <h1>Source code for brom_drake.utils.pick_and_place.target_description</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+          <h1>Source code for brom_drake.watchers.port_watcher.file_naming_convention</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">IntEnum</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">pydrake.geometry.optimization</span> <span class="kn">import</span> <span class="n">HPolyhedron</span>
-<span class="kn">from</span> <span class="nn">pydrake.all</span> <span class="kn">import</span> <span class="n">ModelInstanceIndex</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">pydrake.systems.framework</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">LeafSystem</span><span class="p">,</span>
+    <span class="n">OutputPort</span><span class="p">,</span>
+    <span class="n">PortDataType</span><span class="p">,</span>
+<span class="p">)</span>
 
-<span class="c1"># Internal Imports</span>
-<span class="kn">from</span> <span class="nn">brom_drake.utils.pick_and_place.phase</span> <span class="kn">import</span> <span class="n">PickAndPlacePhase</span>
+
+<div class="viewcode-block" id="PathOrganizationConvention">
+<a class="viewcode-back" href="../../../../generated/watchers/port_watcher/port_watcher.html#brom_drake.watchers.port_watcher.file_naming_convention.PathOrganizationConvention">[docs]</a>
+<span class="k">class</span> <span class="nc">PathOrganizationConvention</span><span class="p">(</span><span class="n">IntEnum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    **Description**</span>
+
+<span class="sd">    This enum is used to define the organization convention for the file paths.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">kFlat</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># e.g. &quot;plant_generalized_output_dim_0.png&quot;</span>
+    <span class="n">kHierarchical</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># e.g. &quot;system_plant/port_generalized_output/dim_0.png&quot;</span></div>
 
 
-<div class="viewcode-block" id="PickAndPlaceTargetDescription">
-<a class="viewcode-back" href="../../../../generated/utils/pick_and_place/pick_and_place.html#brom_drake.utils.pick_and_place.target_description.PickAndPlaceTargetDescription">[docs]</a>
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">PickAndPlaceTargetDescription</span><span class="p">:</span>
-    <span class="n">file_path</span><span class="p">:</span> <span class="n">Path</span>
-    <span class="n">goal_region</span><span class="p">:</span> <span class="n">HPolyhedron</span>
-    <span class="n">model_instance_index</span><span class="p">:</span> <span class="n">ModelInstanceIndex</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="c1"># If a name was provided, then provide that instead.</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
+<div class="viewcode-block" id="compute_safe_system_name">
+<a class="viewcode-back" href="../../../../generated/watchers/port_watcher/port_watcher.html#brom_drake.watchers.port_watcher.file_naming_convention.compute_safe_system_name">[docs]</a>
+<span class="k">def</span> <span class="nf">compute_safe_system_name</span><span class="p">(</span><span class="n">system_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    *Description*</span>
 
-        <span class="c1"># If a name was not provided, then extract a name from the file_path.</span>
-        <span class="n">file_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_path</span><span class="o">.</span><span class="n">name</span>
-        <span class="k">return</span> <span class="n">file_name</span><span class="p">[:</span> <span class="n">file_name</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)]</span>
+<span class="sd">    This function returns a filesystem-safe version of the system name.</span>
 
-    <span class="k">def</span> <span class="nf">name_for_pick_and_place_phase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phase</span><span class="p">:</span> <span class="n">PickAndPlacePhase</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">phase</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span></div>
+<span class="sd">    *Returns*</span>
+
+<span class="sd">    safe_system_name: str</span>
+<span class="sd">        The filesystem-safe version of the system name.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># First, let&#39;s check to see how many &quot;/&quot; exist in the name</span>
+    <span class="n">slash_occurences</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">letter</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">system_name</span><span class="p">)</span> <span class="k">if</span> <span class="n">letter</span> <span class="o">==</span> <span class="s2">&quot;/&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">slash_occurences</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">system_name</span> <span class="o">=</span> <span class="n">system_name</span><span class="p">[</span>
+            <span class="n">slash_occurences</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:</span>
+        <span class="p">]</span>  <span class="c1"># truncrate string based on the last slash</span>
+
+    <span class="c1"># Second, replace all spaces with underscores</span>
+    <span class="n">system_name</span> <span class="o">=</span> <span class="n">system_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">system_name</span></div>
+
+
+
+<div class="viewcode-block" id="generate_all_file_paths_for_ports_data">
+<a class="viewcode-back" href="../../../../generated/watchers/port_watcher/port_watcher.html#brom_drake.watchers.port_watcher.file_naming_convention.generate_all_file_paths_for_ports_data">[docs]</a>
+<span class="k">def</span> <span class="nf">generate_all_file_paths_for_ports_data</span><span class="p">(</span>
+    <span class="n">output_port</span><span class="p">:</span> <span class="n">OutputPort</span><span class="p">,</span>
+    <span class="n">file_format</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">organization_convention</span><span class="p">:</span> <span class="n">PathOrganizationConvention</span><span class="p">,</span>
+    <span class="n">dimension_names</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">component_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    *Description*</span>
+
+<span class="sd">    Generates ALL file path for the data of the given output port.</span>
+<span class="sd">    For ports that have multiple dimensions, this will generate a file path for each dimension.</span>
+<span class="sd">    For example, if the output port is a 3-dimensional vector, this function will generate 3 file paths,</span>
+<span class="sd">    one for each dimension.</span>
+
+<span class="sd">    *Parameters*</span>
+
+<span class="sd">    output_port: OutputPort</span>
+<span class="sd">        The output port for which to generate the file path.</span>
+<span class="sd">    file_format: str</span>
+<span class="sd">        The file format for the data (e.g., &quot;npy&quot;, &quot;csv&quot;, etc.).</span>
+
+<span class="sd">    component_name: str, optional</span>
+<span class="sd">        The name of the COMPONENT of the output port for which to generate the file path.</span>
+<span class="sd">        This is used because some output ports produce dictionaries of data, where each component of the dictionary has a different name.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Identify the number of dimensions of the output port</span>
+    <span class="k">if</span> <span class="n">output_port</span><span class="o">.</span><span class="n">get_data_type</span><span class="p">()</span> <span class="o">==</span> <span class="n">PortDataType</span><span class="o">.</span><span class="n">kVectorValued</span><span class="p">:</span>
+        <span class="n">num_dimensions</span> <span class="o">=</span> <span class="n">output_port</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Unsupported output port data type: </span><span class="si">{</span><span class="n">output_port</span><span class="o">.</span><span class="n">get_data_type</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Create dimension names dict, if it is not provided</span>
+    <span class="k">if</span> <span class="n">dimension_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">dimension_names</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">dimension</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;dim</span><span class="si">{</span><span class="n">dimension</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">dimension</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_dimensions</span><span class="p">)</span>
+        <span class="p">}</span>
+
+    <span class="c1"># Generate file paths for each dimension</span>
+    <span class="n">file_paths</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">dimension</span><span class="p">,</span> <span class="n">dimension_name</span> <span class="ow">in</span> <span class="n">dimension_names</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">file_path</span> <span class="o">=</span> <span class="n">file_path_for_port_data_dimension</span><span class="p">(</span>
+            <span class="n">output_port</span><span class="o">=</span><span class="n">output_port</span><span class="p">,</span>
+            <span class="n">file_format</span><span class="o">=</span><span class="n">file_format</span><span class="p">,</span>
+            <span class="n">organization_convention</span><span class="o">=</span><span class="n">organization_convention</span><span class="p">,</span>
+            <span class="n">dimension_name</span><span class="o">=</span><span class="n">dimension_name</span><span class="p">,</span>
+            <span class="n">component_name</span><span class="o">=</span><span class="n">component_name</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">file_paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">file_paths</span></div>
+
+
+
+<div class="viewcode-block" id="file_path_for_port_data_dimension">
+<a class="viewcode-back" href="../../../../generated/watchers/port_watcher/port_watcher.html#brom_drake.watchers.port_watcher.file_naming_convention.file_path_for_port_data_dimension">[docs]</a>
+<span class="k">def</span> <span class="nf">file_path_for_port_data_dimension</span><span class="p">(</span>
+    <span class="n">output_port</span><span class="p">:</span> <span class="n">OutputPort</span><span class="p">,</span>
+    <span class="n">file_format</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">dimension_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">organization_convention</span><span class="p">:</span> <span class="n">PathOrganizationConvention</span> <span class="o">=</span> <span class="n">PathOrganizationConvention</span><span class="o">.</span><span class="n">kFlat</span><span class="p">,</span>
+    <span class="n">component_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    *Description*</span>
+
+<span class="sd">    Generates a file path for the data of the given output port and dimension.</span>
+
+<span class="sd">    *Parameters*</span>
+
+<span class="sd">    output_port: OutputPort</span>
+<span class="sd">        The output port for which to generate the file path.</span>
+
+<span class="sd">    dimension_name: str, optional</span>
+<span class="sd">        The name of the dimension of the output port for which to generate the file path.</span>
+<span class="sd">        By default, this is set to None, which means that the file path will be generated for the first dimension of the output port.</span>
+
+<span class="sd">    component_name: str, optional</span>
+<span class="sd">        The name of the COMPONENT of the output port for which to generate the file path.</span>
+<span class="sd">        This is used because some output ports produce dictionaries of data, where each component of the dictionary has a different name.</span>
+
+<span class="sd">    file_format: str</span>
+<span class="sd">        The file format for the data (e.g., &quot;npy&quot;, &quot;csv&quot;, etc.).</span>
+
+<span class="sd">    organization_convention: PathOrganizationConvention, optional</span>
+<span class="sd">        The organization convention for the file paths. Defaults to PathOrganizationConvention.kFlat.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Setup</span>
+    <span class="n">dimension_name_is_empty</span> <span class="o">=</span> <span class="n">dimension_name</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">dimension_name</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">component_name_is_empty</span> <span class="o">=</span> <span class="n">component_name</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">component_name</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="c1"># Collect System and Port Names</span>
+    <span class="c1"># - System Name</span>
+    <span class="n">system</span><span class="p">:</span> <span class="n">LeafSystem</span> <span class="o">=</span> <span class="n">output_port</span><span class="o">.</span><span class="n">get_system</span><span class="p">()</span>
+    <span class="n">system_name</span> <span class="o">=</span> <span class="n">system</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
+    <span class="n">safe_system_name</span> <span class="o">=</span> <span class="n">compute_safe_system_name</span><span class="p">(</span><span class="n">system_name</span><span class="p">)</span>
+
+    <span class="c1"># - Port Name</span>
+    <span class="n">port_name</span> <span class="o">=</span> <span class="n">output_port</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
+
+    <span class="c1"># Build File Path</span>
+    <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">organization_convention</span> <span class="o">==</span> <span class="n">PathOrganizationConvention</span><span class="o">.</span><span class="n">kFlat</span><span class="p">:</span>
+        <span class="n">file_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;system_</span><span class="si">{</span><span class="n">safe_system_name</span><span class="si">}</span><span class="s2">_port_</span><span class="si">{</span><span class="n">port_name</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="c1"># Remove the dimension part of the file path if the output port is not vector-valued (i.e., if it only has one dimension)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">component_name_is_empty</span><span class="p">:</span>
+            <span class="n">file_path</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">component_name</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">dimension_name_is_empty</span><span class="p">:</span>
+            <span class="n">file_path</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">dimension_name</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">elif</span> <span class="n">organization_convention</span> <span class="o">==</span> <span class="n">PathOrganizationConvention</span><span class="o">.</span><span class="n">kHierarchical</span><span class="p">:</span>
+        <span class="n">file_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;system_</span><span class="si">{</span><span class="n">safe_system_name</span><span class="si">}</span><span class="s2">/port_</span><span class="si">{</span><span class="n">port_name</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="c1"># Remove the dimension part of the file path if the output port is not vector-valued (i.e., if it only has one dimension)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">component_name_is_empty</span><span class="p">:</span>
+            <span class="n">file_path</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;/</span><span class="si">{</span><span class="n">component_name</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">dimension_name_is_empty</span><span class="p">:</span>
+            <span class="n">file_path</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;/</span><span class="si">{</span><span class="n">dimension_name</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Unsupported organization convention: </span><span class="si">{</span><span class="n">organization_convention</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Add suffix</span>
+    <span class="n">file_path</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;.</span><span class="si">{</span><span class="n">file_format</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span></div>
 
 </pre></div>
         </article>

@@ -13,6 +13,8 @@ Classes
 
 .. autoclass:: brom_drake.watchers.port_watcher.file_manager.PortWatcherFileManager
    :members:
+.. autoclass:: brom_drake.watchers.port_watcher.file_naming_convention.PathOrganizationConvention
+   :members:
 .. autoclass:: brom_drake.watchers.port_watcher.plotter.PortWatcherPlotter
    :members:
 .. autoclass:: brom_drake.watchers.port_watcher.port_figure_arrangement.PortFigureArrangement
@@ -31,6 +33,9 @@ Classes
 Functions
 ---------
 
+.. autofunction:: brom_drake.watchers.port_watcher.file_naming_convention.compute_safe_system_name
+.. autofunction:: brom_drake.watchers.port_watcher.file_naming_convention.file_path_for_port_data_dimension
+.. autofunction:: brom_drake.watchers.port_watcher.file_naming_convention.generate_all_file_paths_for_ports_data
 .. autofunction:: brom_drake.watchers.port_watcher.support_types.assert_abstract_value_ports_type_is_supported
 .. autofunction:: brom_drake.watchers.port_watcher.support_types.assert_port_is_supported
 .. autofunction:: brom_drake.watchers.port_watcher.support_types.create_port_value_type_error
@@ -38,9 +43,5 @@ Functions
 Variables
 ---------
 
-.. autodata:: brom_drake.watchers.port_watcher.plotter.DEFAULT_PLOT_DIR
-.. autodata:: brom_drake.watchers.port_watcher.port_watcher.DEFAULT_BROM_DIR
-.. autodata:: brom_drake.watchers.port_watcher.port_watcher_options.DEFAULT_PLOT_DIR
-.. autodata:: brom_drake.watchers.port_watcher.port_watcher_options.DEFAULT_RAW_DATA_DIR
-.. autodata:: brom_drake.watchers.port_watcher.port_watcher_options.DEFAULT_WATCHER_DIR
+(None found)
 
