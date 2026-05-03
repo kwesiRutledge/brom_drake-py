@@ -527,6 +527,7 @@ class PortWatcher:
             # - time data
             time_data_file_name = self.file_manager.time_data_file_path(
                 output_port=port,
+                component_name=output_port_name if n_vector_logs > 1 else None,
             )
 
             log_times = log.sample_times()
@@ -535,18 +536,13 @@ class PortWatcher:
 
             # - data values
             raw_data_file: Path = None
-            if n_vector_logs == 1:
-                raw_data_file = self.file_manager.raw_data_file_path(
-                    output_port=port,
-                )
-            else:
-                raw_data_file = self.file_manager.raw_data_file_path(
-                    output_port=port,
-                    port_component_name=output_port_name,
-                )
+            raw_data_file = self.file_manager.raw_data_file_path(
+                output_port=port,
+                port_component_name=output_port_name if n_vector_logs > 1 else None,
+            )
 
-                if raw_data_file.parent.exists() is False:
-                    raw_data_file.parent.mkdir(parents=True, exist_ok=True)
+            if raw_data_file.parent.exists() is False:
+                raw_data_file.parent.mkdir(parents=True, exist_ok=True)
 
             log_data = log.data()
             np.save(raw_data_file, log_data)

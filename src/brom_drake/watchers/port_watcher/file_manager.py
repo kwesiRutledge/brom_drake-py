@@ -77,7 +77,6 @@ class PortWatcherFileManager:
                     / file_path_for_port_data_dimension(
                         output_port=output_port,
                         file_format=file_format,
-                        dimension_name=port_component_name,
                         organization_convention=file_organization_convention,
                         component_name=port_component_name,
                     )
@@ -409,9 +408,12 @@ class PortWatcherFileManager:
             file_format=self.raw_data_options.file_format,
             organization_convention=self.raw_data_options.file_organization_convention,
             component_name=port_component_name,
+            dimension_name=output_port.get_name() + "_data",
         )
 
-    def time_data_file_path(self, output_port: OutputPort) -> Path:
+    def time_data_file_path(
+        self, output_port: OutputPort, component_name: str = None
+    ) -> Path:
         """
         *Description*
 
@@ -428,5 +430,6 @@ class PortWatcherFileManager:
             output_port=output_port,
             file_format=self.raw_data_options.file_format,
             organization_convention=self.raw_data_options.file_organization_convention,
+            component_name=component_name,
             dimension_name=port_name + "_times",
         )

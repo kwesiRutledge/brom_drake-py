@@ -119,6 +119,10 @@ def file_path_for_port_data_dimension(
         The name of the dimension of the output port for which to generate the file path.
         By default, this is set to None, which means that the file path will be generated for the first dimension of the output port.
 
+    component_name: str, optional
+        The name of the COMPONENT of the output port for which to generate the file path.
+        This is used because some output ports produce dictionaries of data, where each component of the dictionary has a different name.
+
     file_format: str
         The file format for the data (e.g., "npy", "csv", etc.).
 
@@ -138,33 +142,34 @@ def file_path_for_port_data_dimension(
     # - Port Name
     port_name = output_port.get_name()
 
-    # Generate File Path
+    # Build File Path
+    file_path: str = ""
     if organization_convention == PathOrganizationConvention.kFlat:
-        file_path = f"{safe_system_name}_{port_name}_{component_name}_{dimension_name}.{file_format}"
-        file_path = file_path.replace(
-            "/", "_"
-        )  # Replace any "/" in the system or port names with "_"
+        file_path = f"system_{safe_system_name}_port_{port_name}"
 
         # Remove the dimension part of the file path if the output port is not vector-valued (i.e., if it only has one dimension)
-        if component_name_is_empty:
-            file_path = file_path.replace(f"_{component_name}", "")
+        if not component_name_is_empty:
+            file_path += f"_{component_name}"
 
-        if dimension_name_is_empty:
-            file_path = file_path.replace(f"_{dimension_name}", "")
+        if not dimension_name_is_empty:
+            file_path += f"_{dimension_name}"
 
     elif organization_convention == PathOrganizationConvention.kHierarchical:
-        file_path = f"system_{safe_system_name}/port_{port_name}/{component_name}/{dimension_name}.{file_format}"
+        file_path = f"system_{safe_system_name}/port_{port_name}"
 
         # Remove the dimension part of the file path if the output port is not vector-valued (i.e., if it only has one dimension)
-        if component_name_is_empty:
-            file_path = file_path.replace(f"/{component_name}", "")
+        if not component_name_is_empty:
+            file_path += f"/{component_name}"
 
-        if dimension_name_is_empty:
-            file_path = file_path.replace(f"/{dimension_name}", "")
+        if not dimension_name_is_empty:
+            file_path += f"/{dimension_name}"
 
     else:
         raise ValueError(
             f"Unsupported organization convention: {organization_convention}"
         )
+
+    # Add suffix
+    file_path += f".{file_format}"
 
     return Path(file_path)
