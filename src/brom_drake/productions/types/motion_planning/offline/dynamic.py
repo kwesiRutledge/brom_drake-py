@@ -112,6 +112,12 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
         self._start_pose = start_pose
         self._goal_pose = goal_pose
 
+        # Update metadata dictionary with information about the start and goal poses and configurations
+        self._metadata["start_configuration"] = self.start_configuration.tolist() if self.start_configuration is not None else None
+        self._metadata["goal_configuration"] = self.goal_configuration.tolist() if self.goal_configuration is not None else None
+        self._metadata["start_pose"] = self.start_pose.GetAsMatrix4().tolist() if self.start_pose is not None else None
+        self._metadata["goal_pose"] = self.goal_pose.GetAsMatrix4().tolist() if self.goal_pose is not None else None
+
         # If the performer does not have plan_is_ready port, then
         # let's create a dummy value and connect it to the right place.
         plan_ready_source = ConstantValueSource(
@@ -203,7 +209,7 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
 
         goal_sphere_defn.write_to_file(goal_sphere_urdf_location)
 
-        # Load the start sphere into the plant and rigidly attach it at the start_pose
+        # Load the goal sphere into the plant and rigidly attach it at the goal_pose
         goal_sphere_model_idx = Parser(plant).AddModels(str(goal_sphere_urdf_location))[
             0
         ]

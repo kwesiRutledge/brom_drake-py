@@ -1,8 +1,10 @@
+import json
 from typing import Union, Tuple, List
 
 from pydrake.systems.framework import DiagramBuilder, LeafSystem, Diagram, Context
 
 # Internal Imports
+from brom_drake.directories import DEFAULT_PRODUCTION_REPORTS_DIR
 from brom_drake.watchers.port_watcher.plotter import FigureNamingConvention
 from brom_drake.productions.roles.role import Role
 from brom_drake.productions.ids import ProductionID
@@ -70,6 +72,29 @@ class BaseProduction:
 
         # Create an initial condition manager
         self.initial_condition_manager = InitialConditionManager()
+
+        # Create metadata dictionary
+        self._metadata = {}
+
+    def _record_metadata(self):
+        """
+        *Description*
+
+        This method should be called at the end of the production's build_production method.
+        It can be used to record any metadata about the production that may be useful for
+        later analysis or debugging.
+        """
+        # Record the production ID and number of performers, at least.
+        self._metadata["production_id"] = self.id.value
+        self._metadata["num_performers"] = len(self.performers)
+        
+        # Add more metadata as needed
+
+        # Save the metadata to a json
+        log_file_path = DEFAULT_PRODUCTION_REPORTS_DIR / f"metadata.json"
+        log_file_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(log_file_path, "w") as f:
+            json.dump(self._metadata, f, indent=4)
 
     def add_supporting_cast(self):
         """
@@ -182,6 +207,9 @@ class BaseProduction:
         else:
             self.diagram = builder.Build()
             self.diagram_context = self.diagram.CreateDefaultContext()
+
+        # Record metadata about the production
+        self._record_metadata()
 
         return self.diagram, self.diagram_context
 

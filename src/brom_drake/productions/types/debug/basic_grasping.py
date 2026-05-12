@@ -159,11 +159,19 @@ class BasicGraspingDebuggingProduction(BaseProduction):
             self.gripper_model_index
         )
 
+        self._metadata["gripper_model"] = {
+            "model_index": int(self.gripper_model_index),
+            "model_name": self.gripper_model_name,
+        }
+
         # Draw the MultibodyTriad for the
         # - Target Frame on the Gripper
         # - Base Link of the Gripper
         target_frame = self.get_target_frame_on_gripper()
         gripper_base_frame = self.get_gripper_base_frame()
+
+        self._metadata["gripper_model"]["target_frame"] = target_frame.name()
+        self._metadata["gripper_model"]["base_frame"] = gripper_base_frame.name()
 
         # Add the target triad to the builder
         AddMultibodyTriad(
@@ -190,6 +198,12 @@ class BasicGraspingDebuggingProduction(BaseProduction):
                 with_X_WorldGripper,
             )
 
+            # Record metadata about the initial weld of the gripper
+            self._metadata["initial_gripper_weld"] = {
+                "weld_to_frame": and_weld_to.name(),
+                "with_X_WorldGripper": with_X_WorldGripper.GetAsMatrix4(),
+            }
+
     def add_manipuland_to_plant(self, and_weld_to: Frame = None):
         """
         **Description**
@@ -213,6 +227,12 @@ class BasicGraspingDebuggingProduction(BaseProduction):
         ), f"Only one model should be added; received {len(temp_idcs)}"
         self.manipuland_index = temp_idcs[0]
         self.manipuland_name = self.plant.GetModelInstanceName(self.manipuland_index)
+
+        # Record metadata about the manipuland
+        self._metadata["manipuland"] = {
+            "model_index": int(self.manipuland_index),
+            "model_name": self.manipuland_name,
+        }
 
         if and_weld_to is not None:
             # Weld the first frame in the model to the frame given by and_weld_to
@@ -254,12 +274,17 @@ class BasicGraspingDebuggingProduction(BaseProduction):
                 role=DrakeRole.kProximity,
             )
 
+        # Add the visualizer to the builder
         m_visualizer.AddToBuilder(
             self.builder,
             self.scene_graph,
             self.meshcat,
             params=params,
         )
+
+        # Record some metadata about the meshcat connection
+        self._metadata["meshcat_port_number"] = self.meshcat_port_number
+        self._metadata["show_collision_geometries"] = self.show_collision_geometries
 
     def get_gripper_base_frame(self) -> Frame:
         """
