@@ -205,7 +205,11 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         self.arm = self.station.arm
         self.robot_model_idx_ = self.arm
 
-        # self.gripper = self.station.gripper
+        # Record metadata about the robot
+        self._metadata["robot_model"] = {
+            "model_index": int(self.robot_model_idx_),
+            "model_name": self.station.plant.GetModelInstanceName(self.robot_model_idx_),
+        }
 
         # Set Names of Plant and scene graph
         self.plant = self.station.plant
