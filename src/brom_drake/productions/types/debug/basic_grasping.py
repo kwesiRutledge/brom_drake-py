@@ -194,7 +194,7 @@ class BasicGraspingDebuggingProduction(BaseProduction):
             # Record metadata about the initial weld of the gripper
             self._metadata["initial_gripper_weld"] = {
                 "weld_to_frame": and_weld_to.name(),
-                "with_X_WorldGripper": with_X_WorldGripper.GetAsMatrix4(),
+                "with_X_WorldGripper": with_X_WorldGripper.GetAsMatrix4().tolist(),
             }
 
     def add_manipuland_to_plant(self, and_weld_to: Frame = None):
