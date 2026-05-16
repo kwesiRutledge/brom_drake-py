@@ -160,19 +160,11 @@ class BasicGraspingDebuggingProduction(BaseProduction):
             self.gripper_model_index
         )
 
-        self._metadata["gripper_model"] = summarize_model_instance_with_dict(
-            plant=self.plant,
-            model_instance_index=self.gripper_model_index,
-        )
-
         # Draw the MultibodyTriad for the
         # - Target Frame on the Gripper
         # - Base Link of the Gripper
         target_frame = self.get_target_frame_on_gripper()
         gripper_base_frame = self.get_gripper_base_frame()
-
-        self._metadata["gripper_model"]["target_frame"] = target_frame.name()
-        self._metadata["gripper_model"]["base_frame"] = gripper_base_frame.name()
 
         # Add the target triad to the builder
         AddMultibodyTriad(
@@ -229,12 +221,6 @@ class BasicGraspingDebuggingProduction(BaseProduction):
         self.manipuland_index = temp_idcs[0]
         self.manipuland_name = self.plant.GetModelInstanceName(self.manipuland_index)
 
-        # Record metadata about the manipuland
-        self._metadata["manipuland"] = {
-            "model_index": int(self.manipuland_index),
-            "model_name": self.manipuland_name,
-        }
-
         if and_weld_to is not None:
             # Weld the first frame in the model to the frame given by and_weld_to
             assert isinstance(
@@ -282,10 +268,6 @@ class BasicGraspingDebuggingProduction(BaseProduction):
             self.meshcat,
             params=params,
         )
-
-        # Record some metadata about the meshcat connection
-        self._metadata["meshcat_port_number"] = self.meshcat_port_number
-        self._metadata["show_collision_geometries"] = self.show_collision_geometries
 
     def get_gripper_base_frame(self) -> Frame:
         """
@@ -380,3 +362,37 @@ class BasicGraspingDebuggingProduction(BaseProduction):
             self.gripper_model_index,
         )
         return target_frame_on_gripper
+
+    def _record_metadata(self):
+        """
+        **Description**
+
+        This method records metadata about the production, which can be useful for debugging and analysis.
+        It is called at the end of the build_production method.
+
+        In this base class, we will record metadata about the gripper model.
+        """
+        # Record metadata about the gripper model
+        if self.gripper_model_index is not None:
+            self._metadata["gripper_model"] = summarize_model_instance_with_dict(
+                plant=self.plant,
+                model_instance=self.gripper_model_index,
+            )
+
+            self._metadata["gripper_model"]["target_frame"] = self.get_target_frame_on_gripper()
+            self._metadata["gripper_model"]["base_frame"] = self.get_gripper_base_frame()
+
+
+        # Record metadata about the manipuland
+        self._metadata["manipuland"] = summarize_model_instance_with_dict(
+            plant=self.plant,
+            model_instance=self.manipuland_index,
+        )
+
+        # Record some metadata about the meshcat connection (if it exists)
+        self._metadata["meshcat_port_number"] = self.meshcat_port_number
+        self._metadata["show_collision_geometries"] = self.show_collision_geometries
+
+        # Call the base class _record_metadata to record any additional metadata
+        return super()._record_metadata()
+        

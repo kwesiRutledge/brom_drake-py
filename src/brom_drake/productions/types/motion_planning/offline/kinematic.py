@@ -510,7 +510,7 @@ class KinematicMotionPlanningProduction(BaseProduction):
         # Save information about the robot's model
         self._metadata["robot_model"] = summarize_model_instance_with_dict(
             plant=self.plant,
-            model_instance_index=self.robot_model_index,
+            model_instance=self.robot_model_index,
         )
 
         return super()._record_metadata()
