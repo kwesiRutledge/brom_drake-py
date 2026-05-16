@@ -1,4 +1,5 @@
 import sys
+from pathlib import Path
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -80,7 +81,7 @@ class BlockHandlerSystem(LeafSystem):
         # Add the Block to the given plant
         self.plant = plant
         self.block_model_idx = Parser(plant=self.plant).AddModels(
-            "./slider-block.urdf"
+            str(Path(__file__).resolve().parent / "slider-block.urdf")
         )[0]
         self.block_model_name = self.plant.GetModelInstanceName(self.block_model_idx)
         self.block_body_name = "block"
