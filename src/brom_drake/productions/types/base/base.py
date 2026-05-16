@@ -90,7 +90,7 @@ class BaseProduction:
         self._metadata["num_performers"] = len(self.performers)
 
         # Record metadata about when the "report file" will be written
-        record_time_dt = datetime.now()
+        record_time_dt = datetime.datetime.now()
         self._metadata["record_time"] = record_time_dt.strftime("%Y-%m-%d_%H-%M-%S")
 
         # Add more metadata as needed
