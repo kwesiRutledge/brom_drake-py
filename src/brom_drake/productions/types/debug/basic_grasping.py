@@ -379,8 +379,8 @@ class BasicGraspingDebuggingProduction(BaseProduction):
                 model_instance=self.gripper_model_index,
             )
 
-            self._metadata["gripper_model"]["target_frame"] = self.get_target_frame_on_gripper()
-            self._metadata["gripper_model"]["base_frame"] = self.get_gripper_base_frame()
+            self._metadata["gripper_model"]["target_frame"] = self.get_target_frame_on_gripper().name()
+            self._metadata["gripper_model"]["base_frame"] = self.get_gripper_base_frame().name()
 
 
         # Record metadata about the manipuland
