@@ -18,6 +18,7 @@ from brom_drake.productions.types.base.base import BaseProduction
 from brom_drake.utils.model_instances import (
     get_name_of_first_body_in_urdf,
     get_name_of_all_bodies_in_urdf,
+    summarize_model_instance_with_dict,
 )
 from brom_drake.utils.triads import AddMultibodyTriad
 
@@ -159,10 +160,10 @@ class BasicGraspingDebuggingProduction(BaseProduction):
             self.gripper_model_index
         )
 
-        self._metadata["gripper_model"] = {
-            "model_index": int(self.gripper_model_index),
-            "model_name": self.gripper_model_name,
-        }
+        self._metadata["gripper_model"] = summarize_model_instance_with_dict(
+            plant=self.plant,
+            model_instance_index=self.gripper_model_index,
+        )
 
         # Draw the MultibodyTriad for the
         # - Target Frame on the Gripper

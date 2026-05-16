@@ -74,8 +74,8 @@ class TestPrototypicalPlannerSystem(unittest.TestCase):
         # Create the Production
         production1 = ShelfPlanning1(
             meshcat_port_number=None,
-            start_config=q_collision,
-            goal_config=q_collision,
+            start_configuration=q_collision,
+            goal_configuration=q_collision,
             shelf_pose=bad_shelf_pose,
         )
 
@@ -141,8 +141,8 @@ class TestPrototypicalPlannerSystem(unittest.TestCase):
         q_easy_goal = np.array([0.0, 0.0, -np.pi / 8.0, 0.0, 0.0, 0.0])
         production1 = ShelfPlanning1(
             meshcat_port_number=None,
-            start_config=q_easy_start,
-            goal_config=q_easy_goal,
+            start_configuration=q_easy_start,
+            goal_configuration=q_easy_goal,
         )
 
         # Cast all secondary cast members
@@ -194,8 +194,8 @@ class TestPrototypicalPlannerSystem(unittest.TestCase):
         q_easy_goal = np.array([0.0, 0.0, -np.pi / 8.0, 0.0, 0.0, 0.0])
         production1 = ShelfPlanning1(
             meshcat_port_number=None,
-            start_config=q_easy_start,
-            goal_config=q_easy_goal,
+            start_configuration=q_easy_start,
+            goal_configuration=q_easy_goal,
         )
 
         # Cast all secondary cast members
@@ -246,8 +246,8 @@ class TestPrototypicalPlannerSystem(unittest.TestCase):
         q_easy_goal = np.array([0.0, 0.0, -np.pi / 8.0, 0.0, 0.0, 0.0])
         production1 = ShelfPlanning1(
             meshcat_port_number=None,
-            start_config=q_easy_start,
-            goal_config=q_easy_goal,
+            start_configuration=q_easy_start,
+            goal_configuration=q_easy_goal,
         )
 
         # Cast all secondary cast members

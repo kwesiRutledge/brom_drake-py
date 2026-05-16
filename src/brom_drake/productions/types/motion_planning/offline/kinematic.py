@@ -31,6 +31,7 @@ from brom_drake.file_manipulation.urdf.simple_writer.urdf_definition import (
     SimpleShapeURDFDefinition,
 )
 from brom_drake.utils import Performer, MotionPlan
+from brom_drake.utils.model_instances import summarize_model_instance_with_dict
 
 
 class KinematicMotionPlanningProduction(BaseProduction):
@@ -83,12 +84,6 @@ class KinematicMotionPlanningProduction(BaseProduction):
         # Start and Goal Poses
         self._start_pose = start_pose
         self._goal_pose = goal_pose
-
-        # Update metadata dictionary with information about the start and goal poses and configurations
-        self._metadata["start_configuration"] = self.start_configuration.tolist() if self.start_configuration is not None else None
-        self._metadata["goal_configuration"] = self.goal_configuration.tolist() if self.goal_configuration is not None else None
-        self._metadata["start_pose"] = self.start_pose.GetAsMatrix4().tolist() if self.start_pose is not None else None
-        self._metadata["goal_pose"] = self.goal_pose.GetAsMatrix4().tolist() if self.goal_pose is not None else None
 
         # Create placeholder for the robot model index
         self.robot_model_idx_ = None
@@ -504,6 +499,21 @@ class KinematicMotionPlanningProduction(BaseProduction):
             raise NotImplementedError(
                 "This function should be implemented by the subclass."
             )
+
+    def _record_metadata(self):
+        # Update metadata dictionary with information about the start and goal poses and configurations
+        self._metadata["start_configuration"] = self.start_configuration.tolist() if self.start_configuration is not None else None
+        self._metadata["goal_configuration"] = self.goal_configuration.tolist() if self.goal_configuration is not None else None
+        self._metadata["start_pose"] = self.start_pose.GetAsMatrix4().tolist() if self.start_pose is not None else None
+        self._metadata["goal_pose"] = self.goal_pose.GetAsMatrix4().tolist() if self.goal_pose is not None else None
+
+        # Save information about the robot's model
+        self._metadata["robot_model"] = summarize_model_instance_with_dict(
+            plant=self.plant,
+            model_instance_index=self.robot_model_index,
+        )
+
+        return super()._record_metadata()
 
     @property
     def robot_model_index(self) -> ModelInstanceIndex:
