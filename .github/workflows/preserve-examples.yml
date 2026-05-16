@@ -18,13 +18,31 @@ jobs:
         run: |
           python3 - << 'PY'
           import json
+          import os
+          import sys
           from pathlib import Path
 
-          examples = sorted(str(p) for p in Path("examples").rglob("*.py"))
-          matrix = {"example_location": examples}
+          try:
+            examples_root = Path("examples")
+            if not examples_root.exists():
+              raise FileNotFoundError("examples directory not found")
 
-          with open("$GITHUB_OUTPUT", "a", encoding="utf-8") as f:
-              f.write(f"example_matrix={json.dumps(matrix)}\n")
+            examples = sorted(str(p) for p in examples_root.rglob("*.py"))
+            matrix = {"example_location": examples}
+            matrix_json = json.dumps(matrix)
+
+            print(f"Discovered {len(examples)} example(s).")
+            print(f"example_matrix JSON: {matrix_json}")
+
+            github_output = os.environ.get("GITHUB_OUTPUT")
+            if not github_output:
+              raise RuntimeError("GITHUB_OUTPUT is not set")
+
+            with open(github_output, "a", encoding="utf-8") as f:
+              f.write(f"example_matrix={matrix_json}\n")
+          except Exception as exc:
+            print(f"Failed to discover examples: {exc}", file=sys.stderr)
+            raise
           PY
 
   run-examples:
