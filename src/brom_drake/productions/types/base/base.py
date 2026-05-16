@@ -89,11 +89,15 @@ class BaseProduction:
         self._metadata["production_id"] = self.id.value
         self._metadata["num_performers"] = len(self.performers)
 
+        # Record metadata about when the "report file" will be written
+        record_time_dt = datetime.now()
+        self._metadata["record_time"] = record_time_dt.strftime("%Y-%m-%d_%H-%M-%S")
+
         # Add more metadata as needed
 
         # Save the metadata to a json
-        build_time_str = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        log_file_path = DEFAULT_PRODUCTION_REPORTS_DIR / f"build_metadata_{build_time_str}.json"
+        record_time_str = record_time_dt.strftime("%Y-%m-%d_%H-%M-%S")
+        log_file_path = DEFAULT_PRODUCTION_REPORTS_DIR / f"build_metadata_{record_time_str}.json"
         log_file_path.parent.mkdir(parents=True, exist_ok=True)
         with open(log_file_path, "w") as f:
             json.dump(self._metadata, f, indent=4)
