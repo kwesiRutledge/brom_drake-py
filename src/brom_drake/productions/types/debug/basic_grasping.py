@@ -401,7 +401,9 @@ class BasicGraspingDebuggingProduction(BaseProduction):
         if "leaf_systems" not in self._metadata:
             self._metadata["leaf_systems"] = {}
 
-        self._metadata["leaf_systems"][self.plant.get_name()] = create_summary_for_LeafSystem(self.plant)
+        self._metadata["leaf_systems"][self.plant.get_name()] = (
+            create_summary_for_LeafSystem(self.plant)
+        )
 
         # Call the base class _record_metadata to record any additional metadata
         return super()._record_metadata()
