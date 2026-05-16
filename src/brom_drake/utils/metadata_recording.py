@@ -7,6 +7,7 @@ def create_summary_for_LeafSystem(leaf_system: LeafSystem) -> dict:
     This can be used to record metadata about the system.
     """
     summary = {
+        "name": leaf_system.get_name(),
         "input_ports": [
             leaf_system.get_input_port(input_port_index).get_name() 
             for input_port_index in range(leaf_system.num_input_ports())
