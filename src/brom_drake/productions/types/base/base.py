@@ -87,7 +87,7 @@ class BaseProduction:
         # Record the production ID and number of performers, at least.
         self._metadata["production_id"] = self.id.value
         self._metadata["num_performers"] = len(self.performers)
-        
+
         # Add more metadata as needed
 
         # Save the metadata to a json

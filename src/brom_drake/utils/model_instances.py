@@ -113,7 +113,10 @@ def get_name_of_all_bodies_in_urdf(urdf_in: str) -> list[str]:
     all_bodies = get_all_bodies_in(plant, model_instance)
     return [body.name() for body in all_bodies]
 
-def summarize_model_instance_with_dict(plant: MultibodyPlant, model_instance: ModelInstanceIndex) -> dict:
+
+def summarize_model_instance_with_dict(
+    plant: MultibodyPlant, model_instance: ModelInstanceIndex
+) -> dict:
     """
     *Description*
 
