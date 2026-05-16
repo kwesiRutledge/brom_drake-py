@@ -15,6 +15,7 @@ from typing import List
 # Internal Imports
 from brom_drake.file_manipulation.urdf.drakeify import drakeify_my_urdf
 from brom_drake.productions.types.base.base import BaseProduction
+from brom_drake.utils.metadata_recording import create_summary_for_LeafSystem
 from brom_drake.utils.model_instances import (
     get_name_of_first_body_in_urdf,
     get_name_of_all_bodies_in_urdf,
@@ -395,6 +396,14 @@ class BasicGraspingDebuggingProduction(BaseProduction):
         # Record some metadata about the meshcat connection (if it exists)
         self._metadata["meshcat_port_number"] = self.meshcat_port_number
         self._metadata["show_collision_geometries"] = self.show_collision_geometries
+
+        # Record metadata about the plant
+        if "leaf_systems" not in self._metadata:
+            self._metadata["leaf_systems"] = {}
+
+        self._metadata["leaf_systems"]["plant"] = create_summary_for_LeafSystem(
+            self.plant
+        )
 
         # Call the base class _record_metadata to record any additional metadata
         return super()._record_metadata()

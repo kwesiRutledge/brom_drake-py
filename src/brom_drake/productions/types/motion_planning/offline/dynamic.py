@@ -35,6 +35,7 @@ from brom_drake.file_manipulation.urdf.simple_writer.urdf_definition import (
     SimpleShapeURDFDefinition,
 )
 from brom_drake.utils import Performer, MotionPlan
+from brom_drake.utils.metadata_recording import create_summary_for_LeafSystem
 from brom_drake.utils.model_instances import summarize_model_instance_with_dict
 
 
@@ -664,6 +665,14 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
         self._metadata["robot_model"] = summarize_model_instance_with_dict(
             plant=self.plant,
             model_instance=self.robot_model_index,
+        )
+
+        # Record metadata about the plant
+        if "leaf_systems" not in self._metadata:
+            self._metadata["leaf_systems"] = {}
+
+        self._metadata["leaf_systems"]["plant"] = create_summary_for_LeafSystem(
+            self.plant
         )
 
         return super()._record_metadata()

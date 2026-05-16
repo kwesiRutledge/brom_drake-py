@@ -97,7 +97,9 @@ class BaseProduction:
 
         # Save the metadata to a json
         record_time_str = record_time_dt.strftime("%Y-%m-%d_%H-%M-%S")
-        log_file_path = DEFAULT_PRODUCTION_REPORTS_DIR / f"build_metadata_{record_time_str}.json"
+        log_file_path = (
+            DEFAULT_PRODUCTION_REPORTS_DIR / f"build_metadata_{record_time_str}.json"
+        )
         log_file_path.parent.mkdir(parents=True, exist_ok=True)
         with open(log_file_path, "w") as f:
             json.dump(self._metadata, f, indent=4)
