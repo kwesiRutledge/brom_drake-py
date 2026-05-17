@@ -502,25 +502,27 @@ class KinematicMotionPlanningProduction(BaseProduction):
             )
 
     def _record_metadata(self):
-        # Update metadata dictionary with information about the start and goal poses and configurations
+        # Update metadata dictionary with information about the start and goal poses and configurations.
+        # Use the backing fields directly so metadata recording does not trigger property accessors
+        # that may raise NotImplementedError when a subclass intentionally leaves a value unset.
         self._metadata["start_configuration"] = (
-            self.start_configuration.tolist()
-            if self.start_configuration is not None
+            self._start_config.tolist()
+            if self._start_config is not None
             else None
         )
         self._metadata["goal_configuration"] = (
-            self.goal_configuration.tolist()
-            if self.goal_configuration is not None
+            self._goal_config.tolist()
+            if self._goal_config is not None
             else None
         )
         self._metadata["start_pose"] = (
-            self.start_pose.GetAsMatrix4().tolist()
-            if self.start_pose is not None
+            self._start_pose.GetAsMatrix4().tolist()
+            if self._start_pose is not None
             else None
         )
         self._metadata["goal_pose"] = (
-            self.goal_pose.GetAsMatrix4().tolist()
-            if self.goal_pose is not None
+            self._goal_pose.GetAsMatrix4().tolist()
+            if self._goal_pose is not None
             else None
         )
 
