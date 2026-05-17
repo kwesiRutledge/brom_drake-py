@@ -112,3 +112,26 @@ def get_name_of_all_bodies_in_urdf(urdf_in: str) -> list[str]:
     ]  # TODO(kwesi): Do we need to finalize the plant?
     all_bodies = get_all_bodies_in(plant, model_instance)
     return [body.name() for body in all_bodies]
+
+
+def summarize_model_instance_with_dict(
+    plant: MultibodyPlant, model_instance: ModelInstanceIndex
+) -> dict:
+    """
+    *Description*
+
+    This method returns a dictionary summarizing the model instance.
+    """
+    # Setup
+
+    # Algorithm
+    model_bodies = get_all_bodies_in(plant, model_instance)
+    body_names = [body.name() for body in model_bodies]
+    return {
+        "model_instance": int(model_instance),
+        "num_bodies": len(model_bodies),
+        "body_names": body_names,
+        "model_name": plant.GetModelInstanceName(model_instance),
+        "num_positions": plant.num_positions(model_instance),
+        "num_velocities": plant.num_velocities(model_instance),
+    }

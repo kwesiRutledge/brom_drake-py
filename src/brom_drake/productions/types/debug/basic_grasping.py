@@ -15,9 +15,11 @@ from typing import List
 # Internal Imports
 from brom_drake.file_manipulation.urdf.drakeify import drakeify_my_urdf
 from brom_drake.productions.types.base.base import BaseProduction
+from brom_drake.utils.metadata_recording import create_summary_for_LeafSystem
 from brom_drake.utils.model_instances import (
     get_name_of_first_body_in_urdf,
     get_name_of_all_bodies_in_urdf,
+    summarize_model_instance_with_dict,
 )
 from brom_drake.utils.triads import AddMultibodyTriad
 
@@ -190,6 +192,12 @@ class BasicGraspingDebuggingProduction(BaseProduction):
                 with_X_WorldGripper,
             )
 
+            # Record metadata about the initial weld of the gripper
+            self._metadata["initial_gripper_weld"] = {
+                "weld_to_frame": and_weld_to.name(),
+                "with_X_WorldGripper": with_X_WorldGripper.GetAsMatrix4().tolist(),
+            }
+
     def add_manipuland_to_plant(self, and_weld_to: Frame = None):
         """
         **Description**
@@ -254,6 +262,7 @@ class BasicGraspingDebuggingProduction(BaseProduction):
                 role=DrakeRole.kProximity,
             )
 
+        # Add the visualizer to the builder
         m_visualizer.AddToBuilder(
             self.builder,
             self.scene_graph,
@@ -354,3 +363,47 @@ class BasicGraspingDebuggingProduction(BaseProduction):
             self.gripper_model_index,
         )
         return target_frame_on_gripper
+
+    def _record_metadata(self):
+        """
+        **Description**
+
+        This method records metadata about the production, which can be useful for debugging and analysis.
+        It is called at the end of the build_production method.
+
+        In this base class, we will record metadata about the gripper model.
+        """
+        # Record metadata about the gripper model
+        if self.gripper_model_index is not None:
+            self._metadata["gripper_model"] = summarize_model_instance_with_dict(
+                plant=self.plant,
+                model_instance=self.gripper_model_index,
+            )
+
+            self._metadata["gripper_model"][
+                "target_frame"
+            ] = self.get_target_frame_on_gripper().name()
+            self._metadata["gripper_model"][
+                "base_frame"
+            ] = self.get_gripper_base_frame().name()
+
+        # Record metadata about the manipuland
+        self._metadata["manipuland"] = summarize_model_instance_with_dict(
+            plant=self.plant,
+            model_instance=self.manipuland_index,
+        )
+
+        # Record some metadata about the meshcat connection (if it exists)
+        self._metadata["meshcat_port_number"] = self.meshcat_port_number
+        self._metadata["show_collision_geometries"] = self.show_collision_geometries
+
+        # Record metadata about the plant
+        if "leaf_systems" not in self._metadata:
+            self._metadata["leaf_systems"] = {}
+
+        self._metadata["leaf_systems"][self.plant.get_name()] = (
+            create_summary_for_LeafSystem(self.plant)
+        )
+
+        # Call the base class _record_metadata to record any additional metadata
+        return super()._record_metadata()

@@ -38,6 +38,7 @@ from brom_drake.file_manipulation.urdf.simple_writer.urdf_definition import (
 )
 from brom_drake.utils import Performer, MotionPlan
 from brom_drake.systems.network_fsm import NetworkXFSM, FSMOutputDefinition
+from brom_drake.utils.model_instances import summarize_model_instance_with_dict
 from brom_drake.utils.pick_and_place.phase import PickAndPlacePhase
 from brom_drake.utils.pick_and_place.target_description import (
     PickAndPlaceTargetDescription,
@@ -571,6 +572,22 @@ class MotionPlanningAndGraspingProduction(BaseProduction):
             raise NotImplementedError(
                 "This function should be implemented by the subclass."
             )
+
+    def _record_metadata(self):
+        # Record metadata about the start and goal poses
+        self._metadata["start_configuration"] = self.start_configuration.tolist()
+        self._metadata["start_pose"] = self.start_pose.GetAsMatrix4().tolist()
+        self._metadata["goal_configuration"] = self.goal_configuration.tolist()
+        self._metadata["goal_pose"] = self.goal_pose.GetAsMatrix4().tolist()
+
+        # Record information about the robot's model
+        self._metadata["robot_model"] = summarize_model_instance_with_dict(
+            plant=self.plant,
+            model_instance=self.robot_model_index,
+        )
+
+        # Finally, record the remaining metadata and write the data to a file
+        return super()._record_metadata()
 
     @property
     def robot_model_index(self) -> ModelInstanceIndex:

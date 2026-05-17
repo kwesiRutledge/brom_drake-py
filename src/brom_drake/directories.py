@@ -16,3 +16,6 @@ DEFAULT_BROM_MODELS_DIR = (
 DEFAULT_NETWORKX_FSM_DIR = (
     DEFAULT_BROM_DIR / "networkx_fsm"
 )  #: Default subdirectory for NetworkX FSM data
+DEFAULT_PRODUCTION_REPORTS_DIR = (
+    DEFAULT_BROM_DIR / "productions"
+)  #: Default subdirectory for production reports

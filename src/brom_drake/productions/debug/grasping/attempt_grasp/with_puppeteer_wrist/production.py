@@ -71,6 +71,7 @@ from brom_drake.systems.named_vector_selection_system import (
 from brom_drake.utils.model_instances import (
     get_name_of_first_body_in_urdf,
     find_number_of_positions_in_welded_model,
+    summarize_model_instance_with_dict,
 )
 from brom_drake.utils.triads import AddMultibodyTriad
 from .config import Configuration
@@ -1228,6 +1229,16 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         This property is required to implement the BaseProduction class.
         """
         return ProductionID.kAttemptGraspWithPuppeteer
+
+    def _record_metadata(self):
+        # Also track the floor's data
+        self._metadata["floor_model"] = summarize_model_instance_with_dict(
+            self.plant, self.floor_model_index
+        )
+
+        # Run the parent class's metadata recording method to get the default metadata dictionary
+        # included and then write additional metadata specific to this production.
+        return super()._record_metadata()
 
     def set_initial_conditions(self):
         """

@@ -31,6 +31,8 @@ from brom_drake.file_manipulation.urdf.simple_writer.urdf_definition import (
     SimpleShapeURDFDefinition,
 )
 from brom_drake.utils import Performer, MotionPlan
+from brom_drake.utils.metadata_recording import create_summary_for_LeafSystem
+from brom_drake.utils.model_instances import summarize_model_instance_with_dict
 
 
 class KinematicMotionPlanningProduction(BaseProduction):
@@ -498,6 +500,43 @@ class KinematicMotionPlanningProduction(BaseProduction):
             raise NotImplementedError(
                 "This function should be implemented by the subclass."
             )
+
+    def _record_metadata(self):
+        # Update metadata dictionary with information about the start and goal poses and configurations.
+        # Use the backing fields directly so metadata recording does not trigger property accessors
+        # that may raise NotImplementedError when a subclass intentionally leaves a value unset.
+        self._metadata["start_configuration"] = (
+            self._start_config.tolist() if self._start_config is not None else None
+        )
+        self._metadata["goal_configuration"] = (
+            self._goal_config.tolist() if self._goal_config is not None else None
+        )
+        self._metadata["start_pose"] = (
+            self._start_pose.GetAsMatrix4().tolist()
+            if self._start_pose is not None
+            else None
+        )
+        self._metadata["goal_pose"] = (
+            self._goal_pose.GetAsMatrix4().tolist()
+            if self._goal_pose is not None
+            else None
+        )
+
+        # Save information about the robot's model
+        self._metadata["robot_model"] = summarize_model_instance_with_dict(
+            plant=self.plant,
+            model_instance=self.robot_model_index,
+        )
+
+        # Record metadata about the plant
+        if "leaf_systems" not in self._metadata:
+            self._metadata["leaf_systems"] = {}
+
+        self._metadata["leaf_systems"][self.plant.get_name()] = (
+            create_summary_for_LeafSystem(self.plant)
+        )
+
+        return super()._record_metadata()
 
     @property
     def robot_model_index(self) -> ModelInstanceIndex:

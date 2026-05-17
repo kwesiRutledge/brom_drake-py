@@ -147,6 +147,7 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
         plan_execution_speed: float, optional
             The speed at which to execute the motion plan, by default 0.2
         """
+        # Call the parent constructor
         super().__init__(**kwargs)
 
         self.time_step = time_step

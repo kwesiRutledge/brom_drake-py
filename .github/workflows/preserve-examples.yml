@@ -1,36 +1,58 @@
 name: Verify that all examples still run
-on: [pull_request]
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 jobs:
+  discover-examples:
+    runs-on: ubuntu-latest
+    outputs:
+      example_matrix: ${{ steps.discover.outputs.example_matrix }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Discover examples
+        id: discover
+        run: |
+          python3 - << 'PY'
+          import json
+          import os
+          import sys
+          from pathlib import Path
+
+          try:
+            examples_root = Path("examples")
+            if not examples_root.exists():
+              raise FileNotFoundError("examples directory not found")
+
+            examples = sorted(str(p) for p in examples_root.rglob("*.py"))
+            matrix = {"example_location": examples}
+            matrix_json = json.dumps(matrix)
+
+            print(f"Discovered {len(examples)} example(s).")
+            print(f"example_matrix JSON: {matrix_json}")
+
+            github_output = os.environ.get("GITHUB_OUTPUT")
+            if not github_output:
+              raise RuntimeError("GITHUB_OUTPUT is not set")
+
+            with open(github_output, "a", encoding="utf-8") as f:
+              f.write(f"example_matrix={matrix_json}\n")
+          except Exception as exc:
+            print(f"Failed to discover examples: {exc}", file=sys.stderr)
+            raise
+          PY
+
   run-examples:
+    needs: discover-examples
     runs-on: ubuntu-latest
     name: Run example
+    timeout-minutes: 30
     strategy:
-      matrix:
-        example_location: [
-          'examples/watcher/suggested_use1/create_monitor.py',
-          'examples/watcher/wo_convenience1/create_monitor_wo_convenience.py',
-          'examples/watcher/changing_plot_arrangement1/create_monitor_w_different_arrangement.py',
-          'examples/conversion/suggested_use1/drakeify.py',
-          'examples/conversion/converter_advanced_usage1/demo.py',
-          'examples/productions/helpful_for_debugging/show_me_this_model/suggested_use1/show.py',
-          'examples/productions/helpful_for_debugging/show_me_this_model/suggested_use2/show.py',
-          'examples/productions/helpful_for_debugging/show_me_this_model/show_collision_geometries1/show.py',
-          'examples/productions/motion_planning/offline/chem_lab1/example.py',
-          'examples/productions/motion_planning/offline/shelf/shelf1.py',
-          'examples/productions/motion_planning/offline/chem_lab2/suggested_use1/example.py',
-          'examples/productions/motion_planning/offline/chem_lab2/providing_start_as_config1/provide_start_config1.py',
-          'examples/productions/helpful_for_debugging/grasping/demonstrate_static_grasp/suggested_use1/demonstrate.py',
-          'examples/productions/helpful_for_debugging/grasping/demonstrate_static_grasp/changing_color1/color.py',
-          'examples/productions/helpful_for_debugging/grasping/demonstrate_static_grasp/defining_grasp_wrt_finger1/defining.py',
-          'examples/productions/helpful_for_debugging/grasping/attempt_grasp/with_static_wrist/suggested_use1/attempt.py',
-          'examples/conversion/nonconvex_mesh1/nonconvex_mesh.py',
-          'examples/productions/helpful_for_debugging/grasping/attempt_grasp/with_static_wrist/with_nonconvex_geometries1/attempt.py',
-          'examples/utils/puppetmaker/tutorial1/tutorial1.py',
-          'examples/utils/puppetmaker/advanced_usage1_change_visuals/tutorial_with_changed_visuals.py',
-          'examples/utils/puppetmaker/wrench1/puppet_wrench.py',
-          'examples/productions/helpful_for_debugging/grasping/attempt_grasp/with_puppeteer_wrist/suggested_use1/attempt.py',
-          'examples/productions/helpful_for_debugging/grasping/attempt_grasp/with_puppeteer_wrist/suggested_use2/attempt.py',
-        ]
+      fail-fast: false
+      matrix: ${{ fromJson(needs.discover-examples.outputs.example_matrix) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
