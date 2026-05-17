@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.productions.types.debug.basic_grasping - brom_drake-py 0.5.5 documentation</title>
+        <title>brom_drake.productions.types.debug.basic_grasping - brom_drake-py 0.5.6 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../index.html"><div class="brand">brom_drake-py 0.5.5 documentation</div></a>
+      <a href="../../../../../index.html"><div class="brand">brom_drake-py 0.5.6 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.5 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 0.5.6 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -568,9 +568,11 @@
 <span class="c1"># Internal Imports</span>
 <span class="kn">from</span> <span class="nn">brom_drake.file_manipulation.urdf.drakeify</span> <span class="kn">import</span> <span class="n">drakeify_my_urdf</span>
 <span class="kn">from</span> <span class="nn">brom_drake.productions.types.base.base</span> <span class="kn">import</span> <span class="n">BaseProduction</span>
+<span class="kn">from</span> <span class="nn">brom_drake.utils.metadata_recording</span> <span class="kn">import</span> <span class="n">create_summary_for_LeafSystem</span>
 <span class="kn">from</span> <span class="nn">brom_drake.utils.model_instances</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">get_name_of_first_body_in_urdf</span><span class="p">,</span>
     <span class="n">get_name_of_all_bodies_in_urdf</span><span class="p">,</span>
+    <span class="n">summarize_model_instance_with_dict</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">brom_drake.utils.triads</span> <span class="kn">import</span> <span class="n">AddMultibodyTriad</span>
 
@@ -745,7 +747,13 @@
                 <span class="n">and_weld_to</span><span class="p">,</span>
                 <span class="n">gripper_base_frame</span><span class="p">,</span>
                 <span class="n">with_X_WorldGripper</span><span class="p">,</span>
-            <span class="p">)</span></div>
+            <span class="p">)</span>
+
+            <span class="c1"># Record metadata about the initial weld of the gripper</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="p">[</span><span class="s2">&quot;initial_gripper_weld&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;weld_to_frame&quot;</span><span class="p">:</span> <span class="n">and_weld_to</span><span class="o">.</span><span class="n">name</span><span class="p">(),</span>
+                <span class="s2">&quot;with_X_WorldGripper&quot;</span><span class="p">:</span> <span class="n">with_X_WorldGripper</span><span class="o">.</span><span class="n">GetAsMatrix4</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+            <span class="p">}</span></div>
 
 
 <div class="viewcode-block" id="BasicGraspingDebuggingProduction.add_manipuland_to_plant">
@@ -817,6 +825,7 @@
                 <span class="n">role</span><span class="o">=</span><span class="n">DrakeRole</span><span class="o">.</span><span class="n">kProximity</span><span class="p">,</span>
             <span class="p">)</span>
 
+        <span class="c1"># Add the visualizer to the builder</span>
         <span class="n">m_visualizer</span><span class="o">.</span><span class="n">AddToBuilder</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">scene_graph</span><span class="p">,</span>
@@ -926,7 +935,51 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">gripper_model_index</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">target_frame_on_gripper</span></div>
-</div>
+
+
+    <span class="k">def</span> <span class="nf">_record_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        **Description**</span>
+
+<span class="sd">        This method records metadata about the production, which can be useful for debugging and analysis.</span>
+<span class="sd">        It is called at the end of the build_production method.</span>
+
+<span class="sd">        In this base class, we will record metadata about the gripper model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Record metadata about the gripper model</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gripper_model_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="p">[</span><span class="s2">&quot;gripper_model&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">summarize_model_instance_with_dict</span><span class="p">(</span>
+                <span class="n">plant</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="p">,</span>
+                <span class="n">model_instance</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">gripper_model_index</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="p">[</span><span class="s2">&quot;gripper_model&quot;</span><span class="p">][</span>
+                <span class="s2">&quot;target_frame&quot;</span>
+            <span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_target_frame_on_gripper</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="p">[</span><span class="s2">&quot;gripper_model&quot;</span><span class="p">][</span>
+                <span class="s2">&quot;base_frame&quot;</span>
+            <span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_gripper_base_frame</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="p">()</span>
+
+        <span class="c1"># Record metadata about the manipuland</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="p">[</span><span class="s2">&quot;manipuland&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">summarize_model_instance_with_dict</span><span class="p">(</span>
+            <span class="n">plant</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="p">,</span>
+            <span class="n">model_instance</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">manipuland_index</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Record some metadata about the meshcat connection (if it exists)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="p">[</span><span class="s2">&quot;meshcat_port_number&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">meshcat_port_number</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="p">[</span><span class="s2">&quot;show_collision_geometries&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">show_collision_geometries</span>
+
+        <span class="c1"># Record metadata about the plant</span>
+        <span class="k">if</span> <span class="s2">&quot;leaf_systems&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="p">[</span><span class="s2">&quot;leaf_systems&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="p">[</span><span class="s2">&quot;leaf_systems&quot;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">get_name</span><span class="p">()]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">create_summary_for_LeafSystem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Call the base class _record_metadata to record any additional metadata</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_record_metadata</span><span class="p">()</span></div>
 
 </pre></div>
         </article>
@@ -960,7 +1013,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../_static/documentation_options.js?v=45def3bc"></script>
+</div><script src="../../../../../_static/documentation_options.js?v=722679d6"></script>
     <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

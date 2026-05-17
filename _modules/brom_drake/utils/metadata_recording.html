@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.systems.named_vector_selection_system - brom_drake-py 0.5.6 documentation</title>
+        <title>brom_drake.utils.metadata_recording - brom_drake-py 0.5.6 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -550,60 +550,29 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <h1>Source code for brom_drake.systems.named_vector_selection_system</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">pydrake.all</span> <span class="kn">import</span> <span class="n">AffineSystem</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+          <h1>Source code for brom_drake.utils.metadata_recording</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">pydrake.systems.framework</span> <span class="kn">import</span> <span class="n">LeafSystem</span>
 
 
-<div class="viewcode-block" id="define_named_vector_selection_system">
-<a class="viewcode-back" href="../../../generated/systems/systems.html#brom_drake.systems.named_vector_selection_system.define_named_vector_selection_system">[docs]</a>
-<span class="k">def</span> <span class="nf">define_named_vector_selection_system</span><span class="p">(</span>
-    <span class="n">all_element_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-    <span class="n">sequence_of_names_for_output</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AffineSystem</span><span class="p">:</span>
+<div class="viewcode-block" id="create_summary_for_LeafSystem">
+<a class="viewcode-back" href="../../../generated/utils/utils.html#brom_drake.utils.metadata_recording.create_summary_for_LeafSystem">[docs]</a>
+<span class="k">def</span> <span class="nf">create_summary_for_LeafSystem</span><span class="p">(</span><span class="n">leaf_system</span><span class="p">:</span> <span class="n">LeafSystem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    *Description*</span>
-
-<span class="sd">    This method creates an Affine System that will receive as input</span>
-<span class="sd">    a vector where each element is named according to `all_element_names`</span>
-<span class="sd">    and returns an output vector that selects only the elements</span>
-<span class="sd">    specified in `desired_inputs`.</span>
-
-<span class="sd">    *Parameters*</span>
-
-<span class="sd">    name : str</span>
-<span class="sd">        The name of the system to be added.</span>
-
-<span class="sd">    all_element_names : List[str]</span>
-<span class="sd">        The list of all element names in the input vector.</span>
-
-<span class="sd">    desired_inputs : List[str]</span>
-<span class="sd">        The list of desired element names to be selected for output.</span>
-
-<span class="sd">    *Returns*</span>
-
-<span class="sd">    AffineSystem</span>
-<span class="sd">        The created NamedVectorSelectionSystem.</span>
+<span class="sd">    Create a summary dictionary for a given LeafSystem.</span>
+<span class="sd">    This can be used to record metadata about the system.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Setup</span>
-    <span class="n">n_x</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_element_names</span><span class="p">)</span>
-    <span class="n">n_y</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sequence_of_names_for_output</span><span class="p">)</span>
-
-    <span class="c1"># Create the selection matrix</span>
-    <span class="n">D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_y</span><span class="p">,</span> <span class="n">n_x</span><span class="p">))</span>
-    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">desired_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sequence_of_names_for_output</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">desired_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">all_element_names</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Desired input &#39;</span><span class="si">{</span><span class="n">desired_name</span><span class="si">}</span><span class="s2">&#39; not found in all_element_names.&quot;</span>
-            <span class="p">)</span>
-        <span class="n">j</span> <span class="o">=</span> <span class="n">all_element_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">desired_name</span><span class="p">)</span>
-        <span class="n">D</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
-
-    <span class="c1"># Create the Affine System</span>
-    <span class="k">return</span> <span class="n">AffineSystem</span><span class="p">(</span>
-        <span class="n">D</span><span class="o">=</span><span class="n">D</span><span class="p">,</span>
-    <span class="p">)</span></div>
+    <span class="n">summary</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">leaf_system</span><span class="o">.</span><span class="n">get_name</span><span class="p">(),</span>
+        <span class="s2">&quot;input_ports&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="n">leaf_system</span><span class="o">.</span><span class="n">get_input_port</span><span class="p">(</span><span class="n">input_port_index</span><span class="p">)</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">input_port_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">leaf_system</span><span class="o">.</span><span class="n">num_input_ports</span><span class="p">())</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;output_ports&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="n">leaf_system</span><span class="o">.</span><span class="n">get_output_port</span><span class="p">(</span><span class="n">output_port_index</span><span class="p">)</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">output_port_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">leaf_system</span><span class="o">.</span><span class="n">num_output_ports</span><span class="p">())</span>
+        <span class="p">],</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">summary</span></div>
 
 </pre></div>
         </article>

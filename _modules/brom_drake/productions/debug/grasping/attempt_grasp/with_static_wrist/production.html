@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.productions.debug.grasping.attempt_grasp.with_static_wrist.production - brom_drake-py 0.5.5 documentation</title>
+        <title>brom_drake.productions.debug.grasping.attempt_grasp.with_static_wrist.production - brom_drake-py 0.5.6 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../../../index.html"><div class="brand">brom_drake-py 0.5.5 documentation</div></a>
+      <a href="../../../../../../../index.html"><div class="brand">brom_drake-py 0.5.6 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.5 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 0.5.6 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -599,6 +599,7 @@
 <span class="kn">from</span> <span class="nn">brom_drake.utils.model_instances</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">get_name_of_first_body_in_urdf</span><span class="p">,</span>
     <span class="n">find_number_of_positions_in_welded_model</span><span class="p">,</span>
+    <span class="n">summarize_model_instance_with_dict</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">brom_drake.productions.debug.show_me.show_me_system</span> <span class="kn">import</span> <span class="n">ShowMeSystem</span>
 <span class="kn">from</span> <span class="nn">.config</span> <span class="kn">import</span> <span class="n">Configuration</span>
@@ -1263,6 +1264,16 @@
     <span class="k">def</span> <span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">ProductionID</span><span class="o">.</span><span class="n">kAttemptGraspWithStaticWrist</span>
 
+    <span class="k">def</span> <span class="nf">_record_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Also track the floor&#39;s data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="p">[</span><span class="s2">&quot;floor_model&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">summarize_model_instance_with_dict</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">floor_model_index</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Run the parent class&#39;s metadata recording method to get the default metadata dictionary</span>
+        <span class="c1"># included and then write additional metadata specific to this production.</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_record_metadata</span><span class="p">()</span>
+
 <div class="viewcode-block" id="AttemptGraspWithStaticWrist.set_plant_defaults">
 <a class="viewcode-back" href="../../../../../../../generated/productions/debug/grasping/attempt_grasp/with_static_wrist/with_static_wrist.html#brom_drake.productions.debug.grasping.attempt_grasp.with_static_wrist.production.AttemptGraspWithStaticWrist.set_plant_defaults">[docs]</a>
     <span class="k">def</span> <span class="nf">set_plant_defaults</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1328,7 +1339,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../../../_static/documentation_options.js?v=45def3bc"></script>
+</div><script src="../../../../../../../_static/documentation_options.js?v=722679d6"></script>
     <script src="../../../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.productions.types.base.base - brom_drake-py 0.5.5 documentation</title>
+        <title>brom_drake.productions.types.base.base - brom_drake-py 0.5.6 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../index.html"><div class="brand">brom_drake-py 0.5.5 documentation</div></a>
+      <a href="../../../../../index.html"><div class="brand">brom_drake-py 0.5.6 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.5 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 0.5.6 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -551,11 +551,14 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for brom_drake.productions.types.base.base</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span>
+<span></span><span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span>
 
 <span class="kn">from</span> <span class="nn">pydrake.systems.framework</span> <span class="kn">import</span> <span class="n">DiagramBuilder</span><span class="p">,</span> <span class="n">LeafSystem</span><span class="p">,</span> <span class="n">Diagram</span><span class="p">,</span> <span class="n">Context</span>
 
 <span class="c1"># Internal Imports</span>
+<span class="kn">from</span> <span class="nn">brom_drake.directories</span> <span class="kn">import</span> <span class="n">DEFAULT_PRODUCTION_REPORTS_DIR</span>
 <span class="kn">from</span> <span class="nn">brom_drake.watchers.port_watcher.plotter</span> <span class="kn">import</span> <span class="n">FigureNamingConvention</span>
 <span class="kn">from</span> <span class="nn">brom_drake.productions.roles.role</span> <span class="kn">import</span> <span class="n">Role</span>
 <span class="kn">from</span> <span class="nn">brom_drake.productions.ids</span> <span class="kn">import</span> <span class="n">ProductionID</span>
@@ -625,6 +628,36 @@
 
         <span class="c1"># Create an initial condition manager</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">initial_condition_manager</span> <span class="o">=</span> <span class="n">InitialConditionManager</span><span class="p">()</span>
+
+        <span class="c1"># Create metadata dictionary</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="nf">_record_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        *Description*</span>
+
+<span class="sd">        This method should be called at the end of the production&#39;s build_production method.</span>
+<span class="sd">        It can be used to record any metadata about the production that may be useful for</span>
+<span class="sd">        later analysis or debugging.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Record the production ID and number of performers, at least.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="p">[</span><span class="s2">&quot;production_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="p">[</span><span class="s2">&quot;num_performers&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">performers</span><span class="p">)</span>
+
+        <span class="c1"># Record metadata about when the &quot;report file&quot; will be written</span>
+        <span class="n">record_time_dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="p">[</span><span class="s2">&quot;record_time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">record_time_dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">_%H-%M-%S&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Add more metadata as needed</span>
+
+        <span class="c1"># Save the metadata to a json</span>
+        <span class="n">record_time_str</span> <span class="o">=</span> <span class="n">record_time_dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">_%H-%M-%S&quot;</span><span class="p">)</span>
+        <span class="n">log_file_path</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">DEFAULT_PRODUCTION_REPORTS_DIR</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;build_metadata_</span><span class="si">{</span><span class="n">record_time_str</span><span class="si">}</span><span class="s2">.json&quot;</span>
+        <span class="p">)</span>
+        <span class="n">log_file_path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">log_file_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 
 <div class="viewcode-block" id="BaseProduction.add_supporting_cast">
 <a class="viewcode-back" href="../../../../../generated/productions/types/base/base.html#brom_drake.productions.types.base.base.BaseProduction.add_supporting_cast">[docs]</a>
@@ -749,6 +782,9 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">diagram</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">Build</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">diagram_context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">diagram</span><span class="o">.</span><span class="n">CreateDefaultContext</span><span class="p">()</span>
 
+        <span class="c1"># Record metadata about the production</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_record_metadata</span><span class="p">()</span>
+
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">diagram</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">diagram_context</span></div>
 
 
@@ -817,7 +853,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../_static/documentation_options.js?v=45def3bc"></script>
+</div><script src="../../../../../_static/documentation_options.js?v=722679d6"></script>
     <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>
