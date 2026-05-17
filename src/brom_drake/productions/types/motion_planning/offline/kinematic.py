@@ -506,14 +506,10 @@ class KinematicMotionPlanningProduction(BaseProduction):
         # Use the backing fields directly so metadata recording does not trigger property accessors
         # that may raise NotImplementedError when a subclass intentionally leaves a value unset.
         self._metadata["start_configuration"] = (
-            self._start_config.tolist()
-            if self._start_config is not None
-            else None
+            self._start_config.tolist() if self._start_config is not None else None
         )
         self._metadata["goal_configuration"] = (
-            self._goal_config.tolist()
-            if self._goal_config is not None
-            else None
+            self._goal_config.tolist() if self._goal_config is not None else None
         )
         self._metadata["start_pose"] = (
             self._start_pose.GetAsMatrix4().tolist()

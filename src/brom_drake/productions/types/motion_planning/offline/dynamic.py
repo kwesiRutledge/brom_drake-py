@@ -646,9 +646,7 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
             else None
         )
         self._metadata["goal_configuration"] = (
-            self.goal_configuration.tolist()
-            if self._goal_config is not None
-            else None
+            self.goal_configuration.tolist() if self._goal_config is not None else None
         )
         self._metadata["start_pose"] = (
             self.start_pose.GetAsMatrix4().tolist()
