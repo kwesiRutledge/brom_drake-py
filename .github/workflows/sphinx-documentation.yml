@@ -33,8 +33,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@master
-      - name: Set up Python
+      - name: Set up Python ${{ vars.PYTHON_VERSION }}
         uses: actions/setup-python@v5
+        with:
+          python-version: ${{ vars.PYTHON_VERSION }}
       - name: Install Sphinx dependencies
         run: |
           pip install sphinx sphinx_rtd_theme myst_parser sphinx_copybutton furo
