@@ -83,7 +83,6 @@ class ShowMeThisModel(BaseProduction):
         # Set up simulation
         simulator = Simulator(diagram, diagram_context)
         simulator.set_target_realtime_rate(1.0)
-        simulator.set_publish_every_time_step(False)
 
     If the model is articulated, then you can also provide desired joint positions. ::
 
@@ -107,7 +106,6 @@ class ShowMeThisModel(BaseProduction):
         # Set up simulation
         simulator = Simulator(diagram, diagram_context)
         simulator.set_target_realtime_rate(1.0)
-        simulator.set_publish_every_time_step(False)
 
     """
 

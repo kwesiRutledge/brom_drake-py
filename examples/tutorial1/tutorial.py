@@ -127,9 +127,9 @@ class BlockHandlerSystem(LeafSystem):
         )
 
         self.plant.SetFreeBodySpatialVelocity(
+            plant_context,
             self.plant.GetBodyByName(self.block_body_name),
             SpatialVelocity(np.zeros(3), np.array([0.0, 0.0, 0.0])),
-            plant_context,
         )
 
         X_WBlock = self.plant.GetFreeBodyPose(
@@ -166,9 +166,9 @@ class BlockHandlerSystem(LeafSystem):
 
         # Set Velocities
         self.plant.SetFreeBodySpatialVelocity(
+            self.plant.GetMyContextFromRoot(diagram_context),
             self.plant.GetBodyByName(self.block_body_name),
             SpatialVelocity(np.zeros(3), np.array([0.0, 0.0, 0.0])),
-            self.plant.GetMyContextFromRoot(diagram_context),
         )
 
 
@@ -255,7 +255,6 @@ def main(show_plots: bool = True):
         block_handler_system.plant.GetMyMutableContextFromRoot(diagram_context)
     )
     simulator.set_target_realtime_rate(1.0)
-    simulator.set_publish_every_time_step(False)
 
     # Run simulation
     simulator.Initialize()

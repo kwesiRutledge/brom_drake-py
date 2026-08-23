@@ -306,12 +306,12 @@ class MotionPlanningAndGraspingProduction(BaseProduction):
                 pose_ii,
             )
             plant.SetFreeBodySpatialVelocity(
+                plant.GetMyContextFromRoot(diagram_context),
                 first_body,
                 SpatialVelocity(
                     np.zeros((3,)),
                     np.zeros((3,)),
                 ),
-                plant.GetMyContextFromRoot(diagram_context),
             )
 
         # Set the initial configuration of the robot

@@ -74,7 +74,6 @@ def main():
     # Set up simulation
     simulator = Simulator(diagram, diagram_context)
     simulator.set_target_realtime_rate(1.0)
-    simulator.set_publish_every_time_step(False)
     simulator.Initialize()
     simulator.AdvanceTo(30.0)
 

@@ -143,7 +143,6 @@ def main(t_final: float = 15.0):
     # Set up simulation
     simulator = Simulator(diagram, diagram_context)
     simulator.set_target_realtime_rate(1.0)
-    simulator.set_publish_every_time_step(False)
 
     # Run simulation
     simulator.Initialize()

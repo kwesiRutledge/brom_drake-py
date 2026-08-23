@@ -324,14 +324,13 @@ class PortWatcherPlotterTest(unittest.TestCase):
 
         # - initial Velocities
         plant.SetFreeBodySpatialVelocity(
+            plant.GetMyContextFromRoot(diagram_context),
             plant.GetBodyByName(block_body_name),
             SpatialVelocity(np.zeros(3), np.array([0.0, 0.0, 0.0])),
-            plant.GetMyContextFromRoot(diagram_context),
         )
 
         # Run sim
         simulator = Simulator(diagram, diagram_context)
-        simulator.set_publish_every_time_step(False)
 
         # simulator.Initialize()
         simulator.AdvanceTo(self.T_sim1)
@@ -416,14 +415,13 @@ class PortWatcherPlotterTest(unittest.TestCase):
 
         # - initial Velocities
         plant.SetFreeBodySpatialVelocity(
+            plant.GetMyContextFromRoot(diagram_context),
             plant.GetBodyByName(block_body_name),
             SpatialVelocity(np.zeros(3), np.array([0.0, 0.0, 0.0])),
-            plant.GetMyContextFromRoot(diagram_context),
         )
 
         # Run sim
         simulator = Simulator(diagram, diagram_context)
-        simulator.set_publish_every_time_step(False)
 
         # Running either of these commands would include data in the vector log sink
         # simulator.Initialize()
@@ -513,14 +511,13 @@ class PortWatcherPlotterTest(unittest.TestCase):
 
         # - initial Velocities
         plant.SetFreeBodySpatialVelocity(
+            plant.GetMyContextFromRoot(diagram_context),
             plant.GetBodyByName(block_body_name),
             SpatialVelocity(np.zeros(3), np.array([0.0, 0.0, 0.0])),
-            plant.GetMyContextFromRoot(diagram_context),
         )
 
         # Run sim
         simulator = Simulator(diagram, diagram_context)
-        simulator.set_publish_every_time_step(False)
 
         simulator.Initialize()
         simulator.AdvanceTo(self.T_sim1)
@@ -608,14 +605,13 @@ class PortWatcherPlotterTest(unittest.TestCase):
 
         # - initial Velocities
         plant.SetFreeBodySpatialVelocity(
+            plant.GetMyContextFromRoot(diagram_context),
             plant.GetBodyByName(block_body_name),
             SpatialVelocity(np.zeros(3), np.array([0.0, 0.0, 0.0])),
-            plant.GetMyContextFromRoot(diagram_context),
         )
 
         # Run sim
         simulator = Simulator(diagram, diagram_context)
-        simulator.set_publish_every_time_step(False)
 
         simulator.Initialize()
         simulator.AdvanceTo(self.T_sim1)
@@ -718,9 +714,9 @@ class PortWatcherPlotterTest(unittest.TestCase):
 
         # - initial Velocities
         plant.SetFreeBodySpatialVelocity(
+            plant.GetMyContextFromRoot(diagram_context),
             plant.GetBodyByName(block_body_name),
             SpatialVelocity(np.zeros(3), np.array([0.0, 0.0, 0.0])),
-            plant.GetMyContextFromRoot(diagram_context),
         )
 
         return diagram, diagram_context, plotter0, plant, logger0
@@ -746,7 +742,6 @@ class PortWatcherPlotterTest(unittest.TestCase):
 
         # Run sim
         simulator = Simulator(diagram, diagram_context)
-        simulator.set_publish_every_time_step(False)
 
         # simulator.Initialize()
         simulator.AdvanceTo(self.T_sim1)
@@ -788,7 +783,6 @@ class PortWatcherPlotterTest(unittest.TestCase):
 
         # Run sim
         simulator = Simulator(diagram, diagram_context)
-        simulator.set_publish_every_time_step(False)
 
         # simulator.Initialize()
         simulator.AdvanceTo(self.T_sim1)
@@ -838,7 +832,6 @@ class PortWatcherPlotterTest(unittest.TestCase):
 
         # Run sim
         simulator = Simulator(diagram, diagram_context)
-        simulator.set_publish_every_time_step(False)
 
         # simulator.Initialize()
         simulator.AdvanceTo(self.T_sim1)
@@ -887,7 +880,6 @@ class PortWatcherPlotterTest(unittest.TestCase):
 
         # Run sim
         simulator = Simulator(diagram, diagram_context)
-        simulator.set_publish_every_time_step(False)
 
         # simulator.Initialize()
         simulator.AdvanceTo(self.T_sim1)
@@ -928,7 +920,6 @@ class PortWatcherPlotterTest(unittest.TestCase):
 
         # Run sim
         simulator = Simulator(diagram, diagram_context)
-        simulator.set_publish_every_time_step(False)
 
         # simulator.Initialize()
         simulator.AdvanceTo(self.T_sim1)
@@ -977,7 +968,6 @@ class PortWatcherPlotterTest(unittest.TestCase):
 
         # Run sim
         simulator = Simulator(diagram, diagram_context)
-        simulator.set_publish_every_time_step(False)
 
         # simulator.Initialize()
         simulator.AdvanceTo(self.T_sim1)
@@ -1033,7 +1023,6 @@ class PortWatcherPlotterTest(unittest.TestCase):
 
         # Create simulator and simulate for a few seconds
         simulator = Simulator(diagram, diagram_context)
-        simulator.set_publish_every_time_step(False)
         simulator.AdvanceTo(1.0)
         simulator.AdvanceTo(2.0)
 
