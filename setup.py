@@ -11,6 +11,7 @@ if __name__ == "__main__":
     setup(
         name="brom_drake",
         version="{{VERSION_PLACEHOLDER}}",
+        python_requires=">=3.14",
         author="Kwesi Rutledge",
         author_email="thesolitaryecrivain@gmail.com",
         url="https://github.com/kwesiRutledge/brom_drake-py",
@@ -20,7 +21,7 @@ if __name__ == "__main__":
         # packages=find_packages(where='src/brom_drake'),
         include_package_data=True,
         install_requires=[
-            "drake",
+            "drake>=1.54.0",
             "meshcat",
             "matplotlib",
             "networkx",
