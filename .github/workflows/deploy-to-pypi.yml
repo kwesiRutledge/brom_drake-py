@@ -22,18 +22,18 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
-      - name: Install pypa/setuptools
+      - name: Install build dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install wheel
+          python -m pip install --upgrade setuptools wheel build
       - name: Extract tag name
         id: tag
-        run: echo ::set-output name=TAG_NAME::$(echo $GITHUB_REF | cut -d / -f 3)
+        run: echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
       - name: Update version in setup.py
         run: >-
           sed -i "s/{{VERSION_PLACEHOLDER}}/${{ steps.tag.outputs.TAG_NAME }}/g" setup.py
       - name: Build a binary wheel
         run: >-
-          python setup.py sdist bdist_wheel
+          python -m build --sdist --wheel .
       - name: Publish distribution 📦 to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
