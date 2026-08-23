@@ -5,8 +5,8 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.watchers.port_watcher.port_watcher - brom_drake-py 0.5.6 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=acfd86a5" />
+        <title>brom_drake.watchers.port_watcher.port_watcher - brom_drake-py v0.0.0+githubActionDefault documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">brom_drake-py 0.5.6 documentation</div></a>
+      <a href="../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.6 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -551,63 +551,63 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for brom_drake.watchers.port_watcher.port_watcher</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""</span>
 <span class="sd">PortWatcher.py</span>
 <span class="sd">Description:</span>
 
 <span class="sd">    This file defines the PortWatcher class. This class is used to watch the ports of a</span>
 <span class="sd">    diagram.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
-<span class="kn">from</span> <span class="nn">pydrake.multibody.plant</span> <span class="kn">import</span> <span class="n">MultibodyPlant</span>
-<span class="kn">from</span> <span class="nn">pydrake.systems.framework</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.multibody.plant</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultibodyPlant</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.systems.framework</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">OutputPort</span><span class="p">,</span>
     <span class="n">PortDataType</span><span class="p">,</span>
     <span class="n">DiagramBuilder</span><span class="p">,</span>
     <span class="n">LeafSystem</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">pydrake.systems.primitives</span> <span class="kn">import</span> <span class="n">LogVectorOutput</span><span class="p">,</span> <span class="n">VectorLogSink</span>
-<span class="kn">from</span> <span class="nn">pydrake.systems.framework</span> <span class="kn">import</span> <span class="n">Context</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.systems.primitives</span><span class="w"> </span><span class="kn">import</span> <span class="n">LogVectorOutput</span><span class="p">,</span> <span class="n">VectorLogSink</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.systems.framework</span><span class="w"> </span><span class="kn">import</span> <span class="n">Context</span>
 
 <span class="c1"># Internal Imports</span>
-<span class="kn">from</span> <span class="nn">brom_drake.directories</span> <span class="kn">import</span> <span class="n">DEFAULT_BROM_DIR</span>
-<span class="kn">from</span> <span class="nn">.file_manager</span> <span class="kn">import</span> <span class="n">PortWatcherFileManager</span>
-<span class="kn">from</span> <span class="nn">brom_drake.watchers.port_watcher.support_types</span> <span class="kn">import</span> <span class="n">assert_port_is_supported</span>
-<span class="kn">from</span> <span class="nn">.port_watcher_options</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.directories</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_BROM_DIR</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.file_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">PortWatcherFileManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.watchers.port_watcher.support_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">assert_port_is_supported</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.port_watcher_options</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">PortWatcherOptions</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">.plotter</span> <span class="kn">import</span> <span class="n">PortWatcherPlotter</span>
-<span class="kn">from</span> <span class="nn">brom_drake.systems.abstract_list_selection_system</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.plotter</span><span class="w"> </span><span class="kn">import</span> <span class="n">PortWatcherPlotter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.systems.abstract_list_selection_system</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">AbstractListSelectionSystem</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">brom_drake.systems.conversion</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.systems.conversion</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">BoolToVectorSystem</span><span class="p">,</span>
     <span class="n">RigidTransformToVectorSystem</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">brom_drake.utils.plant</span> <span class="kn">import</span> <span class="n">get_all_associated_body_indices_in_plant</span>
-<span class="kn">from</span> <span class="nn">brom_drake.utils.type_checking</span> <span class="kn">import</span> <span class="n">is_rigid_transform</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.utils.plant</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_all_associated_body_indices_in_plant</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.utils.type_checking</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_rigid_transform</span>
 
 <span class="n">OutputPortNameLike</span> <span class="o">=</span> <span class="nb">str</span>
 
 
 <div class="viewcode-block" id="PortWatcher">
 <a class="viewcode-back" href="../../../../generated/watchers/port_watcher/port_watcher.html#brom_drake.watchers.port_watcher.port_watcher.PortWatcher">[docs]</a>
-<span class="k">class</span> <span class="nc">PortWatcher</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PortWatcher</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    *Description*</span>
 
 <span class="sd">    The real workhorse of the :py:class:`DiagramWatcher&lt;brom_drake.watchers.diagram_watcher.diagram_watcher.DiagramWatcher&gt;` class.</span>
 <span class="sd">    This class adds the elements to the drake diagram that will monitor a given</span>
-<span class="sd">    system&#39;s output port (**output_port**), if possible.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    system's output port (**output_port**), if possible.</span>
+<span class="sd">    """</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">output_port</span><span class="p">:</span> <span class="n">OutputPort</span><span class="p">,</span>
         <span class="n">builder</span><span class="p">:</span> <span class="n">DiagramBuilder</span><span class="p">,</span>
@@ -616,7 +616,7 @@
         <span class="n">options</span><span class="p">:</span> <span class="n">PortWatcherOptions</span> <span class="o">=</span> <span class="n">PortWatcherOptions</span><span class="p">(),</span>
         <span class="n">base_watcher_dir</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">DEFAULT_BROM_DIR</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
 <span class="sd">        This class is used to watch a single port of a system.</span>
@@ -640,7 +640,7 @@
 
 <span class="sd">        raw_data_dir: str</span>
 <span class="sd">            The directory where the raw data will be saved.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">options</span> <span class="o">=</span> <span class="n">options</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">output_port</span>
@@ -677,8 +677,8 @@
 
 <div class="viewcode-block" id="PortWatcher.get_data_dictionary">
 <a class="viewcode-back" href="../../../../generated/watchers/port_watcher/port_watcher.html#brom_drake.watchers.port_watcher.port_watcher.PortWatcher.get_data_dictionary">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_data_dictionary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">diagram_context</span><span class="p">:</span> <span class="n">Context</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_data_dictionary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">diagram_context</span><span class="p">:</span> <span class="n">Context</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        **Description**</span>
 
 <span class="sd">        Returns the data recorded by this PortWatcher as a dictionary.</span>
@@ -689,8 +689,8 @@
 
 
 <span class="sd">        The keys of the dictionary are the names of the output ports being watched, and the values are the corresponding data as numpy arrays.</span>
-<span class="sd">        Importantly, most of the time this data dictionary contains only one key-value pair, since most ports being watched are not list-valued (i.e., they do not have &quot;components&quot; that require multiple VectorLogSinks to monitor).</span>
-<span class="sd">        However, in the case of list-valued ports, there will be multiple key-value pairs in the dictionary, where each key corresponds to a different component of the port (e.g., &quot;element_0_out&quot;, &quot;element_1_out&quot;, etc.).</span>
+<span class="sd">        Importantly, most of the time this data dictionary contains only one key-value pair, since most ports being watched are not list-valued (i.e., they do not have "components" that require multiple VectorLogSinks to monitor).</span>
+<span class="sd">        However, in the case of list-valued ports, there will be multiple key-value pairs in the dictionary, where each key corresponds to a different component of the port (e.g., "element_0_out", "element_1_out", etc.).</span>
 <span class="sd">        In this case, the user can use the output port name (which is included in the keys) to determine which component of the port each key-value pair corresponds to.</span>
 
 <span class="sd">        .. note::</span>
@@ -708,7 +708,7 @@
 <span class="sd">        data: Dict[str, np.ndarray]</span>
 <span class="sd">            A dictionary containing the data from all of the VectorLogSinks</span>
 <span class="sd">            associated with this PortWatcher. The keys are the names of the output ports being watched.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">output_port_name</span><span class="p">,</span> <span class="n">log_sink</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drake_vector_logs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">log</span> <span class="o">=</span> <span class="n">log_sink</span><span class="o">.</span><span class="n">FindLog</span><span class="p">(</span><span class="n">diagram_context</span><span class="p">)</span>
@@ -719,8 +719,8 @@
 
 <div class="viewcode-block" id="PortWatcher.get_timing_array">
 <a class="viewcode-back" href="../../../../generated/watchers/port_watcher/port_watcher.html#brom_drake.watchers.port_watcher.port_watcher.PortWatcher.get_timing_array">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_timing_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">diagram_context</span><span class="p">:</span> <span class="n">Context</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_timing_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">diagram_context</span><span class="p">:</span> <span class="n">Context</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        **Description**</span>
 
 <span class="sd">        Returns the timing data recorded by this PortWatcher as a numpy array.</span>
@@ -734,11 +734,11 @@
 <span class="sd">        timing: np.ndarray</span>
 <span class="sd">            A numpy array containing the timing data from one of the VectorLogSinks</span>
 <span class="sd">            associated with this PortWatcher. Since all of the VectorLogSinks should have the same timing, it does not matter which one we pull the timing data from.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Check to see if we have any VectorLogSinks</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_drake_vector_logs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Cannot get timing data because no VectorLogSinks were created for this PortWatcher.&quot;</span>
+                <span class="s2">"Cannot get timing data because no VectorLogSinks were created for this PortWatcher."</span>
             <span class="p">)</span>
 
         <span class="c1"># Pull timing data from the first VectorLogSink (they should all have the same timing)</span>
@@ -751,10 +751,10 @@
 
 <div class="viewcode-block" id="PortWatcher.get_vector_log_sink">
 <a class="viewcode-back" href="../../../../generated/watchers/port_watcher/port_watcher.html#brom_drake.watchers.port_watcher.port_watcher.PortWatcher.get_vector_log_sink">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_vector_log_sink</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_vector_log_sink</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">with_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">with_output_port_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VectorLogSink</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        **Description**</span>
 
 <span class="sd">        Returns the VectorLogSink corresponding to the given index or output port name.</span>
@@ -774,7 +774,7 @@
 
 <span class="sd">        vector_log_sink: VectorLogSink</span>
 <span class="sd">            The VectorLogSink corresponding to the given index or output port name.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Default case</span>
         <span class="k">if</span> <span class="n">with_index</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">with_output_port_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">all_vector_logs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_drake_vector_logs</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
@@ -788,52 +788,52 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drake_vector_logs</span><span class="p">[</span><span class="n">with_output_port_name</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Either with_index or with_output_port_name must be provided.&quot;</span>
+                <span class="s2">"Either with_index or with_output_port_name must be provided."</span>
             <span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_name_vector_log_sink</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_name_vector_log_sink</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">current_output_port</span><span class="p">:</span> <span class="n">OutputPort</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        **Description**</span>
 
 <span class="sd">        Provides a name to the VectorLogSink stored in `self.drake_vector_logs`</span>
 <span class="sd">        that corresponds to the given system and output_port.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
         <span class="n">original_output_port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">port</span>
         <span class="n">system</span> <span class="o">=</span> <span class="n">original_output_port</span><span class="o">.</span><span class="n">get_system</span><span class="p">()</span>
 
         <span class="c1"># Name the VectorLogSink</span>
-        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;PortWatcher_</span><span class="si">{</span><span class="n">system</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">original_output_port</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"PortWatcher_</span><span class="si">{</span><span class="n">system</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">original_output_port</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span>
         <span class="k">if</span> <span class="n">current_output_port</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span> <span class="o">!=</span> <span class="n">original_output_port</span><span class="o">.</span><span class="n">get_name</span><span class="p">():</span>
-            <span class="n">name</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">current_output_port</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">name</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"_</span><span class="si">{</span><span class="n">current_output_port</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_drake_vector_logs</span><span class="p">[</span><span class="n">current_output_port</span><span class="o">.</span><span class="n">get_name</span><span class="p">()]</span><span class="o">.</span><span class="n">set_name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_prepare_vector_log_for_rigid_transform_port</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_prepare_vector_log_for_rigid_transform_port</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">current_output_port</span><span class="p">:</span> <span class="n">OutputPort</span><span class="p">,</span>
         <span class="n">builder</span><span class="p">:</span> <span class="n">DiagramBuilder</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
 <span class="sd">        Adds to the current Drake Diagram a VectorLogSink (and helper system) to measure the value of the RigidTransform</span>
-<span class="sd">        value coming from the **PortWatcher**&#39;s target output port.</span>
+<span class="sd">        value coming from the **PortWatcher**'s target output port.</span>
 
 <span class="sd">        *Parameters*</span>
 
 <span class="sd">        builder: DiagramBuilder</span>
 <span class="sd">            The diagram builder that is used to create the VectorLogSink.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Determine the name of the system that converts</span>
         <span class="c1"># RigidTransform objects to vectors</span>
-        <span class="n">converter_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;RigidTransformToVectorSystem_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">safe_system_name</span><span class="p">(</span><span class="n">current_output_port</span><span class="o">.</span><span class="n">get_system</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">converter_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"RigidTransformToVectorSystem_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">safe_system_name</span><span class="p">(</span><span class="n">current_output_port</span><span class="o">.</span><span class="n">get_system</span><span class="p">())</span><span class="si">}</span><span class="s2">"</span>
 
-        <span class="c1"># First, let&#39;s create an intermediate system</span>
+        <span class="c1"># First, let's create an intermediate system</span>
         <span class="c1"># that will convert the RigidTransform to a vector that is easily logged</span>
         <span class="n">converter_system</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">AddNamedSystem</span><span class="p">(</span>
             <span class="n">system</span><span class="o">=</span><span class="n">RigidTransformToVectorSystem</span><span class="p">(),</span>
@@ -855,19 +855,19 @@
         <span class="c1"># And finally, name the vector log sink (must have unique names to compile the diagram)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name_vector_log_sink</span><span class="p">(</span><span class="n">current_output_port</span><span class="o">=</span><span class="n">current_output_port</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_prepare_vector_log_for_abstract_valued_port</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_prepare_vector_log_for_abstract_valued_port</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">current_output_port</span><span class="p">:</span> <span class="n">OutputPort</span><span class="p">,</span>
         <span class="n">builder</span><span class="p">:</span> <span class="n">DiagramBuilder</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
 <span class="sd">        .. note::</span>
 
 <span class="sd">            While this is usually called with the port ``self.port``,</span>
 <span class="sd">            it can be called with other ports (as is done with list[T] inputs).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Collect the system and output port (their names will be used in the default name)</span>
         <span class="n">system</span><span class="p">:</span> <span class="n">LeafSystem</span> <span class="o">=</span> <span class="n">current_output_port</span><span class="o">.</span><span class="n">get_system</span><span class="p">()</span>
 
@@ -882,18 +882,18 @@
             <span class="c1"># A list input should NEVER have zero length</span>
             <span class="k">assert</span> <span class="p">(</span>
                 <span class="nb">len</span><span class="p">(</span><span class="n">example_value</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
-            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;All list output ports should contain at least 1 example allocation value; received 0 from port </span><span class="si">{</span><span class="n">current_output_port</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s2">"All list output ports should contain at least 1 example allocation value; received 0 from port </span><span class="si">{</span><span class="n">current_output_port</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span>
 
             <span class="c1"># If the value is a list, then we will use</span>
             <span class="c1"># a special system to select each element of the list</span>
             <span class="c1"># and then recursively call this function.</span>
 
             <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">example_value</span><span class="p">)):</span>
-                <span class="n">output_port_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;element_</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">_out&quot;</span>
+                <span class="n">output_port_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"element_</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">_out"</span>
 
                 <span class="c1"># If this is a very specific port (body_poses),</span>
                 <span class="c1"># then propose a very specific name for the output port</span>
-                <span class="k">if</span> <span class="n">current_output_port</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;body_poses&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">current_output_port</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"body_poses"</span><span class="p">:</span>
                     <span class="c1"># TODO(Kwesi): Include test to see if</span>
                     <span class="c1"># this system is a multibody plant</span>
                     <span class="n">system_is_multibody_plant</span> <span class="o">=</span> <span class="p">(</span>
@@ -911,7 +911,7 @@
                             <span class="n">body_index</span><span class="o">=</span><span class="n">body_indices</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
                         <span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">()</span>
 
-                        <span class="n">output_port_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">current_body_name</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="n">output_port_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">current_body_name</span><span class="si">}</span><span class="s2">"</span>
 
                 <span class="c1"># Create selection system for this iteration</span>
                 <span class="n">selection_i</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">AddNamedSystem</span><span class="p">(</span>
@@ -920,7 +920,7 @@
                         <span class="n">output_type</span><span class="o">=</span><span class="nb">type</span><span class="p">(</span><span class="n">example_value</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
                         <span class="n">output_port_name</span><span class="o">=</span><span class="n">output_port_name</span><span class="p">,</span>
                     <span class="p">),</span>
-                    <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;System </span><span class="si">{</span><span class="n">system</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="si">}</span><span class="se">\&#39;</span><span class="s1">s Port &quot;</span><span class="si">{</span><span class="n">current_output_port</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="si">}</span><span class="s1">&quot; Element #</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+                    <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">'System </span><span class="si">{</span><span class="n">system</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="si">}</span><span class="se">\'</span><span class="s1">s Port "</span><span class="si">{</span><span class="n">current_output_port</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="si">}</span><span class="s1">" Element #</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span>
                 <span class="p">)</span>
 
                 <span class="c1"># Connect selection system to target port</span>
@@ -964,14 +964,14 @@
 
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;PortWatcher does not support the type of data (</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">example_value</span><span class="p">)</span><span class="si">}</span><span class="s2">) contained in the port.&quot;</span>
+                <span class="sa">f</span><span class="s2">"PortWatcher does not support the type of data (</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">example_value</span><span class="p">)</span><span class="si">}</span><span class="s2">) contained in the port."</span>
             <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_prepare_vector_logs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">builder</span><span class="p">:</span> <span class="n">DiagramBuilder</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_prepare_vector_logs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">builder</span><span class="p">:</span> <span class="n">DiagramBuilder</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
-<span class="sd">        Prepares any VectorLogSink&#39;s needed to measure the current port.</span>
+<span class="sd">        Prepares any VectorLogSink's needed to measure the current port.</span>
 <span class="sd">        In most cases, only one VectorLogSink is needed.</span>
 
 <span class="sd">        *Parameters*</span>
@@ -979,8 +979,8 @@
 <span class="sd">        builder: DiagramBuilder</span>
 <span class="sd">            The diagram builder that is used to create the logger.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Create ALL of the VectorLogSink&#39;s needed</span>
+<span class="sd">        """</span>
+        <span class="c1"># Create ALL of the VectorLogSink's needed</span>
         <span class="c1"># for each type of data in the port</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="o">.</span><span class="n">get_data_type</span><span class="p">()</span> <span class="o">==</span> <span class="n">PortDataType</span><span class="o">.</span><span class="n">kVectorValued</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_drake_vector_logs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="o">.</span><span class="n">get_name</span><span class="p">()]</span> <span class="o">=</span> <span class="n">LogVectorOutput</span><span class="p">(</span>
@@ -991,19 +991,19 @@
             <span class="c1"># Port must be abstract valued</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_vector_log_for_abstract_valued_port</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">,</span> <span class="n">builder</span><span class="p">)</span>
 
-        <span class="c1"># Announce the preparation of the VectorLogSink&#39;s</span>
+        <span class="c1"># Announce the preparation of the VectorLogSink's</span>
         <span class="c1"># with the logger</span>
         <span class="k">for</span> <span class="n">target_port_name</span><span class="p">,</span> <span class="n">log_sink</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drake_vector_logs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">python_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">&#39;PortWatcher prepared VectorLogSink for system &quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="o">.</span><span class="n">get_system</span><span class="p">()</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="si">}</span><span class="s1">&quot;</span><span class="se">\&#39;</span><span class="s1">s &#39;</span>
-                <span class="sa">f</span><span class="s1">&#39;port &quot;</span><span class="si">{</span><span class="n">target_port_name</span><span class="si">}</span><span class="s1">&quot;.</span><span class="se">\n</span><span class="s1">&#39;</span>
-                <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39; - It</span><span class="se">\&#39;</span><span class="s1">s name is &quot;</span><span class="si">{</span><span class="n">log_sink</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="si">}</span><span class="s1">&quot;.&#39;</span>
+                <span class="sa">f</span><span class="s1">'PortWatcher prepared VectorLogSink for system "</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="o">.</span><span class="n">get_system</span><span class="p">()</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="si">}</span><span class="s1">"</span><span class="se">\'</span><span class="s1">s '</span>
+                <span class="sa">f</span><span class="s1">'port "</span><span class="si">{</span><span class="n">target_port_name</span><span class="si">}</span><span class="s1">".</span><span class="se">\n</span><span class="s1">'</span>
+                <span class="o">+</span> <span class="sa">f</span><span class="s1">' - It</span><span class="se">\'</span><span class="s1">s name is "</span><span class="si">{</span><span class="n">log_sink</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="si">}</span><span class="s1">".'</span>
             <span class="p">)</span>
 
 <div class="viewcode-block" id="PortWatcher.safe_system_name">
 <a class="viewcode-back" href="../../../../generated/watchers/port_watcher/port_watcher.html#brom_drake.watchers.port_watcher.port_watcher.PortWatcher.safe_system_name">[docs]</a>
-    <span class="k">def</span> <span class="nf">safe_system_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">system</span><span class="p">:</span> <span class="n">LeafSystem</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">safe_system_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">system</span><span class="p">:</span> <span class="n">LeafSystem</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
 <span class="sd">        Returns a safe name for the system.</span>
@@ -1012,31 +1012,31 @@
 
 <span class="sd">        system: LeafSystem, optional</span>
 <span class="sd">            The system for which to generate a safe name. If None, uses the system of the</span>
-<span class="sd">            PortWatcher\&#39;s target port.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">            PortWatcher\'s target port.</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
         <span class="k">if</span> <span class="n">system</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">system</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="o">.</span><span class="n">get_system</span><span class="p">()</span>
 
         <span class="n">out</span> <span class="o">=</span> <span class="n">system</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
 
-        <span class="c1"># First, let&#39;s check to see how many &quot;/&quot; exist in the name</span>
-        <span class="n">slash_occurences</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">letter</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">out</span><span class="p">)</span> <span class="k">if</span> <span class="n">letter</span> <span class="o">==</span> <span class="s2">&quot;/&quot;</span><span class="p">]</span>
+        <span class="c1"># First, let's check to see how many "/" exist in the name</span>
+        <span class="n">slash_occurences</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">letter</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">out</span><span class="p">)</span> <span class="k">if</span> <span class="n">letter</span> <span class="o">==</span> <span class="s2">"/"</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">slash_occurences</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="p">[</span>
                 <span class="n">slash_occurences</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:</span>
             <span class="p">]</span>  <span class="c1"># truncrate string based on the last slash</span>
 
         <span class="c1"># Second, replace all spaces with underscores</span>
-        <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">" "</span><span class="p">,</span> <span class="s2">"_"</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">out</span></div>
 
 
 <div class="viewcode-block" id="PortWatcher.save_all_figures">
 <a class="viewcode-back" href="../../../../generated/watchers/port_watcher/port_watcher.html#brom_drake.watchers.port_watcher.port_watcher.PortWatcher.save_all_figures">[docs]</a>
-    <span class="k">def</span> <span class="nf">save_all_figures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">diagram_context</span><span class="p">:</span> <span class="n">Context</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_all_figures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">diagram_context</span><span class="p">:</span> <span class="n">Context</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
 <span class="sd">        Saves all of the figures that the PortWatcher should according to its options.</span>
@@ -1047,15 +1047,15 @@
 
 <span class="sd">        diagram_context: Context</span>
 <span class="sd">            The context of the diagram.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Test to see if we have a plotter</span>
         <span class="k">assert</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">plotter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-        <span class="p">),</span> <span class="s2">&quot;Cannot save figures because no plotter was created for this PortWatcher.&quot;</span>
+        <span class="p">),</span> <span class="s2">"Cannot save figures because no plotter was created for this PortWatcher."</span>
 
         <span class="c1"># For each vector log, save one figure</span>
         <span class="k">for</span> <span class="n">output_port_name</span><span class="p">,</span> <span class="n">log_sink</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drake_vector_logs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="c1"># Decide on whether or not there are &quot;components&quot;</span>
+            <span class="c1"># Decide on whether or not there are "components"</span>
             <span class="c1"># in this output port (i.e., multiple values in a list output; different from a vector with multiple dimensions)</span>
             <span class="n">port_component_name</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">if</span> <span class="n">output_port_name</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="o">.</span><span class="n">get_name</span><span class="p">():</span>
@@ -1069,8 +1069,8 @@
 
 <div class="viewcode-block" id="PortWatcher.save_raw_data">
 <a class="viewcode-back" href="../../../../generated/watchers/port_watcher/port_watcher.html#brom_drake.watchers.port_watcher.port_watcher.PortWatcher.save_raw_data">[docs]</a>
-    <span class="k">def</span> <span class="nf">save_raw_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">diagram_context</span><span class="p">:</span> <span class="n">Context</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_raw_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">diagram_context</span><span class="p">:</span> <span class="n">Context</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        **Description**</span>
 
 <span class="sd">        Saves the raw data to file(s). The number of files depends on the components in the data AND the options of the PortWatcher (i.e., whether to save each component in a separate file or all in one file).</span>
@@ -1083,11 +1083,11 @@
 <span class="sd">        **Notes**</span>
 
 <span class="sd">        TODO(Kwesi): Take advantage of get_data_dictionary function to clean up this code.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Test to see the number of logs we have to save data for</span>
         <span class="n">n_vector_logs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_drake_vector_logs</span><span class="p">))</span>
 
-        <span class="c1"># Iterate through all of the available VectorLogSink&#39;s</span>
+        <span class="c1"># Iterate through all of the available VectorLogSink's</span>
         <span class="k">for</span> <span class="n">output_port_name</span><span class="p">,</span> <span class="n">log_sink</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drake_vector_logs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="c1"># Collect Drake Log of Data</span>
             <span class="n">log</span> <span class="o">=</span> <span class="n">log_sink</span><span class="o">.</span><span class="n">FindLog</span><span class="p">(</span><span class="n">diagram_context</span><span class="p">)</span>
@@ -1155,7 +1155,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=722679d6"></script>
+</div><script src="../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>

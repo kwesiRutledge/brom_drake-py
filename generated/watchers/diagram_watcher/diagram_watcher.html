@@ -6,8 +6,8 @@
 <link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html"><link rel="next" title="port_watcher" href="../port_watcher/port_watcher.html"><link rel="prev" title="watchers" href="../watchers.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>diagram_watcher - brom_drake-py 0.5.6 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=acfd86a5" />
+        <title>diagram_watcher - brom_drake-py v0.0.0+githubActionDefault documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -162,7 +162,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">brom_drake-py 0.5.6 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +183,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.6 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -620,6 +620,12 @@ port_watchers : Dict[str, PortWatcher]</p>
 </dd></dl>
 
 <dl class="py property">
+<dt class="sig sig-object py" id="brom_drake.watchers.diagram_watcher.diagram_watcher.DiagramWatcher.plot_dir">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">plot_dir</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></span><a class="headerlink" href="#brom_drake.watchers.diagram_watcher.diagram_watcher.DiagramWatcher.plot_dir" title="Link to this definition">¶</a></dt>
+<dd><p>The directory where this watcher saves plots.</p>
+</dd></dl>
+
+<dl class="py property">
 <dt class="sig sig-object py" id="brom_drake.watchers.diagram_watcher.diagram_watcher.DiagramWatcher.port_watchers">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">port_watchers</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../port_watcher/port_watcher.html#brom_drake.watchers.port_watcher.port_watcher.PortWatcher" title="brom_drake.watchers.port_watcher.port_watcher.PortWatcher"><span class="pre">PortWatcher</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#brom_drake.watchers.diagram_watcher.diagram_watcher.DiagramWatcher.port_watchers" title="Link to this definition">¶</a></dt>
 <dd><p><strong>Description</strong></p>
@@ -632,6 +638,12 @@ port_watchers : Dict[str, PortWatcher]</p>
 <dt>port_watchers<span class="classifier">Dict[str, Dict[str, PortWatcher]]</span></dt><dd><p>A nested dictionary of system names to port names to PortWatcher objects.</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="brom_drake.watchers.diagram_watcher.diagram_watcher.DiagramWatcher.raw_data_dir">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">raw_data_dir</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></span><a class="headerlink" href="#brom_drake.watchers.diagram_watcher.diagram_watcher.DiagramWatcher.raw_data_dir" title="Link to this definition">¶</a></dt>
+<dd><p>The directory where this watcher saves raw data.</p>
 </dd></dl>
 
 </dd></dl>
@@ -762,7 +774,7 @@ Each target can be specified as either:</p>
 <li><p>A tuple of (system_index: int, port_index: int) to watch a specific port of a system by its index.</p></li>
 </ul>
 <p>Here are some examples of how to specify targets:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">watcher</span> <span class="o">=</span> <span class="n">add_watcher</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="p">[(</span><span class="s2">&quot;plant&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;controller&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)])</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">watcher</span> <span class="o">=</span> <span class="n">add_watcher</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="p">[(</span><span class="s2">"plant"</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="s2">"controller"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)])</span>
 </pre></div>
 </div>
 <p><strong>Returns</strong></p>
@@ -786,13 +798,13 @@ and its default context is added to the DiagramWatcher object.</p>
 </pre></div>
 </div>
 <p>In addition, one can specify which systems to watch:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">watcher</span> <span class="o">=</span> <span class="n">add_watcher_and_build</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="p">[(</span><span class="s2">&quot;plant&quot;</span><span class="p">,)])</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">watcher</span> <span class="o">=</span> <span class="n">add_watcher_and_build</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="p">[(</span><span class="s2">"plant"</span><span class="p">,)])</span>
 </pre></div>
 </div>
 <p>The DiagramWatcher will then watch all supported ports of the “plant” system
 that it can find.</p>
 <p>Furthermore, to specify which systems and specific ports to watch:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">watcher</span> <span class="o">=</span> <span class="n">add_watcher_and_build</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="p">[(</span><span class="s2">&quot;plant&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;controller&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)])</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">watcher</span> <span class="o">=</span> <span class="n">add_watcher_and_build</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="p">[(</span><span class="s2">"plant"</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="s2">"controller"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)])</span>
 </pre></div>
 </div>
 <p>This will watch output port 0 of both the “plant” and “controller” systems, if possible.</p>
@@ -830,7 +842,7 @@ that it can find.</p>
 <dd><p><strong>Description</strong></p>
 <p>This function takes a list of simplified targets and converts them to the full form.</p>
 <p><strong>Example Usage</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">targets</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;plant&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;controller&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">targets</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">"plant"</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="s2">"controller"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]</span>
 <span class="n">parsed_targets</span> <span class="o">=</span> <span class="n">parse_list_of_simplified_targets</span><span class="p">(</span><span class="n">targets</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -931,7 +943,9 @@ The argument must be an iterable if specified.</p>
 <li><a class="reference internal" href="#brom_drake.watchers.diagram_watcher.diagram_watcher.DiagramWatcher"><code class="docutils literal notranslate"><span class="pre">DiagramWatcher</span></code></a><ul>
 <li><a class="reference internal" href="#brom_drake.watchers.diagram_watcher.diagram_watcher.DiagramWatcher.get_all_port_watchers_for_system"><code class="docutils literal notranslate"><span class="pre">DiagramWatcher.get_all_port_watchers_for_system()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.watchers.diagram_watcher.diagram_watcher.DiagramWatcher.get_port_watcher"><code class="docutils literal notranslate"><span class="pre">DiagramWatcher.get_port_watcher()</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.watchers.diagram_watcher.diagram_watcher.DiagramWatcher.plot_dir"><code class="docutils literal notranslate"><span class="pre">DiagramWatcher.plot_dir</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.watchers.diagram_watcher.diagram_watcher.DiagramWatcher.port_watchers"><code class="docutils literal notranslate"><span class="pre">DiagramWatcher.port_watchers</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.watchers.diagram_watcher.diagram_watcher.DiagramWatcher.raw_data_dir"><code class="docutils literal notranslate"><span class="pre">DiagramWatcher.raw_data_dir</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#brom_drake.watchers.diagram_watcher.diagram_watcher_options.DiagramWatcherOptions"><code class="docutils literal notranslate"><span class="pre">DiagramWatcherOptions</span></code></a><ul>
@@ -967,7 +981,7 @@ The argument must be an iterable if specified.</p>
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=722679d6"></script>
+</div><script src="../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>

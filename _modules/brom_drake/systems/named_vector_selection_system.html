@@ -5,8 +5,8 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.systems.named_vector_selection_system - brom_drake-py 0.5.6 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=acfd86a5" />
+        <title>brom_drake.systems.named_vector_selection_system - brom_drake-py v0.0.0+githubActionDefault documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">brom_drake-py 0.5.6 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.6 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -551,18 +551,18 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for brom_drake.systems.named_vector_selection_system</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">pydrake.all</span> <span class="kn">import</span> <span class="n">AffineSystem</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.all</span><span class="w"> </span><span class="kn">import</span> <span class="n">AffineSystem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
 
 
 <div class="viewcode-block" id="define_named_vector_selection_system">
 <a class="viewcode-back" href="../../../generated/systems/systems.html#brom_drake.systems.named_vector_selection_system.define_named_vector_selection_system">[docs]</a>
-<span class="k">def</span> <span class="nf">define_named_vector_selection_system</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">define_named_vector_selection_system</span><span class="p">(</span>
     <span class="n">all_element_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="n">sequence_of_names_for_output</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AffineSystem</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    *Description*</span>
 
 <span class="sd">    This method creates an Affine System that will receive as input</span>
@@ -585,7 +585,7 @@
 
 <span class="sd">    AffineSystem</span>
 <span class="sd">        The created NamedVectorSelectionSystem.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Setup</span>
     <span class="n">n_x</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_element_names</span><span class="p">)</span>
     <span class="n">n_y</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sequence_of_names_for_output</span><span class="p">)</span>
@@ -595,7 +595,7 @@
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">desired_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sequence_of_names_for_output</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">desired_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">all_element_names</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Desired input &#39;</span><span class="si">{</span><span class="n">desired_name</span><span class="si">}</span><span class="s2">&#39; not found in all_element_names.&quot;</span>
+                <span class="sa">f</span><span class="s2">"Desired input '</span><span class="si">{</span><span class="n">desired_name</span><span class="si">}</span><span class="s2">' not found in all_element_names."</span>
             <span class="p">)</span>
         <span class="n">j</span> <span class="o">=</span> <span class="n">all_element_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">desired_name</span><span class="p">)</span>
         <span class="n">D</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
@@ -637,7 +637,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=722679d6"></script>
+</div><script src="../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>

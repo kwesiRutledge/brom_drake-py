@@ -5,8 +5,8 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.mesh_file_converter - brom_drake-py 0.5.6 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=acfd86a5" />
+        <title>brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.mesh_file_converter - brom_drake-py v0.0.0+githubActionDefault documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../index.html"><div class="brand">brom_drake-py 0.5.6 documentation</div></a>
+      <a href="../../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.6 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -551,31 +551,31 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.mesh_file_converter</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
-<span class="kn">import</span> <span class="nn">xml.etree.ElementTree</span> <span class="k">as</span> <span class="nn">ET</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tuple</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">xml.etree.ElementTree</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ET</span>
 
-<span class="kn">import</span> <span class="nn">trimesh</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">trimesh</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">ament_index_python.packages</span> <span class="kn">import</span> <span class="n">get_package_share_directory</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">ament_index_python.packages</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_package_share_directory</span>
 
     <span class="n">_AMENT_INDEX_AVAILABLE</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="n">_AMENT_INDEX_AVAILABLE</span> <span class="o">=</span> <span class="kc">False</span>
 
 <span class="c1"># Internal imports</span>
-<span class="kn">from</span> <span class="nn">brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.util</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.util</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">URDF_CONVERSION_LOG_LEVEL_NAME</span><span class="p">,</span>
 <span class="p">)</span>
 
 
 <div class="viewcode-block" id="MeshFileConverter">
 <a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/drake_ready_urdf_converter/drake_ready_urdf_converter.html#brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.mesh_file_converter.MeshFileConverter">[docs]</a>
-<span class="k">class</span> <span class="nc">MeshFileConverter</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MeshFileConverter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    **Description**</span>
 
 <span class="sd">    This class will convert a mesh file to a different format using</span>
@@ -595,16 +595,16 @@
 
 <span class="sd">    logger: logging.Logger</span>
 <span class="sd">        The logger to use for logging messages.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">mesh_file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">urdf_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
         <span class="n">new_urdf_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
         <span class="n">logger</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">Logger</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        **Description**</span>
 
 <span class="sd">        This class will convert a mesh file to a different format.</span>
@@ -623,7 +623,7 @@
 
 <span class="sd">        logger: logging.Logger</span>
 <span class="sd">            The logger to use for logging messages.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Input Processing</span>
 
         <span class="c1"># Setup</span>
@@ -632,7 +632,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">new_urdf_dir</span> <span class="o">=</span> <span class="n">new_urdf_dir</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
 
-    <span class="k">def</span> <span class="nf">convert</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convert</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">output_file_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
@@ -641,8 +641,8 @@
             <span class="n">output_file_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">define_output_path</span><span class="p">(</span><span class="n">output_file_path</span><span class="p">)</span>
 
         <span class="c1"># Use trimesh to convert</span>
-        <span class="c1"># print(f&quot;urdf_dir: {self.urdf_dir}&quot;)</span>
-        <span class="c1"># print(f&quot;true_path: {self.true_mesh_file_path()}&quot;)</span>
+        <span class="c1"># print(f"urdf_dir: {self.urdf_dir}")</span>
+        <span class="c1"># print(f"true_path: {self.true_mesh_file_path()}")</span>
         <span class="c1"># print(</span>
         <span class="c1">#     str(self.urdf_dir / self.true_mesh_file_path())</span>
         <span class="c1"># )</span>
@@ -655,14 +655,14 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">define_output_path</span><span class="p">(</span><span class="n">output_file_path</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">output_mesh_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">output_mesh_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
         <span class="n">new_urdf_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_urdf_dir</span>
         <span class="k">return</span> <span class="n">new_urdf_dir</span>
 
 <div class="viewcode-block" id="MeshFileConverter.define_output_path">
 <a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/drake_ready_urdf_converter/drake_ready_urdf_converter.html#brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.mesh_file_converter.MeshFileConverter.define_output_path">[docs]</a>
-    <span class="k">def</span> <span class="nf">define_output_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_mesh_file</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">define_output_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_mesh_file</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        **Description**</span>
 
 <span class="sd">        This function will define the output path for the CONVERTED mesh file.</span>
@@ -677,7 +677,7 @@
 <span class="sd">        converted_mesh_file_path: Path</span>
 <span class="sd">            The output path for the converted mesh file.</span>
 <span class="sd">            This should be the same as the input mesh file, if given.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Input Processing</span>
         <span class="k">if</span> <span class="n">output_mesh_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">output_mesh_file</span>
@@ -690,57 +690,57 @@
             <span class="k">if</span> <span class="n">suffix</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">mesh_file_name</span><span class="p">):</span>
                 <span class="c1"># Strip off all parts of the file that might contain:</span>
                 <span class="c1"># - The package name</span>
-                <span class="c1"># - &quot;../&quot;</span>
-                <span class="c1"># - &quot;./&quot;</span>
+                <span class="c1"># - "../"</span>
+                <span class="c1"># - "./"</span>
                 <span class="n">clean_mesh_file_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">mesh_file_name</span><span class="p">)</span>
-                <span class="k">if</span> <span class="s2">&quot;package://&quot;</span> <span class="ow">in</span> <span class="n">clean_mesh_file_name</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s2">"package://"</span> <span class="ow">in</span> <span class="n">clean_mesh_file_name</span><span class="p">:</span>
                     <span class="n">clean_mesh_file_name</span> <span class="o">=</span> <span class="n">clean_mesh_file_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
-                        <span class="s2">&quot;package://&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span>
+                        <span class="s2">"package://"</span><span class="p">,</span> <span class="s2">""</span>
                     <span class="p">)</span>
                     <span class="n">clean_mesh_file_name</span> <span class="o">=</span> <span class="n">clean_mesh_file_name</span><span class="p">[</span>
-                        <span class="n">clean_mesh_file_name</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:</span>
+                        <span class="n">clean_mesh_file_name</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:</span>
                     <span class="p">]</span>
-                <span class="k">elif</span> <span class="s2">&quot;file://&quot;</span> <span class="ow">in</span> <span class="n">clean_mesh_file_name</span><span class="p">:</span>
-                    <span class="n">clean_mesh_file_name</span> <span class="o">=</span> <span class="n">clean_mesh_file_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;file://&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="s2">"file://"</span> <span class="ow">in</span> <span class="n">clean_mesh_file_name</span><span class="p">:</span>
+                    <span class="n">clean_mesh_file_name</span> <span class="o">=</span> <span class="n">clean_mesh_file_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"file://"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">clean_mesh_file_name</span><span class="p">):</span>
-                        <span class="c1"># If path is absolute, then let&#39;s save the new mesh file in a simplified way.</span>
+                        <span class="c1"># If path is absolute, then let's save the new mesh file in a simplified way.</span>
                         <span class="n">clean_mesh_file_name</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">clean_mesh_file_name</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">clean_mesh_file_name</span> <span class="o">=</span> <span class="n">clean_mesh_file_name</span><span class="p">[</span>
-                            <span class="n">clean_mesh_file_name</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:</span>
+                            <span class="n">clean_mesh_file_name</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:</span>
                         <span class="p">]</span>
 
-                <span class="n">clean_mesh_file_name</span> <span class="o">=</span> <span class="n">clean_mesh_file_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;../&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-                <span class="n">clean_mesh_file_name</span> <span class="o">=</span> <span class="n">clean_mesh_file_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;./&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                <span class="n">clean_mesh_file_name</span> <span class="o">=</span> <span class="n">clean_mesh_file_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"../"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
+                <span class="n">clean_mesh_file_name</span> <span class="o">=</span> <span class="n">clean_mesh_file_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"./"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
 
                 <span class="c1"># If we pass this point, then we know that the file type is supported</span>
                 <span class="c1"># Clean all parts of the file name that are not the name</span>
-                <span class="n">output_mesh_file</span> <span class="o">=</span> <span class="n">clean_mesh_file_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">suffix</span><span class="p">,</span> <span class="s2">&quot;.obj&quot;</span><span class="p">)</span>
+                <span class="n">output_mesh_file</span> <span class="o">=</span> <span class="n">clean_mesh_file_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">suffix</span><span class="p">,</span> <span class="s2">".obj"</span><span class="p">)</span>
 
                 <span class="c1"># Prepend a models directory to the path</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_mesh_directory</span> <span class="o">/</span> <span class="n">output_mesh_file</span>
 
         <span class="c1"># If we pass this point, then we know that the file type is not supported</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;File type </span><span class="si">{</span><span class="n">mesh_file_name</span><span class="si">}</span><span class="s2"> is not supported by this function!</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;Make sure that the file type is one of the following: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">supported_suffixes</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">"File type </span><span class="si">{</span><span class="n">mesh_file_name</span><span class="si">}</span><span class="s2"> is not supported by this function!</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="o">+</span> <span class="sa">f</span><span class="s2">"Make sure that the file type is one of the following: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">supported_suffixes</span><span class="si">}</span><span class="s2">"</span>
         <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="MeshFileConverter.find_file_path_in_package">
 <a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/drake_ready_urdf_converter/drake_ready_urdf_converter.html#brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.mesh_file_converter.MeshFileConverter.find_file_path_in_package">[docs]</a>
-    <span class="k">def</span> <span class="nf">find_file_path_in_package</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_file_path_in_package</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">max_depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description</span>
 <span class="sd">        -----------</span>
 <span class="sd">        This method will find the file path in the package.</span>
 
 <span class="sd">        :param max_depth: The maximum depth to search for the package directory.</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># Setup</span>
         <span class="n">mesh_file_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mesh_file</span>
@@ -752,21 +752,21 @@
 
         <span class="c1"># Create the output file path from what we now know</span>
         <span class="k">return</span> <span class="n">package_dir</span> <span class="o">/</span> <span class="n">Path</span><span class="p">(</span>
-            <span class="n">mesh_file_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;package://</span><span class="si">{</span><span class="n">package_name</span><span class="si">}</span><span class="s2">/&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">mesh_file_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">f</span><span class="s2">"package://</span><span class="si">{</span><span class="n">package_name</span><span class="si">}</span><span class="s2">/"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
         <span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">find_package_directory_including_mesh</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_package_directory_including_mesh</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">max_depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
         <span class="c1"># If ament_index_python is available (ROS 2 environment), use it directly.</span>
         <span class="k">if</span> <span class="n">_AMENT_INDEX_AVAILABLE</span><span class="p">:</span>
-            <span class="c1"># Extract the package name from &quot;package://pkg_name/...&quot;</span>
-            <span class="n">package_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mesh_file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="c1"># Extract the package name from "package://pkg_name/..."</span>
+            <span class="n">package_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mesh_file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span>
             <span class="n">package_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">get_package_share_directory</span><span class="p">(</span><span class="n">package_name</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;[MeshFileConverter] Resolved package &#39;</span><span class="si">{</span><span class="n">package_name</span><span class="si">}</span><span class="s2">&#39; via ament index at </span><span class="si">{</span><span class="n">package_dir</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">"[MeshFileConverter] Resolved package '</span><span class="si">{</span><span class="n">package_name</span><span class="si">}</span><span class="s2">' via ament index at </span><span class="si">{</span><span class="n">package_dir</span><span class="si">}</span><span class="s2">."</span>
             <span class="p">)</span>
             <span class="k">return</span> <span class="n">package_dir</span><span class="p">,</span> <span class="n">package_name</span>
 
@@ -777,9 +777,9 @@
         <span class="n">candidate_path</span> <span class="o">=</span> <span class="n">original_urdf_dir</span>
         <span class="n">search_depth</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="k">while</span> <span class="ow">not</span> <span class="n">package_found</span><span class="p">:</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">candidate_path</span> <span class="o">/</span> <span class="s2">&quot;package.xml&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">candidate_path</span> <span class="o">/</span> <span class="s2">"package.xml"</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;[MeshFileConverter] Found package path at </span><span class="si">{</span><span class="n">candidate_path</span><span class="si">}</span><span class="s2">.&quot;</span>
+                    <span class="sa">f</span><span class="s2">"[MeshFileConverter] Found package path at </span><span class="si">{</span><span class="n">candidate_path</span><span class="si">}</span><span class="s2">."</span>
                 <span class="p">)</span>
                 <span class="n">package_found</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">else</span><span class="p">:</span>
@@ -788,36 +788,36 @@
 
             <span class="k">if</span> <span class="n">search_depth</span> <span class="o">&gt;</span> <span class="n">max_depth</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Could not find package path for file </span><span class="si">{</span><span class="n">original_urdf_dir</span><span class="si">}</span><span class="s2"> after searching </span><span class="si">{</span><span class="n">max_depth</span><span class="si">}</span><span class="s2"> directories.&quot;</span>
+                    <span class="sa">f</span><span class="s2">"Could not find package path for file </span><span class="si">{</span><span class="n">original_urdf_dir</span><span class="si">}</span><span class="s2"> after searching </span><span class="si">{</span><span class="n">max_depth</span><span class="si">}</span><span class="s2"> directories."</span>
                 <span class="p">)</span>
 
         <span class="c1"># Should now have found the package directory</span>
         <span class="n">package_dir</span> <span class="o">=</span> <span class="n">candidate_path</span>
 
         <span class="c1"># Open the package.xml file and find the name of the package</span>
-        <span class="n">package_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">ElementTree</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">package_dir</span> <span class="o">/</span> <span class="s2">&quot;package.xml&quot;</span><span class="p">)</span>
+        <span class="n">package_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">ElementTree</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">package_dir</span> <span class="o">/</span> <span class="s2">"package.xml"</span><span class="p">)</span>
         <span class="n">package_root</span> <span class="o">=</span> <span class="n">package_xml</span><span class="o">.</span><span class="n">getroot</span><span class="p">()</span>
-        <span class="n">package_name</span> <span class="o">=</span> <span class="n">package_root</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+        <span class="n">package_name</span> <span class="o">=</span> <span class="n">package_root</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">"name"</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
 
         <span class="k">return</span> <span class="n">package_dir</span><span class="p">,</span> <span class="n">package_name</span>
 
 <div class="viewcode-block" id="MeshFileConverter.mesh_file_path_is_relative">
 <a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/drake_ready_urdf_converter/drake_ready_urdf_converter.html#brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.mesh_file_converter.MeshFileConverter.mesh_file_path_is_relative">[docs]</a>
-    <span class="k">def</span> <span class="nf">mesh_file_path_is_relative</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mesh_file_path_is_relative</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description:</span>
 <span class="sd">            This function will check if the mesh file path is relative.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Algorithm</span>
         <span class="n">mesh_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mesh_file</span>
 
         <span class="c1"># Ignore this if the mesh file contains a package prefix</span>
-        <span class="k">if</span> <span class="n">mesh_file</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;package:&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">mesh_file</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"package:"</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">False</span>
 
         <span class="c1"># Handle file:// URIs by checking whether the URI payload is absolute.</span>
-        <span class="k">if</span> <span class="n">mesh_file</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;file://&quot;</span><span class="p">):</span>
-            <span class="n">mesh_file</span> <span class="o">=</span> <span class="n">mesh_file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;file://&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mesh_file</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"file://"</span><span class="p">):</span>
+            <span class="n">mesh_file</span> <span class="o">=</span> <span class="n">mesh_file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"file://"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
             <span class="k">return</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">mesh_file</span><span class="p">)</span>
 
         <span class="c1"># Treat any non-package, non-absolute path (including ../...) as relative.</span>
@@ -825,34 +825,34 @@
 
 
         <span class="c1"># raise FileNotFoundError(</span>
-        <span class="c1">#     f&quot;File {complete_file_path} does not exist in directory {os.getcwd()}!&quot;</span>
+        <span class="c1">#     f"File {complete_file_path} does not exist in directory {os.getcwd()}!"</span>
         <span class="c1"># )</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">supported_suffixes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;.stl&quot;</span><span class="p">,</span> <span class="s2">&quot;.dae&quot;</span><span class="p">,</span> <span class="s2">&quot;.DAE&quot;</span><span class="p">,</span> <span class="s2">&quot;.STL&quot;</span><span class="p">,</span> <span class="s2">&quot;.obj&quot;</span><span class="p">,</span> <span class="s2">&quot;.OBJ&quot;</span><span class="p">,</span> <span class="s2">&quot;.ply&quot;</span><span class="p">,</span> <span class="s2">&quot;.PLY&quot;</span><span class="p">]</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">supported_suffixes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s2">".stl"</span><span class="p">,</span> <span class="s2">".dae"</span><span class="p">,</span> <span class="s2">".DAE"</span><span class="p">,</span> <span class="s2">".STL"</span><span class="p">,</span> <span class="s2">".obj"</span><span class="p">,</span> <span class="s2">".OBJ"</span><span class="p">,</span> <span class="s2">".ply"</span><span class="p">,</span> <span class="s2">".PLY"</span><span class="p">]</span>
 
 <div class="viewcode-block" id="MeshFileConverter.true_mesh_file_path">
 <a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/drake_ready_urdf_converter/drake_ready_urdf_converter.html#brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.mesh_file_converter.MeshFileConverter.true_mesh_file_path">[docs]</a>
-    <span class="k">def</span> <span class="nf">true_mesh_file_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">true_mesh_file_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description</span>
 <span class="sd">        -----------</span>
 <span class="sd">        This function will return the true mesh file path.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Algorithm</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mesh_file</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;package:&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mesh_file</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"package:"</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_file_path_in_package</span><span class="p">(</span><span class="n">max_depth</span><span class="o">=</span><span class="n">max_depth</span><span class="p">)</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">mesh_file_path_is_relative</span><span class="p">():</span>
-            <span class="n">mesh_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mesh_file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;file://&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">mesh_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mesh_file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"file://"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="n">mesh_file</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mesh_file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;file://&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)):</span>
-            <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mesh_file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;file://&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mesh_file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"file://"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mesh_file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"file://"</span><span class="p">,</span> <span class="s2">""</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Mesh file path </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mesh_file</span><span class="si">}</span><span class="s2"> is not supported by this function!</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="o">+</span> <span class="s1">&#39;Make sure that the &quot;filename&quot; attribute contains a relative path (e.g., starts with &quot;./&quot;)</span><span class="se">\n</span><span class="s1">&#39;</span>
-                <span class="s1">&#39; or a package path (i.e., starts with &quot;package:&quot;).&#39;</span>
+                <span class="sa">f</span><span class="s2">"Mesh file path </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mesh_file</span><span class="si">}</span><span class="s2"> is not supported by this function!</span><span class="se">\n</span><span class="s2">"</span>
+                <span class="o">+</span> <span class="s1">'Make sure that the "filename" attribute contains a relative path (e.g., starts with "./")</span><span class="se">\n</span><span class="s1">'</span>
+                <span class="s1">' or a package path (i.e., starts with "package:").'</span>
             <span class="p">)</span></div>
 </div>
 
@@ -888,7 +888,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../_static/documentation_options.js?v=722679d6"></script>
+</div><script src="../../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

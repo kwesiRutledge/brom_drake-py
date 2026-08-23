@@ -6,8 +6,8 @@
 <link rel="index" title="Index" href="../../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../../search.html"><link rel="next" title="with_static_wrist" href="../with_static_wrist/with_static_wrist.html"><link rel="prev" title="attempt_grasp" href="../attempt_grasp.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>with_puppeteer_wrist - brom_drake-py 0.5.6 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=acfd86a5" />
+        <title>with_puppeteer_wrist - brom_drake-py v0.0.0+githubActionDefault documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -162,7 +162,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../../index.html"><div class="brand">brom_drake-py 0.5.6 documentation</div></a>
+      <a href="../../../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +183,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.6 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -623,7 +623,7 @@ kFloorDrop</p>
 </dd>
 </dl>
 <p><em>Usage</em></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">brom_drake.productions.debug.grasping.attempt_grasp.with_puppeteer_wrist.phases</span> <span class="kn">import</span> <span class="n">AttemptGraspWithPuppeteerWristPhase</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.productions.debug.grasping.attempt_grasp.with_puppeteer_wrist.phases</span><span class="w"> </span><span class="kn">import</span> <span class="n">AttemptGraspWithPuppeteerWristPhase</span>
 <span class="c1"># or</span>
 <span class="c1"># from brom_drake.all import AttemptGraspWithPuppeteerWristPhase</span>
 
@@ -673,8 +673,8 @@ Default is the standard Configuration.</p>
 </dl>
 <p><em>Usage</em></p>
 <p>The user can create an instance of this production and simulate it to see if the grasp is successful in the following way:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">brom_drake.all</span> <span class="kn">import</span> <span class="n">drakeify_my_urdf</span><span class="p">,</span> <span class="n">GripperType</span><span class="p">,</span> <span class="n">MeshReplacementStrategy</span>
-<span class="kn">from</span> <span class="nn">brom_drake.productions</span> <span class="kn">import</span> <span class="n">AttemptGraspWithPuppeteerWrist</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.all</span><span class="w"> </span><span class="kn">import</span> <span class="n">drakeify_my_urdf</span><span class="p">,</span> <span class="n">GripperType</span><span class="p">,</span> <span class="n">MeshReplacementStrategy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.productions</span><span class="w"> </span><span class="kn">import</span> <span class="n">AttemptGraspWithPuppeteerWrist</span>
 
 <span class="c1"># Create erlenmeyer flask urdf</span>
 <span class="n">model_file</span> <span class="o">=</span> <span class="o">...</span> <span class="c1"># Some path to your urdf file</span>
@@ -703,14 +703,13 @@ Default is the standard Configuration.</p>
     <span class="n">meshcat_port_number</span><span class="o">=</span><span class="mi">7001</span><span class="p">,</span> <span class="c1"># Use None for CI</span>
 <span class="p">)</span>
 
-<span class="c1"># Build with watcher (so we can view the simulation&#39;s data in `brom/watcher/plots` which is helpful for debugging)</span>
+<span class="c1"># Build with watcher (so we can view the simulation's data in `brom/watcher/plots` which is helpful for debugging)</span>
 <span class="n">diagram</span><span class="p">,</span> <span class="n">diagram_context</span> <span class="o">=</span> <span class="n">production</span><span class="o">.</span><span class="n">add_cast_and_build</span><span class="p">()</span>
 <span class="n">script</span> <span class="o">=</span> <span class="n">production</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">script</span>
 
 <span class="c1"># Set up simulation</span>
 <span class="n">simulator</span> <span class="o">=</span> <span class="n">Simulator</span><span class="p">(</span><span class="n">diagram</span><span class="p">,</span> <span class="n">diagram_context</span><span class="p">)</span>
 <span class="n">simulator</span><span class="o">.</span><span class="n">set_target_realtime_rate</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
-<span class="n">simulator</span><span class="o">.</span><span class="n">set_publish_every_time_step</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">simulator</span><span class="o">.</span><span class="n">Initialize</span><span class="p">()</span>
 <span class="n">simulator</span><span class="o">.</span><span class="n">AdvanceTo</span><span class="p">(</span><span class="n">script</span><span class="o">.</span><span class="n">total_time</span><span class="p">())</span>
 </pre></div>
@@ -1204,7 +1203,7 @@ attempted grasp.</p>
       
     </aside>
   </div>
-</div><script src="../../../../../../_static/documentation_options.js?v=722679d6"></script>
+</div><script src="../../../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

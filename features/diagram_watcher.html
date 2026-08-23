@@ -6,8 +6,8 @@
 <link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="“Drakeify”-My-URDF" href="drakeify_my_urdf.html"><link rel="prev" title="Features" href="index.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>DiagramWatcher - brom_drake-py 0.5.6 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=acfd86a5" />
+        <title>DiagramWatcher - brom_drake-py v0.0.0+githubActionDefault documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -162,7 +162,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">brom_drake-py 0.5.6 documentation</div></a>
+      <a href="../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +183,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.6 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -570,7 +570,7 @@
 <section id="example-usage">
 <h2>Example Usage<a class="headerlink" href="#example-usage" title="Link to this heading">¶</a></h2>
 <p>A full example is shown in the <code class="code docutils literal notranslate"><span class="pre">examples/watcher</span></code> directory of the repository, but a partial example snippet is:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
 
     <span class="c1"># Building Diagram</span>
     <span class="n">time_step</span> <span class="o">=</span> <span class="mf">1e-3</span>
@@ -583,7 +583,7 @@
         <span class="n">builder</span><span class="p">,</span>
         <span class="n">plot_arrangement</span><span class="o">=</span><span class="n">PortFigureArrangement</span><span class="o">.</span><span class="n">OnePlotPerDim</span><span class="p">,</span>
         <span class="n">figure_naming_convention</span><span class="o">=</span><span class="n">FigureNamingConvention</span><span class="o">.</span><span class="n">kHierarchical</span><span class="p">,</span>
-        <span class="n">file_format</span><span class="o">=</span><span class="s2">&quot;svg&quot;</span><span class="p">,</span>
+        <span class="n">file_format</span><span class="o">=</span><span class="s2">"svg"</span><span class="p">,</span>
     <span class="p">)</span>
 </pre></div>
 </div>
@@ -607,12 +607,12 @@
 <p>It is recommended that you use the convenience function <code class="xref py py-func docutils literal notranslate"><span class="pre">add_watcher_and_build()</span></code> to add a
 <a class="reference internal" href="../generated/watchers/diagram_watcher/diagram_watcher.html#brom_drake.watchers.diagram_watcher.diagram_watcher.DiagramWatcher" title="brom_drake.watchers.diagram_watcher.diagram_watcher.DiagramWatcher"><code class="xref py py-class docutils literal notranslate"><span class="pre">DiagramWatcher</span></code></a> to your diagram.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Drake imports</span>
-<span class="kn">from</span> <span class="nn">pydrake.all</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.all</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">DiagramBuilder</span><span class="p">,</span> <span class="n">Simulator</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="c1"># All your other imports</span>
 
-<span class="kn">from</span> <span class="nn">brom_drake.all</span> <span class="kn">import</span> <span class="n">add_watcher_and_build</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.all</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_watcher_and_build</span>
 
 <span class="c1"># Create a diagram builder</span>
 <span class="n">builder</span> <span class="o">=</span> <span class="n">DiagramBuilder</span><span class="p">()</span>
@@ -652,8 +652,8 @@
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">watcher</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">add_watcher_and_build</span><span class="p">(</span>
     <span class="n">builder</span><span class="p">,</span>
     <span class="n">targets</span><span class="o">=</span><span class="p">[</span>
-        <span class="p">(</span><span class="s2">&quot;system_name&quot;</span><span class="p">,</span> <span class="s2">&quot;port_name&quot;</span><span class="p">),</span>
-        <span class="s2">&quot;system_name2&quot;</span><span class="p">,</span>
+        <span class="p">(</span><span class="s2">"system_name"</span><span class="p">,</span> <span class="s2">"port_name"</span><span class="p">),</span>
+        <span class="s2">"system_name2"</span><span class="p">,</span>
     <span class="p">],</span>
 <span class="p">)</span>
 </pre></div>
@@ -736,7 +736,7 @@
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=722679d6"></script>
+</div><script src="../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>

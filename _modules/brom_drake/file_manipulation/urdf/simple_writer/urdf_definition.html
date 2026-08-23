@@ -5,8 +5,8 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.file_manipulation.urdf.simple_writer.urdf_definition - brom_drake-py 0.5.6 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=acfd86a5" />
+        <title>brom_drake.file_manipulation.urdf.simple_writer.urdf_definition - brom_drake-py v0.0.0+githubActionDefault documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../index.html"><div class="brand">brom_drake-py 0.5.6 documentation</div></a>
+      <a href="../../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.6 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -551,38 +551,38 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for brom_drake.file_manipulation.urdf.simple_writer.urdf_definition</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""</span>
 <span class="sd">Description:</span>
 <span class="sd">    This file will contain utilities for quickly creating simple URDF files</span>
 <span class="sd">    to be used in debugging and testing.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="c1"># External Imports</span>
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">IntEnum</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">xml.etree.ElementTree</span> <span class="k">as</span> <span class="nn">ET</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntEnum</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">xml.etree.ElementTree</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ET</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">pydrake.math</span> <span class="kn">import</span> <span class="n">RigidTransform</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.math</span><span class="w"> </span><span class="kn">import</span> <span class="n">RigidTransform</span>
 
 <span class="c1"># Internal Imports</span>
-<span class="kn">from</span> <span class="nn">brom_drake.file_manipulation.urdf.shapes.shape_definition</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.file_manipulation.urdf.shapes.shape_definition</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">ShapeEnum</span><span class="p">,</span>
     <span class="n">ShapeDefinition</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">brom_drake.file_manipulation.urdf.simple_writer.inertia_definition</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.file_manipulation.urdf.simple_writer.inertia_definition</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">InertiaDefinition</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">brom_drake.directories</span> <span class="kn">import</span> <span class="n">DEFAULT_BROM_MODELS_DIR</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.directories</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_BROM_MODELS_DIR</span>
 
 
 <div class="viewcode-block" id="SimpleShapeURDFDefinition">
 <a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/simple_writer/simple_writer.html#brom_drake.file_manipulation.urdf.simple_writer.urdf_definition.SimpleShapeURDFDefinition">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">SimpleShapeURDFDefinition</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SimpleShapeURDFDefinition</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    *Description*</span>
 
 <span class="sd">    A simple shape along with the optional and required options to fully</span>
@@ -625,7 +625,7 @@
 <span class="sd">    is_hydroelastic: bool, optional</span>
 <span class="sd">        Whether to use hydroelastic collision for the shape.</span>
 <span class="sd">        Defaults to True.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">shape</span><span class="p">:</span> <span class="n">ShapeDefinition</span>
@@ -642,26 +642,26 @@
 
 <div class="viewcode-block" id="SimpleShapeURDFDefinition.as_urdf">
 <a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/simple_writer/simple_writer.html#brom_drake.file_manipulation.urdf.simple_writer.urdf_definition.SimpleShapeURDFDefinition.as_urdf">[docs]</a>
-    <span class="k">def</span> <span class="nf">as_urdf</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">as_urdf</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
-<span class="sd">        Create the URDF for the simple shape using python&#39;s built-in xml library.</span>
+<span class="sd">        Create the URDF for the simple shape using python's built-in xml library.</span>
 
 <span class="sd">        *Returns*</span>
 
 <span class="sd">        xml.etree.ElementTree.Element</span>
 <span class="sd">            The root element of the desired URDF.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
         <span class="n">root</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span>
-            <span class="s2">&quot;robot&quot;</span><span class="p">,</span>
+            <span class="s2">"robot"</span><span class="p">,</span>
             <span class="p">{</span>
-                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_robot&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;xmlns:drake&quot;</span><span class="p">:</span> <span class="s2">&quot;http://drake.mit.edu&quot;</span><span class="p">,</span>
+                <span class="s2">"name"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">"_robot"</span><span class="p">,</span>
+                <span class="s2">"xmlns:drake"</span><span class="p">:</span> <span class="s2">"http://drake.mit.edu"</span><span class="p">,</span>
             <span class="p">},</span>
         <span class="p">)</span>
-        <span class="n">link</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s2">&quot;link&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_link_name</span><span class="p">})</span>
+        <span class="n">link</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s2">"link"</span><span class="p">,</span> <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_link_name</span><span class="p">})</span>
 
         <span class="c1"># Add inertial elements to link</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_inertial_elements_to</span><span class="p">(</span><span class="n">link</span><span class="p">)</span>
@@ -678,8 +678,8 @@
 
 <div class="viewcode-block" id="SimpleShapeURDFDefinition.add_inertial_elements_to">
 <a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/simple_writer/simple_writer.html#brom_drake.file_manipulation.urdf.simple_writer.urdf_definition.SimpleShapeURDFDefinition.add_inertial_elements_to">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_inertial_elements_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">link_elt</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_inertial_elements_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">link_elt</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
 <span class="sd">        Add the inertial elements to the link element.</span>
@@ -692,19 +692,19 @@
 <span class="sd">        *Returns*</span>
 
 <span class="sd">        Nothing, but modifies the link_elt in place.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
-        <span class="n">inertial_link</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">link_elt</span><span class="p">,</span> <span class="s2">&quot;inertial&quot;</span><span class="p">)</span>
+        <span class="n">inertial_link</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">link_elt</span><span class="p">,</span> <span class="s2">"inertial"</span><span class="p">)</span>
         <span class="n">inertia_def</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inertia</span>
         <span class="k">if</span> <span class="n">inertia_def</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">inertia_def</span> <span class="o">=</span> <span class="n">InertiaDefinition</span><span class="p">()</span>
 
         <span class="c1"># Create all child links for inertial elements</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_origin_element_to</span><span class="p">(</span><span class="n">inertial_link</span><span class="p">)</span>
-        <span class="n">mass</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">inertial_link</span><span class="p">,</span> <span class="s2">&quot;mass&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mass</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">})</span>
+        <span class="n">mass</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">inertial_link</span><span class="p">,</span> <span class="s2">"mass"</span><span class="p">,</span> <span class="p">{</span><span class="s2">"value"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mass</span><span class="si">}</span><span class="s2">"</span><span class="p">})</span>
         <span class="n">inertia</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span>
             <span class="n">inertial_link</span><span class="p">,</span>
-            <span class="s2">&quot;inertia&quot;</span><span class="p">,</span>
+            <span class="s2">"inertia"</span><span class="p">,</span>
             <span class="n">inertia_def</span><span class="o">.</span><span class="n">as_map</span><span class="p">(),</span>
         <span class="p">)</span>
 
@@ -714,8 +714,8 @@
 
 <div class="viewcode-block" id="SimpleShapeURDFDefinition.add_visual_elements_to">
 <a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/simple_writer/simple_writer.html#brom_drake.file_manipulation.urdf.simple_writer.urdf_definition.SimpleShapeURDFDefinition.add_visual_elements_to">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_visual_elements_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">link_elt</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_visual_elements_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">link_elt</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
 <span class="sd">        Add the visual elements to the link element.</span>
@@ -728,33 +728,33 @@
 <span class="sd">        *Returns*</span>
 
 <span class="sd">        Nothing, but modifies the link_elt in place.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
-        <span class="n">visual_link</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">link_elt</span><span class="p">,</span> <span class="s2">&quot;visual&quot;</span><span class="p">)</span>
+        <span class="n">visual_link</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">link_elt</span><span class="p">,</span> <span class="s2">"visual"</span><span class="p">)</span>
         <span class="n">color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">color</span>
         <span class="k">if</span> <span class="n">color</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">color</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">])</span>
 
         <span class="c1"># Create all child links for visual elements</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_origin_element_to</span><span class="p">(</span><span class="n">visual_link</span><span class="p">)</span>
-        <span class="n">geometry</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">visual_link</span><span class="p">,</span> <span class="s2">&quot;geometry&quot;</span><span class="p">)</span>
+        <span class="n">geometry</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">visual_link</span><span class="p">,</span> <span class="s2">"geometry"</span><span class="p">)</span>
 
         <span class="c1"># Add the shape to the geometry element</span>
         <span class="n">shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">add_geometry_to_element</span><span class="p">(</span><span class="n">geometry</span><span class="p">)</span>
 
         <span class="c1"># Add the material to the visual element</span>
-        <span class="n">material</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">visual_link</span><span class="p">,</span> <span class="s2">&quot;material&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;blue&quot;</span><span class="p">})</span>
+        <span class="n">material</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">visual_link</span><span class="p">,</span> <span class="s2">"material"</span><span class="p">,</span> <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"blue"</span><span class="p">})</span>
         <span class="n">color</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span>
             <span class="n">material</span><span class="p">,</span>
-            <span class="s2">&quot;color&quot;</span><span class="p">,</span>
-            <span class="p">{</span><span class="s2">&quot;rgba&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">color</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">color</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">color</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">color</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">},</span>
+            <span class="s2">"color"</span><span class="p">,</span>
+            <span class="p">{</span><span class="s2">"rgba"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">color</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">color</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">color</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">color</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">},</span>
         <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="SimpleShapeURDFDefinition.add_collision_elements_to">
 <a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/simple_writer/simple_writer.html#brom_drake.file_manipulation.urdf.simple_writer.urdf_definition.SimpleShapeURDFDefinition.add_collision_elements_to">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_collision_elements_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">link_elt</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_collision_elements_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">link_elt</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
 <span class="sd">        Add the collision elements to the link element.</span>
@@ -766,13 +766,13 @@
 
 <span class="sd">        *Returns*</span>
 <span class="sd">        Nothing, but modifies the link_elt in place.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
-        <span class="n">collision_link</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">link_elt</span><span class="p">,</span> <span class="s2">&quot;collision&quot;</span><span class="p">)</span>
+        <span class="n">collision_link</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">link_elt</span><span class="p">,</span> <span class="s2">"collision"</span><span class="p">)</span>
 
         <span class="c1"># Add pose to collision element</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_origin_element_to</span><span class="p">(</span><span class="n">collision_link</span><span class="p">)</span>
-        <span class="n">geometry</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">collision_link</span><span class="p">,</span> <span class="s2">&quot;geometry&quot;</span><span class="p">)</span>
+        <span class="n">geometry</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">collision_link</span><span class="p">,</span> <span class="s2">"geometry"</span><span class="p">)</span>
 
         <span class="c1"># Add the shape to the geometry element</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">add_geometry_to_element</span><span class="p">(</span><span class="n">geometry</span><span class="p">)</span>
@@ -783,8 +783,8 @@
 
 <div class="viewcode-block" id="SimpleShapeURDFDefinition.add_proximity_properties_to">
 <a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/simple_writer/simple_writer.html#brom_drake.file_manipulation.urdf.simple_writer.urdf_definition.SimpleShapeURDFDefinition.add_proximity_properties_to">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_proximity_properties_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">collision_elt</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_proximity_properties_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">collision_elt</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
 <span class="sd">        Add the proximity properties to the collision element.</span>
@@ -797,31 +797,31 @@
 <span class="sd">        *Returns*</span>
 
 <span class="sd">        Nothing, but modifies the collision_elt in place.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
-        <span class="n">proximity_properties</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">collision_elt</span><span class="p">,</span> <span class="s2">&quot;proximity_properties&quot;</span><span class="p">)</span>
+        <span class="n">proximity_properties</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">collision_elt</span><span class="p">,</span> <span class="s2">"proximity_properties"</span><span class="p">)</span>
 
         <span class="c1"># Create mu_static element</span>
         <span class="n">mu_static</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span>
-            <span class="n">proximity_properties</span><span class="p">,</span> <span class="s2">&quot;drake:mu_static&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mu_static</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}</span>
+            <span class="n">proximity_properties</span><span class="p">,</span> <span class="s2">"drake:mu_static"</span><span class="p">,</span> <span class="p">{</span><span class="s2">"value"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mu_static</span><span class="si">}</span><span class="s2">"</span><span class="p">}</span>
         <span class="p">)</span>
 
         <span class="c1"># Create mu_dynamic element</span>
         <span class="n">mu_dynamic</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span>
-            <span class="n">proximity_properties</span><span class="p">,</span> <span class="s2">&quot;drake:mu_dynamic&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mu_dynamic</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}</span>
+            <span class="n">proximity_properties</span><span class="p">,</span> <span class="s2">"drake:mu_dynamic"</span><span class="p">,</span> <span class="p">{</span><span class="s2">"value"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mu_dynamic</span><span class="si">}</span><span class="s2">"</span><span class="p">}</span>
         <span class="p">)</span>
 
         <span class="c1"># Create is_hydroelastic element</span>
         <span class="n">hydroelastic</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span>
             <span class="n">proximity_properties</span><span class="p">,</span>
-            <span class="s2">&quot;drake:rigid_hydroelastic&quot;</span><span class="p">,</span>
+            <span class="s2">"drake:rigid_hydroelastic"</span><span class="p">,</span>
         <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="SimpleShapeURDFDefinition.add_origin_element_to">
 <a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/simple_writer/simple_writer.html#brom_drake.file_manipulation.urdf.simple_writer.urdf_definition.SimpleShapeURDFDefinition.add_origin_element_to">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_origin_element_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_element</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_origin_element_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_element</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
 <span class="sd">        Add the origin element to the target element.</span>
@@ -833,23 +833,23 @@
 
 <span class="sd">        *Returns*</span>
 <span class="sd">        Nothing, but modifies the target_element in place.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
         <span class="n">translation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pose</span><span class="o">.</span><span class="n">translation</span><span class="p">()</span>
         <span class="n">rot_as_rpy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pose</span><span class="o">.</span><span class="n">rotation</span><span class="p">()</span><span class="o">.</span><span class="n">ToRollPitchYaw</span><span class="p">()</span>
         <span class="n">origin_elt</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span>
             <span class="n">target_element</span><span class="p">,</span>
-            <span class="s2">&quot;origin&quot;</span><span class="p">,</span>
+            <span class="s2">"origin"</span><span class="p">,</span>
             <span class="p">{</span>
-                <span class="s2">&quot;xyz&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">translation</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">translation</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">translation</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;rpy&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">rot_as_rpy</span><span class="o">.</span><span class="n">roll_angle</span><span class="p">()</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">rot_as_rpy</span><span class="o">.</span><span class="n">pitch_angle</span><span class="p">()</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">rot_as_rpy</span><span class="o">.</span><span class="n">yaw_angle</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="s2">"xyz"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">translation</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">translation</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">translation</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+                <span class="s2">"rpy"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">rot_as_rpy</span><span class="o">.</span><span class="n">roll_angle</span><span class="p">()</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">rot_as_rpy</span><span class="o">.</span><span class="n">pitch_angle</span><span class="p">()</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">rot_as_rpy</span><span class="o">.</span><span class="n">yaw_angle</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
             <span class="p">},</span>
         <span class="p">)</span></div>
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">base_link_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">base_link_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
 <span class="sd">        The name of the base link.</span>
@@ -858,13 +858,13 @@
 
 <span class="sd">        str</span>
 <span class="sd">            The name of the base link.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_base_link&quot;</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">"_base_link"</span>
 
 <div class="viewcode-block" id="SimpleShapeURDFDefinition.write_to_file">
 <a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/simple_writer/simple_writer.html#brom_drake.file_manipulation.urdf.simple_writer.urdf_definition.SimpleShapeURDFDefinition.write_to_file">[docs]</a>
-    <span class="k">def</span> <span class="nf">write_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">write_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
 <span class="sd">        Write the URDF to a file.</span>
@@ -878,17 +878,17 @@
 
 <span class="sd">        Path</span>
 <span class="sd">            The path to the file where the URDF was written.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
         <span class="n">root</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">as_urdf</span><span class="p">()</span>
         <span class="n">tree</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">ElementTree</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
-        <span class="n">ET</span><span class="o">.</span><span class="n">indent</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="n">space</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">ET</span><span class="o">.</span><span class="n">indent</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="n">space</span><span class="o">=</span><span class="s2">"</span><span class="se">\t</span><span class="s2">"</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
         <span class="c1"># Input Processing</span>
         <span class="k">if</span> <span class="n">file_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">file_path</span> <span class="o">=</span> <span class="n">DEFAULT_BROM_MODELS_DIR</span> <span class="o">/</span> <span class="s2">&quot;shapes&quot;</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">.urdf&quot;</span>
+            <span class="n">file_path</span> <span class="o">=</span> <span class="n">DEFAULT_BROM_MODELS_DIR</span> <span class="o">/</span> <span class="s2">"shapes"</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">.urdf"</span>
 
-        <span class="c1"># Create the directory if it doesn&#39;t exist</span>
+        <span class="c1"># Create the directory if it doesn't exist</span>
         <span class="n">fp_as_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
         <span class="n">fp_as_path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
@@ -930,7 +930,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../_static/documentation_options.js?v=722679d6"></script>
+</div><script src="../../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

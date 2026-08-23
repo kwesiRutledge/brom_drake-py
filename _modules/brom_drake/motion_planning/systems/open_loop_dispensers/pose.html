@@ -5,8 +5,8 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.motion_planning.systems.open_loop_dispensers.pose - brom_drake-py 0.5.6 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=acfd86a5" />
+        <title>brom_drake.motion_planning.systems.open_loop_dispensers.pose - brom_drake-py v0.0.0+githubActionDefault documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../index.html"><div class="brand">brom_drake-py 0.5.6 documentation</div></a>
+      <a href="../../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.6 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -551,27 +551,27 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for brom_drake.motion_planning.systems.open_loop_dispensers.pose</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">IntEnum</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">pydrake.all</span> <span class="kn">import</span> <span class="n">RigidTransform</span>
-<span class="kn">from</span> <span class="nn">pydrake.common.value</span> <span class="kn">import</span> <span class="n">AbstractValue</span>
-<span class="kn">from</span> <span class="nn">pydrake.systems.framework</span> <span class="kn">import</span> <span class="n">LeafSystem</span><span class="p">,</span> <span class="n">Context</span><span class="p">,</span> <span class="n">BasicVector</span>
-<span class="kn">from</span> <span class="nn">pydrake.trajectories</span> <span class="kn">import</span> <span class="p">(</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntEnum</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.all</span><span class="w"> </span><span class="kn">import</span> <span class="n">RigidTransform</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.common.value</span><span class="w"> </span><span class="kn">import</span> <span class="n">AbstractValue</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.systems.framework</span><span class="w"> </span><span class="kn">import</span> <span class="n">LeafSystem</span><span class="p">,</span> <span class="n">Context</span><span class="p">,</span> <span class="n">BasicVector</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.trajectories</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">PiecewisePose</span><span class="p">,</span>
     <span class="n">PiecewisePolynomial</span><span class="p">,</span>
     <span class="n">PiecewiseQuaternionSlerp</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="c1"># Internal Imports</span>
-<span class="kn">from</span> <span class="nn">brom_drake.motion_planning.systems.state_of_plan_in_memory</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.motion_planning.systems.state_of_plan_in_memory</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">StateOfPlanInMemory</span><span class="p">,</span>
 <span class="p">)</span>
 
 
 <div class="viewcode-block" id="OpenLoopPosePlanDispenser">
 <a class="viewcode-back" href="../../../../../generated/motion_planning/systems/open_loop_dispensers/open_loop_dispensers.html#brom_drake.motion_planning.systems.open_loop_dispensers.pose.OpenLoopPosePlanDispenser">[docs]</a>
-<span class="k">class</span> <span class="nc">OpenLoopPosePlanDispenser</span><span class="p">(</span><span class="n">LeafSystem</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">OpenLoopPosePlanDispenser</span><span class="p">(</span><span class="n">LeafSystem</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">speed</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>  <span class="c1"># Speed at which to proceed through points.</span>
     <span class="p">):</span>
@@ -586,12 +586,12 @@
         <span class="n">sample_plan</span> <span class="o">=</span> <span class="p">[</span><span class="n">RigidTransform</span><span class="p">()]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">t0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">t_final</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plan_port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DeclareAbstractInputPort</span><span class="p">(</span>
-            <span class="s2">&quot;plan&quot;</span><span class="p">,</span>
+            <span class="s2">"plan"</span><span class="p">,</span>
             <span class="n">AbstractValue</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="n">sample_plan</span><span class="p">),</span>
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">plan_ready_port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DeclareAbstractInputPort</span><span class="p">(</span>
-            <span class="s2">&quot;plan_ready&quot;</span><span class="p">,</span>
+            <span class="s2">"plan_ready"</span><span class="p">,</span>
             <span class="n">AbstractValue</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="kc">False</span><span class="p">),</span>
         <span class="p">)</span>
 
@@ -604,20 +604,20 @@
 
 <div class="viewcode-block" id="OpenLoopPosePlanDispenser.define_output_ports">
 <a class="viewcode-back" href="../../../../../generated/motion_planning/systems/open_loop_dispensers/open_loop_dispensers.html#brom_drake.motion_planning.systems.open_loop_dispensers.pose.OpenLoopPosePlanDispenser.define_output_ports">[docs]</a>
-    <span class="k">def</span> <span class="nf">define_output_ports</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">define_output_ports</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description</span>
 <span class="sd">        -----------</span>
 <span class="sd">        This method defines the output ports for this system.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">DeclareAbstractOutputPort</span><span class="p">(</span>
-            <span class="s2">&quot;pose_in_plan&quot;</span><span class="p">,</span>
+            <span class="s2">"pose_in_plan"</span><span class="p">,</span>
             <span class="k">lambda</span><span class="p">:</span> <span class="n">AbstractValue</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="n">RigidTransform</span><span class="p">()),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">GetCurrentPoseInPlan</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">DeclareAbstractOutputPort</span><span class="p">(</span>
-            <span class="s2">&quot;plan_is_set&quot;</span><span class="p">,</span>
+            <span class="s2">"plan_is_set"</span><span class="p">,</span>
             <span class="k">lambda</span><span class="p">:</span> <span class="n">AbstractValue</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="n">StateOfPlanInMemory</span><span class="o">.</span><span class="n">kNotSet</span><span class="p">),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">GetStateOfPlanInMemory</span><span class="p">,</span>
             <span class="p">{</span>
@@ -629,20 +629,20 @@
         <span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">GetCurrentPoseInPlan</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">output_point</span><span class="p">:</span> <span class="n">AbstractValue</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">GetCurrentPoseInPlan</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">output_point</span><span class="p">:</span> <span class="n">AbstractValue</span><span class="p">):</span>
         <span class="c1"># Setup</span>
         <span class="n">plan_is_ready</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plan_ready_port</span><span class="o">.</span><span class="n">Eval</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
 
         <span class="c1"># Get the abstract state</span>
         <span class="n">abstract_state</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get_discrete_state</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state_of_plan_in_memory_idx</span><span class="p">)</span>
 
-        <span class="c1"># If plan isn&#39;t ready, then skip the rest of the logic</span>
+        <span class="c1"># If plan isn't ready, then skip the rest of the logic</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">plan_is_ready</span><span class="p">:</span>
             <span class="n">output_point</span><span class="o">.</span><span class="n">SetFrom</span><span class="p">(</span><span class="n">AbstractValue</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="n">RigidTransform</span><span class="p">()))</span>
             <span class="k">return</span>
 
         <span class="c1"># If this is the first time that plan_is_ready, then</span>
-        <span class="c1"># let&#39;s save the current time as the time when the plan starts</span>
+        <span class="c1"># let's save the current time as the time when the plan starts</span>
         <span class="k">if</span> <span class="n">abstract_state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">StateOfPlanInMemory</span><span class="o">.</span><span class="n">kNotSet</span><span class="p">:</span>
             <span class="c1"># Initialize the system to handle the new plan</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">initialize_system_for_new_plan</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
@@ -673,13 +673,13 @@
 
 <div class="viewcode-block" id="OpenLoopPosePlanDispenser.find_time_between_two_points">
 <a class="viewcode-back" href="../../../../../generated/motion_planning/systems/open_loop_dispensers/open_loop_dispensers.html#brom_drake.motion_planning.systems.open_loop_dispensers.pose.OpenLoopPosePlanDispenser.find_time_between_two_points">[docs]</a>
-    <span class="k">def</span> <span class="nf">find_time_between_two_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">x2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_time_between_two_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">x2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description</span>
 <span class="sd">        -----------</span>
 <span class="sd">        This method computes the time that it will take to move between two points.</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
 
         <span class="c1"># Compute the distance between the two points</span>
@@ -689,8 +689,8 @@
 
 <div class="viewcode-block" id="OpenLoopPosePlanDispenser.initialize_system_for_new_plan">
 <a class="viewcode-back" href="../../../../../generated/motion_planning/systems/open_loop_dispensers/open_loop_dispensers.html#brom_drake.motion_planning.systems.open_loop_dispensers.pose.OpenLoopPosePlanDispenser.initialize_system_for_new_plan">[docs]</a>
-    <span class="k">def</span> <span class="nf">initialize_system_for_new_plan</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">initialize_system_for_new_plan</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description</span>
 <span class="sd">        -----------</span>
 <span class="sd">        This function should lock a couple of things into memory for this object to handle future</span>
@@ -698,7 +698,7 @@
 
 <span class="sd">        :param context:</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
 
         <span class="c1"># Get time to start executing the plan</span>
@@ -738,8 +738,8 @@
 
 <div class="viewcode-block" id="OpenLoopPosePlanDispenser.GetStateOfPlanInMemory">
 <a class="viewcode-back" href="../../../../../generated/motion_planning/systems/open_loop_dispensers/open_loop_dispensers.html#brom_drake.motion_planning.systems.open_loop_dispensers.pose.OpenLoopPosePlanDispenser.GetStateOfPlanInMemory">[docs]</a>
-    <span class="k">def</span> <span class="nf">GetStateOfPlanInMemory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="n">AbstractValue</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plan is set if and only if the internal variable is not None.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">GetStateOfPlanInMemory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="n">AbstractValue</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Plan is set if and only if the internal variable is not None."""</span>
         <span class="n">output</span><span class="o">.</span><span class="n">SetFrom</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">get_abstract_state</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state_of_plan_in_memory_idx</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span></div>
 </div>
 
@@ -775,7 +775,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../_static/documentation_options.js?v=722679d6"></script>
+</div><script src="../../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

@@ -5,8 +5,8 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.productions.roles.role - brom_drake-py 0.5.6 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=acfd86a5" />
+        <title>brom_drake.productions.roles.role - brom_drake-py v0.0.0+githubActionDefault documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">brom_drake-py 0.5.6 documentation</div></a>
+      <a href="../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.6 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -551,34 +551,34 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for brom_drake.productions.roles.role</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""</span>
 <span class="sd">Description:</span>
 <span class="sd">    This file defines a Role class that is used to populate the</span>
 <span class="sd">    production with ONLY systems that match the appropriate structure/signature.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
 
-<span class="kn">from</span> <span class="nn">pydrake.systems.framework</span> <span class="kn">import</span> <span class="n">DiagramBuilder</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.systems.framework</span><span class="w"> </span><span class="kn">import</span> <span class="n">DiagramBuilder</span>
 
-<span class="kn">from</span> <span class="nn">brom_drake.productions.roles.role_port_assignment</span> <span class="kn">import</span> <span class="n">RolePortAssignment</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.productions.roles.role_port_assignment</span><span class="w"> </span><span class="kn">import</span> <span class="n">RolePortAssignment</span>
 
 <span class="c1"># Internal Imports</span>
-<span class="kn">from</span> <span class="nn">brom_drake.utils</span> <span class="kn">import</span> <span class="n">Performer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">Performer</span>
 
 
 <div class="viewcode-block" id="Role">
 <a class="viewcode-back" href="../../../../generated/productions/roles/roles.html#brom_drake.productions.roles.role.Role">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">Role</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Role</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    *Description*</span>
 
-<span class="sd">    This class defines a &quot;slot&quot; to be filled in a Drake Diagram.</span>
+<span class="sd">    This class defines a "slot" to be filled in a Drake Diagram.</span>
 <span class="sd">    A name is used for unique identification and a description is (optionally)</span>
 <span class="sd">    used to describe what is expected of a drake LeafSystem (or Diagram) that</span>
-<span class="sd">    properly &quot;fills the role&quot; (i.e., fills the slot) in a Drake Diagram.</span>
+<span class="sd">    properly "fills the role" (i.e., fills the slot) in a Drake Diagram.</span>
 
 <span class="sd">    *Parameters*</span>
 
@@ -602,39 +602,39 @@
 <span class="sd">        from brom_drake.productions.roles.role_port_assignment import PairingType</span>
 
 <span class="sd">        kGraspConfirmer = Role(</span>
-<span class="sd">            name=&quot;Confirm-When-Grasp-Worked&quot;,</span>
-<span class="sd">            description=&quot;Attempts to define with a boolean whether or not the object we&#39;re interested in is currently in our grasp.&quot;,</span>
+<span class="sd">            name="Confirm-When-Grasp-Worked",</span>
+<span class="sd">            description="Attempts to define with a boolean whether or not the object we're interested in is currently in our grasp.",</span>
 <span class="sd">            port_assignments=[</span>
 <span class="sd">                # Required inputs for Role</span>
 <span class="sd">                RolePortAssignment(</span>
-<span class="sd">                    external_target_name=&quot;target_cube_pose&quot;,</span>
-<span class="sd">                    performer_port_name=&quot;current_manipuland_pose&quot;,</span>
+<span class="sd">                    external_target_name="target_cube_pose",</span>
+<span class="sd">                    performer_port_name="current_manipuland_pose",</span>
 <span class="sd">                    pairing_type=PairingType.kInput</span>
 <span class="sd">                ),</span>
 <span class="sd">                RolePortAssignment(</span>
-<span class="sd">                    external_target_name=&quot;cube_model_idx&quot;,</span>
-<span class="sd">                    performer_port_name=&quot;object_model_index&quot;,</span>
+<span class="sd">                    external_target_name="cube_model_idx",</span>
+<span class="sd">                    performer_port_name="object_model_index",</span>
 <span class="sd">                    pairing_type=PairingType.kInput</span>
 <span class="sd">                ),</span>
 <span class="sd">                RolePortAssignment(</span>
-<span class="sd">                    external_target_name=&quot;gripper_pose&quot;,</span>
-<span class="sd">                    performer_port_name=&quot;gripper_pose&quot;,</span>
+<span class="sd">                    external_target_name="gripper_pose",</span>
+<span class="sd">                    performer_port_name="gripper_pose",</span>
 <span class="sd">                    pairing_type=PairingType.kInput,</span>
 <span class="sd">                ),</span>
 <span class="sd">                RolePortAssignment(</span>
-<span class="sd">                    external_target_name=&quot;production_gripper_model_idx&quot;,</span>
-<span class="sd">                    performer_port_name=&quot;gripper_model_index&quot;,</span>
+<span class="sd">                    external_target_name="production_gripper_model_idx",</span>
+<span class="sd">                    performer_port_name="gripper_model_index",</span>
 <span class="sd">                    pairing_type=PairingType.kInput</span>
 <span class="sd">                ),</span>
 <span class="sd">                RolePortAssignment(</span>
-<span class="sd">                    external_target_name=&quot;gripper_configuration&quot;,</span>
-<span class="sd">                    performer_port_name=&quot;gripper_configuration&quot;,</span>
+<span class="sd">                    external_target_name="gripper_configuration",</span>
+<span class="sd">                    performer_port_name="gripper_configuration",</span>
 <span class="sd">                    pairing_type=PairingType.kInput,</span>
 <span class="sd">                ),</span>
 <span class="sd">                # Output Of Role</span>
 <span class="sd">                RolePortAssignment(</span>
-<span class="sd">                    external_target_name=&quot;grasp_complete&quot;,</span>
-<span class="sd">                    performer_port_name=&quot;grasp_success_flag&quot;,</span>
+<span class="sd">                    external_target_name="grasp_complete",</span>
+<span class="sd">                    performer_port_name="grasp_success_flag",</span>
 <span class="sd">                    pairing_type=PairingType.kOutput,</span>
 <span class="sd">                )</span>
 <span class="sd">            ]</span>
@@ -643,44 +643,44 @@
 
 <span class="sd">    The above example defines a Role with:</span>
 
-<span class="sd">    - name: ``&quot;Confirm-When-Grasp-Worked&quot;``</span>
+<span class="sd">    - name: ``"Confirm-When-Grasp-Worked"``</span>
 <span class="sd">    - Required Input Ports:</span>
-<span class="sd">        + ``&quot;current_manipuland_pose&quot;``</span>
-<span class="sd">        + ``&quot;object_model_index&quot;``</span>
-<span class="sd">        + ``&quot;gripper_pose&quot;``</span>
-<span class="sd">        + ``&quot;gripper_model_index&quot;``</span>
-<span class="sd">        + ``&quot;gripper_configuration&quot;``</span>
+<span class="sd">        + ``"current_manipuland_pose"``</span>
+<span class="sd">        + ``"object_model_index"``</span>
+<span class="sd">        + ``"gripper_pose"``</span>
+<span class="sd">        + ``"gripper_model_index"``</span>
+<span class="sd">        + ``"gripper_configuration"``</span>
 <span class="sd">    - Required Output Port:</span>
-<span class="sd">        + ``&quot;grasp_success_flag&quot;``</span>
+<span class="sd">        + ``"grasp_success_flag"``</span>
 <span class="sd">    - Required Ports to exist *somewhere else in the Diagram*:</span>
-<span class="sd">        + ``&quot;target_cube_pose&quot;``</span>
-<span class="sd">        + ``&quot;cube_model_idx&quot;``</span>
-<span class="sd">        + ``&quot;gripper_pose&quot;``</span>
-<span class="sd">        + ``&quot;production_gripper_model_idx&quot;``</span>
-<span class="sd">        + ``&quot;gripper_configuration&quot;``</span>
-<span class="sd">        + ``&quot;grasp_complete&quot;``</span>
+<span class="sd">        + ``"target_cube_pose"``</span>
+<span class="sd">        + ``"cube_model_idx"``</span>
+<span class="sd">        + ``"gripper_pose"``</span>
+<span class="sd">        + ``"production_gripper_model_idx"``</span>
+<span class="sd">        + ``"gripper_configuration"``</span>
+<span class="sd">        + ``"grasp_complete"``</span>
 
 <span class="sd">    Without all of these satisfied, we can not successfully place</span>
-<span class="sd">    a `LeafSystem` into a Production that expects the ``&quot;Confirm-When-Grasp-Worked&quot;``</span>
+<span class="sd">    a `LeafSystem` into a Production that expects the ``"Confirm-When-Grasp-Worked"``</span>
 <span class="sd">    role.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">description</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">port_assignments</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">RolePortAssignment</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
 
 <div class="viewcode-block" id="Role.connect_performer_ports_to">
 <a class="viewcode-back" href="../../../../generated/productions/roles/roles.html#brom_drake.productions.roles.role.Role.connect_performer_ports_to">[docs]</a>
-    <span class="k">def</span> <span class="nf">connect_performer_ports_to</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">connect_performer_ports_to</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">builder</span><span class="p">:</span> <span class="n">DiagramBuilder</span><span class="p">,</span>
         <span class="n">performer</span><span class="p">:</span> <span class="n">Performer</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
 <span class="sd">        Connect each inputs and output port mentioned in `self.port_assignments`</span>
@@ -698,7 +698,7 @@
 
 <span class="sd">        performer: Performer</span>
 <span class="sd">            The object that we think can fill the role defined by self.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
 
         <span class="c1"># Add performer to builder</span>
@@ -741,7 +741,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=722679d6"></script>
+</div><script src="../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>

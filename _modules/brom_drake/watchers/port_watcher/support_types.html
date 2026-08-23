@@ -5,8 +5,8 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.watchers.port_watcher.support_types - brom_drake-py 0.5.6 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=acfd86a5" />
+        <title>brom_drake.watchers.port_watcher.support_types - brom_drake-py v0.0.0+githubActionDefault documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">brom_drake-py 0.5.6 documentation</div></a>
+      <a href="../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.6 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -551,20 +551,20 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for brom_drake.watchers.port_watcher.support_types</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">brom_drake.utils.type_checking</span> <span class="kn">import</span> <span class="n">is_rigid_transform</span>
-<span class="kn">from</span> <span class="nn">pydrake.systems.framework</span> <span class="kn">import</span> <span class="n">OutputPort</span><span class="p">,</span> <span class="n">PortDataType</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.utils.type_checking</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_rigid_transform</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.systems.framework</span><span class="w"> </span><span class="kn">import</span> <span class="n">OutputPort</span><span class="p">,</span> <span class="n">PortDataType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
 
 
 <div class="viewcode-block" id="assert_port_is_supported">
 <a class="viewcode-back" href="../../../../generated/watchers/port_watcher/port_watcher.html#brom_drake.watchers.port_watcher.support_types.assert_port_is_supported">[docs]</a>
-<span class="k">def</span> <span class="nf">assert_port_is_supported</span><span class="p">(</span><span class="n">output_port</span><span class="p">:</span> <span class="n">OutputPort</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">assert_port_is_supported</span><span class="p">(</span><span class="n">output_port</span><span class="p">:</span> <span class="n">OutputPort</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    *Description*</span>
 
 <span class="sd">    Checks to see if the port is of the correct type for plotting.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Algorithm</span>
     <span class="k">if</span> <span class="n">output_port</span><span class="o">.</span><span class="n">get_data_type</span><span class="p">()</span> <span class="o">==</span> <span class="n">PortDataType</span><span class="o">.</span><span class="n">kVectorValued</span><span class="p">:</span>
         <span class="k">return</span>
@@ -582,7 +582,7 @@
 
 <div class="viewcode-block" id="assert_abstract_value_ports_type_is_supported">
 <a class="viewcode-back" href="../../../../generated/watchers/port_watcher/port_watcher.html#brom_drake.watchers.port_watcher.support_types.assert_abstract_value_ports_type_is_supported">[docs]</a>
-<span class="k">def</span> <span class="nf">assert_abstract_value_ports_type_is_supported</span><span class="p">(</span><span class="n">output_port_value</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">assert_abstract_value_ports_type_is_supported</span><span class="p">(</span><span class="n">output_port_value</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
     <span class="c1"># Check to see if AbstractValue port contains RigidTransform</span>
     <span class="k">if</span> <span class="n">is_rigid_transform</span><span class="p">(</span><span class="n">output_port_value</span><span class="p">):</span>
         <span class="k">return</span>
@@ -606,8 +606,8 @@
 
 <div class="viewcode-block" id="create_port_value_type_error">
 <a class="viewcode-back" href="../../../../generated/watchers/port_watcher/port_watcher.html#brom_drake.watchers.port_watcher.support_types.create_port_value_type_error">[docs]</a>
-<span class="k">def</span> <span class="nf">create_port_value_type_error</span><span class="p">(</span><span class="n">example_value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="ne">ValueError</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_port_value_type_error</span><span class="p">(</span><span class="n">example_value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="ne">ValueError</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    *Description*</span>
 
 <span class="sd">    Creates an error message for the port value type.</span>
@@ -621,16 +621,16 @@
 
 <span class="sd">    error_out: ValueError</span>
 <span class="sd">        The error message.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Return</span>
     <span class="k">return</span> <span class="ne">ValueError</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;This watcher only supports output ports that are:</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;- Vector valued ports (i.e., of type </span><span class="si">{</span><span class="n">PortDataType</span><span class="o">.</span><span class="n">kVectorValued</span><span class="si">}</span><span class="s2">.</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;- Abstract valued ports containing:</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;  + RigidTransforms</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;  + Booleans</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;  + list[T], where T is a type from the above list.&quot;</span>
-        <span class="sa">f</span><span class="s2">&quot;Received port of type </span><span class="si">{</span><span class="n">PortDataType</span><span class="o">.</span><span class="n">kAbstractValued</span><span class="si">}</span><span class="s2"> with underlying type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">example_value</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="sa">f</span><span class="s2">"This watcher only supports output ports that are:</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="o">+</span> <span class="sa">f</span><span class="s2">"- Vector valued ports (i.e., of type </span><span class="si">{</span><span class="n">PortDataType</span><span class="o">.</span><span class="n">kVectorValued</span><span class="si">}</span><span class="s2">.</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="o">+</span> <span class="sa">f</span><span class="s2">"- Abstract valued ports containing:</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="o">+</span> <span class="sa">f</span><span class="s2">"  + RigidTransforms</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="o">+</span> <span class="sa">f</span><span class="s2">"  + Booleans</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="o">+</span> <span class="sa">f</span><span class="s2">"  + list[T], where T is a type from the above list."</span>
+        <span class="sa">f</span><span class="s2">"Received port of type </span><span class="si">{</span><span class="n">PortDataType</span><span class="o">.</span><span class="n">kAbstractValued</span><span class="si">}</span><span class="s2"> with underlying type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">example_value</span><span class="p">)</span><span class="si">}</span><span class="s2">."</span>
     <span class="p">)</span></div>
 
 </pre></div>
@@ -665,7 +665,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=722679d6"></script>
+</div><script src="../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>

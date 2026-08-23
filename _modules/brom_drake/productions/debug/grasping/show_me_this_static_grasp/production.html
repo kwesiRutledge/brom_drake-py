@@ -5,8 +5,8 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.productions.debug.grasping.show_me_this_static_grasp.production - brom_drake-py 0.5.6 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=acfd86a5" />
+        <title>brom_drake.productions.debug.grasping.show_me_this_static_grasp.production - brom_drake-py v0.0.0+githubActionDefault documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../../index.html"><div class="brand">brom_drake-py 0.5.6 documentation</div></a>
+      <a href="../../../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.6 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -551,10 +551,10 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for brom_drake.productions.debug.grasping.show_me_this_static_grasp.production</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">pydrake.all</span> <span class="kn">import</span> <span class="p">(</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.all</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">GeometryProperties</span><span class="p">,</span>
     <span class="n">IllustrationProperties</span><span class="p">,</span>
     <span class="n">RigidBodyFrame</span><span class="p">,</span>
@@ -563,33 +563,33 @@
     <span class="n">SceneGraph</span><span class="p">,</span>
     <span class="n">SceneGraphInspector</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">pydrake.geometry</span> <span class="kn">import</span> <span class="n">Meshcat</span><span class="p">,</span> <span class="n">MeshcatVisualizer</span><span class="p">,</span> <span class="n">MeshcatVisualizerParams</span>
-<span class="kn">from</span> <span class="nn">pydrake.geometry</span> <span class="kn">import</span> <span class="n">Role</span> <span class="k">as</span> <span class="n">DrakeRole</span>
-<span class="kn">from</span> <span class="nn">pydrake.multibody.parsing</span> <span class="kn">import</span> <span class="n">Parser</span>
-<span class="kn">from</span> <span class="nn">pydrake.multibody.plant</span> <span class="kn">import</span> <span class="n">AddMultibodyPlantSceneGraph</span><span class="p">,</span> <span class="n">MultibodyPlant</span>
-<span class="kn">from</span> <span class="nn">pydrake.systems.framework</span> <span class="kn">import</span> <span class="n">DiagramBuilder</span><span class="p">,</span> <span class="n">Diagram</span><span class="p">,</span> <span class="n">Context</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">Meshcat</span><span class="p">,</span> <span class="n">MeshcatVisualizer</span><span class="p">,</span> <span class="n">MeshcatVisualizerParams</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">Role</span> <span class="k">as</span> <span class="n">DrakeRole</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.multibody.parsing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Parser</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.multibody.plant</span><span class="w"> </span><span class="kn">import</span> <span class="n">AddMultibodyPlantSceneGraph</span><span class="p">,</span> <span class="n">MultibodyPlant</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.systems.framework</span><span class="w"> </span><span class="kn">import</span> <span class="n">DiagramBuilder</span><span class="p">,</span> <span class="n">Diagram</span><span class="p">,</span> <span class="n">Context</span>
 
-<span class="kn">from</span> <span class="nn">pydrake.systems.primitives</span> <span class="kn">import</span> <span class="n">ConstantVectorSource</span><span class="p">,</span> <span class="n">VectorLogSink</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.systems.primitives</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConstantVectorSource</span><span class="p">,</span> <span class="n">VectorLogSink</span>
 
 <span class="c1"># Internal Imports</span>
-<span class="kn">from</span> <span class="nn">brom_drake.file_manipulation.urdf.drakeify</span> <span class="kn">import</span> <span class="n">drakeify_my_urdf</span>
-<span class="kn">from</span> <span class="nn">brom_drake.robots</span> <span class="kn">import</span> <span class="n">find_base_link_name_in</span>
-<span class="kn">from</span> <span class="nn">brom_drake.productions.types.debug</span> <span class="kn">import</span> <span class="n">BasicGraspingDebuggingProduction</span>
-<span class="kn">from</span> <span class="nn">brom_drake.productions.ids</span> <span class="kn">import</span> <span class="n">ProductionID</span>
-<span class="kn">from</span> <span class="nn">brom_drake.productions.roles.role</span> <span class="kn">import</span> <span class="n">Role</span>
-<span class="kn">from</span> <span class="nn">brom_drake.utils</span> <span class="kn">import</span> <span class="n">Performer</span><span class="p">,</span> <span class="n">AddMultibodyTriad</span>
-<span class="kn">from</span> <span class="nn">brom_drake.utils.model_instances</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.file_manipulation.urdf.drakeify</span><span class="w"> </span><span class="kn">import</span> <span class="n">drakeify_my_urdf</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.robots</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_base_link_name_in</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.productions.types.debug</span><span class="w"> </span><span class="kn">import</span> <span class="n">BasicGraspingDebuggingProduction</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.productions.ids</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProductionID</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.productions.roles.role</span><span class="w"> </span><span class="kn">import</span> <span class="n">Role</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">Performer</span><span class="p">,</span> <span class="n">AddMultibodyTriad</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.utils.model_instances</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">get_name_of_first_body_in_urdf</span><span class="p">,</span>
     <span class="n">find_number_of_positions_in_welded_model</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">brom_drake.productions.debug.show_me.show_me_system</span> <span class="kn">import</span> <span class="n">ShowMeSystem</span>
-<span class="kn">from</span> <span class="nn">.config</span> <span class="kn">import</span> <span class="n">Configuration</span> <span class="k">as</span> <span class="n">ShowMeThisStaticGraspConfiguration</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.productions.debug.show_me.show_me_system</span><span class="w"> </span><span class="kn">import</span> <span class="n">ShowMeSystem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">Configuration</span> <span class="k">as</span> <span class="n">ShowMeThisStaticGraspConfiguration</span>
 
 
 <div class="viewcode-block" id="ShowMeThisStaticGrasp">
 <a class="viewcode-back" href="../../../../../../generated/productions/debug/grasping/show_me_this_static_grasp/show_me_this_static_grasp.html#brom_drake.productions.debug.grasping.show_me_this_static_grasp.production.ShowMeThisStaticGrasp">[docs]</a>
-<span class="k">class</span> <span class="nc">ShowMeThisStaticGrasp</span><span class="p">(</span><span class="n">BasicGraspingDebuggingProduction</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ShowMeThisStaticGrasp</span><span class="p">(</span><span class="n">BasicGraspingDebuggingProduction</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">path_to_object</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">path_to_gripper</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -630,14 +630,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">gripper_joint_positions</span> <span class="o">=</span> <span class="n">gripper_joint_positions</span>
 
         <span class="c1"># Add Name to plantPlant and Scene Graph for easy simulation</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">set_name</span><span class="p">(</span><span class="s2">&quot;DemonstrateStaticGrasp_plant&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">set_name</span><span class="p">(</span><span class="s2">"DemonstrateStaticGrasp_plant"</span><span class="p">)</span>
 
         <span class="c1"># Create show me system for holding object in place</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">show_me_system</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
 
-    <span class="k">def</span> <span class="nf">add_cast_and_build</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_cast_and_build</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">cast</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Role</span><span class="p">,</span> <span class="n">Performer</span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Diagram</span><span class="p">,</span> <span class="n">Context</span><span class="p">]:</span>
@@ -654,15 +654,15 @@
 
 <div class="viewcode-block" id="ShowMeThisStaticGrasp.add_supporting_cast">
 <a class="viewcode-back" href="../../../../../../generated/productions/debug/grasping/show_me_this_static_grasp/show_me_this_static_grasp.html#brom_drake.productions.debug.grasping.show_me_this_static_grasp.production.ShowMeThisStaticGrasp.add_supporting_cast">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_supporting_cast</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_supporting_cast</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description</span>
 <span class="sd">        -----------</span>
 <span class="sd">        This method will add:</span>
-<span class="sd">        - The user&#39;s object model to the builder.</span>
-<span class="sd">        - The user&#39;s gripper model to the builder.</span>
+<span class="sd">        - The user's object model to the builder.</span>
+<span class="sd">        - The user's gripper model to the builder.</span>
 <span class="sd">        - The gripper triad to the builder.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
         <span class="n">plant</span><span class="p">:</span> <span class="n">MultibodyPlant</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span>
 
@@ -689,11 +689,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">Finalize</span><span class="p">()</span></div>
 
 
-    <span class="k">def</span> <span class="nf">add_gripper_controller_and_connect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_gripper_controller_and_connect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Setup</span>
         <span class="n">plant</span><span class="p">:</span> <span class="n">MultibodyPlant</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span>
 
-        <span class="c1"># Create a system to control the gripper&#39;s actuators</span>
+        <span class="c1"># Create a system to control the gripper's actuators</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">show_me_system</span> <span class="o">=</span> <span class="n">ShowMeSystem</span><span class="p">(</span>
             <span class="n">plant</span><span class="o">=</span><span class="n">plant</span><span class="p">,</span>
             <span class="n">model_index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">gripper_model_index</span><span class="p">,</span>
@@ -714,17 +714,17 @@
 
 <div class="viewcode-block" id="ShowMeThisStaticGrasp.find_X_WorldGripper">
 <a class="viewcode-back" href="../../../../../../generated/productions/debug/grasping/show_me_this_static_grasp/show_me_this_static_grasp.html#brom_drake.productions.debug.grasping.show_me_this_static_grasp.production.ShowMeThisStaticGrasp.find_X_WorldGripper">[docs]</a>
-    <span class="k">def</span> <span class="nf">find_X_WorldGripper</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_X_WorldGripper</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">X_ObjectGripper</span><span class="p">:</span> <span class="n">RigidTransform</span><span class="p">,</span>
         <span class="n">target_frame_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">desired_joint_positions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RigidTransform</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description</span>
 <span class="sd">        -----------</span>
 <span class="sd">        This method will return the transform from the world frame to the gripper frame.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
         <span class="n">desired_joint_positions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">desired_joint_positions</span><span class="p">)</span>
 
@@ -759,7 +759,7 @@
             <span class="n">desired_joint_positions</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="c1"># Get the transform of the gripper&#39;s base in the static world frame</span>
+        <span class="c1"># Get the transform of the gripper's base in the static world frame</span>
         <span class="n">X_GripperBase_GripperTarget</span> <span class="o">=</span> <span class="n">shadow_plant</span><span class="o">.</span><span class="n">EvalBodyPoseInWorld</span><span class="p">(</span>
             <span class="n">shadow_plant</span><span class="o">.</span><span class="n">GetMyContextFromRoot</span><span class="p">(</span><span class="n">shadow_diagram_context</span><span class="p">),</span>
             <span class="n">shadow_plant</span><span class="o">.</span><span class="n">GetBodyByName</span><span class="p">(</span><span class="n">target_frame_name</span><span class="p">),</span>
@@ -776,11 +776,11 @@
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">ProductionID</span><span class="o">.</span><span class="n">kDemonstrateStaticGrasp</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">suggested_roles</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Role</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">suggested_roles</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Role</span><span class="p">]:</span>
         <span class="k">return</span> <span class="p">[]</span></div>
 
 </pre></div>
@@ -815,7 +815,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../../_static/documentation_options.js?v=722679d6"></script>
+</div><script src="../../../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

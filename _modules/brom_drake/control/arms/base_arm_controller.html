@@ -5,8 +5,8 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.control.arms.base_arm_controller - brom_drake-py 0.5.6 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=acfd86a5" />
+        <title>brom_drake.control.arms.base_arm_controller - brom_drake-py v0.0.0+githubActionDefault documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">brom_drake-py 0.5.6 documentation</div></a>
+      <a href="../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.6 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -551,18 +551,18 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for brom_drake.control.arms.base_arm_controller</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">pydrake.all</span> <span class="kn">import</span> <span class="n">Context</span>
-<span class="kn">from</span> <span class="nn">pydrake.math</span> <span class="kn">import</span> <span class="n">RollPitchYaw</span>
-<span class="kn">from</span> <span class="nn">pydrake.multibody.plant</span> <span class="kn">import</span> <span class="n">MultibodyPlant</span>
-<span class="kn">from</span> <span class="nn">pydrake.multibody.tree</span> <span class="kn">import</span> <span class="n">JacobianWrtVariable</span><span class="p">,</span> <span class="n">ModelInstanceIndex</span>
-<span class="kn">from</span> <span class="nn">pydrake.systems.framework</span> <span class="kn">import</span> <span class="n">LeafSystem</span><span class="p">,</span> <span class="n">BasicVector</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.all</span><span class="w"> </span><span class="kn">import</span> <span class="n">Context</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.math</span><span class="w"> </span><span class="kn">import</span> <span class="n">RollPitchYaw</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.multibody.plant</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultibodyPlant</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.multibody.tree</span><span class="w"> </span><span class="kn">import</span> <span class="n">JacobianWrtVariable</span><span class="p">,</span> <span class="n">ModelInstanceIndex</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.systems.framework</span><span class="w"> </span><span class="kn">import</span> <span class="n">LeafSystem</span><span class="p">,</span> <span class="n">BasicVector</span>
 
 
 <div class="viewcode-block" id="BaseArmController">
 <a class="viewcode-back" href="../../../../generated/control/arms/arms.html#brom_drake.control.arms.base_arm_controller.BaseArmController">[docs]</a>
-<span class="k">class</span> <span class="nc">BaseArmController</span><span class="p">(</span><span class="n">LeafSystem</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BaseArmController</span><span class="p">(</span><span class="n">LeafSystem</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    *Description*</span>
 
 <span class="sd">    A controller which provides the basic functionality for controlling</span>
@@ -594,14 +594,14 @@
 <span class="sd">    arm_model: pydrake.multibody.tree.ModelInstanceIndex</span>
 <span class="sd">        The model instance index of the arm to be controlled.</span>
 <span class="sd">    end_effector_frame_name: str, optional</span>
-<span class="sd">        The name of the end-effector frame in the plant, by default &quot;end_effector_frame&quot;.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        The name of the end-effector frame in the plant, by default "end_effector_frame".</span>
+<span class="sd">    """</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">plant</span><span class="p">:</span> <span class="n">MultibodyPlant</span><span class="p">,</span>
         <span class="n">arm_model</span><span class="p">:</span> <span class="n">ModelInstanceIndex</span><span class="p">,</span>
-        <span class="n">end_effector_frame_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;end_effector_frame&quot;</span><span class="p">,</span>
+        <span class="n">end_effector_frame_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"end_effector_frame"</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="n">LeafSystem</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
@@ -626,8 +626,8 @@
 
 <div class="viewcode-block" id="BaseArmController.define_input_ports_for_arm_state">
 <a class="viewcode-back" href="../../../../generated/control/arms/arms.html#brom_drake.control.arms.base_arm_controller.BaseArmController.define_input_ports_for_arm_state">[docs]</a>
-    <span class="k">def</span> <span class="nf">define_input_ports_for_arm_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">define_input_ports_for_arm_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
 <span class="sd">        Defines the input ports for the arm state. This is useful for</span>
@@ -636,21 +636,21 @@
 <span class="sd">        The input ports defined are:</span>
 <span class="sd">            - arm_joint_position</span>
 <span class="sd">            - arm_joint_velocity</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">arm_joint_position_port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DeclareVectorInputPort</span><span class="p">(</span>
-            <span class="s2">&quot;arm_joint_position&quot;</span><span class="p">,</span>
+            <span class="s2">"arm_joint_position"</span><span class="p">,</span>
             <span class="n">BasicVector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">num_positions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">arm</span><span class="p">)),</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">arm_joint_velocity_port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DeclareVectorInputPort</span><span class="p">(</span>
-            <span class="s2">&quot;arm_joint_velocity&quot;</span><span class="p">,</span>
+            <span class="s2">"arm_joint_velocity"</span><span class="p">,</span>
             <span class="n">BasicVector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">num_velocities</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">arm</span><span class="p">)),</span>
         <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="BaseArmController.define_output_measurement_ports">
 <a class="viewcode-back" href="../../../../generated/control/arms/arms.html#brom_drake.control.arms.base_arm_controller.BaseArmController.define_output_measurement_ports">[docs]</a>
-    <span class="k">def</span> <span class="nf">define_output_measurement_ports</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">define_output_measurement_ports</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
 <span class="sd">        Defines the output ports for the controller that have to deal with</span>
@@ -659,15 +659,15 @@
 <span class="sd">        The output ports defined are:</span>
 <span class="sd">            - measured_ee_pose</span>
 <span class="sd">            - measured_ee_twist</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">DeclareVectorOutputPort</span><span class="p">(</span>
-            <span class="s2">&quot;measured_ee_pose&quot;</span><span class="p">,</span>
+            <span class="s2">"measured_ee_pose"</span><span class="p">,</span>
             <span class="n">BasicVector</span><span class="p">(</span><span class="mi">6</span><span class="p">),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">CalcEndEffectorPose</span><span class="p">,</span>
-            <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">time_ticket</span><span class="p">()},</span>  <span class="c1"># indicate that this doesn&#39;t depend on any inputs,</span>
+            <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">time_ticket</span><span class="p">()},</span>  <span class="c1"># indicate that this doesn't depend on any inputs,</span>
         <span class="p">)</span>  <span class="c1"># but should still be updated each timestep</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">DeclareVectorOutputPort</span><span class="p">(</span>
-            <span class="s2">&quot;measured_ee_twist&quot;</span><span class="p">,</span>
+            <span class="s2">"measured_ee_twist"</span><span class="p">,</span>
             <span class="n">BasicVector</span><span class="p">(</span><span class="mi">6</span><span class="p">),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">CalcEndEffectorTwist</span><span class="p">,</span>
             <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">time_ticket</span><span class="p">()},</span>
@@ -676,12 +676,12 @@
 
 <div class="viewcode-block" id="BaseArmController.CalcEndEffectorPose">
 <a class="viewcode-back" href="../../../../generated/control/arms/arms.html#brom_drake.control.arms.base_arm_controller.BaseArmController.CalcEndEffectorPose">[docs]</a>
-    <span class="k">def</span> <span class="nf">CalcEndEffectorPose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="n">BasicVector</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">CalcEndEffectorPose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="n">BasicVector</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
 <span class="sd">        This method is called each timestep to determine the end-effector pose</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">arm_joint_position_port</span><span class="o">.</span><span class="n">Eval</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
         <span class="n">qd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">arm_joint_velocity_port</span><span class="o">.</span><span class="n">Eval</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">SetPositions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">arm</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span>
@@ -703,14 +703,14 @@
 
 <div class="viewcode-block" id="BaseArmController.CalcEndEffectorTwist">
 <a class="viewcode-back" href="../../../../generated/control/arms/arms.html#brom_drake.control.arms.base_arm_controller.BaseArmController.CalcEndEffectorTwist">[docs]</a>
-    <span class="k">def</span> <span class="nf">CalcEndEffectorTwist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="n">BasicVector</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">CalcEndEffectorTwist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="n">BasicVector</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
 <span class="sd">        Callback for the `measured_ee_twist` output port.</span>
 <span class="sd">        This method computes the end-effector twist based on the current</span>
 <span class="sd">        joint positions and velocities.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
         <span class="n">q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">arm_joint_position_port</span><span class="o">.</span><span class="n">Eval</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
         <span class="n">qd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">arm_joint_velocity_port</span><span class="o">.</span><span class="n">Eval</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
@@ -735,8 +735,8 @@
 
 <div class="viewcode-block" id="BaseArmController.GetJointLimits">
 <a class="viewcode-back" href="../../../../generated/control/arms/arms.html#brom_drake.control.arms.base_arm_controller.BaseArmController.GetJointLimits">[docs]</a>
-    <span class="k">def</span> <span class="nf">GetJointLimits</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">GetJointLimits</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
 <span class="sd">        Iterate through the associated plant to determine</span>
@@ -752,7 +752,7 @@
 <span class="sd">        - qd_min</span>
 <span class="sd">        - qd_max</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">q_min</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">q_max</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">qd_min</span> <span class="o">=</span> <span class="p">[]</span>
@@ -763,7 +763,7 @@
         <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">joint_indices</span><span class="p">:</span>
             <span class="n">joint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">get_joint</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">joint</span><span class="o">.</span><span class="n">type_name</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;revolute&quot;</span><span class="p">:</span>  <span class="c1"># ignore the joint welded to the world</span>
+            <span class="k">if</span> <span class="n">joint</span><span class="o">.</span><span class="n">type_name</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"revolute"</span><span class="p">:</span>  <span class="c1"># ignore the joint welded to the world</span>
                 <span class="n">q_min</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">joint</span><span class="o">.</span><span class="n">position_lower_limit</span><span class="p">())</span>
                 <span class="n">q_max</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">joint</span><span class="o">.</span><span class="n">position_upper_limit</span><span class="p">())</span>
                 <span class="n">qd_min</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">joint</span><span class="o">.</span><span class="n">velocity_lower_limit</span><span class="p">())</span>  <span class="c1"># note that higher limits</span>
@@ -778,7 +778,7 @@
 </div>
 
 
-        <span class="c1"># print(&quot;Got joint limits&quot;)</span>
+        <span class="c1"># print("Got joint limits")</span>
 </pre></div>
         </article>
       </div>
@@ -811,7 +811,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=722679d6"></script>
+</div><script src="../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>

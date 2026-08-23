@@ -5,8 +5,8 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.motion_planning.systems.prototypical_planner - brom_drake-py 0.5.6 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=acfd86a5" />
+        <title>brom_drake.motion_planning.systems.prototypical_planner - brom_drake-py v0.0.0+githubActionDefault documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">brom_drake-py 0.5.6 documentation</div></a>
+      <a href="../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.6 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -551,35 +551,35 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for brom_drake.motion_planning.systems.prototypical_planner</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">pydrake.common.eigen_geometry</span> <span class="kn">import</span> <span class="n">Quaternion</span>
-<span class="kn">from</span> <span class="nn">pydrake.common.value</span> <span class="kn">import</span> <span class="n">AbstractValue</span>
-<span class="kn">from</span> <span class="nn">pydrake.geometry</span> <span class="kn">import</span> <span class="n">SceneGraph</span>
-<span class="kn">from</span> <span class="nn">pydrake.math</span> <span class="kn">import</span> <span class="n">RotationMatrix</span>
-<span class="kn">from</span> <span class="nn">pydrake.multibody.inverse_kinematics</span> <span class="kn">import</span> <span class="n">InverseKinematics</span>
-<span class="kn">from</span> <span class="nn">pydrake.multibody.plant</span> <span class="kn">import</span> <span class="n">MultibodyPlant</span>
-<span class="kn">from</span> <span class="nn">pydrake.multibody.tree</span> <span class="kn">import</span> <span class="n">ModelInstanceIndex</span>
-<span class="kn">from</span> <span class="nn">pydrake.solvers</span> <span class="kn">import</span> <span class="n">Solve</span><span class="p">,</span> <span class="n">SolutionResult</span>
-<span class="kn">from</span> <span class="nn">pydrake.systems.framework</span> <span class="kn">import</span> <span class="n">LeafSystem</span><span class="p">,</span> <span class="n">BasicVector</span><span class="p">,</span> <span class="n">Context</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Tuple</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">networkx</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nx</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.common.eigen_geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">Quaternion</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.common.value</span><span class="w"> </span><span class="kn">import</span> <span class="n">AbstractValue</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">SceneGraph</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.math</span><span class="w"> </span><span class="kn">import</span> <span class="n">RotationMatrix</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.multibody.inverse_kinematics</span><span class="w"> </span><span class="kn">import</span> <span class="n">InverseKinematics</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.multibody.plant</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultibodyPlant</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.multibody.tree</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelInstanceIndex</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.solvers</span><span class="w"> </span><span class="kn">import</span> <span class="n">Solve</span><span class="p">,</span> <span class="n">SolutionResult</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.systems.framework</span><span class="w"> </span><span class="kn">import</span> <span class="n">LeafSystem</span><span class="p">,</span> <span class="n">BasicVector</span><span class="p">,</span> <span class="n">Context</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="c1"># Internal Imports</span>
-<span class="kn">from</span> <span class="nn">brom_drake.utils.constants</span> <span class="kn">import</span> <span class="n">MotionPlan</span><span class="p">,</span> <span class="n">MotionPlanningResult</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.utils.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">MotionPlan</span><span class="p">,</span> <span class="n">MotionPlanningResult</span>
 
 
 <div class="viewcode-block" id="PrototypicalPlannerSystem">
 <a class="viewcode-back" href="../../../../generated/motion_planning/systems/systems.html#brom_drake.motion_planning.systems.prototypical_planner.PrototypicalPlannerSystem">[docs]</a>
-<span class="k">class</span> <span class="nc">PrototypicalPlannerSystem</span><span class="p">(</span><span class="n">LeafSystem</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PrototypicalPlannerSystem</span><span class="p">(</span><span class="n">LeafSystem</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Description</span>
 <span class="sd">    -----------</span>
 <span class="sd">    This function is meant to be a prototypical planner system.</span>
 <span class="sd">    It will receive a planning algorithm and wrap that algorithm in a LeafSystem</span>
 <span class="sd">    that works in Brom.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">plant</span><span class="p">:</span> <span class="n">MultibodyPlant</span><span class="p">,</span>
         <span class="n">scene_graph</span><span class="p">:</span> <span class="n">SceneGraph</span><span class="p">,</span>
@@ -590,7 +590,7 @@
         <span class="n">robot_model_idx</span><span class="p">:</span> <span class="n">ModelInstanceIndex</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description</span>
 <span class="sd">        -----------</span>
 <span class="sd">        Constructor for the PrototypicalPlannerSystem.</span>
@@ -612,7 +612,7 @@
 <span class="sd">            2. An optional index of the goal node within the plan. (Not needed if the plan is a numpy array)</span>
 <span class="sd">        robot_model_idx : ModelInstanceIndex</span>
 <span class="sd">            The robot model index that we are working with.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">LeafSystem</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
         <span class="c1"># Setup</span>
@@ -632,26 +632,26 @@
 
 <div class="viewcode-block" id="PrototypicalPlannerSystem.check_collision_in_config">
 <a class="viewcode-back" href="../../../../generated/motion_planning/systems/systems.html#brom_drake.motion_planning.systems.prototypical_planner.PrototypicalPlannerSystem.check_collision_in_config">[docs]</a>
-    <span class="k">def</span> <span class="nf">check_collision_in_config</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_collision_in_config</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">q_model</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description</span>
 <span class="sd">        -----------</span>
-<span class="sd">        This function checks for collisions in the robot&#39;s environment.</span>
+<span class="sd">        This function checks for collisions in the robot's environment.</span>
 
 <span class="sd">        Arguments</span>
 <span class="sd">        ---------</span>
 <span class="sd">        q_model : np.ndarray</span>
 <span class="sd">            The model configuration that we are checking for collisions.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Input Processing</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_context</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Plant context is not initialized yet!&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Plant context is not initialized yet!"</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">robot_model_idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Robot model index is not set yet!&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Robot model index is not set yet!"</span><span class="p">)</span>
 
         <span class="c1"># Setup</span>
         <span class="n">plant_context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetMyMutableContextFromRoot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root_context</span><span class="p">)</span>
@@ -686,8 +686,8 @@
 
 <div class="viewcode-block" id="PrototypicalPlannerSystem.compute_plan_if_not_available">
 <a class="viewcode-back" href="../../../../generated/motion_planning/systems/systems.html#brom_drake.motion_planning.systems.prototypical_planner.PrototypicalPlannerSystem.compute_plan_if_not_available">[docs]</a>
-    <span class="k">def</span> <span class="nf">compute_plan_if_not_available</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="n">AbstractValue</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_plan_if_not_available</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="n">AbstractValue</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description</span>
 <span class="sd">        -----------</span>
 <span class="sd">        This function computes the plan if it is not available.</span>
@@ -698,21 +698,21 @@
 <span class="sd">            The context that we are working with.</span>
 <span class="sd">        output : AbstractValue</span>
 <span class="sd">            The output that will be produced by the output port</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Print</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">plan</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># Compute plan</span>
-            <span class="n">q_start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetInputPort</span><span class="p">(</span><span class="s2">&quot;start_configuration&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">Eval</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
-            <span class="n">q_goal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetInputPort</span><span class="p">(</span><span class="s2">&quot;goal_configuration&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">Eval</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+            <span class="n">q_start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetInputPort</span><span class="p">(</span><span class="s2">"start_configuration"</span><span class="p">)</span><span class="o">.</span><span class="n">Eval</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+            <span class="n">q_goal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetInputPort</span><span class="p">(</span><span class="s2">"goal_configuration"</span><span class="p">)</span><span class="o">.</span><span class="n">Eval</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">robot_model_idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">robot_model_idx</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">GetInputPort</span><span class="p">(</span><span class="s2">&quot;robot_model_index&quot;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">GetInputPort</span><span class="p">(</span><span class="s2">"robot_model_index"</span><span class="p">)</span>
                     <span class="o">.</span><span class="n">EvalAbstract</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
                     <span class="o">.</span><span class="n">get_value</span><span class="p">()</span>
                 <span class="p">)</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_context</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Plant context is not initialized yet!&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Plant context is not initialized yet!"</span><span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">root_context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_context</span>
 
@@ -728,48 +728,48 @@
 
 <div class="viewcode-block" id="PrototypicalPlannerSystem.create_input_ports">
 <a class="viewcode-back" href="../../../../generated/motion_planning/systems/systems.html#brom_drake.motion_planning.systems.prototypical_planner.PrototypicalPlannerSystem.create_input_ports">[docs]</a>
-    <span class="k">def</span> <span class="nf">create_input_ports</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_input_ports</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description:</span>
 <span class="sd">            This function creates the input ports for the RRT planner.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
         <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetActuatedJointIndices</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">robot_model_idx</span><span class="p">))</span>
 
         <span class="c1"># Define outputs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">DeclareVectorInputPort</span><span class="p">(</span>
-            <span class="s2">&quot;start_configuration&quot;</span><span class="p">,</span>
+            <span class="s2">"start_configuration"</span><span class="p">,</span>
             <span class="n">BasicVector</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">N</span><span class="p">,))),</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">DeclareVectorInputPort</span><span class="p">(</span>
-            <span class="s2">&quot;goal_configuration&quot;</span><span class="p">,</span>
+            <span class="s2">"goal_configuration"</span><span class="p">,</span>
             <span class="n">BasicVector</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">N</span><span class="p">,))),</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">DeclareAbstractInputPort</span><span class="p">(</span>
-            <span class="s2">&quot;robot_model_index&quot;</span><span class="p">,</span> <span class="n">AbstractValue</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="n">ModelInstanceIndex</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+            <span class="s2">"robot_model_index"</span><span class="p">,</span> <span class="n">AbstractValue</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="n">ModelInstanceIndex</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
         <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="PrototypicalPlannerSystem.create_output_ports">
 <a class="viewcode-back" href="../../../../generated/motion_planning/systems/systems.html#brom_drake.motion_planning.systems.prototypical_planner.PrototypicalPlannerSystem.create_output_ports">[docs]</a>
-    <span class="k">def</span> <span class="nf">create_output_ports</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_output_ports</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description:</span>
 <span class="sd">            This function creates the output ports for the RRT planner.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
 
         <span class="c1"># Create output for plan</span>
         <span class="n">sample_plan</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_actuated_dof</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">DeclareAbstractOutputPort</span><span class="p">(</span>
-            <span class="s2">&quot;motion_plan&quot;</span><span class="p">,</span>
+            <span class="s2">"motion_plan"</span><span class="p">,</span>
             <span class="k">lambda</span><span class="p">:</span> <span class="n">AbstractValue</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="n">sample_plan</span><span class="p">),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">compute_plan_if_not_available</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="c1"># Create output for plan readiness</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">DeclareAbstractOutputPort</span><span class="p">(</span>
-            <span class="s2">&quot;plan_is_ready&quot;</span><span class="p">,</span>
+            <span class="s2">"plan_is_ready"</span><span class="p">,</span>
             <span class="k">lambda</span><span class="p">:</span> <span class="n">AbstractValue</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="kc">False</span><span class="p">),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">GetPlanIsReady</span><span class="p">,</span>
         <span class="p">)</span></div>
@@ -777,18 +777,18 @@
 
 <div class="viewcode-block" id="PrototypicalPlannerSystem.define_pose_ik_problem">
 <a class="viewcode-back" href="../../../../generated/motion_planning/systems/systems.html#brom_drake.motion_planning.systems.prototypical_planner.PrototypicalPlannerSystem.define_pose_ik_problem">[docs]</a>
-    <span class="k">def</span> <span class="nf">define_pose_ik_problem</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">define_pose_ik_problem</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">input_pose_vec</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
         <span class="n">eps0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.5e-2</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">InverseKinematics</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description</span>
 <span class="sd">        -----------</span>
 <span class="sd">        Sets up the inverse kinematics problem for the start pose</span>
 <span class="sd">        input to theis function.</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
         <span class="n">plant_context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetMyMutableContextFromRoot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root_context</span><span class="p">)</span>
 
@@ -799,7 +799,7 @@
         <span class="n">ik_problem</span><span class="o">.</span><span class="n">AddPositionConstraint</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">world_frame</span><span class="p">(),</span>
             <span class="n">input_pose_vec</span><span class="p">[:</span><span class="mi">3</span><span class="p">],</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetFrameByName</span><span class="p">(</span><span class="s2">&quot;ft_frame&quot;</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetFrameByName</span><span class="p">(</span><span class="s2">"ft_frame"</span><span class="p">),</span>
             <span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,))</span> <span class="o">*</span> <span class="n">eps0</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
             <span class="p">(</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,))</span> <span class="o">*</span> <span class="n">eps0</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
         <span class="p">)</span>
@@ -808,7 +808,7 @@
         <span class="n">ik_problem</span><span class="o">.</span><span class="n">AddOrientationCost</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">world_frame</span><span class="p">(),</span>
             <span class="n">RotationMatrix</span><span class="p">(</span><span class="n">Quaternion</span><span class="p">(</span><span class="n">input_pose_vec</span><span class="p">[</span><span class="mi">3</span><span class="p">:])</span><span class="o">.</span><span class="n">rotation</span><span class="p">()),</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetFrameByName</span><span class="p">(</span><span class="s2">&quot;ft_frame&quot;</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetFrameByName</span><span class="p">(</span><span class="s2">"ft_frame"</span><span class="p">),</span>
             <span class="n">RotationMatrix</span><span class="o">.</span><span class="n">Identity</span><span class="p">(),</span>
             <span class="mf">0.25</span><span class="p">,</span>
         <span class="p">)</span>
@@ -817,32 +817,32 @@
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">n_actuated_dof</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">n_actuated_dof</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description</span>
 <span class="sd">        -----------</span>
 <span class="sd">        This method uses the plant and the robot model idx</span>
 <span class="sd">        to identify the numer of degrees of freedom we have for control.</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">num_actuated_dofs</span><span class="p">()</span>
 
 <div class="viewcode-block" id="PrototypicalPlannerSystem.GetPlanIsReady">
 <a class="viewcode-back" href="../../../../generated/motion_planning/systems/systems.html#brom_drake.motion_planning.systems.prototypical_planner.PrototypicalPlannerSystem.GetPlanIsReady">[docs]</a>
-    <span class="k">def</span> <span class="nf">GetPlanIsReady</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="n">AbstractValue</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">GetPlanIsReady</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="n">AbstractValue</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description:</span>
 <span class="sd">            This function checks if the plan is ready.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">output</span><span class="o">.</span><span class="n">SetFrom</span><span class="p">(</span><span class="n">AbstractValue</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plan</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="PrototypicalPlannerSystem.planning_result_to_array">
 <a class="viewcode-back" href="../../../../generated/motion_planning/systems/systems.html#brom_drake.motion_planning.systems.prototypical_planner.PrototypicalPlannerSystem.planning_result_to_array">[docs]</a>
-    <span class="k">def</span> <span class="nf">planning_result_to_array</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">planning_result_to_array</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">planning_result</span><span class="p">:</span> <span class="n">MotionPlanningResult</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description</span>
 <span class="sd">        -----------</span>
 <span class="sd">        This function converts the planning result to an array.</span>
@@ -851,32 +851,32 @@
 <span class="sd">        ---------</span>
 <span class="sd">        planning_result : MotionPlanningResult</span>
 <span class="sd">            The plan that we are converting to an array.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Input Processing</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">planning_result</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
             <span class="n">plan_in</span><span class="p">,</span> <span class="n">goal_node_index</span> <span class="o">=</span> <span class="n">planning_result</span>
 
             <span class="k">if</span> <span class="n">goal_node_index</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                    <span class="s2">&quot;No path found! Try increasing the number of iterations or checking your problem!&quot;</span>
+                    <span class="s2">"No path found! Try increasing the number of iterations or checking your problem!"</span>
                 <span class="p">)</span>
 
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">planning_result</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
             <span class="n">plan_in</span> <span class="o">=</span> <span class="n">planning_result</span>
             <span class="n">goal_node_index</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="o">-</span><span class="mi">1</span>
-            <span class="p">)</span>  <span class="c1"># Assume that the last configuration is the one we&#39;re trying to get to!</span>
+            <span class="p">)</span>  <span class="c1"># Assume that the last configuration is the one we're trying to get to!</span>
 
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">planning_result</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">):</span>
             <span class="n">plan_in</span> <span class="o">=</span> <span class="n">planning_result</span>
             <span class="n">all_node_ids</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">plan_in</span><span class="o">.</span><span class="n">nodes</span><span class="p">]</span>
             <span class="n">goal_node_index</span> <span class="o">=</span> <span class="n">all_node_ids</span><span class="p">[</span>
                 <span class="o">-</span><span class="mi">1</span>
-            <span class="p">]</span>  <span class="c1"># Assume that the last configuration is the one we&#39;re trying to get to!</span>
+            <span class="p">]</span>  <span class="c1"># Assume that the last configuration is the one we're trying to get to!</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">&#39;Unknown planning result type: &quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">planning_result</span><span class="p">)</span><span class="si">}</span><span class="s1">&quot;!&#39;</span>
+                <span class="sa">f</span><span class="s1">'Unknown planning result type: "</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">planning_result</span><span class="p">)</span><span class="si">}</span><span class="s1">"!'</span>
             <span class="p">)</span>
 
         <span class="c1"># Setup</span>
@@ -889,12 +889,12 @@
                 <span class="n">source</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
                 <span class="n">target</span><span class="o">=</span><span class="n">goal_node_index</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">plan_in</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="s2">&quot;q&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">path</span><span class="p">])</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">plan_in</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="s2">"q"</span><span class="p">]</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">path</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unknown plan type: &quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">plan_in</span><span class="p">)</span><span class="si">}</span><span class="s1">&quot;!&#39;</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Unknown plan type: "</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">plan_in</span><span class="p">)</span><span class="si">}</span><span class="s1">"!'</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">set_internal_root_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root_context_in</span><span class="p">:</span> <span class="n">Context</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_internal_root_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root_context_in</span><span class="p">:</span> <span class="n">Context</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">root_context</span> <span class="o">=</span> <span class="n">root_context_in</span></div>
 
 </pre></div>
@@ -929,7 +929,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=722679d6"></script>
+</div><script src="../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>

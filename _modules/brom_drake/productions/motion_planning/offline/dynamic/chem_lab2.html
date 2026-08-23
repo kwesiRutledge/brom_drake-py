@@ -5,8 +5,8 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.productions.motion_planning.offline.dynamic.chem_lab2 - brom_drake-py 0.5.6 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=acfd86a5" />
+        <title>brom_drake.productions.motion_planning.offline.dynamic.chem_lab2 - brom_drake-py v0.0.0+githubActionDefault documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../../index.html"><div class="brand">brom_drake-py 0.5.6 documentation</div></a>
+      <a href="../../../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.6 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -551,10 +551,10 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for brom_drake.productions.motion_planning.offline.dynamic.chem_lab2</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">importlib</span> <span class="kn">import</span> <span class="n">resources</span> <span class="k">as</span> <span class="n">impresources</span>
-<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">pydrake.all</span> <span class="kn">import</span> <span class="p">(</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">importlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">resources</span> <span class="k">as</span> <span class="n">impresources</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">networkx</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nx</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.all</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">AbstractValue</span><span class="p">,</span>
     <span class="n">CollisionFilterDeclaration</span><span class="p">,</span>
     <span class="n">ConstantValueSource</span><span class="p">,</span>
@@ -569,36 +569,36 @@
     <span class="n">RigidTransform</span><span class="p">,</span>
     <span class="n">RotationMatrix</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">pydrake.math</span> <span class="kn">import</span> <span class="n">RollPitchYaw</span><span class="p">,</span> <span class="n">RigidTransform</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.math</span><span class="w"> </span><span class="kn">import</span> <span class="n">RollPitchYaw</span><span class="p">,</span> <span class="n">RigidTransform</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="c1"># Internal Imports</span>
-<span class="kn">from</span> <span class="nn">brom_drake.directories</span> <span class="kn">import</span> <span class="n">DEFAULT_BROM_MODELS_DIR</span>
-<span class="kn">from</span> <span class="nn">brom_drake.control</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.directories</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_BROM_MODELS_DIR</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.control</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">GripperTarget</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">brom_drake.file_manipulation.urdf</span> <span class="kn">import</span> <span class="n">drakeify_my_urdf</span>
-<span class="kn">from</span> <span class="nn">brom_drake.file_manipulation.urdf.shapes.box</span> <span class="kn">import</span> <span class="n">BoxDefinition</span>
-<span class="kn">from</span> <span class="nn">brom_drake.file_manipulation.urdf.simple_writer.urdf_definition</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.file_manipulation.urdf</span><span class="w"> </span><span class="kn">import</span> <span class="n">drakeify_my_urdf</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.file_manipulation.urdf.shapes.box</span><span class="w"> </span><span class="kn">import</span> <span class="n">BoxDefinition</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.file_manipulation.urdf.simple_writer.urdf_definition</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">SimpleShapeURDFDefinition</span><span class="p">,</span>
     <span class="n">InertiaDefinition</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">brom_drake.motion_planning.systems.open_loop_dispensers.open_loop_plan_dispenser</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.motion_planning.systems.open_loop_dispensers.open_loop_plan_dispenser</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">OpenLoopPlanDispenser</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">import</span> <span class="nn">brom_drake.robots</span> <span class="k">as</span> <span class="nn">robots</span>
-<span class="kn">from</span> <span class="nn">brom_drake.robots.gripper_type</span> <span class="kn">import</span> <span class="n">GripperType</span>
-<span class="kn">from</span> <span class="nn">brom_drake.stations.classical</span> <span class="kn">import</span> <span class="n">UR10eStation</span>
-<span class="kn">from</span> <span class="nn">brom_drake.productions.ids</span> <span class="kn">import</span> <span class="n">ProductionID</span>
-<span class="kn">from</span> <span class="nn">brom_drake.productions.roles.role</span> <span class="kn">import</span> <span class="n">Role</span>
-<span class="kn">from</span> <span class="nn">brom_drake.productions.types</span> <span class="kn">import</span> <span class="n">OfflineDynamicMotionPlanningProduction</span>
-<span class="kn">from</span> <span class="nn">brom_drake.utils</span> <span class="kn">import</span> <span class="n">Performer</span><span class="p">,</span> <span class="n">AddGround</span><span class="p">,</span> <span class="n">MotionPlan</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">brom_drake.robots</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">robots</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.robots.gripper_type</span><span class="w"> </span><span class="kn">import</span> <span class="n">GripperType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.stations.classical</span><span class="w"> </span><span class="kn">import</span> <span class="n">UR10eStation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.productions.ids</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProductionID</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.productions.roles.role</span><span class="w"> </span><span class="kn">import</span> <span class="n">Role</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.productions.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">OfflineDynamicMotionPlanningProduction</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">Performer</span><span class="p">,</span> <span class="n">AddGround</span><span class="p">,</span> <span class="n">MotionPlan</span>
 
 
 <div class="viewcode-block" id="ChemLab2">
 <a class="viewcode-back" href="../../../../../../generated/productions/motion_planning/offline/dynamic/dynamic.html#brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2">[docs]</a>
-<span class="k">class</span> <span class="nc">ChemLab2</span><span class="p">(</span><span class="n">OfflineDynamicMotionPlanningProduction</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ChemLab2</span><span class="p">(</span><span class="n">OfflineDynamicMotionPlanningProduction</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    *Description*</span>
 
 <span class="sd">    This production is the second in the chemistry lab series.</span>
@@ -670,7 +670,7 @@
 <span class="sd">            with_watcher=True,</span>
 <span class="sd">        )</span>
 
-<span class="sd">        print(&quot;Simulating...&quot;)</span>
+<span class="sd">        print("Simulating...")</span>
 
 <span class="sd">        # Simulate the diagram</span>
 <span class="sd">        simulator = Simulator(diagram, diagram_context)</span>
@@ -681,12 +681,12 @@
 <span class="sd">        simulator.AdvanceTo(0.05)</span>
 <span class="sd">        planned_trajectory = production.plan_dispenser.planned_trajectory</span>
 
-<span class="sd">        print(f&quot;Expected end time of trajectory: {planned_trajectory.end_time()}&quot;)</span>
+<span class="sd">        print(f"Expected end time of trajectory: {planned_trajectory.end_time()}")</span>
 <span class="sd">        simulator.AdvanceTo(planned_trajectory.end_time()+2.0)</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">time_step</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-3</span><span class="p">,</span>
         <span class="n">meshcat_port_number</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">7001</span><span class="p">,</span>
@@ -699,7 +699,7 @@
         <span class="n">gripper_type</span><span class="p">:</span> <span class="n">GripperType</span> <span class="o">=</span> <span class="n">GripperType</span><span class="o">.</span><span class="n">Robotiq_2f_85</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
 <span class="sd">        Constructor for the ChemLab2 Production.</span>
@@ -733,7 +733,7 @@
 <span class="sd">        gripper_type: GripperType, optional</span>
 <span class="sd">            The type of gripper to use, by default GripperType.Robotiq_2f_85.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Superclass constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -761,9 +761,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">robot_model_idx_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">arm</span>
 
         <span class="c1"># Record metadata about the robot</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="p">[</span><span class="s2">&quot;robot_model&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;model_index&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">robot_model_idx_</span><span class="p">),</span>
-            <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">station</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetModelInstanceName</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="p">[</span><span class="s2">"robot_model"</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">"model_index"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">robot_model_idx_</span><span class="p">),</span>
+            <span class="s2">"model_name"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">station</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetModelInstanceName</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">robot_model_idx_</span>
             <span class="p">),</span>
         <span class="p">}</span>
@@ -772,16 +772,16 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">plant</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">station</span><span class="o">.</span><span class="n">plant</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scene_graph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">station</span><span class="o">.</span><span class="n">scene_graph</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">set_name</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ChemLab2_Production_Plant&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">scene_graph</span><span class="o">.</span><span class="n">set_name</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ChemLab2_Production_SceneGraph&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">set_name</span><span class="p">(</span><span class="sa">f</span><span class="s2">"ChemLab2_Production_Plant"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scene_graph</span><span class="o">.</span><span class="n">set_name</span><span class="p">(</span><span class="sa">f</span><span class="s2">"ChemLab2_Production_SceneGraph"</span><span class="p">)</span>
 
         <span class="c1"># Define placeholder variables for models</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">test_tube_holder1</span> <span class="o">=</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="ChemLab2.add_supporting_cast">
 <a class="viewcode-back" href="../../../../../../generated/productions/motion_planning/offline/dynamic/dynamic.html#brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2.add_supporting_cast">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_supporting_cast</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_supporting_cast</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
 <span class="sd">        This method adds all secondary cast members to the builder.</span>
@@ -789,10 +789,10 @@
 
 <span class="sd">        - Table, where the robot exists</span>
 <span class="sd">        - Test Tube Holders</span>
-<span class="sd">        - Component which share&#39;s the robot model reference</span>
+<span class="sd">        - Component which share's the robot model reference</span>
 <span class="sd">        - Motion Planning components (e.g., dispensers, etc.)</span>
 <span class="sd">        - Start and Goal sources</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Call the superclass method</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">add_supporting_cast</span><span class="p">()</span>
 
@@ -824,21 +824,21 @@
         <span class="p">)</span>
         <span class="c1"># The initial condition will be set for the plant when we build the production.</span>
 
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Completed adding supporting cast members.&quot;</span><span class="p">)</span></div>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Completed adding supporting cast members."</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ChemLab2.add_beaker">
 <a class="viewcode-back" href="../../../../../../generated/productions/motion_planning/offline/dynamic/dynamic.html#brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2.add_beaker">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_beaker</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_beaker</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
-<span class="sd">        This method adds the beaker URDF to the production&#39;s plant.</span>
-<span class="sd">        The beaker&#39;s URDF comes from the brom_drake `robots` directories.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        This method adds the beaker URDF to the production's plant.</span>
+<span class="sd">        The beaker's URDF comes from the brom_drake `robots` directories.</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
         <span class="n">plant</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span>
-        <span class="n">urdf_file_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">impresources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="n">robots</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;models/beaker/beaker.urdf&quot;</span><span class="p">)</span>
+        <span class="n">urdf_file_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">impresources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="n">robots</span><span class="p">)</span> <span class="o">/</span> <span class="s2">"models/beaker/beaker.urdf"</span><span class="p">)</span>
 
         <span class="c1"># Use Drakeify my urdf to create the beaker</span>
         <span class="n">new_beaker_urdf</span> <span class="o">=</span> <span class="n">drakeify_my_urdf</span><span class="p">(</span><span class="n">urdf_file_path</span><span class="p">)</span>
@@ -856,23 +856,23 @@
         <span class="c1"># # Weld the beaker to the world frame</span>
         <span class="c1"># plant.WeldFrames(</span>
         <span class="c1">#     plant.world_frame(),</span>
-        <span class="c1">#     plant.GetFrameByName(&quot;beaker_base_link&quot;, self.beaker_model_index),</span>
+        <span class="c1">#     plant.GetFrameByName("beaker_base_link", self.beaker_model_index),</span>
         <span class="c1">#     self.pose_WorldBeaker,</span>
         <span class="c1"># )</span>
 
 <div class="viewcode-block" id="ChemLab2.add_motion_planning_components">
 <a class="viewcode-back" href="../../../../../../generated/productions/motion_planning/offline/dynamic/dynamic.html#brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2.add_motion_planning_components">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_motion_planning_components</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_motion_planning_components</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
-<span class="sd">        Add the following components to the production&#39;s</span>
+<span class="sd">        Add the following components to the production's</span>
 <span class="sd">        ``builder`` in order to help with motion planning:</span>
 
 <span class="sd">        - `plan_dispenser`: An OpenLoopPlanDispenser which will describe the reference robot trajectory.</span>
 <span class="sd">        - Connections between reference trajectory and UR10e station.</span>
-<span class="sd">        - Gripper control components (type of control and an &quot;open&quot; command)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        - Gripper control components (type of control and an "open" command)</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
         <span class="n">arm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">arm</span>
         <span class="n">n_actuated_dof</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">num_actuated_dofs</span><span class="p">(</span>
@@ -885,12 +885,12 @@
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">Connect</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">plan_dispenser</span><span class="o">.</span><span class="n">GetOutputPort</span><span class="p">(</span><span class="s2">&quot;point_in_plan&quot;</span><span class="p">),</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">station</span><span class="o">.</span><span class="n">GetInputPort</span><span class="p">(</span><span class="s2">&quot;desired_joint_positions&quot;</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plan_dispenser</span><span class="o">.</span><span class="n">GetOutputPort</span><span class="p">(</span><span class="s2">"point_in_plan"</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">station</span><span class="o">.</span><span class="n">GetInputPort</span><span class="p">(</span><span class="s2">"desired_joint_positions"</span><span class="p">),</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gripper_type</span> <span class="o">!=</span> <span class="n">GripperType</span><span class="o">.</span><span class="n">NoGripper</span><span class="p">:</span>
-            <span class="c1"># Add components for the gripper&#39;s control, including:</span>
+            <span class="c1"># Add components for the gripper's control, including:</span>
             <span class="c1"># - Gripper Target Type</span>
             <span class="c1"># - Gripper Target</span>
             <span class="c1"># Both should be static.</span>
@@ -905,7 +905,7 @@
             <span class="c1"># Connect the gripper target type to the station</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">Connect</span><span class="p">(</span>
                 <span class="n">gripper_target_type_source</span><span class="o">.</span><span class="n">get_output_port</span><span class="p">(),</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">station</span><span class="o">.</span><span class="n">GetInputPort</span><span class="p">(</span><span class="s2">&quot;gripper_target_type&quot;</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">station</span><span class="o">.</span><span class="n">GetInputPort</span><span class="p">(</span><span class="s2">"gripper_target_type"</span><span class="p">),</span>
             <span class="p">)</span>
 
             <span class="c1"># Add the gripper target to the builder</span>
@@ -916,23 +916,23 @@
             <span class="c1"># Connect the gripper target to the station</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">Connect</span><span class="p">(</span>
                 <span class="n">gripper_target_source</span><span class="o">.</span><span class="n">get_output_port</span><span class="p">(),</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">station</span><span class="o">.</span><span class="n">GetInputPort</span><span class="p">(</span><span class="s2">&quot;gripper_target&quot;</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">station</span><span class="o">.</span><span class="n">GetInputPort</span><span class="p">(</span><span class="s2">"gripper_target"</span><span class="p">),</span>
             <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ChemLab2.add_shelf">
 <a class="viewcode-back" href="../../../../../../generated/productions/motion_planning/offline/dynamic/dynamic.html#brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2.add_shelf">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_shelf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_shelf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
-<span class="sd">        Add the shelf to the production&#39;s plant.</span>
+<span class="sd">        Add the shelf to the production's plant.</span>
 <span class="sd">        Welds the shelf to the world frame.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
         <span class="n">plant</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span>
         <span class="n">urdf_file_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span>
-            <span class="n">impresources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="n">robots</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;models/cupboard/cupboard.sdf&quot;</span>
+            <span class="n">impresources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="n">robots</span><span class="p">)</span> <span class="o">/</span> <span class="s2">"models/cupboard/cupboard.sdf"</span>
         <span class="p">)</span>
 
         <span class="c1"># Add the shelf to the plant</span>
@@ -942,25 +942,25 @@
         <span class="c1"># Weld the bookshelf to the world frame</span>
         <span class="n">plant</span><span class="o">.</span><span class="n">WeldFrames</span><span class="p">(</span>
             <span class="n">plant</span><span class="o">.</span><span class="n">world_frame</span><span class="p">(),</span>
-            <span class="n">plant</span><span class="o">.</span><span class="n">GetFrameByName</span><span class="p">(</span><span class="s2">&quot;cupboard_body&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shelf_model_index</span><span class="p">),</span>
+            <span class="n">plant</span><span class="o">.</span><span class="n">GetFrameByName</span><span class="p">(</span><span class="s2">"cupboard_body"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shelf_model_index</span><span class="p">),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pose_WorldShelf</span><span class="p">,</span>
         <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ChemLab2.add_table">
 <a class="viewcode-back" href="../../../../../../generated/productions/motion_planning/offline/dynamic/dynamic.html#brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2.add_table">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
-<span class="sd">        This method adds the table to the production&#39;s plant.</span>
+<span class="sd">        This method adds the table to the production's plant.</span>
 <span class="sd">        Welds the table to the world frame.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
 
         <span class="c1"># Create a new shape urdf</span>
         <span class="n">table_defn</span> <span class="o">=</span> <span class="n">SimpleShapeURDFDefinition</span><span class="p">(</span>
-            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;table&quot;</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">"table"</span><span class="p">,</span>
             <span class="n">shape</span><span class="o">=</span><span class="n">BoxDefinition</span><span class="p">(</span>
                 <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table_width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_length</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_height</span><span class="p">),</span>
             <span class="p">),</span>
@@ -972,7 +972,7 @@
             <span class="p">),</span>
             <span class="n">color</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]),</span>
         <span class="p">)</span>
-        <span class="n">table_urdf_path</span> <span class="o">=</span> <span class="n">DEFAULT_BROM_MODELS_DIR</span> <span class="o">/</span> <span class="s2">&quot;table&quot;</span> <span class="o">/</span> <span class="s2">&quot;table.urdf&quot;</span>
+        <span class="n">table_urdf_path</span> <span class="o">=</span> <span class="n">DEFAULT_BROM_MODELS_DIR</span> <span class="o">/</span> <span class="s2">"table"</span> <span class="o">/</span> <span class="s2">"table.urdf"</span>
         <span class="n">table_defn</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="n">table_urdf_path</span><span class="p">)</span>
 
         <span class="c1"># Add the table to the production</span>
@@ -985,24 +985,24 @@
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">WeldFrames</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">world_frame</span><span class="p">(),</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetFrameByName</span><span class="p">(</span><span class="s2">&quot;table_base_link&quot;</span><span class="p">,</span> <span class="n">table_model_index</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetFrameByName</span><span class="p">(</span><span class="s2">"table_base_link"</span><span class="p">,</span> <span class="n">table_model_index</span><span class="p">),</span>
             <span class="n">table_pose</span><span class="p">,</span>
         <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ChemLab2.add_test_tube_holders">
 <a class="viewcode-back" href="../../../../../../generated/productions/motion_planning/offline/dynamic/dynamic.html#brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2.add_test_tube_holders">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_test_tube_holders</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_test_tube_holders</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
-<span class="sd">        This method adds the test tube holders to the production&#39;s plant.</span>
+<span class="sd">        This method adds the test tube holders to the production's plant.</span>
 <span class="sd">        Welds the test tube holders to the world frame with using</span>
 <span class="sd">        predefined poses.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
         <span class="n">test_tube_urdf1</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span>
-            <span class="n">impresources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="n">robots</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;models/test_tube_holder/test_tube_holder.urdf&quot;</span>
+            <span class="n">impresources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="n">robots</span><span class="p">)</span> <span class="o">/</span> <span class="s2">"models/test_tube_holder/test_tube_holder.urdf"</span>
         <span class="p">)</span>
 
         <span class="c1"># Use Drakeify my urdf to create the test tube holders</span>
@@ -1020,12 +1020,12 @@
 
 <div class="viewcode-block" id="ChemLab2.add_cast_and_build">
 <a class="viewcode-back" href="../../../../../../generated/productions/motion_planning/offline/dynamic/dynamic.html#brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2.add_cast_and_build">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_cast_and_build</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_cast_and_build</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">cast</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Role</span><span class="p">,</span> <span class="n">Performer</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[],</span>
         <span class="n">with_watcher</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Diagram</span><span class="p">,</span> <span class="n">Context</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
 <span class="sd">        Modifies the normal add_cast_and_build, so that</span>
@@ -1051,7 +1051,7 @@
 <span class="sd">        diagram_context: Context</span>
 <span class="sd">            The context for the built diagram.</span>
 <span class="sd">            This context will be used to initialize the watcher.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">diagram</span><span class="p">,</span> <span class="n">diagram_context</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">add_cast_and_build</span><span class="p">(</span>
             <span class="n">main_cast_members</span><span class="o">=</span><span class="n">cast</span><span class="p">,</span>
             <span class="n">with_watcher</span><span class="o">=</span><span class="n">with_watcher</span><span class="p">,</span>
@@ -1072,7 +1072,7 @@
         <span class="p">)</span>
 
         <span class="k">for</span> <span class="n">role_ii</span><span class="p">,</span> <span class="n">performer_ii</span> <span class="ow">in</span> <span class="n">cast</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">role_ii</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;OfflineMotionPlanner&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">role_ii</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">"OfflineMotionPlanner"</span><span class="p">:</span>
                 <span class="n">performer_ii</span><span class="o">.</span><span class="n">set_internal_root_context</span><span class="p">(</span><span class="n">diagram_context</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">diagram</span><span class="p">,</span> <span class="n">diagram_context</span></div>
@@ -1080,8 +1080,8 @@
 
 <div class="viewcode-block" id="ChemLab2.configure_collision_filter">
 <a class="viewcode-back" href="../../../../../../generated/productions/motion_planning/offline/dynamic/dynamic.html#brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2.configure_collision_filter">[docs]</a>
-    <span class="k">def</span> <span class="nf">configure_collision_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scene_graph_context</span><span class="p">:</span> <span class="n">Context</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">configure_collision_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scene_graph_context</span><span class="p">:</span> <span class="n">Context</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
 <span class="sd">        This method configures the collision filter in the scene graph so that we ignore:</span>
@@ -1092,7 +1092,7 @@
 
 <span class="sd">        scene_graph_context: Context</span>
 <span class="sd">            The context for the scene graph.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
         <span class="n">scene_graph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scene_graph</span>
         <span class="n">shelf_model_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shelf_model_index</span>
@@ -1141,20 +1141,20 @@
 
 <div class="viewcode-block" id="ChemLab2.define_pose_ik_problem">
 <a class="viewcode-back" href="../../../../../../generated/productions/motion_planning/offline/dynamic/dynamic.html#brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2.define_pose_ik_problem">[docs]</a>
-    <span class="k">def</span> <span class="nf">define_pose_ik_problem</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">define_pose_ik_problem</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">pose_WorldTarget</span><span class="p">:</span> <span class="n">RigidTransform</span><span class="p">,</span>
         <span class="n">target_frame_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">eps0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.5e-2</span><span class="p">,</span>
         <span class="n">orientation_cost_scaling</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.25</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">InverseKinematics</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
 <span class="sd">        Sets up the inverse kinematics problem for the start pose</span>
 <span class="sd">        input to theis function.</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
         <span class="n">scene_graph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scene_graph</span>
         <span class="n">sg_inspector</span> <span class="o">=</span> <span class="n">scene_graph</span><span class="o">.</span><span class="n">model_inspector</span><span class="p">()</span>
@@ -1175,7 +1175,7 @@
         <span class="c1"># ik_problem.AddOrientationConstraint(</span>
         <span class="c1">#     self.plant.world_frame(),</span>
         <span class="c1">#     RotationMatrix(Quaternion(input_pose_vec[3:]).rotation()),</span>
-        <span class="c1">#     self.plant.GetFrameByName(&quot;ft_frame&quot;),</span>
+        <span class="c1">#     self.plant.GetFrameByName("ft_frame"),</span>
         <span class="c1">#     RotationMatrix.Identity(),</span>
         <span class="c1">#     0.25,</span>
         <span class="c1"># )</span>
@@ -1201,7 +1201,7 @@
 
 <div class="viewcode-block" id="ChemLab2.easy_cast_and_build">
 <a class="viewcode-back" href="../../../../../../generated/productions/motion_planning/offline/dynamic/dynamic.html#brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2.easy_cast_and_build">[docs]</a>
-    <span class="k">def</span> <span class="nf">easy_cast_and_build</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">easy_cast_and_build</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">planning_algorithm</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span>
             <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]],</span>
@@ -1209,7 +1209,7 @@
         <span class="p">],</span>
         <span class="n">with_watcher</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Diagram</span><span class="p">,</span> <span class="n">Context</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
 <span class="sd">        This function is used to easily cast and build the production.</span>
@@ -1230,7 +1230,7 @@
 <span class="sd">        diagram_context: Context</span>
 <span class="sd">            The context for the built diagram.</span>
 <span class="sd">            If with_watcher is True, this context will be used to initialize the watcher.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
 
         <span class="c1"># Use Base class implementation to start</span>
@@ -1239,7 +1239,7 @@
             <span class="n">with_watcher</span><span class="o">=</span><span class="n">with_watcher</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="c1"># print(&quot;completed cast and build.&quot;)</span>
+        <span class="c1"># print("completed cast and build.")</span>
 
         <span class="c1"># Configure the scene graph for collision detection</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">configure_collision_filter</span><span class="p">(</span>
@@ -1277,8 +1277,8 @@
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">goal_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">goal_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
 <span class="sd">        Get the goal pose.</span>
@@ -1287,15 +1287,15 @@
 
 <span class="sd">        q_goal: np.ndarray</span>
 <span class="sd">            The goal configuration of the robot.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
         <span class="n">hardcoded_robot_joint_names</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="s2">&quot;ur10e-test_shoulder_pan_joint_q&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;ur10e-test_shoulder_lift_joint_q&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;ur10e-test_elbow_joint_q&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;ur10e-test_wrist_1_joint_q&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;ur10e-test_wrist_2_joint_q&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;ur10e-test_wrist_3_joint_q&quot;</span><span class="p">,</span>
+            <span class="s2">"ur10e-test_shoulder_pan_joint_q"</span><span class="p">,</span>
+            <span class="s2">"ur10e-test_shoulder_lift_joint_q"</span><span class="p">,</span>
+            <span class="s2">"ur10e-test_elbow_joint_q"</span><span class="p">,</span>
+            <span class="s2">"ur10e-test_wrist_1_joint_q"</span><span class="p">,</span>
+            <span class="s2">"ur10e-test_wrist_2_joint_q"</span><span class="p">,</span>
+            <span class="s2">"ur10e-test_wrist_3_joint_q"</span><span class="p">,</span>
         <span class="p">]</span>
 
         <span class="c1"># Retrieve goal_configuraiton value</span>
@@ -1313,8 +1313,8 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_goal_config</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">goal_pose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RigidTransform</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">goal_pose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RigidTransform</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
 <span class="sd">        Get the goal pose of the end effector frame.</span>
@@ -1323,7 +1323,7 @@
 
 <span class="sd">        pose_WorldGoal: RigidTransform</span>
 <span class="sd">            The goal pose of the end effector frame.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
 
         <span class="c1"># Algorithm</span>
@@ -1343,12 +1343,12 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_goal_pose</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;It appears that the starting configuration is set, but the starting pose is not. This is unexpected behavior!&quot;</span>
+                <span class="sa">f</span><span class="s2">"It appears that the starting configuration is set, but the starting pose is not. This is unexpected behavior!"</span>
             <span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ProductionID</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ProductionID</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
 <span class="sd">        Always returns the ProductionID for ChemLab2.</span>
@@ -1357,13 +1357,13 @@
 
 <span class="sd">        ProductionID.kChemLab2: ProductionID</span>
 <span class="sd">            The ProductionID for ChemLab2.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">ProductionID</span><span class="o">.</span><span class="n">kChemLab2</span>
 
 <div class="viewcode-block" id="ChemLab2.initialize_pose_data">
 <a class="viewcode-back" href="../../../../../../generated/productions/motion_planning/offline/dynamic/dynamic.html#brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2.initialize_pose_data">[docs]</a>
-    <span class="k">def</span> <span class="nf">initialize_pose_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">initialize_pose_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
 <span class="sd">        Initialize the following poses if they are not already set:</span>
@@ -1373,7 +1373,7 @@
 <span class="sd">        - pose_WorldHolder</span>
 <span class="sd">        - pose_BeakerGoal</span>
 <span class="sd">        - pose_HolderStart</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Set shelf pose</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">shelf_pose</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pose_WorldShelf</span> <span class="o">=</span> <span class="n">RigidTransform</span><span class="p">(</span>
@@ -1419,18 +1419,18 @@
 
 <div class="viewcode-block" id="ChemLab2.solve_forward_kinematics_problem_for_arm">
 <a class="viewcode-back" href="../../../../../../generated/productions/motion_planning/offline/dynamic/dynamic.html#brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2.solve_forward_kinematics_problem_for_arm">[docs]</a>
-    <span class="k">def</span> <span class="nf">solve_forward_kinematics_problem_for_arm</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">solve_forward_kinematics_problem_for_arm</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">robot_joint_positions</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RigidTransform</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
 <span class="sd">        This method solves the forward kinematics problem for the UR10e arm</span>
 <span class="sd">        by itself.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
-        <span class="n">target_frame_name</span> <span class="o">=</span> <span class="s2">&quot;tool0&quot;</span>
+        <span class="n">target_frame_name</span> <span class="o">=</span> <span class="s2">"tool0"</span>
 
         <span class="c1"># Create shadow plant and populate it with the UR10e arm</span>
         <span class="n">shadow_station</span> <span class="o">=</span> <span class="n">UR10eStation</span><span class="p">(</span>
@@ -1440,10 +1440,10 @@
         <span class="p">)</span>
         <span class="n">shadow_station</span><span class="o">.</span><span class="n">Finalize</span><span class="p">()</span>
 
-        <span class="c1"># Use station&#39;s plant to solve the forward kinematics problem</span>
+        <span class="c1"># Use station's plant to solve the forward kinematics problem</span>
         <span class="n">shadow_plant</span> <span class="o">=</span> <span class="n">shadow_station</span><span class="o">.</span><span class="n">plant</span>
 
-        <span class="c1"># Set the arm&#39;s joint positions</span>
+        <span class="c1"># Set the arm's joint positions</span>
         <span class="n">temp_context</span> <span class="o">=</span> <span class="n">shadow_plant</span><span class="o">.</span><span class="n">CreateDefaultContext</span><span class="p">()</span>
         <span class="n">shadow_plant</span><span class="o">.</span><span class="n">SetPositions</span><span class="p">(</span>
             <span class="n">temp_context</span><span class="p">,</span>
@@ -1461,8 +1461,8 @@
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">start_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">start_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
 <span class="sd">        Get the start configuration of the robot in the production.</span>
@@ -1471,15 +1471,15 @@
 
 <span class="sd">        q_start: np.ndarray</span>
 <span class="sd">            The start configuration of the robot.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
         <span class="n">hardcoded_robot_joint_names</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="s2">&quot;ur10e-test_shoulder_pan_joint_q&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;ur10e-test_shoulder_lift_joint_q&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;ur10e-test_elbow_joint_q&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;ur10e-test_wrist_1_joint_q&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;ur10e-test_wrist_2_joint_q&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;ur10e-test_wrist_3_joint_q&quot;</span><span class="p">,</span>
+            <span class="s2">"ur10e-test_shoulder_pan_joint_q"</span><span class="p">,</span>
+            <span class="s2">"ur10e-test_shoulder_lift_joint_q"</span><span class="p">,</span>
+            <span class="s2">"ur10e-test_elbow_joint_q"</span><span class="p">,</span>
+            <span class="s2">"ur10e-test_wrist_1_joint_q"</span><span class="p">,</span>
+            <span class="s2">"ur10e-test_wrist_2_joint_q"</span><span class="p">,</span>
+            <span class="s2">"ur10e-test_wrist_3_joint_q"</span><span class="p">,</span>
         <span class="p">]</span>
 
         <span class="c1"># Algorithm</span>
@@ -1494,12 +1494,12 @@
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-                <span class="s2">&quot;This function should be implemented by the subclass.&quot;</span>
+                <span class="s2">"This function should be implemented by the subclass."</span>
             <span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">start_pose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RigidTransform</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">start_pose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RigidTransform</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
 <span class="sd">        Get the start pose. This should be defined by the subclass.</span>
@@ -1508,7 +1508,7 @@
 
 <span class="sd">        pose_WorldStart: RigidTransform</span>
 <span class="sd">            The start pose of the end effector frame.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
 
         <span class="c1"># Algorithm</span>
@@ -1521,13 +1521,13 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_pose</span>
         <span class="k">elif</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start_pose</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
             <span class="c1"># Use the start configuration to get the starting pose</span>
-            <span class="c1"># Using a &quot;forward kinematics solver&quot;</span>
+            <span class="c1"># Using a "forward kinematics solver"</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_start_pose</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">solve_forward_kinematics_problem_for_arm</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_start_config</span>
             <span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_pose</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unexpected behavior. This should never happen.&quot;</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unexpected behavior. This should never happen."</span><span class="p">)</span></div>
 
 </pre></div>
         </article>
@@ -1561,7 +1561,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../../_static/documentation_options.js?v=722679d6"></script>
+</div><script src="../../../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

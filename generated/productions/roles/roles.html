@@ -6,8 +6,8 @@
 <link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html"><link rel="next" title="motion_planners" href="motion_planners/motion_planners.html"><link rel="prev" title="pick_and_place" href="../pick_and_place/pick_and_place.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>roles - brom_drake-py 0.5.6 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=acfd86a5" />
+        <title>roles - brom_drake-py v0.0.0+githubActionDefault documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -162,7 +162,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">brom_drake-py 0.5.6 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +183,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.6 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -592,43 +592,43 @@ properly “fills the role” (i.e., fills the slot) in a Drake Diagram.</p>
 </dl>
 <p><em>Usage</em></p>
 <p>Consider the following pieces of code:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">brom_drake.productions.roles</span> <span class="kn">import</span> <span class="n">Role</span><span class="p">,</span> <span class="n">RolePortAssignment</span>
-<span class="kn">from</span> <span class="nn">brom_drake.productions.roles.role_port_assignment</span> <span class="kn">import</span> <span class="n">PairingType</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.productions.roles</span><span class="w"> </span><span class="kn">import</span> <span class="n">Role</span><span class="p">,</span> <span class="n">RolePortAssignment</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.productions.roles.role_port_assignment</span><span class="w"> </span><span class="kn">import</span> <span class="n">PairingType</span>
 
 <span class="n">kGraspConfirmer</span> <span class="o">=</span> <span class="n">Role</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Confirm-When-Grasp-Worked&quot;</span><span class="p">,</span>
-    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Attempts to define with a boolean whether or not the object we&#39;re interested in is currently in our grasp.&quot;</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">"Confirm-When-Grasp-Worked"</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">"Attempts to define with a boolean whether or not the object we're interested in is currently in our grasp."</span><span class="p">,</span>
     <span class="n">port_assignments</span><span class="o">=</span><span class="p">[</span>
         <span class="c1"># Required inputs for Role</span>
         <span class="n">RolePortAssignment</span><span class="p">(</span>
-            <span class="n">external_target_name</span><span class="o">=</span><span class="s2">&quot;target_cube_pose&quot;</span><span class="p">,</span>
-            <span class="n">performer_port_name</span><span class="o">=</span><span class="s2">&quot;current_manipuland_pose&quot;</span><span class="p">,</span>
+            <span class="n">external_target_name</span><span class="o">=</span><span class="s2">"target_cube_pose"</span><span class="p">,</span>
+            <span class="n">performer_port_name</span><span class="o">=</span><span class="s2">"current_manipuland_pose"</span><span class="p">,</span>
             <span class="n">pairing_type</span><span class="o">=</span><span class="n">PairingType</span><span class="o">.</span><span class="n">kInput</span>
         <span class="p">),</span>
         <span class="n">RolePortAssignment</span><span class="p">(</span>
-            <span class="n">external_target_name</span><span class="o">=</span><span class="s2">&quot;cube_model_idx&quot;</span><span class="p">,</span>
-            <span class="n">performer_port_name</span><span class="o">=</span><span class="s2">&quot;object_model_index&quot;</span><span class="p">,</span>
+            <span class="n">external_target_name</span><span class="o">=</span><span class="s2">"cube_model_idx"</span><span class="p">,</span>
+            <span class="n">performer_port_name</span><span class="o">=</span><span class="s2">"object_model_index"</span><span class="p">,</span>
             <span class="n">pairing_type</span><span class="o">=</span><span class="n">PairingType</span><span class="o">.</span><span class="n">kInput</span>
         <span class="p">),</span>
         <span class="n">RolePortAssignment</span><span class="p">(</span>
-            <span class="n">external_target_name</span><span class="o">=</span><span class="s2">&quot;gripper_pose&quot;</span><span class="p">,</span>
-            <span class="n">performer_port_name</span><span class="o">=</span><span class="s2">&quot;gripper_pose&quot;</span><span class="p">,</span>
+            <span class="n">external_target_name</span><span class="o">=</span><span class="s2">"gripper_pose"</span><span class="p">,</span>
+            <span class="n">performer_port_name</span><span class="o">=</span><span class="s2">"gripper_pose"</span><span class="p">,</span>
             <span class="n">pairing_type</span><span class="o">=</span><span class="n">PairingType</span><span class="o">.</span><span class="n">kInput</span><span class="p">,</span>
         <span class="p">),</span>
         <span class="n">RolePortAssignment</span><span class="p">(</span>
-            <span class="n">external_target_name</span><span class="o">=</span><span class="s2">&quot;production_gripper_model_idx&quot;</span><span class="p">,</span>
-            <span class="n">performer_port_name</span><span class="o">=</span><span class="s2">&quot;gripper_model_index&quot;</span><span class="p">,</span>
+            <span class="n">external_target_name</span><span class="o">=</span><span class="s2">"production_gripper_model_idx"</span><span class="p">,</span>
+            <span class="n">performer_port_name</span><span class="o">=</span><span class="s2">"gripper_model_index"</span><span class="p">,</span>
             <span class="n">pairing_type</span><span class="o">=</span><span class="n">PairingType</span><span class="o">.</span><span class="n">kInput</span>
         <span class="p">),</span>
         <span class="n">RolePortAssignment</span><span class="p">(</span>
-            <span class="n">external_target_name</span><span class="o">=</span><span class="s2">&quot;gripper_configuration&quot;</span><span class="p">,</span>
-            <span class="n">performer_port_name</span><span class="o">=</span><span class="s2">&quot;gripper_configuration&quot;</span><span class="p">,</span>
+            <span class="n">external_target_name</span><span class="o">=</span><span class="s2">"gripper_configuration"</span><span class="p">,</span>
+            <span class="n">performer_port_name</span><span class="o">=</span><span class="s2">"gripper_configuration"</span><span class="p">,</span>
             <span class="n">pairing_type</span><span class="o">=</span><span class="n">PairingType</span><span class="o">.</span><span class="n">kInput</span><span class="p">,</span>
         <span class="p">),</span>
         <span class="c1"># Output Of Role</span>
         <span class="n">RolePortAssignment</span><span class="p">(</span>
-            <span class="n">external_target_name</span><span class="o">=</span><span class="s2">&quot;grasp_complete&quot;</span><span class="p">,</span>
-            <span class="n">performer_port_name</span><span class="o">=</span><span class="s2">&quot;grasp_success_flag&quot;</span><span class="p">,</span>
+            <span class="n">external_target_name</span><span class="o">=</span><span class="s2">"grasp_complete"</span><span class="p">,</span>
+            <span class="n">performer_port_name</span><span class="o">=</span><span class="s2">"grasp_success_flag"</span><span class="p">,</span>
             <span class="n">pairing_type</span><span class="o">=</span><span class="n">PairingType</span><span class="o">.</span><span class="n">kOutput</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="p">]</span>
@@ -930,7 +930,7 @@ target definition, i.e.:</p>
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=722679d6"></script>
+</div><script src="../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>

@@ -5,8 +5,8 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.productions.debug.show_me.show_me_system - brom_drake-py 0.5.6 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=acfd86a5" />
+        <title>brom_drake.productions.debug.show_me.show_me_system - brom_drake-py v0.0.0+githubActionDefault documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../index.html"><div class="brand">brom_drake-py 0.5.6 documentation</div></a>
+      <a href="../../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.6 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -551,18 +551,18 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for brom_drake.productions.debug.show_me.show_me_system</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">pydrake.multibody.plant</span> <span class="kn">import</span> <span class="n">MultibodyPlant</span>
-<span class="kn">from</span> <span class="nn">pydrake.multibody.tree</span> <span class="kn">import</span> <span class="n">ModelInstanceIndex</span>
-<span class="kn">from</span> <span class="nn">pydrake.systems.framework</span> <span class="kn">import</span> <span class="n">LeafSystem</span><span class="p">,</span> <span class="n">BasicVector</span><span class="p">,</span> <span class="n">Context</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.multibody.plant</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultibodyPlant</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.multibody.tree</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelInstanceIndex</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.systems.framework</span><span class="w"> </span><span class="kn">import</span> <span class="n">LeafSystem</span><span class="p">,</span> <span class="n">BasicVector</span><span class="p">,</span> <span class="n">Context</span>
 
-<span class="kn">from</span> <span class="nn">brom_drake.utils</span> <span class="kn">import</span> <span class="n">AddMultibodyTriad</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">AddMultibodyTriad</span>
 
 
 <div class="viewcode-block" id="ShowMeSystem">
 <a class="viewcode-back" href="../../../../../generated/productions/debug/show_me/show_me.html#brom_drake.productions.debug.show_me.show_me_system.ShowMeSystem">[docs]</a>
-<span class="k">class</span> <span class="nc">ShowMeSystem</span><span class="p">(</span><span class="n">LeafSystem</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ShowMeSystem</span><span class="p">(</span><span class="n">LeafSystem</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    **Description**</span>
 
 <span class="sd">    This class defines a LeafSystem that will force a specific model</span>
@@ -592,9 +592,9 @@
 <span class="sd">    desired_joint_positions : np.ndarray</span>
 <span class="sd">        The desired joint positions for the model, if any.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">plant</span><span class="p">:</span> <span class="n">MultibodyPlant</span><span class="p">,</span>
         <span class="n">model_index</span><span class="p">:</span> <span class="n">ModelInstanceIndex</span><span class="p">,</span>
@@ -611,28 +611,28 @@
         <span class="c1"># Define Input Ports</span>
         <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">desired_joint_positions</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">desired_joint_positions_port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DeclareVectorInputPort</span><span class="p">(</span>
-            <span class="s2">&quot;desired_joint_positions&quot;</span><span class="p">,</span>
+            <span class="s2">"desired_joint_positions"</span><span class="p">,</span>
             <span class="n">BasicVector</span><span class="p">(</span><span class="n">n</span><span class="p">),</span>
         <span class="p">)</span>
 
         <span class="c1"># Define Output Ports</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">DeclareVectorOutputPort</span><span class="p">(</span>
-            <span class="s2">&quot;measured_joint_positions&quot;</span><span class="p">,</span>
+            <span class="s2">"measured_joint_positions"</span><span class="p">,</span>
             <span class="n">BasicVector</span><span class="p">(</span><span class="n">n</span><span class="p">),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">SetModelJointPositions</span><span class="p">,</span>
-            <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">time_ticket</span><span class="p">()},</span>  <span class="c1"># indicate that this doesn&#39;t depend on any inputs,</span>
+            <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">time_ticket</span><span class="p">()},</span>  <span class="c1"># indicate that this doesn't depend on any inputs,</span>
         <span class="p">)</span>  <span class="c1"># but should still be updated each timestep</span>
 
         <span class="c1"># Create plant context</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mutable_plant_context</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># Define the name of the system</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_name</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ShowMeSystem_for_</span><span class="si">{</span><span class="n">plant</span><span class="o">.</span><span class="n">GetModelInstanceName</span><span class="p">(</span><span class="n">model_index</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_name</span><span class="p">(</span><span class="sa">f</span><span class="s2">"ShowMeSystem_for_</span><span class="si">{</span><span class="n">plant</span><span class="o">.</span><span class="n">GetModelInstanceName</span><span class="p">(</span><span class="n">model_index</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ShowMeSystem.SetModelJointPositions">
 <a class="viewcode-back" href="../../../../../generated/productions/debug/show_me/show_me.html#brom_drake.productions.debug.show_me.show_me_system.ShowMeSystem.SetModelJointPositions">[docs]</a>
-    <span class="k">def</span> <span class="nf">SetModelJointPositions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="n">BasicVector</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetModelJointPositions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="n">BasicVector</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        **Description**</span>
 
 <span class="sd">        This method will set the joint positions of the model to the desired joint positions.</span>
@@ -644,7 +644,7 @@
 
 <span class="sd">        output: BasicVector</span>
 <span class="sd">            The output vector to be populated with the current joint positions.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
 
         <span class="c1"># Get desired joint positions</span>
@@ -660,9 +660,9 @@
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Could not set the joint positions; this is most likely a mismatch between:</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;- Number of joint positions in command: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">pose_as_vec</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;- Number of joint positions in model: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">num_positions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_index</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">"Could not set the joint positions; this is most likely a mismatch between:</span><span class="se">\n</span><span class="s2">"</span>
+                <span class="o">+</span> <span class="sa">f</span><span class="s2">"- Number of joint positions in command: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">pose_as_vec</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+                <span class="o">+</span> <span class="sa">f</span><span class="s2">"- Number of joint positions in model: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">num_positions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_index</span><span class="p">)</span><span class="si">}</span><span class="s2">."</span>
             <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">SetVelocities</span><span class="p">(</span>
@@ -706,7 +706,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../_static/documentation_options.js?v=722679d6"></script>
+</div><script src="../../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

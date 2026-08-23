@@ -5,8 +5,8 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.motion_planning.algorithms.rrt.bidirectional_connect - brom_drake-py 0.5.6 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=acfd86a5" />
+        <title>brom_drake.motion_planning.algorithms.rrt.bidirectional_connect - brom_drake-py v0.0.0+githubActionDefault documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../index.html"><div class="brand">brom_drake-py 0.5.6 documentation</div></a>
+      <a href="../../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.6 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -551,26 +551,26 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for brom_drake.motion_planning.algorithms.rrt.bidirectional_connect</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""</span>
 <span class="sd">bidirectional_connect.py</span>
 <span class="sd">Description</span>
 <span class="sd">-----------</span>
 <span class="sd">This file contains an algorithm for performing bidirectional RRT-Connect</span>
 <span class="sd">based search.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">pydrake.all</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">networkx</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nx</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.all</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">ModelInstanceIndex</span><span class="p">,</span>
     <span class="n">MultibodyPlant</span><span class="p">,</span>
     <span class="n">SceneGraph</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="c1"># Internal Imports</span>
-<span class="kn">from</span> <span class="nn">brom_drake.motion_planning.algorithms.motion_planner</span> <span class="kn">import</span> <span class="n">MotionPlanner</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.motion_planning.algorithms.motion_planner</span><span class="w"> </span><span class="kn">import</span> <span class="n">MotionPlanner</span>
 
 <span class="c1"># TODO(Kwesi): Introduce planning node object</span>
 
@@ -579,10 +579,10 @@
 <div class="viewcode-block" id="BiRRTConnectSamplingProbabilities">
 <a class="viewcode-back" href="../../../../../generated/motion_planning/algorithms/rrt/rrt.html#brom_drake.motion_planning.algorithms.rrt.bidirectional_connect.BiRRTConnectSamplingProbabilities">[docs]</a>
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">BiRRTConnectSamplingProbabilities</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BiRRTConnectSamplingProbabilities</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A dataclass that defines the sampling probabilities for a bidirectional RRT planner.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">sample_goal_tree</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.10</span>
     <span class="n">sample_opposite_tree</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.10</span></div>
@@ -592,10 +592,10 @@
 <div class="viewcode-block" id="BidirectionalRRTConnectPlannerConfig">
 <a class="viewcode-back" href="../../../../../generated/motion_planning/algorithms/rrt/rrt.html#brom_drake.motion_planning.algorithms.rrt.bidirectional_connect.BidirectionalRRTConnectPlannerConfig">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">BidirectionalRRTConnectPlannerConfig</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BidirectionalRRTConnectPlannerConfig</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A dataclass that defines the configuration for a bidirectional RRT planner.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">convergence_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-3</span>
     <span class="n">max_tree_nodes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e5</span><span class="p">)</span>
@@ -610,8 +610,8 @@
 
 <div class="viewcode-block" id="BidirectionalRRTConnectPlanner">
 <a class="viewcode-back" href="../../../../../generated/motion_planning/algorithms/rrt/rrt.html#brom_drake.motion_planning.algorithms.rrt.bidirectional_connect.BidirectionalRRTConnectPlanner">[docs]</a>
-<span class="k">class</span> <span class="nc">BidirectionalRRTConnectPlanner</span><span class="p">(</span><span class="n">MotionPlanner</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BidirectionalRRTConnectPlanner</span><span class="p">(</span><span class="n">MotionPlanner</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">robot_model_idx</span><span class="p">:</span> <span class="n">ModelInstanceIndex</span><span class="p">,</span>
         <span class="n">plant</span><span class="p">:</span> <span class="n">MultibodyPlant</span><span class="p">,</span>
@@ -635,14 +635,14 @@
 
 <div class="viewcode-block" id="BidirectionalRRTConnectPlanner.add_new_node_to">
 <a class="viewcode-back" href="../../../../../generated/motion_planning/algorithms/rrt/rrt.html#brom_drake.motion_planning.algorithms.rrt.bidirectional_connect.BidirectionalRRTConnectPlanner.add_new_node_to">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_new_node_to</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_new_node_to</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">target_tree</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">,</span>
         <span class="n">prev_node</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">reportviews</span><span class="o">.</span><span class="n">NodeView</span><span class="p">,</span>
         <span class="n">q_new</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
         <span class="n">tree_is_goal</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description</span>
 <span class="sd">        -----------</span>
 <span class="sd">        This function adds a new node to the RRT.</span>
@@ -653,7 +653,7 @@
 <span class="sd">            The RRT to add the node to.</span>
 <span class="sd">        q_new: np.ndarray</span>
 <span class="sd">            The new configuration to add to the RRT.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
         <span class="n">n_nodes</span> <span class="o">=</span> <span class="n">target_tree</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">()</span>
 
@@ -673,7 +673,7 @@
 
 <div class="viewcode-block" id="BidirectionalRRTConnectPlanner.connect">
 <a class="viewcode-back" href="../../../../../generated/motion_planning/algorithms/rrt/rrt.html#brom_drake.motion_planning.algorithms.rrt.bidirectional_connect.BidirectionalRRTConnectPlanner.connect">[docs]</a>
-    <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">connect</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">nearest_node_view</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">reportviews</span><span class="o">.</span><span class="n">NodeView</span><span class="p">,</span>
         <span class="n">q_target</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
@@ -682,7 +682,7 @@
         <span class="n">collision_check_fcn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">target_config_already_exists</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description</span>
 <span class="sd">        -----------</span>
 <span class="sd">        This function connects the RRT from the nearest node to the target configuration.</span>
@@ -691,7 +691,7 @@
 <span class="sd">        ---------</span>
 <span class="sd">        target_config_already_exists: bool</span>
 <span class="sd">            Whether or not the target configuration already exists in the combined RRT.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Input Processing</span>
         <span class="k">if</span> <span class="n">collision_check_fcn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">collision_check_fcn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_collision_in_config</span>
@@ -701,7 +701,7 @@
         <span class="n">debug</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">debug</span>
 
         <span class="c1"># Steer from nearest node to random configuration</span>
-        <span class="n">q_current</span> <span class="o">=</span> <span class="n">nearest_node</span><span class="p">[</span><span class="s2">&quot;q&quot;</span><span class="p">]</span>
+        <span class="n">q_current</span> <span class="o">=</span> <span class="n">nearest_node</span><span class="p">[</span><span class="s2">"q"</span><span class="p">]</span>
         <span class="n">last_node_view</span> <span class="o">=</span> <span class="n">nearest_node_view</span>
 
         <span class="n">n_loops</span> <span class="o">=</span> <span class="mi">0</span>
@@ -733,21 +733,21 @@
             <span class="n">n_loops</span> <span class="o">+=</span> <span class="mi">1</span>
 
         <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of loops in connection: </span><span class="si">{</span><span class="n">n_loops</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;RRT Size: </span><span class="si">{</span><span class="n">rrt</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Number of loops in connection: </span><span class="si">{</span><span class="n">n_loops</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"RRT Size: </span><span class="si">{</span><span class="n">rrt</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">q_current</span><span class="p">,</span> <span class="n">reached_new</span>  <span class="c1"># Return the last configuration we visited</span></div>
 
 
 <div class="viewcode-block" id="BidirectionalRRTConnectPlanner.plan">
 <a class="viewcode-back" href="../../../../../generated/motion_planning/algorithms/rrt/rrt.html#brom_drake.motion_planning.algorithms.rrt.bidirectional_connect.BidirectionalRRTConnectPlanner.plan">[docs]</a>
-    <span class="k">def</span> <span class="nf">plan</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plan</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">q_start</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
         <span class="n">q_goal</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
         <span class="n">collision_check_fcn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description</span>
 <span class="sd">        -----------</span>
 <span class="sd">        This function plans a path from q_start to q_goal using the Bidirectional</span>
@@ -759,14 +759,14 @@
 <span class="sd">            The RRT that was created during the planning process.</span>
 <span class="sd">        int</span>
 <span class="sd">            The index of the goal node in the RRT.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Input Processing</span>
         <span class="n">q_start</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">q_start</span><span class="p">)</span>
         <span class="n">q_goal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">q_goal</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">q_start</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim_q</span> <span class="ow">or</span> <span class="n">q_goal</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim_q</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Start configuration shape (</span><span class="si">{</span><span class="n">q_start</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">) and goal configuration &quot;</span>
-                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;shape (</span><span class="si">{</span><span class="n">q_goal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">) must match the dimension of the robot (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dim_q</span><span class="si">}</span><span class="s2">).&quot;</span>
+                <span class="sa">f</span><span class="s2">"Start configuration shape (</span><span class="si">{</span><span class="n">q_start</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">) and goal configuration "</span>
+                <span class="o">+</span> <span class="sa">f</span><span class="s2">"shape (</span><span class="si">{</span><span class="n">q_goal</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">) must match the dimension of the robot (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dim_q</span><span class="si">}</span><span class="s2">)."</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">collision_check_fcn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -821,7 +821,7 @@
                     <span class="n">collision_check_fcn</span><span class="o">=</span><span class="n">collision_check_fcn</span><span class="p">,</span>
                 <span class="p">)</span>
                 <span class="c1"># q_new, reached_new = self.steer(</span>
-                <span class="c1">#     current_tree.nodes[nearest_node_view][&#39;q&#39;],</span>
+                <span class="c1">#     current_tree.nodes[nearest_node_view]['q'],</span>
                 <span class="c1">#     q_random,</span>
                 <span class="c1"># )</span>
 
@@ -844,21 +844,21 @@
 
         <span class="c1"># If we exit the loop without finding a path to the goal,</span>
         <span class="c1"># return the RRT and indicate failure</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Max iterations reached without finding a path to the goal.&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Max iterations reached without finding a path to the goal."</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">nx</span><span class="o">.</span><span class="n">disjoint_union</span><span class="p">(</span><span class="n">rrt_start</span><span class="p">,</span> <span class="n">rrt_goal</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span></div>
 
 
 <div class="viewcode-block" id="BidirectionalRRTConnectPlanner.sample_from_tree">
 <a class="viewcode-back" href="../../../../../generated/motion_planning/algorithms/rrt/rrt.html#brom_drake.motion_planning.algorithms.rrt.bidirectional_connect.BidirectionalRRTConnectPlanner.sample_from_tree">[docs]</a>
-    <span class="k">def</span> <span class="nf">sample_from_tree</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sample_from_tree</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">rrt</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">nx</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">reportviews</span><span class="o">.</span><span class="n">NodeView</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description</span>
 <span class="sd">        -----------</span>
 <span class="sd">        This function samples a configuration from the RRT.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
         <span class="n">n_tree</span> <span class="o">=</span> <span class="n">rrt</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">()</span>
 
@@ -869,18 +869,18 @@
                 <span class="k">return</span> <span class="n">node_ii</span>
 
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Random index (</span><span class="si">{</span><span class="n">random_index</span><span class="si">}</span><span class="s2">) not found in RRT with </span><span class="si">{</span><span class="n">n_tree</span><span class="si">}</span><span class="s2"> nodes.&quot;</span>
+            <span class="sa">f</span><span class="s2">"Random index (</span><span class="si">{</span><span class="n">random_index</span><span class="si">}</span><span class="s2">) not found in RRT with </span><span class="si">{</span><span class="n">n_tree</span><span class="si">}</span><span class="s2"> nodes."</span>
         <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="BidirectionalRRTConnectPlanner.sample_nearest_in_tree">
 <a class="viewcode-back" href="../../../../../generated/motion_planning/algorithms/rrt/rrt.html#brom_drake.motion_planning.algorithms.rrt.bidirectional_connect.BidirectionalRRTConnectPlanner.sample_nearest_in_tree">[docs]</a>
-    <span class="k">def</span> <span class="nf">sample_nearest_in_tree</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sample_nearest_in_tree</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">rrt</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">,</span>
         <span class="n">q_random</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">nx</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">reportviews</span><span class="o">.</span><span class="n">NodeView</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description</span>
 <span class="sd">        -----------</span>
 <span class="sd">        This function samples a configuration from the RRT.</span>
@@ -900,14 +900,14 @@
 <span class="sd">        distance: float</span>
 <span class="sd">            The distance from the random configuration to the nearest node in the RRT.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
 
         <span class="c1"># Search through the tree to find the node that is nearest to the random configuration</span>
-        <span class="n">min_distance</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
+        <span class="n">min_distance</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"inf"</span><span class="p">)</span>
         <span class="n">nearest_node_view</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">rrt</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
-            <span class="n">distance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">rrt</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="s2">&quot;q&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">q_random</span><span class="p">)</span>
+            <span class="n">distance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">rrt</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="s2">"q"</span><span class="p">]</span> <span class="o">-</span> <span class="n">q_random</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">distance</span> <span class="o">&lt;</span> <span class="n">min_distance</span><span class="p">:</span>
                 <span class="n">min_distance</span> <span class="o">=</span> <span class="n">distance</span>
                 <span class="n">nearest_node_view</span> <span class="o">=</span> <span class="n">node</span>
@@ -917,12 +917,12 @@
 
 <div class="viewcode-block" id="BidirectionalRRTConnectPlanner.steer">
 <a class="viewcode-back" href="../../../../../generated/motion_planning/algorithms/rrt/rrt.html#brom_drake.motion_planning.algorithms.rrt.bidirectional_connect.BidirectionalRRTConnectPlanner.steer">[docs]</a>
-    <span class="k">def</span> <span class="nf">steer</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">steer</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">q_current</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
         <span class="n">q_target</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description</span>
 <span class="sd">        -----------</span>
 <span class="sd">        This function steers the RRT from the start configuration to the goal configuration.</span>
@@ -940,7 +940,7 @@
 <span class="sd">            The new configuration of the robot after steering.</span>
 <span class="sd">        reached_config: bool</span>
 <span class="sd">            Whether or not we reached the target configuration with our step size or not.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
         <span class="n">step_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">steering_step_size</span>
 
@@ -960,14 +960,14 @@
 
 <div class="viewcode-block" id="BidirectionalRRTConnectPlanner.steer_towards_tree">
 <a class="viewcode-back" href="../../../../../generated/motion_planning/algorithms/rrt/rrt.html#brom_drake.motion_planning.algorithms.rrt.bidirectional_connect.BidirectionalRRTConnectPlanner.steer_towards_tree">[docs]</a>
-    <span class="k">def</span> <span class="nf">steer_towards_tree</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">steer_towards_tree</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">rrt_start</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">,</span>
         <span class="n">rrt_goal</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">,</span>
         <span class="n">current_tree_is_goal</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
         <span class="n">collision_check_fcn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description</span>
 <span class="sd">        -----------</span>
 <span class="sd">        This function steers the RRT from the start configuration to the goal configuration.</span>
@@ -979,7 +979,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        bool</span>
 <span class="sd">            Whether or not we reached the target configuration with our step size or not.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
         <span class="n">debug</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">debug</span>
         <span class="n">current_tree</span> <span class="o">=</span> <span class="n">rrt_goal</span> <span class="k">if</span> <span class="n">current_tree_is_goal</span> <span class="k">else</span> <span class="n">rrt_start</span>
@@ -989,7 +989,7 @@
 
         <span class="c1"># Sample a node in the current tree</span>
         <span class="n">current_node_view</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_from_tree</span><span class="p">(</span><span class="n">current_tree</span><span class="p">)</span>
-        <span class="n">q_current</span> <span class="o">=</span> <span class="n">current_tree</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">current_node_view</span><span class="p">][</span><span class="s2">&quot;q&quot;</span><span class="p">]</span>
+        <span class="n">q_current</span> <span class="o">=</span> <span class="n">current_tree</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">current_node_view</span><span class="p">][</span><span class="s2">"q"</span><span class="p">]</span>
 
         <span class="c1"># Sample from the opposite tree</span>
         <span class="n">opposite_tree</span> <span class="o">=</span> <span class="n">rrt_start</span> <span class="k">if</span> <span class="n">current_tree_is_goal</span> <span class="k">else</span> <span class="n">rrt_goal</span>
@@ -998,7 +998,7 @@
         <span class="p">)</span>
 
         <span class="n">node_in_opposite_tree</span> <span class="o">=</span> <span class="n">opposite_tree</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node_idx_in_opposite_tree</span><span class="p">]</span>
-        <span class="n">sampled_config</span> <span class="o">=</span> <span class="n">node_in_opposite_tree</span><span class="p">[</span><span class="s2">&quot;q&quot;</span><span class="p">]</span>
+        <span class="n">sampled_config</span> <span class="o">=</span> <span class="n">node_in_opposite_tree</span><span class="p">[</span><span class="s2">"q"</span><span class="p">]</span>
 
         <span class="c1"># Steer from the current configuration to the sampled one</span>
         <span class="c1"># q_new, reached_new = self.steer(q_current, sampled_config)</span>
@@ -1021,7 +1021,7 @@
             <span class="k">if</span> <span class="n">current_tree_is_goal</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
                     <span class="nb">print</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;Adding edge between </span><span class="si">{</span><span class="n">node_idx_in_opposite_tree</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">rrt_start</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">int</span><span class="p">(</span><span class="n">current_node_view</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="sa">f</span><span class="s2">"Adding edge between </span><span class="si">{</span><span class="n">node_idx_in_opposite_tree</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">rrt_start</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">int</span><span class="p">(</span><span class="n">current_node_view</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
                     <span class="p">)</span>
 
                 <span class="n">combined_rrt</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span>
@@ -1031,7 +1031,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
                     <span class="nb">print</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;Adding edge between </span><span class="si">{</span><span class="n">current_node_view</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">rrt_start</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">node_idx_in_opposite_tree</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="sa">f</span><span class="s2">"Adding edge between </span><span class="si">{</span><span class="n">current_node_view</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">rrt_start</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">node_idx_in_opposite_tree</span><span class="si">}</span><span class="s2">"</span>
                     <span class="p">)</span>
 
                 <span class="n">combined_rrt</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span>
@@ -1086,7 +1086,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../_static/documentation_options.js?v=722679d6"></script>
+</div><script src="../../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

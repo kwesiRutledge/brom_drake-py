@@ -5,8 +5,8 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.systems.abstract_list_selection_system - brom_drake-py 0.5.6 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=acfd86a5" />
+        <title>brom_drake.systems.abstract_list_selection_system - brom_drake-py v0.0.0+githubActionDefault documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">brom_drake-py 0.5.6 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.6 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -551,15 +551,15 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for brom_drake.systems.abstract_list_selection_system</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">pydrake.common.value</span> <span class="kn">import</span> <span class="n">AbstractValue</span>
-<span class="kn">from</span> <span class="nn">pydrake.math</span> <span class="kn">import</span> <span class="n">RigidTransform</span>
-<span class="kn">from</span> <span class="nn">pydrake.systems.framework</span> <span class="kn">import</span> <span class="n">Context</span><span class="p">,</span> <span class="n">LeafSystem</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.common.value</span><span class="w"> </span><span class="kn">import</span> <span class="n">AbstractValue</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.math</span><span class="w"> </span><span class="kn">import</span> <span class="n">RigidTransform</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.systems.framework</span><span class="w"> </span><span class="kn">import</span> <span class="n">Context</span><span class="p">,</span> <span class="n">LeafSystem</span>
 
 
 <div class="viewcode-block" id="AbstractListSelectionSystem">
 <a class="viewcode-back" href="../../../generated/systems/systems.html#brom_drake.systems.abstract_list_selection_system.AbstractListSelectionSystem">[docs]</a>
-<span class="k">class</span> <span class="nc">AbstractListSelectionSystem</span><span class="p">(</span><span class="n">LeafSystem</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AbstractListSelectionSystem</span><span class="p">(</span><span class="n">LeafSystem</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    *Description*</span>
 
 <span class="sd">    This System receives selects a single element from an AbstractValue</span>
@@ -568,7 +568,7 @@
 
 <span class="sd">    *Diagram*</span>
 
-<span class="sd">    The LeafSystem&#39;s input and output ports can be illustrated with the following block: ::</span>
+<span class="sd">    The LeafSystem's input and output ports can be illustrated with the following block: ::</span>
 
 <span class="sd">                            |---------------|</span>
 <span class="sd">            list_in -------&gt;|               |</span>
@@ -578,13 +578,13 @@
 <span class="sd">                            |               |</span>
 <span class="sd">                            |---------------|</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">output_type</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="n">RigidTransform</span><span class="p">,</span>
-        <span class="n">output_port_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;element_out&quot;</span><span class="p">,</span>
+        <span class="n">output_port_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"element_out"</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="n">LeafSystem</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
@@ -592,7 +592,7 @@
 
         <span class="c1"># Define Input Ports</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">list_input_port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DeclareAbstractInputPort</span><span class="p">(</span>
-            <span class="s2">&quot;list_in&quot;</span><span class="p">,</span>
+            <span class="s2">"list_in"</span><span class="p">,</span>
             <span class="n">AbstractValue</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span>
                 <span class="p">[</span><span class="n">output_type</span><span class="p">()]</span>
             <span class="p">),</span>  <span class="c1"># Placeholder; actual type will be checked at runtime</span>
@@ -607,27 +607,27 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">CalcOutputElement</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_name</span><span class="p">(</span><span class="s2">&quot;ListSelectionSystem&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_name</span><span class="p">(</span><span class="s2">"ListSelectionSystem"</span><span class="p">)</span>
 
 <div class="viewcode-block" id="AbstractListSelectionSystem.CalcOutputElement">
 <a class="viewcode-back" href="../../../generated/systems/systems.html#brom_drake.systems.abstract_list_selection_system.AbstractListSelectionSystem.CalcOutputElement">[docs]</a>
-    <span class="k">def</span> <span class="nf">CalcOutputElement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="n">AbstractValue</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">CalcOutputElement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="n">AbstractValue</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
 <span class="sd">        This callback function computes the selected element from the input list.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Retrieve current input value</span>
-        <span class="n">input_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetInputPort</span><span class="p">(</span><span class="s2">&quot;list_in&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">Eval</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+        <span class="n">input_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetInputPort</span><span class="p">(</span><span class="s2">"list_in"</span><span class="p">)</span><span class="o">.</span><span class="n">Eval</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
 
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
             <span class="n">input_list</span><span class="p">,</span> <span class="nb">list</span>
-        <span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;Expected list_in port to contain &quot;list&quot; objects, but received type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">input_list</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s1">'Expected list_in port to contain "list" objects, but received type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">input_list</span><span class="p">)</span><span class="si">}</span><span class="s1">'</span>
 
         <span class="c1"># Check index validity</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_list</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Index </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="si">}</span><span class="s2"> is out of bounds for input list of length </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">input_list</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">"Index </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="si">}</span><span class="s2"> is out of bounds for input list of length </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">input_list</span><span class="p">)</span><span class="si">}</span><span class="s2">."</span>
             <span class="p">)</span>
 
         <span class="c1"># Select the element at the specified index</span>
@@ -669,7 +669,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=722679d6"></script>
+</div><script src="../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>

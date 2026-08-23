@@ -5,8 +5,8 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.productions.types.pick_and_place.mp_and_grasping - brom_drake-py 0.5.6 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=acfd86a5" />
+        <title>brom_drake.productions.types.pick_and_place.mp_and_grasping - brom_drake-py v0.0.0+githubActionDefault documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../index.html"><div class="brand">brom_drake-py 0.5.6 documentation</div></a>
+      <a href="../../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.6 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -551,14 +551,14 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for brom_drake.productions.types.pick_and_place.mp_and_grasping</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Callable</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Callable</span>
 
-<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">pydrake.all</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">networkx</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nx</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.all</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">FixedOffsetFrame</span><span class="p">,</span>
     <span class="n">RotationMatrix</span><span class="p">,</span>
     <span class="n">Quaternion</span><span class="p">,</span>
@@ -569,42 +569,42 @@
     <span class="n">InverseKinematics</span><span class="p">,</span>
     <span class="n">ModelInstanceIndex</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">pydrake.common.value</span> <span class="kn">import</span> <span class="n">AbstractValue</span>
-<span class="kn">from</span> <span class="nn">pydrake.math</span> <span class="kn">import</span> <span class="n">RigidTransform</span>
-<span class="kn">from</span> <span class="nn">pydrake.multibody.parsing</span> <span class="kn">import</span> <span class="n">Parser</span>
-<span class="kn">from</span> <span class="nn">pydrake.multibody.plant</span> <span class="kn">import</span> <span class="n">MultibodyPlant</span>
-<span class="kn">from</span> <span class="nn">pydrake.systems.framework</span> <span class="kn">import</span> <span class="n">Diagram</span><span class="p">,</span> <span class="n">Context</span>
-<span class="kn">from</span> <span class="nn">pydrake.systems.primitives</span> <span class="kn">import</span> <span class="n">ConstantVectorSource</span><span class="p">,</span> <span class="n">ConstantValueSource</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.common.value</span><span class="w"> </span><span class="kn">import</span> <span class="n">AbstractValue</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.math</span><span class="w"> </span><span class="kn">import</span> <span class="n">RigidTransform</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.multibody.parsing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Parser</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.multibody.plant</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultibodyPlant</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.systems.framework</span><span class="w"> </span><span class="kn">import</span> <span class="n">Diagram</span><span class="p">,</span> <span class="n">Context</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.systems.primitives</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConstantVectorSource</span><span class="p">,</span> <span class="n">ConstantValueSource</span>
 
 <span class="c1"># Internal Imports</span>
-<span class="kn">from</span> <span class="nn">brom_drake.motion_planning.systems.prototypical_planner</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.motion_planning.systems.prototypical_planner</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">PrototypicalPlannerSystem</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">brom_drake.productions.types</span> <span class="kn">import</span> <span class="n">BaseProduction</span>
-<span class="kn">from</span> <span class="nn">brom_drake.productions.roles.role</span> <span class="kn">import</span> <span class="n">Role</span>
-<span class="kn">from</span> <span class="nn">brom_drake.productions.roles.motion_planners.kinematic</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.productions.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseProduction</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.productions.roles.role</span><span class="w"> </span><span class="kn">import</span> <span class="n">Role</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.productions.roles.motion_planners.kinematic</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">kKinematicMotionPlanner</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">brom_drake.file_manipulation.urdf.shapes.sphere</span> <span class="kn">import</span> <span class="n">SphereDefinition</span>
-<span class="kn">from</span> <span class="nn">brom_drake.file_manipulation.urdf.simple_writer.urdf_definition</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.file_manipulation.urdf.shapes.sphere</span><span class="w"> </span><span class="kn">import</span> <span class="n">SphereDefinition</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.file_manipulation.urdf.simple_writer.urdf_definition</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">SimpleShapeURDFDefinition</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">brom_drake.utils</span> <span class="kn">import</span> <span class="n">Performer</span><span class="p">,</span> <span class="n">MotionPlan</span>
-<span class="kn">from</span> <span class="nn">brom_drake.systems.network_fsm</span> <span class="kn">import</span> <span class="n">NetworkXFSM</span><span class="p">,</span> <span class="n">FSMOutputDefinition</span>
-<span class="kn">from</span> <span class="nn">brom_drake.utils.model_instances</span> <span class="kn">import</span> <span class="n">summarize_model_instance_with_dict</span>
-<span class="kn">from</span> <span class="nn">brom_drake.utils.pick_and_place.phase</span> <span class="kn">import</span> <span class="n">PickAndPlacePhase</span>
-<span class="kn">from</span> <span class="nn">brom_drake.utils.pick_and_place.target_description</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">Performer</span><span class="p">,</span> <span class="n">MotionPlan</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.systems.network_fsm</span><span class="w"> </span><span class="kn">import</span> <span class="n">NetworkXFSM</span><span class="p">,</span> <span class="n">FSMOutputDefinition</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.utils.model_instances</span><span class="w"> </span><span class="kn">import</span> <span class="n">summarize_model_instance_with_dict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.utils.pick_and_place.phase</span><span class="w"> </span><span class="kn">import</span> <span class="n">PickAndPlacePhase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.utils.pick_and_place.target_description</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">PickAndPlaceTargetDescription</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="c1"># Internal Imports</span>
-<span class="kn">from</span> <span class="nn">.script</span> <span class="kn">import</span> <span class="n">Script</span> <span class="k">as</span> <span class="n">MotionPlanningAndGraspingProductionScript</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.script</span><span class="w"> </span><span class="kn">import</span> <span class="n">Script</span> <span class="k">as</span> <span class="n">MotionPlanningAndGraspingProductionScript</span>
 
 
 <div class="viewcode-block" id="MotionPlanningAndGraspingProduction">
 <a class="viewcode-back" href="../../../../../generated/productions/types/pick_and_place/pick_and_place.html#brom_drake.productions.types.pick_and_place.mp_and_grasping.MotionPlanningAndGraspingProduction">[docs]</a>
-<span class="k">class</span> <span class="nc">MotionPlanningAndGraspingProduction</span><span class="p">(</span><span class="n">BaseProduction</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MotionPlanningAndGraspingProduction</span><span class="p">(</span><span class="n">BaseProduction</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">start_configuration</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">start_pose</span><span class="p">:</span> <span class="n">RigidTransform</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -625,7 +625,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_goal_pose</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># If the performer does not have plan_is_ready port, then</span>
-        <span class="c1"># let&#39;s create a dummy value and connect it to the right place.</span>
+        <span class="c1"># let's create a dummy value and connect it to the right place.</span>
         <span class="n">plan_ready_source</span> <span class="o">=</span> <span class="n">ConstantValueSource</span><span class="p">(</span>
             <span class="n">AbstractValue</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="kc">True</span><span class="p">),</span>
         <span class="p">)</span>
@@ -644,8 +644,8 @@
 
 <div class="viewcode-block" id="MotionPlanningAndGraspingProduction.add_supporting_cast">
 <a class="viewcode-back" href="../../../../../generated/productions/types/pick_and_place/pick_and_place.html#brom_drake.productions.types.pick_and_place.mp_and_grasping.MotionPlanningAndGraspingProduction.add_supporting_cast">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_supporting_cast</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_supporting_cast</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description</span>
 <span class="sd">        -----------</span>
 <span class="sd">        This method will add the start and goal poses to the builder.</span>
@@ -653,36 +653,36 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Add visual elements for the start and goal poses</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_start_and_goal_to_plant</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="MotionPlanningAndGraspingProduction.add_robot_source_system">
 <a class="viewcode-back" href="../../../../../generated/productions/types/pick_and_place/pick_and_place.html#brom_drake.productions.types.pick_and_place.mp_and_grasping.MotionPlanningAndGraspingProduction.add_robot_source_system">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_robot_source_system</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_robot_source_system</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description</span>
 <span class="sd">        -----------</span>
 <span class="sd">        This method adds a source for providing the motion planner</span>
 <span class="sd">        with the model index for the robot that we are trying to control.</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
 
         <span class="c1"># Create AbstractValueSource</span>
         <span class="n">robot_source_system</span> <span class="o">=</span> <span class="n">ConstantValueSource</span><span class="p">(</span>
             <span class="n">AbstractValue</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">robot_model_idx_</span><span class="p">)</span>
         <span class="p">)</span>
-        <span class="n">robot_source_system</span><span class="o">.</span><span class="n">set_name</span><span class="p">(</span><span class="s2">&quot;robot_model_index_source&quot;</span><span class="p">)</span>
+        <span class="n">robot_source_system</span><span class="o">.</span><span class="n">set_name</span><span class="p">(</span><span class="s2">"robot_model_index_source"</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">AddSystem</span><span class="p">(</span><span class="n">robot_source_system</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="MotionPlanningAndGraspingProduction.add_start_and_goal_to_plant">
 <a class="viewcode-back" href="../../../../../generated/productions/types/pick_and_place/pick_and_place.html#brom_drake.productions.types.pick_and_place.mp_and_grasping.MotionPlanningAndGraspingProduction.add_start_and_goal_to_plant">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_start_and_goal_to_plant</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plant</span><span class="p">:</span> <span class="n">MultibodyPlant</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_start_and_goal_to_plant</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plant</span><span class="p">:</span> <span class="n">MultibodyPlant</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description</span>
 <span class="sd">        -----------</span>
 <span class="sd">        Add the start and goal to this plant.</span>
@@ -696,12 +696,12 @@
 <span class="sd">        -----</span>
 <span class="sd">        Feel free to overwrite this if you have specific sizes of the start and goal in mind,</span>
 <span class="sd">        or if you want to add more than just spheres, etc.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
 
         <span class="c1"># Create a frame for the start pose of the goal</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">start_frame</span> <span class="o">=</span> <span class="n">FixedOffsetFrame</span><span class="p">(</span>
-            <span class="s2">&quot;start_frame&quot;</span><span class="p">,</span>
+            <span class="s2">"start_frame"</span><span class="p">,</span>
             <span class="n">plant</span><span class="o">.</span><span class="n">world_frame</span><span class="p">(),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">start_pose</span><span class="p">,</span>
         <span class="p">)</span>
@@ -715,7 +715,7 @@
 
         <span class="c1"># Create a frame for the start pose of the goal</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">goal_frame</span> <span class="o">=</span> <span class="n">FixedOffsetFrame</span><span class="p">(</span>
-            <span class="s2">&quot;goal_frame&quot;</span><span class="p">,</span>
+            <span class="s2">"goal_frame"</span><span class="p">,</span>
             <span class="n">plant</span><span class="o">.</span><span class="n">world_frame</span><span class="p">(),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">goal_pose</span><span class="p">,</span>
         <span class="p">)</span>
@@ -730,17 +730,17 @@
 
 <div class="viewcode-block" id="MotionPlanningAndGraspingProduction.create_highlighted_sphere_region">
 <a class="viewcode-back" href="../../../../../generated/productions/types/pick_and_place/pick_and_place.html#brom_drake.productions.types.pick_and_place.mp_and_grasping.MotionPlanningAndGraspingProduction.create_highlighted_sphere_region">[docs]</a>
-    <span class="k">def</span> <span class="nf">create_highlighted_sphere_region</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_highlighted_sphere_region</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">frame_in</span><span class="p">:</span> <span class="n">FixedOffsetFrame</span><span class="p">,</span>
         <span class="n">color</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description</span>
 <span class="sd">        -----------</span>
 <span class="sd">        This method creates a sphere that highlights the region</span>
 <span class="sd">        around the frame `frame`.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
         <span class="n">plant</span><span class="p">:</span> <span class="n">MultibodyPlant</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span>
 
@@ -751,7 +751,7 @@
 
         <span class="c1"># Create a sphere for the goal</span>
         <span class="n">sphere_shape_defn</span> <span class="o">=</span> <span class="n">SimpleShapeURDFDefinition</span><span class="p">(</span>
-            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;sphere</span><span class="si">{</span><span class="n">sphere_index</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">"sphere</span><span class="si">{</span><span class="n">sphere_index</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
             <span class="n">shape</span><span class="o">=</span><span class="n">SphereDefinition</span><span class="p">(</span><span class="n">radius</span><span class="o">=</span><span class="mf">0.1</span><span class="p">),</span>
             <span class="n">create_collision</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span>
@@ -759,7 +759,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">spheres</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spheres</span> <span class="o">+</span> <span class="p">[</span><span class="n">sphere_shape_defn</span><span class="p">]</span>
 
         <span class="n">sphere_urdf_location</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;brom/models/spheres/</span><span class="si">{</span><span class="n">sphere_shape_defn</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">.urdf&quot;</span>
+            <span class="sa">f</span><span class="s2">"brom/models/spheres/</span><span class="si">{</span><span class="n">sphere_shape_defn</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">.urdf"</span>
         <span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">sphere_urdf_location</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
@@ -771,23 +771,23 @@
         <span class="n">plant</span><span class="o">.</span><span class="n">WeldFrames</span><span class="p">(</span>
             <span class="n">frame_in</span><span class="p">,</span>
             <span class="n">plant</span><span class="o">.</span><span class="n">GetFrameByName</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">sphere_shape_defn</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_base_link&quot;</span><span class="p">,</span> <span class="n">goal_sphere_model_idx</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">sphere_shape_defn</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_base_link"</span><span class="p">,</span> <span class="n">goal_sphere_model_idx</span>
             <span class="p">),</span>
         <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="MotionPlanningAndGraspingProduction.add_start_and_goal_sources_to_builder">
 <a class="viewcode-back" href="../../../../../generated/productions/types/pick_and_place/pick_and_place.html#brom_drake.productions.types.pick_and_place.mp_and_grasping.MotionPlanningAndGraspingProduction.add_start_and_goal_sources_to_builder">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_start_and_goal_sources_to_builder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_start_and_goal_sources_to_builder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description</span>
 <span class="sd">        -----------</span>
 <span class="sd">        This method will add the start and goal sources to the builder.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Input Processing</span>
         <span class="k">assert</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">is_finalized</span><span class="p">()</span>
-        <span class="p">),</span> <span class="s2">&quot;Plant must be finalized before adding start and goal sources.&quot;</span>
+        <span class="p">),</span> <span class="s2">"Plant must be finalized before adding start and goal sources."</span>
 
         <span class="c1"># Add the start and goal poses to the builder</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_start_source_system</span><span class="p">()</span>
@@ -796,50 +796,50 @@
 
 <div class="viewcode-block" id="MotionPlanningAndGraspingProduction.add_start_source_system">
 <a class="viewcode-back" href="../../../../../generated/productions/types/pick_and_place/pick_and_place.html#brom_drake.productions.types.pick_and_place.mp_and_grasping.MotionPlanningAndGraspingProduction.add_start_source_system">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_start_source_system</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_start_source_system</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Add a source system for the start pose.</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
 
         <span class="c1"># Adds a source system for the start pose to the builder</span>
         <span class="n">start_source_system</span> <span class="o">=</span> <span class="n">ConstantVectorSource</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start_configuration</span><span class="p">)</span>
-        <span class="n">start_source_system</span><span class="o">.</span><span class="n">set_name</span><span class="p">(</span><span class="s2">&quot;start_configuration&quot;</span><span class="p">)</span>
+        <span class="n">start_source_system</span><span class="o">.</span><span class="n">set_name</span><span class="p">(</span><span class="s2">"start_configuration"</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">AddSystem</span><span class="p">(</span><span class="n">start_source_system</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="MotionPlanningAndGraspingProduction.add_goal_source_system">
 <a class="viewcode-back" href="../../../../../generated/productions/types/pick_and_place/pick_and_place.html#brom_drake.productions.types.pick_and_place.mp_and_grasping.MotionPlanningAndGraspingProduction.add_goal_source_system">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_goal_source_system</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_goal_source_system</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Add a source system for the goal pose.</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
 
         <span class="c1"># Adds a source system for the goal pose to the builder</span>
         <span class="n">goal_source_system</span> <span class="o">=</span> <span class="n">ConstantVectorSource</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">goal_configuration</span><span class="p">)</span>
-        <span class="n">goal_source_system</span><span class="o">.</span><span class="n">set_name</span><span class="p">(</span><span class="s2">&quot;goal_configuration&quot;</span><span class="p">)</span>
+        <span class="n">goal_source_system</span><span class="o">.</span><span class="n">set_name</span><span class="p">(</span><span class="s2">"goal_configuration"</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">AddSystem</span><span class="p">(</span><span class="n">goal_source_system</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="MotionPlanningAndGraspingProduction.add_main_cast">
 <a class="viewcode-back" href="../../../../../generated/productions/types/pick_and_place/pick_and_place.html#brom_drake.productions.types.pick_and_place.mp_and_grasping.MotionPlanningAndGraspingProduction.add_main_cast">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_main_cast</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_main_cast</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">cast</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Role</span><span class="p">,</span> <span class="n">Performer</span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description</span>
 <span class="sd">        -----------</span>
 <span class="sd">        This small modification to the normal add_main_cast()</span>
 <span class="sd">        function includes a call to create the optional inputs if needed.</span>
 <span class="sd">        :param cast:</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
 
         <span class="c1"># Default</span>
@@ -852,11 +852,11 @@
 
 <div class="viewcode-block" id="MotionPlanningAndGraspingProduction.build_production">
 <a class="viewcode-back" href="../../../../../generated/productions/types/pick_and_place/pick_and_place.html#brom_drake.productions.types.pick_and_place.mp_and_grasping.MotionPlanningAndGraspingProduction.build_production">[docs]</a>
-    <span class="k">def</span> <span class="nf">build_production</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_production</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">with_watcher</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Diagram</span><span class="p">,</span> <span class="n">Context</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description</span>
 <span class="sd">        -----------</span>
 <span class="sd">        This method builds the production.</span>
@@ -866,7 +866,7 @@
 <span class="sd">        ---------</span>
 <span class="sd">        with_watcher: bool</span>
 <span class="sd">            A Boolean that determines whether to add a watcher to the diagram.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
         <span class="n">plant</span><span class="p">:</span> <span class="n">MultibodyPlant</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span>
 
@@ -876,7 +876,7 @@
         <span class="c1"># Set the initial poses of the members of the cast that are objects</span>
         <span class="k">for</span> <span class="n">model_ii</span><span class="p">,</span> <span class="n">pose_ii</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">models_in_supporting_cast</span><span class="p">:</span>
             <span class="n">body_list_ii</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetBodyIndices</span><span class="p">(</span><span class="n">model_ii</span><span class="p">)</span>
-            <span class="c1"># print(f&quot;body_list_ii contains {len(body_list_ii)} elements&quot;)</span>
+            <span class="c1"># print(f"body_list_ii contains {len(body_list_ii)} elements")</span>
             <span class="n">first_body</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">get_body</span><span class="p">(</span><span class="n">body_list_ii</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
             <span class="c1"># first_body.body_frame().SetPoseInParentFrame(</span>
             <span class="c1">#     pose,</span>
@@ -887,12 +887,12 @@
                 <span class="n">pose_ii</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">plant</span><span class="o">.</span><span class="n">SetFreeBodySpatialVelocity</span><span class="p">(</span>
+                <span class="n">plant</span><span class="o">.</span><span class="n">GetMyContextFromRoot</span><span class="p">(</span><span class="n">diagram_context</span><span class="p">),</span>
                 <span class="n">first_body</span><span class="p">,</span>
                 <span class="n">SpatialVelocity</span><span class="p">(</span>
                     <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,)),</span>
                     <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,)),</span>
                 <span class="p">),</span>
-                <span class="n">plant</span><span class="o">.</span><span class="n">GetMyContextFromRoot</span><span class="p">(</span><span class="n">diagram_context</span><span class="p">),</span>
             <span class="p">)</span>
 
         <span class="c1"># Set the initial configuration of the robot</span>
@@ -908,12 +908,12 @@
 
 <div class="viewcode-block" id="MotionPlanningAndGraspingProduction.create_optional_outputs_if_necessary">
 <a class="viewcode-back" href="../../../../../generated/productions/types/pick_and_place/pick_and_place.html#brom_drake.productions.types.pick_and_place.mp_and_grasping.MotionPlanningAndGraspingProduction.create_optional_outputs_if_necessary">[docs]</a>
-    <span class="k">def</span> <span class="nf">create_optional_outputs_if_necessary</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_optional_outputs_if_necessary</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">role</span><span class="p">:</span> <span class="n">Role</span><span class="p">,</span>  <span class="c1"># This role will always be the Motion Planner, won&#39;t it?</span>
+        <span class="n">role</span><span class="p">:</span> <span class="n">Role</span><span class="p">,</span>  <span class="c1"># This role will always be the Motion Planner, won't it?</span>
         <span class="n">performer</span><span class="p">:</span> <span class="n">Performer</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description</span>
 <span class="sd">        -----------</span>
 <span class="sd">        This method checks to see if all optional outputs were connected</span>
@@ -927,7 +927,7 @@
 <span class="sd">        been built. Otherwise, this may have unexpected behavior.</span>
 
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
 
         <span class="c1"># Iterate through all OPTIONAL OUTPUTS</span>
@@ -938,7 +938,7 @@
         <span class="c1">#                                   (not assignment_ii.is_required)</span>
         <span class="c1">#</span>
         <span class="c1">#     if not investigate_this_assignment:</span>
-        <span class="c1">#         continue # Skip this assignment value if it doesn&#39;t satisfy this</span>
+        <span class="c1">#         continue # Skip this assignment value if it doesn't satisfy this</span>
         <span class="c1">#</span>
         <span class="c1">#     # Otherwise, check to see if we have the desired output port</span>
         <span class="c1">#     if performer.HasOutputPort(assignment_ii.performer_port_name):</span>
@@ -947,18 +947,18 @@
         <span class="c1">#     # If performer DOES NOT HAVE</span>
 
         <span class="c1"># TODO(kwesi): Maybe move above, general code to somewhere else?</span>
-        <span class="k">if</span> <span class="n">role</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s2">&quot;OfflineMotionPlanner&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">role</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s2">"OfflineMotionPlanner"</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">&#39;Expected role for OfflineMotionPlanning Production to be &quot;OfflineMotionPlanner&quot;;&#39;</span>
-                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;received </span><span class="si">{</span><span class="n">role</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s1">'Expected role for OfflineMotionPlanning Production to be "OfflineMotionPlanner";'</span>
+                <span class="o">+</span> <span class="sa">f</span><span class="s2">"received </span><span class="si">{</span><span class="n">role</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
 
         <span class="c1"># Check to see if performer has the LAST assignment in the motion planning role</span>
         <span class="n">last_assignment</span> <span class="o">=</span> <span class="n">role</span><span class="o">.</span><span class="n">port_assignments</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">last_assignment</span><span class="o">.</span><span class="n">performer_port_name</span> <span class="o">!=</span> <span class="s2">&quot;plan_is_ready&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">last_assignment</span><span class="o">.</span><span class="n">performer_port_name</span> <span class="o">!=</span> <span class="s2">"plan_is_ready"</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">&#39;Expected last port assignment to be &quot;plan_is_ready&quot; assignment, but&#39;</span>
-                <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;received an assignment with performer_port_name &quot;</span><span class="si">{</span><span class="n">last_assignment</span><span class="o">.</span><span class="n">performer_port_name</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
+                <span class="sa">f</span><span class="s1">'Expected last port assignment to be "plan_is_ready" assignment, but'</span>
+                <span class="o">+</span> <span class="sa">f</span><span class="s1">'received an assignment with performer_port_name "</span><span class="si">{</span><span class="n">last_assignment</span><span class="o">.</span><span class="n">performer_port_name</span><span class="si">}</span><span class="s1">"'</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">performer</span><span class="o">.</span><span class="n">HasOutputPort</span><span class="p">(</span><span class="n">last_assignment</span><span class="o">.</span><span class="n">performer_port_name</span><span class="p">):</span>
@@ -967,8 +967,8 @@
         <span class="c1"># Find system we want to connect it to</span>
         <span class="n">systems_list</span> <span class="o">=</span> <span class="n">last_assignment</span><span class="o">.</span><span class="n">find_any_matching_input_targets</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">systems_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s1">&#39;Expected 1 system to have port &quot;</span><span class="si">{</span><span class="n">last_assignment</span><span class="o">.</span><span class="n">external_target_name</span><span class="si">}</span><span class="s1">&quot;,&#39;</span>
-            <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; but found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">systems_list</span><span class="p">)</span><span class="si">}</span><span class="s2"> systems with that output port.&quot;</span>
+            <span class="sa">f</span><span class="s1">'Expected 1 system to have port "</span><span class="si">{</span><span class="n">last_assignment</span><span class="o">.</span><span class="n">external_target_name</span><span class="si">}</span><span class="s1">",'</span>
+            <span class="o">+</span> <span class="sa">f</span><span class="s2">" but found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">systems_list</span><span class="p">)</span><span class="si">}</span><span class="s2"> systems with that output port."</span>
         <span class="p">)</span>
         <span class="c1"># TODO(kwesi): Perhaps move more of these error assertions to a separate file?</span>
 
@@ -980,20 +980,20 @@
 
 <div class="viewcode-block" id="MotionPlanningAndGraspingProduction.define_pose_ik_problem">
 <a class="viewcode-back" href="../../../../../generated/productions/types/pick_and_place/pick_and_place.html#brom_drake.productions.types.pick_and_place.mp_and_grasping.MotionPlanningAndGraspingProduction.define_pose_ik_problem">[docs]</a>
-    <span class="k">def</span> <span class="nf">define_pose_ik_problem</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">define_pose_ik_problem</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">pose_WorldTarget</span><span class="p">:</span> <span class="n">RigidTransform</span><span class="p">,</span>
         <span class="n">target_frame_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">eps0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.5e-2</span><span class="p">,</span>
         <span class="n">orientation_cost_scaling</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.25</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">InverseKinematics</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description</span>
 <span class="sd">        -----------</span>
 <span class="sd">        Sets up the inverse kinematics problem for the start pose</span>
 <span class="sd">        input to theis function.</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
 
         <span class="c1"># Create IK Problem</span>
@@ -1012,7 +1012,7 @@
         <span class="c1"># ik_problem.AddOrientationConstraint(</span>
         <span class="c1">#     self.plant.world_frame(),</span>
         <span class="c1">#     RotationMatrix(Quaternion(input_pose_vec[3:]).rotation()),</span>
-        <span class="c1">#     self.plant.GetFrameByName(&quot;ft_frame&quot;),</span>
+        <span class="c1">#     self.plant.GetFrameByName("ft_frame"),</span>
         <span class="c1">#     RotationMatrix.Identity(),</span>
         <span class="c1">#     0.25,</span>
         <span class="c1"># )</span>
@@ -1030,7 +1030,7 @@
 
 <div class="viewcode-block" id="MotionPlanningAndGraspingProduction.easy_cast_and_build">
 <a class="viewcode-back" href="../../../../../generated/productions/types/pick_and_place/pick_and_place.html#brom_drake.productions.types.pick_and_place.mp_and_grasping.MotionPlanningAndGraspingProduction.easy_cast_and_build">[docs]</a>
-    <span class="k">def</span> <span class="nf">easy_cast_and_build</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">easy_cast_and_build</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">planning_algorithm</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span>
             <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]],</span>
@@ -1038,7 +1038,7 @@
         <span class="p">],</span>
         <span class="n">with_watcher</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Diagram</span><span class="p">,</span> <span class="n">Context</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description</span>
 <span class="sd">        -----------</span>
 <span class="sd">        This function is used to easily cast and build the production.</span>
@@ -1046,12 +1046,12 @@
 <span class="sd">        plan the motion.</span>
 <span class="sd">        :param with_watcher: A Boolean that determines whether to add a watcher to the diagram.</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
 
         <span class="c1"># Add all elements to the builder</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_supporting_cast</span><span class="p">()</span>
-        <span class="c1"># print(&quot;added supporting cast&quot;)</span>
+        <span class="c1"># print("added supporting cast")</span>
 
         <span class="c1"># Create a planner from the algorithm</span>
         <span class="n">prototypical_planner</span> <span class="o">=</span> <span class="n">PrototypicalPlannerSystem</span><span class="p">(</span>
@@ -1067,14 +1067,14 @@
 
         <span class="c1"># Fulfill each role-performer pair in the casting_call list</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fill_role</span><span class="p">(</span><span class="n">planner_role</span><span class="p">,</span> <span class="n">prototypical_planner</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;filled role&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"filled role"</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">create_optional_outputs_if_necessary</span><span class="p">(</span><span class="n">planner_role</span><span class="p">,</span> <span class="n">prototypical_planner</span><span class="p">)</span>
 
         <span class="c1"># Build</span>
         <span class="n">diagram</span><span class="p">,</span> <span class="n">diagram_context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_production</span><span class="p">(</span><span class="n">with_watcher</span><span class="o">=</span><span class="n">with_watcher</span><span class="p">)</span>
 
-        <span class="c1"># Assign prototypical planner&#39;s context</span>
+        <span class="c1"># Assign prototypical planner's context</span>
         <span class="n">prototypical_planner</span><span class="o">.</span><span class="n">set_internal_root_context</span><span class="p">(</span><span class="n">diagram_context</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">diagram</span><span class="p">,</span> <span class="n">diagram_context</span></div>
@@ -1082,12 +1082,12 @@
 
 <div class="viewcode-block" id="MotionPlanningAndGraspingProduction.fill_role">
 <a class="viewcode-back" href="../../../../../generated/productions/types/pick_and_place/pick_and_place.html#brom_drake.productions.types.pick_and_place.mp_and_grasping.MotionPlanningAndGraspingProduction.fill_role">[docs]</a>
-    <span class="k">def</span> <span class="nf">fill_role</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fill_role</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">role</span><span class="p">:</span> <span class="n">Role</span><span class="p">,</span>
         <span class="n">system</span><span class="p">:</span> <span class="n">Performer</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description</span>
 <span class="sd">        -----------</span>
 <span class="sd">        This method should be implemented by the subclass. It should add the</span>
@@ -1095,7 +1095,7 @@
 <span class="sd">        :param role:</span>
 <span class="sd">        :param system:</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
         <span class="n">builder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">builder</span>
 
@@ -1113,13 +1113,13 @@
 
         <span class="c1"># # Connect the initialize_robots_system to the plant and other systems</span>
         <span class="c1"># builder.Connect(</span>
-        <span class="c1">#     system.GetOutputPort(&quot;motion_plan&quot;),</span>
-        <span class="c1">#     initialize_robots_system.GetInputPort(&quot;plan&quot;),</span>
+        <span class="c1">#     system.GetOutputPort("motion_plan"),</span>
+        <span class="c1">#     initialize_robots_system.GetInputPort("plan"),</span>
         <span class="c1"># )</span>
 
         <span class="c1"># self.builder.Connect(</span>
         <span class="c1">#     self.plan_ready_source.get_output_port(),</span>
-        <span class="c1">#     initialize_robots_system.GetInputPort(&quot;trigger_initialize&quot;),</span>
+        <span class="c1">#     initialize_robots_system.GetInputPort("trigger_initialize"),</span>
         <span class="c1"># )</span>
 
         <span class="c1"># Save the performer</span>
@@ -1127,11 +1127,11 @@
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">goal_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">goal_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the goal pose. This should be defined by the subclass.</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_goal_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_goal_config</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_goal_pose</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -1140,42 +1140,42 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">solve_pose_ik_problem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_goal_pose</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-                <span class="s2">&quot;This function should be implemented by the subclass.&quot;</span>
+                <span class="s2">"This function should be implemented by the subclass."</span>
             <span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">goal_pose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RigidTransform</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">goal_pose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RigidTransform</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the goal pose. This should be defined by the subclass.</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_goal_pose</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_goal_pose</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_goal_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># The user would need to define a forward kinematics function,</span>
             <span class="c1"># to convert the goal configuration to a goal pose.</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-                <span class="s2">&quot;It looks like you are trying to get the goal pose from the goal configuration.</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="o">+</span> <span class="s2">&quot;This is not implemented (yet!) because it would require solving the forward kinematics&quot;</span>
-                <span class="o">+</span> <span class="s2">&quot;problem for your specific scene.</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="o">+</span> <span class="s2">&quot;Please implement your own goal_pose() function with a custom forward kinamtics function&quot;</span>
-                <span class="o">+</span> <span class="s2">&quot; (see ChemLab2&#39;s forward kinematics function) to convert the goal configuration to a goal pose.&quot;</span>
+                <span class="s2">"It looks like you are trying to get the goal pose from the goal configuration.</span><span class="se">\n</span><span class="s2">"</span>
+                <span class="o">+</span> <span class="s2">"This is not implemented (yet!) because it would require solving the forward kinematics"</span>
+                <span class="o">+</span> <span class="s2">"problem for your specific scene.</span><span class="se">\n</span><span class="s2">"</span>
+                <span class="o">+</span> <span class="s2">"Please implement your own goal_pose() function with a custom forward kinamtics function"</span>
+                <span class="o">+</span> <span class="s2">" (see ChemLab2's forward kinematics function) to convert the goal configuration to a goal pose."</span>
             <span class="p">)</span>
-            <span class="c1"># TODO(kwesi): Is there a way to do this without knowing about the user&#39;s robot?</span>
+            <span class="c1"># TODO(kwesi): Is there a way to do this without knowing about the user's robot?</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-                <span class="s2">&quot;This function should be implemented by the subclass.&quot;</span>
+                <span class="s2">"This function should be implemented by the subclass."</span>
             <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_record_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_record_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Record metadata about the start and goal poses</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="p">[</span><span class="s2">&quot;start_configuration&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_configuration</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="p">[</span><span class="s2">&quot;start_pose&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_pose</span><span class="o">.</span><span class="n">GetAsMatrix4</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="p">[</span><span class="s2">&quot;goal_configuration&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">goal_configuration</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="p">[</span><span class="s2">&quot;goal_pose&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">goal_pose</span><span class="o">.</span><span class="n">GetAsMatrix4</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="p">[</span><span class="s2">"start_configuration"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_configuration</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="p">[</span><span class="s2">"start_pose"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_pose</span><span class="o">.</span><span class="n">GetAsMatrix4</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="p">[</span><span class="s2">"goal_configuration"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">goal_configuration</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="p">[</span><span class="s2">"goal_pose"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">goal_pose</span><span class="o">.</span><span class="n">GetAsMatrix4</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
 
-        <span class="c1"># Record information about the robot&#39;s model</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="p">[</span><span class="s2">&quot;robot_model&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">summarize_model_instance_with_dict</span><span class="p">(</span>
+        <span class="c1"># Record information about the robot's model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="p">[</span><span class="s2">"robot_model"</span><span class="p">]</span> <span class="o">=</span> <span class="n">summarize_model_instance_with_dict</span><span class="p">(</span>
             <span class="n">plant</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="p">,</span>
             <span class="n">model_instance</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">robot_model_index</span><span class="p">,</span>
         <span class="p">)</span>
@@ -1184,24 +1184,24 @@
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_record_metadata</span><span class="p">()</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">robot_model_index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelInstanceIndex</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">robot_model_index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelInstanceIndex</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the robot model index. This should be defined by the subclass.</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">robot_model_idx_</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">robot_model_idx_</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-                <span class="s2">&quot;This function should be implemented by the subclass.&quot;</span>
+                <span class="s2">"This function should be implemented by the subclass."</span>
             <span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">start_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">start_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description:</span>
 <span class="sd">            This function returns the start and goal poses as a single array.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_config</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_pose</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -1210,56 +1210,56 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">solve_pose_ik_problem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start_pose</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-                <span class="s2">&quot;This function should be implemented by the subclass.&quot;</span>
+                <span class="s2">"This function should be implemented by the subclass."</span>
             <span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">start_pose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RigidTransform</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">start_pose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RigidTransform</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the start pose. This should be defined by the subclass.</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_pose</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_pose</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># The user would need to define a forward kinematics function,</span>
             <span class="c1"># to convert the start configuration to a start pose.</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-                <span class="s2">&quot;It looks like you are trying to get the start pose from the start configuration.</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="o">+</span> <span class="s2">&quot;This is not implemented (yet!) because it would require solving the forward kinematics&quot;</span>
-                <span class="o">+</span> <span class="s2">&quot;problem for your specific scene.</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="o">+</span> <span class="s2">&quot;Please implement your own start_pose() function with a custom forward kinamtics function&quot;</span>
-                <span class="o">+</span> <span class="s2">&quot; (see ChemLab2&#39;s forward kinematics function) to convert the start configuration to a start pose.&quot;</span>
+                <span class="s2">"It looks like you are trying to get the start pose from the start configuration.</span><span class="se">\n</span><span class="s2">"</span>
+                <span class="o">+</span> <span class="s2">"This is not implemented (yet!) because it would require solving the forward kinematics"</span>
+                <span class="o">+</span> <span class="s2">"problem for your specific scene.</span><span class="se">\n</span><span class="s2">"</span>
+                <span class="o">+</span> <span class="s2">"Please implement your own start_pose() function with a custom forward kinamtics function"</span>
+                <span class="o">+</span> <span class="s2">" (see ChemLab2's forward kinematics function) to convert the start configuration to a start pose."</span>
             <span class="p">)</span>
-            <span class="c1"># TODO(kwesi): Is there a way to do this without knowing about the user&#39;s robot?</span>
+            <span class="c1"># TODO(kwesi): Is there a way to do this without knowing about the user's robot?</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-                <span class="s2">&quot;This function should be implemented by the subclass.&quot;</span>
+                <span class="s2">"This function should be implemented by the subclass."</span>
             <span class="p">)</span>
 
 <div class="viewcode-block" id="MotionPlanningAndGraspingProduction.suggested_roles">
 <a class="viewcode-back" href="../../../../../generated/productions/types/pick_and_place/pick_and_place.html#brom_drake.productions.types.pick_and_place.mp_and_grasping.MotionPlanningAndGraspingProduction.suggested_roles">[docs]</a>
-    <span class="k">def</span> <span class="nf">suggested_roles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">suggested_roles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">kKinematicMotionPlanner</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="MotionPlanningAndGraspingProduction.solve_pose_ik_problem">
 <a class="viewcode-back" href="../../../../../generated/productions/types/pick_and_place/pick_and_place.html#brom_drake.productions.types.pick_and_place.mp_and_grasping.MotionPlanningAndGraspingProduction.solve_pose_ik_problem">[docs]</a>
-    <span class="k">def</span> <span class="nf">solve_pose_ik_problem</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">solve_pose_ik_problem</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">pose_WorldTarget</span><span class="p">:</span> <span class="n">RigidTransform</span><span class="p">,</span>
-        <span class="n">frame_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ft_frame&quot;</span><span class="p">,</span>
+        <span class="n">frame_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"ft_frame"</span><span class="p">,</span>
         <span class="n">robot_joint_names</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description:</span>
 <span class="sd">        :param input_pose_vec: An n-dimensional vector</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Input Processing</span>
         <span class="k">assert</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">plant</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-        <span class="p">),</span> <span class="s2">&quot;Plant must be defined before solving IK problem!&quot;</span>
+        <span class="p">),</span> <span class="s2">"Plant must be defined before solving IK problem!"</span>
 
         <span class="c1"># Setup</span>
 
@@ -1280,12 +1280,12 @@
 
         <span class="k">assert</span> <span class="p">(</span>
             <span class="n">ik_result</span><span class="o">.</span><span class="n">get_solution_result</span><span class="p">()</span> <span class="o">==</span> <span class="n">SolutionResult</span><span class="o">.</span><span class="n">kSolutionFound</span>
-        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Solution result was </span><span class="si">{</span><span class="n">ik_result</span><span class="o">.</span><span class="n">get_solution_result</span><span class="p">()</span><span class="si">}</span><span class="s2">; need SolutionResult.kSolutionFound to make RRT Plan!&quot;</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">"Solution result was </span><span class="si">{</span><span class="n">ik_result</span><span class="o">.</span><span class="n">get_solution_result</span><span class="p">()</span><span class="si">}</span><span class="s2">; need SolutionResult.kSolutionFound to make RRT Plan!"</span>
 
         <span class="n">q_solution</span> <span class="o">=</span> <span class="n">ik_result</span><span class="o">.</span><span class="n">get_x_val</span><span class="p">()</span>
-        <span class="c1"># print(f&quot;solved ik problem: {q_solution}&quot;)</span>
+        <span class="c1"># print(f"solved ik problem: {q_solution}")</span>
 
-        <span class="c1"># Extract only the positions that correspond to our robot&#39;s joints</span>
+        <span class="c1"># Extract only the positions that correspond to our robot's joints</span>
         <span class="k">if</span> <span class="n">robot_joint_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">robot_joint_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetPositionNames</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">robot_model_index</span><span class="p">,</span> <span class="n">add_model_instance_prefix</span><span class="o">=</span><span class="kc">True</span>
@@ -1297,7 +1297,7 @@
             <span class="k">if</span> <span class="n">joint_name</span> <span class="ow">in</span> <span class="n">robot_joint_names</span><span class="p">:</span>
                 <span class="n">q_out_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">q_solution</span><span class="p">[</span><span class="n">ii</span><span class="p">])</span>
 
-        <span class="c1"># print(f&quot;q_out_list: {q_out_list}&quot;)</span>
+        <span class="c1"># print(f"q_out_list: {q_out_list}")</span>
 
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">q_out_list</span><span class="p">)</span></div>
 </div>
@@ -1334,7 +1334,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../_static/documentation_options.js?v=722679d6"></script>
+</div><script src="../../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

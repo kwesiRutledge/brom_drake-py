@@ -5,8 +5,8 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.productions.debug.grasping.attempt_grasp.with_puppeteer_wrist.script - brom_drake-py 0.5.6 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../../../_static/pygments.css?v=acfd86a5" />
+        <title>brom_drake.productions.debug.grasping.attempt_grasp.with_puppeteer_wrist.script - brom_drake-py v0.0.0+githubActionDefault documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../../../index.html"><div class="brand">brom_drake-py 0.5.6 documentation</div></a>
+      <a href="../../../../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.6 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -551,31 +551,31 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for brom_drake.productions.debug.grasping.attempt_grasp.with_puppeteer_wrist.script</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">pydrake.all</span> <span class="kn">import</span> <span class="n">RigidTransform</span><span class="p">,</span> <span class="n">PiecewisePose</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">networkx</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nx</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.all</span><span class="w"> </span><span class="kn">import</span> <span class="n">RigidTransform</span><span class="p">,</span> <span class="n">PiecewisePose</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
 
 <span class="c1"># Internal Imports</span>
-<span class="kn">from</span> <span class="nn">brom_drake.systems.network_fsm</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.systems.network_fsm</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">NetworkXFSM</span><span class="p">,</span>
     <span class="n">FSMOutputDefinition</span><span class="p">,</span>
     <span class="n">FSMTransitionCondition</span><span class="p">,</span>
     <span class="n">FSMTransitionConditionType</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">.phases</span> <span class="kn">import</span> <span class="n">AttemptGraspWithPuppeteerWristPhase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.phases</span><span class="w"> </span><span class="kn">import</span> <span class="n">AttemptGraspWithPuppeteerWristPhase</span>
 
 
 <span class="c1"># Define some internal classes/enums</span>
 <div class="viewcode-block" id="Script">
 <a class="viewcode-back" href="../../../../../../../generated/productions/debug/grasping/attempt_grasp/with_puppeteer_wrist/with_puppeteer_wrist.html#brom_drake.productions.debug.grasping.attempt_grasp.with_puppeteer_wrist.script.Script">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">Script</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Script</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    *Description*</span>
 
-<span class="sd">    This class defines the &quot;script&quot; or the sequence of events that is meant to happen in the</span>
+<span class="sd">    This class defines the "script" or the sequence of events that is meant to happen in the</span>
 <span class="sd">    AttemptGrasp production.</span>
 
 <span class="sd">    *Attributes*</span>
@@ -599,7 +599,7 @@
 <span class="sd">    drop_time: float, optional</span>
 <span class="sd">        The time (in seconds) to let the object fall after releasing the grasp.</span>
 <span class="sd">        Default is 10.0 seconds.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">settling_time_on_floor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10.0</span>
     <span class="n">gripper_approach_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span>
@@ -609,8 +609,8 @@
 
 <div class="viewcode-block" id="Script.add_all_states_to_networkx_graph">
 <a class="viewcode-back" href="../../../../../../../generated/productions/debug/grasping/attempt_grasp/with_puppeteer_wrist/with_puppeteer_wrist.html#brom_drake.productions.debug.grasping.attempt_grasp.with_puppeteer_wrist.script.Script.add_all_states_to_networkx_graph">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_all_states_to_networkx_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_all_states_to_networkx_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
 <span class="sd">        This method adds all the states to the provided NetworkX graph.</span>
@@ -627,20 +627,20 @@
 <span class="sd">        graph: nx.DiGraph</span>
 <span class="sd">            A blank NetworkX directed graph to which the states will be added.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
 
         <span class="c1"># First State: Object settled</span>
         <span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span>
             <span class="n">AttemptGraspWithPuppeteerWristPhase</span><span class="o">.</span><span class="n">kObjectSettlingOnFloor</span><span class="p">,</span>
             <span class="n">outputs</span><span class="o">=</span><span class="p">[</span>
-                <span class="n">FSMOutputDefinition</span><span class="p">(</span><span class="s2">&quot;start_floor&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>  <span class="c1"># Floor trigger</span>
+                <span class="n">FSMOutputDefinition</span><span class="p">(</span><span class="s2">"start_floor"</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>  <span class="c1"># Floor trigger</span>
                 <span class="n">FSMOutputDefinition</span><span class="p">(</span>
-                    <span class="s2">&quot;enable_gripper_approach&quot;</span><span class="p">,</span> <span class="kc">True</span>
+                    <span class="s2">"enable_gripper_approach"</span><span class="p">,</span> <span class="kc">True</span>
                 <span class="p">),</span>  <span class="c1"># Make gripper move towards object</span>
-                <span class="n">FSMOutputDefinition</span><span class="p">(</span><span class="s2">&quot;close_gripper&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>  <span class="c1"># Gripper trigger</span>
+                <span class="n">FSMOutputDefinition</span><span class="p">(</span><span class="s2">"close_gripper"</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>  <span class="c1"># Gripper trigger</span>
                 <span class="n">FSMOutputDefinition</span><span class="p">(</span>
-                    <span class="s2">&quot;switch_to_memory&quot;</span><span class="p">,</span> <span class="s2">&quot;trajectory1&quot;</span>
+                    <span class="s2">"switch_to_memory"</span><span class="p">,</span> <span class="s2">"trajectory1"</span>
                 <span class="p">),</span>  <span class="c1"># Switch to memory system for gripper pose</span>
             <span class="p">],</span>
         <span class="p">)</span>
@@ -650,10 +650,10 @@
             <span class="n">AttemptGraspWithPuppeteerWristPhase</span><span class="o">.</span><span class="n">kGripperApproach</span><span class="p">,</span>
             <span class="n">outputs</span><span class="o">=</span><span class="p">[</span>
                 <span class="n">FSMOutputDefinition</span><span class="p">(</span>
-                    <span class="s2">&quot;enable_gripper_approach&quot;</span><span class="p">,</span> <span class="kc">True</span>
+                    <span class="s2">"enable_gripper_approach"</span><span class="p">,</span> <span class="kc">True</span>
                 <span class="p">),</span>  <span class="c1"># Make gripper move towards object</span>
-                <span class="n">FSMOutputDefinition</span><span class="p">(</span><span class="s2">&quot;start_floor&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>  <span class="c1"># Floor trigger</span>
-                <span class="n">FSMOutputDefinition</span><span class="p">(</span><span class="s2">&quot;close_gripper&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>  <span class="c1"># Gripper trigger</span>
+                <span class="n">FSMOutputDefinition</span><span class="p">(</span><span class="s2">"start_floor"</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>  <span class="c1"># Floor trigger</span>
+                <span class="n">FSMOutputDefinition</span><span class="p">(</span><span class="s2">"close_gripper"</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>  <span class="c1"># Gripper trigger</span>
             <span class="p">],</span>
         <span class="p">)</span>
 
@@ -662,9 +662,9 @@
             <span class="n">AttemptGraspWithPuppeteerWristPhase</span><span class="o">.</span><span class="n">kGripperClosing</span><span class="p">,</span>
             <span class="n">outputs</span><span class="o">=</span><span class="p">[</span>
                 <span class="n">FSMOutputDefinition</span><span class="p">(</span>
-                    <span class="s2">&quot;enable_gripper_approach&quot;</span><span class="p">,</span> <span class="kc">True</span>
+                    <span class="s2">"enable_gripper_approach"</span><span class="p">,</span> <span class="kc">True</span>
                 <span class="p">),</span>  <span class="c1"># Stop gripper movement</span>
-                <span class="n">FSMOutputDefinition</span><span class="p">(</span><span class="s2">&quot;close_gripper&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+                <span class="n">FSMOutputDefinition</span><span class="p">(</span><span class="s2">"close_gripper"</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
             <span class="p">],</span>
         <span class="p">)</span>
 
@@ -672,9 +672,9 @@
         <span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span>
             <span class="n">AttemptGraspWithPuppeteerWristPhase</span><span class="o">.</span><span class="n">kFloorDrop</span><span class="p">,</span>
             <span class="n">outputs</span><span class="o">=</span><span class="p">[</span>
-                <span class="n">FSMOutputDefinition</span><span class="p">(</span><span class="s2">&quot;start_floor&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+                <span class="n">FSMOutputDefinition</span><span class="p">(</span><span class="s2">"start_floor"</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
                 <span class="n">FSMOutputDefinition</span><span class="p">(</span>
-                    <span class="s2">&quot;switch_to_memory&quot;</span><span class="p">,</span> <span class="s2">&quot;memory2&quot;</span>
+                    <span class="s2">"switch_to_memory"</span><span class="p">,</span> <span class="s2">"memory2"</span>
                 <span class="p">),</span>  <span class="c1"># Switch to memory system for gripper pose</span>
             <span class="p">],</span>
         <span class="p">)</span></div>
@@ -682,10 +682,10 @@
 
 <div class="viewcode-block" id="Script.build_gripper_approach_trajectory_from_waypoints">
 <a class="viewcode-back" href="../../../../../../../generated/productions/debug/grasping/attempt_grasp/with_puppeteer_wrist/with_puppeteer_wrist.html#brom_drake.productions.debug.grasping.attempt_grasp.with_puppeteer_wrist.script.Script.build_gripper_approach_trajectory_from_waypoints">[docs]</a>
-    <span class="k">def</span> <span class="nf">build_gripper_approach_trajectory_from_waypoints</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_gripper_approach_trajectory_from_waypoints</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">waypoints_X_WorldGripper</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">RigidTransform</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PiecewisePose</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
 <span class="sd">        Returns a PiecewisePose trajectory for the gripper base to follow during the</span>
@@ -705,7 +705,7 @@
 <span class="sd">        gripper_base_trajectory: PiecewisePose</span>
 <span class="sd">            A PiecewisePose trajectory for the gripper base to follow during the</span>
 <span class="sd">            attempted grasp.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># Setup</span>
         <span class="n">n_waypoints</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">waypoints_X_WorldGripper</span><span class="p">)</span>
@@ -747,8 +747,8 @@
 
 <div class="viewcode-block" id="Script.start_time_of_phase">
 <a class="viewcode-back" href="../../../../../../../generated/productions/debug/grasping/attempt_grasp/with_puppeteer_wrist/with_puppeteer_wrist.html#brom_drake.productions.debug.grasping.attempt_grasp.with_puppeteer_wrist.script.Script.start_time_of_phase">[docs]</a>
-    <span class="k">def</span> <span class="nf">start_time_of_phase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phase</span><span class="p">:</span> <span class="n">AttemptGraspWithPuppeteerWristPhase</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">start_time_of_phase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phase</span><span class="p">:</span> <span class="n">AttemptGraspWithPuppeteerWristPhase</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
 <span class="sd">        This method returns the start time of the given phase.</span>
@@ -762,7 +762,7 @@
 
 <span class="sd">        start_time: float</span>
 <span class="sd">            The start time of the given phase in seconds.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">match</span> <span class="n">phase</span><span class="p">:</span>
             <span class="k">case</span> <span class="n">AttemptGraspWithPuppeteerWristPhase</span><span class="o">.</span><span class="n">kObjectSettlingOnFloor</span><span class="p">:</span>
                 <span class="k">return</span> <span class="mf">0.0</span>
@@ -784,13 +784,13 @@
                     <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_grasp_settling_time</span>
                 <span class="p">)</span>
             <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unrecognized phase </span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">)</span></div>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unrecognized phase </span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s2">!"</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Script.to_fsm">
 <a class="viewcode-back" href="../../../../../../../generated/productions/debug/grasping/attempt_grasp/with_puppeteer_wrist/with_puppeteer_wrist.html#brom_drake.productions.debug.grasping.attempt_grasp.with_puppeteer_wrist.script.Script.to_fsm">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_fsm</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NetworkXFSM</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_fsm</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NetworkXFSM</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
 <span class="sd">        This method converts the script to a NetworkXFSM instance.</span>
@@ -799,14 +799,14 @@
 
 <span class="sd">        fsm: NetworkXFSM</span>
 <span class="sd">            The NetworkXFSM LeafSystem which coordinates/sends triggers out according to the script.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">NetworkXFSM</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_networkx_graph</span><span class="p">())</span></div>
 
 
 <div class="viewcode-block" id="Script.to_networkx_graph">
 <a class="viewcode-back" href="../../../../../../../generated/productions/debug/grasping/attempt_grasp/with_puppeteer_wrist/with_puppeteer_wrist.html#brom_drake.productions.debug.grasping.attempt_grasp.with_puppeteer_wrist.script.Script.to_networkx_graph">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_networkx_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_networkx_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
 <span class="sd">        This method converts the script to a NetworkX directed graph.</span>
@@ -815,7 +815,7 @@
 
 <span class="sd">        graph: nx.DiGraph</span>
 <span class="sd">            The NetworkX directed graph representing the FSM of the script.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
         <span class="n">graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
 
@@ -889,8 +889,8 @@
 
 <div class="viewcode-block" id="Script.total_time">
 <a class="viewcode-back" href="../../../../../../../generated/productions/debug/grasping/attempt_grasp/with_puppeteer_wrist/with_puppeteer_wrist.html#brom_drake.productions.debug.grasping.attempt_grasp.with_puppeteer_wrist.script.Script.total_time">[docs]</a>
-    <span class="k">def</span> <span class="nf">total_time</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">total_time</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
 <span class="sd">        This method returns the total time of the script.</span>
@@ -899,7 +899,7 @@
 
 <span class="sd">        total_time: float</span>
 <span class="sd">            The total time of the script in seconds.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">settling_time_on_floor</span>
             <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">gripper_approach_time</span>
@@ -941,7 +941,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../../../_static/documentation_options.js?v=722679d6"></script>
+</div><script src="../../../../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

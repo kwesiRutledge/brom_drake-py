@@ -5,8 +5,8 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.control.ideal_joint_position_controller - brom_drake-py 0.5.6 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=acfd86a5" />
+        <title>brom_drake.control.ideal_joint_position_controller - brom_drake-py v0.0.0+githubActionDefault documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">brom_drake-py 0.5.6 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.6 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -551,23 +551,23 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for brom_drake.control.ideal_joint_position_controller</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">pydrake.math</span> <span class="kn">import</span> <span class="n">RollPitchYaw</span><span class="p">,</span> <span class="n">RigidTransform</span><span class="p">,</span> <span class="n">RotationMatrix</span>
-<span class="kn">from</span> <span class="nn">pydrake.multibody.math</span> <span class="kn">import</span> <span class="n">SpatialVelocity</span>
-<span class="kn">from</span> <span class="nn">pydrake.multibody.parsing</span> <span class="kn">import</span> <span class="n">Parser</span>
-<span class="kn">from</span> <span class="nn">pydrake.multibody.plant</span> <span class="kn">import</span> <span class="n">MultibodyPlant</span><span class="p">,</span> <span class="n">CoulombFriction</span>
-<span class="kn">from</span> <span class="nn">pydrake.multibody.tree</span> <span class="kn">import</span> <span class="n">ModelInstanceIndex</span>
-<span class="kn">from</span> <span class="nn">pydrake.systems.framework</span> <span class="kn">import</span> <span class="n">LeafSystem</span><span class="p">,</span> <span class="n">PortDataType</span><span class="p">,</span> <span class="n">BasicVector</span><span class="p">,</span> <span class="n">Context</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.math</span><span class="w"> </span><span class="kn">import</span> <span class="n">RollPitchYaw</span><span class="p">,</span> <span class="n">RigidTransform</span><span class="p">,</span> <span class="n">RotationMatrix</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.multibody.math</span><span class="w"> </span><span class="kn">import</span> <span class="n">SpatialVelocity</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.multibody.parsing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Parser</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.multibody.plant</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultibodyPlant</span><span class="p">,</span> <span class="n">CoulombFriction</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.multibody.tree</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelInstanceIndex</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.systems.framework</span><span class="w"> </span><span class="kn">import</span> <span class="n">LeafSystem</span><span class="p">,</span> <span class="n">PortDataType</span><span class="p">,</span> <span class="n">BasicVector</span><span class="p">,</span> <span class="n">Context</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="c1"># Internal Imports</span>
-<span class="kn">from</span> <span class="nn">brom_drake.robots.utils</span> <span class="kn">import</span> <span class="n">find_base_link_name_in</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.robots.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_base_link_name_in</span>
 
 
 <div class="viewcode-block" id="IdealJointPositionController">
 <a class="viewcode-back" href="../../../generated/control/control.html#brom_drake.control.ideal_joint_position_controller.IdealJointPositionController">[docs]</a>
-<span class="k">class</span> <span class="nc">IdealJointPositionController</span><span class="p">(</span><span class="n">LeafSystem</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">IdealJointPositionController</span><span class="p">(</span><span class="n">LeafSystem</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">robot_model</span><span class="p">:</span> <span class="n">ModelInstanceIndex</span><span class="p">,</span>
         <span class="n">plant</span><span class="p">:</span> <span class="n">MultibodyPlant</span><span class="p">,</span>
@@ -585,27 +585,27 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">arm</span> <span class="o">=</span> <span class="n">robot_model</span>
 
-        <span class="c1"># Create Input Port for the Body&#39;s Joint Positions</span>
+        <span class="c1"># Create Input Port for the Body's Joint Positions</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">desired_joint_positions_port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DeclareVectorInputPort</span><span class="p">(</span>
-            <span class="s2">&quot;desired_joint_positions&quot;</span><span class="p">,</span>
+            <span class="s2">"desired_joint_positions"</span><span class="p">,</span>
             <span class="n">BasicVector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">num_actuated_dofs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">arm</span><span class="p">)),</span>
         <span class="p">)</span>
 
         <span class="c1"># Create Output Port which should share the pose of the block</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">DeclareVectorOutputPort</span><span class="p">(</span>
-            <span class="s2">&quot;measured_joint_positions&quot;</span><span class="p">,</span>
+            <span class="s2">"measured_joint_positions"</span><span class="p">,</span>
             <span class="n">BasicVector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">num_actuated_dofs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">arm</span><span class="p">)),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">SetJointPositions</span><span class="p">,</span>
-            <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">time_ticket</span><span class="p">()},</span>  <span class="c1"># indicate that this doesn&#39;t depend on any inputs,</span>
+            <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">time_ticket</span><span class="p">()},</span>  <span class="c1"># indicate that this doesn't depend on any inputs,</span>
         <span class="p">)</span>  <span class="c1"># but should still be updated each timestep</span>
 
 <div class="viewcode-block" id="IdealJointPositionController.SetJointPositions">
 <a class="viewcode-back" href="../../../generated/control/control.html#brom_drake.control.ideal_joint_position_controller.IdealJointPositionController.SetJointPositions">[docs]</a>
-    <span class="k">def</span> <span class="nf">SetJointPositions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetJointPositions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description:</span>
 <span class="sd">            This function sets the desired pose of the block.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
         <span class="n">plant_context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant_context</span>
         <span class="n">robot_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">robot_model</span>
@@ -616,7 +616,7 @@
         <span class="c1"># Get plant context from station context</span>
         <span class="c1"># station_context = self.station_context</span>
         <span class="c1"># if station_context is None:</span>
-        <span class="c1">#     raise RuntimeError(&quot;station_context is None&quot;)</span>
+        <span class="c1">#     raise RuntimeError("station_context is None")</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">SetPositions</span><span class="p">(</span><span class="n">plant_context</span><span class="p">,</span> <span class="n">robot_model</span><span class="p">,</span> <span class="n">joint_positions</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">SetVelocities</span><span class="p">(</span>
@@ -628,11 +628,11 @@
 
 <div class="viewcode-block" id="IdealJointPositionController.SetInitialJointPositions">
 <a class="viewcode-back" href="../../../generated/control/control.html#brom_drake.control.ideal_joint_position_controller.IdealJointPositionController.SetInitialJointPositions">[docs]</a>
-    <span class="k">def</span> <span class="nf">SetInitialJointPositions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">diagram_context</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetInitialJointPositions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">diagram_context</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description:</span>
 <span class="sd">            Sets the initial position .</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
         <span class="n">q0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q0</span>
         <span class="k">if</span> <span class="n">q0</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -685,7 +685,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=722679d6"></script>
+</div><script src="../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>

@@ -5,8 +5,8 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.watchers.diagram_watcher.add_watcher - brom_drake-py 0.5.6 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=acfd86a5" />
+        <title>brom_drake.watchers.diagram_watcher.add_watcher - brom_drake-py v0.0.0+githubActionDefault documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">brom_drake-py 0.5.6 documentation</div></a>
+      <a href="../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.6 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -551,22 +551,22 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for brom_drake.watchers.diagram_watcher.add_watcher</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""</span>
 <span class="sd">This file defines a couple of convenience functions for adding in the watcher</span>
 <span class="sd">to a target diagram builder. These functions should be useful for 99% of the</span>
 <span class="sd">users of the DiagramWatcher class.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">pydrake.all</span> <span class="kn">import</span> <span class="n">DiagramBuilder</span><span class="p">,</span> <span class="n">Diagram</span>
-<span class="kn">from</span> <span class="nn">pydrake.systems.framework</span> <span class="kn">import</span> <span class="n">Context</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.all</span><span class="w"> </span><span class="kn">import</span> <span class="n">DiagramBuilder</span><span class="p">,</span> <span class="n">Diagram</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.systems.framework</span><span class="w"> </span><span class="kn">import</span> <span class="n">Context</span>
 
-<span class="kn">from</span> <span class="nn">brom_drake.watchers.diagram_target</span> <span class="kn">import</span> <span class="n">DiagramTarget</span>
-<span class="kn">from</span> <span class="nn">brom_drake.watchers.diagram_watcher</span> <span class="kn">import</span> <span class="n">DiagramWatcher</span><span class="p">,</span> <span class="n">DiagramWatcherOptions</span>
-<span class="kn">from</span> <span class="nn">brom_drake</span> <span class="kn">import</span> <span class="n">directories</span>
-<span class="kn">from</span> <span class="nn">brom_drake.watchers.port_watcher.port_watcher_options</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.watchers.diagram_target</span><span class="w"> </span><span class="kn">import</span> <span class="n">DiagramTarget</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.watchers.diagram_watcher</span><span class="w"> </span><span class="kn">import</span> <span class="n">DiagramWatcher</span><span class="p">,</span> <span class="n">DiagramWatcherOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake</span><span class="w"> </span><span class="kn">import</span> <span class="n">directories</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.watchers.port_watcher.port_watcher_options</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">PortFigureArrangement</span><span class="p">,</span>
     <span class="n">PortWatcherPlottingOptions</span><span class="p">,</span>
     <span class="n">PortWatcherRawDataOptions</span><span class="p">,</span>
@@ -589,15 +589,15 @@
 
 <div class="viewcode-block" id="add_watcher">
 <a class="viewcode-back" href="../../../../generated/watchers/diagram_watcher/diagram_watcher.html#brom_drake.watchers.diagram_watcher.add_watcher.add_watcher">[docs]</a>
-<span class="k">def</span> <span class="nf">add_watcher</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_watcher</span><span class="p">(</span>
     <span class="n">builder</span><span class="p">:</span> <span class="n">DiagramBuilder</span><span class="p">,</span>
     <span class="n">targets</span><span class="p">:</span> <span class="n">PotentialTargetTypes</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">watcher_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">directories</span><span class="o">.</span><span class="n">DEFAULT_WATCHER_DIR</span><span class="p">,</span>
     <span class="n">plot_arrangement</span><span class="p">:</span> <span class="n">PortFigureArrangement</span> <span class="o">=</span> <span class="n">PortFigureArrangement</span><span class="o">.</span><span class="n">OnePlotPerPort</span><span class="p">,</span>
     <span class="n">figure_naming_convention</span><span class="p">:</span> <span class="n">FigureNamingConvention</span> <span class="o">=</span> <span class="n">FigureNamingConvention</span><span class="o">.</span><span class="n">kFlat</span><span class="p">,</span>
-    <span class="n">file_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;png&quot;</span><span class="p">,</span>
+    <span class="n">file_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"png"</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DiagramWatcher</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    **Description**</span>
 
 <span class="sd">    This function adds a :py:class:`~brom_drake.watchers.diagram_watcher.diagram_watcher.DiagramWatcher` to a Drake Diagram.</span>
@@ -628,7 +628,7 @@
 
 <span class="sd">    file_format : str, optional</span>
 <span class="sd">        The file format for the figures.</span>
-<span class="sd">        By default, &quot;png&quot;.</span>
+<span class="sd">        By default, "png".</span>
 
 <span class="sd">    **Example Usage**</span>
 
@@ -649,18 +649,18 @@
 
 <span class="sd">    .. code-block:: python</span>
 
-<span class="sd">        watcher = add_watcher(builder, [(&quot;plant&quot;, 0), (&quot;controller&quot;, 0)])</span>
+<span class="sd">        watcher = add_watcher(builder, [("plant", 0), ("controller", 0)])</span>
 
 <span class="sd">    **Returns**</span>
 
 <span class="sd">    watcher : DiagramWatcher</span>
 <span class="sd">        The watcher that we have added to the diagram builder.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Input Processing</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">plot_arrangement</span><span class="p">,</span> <span class="n">PortFigureArrangement</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;plot_arrangement must be of type PortFigureArrangement; received </span><span class="si">{</span><span class="n">plot_arrangement</span><span class="si">}</span><span class="s2"> of type&quot;</span>
-            <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">plot_arrangement</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="sa">f</span><span class="s2">"plot_arrangement must be of type PortFigureArrangement; received </span><span class="si">{</span><span class="n">plot_arrangement</span><span class="si">}</span><span class="s2"> of type"</span>
+            <span class="o">+</span> <span class="sa">f</span><span class="s2">" </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">plot_arrangement</span><span class="p">)</span><span class="si">}</span><span class="s2">."</span>
         <span class="p">)</span>
 
     <span class="c1"># Parse targets list if it exists</span>
@@ -688,15 +688,15 @@
 
 <div class="viewcode-block" id="add_watcher_and_build">
 <a class="viewcode-back" href="../../../../generated/watchers/diagram_watcher/diagram_watcher.html#brom_drake.watchers.diagram_watcher.add_watcher.add_watcher_and_build">[docs]</a>
-<span class="k">def</span> <span class="nf">add_watcher_and_build</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_watcher_and_build</span><span class="p">(</span>
     <span class="n">builder</span><span class="p">:</span> <span class="n">DiagramBuilder</span><span class="p">,</span>
     <span class="n">targets</span><span class="p">:</span> <span class="n">PotentialTargetTypes</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">watcher_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">directories</span><span class="o">.</span><span class="n">DEFAULT_WATCHER_DIR</span><span class="p">,</span>
     <span class="n">plot_arrangement</span><span class="p">:</span> <span class="n">PortFigureArrangement</span> <span class="o">=</span> <span class="n">PortFigureArrangement</span><span class="o">.</span><span class="n">OnePlotPerPort</span><span class="p">,</span>
     <span class="n">figure_naming_convention</span><span class="p">:</span> <span class="n">FigureNamingConvention</span> <span class="o">=</span> <span class="n">FigureNamingConvention</span><span class="o">.</span><span class="n">kFlat</span><span class="p">,</span>
-    <span class="n">file_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;png&quot;</span><span class="p">,</span>
+    <span class="n">file_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"png"</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">DiagramWatcher</span><span class="p">,</span> <span class="n">Diagram</span><span class="p">,</span> <span class="n">Context</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    **Description**</span>
 
 <span class="sd">    This function adds a :py:class:`~brom_drake.watchers.diagram_watcher.diagram_watcher.DiagramWatcher` to a Drake Diagram.</span>
@@ -716,18 +716,18 @@
 
 <span class="sd">    .. code-block:: python</span>
 
-<span class="sd">        watcher = add_watcher_and_build(builder, targets=[(&quot;plant&quot;,)])</span>
+<span class="sd">        watcher = add_watcher_and_build(builder, targets=[("plant",)])</span>
 
-<span class="sd">    The DiagramWatcher will then watch all supported ports of the &quot;plant&quot; system</span>
+<span class="sd">    The DiagramWatcher will then watch all supported ports of the "plant" system</span>
 <span class="sd">    that it can find.</span>
 
 <span class="sd">    Furthermore, to specify which systems and specific ports to watch:</span>
 
 <span class="sd">    .. code-block:: python</span>
 
-<span class="sd">        watcher = add_watcher_and_build(builder, targets=[(&quot;plant&quot;, 0), (&quot;controller&quot;, 0)])</span>
+<span class="sd">        watcher = add_watcher_and_build(builder, targets=[("plant", 0), ("controller", 0)])</span>
 
-<span class="sd">    This will watch output port 0 of both the &quot;plant&quot; and &quot;controller&quot; systems, if possible.</span>
+<span class="sd">    This will watch output port 0 of both the "plant" and "controller" systems, if possible.</span>
 
 <span class="sd">    **Parameters**</span>
 
@@ -761,7 +761,7 @@
 
 <span class="sd">    diagram_context: Context</span>
 <span class="sd">        The default context for the built diagram.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">watcher</span> <span class="o">=</span> <span class="n">add_watcher</span><span class="p">(</span>
         <span class="n">builder</span><span class="p">,</span>
         <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">,</span>
@@ -783,11 +783,11 @@
 
 <div class="viewcode-block" id="parse_list_of_simplified_targets">
 <a class="viewcode-back" href="../../../../generated/watchers/diagram_watcher/diagram_watcher.html#brom_drake.watchers.diagram_watcher.add_watcher.parse_list_of_simplified_targets">[docs]</a>
-<span class="k">def</span> <span class="nf">parse_list_of_simplified_targets</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_list_of_simplified_targets</span><span class="p">(</span>
     <span class="n">builder</span><span class="p">:</span> <span class="n">DiagramBuilder</span><span class="p">,</span>
     <span class="n">targets</span><span class="p">:</span> <span class="n">PotentialTargetTypes</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">DiagramTarget</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    **Description**</span>
 
 <span class="sd">    This function takes a list of simplified targets and converts them to the full form.</span>
@@ -796,7 +796,7 @@
 
 <span class="sd">    .. code-block:: python</span>
 
-<span class="sd">        targets = [(&quot;plant&quot;, 0), (&quot;controller&quot;, 0)]</span>
+<span class="sd">        targets = [("plant", 0), ("controller", 0)]</span>
 <span class="sd">        parsed_targets = parse_list_of_simplified_targets(targets)</span>
 
 <span class="sd">    **Parameters**</span>
@@ -811,19 +811,19 @@
 
 <span class="sd">    parsed_targets: List[DiagramTarget]</span>
 <span class="sd">        A list of all the targets that we want to watch.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Setup</span>
     <span class="n">parsed_targets</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">system_list</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">GetSystems</span><span class="p">()</span>
 
     <span class="c1"># If input is not a list, then raise an error</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">targets</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;the input &quot;targets&quot; must be a list.&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">'the input "targets" must be a list.'</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">targets</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s1">&#39;the input &quot;targets&quot; must be a non-empty list containing tuples or strings.</span><span class="se">\n</span><span class="s1">&#39;</span>
-            <span class="o">+</span> <span class="s2">&quot;If you want to watch the entire diagram, then pass in None as the value of targets.&quot;</span>
+            <span class="s1">'the input "targets" must be a non-empty list containing tuples or strings.</span><span class="se">\n</span><span class="s1">'</span>
+            <span class="o">+</span> <span class="s2">"If you want to watch the entire diagram, then pass in None as the value of targets."</span>
         <span class="p">)</span>
 
     <span class="c1"># Parse each element in targets</span>
@@ -840,13 +840,13 @@
                 <span class="c1"># Check if the index is valid</span>
                 <span class="k">if</span> <span class="n">target</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">target</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">system_list</span><span class="p">):</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;the index </span><span class="si">{</span><span class="n">target</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> is not a valid index for the list of systems (has length </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">system_list</span><span class="p">)</span><span class="si">}</span><span class="s2">).&quot;</span>
+                        <span class="sa">f</span><span class="s2">"the index </span><span class="si">{</span><span class="n">target</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> is not a valid index for the list of systems (has length </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">system_list</span><span class="p">)</span><span class="si">}</span><span class="s2">)."</span>
                     <span class="p">)</span>
                 <span class="n">target_name</span> <span class="o">=</span> <span class="n">system_list</span><span class="p">[</span><span class="n">target</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
 
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;the first element of the tuple must be a string or an integer; received </span><span class="si">{}</span><span class="s2"> (type </span><span class="si">{}</span><span class="s2">).&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="s2">"the first element of the tuple must be a string or an integer; received </span><span class="si">{}</span><span class="s2"> (type </span><span class="si">{}</span><span class="s2">)."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                         <span class="n">target</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">type</span><span class="p">(</span><span class="n">target</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
                     <span class="p">)</span>
                 <span class="p">)</span>
@@ -872,7 +872,7 @@
                     <span class="n">ports_list</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">system</span><span class="o">.</span><span class="n">GetOutputPort</span><span class="p">(</span><span class="n">port_name</span><span class="p">)</span><span class="o">.</span><span class="n">get_index</span><span class="p">())]</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;the system </span><span class="si">{</span><span class="n">target_name</span><span class="si">}</span><span class="s2"> does not have an output port named </span><span class="si">{</span><span class="n">port_name</span><span class="si">}</span><span class="s2">.&quot;</span>
+                        <span class="sa">f</span><span class="s2">"the system </span><span class="si">{</span><span class="n">target_name</span><span class="si">}</span><span class="s2"> does not have an output port named </span><span class="si">{</span><span class="n">port_name</span><span class="si">}</span><span class="s2">."</span>
                     <span class="p">)</span>
 
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
@@ -895,23 +895,23 @@
                             <span class="p">]</span>
                         <span class="k">else</span><span class="p">:</span>
                             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                                <span class="sa">f</span><span class="s2">&quot;the system </span><span class="si">{</span><span class="n">target_name</span><span class="si">}</span><span class="s2"> does not have an output port named </span><span class="si">{</span><span class="n">port_name</span><span class="si">}</span><span class="s2">.&quot;</span>
+                                <span class="sa">f</span><span class="s2">"the system </span><span class="si">{</span><span class="n">target_name</span><span class="si">}</span><span class="s2"> does not have an output port named </span><span class="si">{</span><span class="n">port_name</span><span class="si">}</span><span class="s2">."</span>
                             <span class="p">)</span>
 
                     <span class="k">else</span><span class="p">:</span>
                         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                            <span class="sa">f</span><span class="s2">&quot;the target_list[</span><span class="si">{</span><span class="n">ii</span><span class="si">}</span><span class="s2">] of the tuple is not an integer or a string! &quot;</span>
-                            <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;Received </span><span class="si">{</span><span class="n">elt_ii</span><span class="si">}</span><span class="s2"> of type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">elt_ii</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+                            <span class="sa">f</span><span class="s2">"the target_list[</span><span class="si">{</span><span class="n">ii</span><span class="si">}</span><span class="s2">] of the tuple is not an integer or a string! "</span>
+                            <span class="o">+</span> <span class="sa">f</span><span class="s2">"Received </span><span class="si">{</span><span class="n">elt_ii</span><span class="si">}</span><span class="s2"> of type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">elt_ii</span><span class="p">)</span><span class="si">}</span><span class="s2">."</span>
                         <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;the second element of the tuple must be either a: </span><span class="se">\n</span><span class="s2">&quot;</span>
-                    <span class="o">+</span> <span class="s2">&quot;- an integer</span><span class="se">\n</span><span class="s2">&quot;</span>
-                    <span class="o">+</span> <span class="s2">&quot;- a list of integers</span><span class="se">\n</span><span class="s2">&quot;</span>
-                    <span class="o">+</span> <span class="s2">&quot;- a string</span><span class="se">\n</span><span class="s2">&quot;</span>
-                    <span class="o">+</span> <span class="s2">&quot;- a list of strings</span><span class="se">\n</span><span class="s2">&quot;</span>
-                    <span class="o">+</span> <span class="s2">&quot;- None.</span><span class="se">\n</span><span class="s2">&quot;</span>
-                    <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;Received type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">target</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="s2">"the second element of the tuple must be either a: </span><span class="se">\n</span><span class="s2">"</span>
+                    <span class="o">+</span> <span class="s2">"- an integer</span><span class="se">\n</span><span class="s2">"</span>
+                    <span class="o">+</span> <span class="s2">"- a list of integers</span><span class="se">\n</span><span class="s2">"</span>
+                    <span class="o">+</span> <span class="s2">"- a string</span><span class="se">\n</span><span class="s2">"</span>
+                    <span class="o">+</span> <span class="s2">"- a list of strings</span><span class="se">\n</span><span class="s2">"</span>
+                    <span class="o">+</span> <span class="s2">"- None.</span><span class="se">\n</span><span class="s2">"</span>
+                    <span class="o">+</span> <span class="sa">f</span><span class="s2">"Received type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">target</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="si">}</span><span class="s2">"</span>
                 <span class="p">)</span>
 
         <span class="c1"># Create the diagram target object</span>
@@ -952,7 +952,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=722679d6"></script>
+</div><script src="../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>

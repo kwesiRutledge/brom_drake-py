@@ -5,8 +5,8 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.config - brom_drake-py 0.5.6 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=acfd86a5" />
+        <title>brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.config - brom_drake-py v0.0.0+githubActionDefault documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../index.html"><div class="brand">brom_drake-py 0.5.6 documentation</div></a>
+      <a href="../../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.6 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -551,15 +551,15 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.config</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">IntEnum</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntEnum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
 
 
 <div class="viewcode-block" id="MeshReplacementStrategy">
 <a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/drake_ready_urdf_converter/drake_ready_urdf_converter.html#brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.config.MeshReplacementStrategy">[docs]</a>
-<span class="k">class</span> <span class="nc">MeshReplacementStrategy</span><span class="p">(</span><span class="n">IntEnum</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MeshReplacementStrategy</span><span class="p">(</span><span class="n">IntEnum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    *Description*</span>
 
 <span class="sd">    The different strategies for replacing mesh files.</span>
@@ -581,7 +581,7 @@
 <span class="sd">        # Selecting the strategy to replace meshes with OBJ files</span>
 <span class="sd">        strategy = MeshReplacementStrategy.kWithObj</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">kDoNotReplace</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">kWithObj</span> <span class="o">=</span> <span class="mi">1</span>
@@ -593,14 +593,14 @@
 <div class="viewcode-block" id="MeshReplacementStrategies">
 <a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/drake_ready_urdf_converter/drake_ready_urdf_converter.html#brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.config.MeshReplacementStrategies">[docs]</a>
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">MeshReplacementStrategies</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MeshReplacementStrategies</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    *Description*</span>
 
 <span class="sd">    A dataclass that specifies the different strategies for replacing mesh files in:</span>
 <span class="sd">    - the &lt;collision&gt; section of the URDF</span>
 <span class="sd">    - the &lt;visual&gt; section of the URDF</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">collision_meshes</span><span class="p">:</span> <span class="n">MeshReplacementStrategy</span> <span class="o">=</span> <span class="n">MeshReplacementStrategy</span><span class="o">.</span><span class="n">kWithObj</span>
     <span class="n">visual_meshes</span><span class="p">:</span> <span class="n">MeshReplacementStrategy</span> <span class="o">=</span> <span class="n">MeshReplacementStrategy</span><span class="o">.</span><span class="n">kWithObj</span></div>
@@ -610,8 +610,8 @@
 <div class="viewcode-block" id="DrakeReadyURDFConverterConfig">
 <a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/drake_ready_urdf_converter/drake_ready_urdf_converter.html#brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.config.DrakeReadyURDFConverterConfig">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">DrakeReadyURDFConverterConfig</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DrakeReadyURDFConverterConfig</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    *Description*</span>
 
 <span class="sd">    A dataclass that specifies how the DrakeReadyURDFConverter</span>
@@ -623,17 +623,17 @@
 <span class="sd">        The path where the converted URDF file will be saved. If None, it defaults to the models directory.</span>
 
 <span class="sd">    coacd_log_level: str</span>
-<span class="sd">        The log level for the coacd tool. Options are &quot;off&quot;, &quot;info&quot;, &quot;error&quot;.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        The log level for the coacd tool. Options are "off", "info", "error".</span>
+<span class="sd">    """</span>
 
     <span class="n">output_urdf_file_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">overwrite_old_logs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">overwrite_old_models</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">log_file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;conversion.log&quot;</span>
+    <span class="n">log_file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"conversion.log"</span>
     <span class="n">mesh_replacement_strategies</span><span class="p">:</span> <span class="n">MeshReplacementStrategies</span> <span class="o">=</span> <span class="n">MeshReplacementStrategies</span><span class="p">()</span>
     <span class="n">add_missing_actuators</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">replace_colors_with</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">coacd_log_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;info&quot;</span></div>
+    <span class="n">coacd_log_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"info"</span></div>
 
 </pre></div>
         </article>
@@ -667,7 +667,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../_static/documentation_options.js?v=722679d6"></script>
+</div><script src="../../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

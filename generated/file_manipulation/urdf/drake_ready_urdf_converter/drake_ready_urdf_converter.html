@@ -6,8 +6,8 @@
 <link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html"><link rel="next" title="shapes" href="../shapes/shapes.html"><link rel="prev" title="urdf" href="../urdf.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>drake_ready_urdf_converter - brom_drake-py 0.5.6 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=acfd86a5" />
+        <title>drake_ready_urdf_converter - brom_drake-py v0.0.0+githubActionDefault documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -162,7 +162,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">brom_drake-py 0.5.6 documentation</div></a>
+      <a href="../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +183,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.6 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -603,7 +603,7 @@ kWithConvexDecomposition</p>
 </dd>
 </dl>
 <p><em>Usage</em></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.config</span> <span class="kn">import</span> <span class="n">MeshReplacementStrategy</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">MeshReplacementStrategy</span>
 <span class="c1"># or</span>
 <span class="c1"># from brom_drake.all import MeshReplacementStrategy</span>
 
@@ -1133,13 +1133,14 @@ element for the given actuated joint.</p>
 <dd><p>int([x]) -&gt; integer
 int(x, base=10) -&gt; integer</p>
 <p>Convert a number or string to an integer, or return 0 if no arguments
-are given.  If x is a number, return x.__int__().  For floating point
+are given.  If x is a number, return x.__int__().  For floating-point
 numbers, this truncates towards zero.</p>
 <p>If x is not a number or if base is given, then x must be a string,
 bytes, or bytearray instance representing an integer literal in the
 given base.  The literal can be preceded by ‘+’ or ‘-’ and be surrounded
 by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.
-Base 0 means to interpret the base from the string as an integer literal.
+Base 0 means to interpret the base from the string as an integer
+iteral.
 &gt;&gt;&gt; int(‘0b100’, base=0)
 4</p>
 </dd></dl>
@@ -1154,7 +1155,7 @@ errors is specified, then the object must expose a data buffer
 that will be decoded using the given encoding and error handler.
 Otherwise, returns the result of object.__str__() (if defined)
 or repr(object).
-encoding defaults to sys.getdefaultencoding().
+encoding defaults to ‘utf-8’.
 errors defaults to ‘strict’.</p>
 </dd></dl>
 
@@ -1164,13 +1165,14 @@ errors defaults to ‘strict’.</p>
 <dd><p>int([x]) -&gt; integer
 int(x, base=10) -&gt; integer</p>
 <p>Convert a number or string to an integer, or return 0 if no arguments
-are given.  If x is a number, return x.__int__().  For floating point
+are given.  If x is a number, return x.__int__().  For floating-point
 numbers, this truncates towards zero.</p>
 <p>If x is not a number or if base is given, then x must be a string,
 bytes, or bytearray instance representing an integer literal in the
 given base.  The literal can be preceded by ‘+’ or ‘-’ and be surrounded
 by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.
-Base 0 means to interpret the base from the string as an integer literal.
+Base 0 means to interpret the base from the string as an integer
+iteral.
 &gt;&gt;&gt; int(‘0b100’, base=0)
 4</p>
 </dd></dl>
@@ -1185,15 +1187,14 @@ errors is specified, then the object must expose a data buffer
 that will be decoded using the given encoding and error handler.
 Otherwise, returns the result of object.__str__() (if defined)
 or repr(object).
-encoding defaults to sys.getdefaultencoding().
+encoding defaults to ‘utf-8’.
 errors defaults to ‘strict’.</p>
 </dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.mesh_file_converter._AMENT_INDEX_AVAILABLE">
 <span class="sig-prename descclassname"><span class="pre">brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.mesh_file_converter.</span></span><span class="sig-name descname"><span class="pre">_AMENT_INDEX_AVAILABLE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.mesh_file_converter._AMENT_INDEX_AVAILABLE" title="Link to this definition">¶</a></dt>
-<dd><p>bool(x) -&gt; bool</p>
-<p>Returns True when the argument x is true, False otherwise.
+<dd><p>Returns True when the argument is true, False otherwise.
 The builtins True and False are the only two instances of the class bool.
 The class bool is a subclass of the class int, and cannot be subclassed.</p>
 </dd></dl>
@@ -1208,7 +1209,7 @@ errors is specified, then the object must expose a data buffer
 that will be decoded using the given encoding and error handler.
 Otherwise, returns the result of object.__str__() (if defined)
 or repr(object).
-encoding defaults to sys.getdefaultencoding().
+encoding defaults to ‘utf-8’.
 errors defaults to ‘strict’.</p>
 </dd></dl>
 
@@ -1218,13 +1219,14 @@ errors defaults to ‘strict’.</p>
 <dd><p>int([x]) -&gt; integer
 int(x, base=10) -&gt; integer</p>
 <p>Convert a number or string to an integer, or return 0 if no arguments
-are given.  If x is a number, return x.__int__().  For floating point
+are given.  If x is a number, return x.__int__().  For floating-point
 numbers, this truncates towards zero.</p>
 <p>If x is not a number or if base is given, then x must be a string,
 bytes, or bytearray instance representing an integer literal in the
 given base.  The literal can be preceded by ‘+’ or ‘-’ and be surrounded
 by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.
-Base 0 means to interpret the base from the string as an integer literal.
+Base 0 means to interpret the base from the string as an integer
+iteral.
 &gt;&gt;&gt; int(‘0b100’, base=0)
 4</p>
 </dd></dl>
@@ -1239,7 +1241,7 @@ errors is specified, then the object must expose a data buffer
 that will be decoded using the given encoding and error handler.
 Otherwise, returns the result of object.__str__() (if defined)
 or repr(object).
-encoding defaults to sys.getdefaultencoding().
+encoding defaults to ‘utf-8’.
 errors defaults to ‘strict’.</p>
 </dd></dl>
 
@@ -1370,7 +1372,7 @@ errors defaults to ‘strict’.</p>
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=722679d6"></script>
+</div><script src="../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>

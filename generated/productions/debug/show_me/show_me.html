@@ -6,8 +6,8 @@
 <link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html"><link rel="next" title="motion_planning" href="../../motion_planning/motion_planning.html"><link rel="prev" title="show_me_this_static_grasp" href="../grasping/show_me_this_static_grasp/show_me_this_static_grasp.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>show_me - brom_drake-py 0.5.6 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=acfd86a5" />
+        <title>show_me - brom_drake-py v0.0.0+githubActionDefault documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -162,7 +162,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">brom_drake-py 0.5.6 documentation</div></a>
+      <a href="../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +183,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.6 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -645,11 +645,11 @@ Default is False.</p>
 <p>The production can be used to show both simple models (e.g., single objects)
 or articulated models (e.g., robots).</p>
 <p>To show a simple model, simply provide the path to the model file.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">brom_drake.productions</span> <span class="kn">import</span> <span class="n">ShowMeThisModel</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.productions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ShowMeThisModel</span>
 
 <span class="c1"># Some stuff here</span>
 
-<span class="n">urdf_file_path</span> <span class="o">=</span> <span class="s2">&quot;path/to/your/model.urdf&quot;</span>
+<span class="n">urdf_file_path</span> <span class="o">=</span> <span class="s2">"path/to/your/model.urdf"</span>
 
 <span class="c1"># Create the production</span>
 <span class="n">production</span> <span class="o">=</span> <span class="n">ShowMeThisModel</span><span class="p">(</span>
@@ -663,15 +663,14 @@ or articulated models (e.g., robots).</p>
 <span class="c1"># Set up simulation</span>
 <span class="n">simulator</span> <span class="o">=</span> <span class="n">Simulator</span><span class="p">(</span><span class="n">diagram</span><span class="p">,</span> <span class="n">diagram_context</span><span class="p">)</span>
 <span class="n">simulator</span><span class="o">.</span><span class="n">set_target_realtime_rate</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
-<span class="n">simulator</span><span class="o">.</span><span class="n">set_publish_every_time_step</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>If the model is articulated, then you can also provide desired joint positions.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">brom_drake.productions</span> <span class="kn">import</span> <span class="n">ShowMeThisModel</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.productions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ShowMeThisModel</span>
 
 <span class="c1"># Some stuff here</span>
 
-<span class="n">urdf_file_path</span> <span class="o">=</span> <span class="s2">&quot;path/to/your/articulated_model.urdf&quot;</span>
+<span class="n">urdf_file_path</span> <span class="o">=</span> <span class="s2">"path/to/your/articulated_model.urdf"</span>
 <span class="n">desired_joint_positions</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]</span>  <span class="c1"># Example joint positions</span>
 
 <span class="c1"># Create the production</span>
@@ -687,7 +686,6 @@ or articulated models (e.g., robots).</p>
 <span class="c1"># Set up simulation</span>
 <span class="n">simulator</span> <span class="o">=</span> <span class="n">Simulator</span><span class="p">(</span><span class="n">diagram</span><span class="p">,</span> <span class="n">diagram_context</span><span class="p">)</span>
 <span class="n">simulator</span><span class="o">.</span><span class="n">set_target_realtime_rate</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
-<span class="n">simulator</span><span class="o">.</span><span class="n">set_publish_every_time_step</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 <dl class="py method">
@@ -884,7 +882,7 @@ roles for this production.</p>
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=722679d6"></script>
+</div><script src="../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>

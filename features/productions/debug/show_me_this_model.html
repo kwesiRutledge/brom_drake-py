@@ -6,8 +6,8 @@
 <link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html"><link rel="next" title="Kinematic Motion Planning" href="../kinematic_motion_planning.html"><link rel="prev" title="Productions" href="../index.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>Show Me This Model - brom_drake-py 0.5.6 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=acfd86a5" />
+        <title>Show Me This Model - brom_drake-py v0.0.0+githubActionDefault documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -162,7 +162,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">brom_drake-py 0.5.6 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +183,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.6 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -576,29 +576,29 @@ You can share your robot model and (optionally) a desired joint configuration wi
 <h2>Example Usage<a class="headerlink" href="#example-usage" title="Link to this heading">¶</a></h2>
 <p>You can view multiple examples for this <code class="code docutils literal notranslate"><span class="pre">Production</span></code> object in our <code class="docutils literal notranslate"><span class="pre">examples/productions/helpful_for_debugging/show_me_this_model</span></code> directory.
 In the following section, we will also include one example to demonstrate how to use ShowMeThisModel.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">importlib</span> <span class="kn">import</span> <span class="n">resources</span> <span class="k">as</span> <span class="n">impresources</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">pydrake.systems.analysis</span> <span class="kn">import</span> <span class="n">Simulator</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">importlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">resources</span> <span class="k">as</span> <span class="n">impresources</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.systems.analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">Simulator</span>
 
 <span class="c1">#Internal imports</span>
-<span class="kn">from</span> <span class="nn">brom_drake</span> <span class="kn">import</span> <span class="n">robots</span>
-<span class="kn">from</span> <span class="nn">brom_drake.all</span> <span class="kn">import</span> <span class="n">drakeify_my_urdf</span>
-<span class="kn">from</span> <span class="nn">brom_drake.scenes</span> <span class="kn">import</span> <span class="n">ShowMeThisModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake</span><span class="w"> </span><span class="kn">import</span> <span class="n">robots</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.all</span><span class="w"> </span><span class="kn">import</span> <span class="n">drakeify_my_urdf</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.scenes</span><span class="w"> </span><span class="kn">import</span> <span class="n">ShowMeThisModel</span>
 
-<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="c1"># Setup</span>
     <span class="n">urdf_file_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span>
-        <span class="n">impresources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="n">robots</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;models/ur/ur10e.urdf&quot;</span>
+        <span class="n">impresources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="n">robots</span><span class="p">)</span> <span class="o">/</span> <span class="s2">"models/ur/ur10e.urdf"</span>
     <span class="p">)</span>
 
     <span class="c1"># Convert the URDF into a format that Drake likes</span>
     <span class="n">new_urdf_path</span> <span class="o">=</span> <span class="n">drakeify_my_urdf</span><span class="p">(</span>
         <span class="n">urdf_file_path</span><span class="p">,</span>
         <span class="n">overwrite_old_logs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">log_file_name</span><span class="o">=</span><span class="s2">&quot;drakeify-my-urdf1.log&quot;</span><span class="p">,</span>
+        <span class="n">log_file_name</span><span class="o">=</span><span class="s2">"drakeify-my-urdf1.log"</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="c1"># Visualize the URDF using the &quot;show-me-this-model&quot; feature</span>
+    <span class="c1"># Visualize the URDF using the "show-me-this-model" feature</span>
     <span class="n">time_step</span> <span class="o">=</span> <span class="mf">1e-3</span>
     <span class="n">production</span> <span class="o">=</span> <span class="n">ShowMeThisModel</span><span class="p">(</span>
         <span class="nb">str</span><span class="p">(</span><span class="n">new_urdf_path</span><span class="p">),</span>
@@ -618,7 +618,7 @@ In the following section, we will also include one example to demonstrate how to
     <span class="n">simulator</span><span class="o">.</span><span class="n">Initialize</span><span class="p">()</span>
     <span class="n">simulator</span><span class="o">.</span><span class="n">AdvanceTo</span><span class="p">(</span><span class="mf">15.0</span><span class="p">)</span>
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -734,7 +734,7 @@ If the collision geometry is very different from the visual geometry, then you m
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=722679d6"></script>
+</div><script src="../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>

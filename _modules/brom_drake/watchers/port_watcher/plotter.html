@@ -5,8 +5,8 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.watchers.port_watcher.plotter - brom_drake-py 0.5.6 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=acfd86a5" />
+        <title>brom_drake.watchers.port_watcher.plotter - brom_drake-py v0.0.0+githubActionDefault documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">brom_drake-py 0.5.6 documentation</div></a>
+      <a href="../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.6 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -551,47 +551,47 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for brom_drake.watchers.port_watcher.plotter</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">pydrake.all</span> <span class="kn">import</span> <span class="p">(</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.all</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">Context</span><span class="p">,</span>
     <span class="n">OutputPort</span><span class="p">,</span>
     <span class="n">PortDataType</span><span class="p">,</span>
     <span class="n">MultibodyPlant</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">pydrake.systems.primitives</span> <span class="kn">import</span> <span class="n">VectorLogSink</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.systems.primitives</span><span class="w"> </span><span class="kn">import</span> <span class="n">VectorLogSink</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="c1"># Internal Imports</span>
-<span class="kn">from</span> <span class="nn">brom_drake.watchers.port_watcher.file_manager</span> <span class="kn">import</span> <span class="n">PortWatcherFileManager</span>
-<span class="kn">from</span> <span class="nn">brom_drake.watchers.port_watcher.port_figure_arrangement</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.watchers.port_watcher.file_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">PortWatcherFileManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.watchers.port_watcher.port_figure_arrangement</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">PortFigureArrangement</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">brom_drake.watchers.port_watcher.port_watcher_options</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.watchers.port_watcher.port_watcher_options</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">FigureNamingConvention</span><span class="p">,</span>
     <span class="n">PortWatcherPlottingOptions</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">brom_drake.utils.constants</span> <span class="kn">import</span> <span class="n">SupportedLogger</span>
-<span class="kn">from</span> <span class="nn">brom_drake.utils.type_checking</span> <span class="kn">import</span> <span class="n">is_rigid_transform</span>
-<span class="kn">from</span> <span class="nn">brom_drake.directories</span> <span class="kn">import</span> <span class="n">DEFAULT_PLOT_DIR</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.utils.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">SupportedLogger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.utils.type_checking</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_rigid_transform</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.directories</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_PLOT_DIR</span>
 
 
 <div class="viewcode-block" id="PortWatcherPlotter">
 <a class="viewcode-back" href="../../../../generated/watchers/port_watcher/port_watcher.html#brom_drake.watchers.port_watcher.plotter.PortWatcherPlotter">[docs]</a>
-<span class="k">class</span> <span class="nc">PortWatcherPlotter</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PortWatcherPlotter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    *Description*</span>
 
 <span class="sd">    A plotter for the PortWatcher object. This is responsible for interpreting</span>
 <span class="sd">    the data from the :py:class:`brom_drake.PortWatcher.PortWatcher`</span>
 
 <span class="sd">    TODO(Kwesi): Consider making this a dataclass</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">port</span><span class="p">:</span> <span class="n">OutputPort</span><span class="p">,</span>
         <span class="n">python_logger</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">Logger</span><span class="p">,</span>
@@ -606,8 +606,8 @@
 
 <div class="viewcode-block" id="PortWatcherPlotter.compute_plot_shape">
 <a class="viewcode-back" href="../../../../generated/watchers/port_watcher/port_watcher.html#brom_drake.watchers.port_watcher.plotter.PortWatcherPlotter.compute_plot_shape">[docs]</a>
-    <span class="k">def</span> <span class="nf">compute_plot_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_dims</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_plot_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_dims</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
 <span class="sd">        Computes the shape of the plot based on the data.</span>
@@ -624,7 +624,7 @@
 
 <span class="sd">        n_columns: int</span>
 <span class="sd">            The number of columns in the plot</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">n_dims</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">return</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>
         <span class="k">if</span> <span class="n">n_dims</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
@@ -639,24 +639,24 @@
 
 <div class="viewcode-block" id="PortWatcherPlotter.add_to_python_report">
 <a class="viewcode-back" href="../../../../generated/watchers/port_watcher/port_watcher.html#brom_drake.watchers.port_watcher.plotter.PortWatcherPlotter.add_to_python_report">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_to_python_report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_to_python_report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description</span>
 <span class="sd">        -----------</span>
 <span class="sd">        Logs a message to the Python logger.</span>
 <span class="sd">        :param message: A string with the message we want to send to the logs.</span>
 <span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">python_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">add_warning_to_python_report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_warning_to_python_report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">python_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
 <div class="viewcode-block" id="PortWatcherPlotter.data_dimension">
 <a class="viewcode-back" href="../../../../generated/watchers/port_watcher/port_watcher.html#brom_drake.watchers.port_watcher.plotter.PortWatcherPlotter.data_dimension">[docs]</a>
-    <span class="k">def</span> <span class="nf">data_dimension</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">data_dimension</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
 <span class="sd">        Returns the dimension of the data in the port.</span>
@@ -670,7 +670,7 @@
 
 <span class="sd">        data_dim: int</span>
 <span class="sd">            The dimension of the data in the port.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="o">.</span><span class="n">get_data_type</span><span class="p">()</span> <span class="o">==</span> <span class="n">PortDataType</span><span class="o">.</span><span class="n">kVectorValued</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
@@ -684,18 +684,18 @@
 
         <span class="c1"># Otherwise, raise an error</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Port </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="si">}</span><span class="s2"> of system </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="o">.</span><span class="n">get_system</span><span class="p">()</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="si">}</span><span class="s2"> is not of the correct type for plotting.&quot;</span>
+            <span class="sa">f</span><span class="s2">"Port </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="si">}</span><span class="s2"> of system </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="o">.</span><span class="n">get_system</span><span class="p">()</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="si">}</span><span class="s2"> is not of the correct type for plotting."</span>
         <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="PortWatcherPlotter.plot_logger_data">
 <a class="viewcode-back" href="../../../../generated/watchers/port_watcher/port_watcher.html#brom_drake.watchers.port_watcher.plotter.PortWatcherPlotter.plot_logger_data">[docs]</a>
-    <span class="k">def</span> <span class="nf">plot_logger_data</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot_logger_data</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">drake_vector_log</span><span class="p">:</span> <span class="n">VectorLogSink</span><span class="p">,</span>
         <span class="n">diagram_context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">]]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
 <span class="sd">        This function plots the data in the logger.</span>
@@ -714,7 +714,7 @@
 <span class="sd">            A tuple where:</span>
 <span class="sd">            - the first element is a list of figures and</span>
 <span class="sd">            - the second element is a list of lists of axes.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
         <span class="n">python_logger</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">python_logger</span>
         <span class="n">plotting_options</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plotting_options</span>
@@ -728,7 +728,7 @@
 
         <span class="k">if</span> <span class="p">(</span><span class="n">log_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">log_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
             <span class="n">python_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;No data found for </span><span class="si">{</span><span class="n">system</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="si">}</span><span class="s2"> - Port </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="si">}</span><span class="s2">! Skipping...&quot;</span>
+                <span class="sa">f</span><span class="s2">"No data found for </span><span class="si">{</span><span class="n">system</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="si">}</span><span class="s2"> - Port </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="si">}</span><span class="s2">! Skipping..."</span>
             <span class="p">)</span>
             <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
 
@@ -747,7 +747,7 @@
                 <span class="n">ax_ii</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">log_times</span><span class="p">,</span> <span class="n">log_data</span><span class="p">[</span><span class="n">port_index</span><span class="p">,</span> <span class="p">:])</span>
 
                 <span class="c1"># Add axis titles and labels</span>
-                <span class="n">ax_ii</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Time (s)&quot;</span><span class="p">)</span>
+                <span class="n">ax_ii</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Time (s)"</span><span class="p">)</span>
                 <span class="n">ax_ii</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">file_manager</span><span class="o">.</span><span class="n">name_of_data_at_index</span><span class="p">(</span>
                         <span class="n">port_index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">,</span> <span class="n">drake_vector_log</span>
@@ -762,19 +762,19 @@
 
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Invalid plot arrangement: </span><span class="si">{</span><span class="n">plotting_options</span><span class="o">.</span><span class="n">plot_arrangement</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">"Invalid plot arrangement: </span><span class="si">{</span><span class="n">plotting_options</span><span class="o">.</span><span class="n">plot_arrangement</span><span class="si">}</span><span class="s2">."</span>
             <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="PortWatcherPlotter.plot_logger_data_subplots">
 <a class="viewcode-back" href="../../../../generated/watchers/port_watcher/port_watcher.html#brom_drake.watchers.port_watcher.plotter.PortWatcherPlotter.plot_logger_data_subplots">[docs]</a>
-    <span class="k">def</span> <span class="nf">plot_logger_data_subplots</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot_logger_data_subplots</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">times</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span>
         <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span>
         <span class="n">drake_vector_log</span><span class="p">:</span> <span class="n">VectorLogSink</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
 <span class="sd">        This function plots the data in the logger.</span>
@@ -799,7 +799,7 @@
 
 <span class="sd">        axes_list: list[plt.Axes]</span>
 <span class="sd">            The list of axes.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
         <span class="n">n_dims</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
@@ -807,7 +807,7 @@
         <span class="n">n_rows</span><span class="p">,</span> <span class="n">n_cols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_plot_shape</span><span class="p">(</span><span class="n">n_dims</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">add_to_python_report</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Plotting </span><span class="si">{</span><span class="n">n_dims</span><span class="si">}</span><span class="s2"> dimensions in a </span><span class="si">{</span><span class="n">n_rows</span><span class="si">}</span><span class="s2">x</span><span class="si">{</span><span class="n">n_cols</span><span class="si">}</span><span class="s2"> grid.&quot;</span>
+            <span class="sa">f</span><span class="s2">"Plotting </span><span class="si">{</span><span class="n">n_dims</span><span class="si">}</span><span class="s2"> dimensions in a </span><span class="si">{</span><span class="n">n_rows</span><span class="si">}</span><span class="s2">x</span><span class="si">{</span><span class="n">n_cols</span><span class="si">}</span><span class="s2"> grid."</span>
         <span class="p">)</span>
 
         <span class="n">fig</span><span class="p">,</span> <span class="n">ax_list</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">n_rows</span><span class="p">,</span> <span class="n">n_cols</span><span class="p">)</span>
@@ -849,13 +849,13 @@
 
 <div class="viewcode-block" id="PortWatcherPlotter.save_figures">
 <a class="viewcode-back" href="../../../../generated/watchers/port_watcher/port_watcher.html#brom_drake.watchers.port_watcher.plotter.PortWatcherPlotter.save_figures">[docs]</a>
-    <span class="k">def</span> <span class="nf">save_figures</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_figures</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">vector_log_sink</span><span class="p">:</span> <span class="n">VectorLogSink</span><span class="p">,</span>
         <span class="n">diagram_context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span>
         <span class="n">port_component_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
 <span class="sd">        This function saves the figures.</span>
@@ -871,7 +871,7 @@
 
 <span class="sd">        diagram_context : Context</span>
 <span class="sd">            The context of the diagram.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
         <span class="n">plotting_options</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plotting_options</span>
         <span class="n">figs</span><span class="p">,</span> <span class="n">ax_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_logger_data</span><span class="p">(</span><span class="n">vector_log_sink</span><span class="p">,</span> <span class="n">diagram_context</span><span class="p">)</span>
@@ -879,13 +879,13 @@
         <span class="c1"># If no figures are returned, then return early!</span>
         <span class="k">if</span> <span class="n">figs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">add_warning_to_python_report</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;No figures to save for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="si">}</span><span class="s2"> of system </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="o">.</span><span class="n">get_system</span><span class="p">()</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="si">}</span><span class="s2">; plot_logger_data was empty.&quot;</span>
+                <span class="sa">f</span><span class="s2">"No figures to save for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="si">}</span><span class="s2"> of system </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="o">.</span><span class="n">get_system</span><span class="p">()</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="si">}</span><span class="s2">; plot_logger_data was empty."</span>
             <span class="p">)</span>
             <span class="k">return</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">figs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">add_warning_to_python_report</span><span class="p">(</span>
-                <span class="s2">&quot;Zero figures to save; plot_logger_data was empty.&quot;</span>
+                <span class="s2">"Zero figures to save; plot_logger_data was empty."</span>
             <span class="p">)</span>
             <span class="k">return</span>  <span class="c1"># Do nothing</span>
 
@@ -897,7 +897,7 @@
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">figs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="c1"># Create directory for the plots, if it doesn&#39;t already exist</span>
+            <span class="c1"># Create directory for the plots, if it doesn't already exist</span>
             <span class="n">first_figure_path</span> <span class="o">=</span> <span class="n">figure_paths</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">first_figure_path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
                 <span class="n">first_figure_path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -918,12 +918,12 @@
 
 
         <span class="c1"># Close all figures when done (this should be redundant?)</span>
-        <span class="c1"># plt.close(&#39;all&#39;)</span>
+        <span class="c1"># plt.close('all')</span>
 
 <div class="viewcode-block" id="PortWatcherPlotter.system_is_multibody_plant">
 <a class="viewcode-back" href="../../../../generated/watchers/port_watcher/port_watcher.html#brom_drake.watchers.port_watcher.plotter.PortWatcherPlotter.system_is_multibody_plant">[docs]</a>
-    <span class="k">def</span> <span class="nf">system_is_multibody_plant</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">system_is_multibody_plant</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
 <span class="sd">        Returns True if the system is a MultibodyPlant.</span>
@@ -937,7 +937,7 @@
 
 <span class="sd">        is_plant: bool</span>
 <span class="sd">            True if the system is a MultibodyPlant.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
         <span class="n">system</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="o">.</span><span class="n">get_system</span><span class="p">()</span>
 
@@ -977,7 +977,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=722679d6"></script>
+</div><script src="../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>

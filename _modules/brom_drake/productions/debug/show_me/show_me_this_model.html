@@ -5,8 +5,8 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.productions.debug.show_me.show_me_this_model - brom_drake-py 0.5.6 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=acfd86a5" />
+        <title>brom_drake.productions.debug.show_me.show_me_this_model - brom_drake-py v0.0.0+githubActionDefault documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../index.html"><div class="brand">brom_drake-py 0.5.6 documentation</div></a>
+      <a href="../../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.6 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -551,31 +551,31 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for brom_drake.productions.debug.show_me.show_me_this_model</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">pydrake.geometry</span> <span class="kn">import</span> <span class="n">Meshcat</span><span class="p">,</span> <span class="n">MeshcatVisualizer</span><span class="p">,</span> <span class="n">MeshcatVisualizerParams</span>
-<span class="kn">from</span> <span class="nn">pydrake.geometry</span> <span class="kn">import</span> <span class="n">Role</span> <span class="k">as</span> <span class="n">DrakeRole</span>
-<span class="kn">from</span> <span class="nn">pydrake.multibody.parsing</span> <span class="kn">import</span> <span class="n">Parser</span>
-<span class="kn">from</span> <span class="nn">pydrake.multibody.plant</span> <span class="kn">import</span> <span class="n">AddMultibodyPlantSceneGraph</span><span class="p">,</span> <span class="n">MultibodyPlant</span>
-<span class="kn">from</span> <span class="nn">pydrake.systems.framework</span> <span class="kn">import</span> <span class="n">DiagramBuilder</span><span class="p">,</span> <span class="n">Diagram</span><span class="p">,</span> <span class="n">Context</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">Meshcat</span><span class="p">,</span> <span class="n">MeshcatVisualizer</span><span class="p">,</span> <span class="n">MeshcatVisualizerParams</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">Role</span> <span class="k">as</span> <span class="n">DrakeRole</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.multibody.parsing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Parser</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.multibody.plant</span><span class="w"> </span><span class="kn">import</span> <span class="n">AddMultibodyPlantSceneGraph</span><span class="p">,</span> <span class="n">MultibodyPlant</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.systems.framework</span><span class="w"> </span><span class="kn">import</span> <span class="n">DiagramBuilder</span><span class="p">,</span> <span class="n">Diagram</span><span class="p">,</span> <span class="n">Context</span>
 
-<span class="kn">from</span> <span class="nn">pydrake.systems.primitives</span> <span class="kn">import</span> <span class="n">ConstantVectorSource</span><span class="p">,</span> <span class="n">VectorLogSink</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.systems.primitives</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConstantVectorSource</span><span class="p">,</span> <span class="n">VectorLogSink</span>
 
 <span class="c1"># Internal Imports</span>
-<span class="kn">from</span> <span class="nn">brom_drake.robots</span> <span class="kn">import</span> <span class="n">find_base_link_name_in</span>
-<span class="kn">from</span> <span class="nn">brom_drake.productions.types</span> <span class="kn">import</span> <span class="n">BaseProduction</span>
-<span class="kn">from</span> <span class="nn">brom_drake.productions.ids</span> <span class="kn">import</span> <span class="n">ProductionID</span>
-<span class="kn">from</span> <span class="nn">brom_drake.productions.roles.role</span> <span class="kn">import</span> <span class="n">Role</span>
-<span class="kn">from</span> <span class="nn">brom_drake.utils</span> <span class="kn">import</span> <span class="n">Performer</span><span class="p">,</span> <span class="n">AddMultibodyTriad</span>
-<span class="kn">from</span> <span class="nn">.show_me_system</span> <span class="kn">import</span> <span class="n">ShowMeSystem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.robots</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_base_link_name_in</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.productions.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseProduction</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.productions.ids</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProductionID</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.productions.roles.role</span><span class="w"> </span><span class="kn">import</span> <span class="n">Role</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">Performer</span><span class="p">,</span> <span class="n">AddMultibodyTriad</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.show_me_system</span><span class="w"> </span><span class="kn">import</span> <span class="n">ShowMeSystem</span>
 
 
 <div class="viewcode-block" id="ShowMeThisModel">
 <a class="viewcode-back" href="../../../../../generated/productions/debug/show_me/show_me.html#brom_drake.productions.debug.show_me.show_me_this_model.ShowMeThisModel">[docs]</a>
-<span class="k">class</span> <span class="nc">ShowMeThisModel</span><span class="p">(</span><span class="n">BaseProduction</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ShowMeThisModel</span><span class="p">(</span><span class="n">BaseProduction</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    **Description**</span>
 
 <span class="sd">    A production which allows the user to visualize a specified model</span>
@@ -624,7 +624,7 @@
 
 <span class="sd">        # Some stuff here</span>
 
-<span class="sd">        urdf_file_path = &quot;path/to/your/model.urdf&quot;</span>
+<span class="sd">        urdf_file_path = "path/to/your/model.urdf"</span>
 
 <span class="sd">        # Create the production</span>
 <span class="sd">        production = ShowMeThisModel(</span>
@@ -638,7 +638,6 @@
 <span class="sd">        # Set up simulation</span>
 <span class="sd">        simulator = Simulator(diagram, diagram_context)</span>
 <span class="sd">        simulator.set_target_realtime_rate(1.0)</span>
-<span class="sd">        simulator.set_publish_every_time_step(False)</span>
 
 <span class="sd">    If the model is articulated, then you can also provide desired joint positions. ::</span>
 
@@ -646,7 +645,7 @@
 
 <span class="sd">        # Some stuff here</span>
 
-<span class="sd">        urdf_file_path = &quot;path/to/your/articulated_model.urdf&quot;</span>
+<span class="sd">        urdf_file_path = "path/to/your/articulated_model.urdf"</span>
 <span class="sd">        desired_joint_positions = [0.0, 1.0, -1.0, 0.5]  # Example joint positions</span>
 
 <span class="sd">        # Create the production</span>
@@ -662,11 +661,10 @@
 <span class="sd">        # Set up simulation</span>
 <span class="sd">        simulator = Simulator(diagram, diagram_context)</span>
 <span class="sd">        simulator.set_target_realtime_rate(1.0)</span>
-<span class="sd">        simulator.set_publish_every_time_step(False)</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">path_to_model</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">,</span>
         <span class="n">with_these_joint_positions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -692,7 +690,7 @@
         <span class="c1"># Check that the model exists</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">path_to_model</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">&#39;The path &quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path_to_model</span><span class="si">}</span><span class="s1">&quot; does not exist! Can not show a model that does not exist!&#39;</span>
+                <span class="sa">f</span><span class="s1">'The path "</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path_to_model</span><span class="si">}</span><span class="s1">" does not exist! Can not show a model that does not exist!'</span>
             <span class="p">)</span>
 
         <span class="c1"># If the base link name is not provided,</span>
@@ -705,7 +703,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="p">,</span>
             <span class="n">time_step</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">time_step</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">set_name</span><span class="p">(</span><span class="s2">&quot;ShowMeThisModel_plant&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">set_name</span><span class="p">(</span><span class="s2">"ShowMeThisModel_plant"</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">meshcat</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
@@ -713,24 +711,24 @@
 
 <div class="viewcode-block" id="ShowMeThisModel.add_supporting_cast">
 <a class="viewcode-back" href="../../../../../generated/productions/debug/show_me/show_me.html#brom_drake.productions.debug.show_me.show_me_this_model.ShowMeThisModel.add_supporting_cast">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_supporting_cast</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_supporting_cast</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        **Description**</span>
 
-<span class="sd">        This method updates the production&#39;s</span>
-<span class="sd">        - MultibodyPlant with the user&#39;s model</span>
+<span class="sd">        This method updates the production's</span>
+<span class="sd">        - MultibodyPlant with the user's model</span>
 <span class="sd">        - Using the ShowMeSystem to freeze the model in place</span>
 <span class="sd">        - Connects to Meshcat, if requested</span>
 
 <span class="sd">        This is required to be implemented by all children of the BaseProduction class.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
 
         <span class="c1"># Add Model</span>
         <span class="n">model_idcs</span> <span class="o">=</span> <span class="n">Parser</span><span class="p">(</span><span class="n">plant</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="p">)</span><span class="o">.</span><span class="n">AddModels</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path_to_model</span><span class="p">))</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">model_idcs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Only one model should be added in this production;&quot;</span>
-            <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; received </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">model_idcs</span><span class="p">)</span><span class="si">}</span><span class="s2"> in the file </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path_to_model</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="sa">f</span><span class="s2">"Only one model should be added in this production;"</span>
+            <span class="o">+</span> <span class="sa">f</span><span class="s2">" received </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">model_idcs</span><span class="p">)</span><span class="si">}</span><span class="s2"> in the file </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path_to_model</span><span class="si">}</span><span class="s2">."</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_index</span> <span class="o">=</span> <span class="n">model_idcs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetModelInstanceName</span><span class="p">(</span><span class="n">model_idcs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
@@ -742,7 +740,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">assert</span> <span class="p">(</span>
                 <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_des</span><span class="p">)</span> <span class="o">==</span> <span class="n">n_dofs</span>
-            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expected </span><span class="si">{</span><span class="n">n_dofs</span><span class="si">}</span><span class="s2"> joint positions; received </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_des</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s2">"Expected </span><span class="si">{</span><span class="n">n_dofs</span><span class="si">}</span><span class="s2"> joint positions; received </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_des</span><span class="p">)</span><span class="si">}</span><span class="s2">."</span>
 
         <span class="c1"># Add ShowMeSystem</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">show_me_system</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">AddSystem</span><span class="p">(</span>
@@ -803,14 +801,14 @@
 
 <div class="viewcode-block" id="ShowMeThisModel.add_cast_and_build">
 <a class="viewcode-back" href="../../../../../generated/productions/debug/show_me/show_me.html#brom_drake.productions.debug.show_me.show_me_this_model.ShowMeThisModel.add_cast_and_build">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_cast_and_build</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_cast_and_build</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">cast</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Role</span><span class="p">,</span> <span class="n">Performer</span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Diagram</span><span class="p">,</span> <span class="n">Context</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        **Description**</span>
 
-<span class="sd">        This method builds the production&#39;s diagram and context,</span>
+<span class="sd">        This method builds the production's diagram and context,</span>
 <span class="sd">        and assigns the plant context to the internal ShowMeSystem.</span>
 
 <span class="sd">        **Parameters**</span>
@@ -826,7 +824,7 @@
 
 <span class="sd">        diagram_context: Context</span>
 <span class="sd">            The built Context of the production.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">add_cast_and_build</span><span class="p">(</span><span class="n">cast</span><span class="p">)</span>
 
         <span class="c1"># Assign the diagram context to the internal show_me_system</span>
@@ -841,19 +839,19 @@
 
 <div class="viewcode-block" id="ShowMeThisModel.add_multibody_triads">
 <a class="viewcode-back" href="../../../../../generated/productions/debug/show_me/show_me.html#brom_drake.productions.debug.show_me.show_me_this_model.ShowMeThisModel.add_multibody_triads">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_multibody_triads</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_multibody_triads</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        **Description**</span>
 
 <span class="sd">        This method will add triads to the world frame</span>
 <span class="sd">        and any other relevant frames.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
 
         <span class="c1"># Input Checking</span>
         <span class="k">assert</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">model_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-        <span class="p">),</span> <span class="s2">&quot;The model index is not yet set. Please call add_supporting_cast() first.&quot;</span>
+        <span class="p">),</span> <span class="s2">"The model index is not yet set. Please call add_supporting_cast() first."</span>
 
         <span class="c1"># Add A Triad to base?</span>
         <span class="n">AddMultibodyTriad</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">world_frame</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">scene_graph</span><span class="p">)</span></div>
@@ -861,8 +859,8 @@
 
 <div class="viewcode-block" id="ShowMeThisModel.create_and_connect_source_of_joint_positions">
 <a class="viewcode-back" href="../../../../../generated/productions/debug/show_me/show_me.html#brom_drake.productions.debug.show_me.show_me_this_model.ShowMeThisModel.create_and_connect_source_of_joint_positions">[docs]</a>
-    <span class="k">def</span> <span class="nf">create_and_connect_source_of_joint_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_and_connect_source_of_joint_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        **Description**</span>
 
 <span class="sd">        This method will create and connect a source of joint positions</span>
@@ -872,16 +870,16 @@
 
 <span class="sd">        - ``self.show_me_system`` is not None</span>
 <span class="sd">        - ``self.q_des`` is not None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
 
         <span class="k">assert</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">show_me_system</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-        <span class="p">),</span> <span class="s2">&quot;The show_me_system is not yet created. Please call add_supporting_cast() first.&quot;</span>
+        <span class="p">),</span> <span class="s2">"The show_me_system is not yet created. Please call add_supporting_cast() first."</span>
 
         <span class="k">assert</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">q_des</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-        <span class="p">),</span> <span class="s2">&quot;The desired joint positions are not yet set. Please provide them at initialization.&quot;</span>
+        <span class="p">),</span> <span class="s2">"The desired joint positions are not yet set. Please provide them at initialization."</span>
 
         <span class="c1"># Add Source</span>
         <span class="n">desired_joint_positions_source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">AddSystem</span><span class="p">(</span>
@@ -897,10 +895,10 @@
 
 <div class="viewcode-block" id="ShowMeThisModel.find_number_of_positions_in_model">
 <a class="viewcode-back" href="../../../../../generated/productions/debug/show_me/show_me.html#brom_drake.productions.debug.show_me.show_me_this_model.ShowMeThisModel.find_number_of_positions_in_model">[docs]</a>
-    <span class="k">def</span> <span class="nf">find_number_of_positions_in_model</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_number_of_positions_in_model</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        **Description**</span>
 
 <span class="sd">        This method will return the number of positions in the model</span>
@@ -910,7 +908,7 @@
 
 <span class="sd">        n_positions: int</span>
 <span class="sd">            The number of positions in the model.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
 
         <span class="c1"># Create a shadow plant</span>
@@ -931,8 +929,8 @@
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ProductionID</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ProductionID</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        **Description**</span>
 
 <span class="sd">        This property returns the unique identifier for this production.</span>
@@ -944,12 +942,12 @@
 
 <span class="sd">        id: ProductionID</span>
 <span class="sd">            The unique identifier for this production.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">ProductionID</span><span class="o">.</span><span class="n">kShowMeThisModel</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">suggested_roles</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Role</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">suggested_roles</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Role</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        **Description**</span>
 
 <span class="sd">        This property returns an empty list, because there are no suggested</span>
@@ -961,7 +959,7 @@
 
 <span class="sd">        roles: List[Role]</span>
 <span class="sd">            A list of suggested roles for this production.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="p">[]</span></div>
 
 </pre></div>
@@ -996,7 +994,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../_static/documentation_options.js?v=722679d6"></script>
+</div><script src="../../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

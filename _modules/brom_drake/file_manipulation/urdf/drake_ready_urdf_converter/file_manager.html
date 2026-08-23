@@ -5,8 +5,8 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.file_manager - brom_drake-py 0.5.6 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=acfd86a5" />
+        <title>brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.file_manager - brom_drake-py v0.0.0+githubActionDefault documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../index.html"><div class="brand">brom_drake-py 0.5.6 documentation</div></a>
+      <a href="../../../../../index.html"><div class="brand">brom_drake-py v0.0.0+githubActionDefault documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 0.5.6 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py v0.0.0+githubActionDefault documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -551,26 +551,26 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.file_manager</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span>
 
 <span class="c1"># Internal Imports</span>
-<span class="kn">from</span> <span class="nn">brom_drake.directories</span> <span class="kn">import</span> <span class="n">DEFAULT_BROM_MODELS_DIR</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.directories</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_BROM_MODELS_DIR</span>
 
 
 <div class="viewcode-block" id="DrakeReadyURDFConverterFileManager">
 <a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/drake_ready_urdf_converter/drake_ready_urdf_converter.html#brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.file_manager.DrakeReadyURDFConverterFileManager">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">DrakeReadyURDFConverterFileManager</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DrakeReadyURDFConverterFileManager</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Description</span>
 <span class="sd">    -----------</span>
 <span class="sd">    A dataclass that specifies how the DrakeReadyURDFConverter</span>
 <span class="sd">    should manage files.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">original_urdf_path</span><span class="p">:</span> <span class="n">Path</span>
     <span class="n">models_directory</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">DEFAULT_BROM_MODELS_DIR</span><span class="p">)</span>
@@ -579,12 +579,12 @@
 
 <div class="viewcode-block" id="DrakeReadyURDFConverterFileManager.clean_up_models_dir">
 <a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/drake_ready_urdf_converter/drake_ready_urdf_converter.html#brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.file_manager.DrakeReadyURDFConverterFileManager.clean_up_models_dir">[docs]</a>
-    <span class="k">def</span> <span class="nf">clean_up_models_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clean_up_models_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description</span>
 <span class="sd">        -----------</span>
 <span class="sd">        This method will clean up the models directory.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Make sure that the models directory exists</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">models_directory</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span>
@@ -594,8 +594,8 @@
 
 <div class="viewcode-block" id="DrakeReadyURDFConverterFileManager.output_file_directory">
 <a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/drake_ready_urdf_converter/drake_ready_urdf_converter.html#brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.file_manager.DrakeReadyURDFConverterFileManager.output_file_directory">[docs]</a>
-    <span class="k">def</span> <span class="nf">output_file_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">output_file_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description</span>
 <span class="sd">        -----------</span>
 <span class="sd">        Returns the directory where the output URDF file will be saved.</span>
@@ -606,17 +606,17 @@
 <span class="sd">        -------</span>
 <span class="sd">        Path</span>
 <span class="sd">            The directory where the output URDF file will be saved.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_urdf_path</span><span class="o">.</span><span class="n">parent</span></div>
 
 
 <div class="viewcode-block" id="DrakeReadyURDFConverterFileManager.file_path_in_context_of_urdf_dir">
 <a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/drake_ready_urdf_converter/drake_ready_urdf_converter.html#brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.file_manager.DrakeReadyURDFConverterFileManager.file_path_in_context_of_urdf_dir">[docs]</a>
-    <span class="k">def</span> <span class="nf">file_path_in_context_of_urdf_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">file_path_in_context_of_urdf_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description</span>
 <span class="sd">        -----------</span>
-<span class="sd">        This method returns the given file_path&#39;s Path when taken into context</span>
+<span class="sd">        This method returns the given file_path's Path when taken into context</span>
 <span class="sd">        of where the urdf lies.</span>
 
 <span class="sd">        Parameters</span>
@@ -628,7 +628,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        Path</span>
 <span class="sd">            The file path with added context of the INPUT URDF file.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
             <span class="n">file_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
@@ -639,8 +639,8 @@
 
 <div class="viewcode-block" id="DrakeReadyURDFConverterFileManager.output_urdf_file_name">
 <a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/drake_ready_urdf_converter/drake_ready_urdf_converter.html#brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.file_manager.DrakeReadyURDFConverterFileManager.output_urdf_file_name">[docs]</a>
-    <span class="k">def</span> <span class="nf">output_urdf_file_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">output_urdf_file_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description</span>
 <span class="sd">        -----------</span>
 <span class="sd">        Creates the output filename based on the original filename.</span>
@@ -649,7 +649,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        str</span>
 <span class="sd">            The name of the output URDF file</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
         <span class="n">original_file_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_urdf_path</span>
         <span class="n">output_urdf_file_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_urdf_path</span>
@@ -657,16 +657,16 @@
         <span class="k">if</span> <span class="n">output_urdf_file_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># If the output file path was not given.</span>
             <span class="c1"># Use Pathlib to extract the filename, if it exists</span>
             <span class="n">original_name</span> <span class="o">=</span> <span class="n">original_file_path</span><span class="o">.</span><span class="n">name</span>
-            <span class="n">original_name</span> <span class="o">=</span> <span class="n">original_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.urdf&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">original_name</span> <span class="o">=</span> <span class="n">original_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">".urdf"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
 
-            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">original_name</span><span class="si">}</span><span class="s2">.drake.urdf&quot;</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">original_name</span><span class="si">}</span><span class="s2">.drake.urdf"</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_urdf_file_path</span><span class="p">)</span><span class="o">.</span><span class="n">name</span></div>
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">output_urdf_path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">output_urdf_path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description</span>
 <span class="sd">        -----------</span>
 <span class="sd">        Returns the path where the output URDF file will be saved.</span>
@@ -677,7 +677,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        Path</span>
 <span class="sd">            The path where the output URDF file will be saved.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Setup</span>
         <span class="n">original_urdf_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_urdf_path</span>
 
@@ -689,7 +689,7 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_urdf_path</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">original_urdf_filename</span> <span class="o">=</span> <span class="n">original_urdf_path</span><span class="o">.</span><span class="n">name</span>
-            <span class="n">new_subdirectory_name</span> <span class="o">=</span> <span class="n">original_urdf_filename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.urdf&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">new_subdirectory_name</span> <span class="o">=</span> <span class="n">original_urdf_filename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">".urdf"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
             <span class="k">return</span> <span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">models_directory</span>
                 <span class="o">/</span> <span class="n">new_subdirectory_name</span>
@@ -728,7 +728,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../_static/documentation_options.js?v=722679d6"></script>
+</div><script src="../../../../../_static/documentation_options.js?v=1365b7c6"></script>
     <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>
