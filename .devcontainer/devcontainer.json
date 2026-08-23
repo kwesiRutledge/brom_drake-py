@@ -1,0 +1,16 @@
+{
+	"name": "brom_drake-py",
+	"image": "mcr.microsoft.com/devcontainers/python:3.14",
+	"postCreateCommand": "bash .devcontainer/postCreateCommand.sh",
+	"customizations": {
+		"vscode": {
+			"settings": {
+				"python.defaultInterpreterPath": "/usr/local/bin/python"
+			},
+			"extensions": [
+				"ms-python.python",
+				"ms-python.black-formatter"
+			]
+		}
+	}
+}

@@ -423,7 +423,6 @@ class TestProximityPosePlanDispenser(unittest.TestCase):
         # Simulate the diagram for 20 seconds
         simulator = Simulator(diagram, diagram_context)
         simulator.Initialize()
-        simulator.set_publish_every_time_step(True)
         simulator.AdvanceTo(20.0)
 
         # Verify that the current pose is the last pose in the plan

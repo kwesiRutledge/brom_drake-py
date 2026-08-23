@@ -238,7 +238,6 @@ class PortWatcherTest(unittest.TestCase):
 
         # Create simulator and simulate for a few seconds
         simulator = Simulator(diagram, diagram_context)
-        simulator.set_publish_every_time_step(False)
         simulator.AdvanceTo(1.0)
         simulator.AdvanceTo(2.0)
 
@@ -285,7 +284,6 @@ class PortWatcherTest(unittest.TestCase):
 
         # Create simulator and simulate for a few seconds
         simulator = Simulator(diagram, diagram_context)
-        simulator.set_publish_every_time_step(False)
         simulator.AdvanceTo(1.0)
         simulator.AdvanceTo(2.0)
 

@@ -4,13 +4,13 @@
     <visual>
       <origin rpy="0 0 3.141592653589793" xyz="0 0 0" />
       <geometry>
-        <mesh filename="file:///Users/kwesirutledge/Documents/Development/brom_drake-py/tests/file_manipulation/urdf/DrakeReadyURDFConverter/resources/meshes/ur10e/collision/base.stl" />
+        <mesh filename="file:///workspaces/brom_drake-py/tests/file_manipulation/urdf/DrakeReadyURDFConverter/resources/meshes/ur10e/collision/base.stl" />
       </geometry>
     </visual>
     <collision>
       <origin rpy="0 0 3.141592653589793" xyz="0 0 0" />
       <geometry>
-        <mesh filename="file:///Users/kwesirutledge/Documents/Development/brom_drake-py/tests/file_manipulation/urdf/DrakeReadyURDFConverter/resources/meshes/ur10e/collision/base.stl" />
+        <mesh filename="file:///workspaces/brom_drake-py/tests/file_manipulation/urdf/DrakeReadyURDFConverter/resources/meshes/ur10e/collision/base.stl" />
       </geometry>
     </collision>
   </link>

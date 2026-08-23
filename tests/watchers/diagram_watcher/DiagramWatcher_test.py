@@ -17,16 +17,34 @@ from pydrake.all import (
 )
 from brom_drake.watchers.diagram_target import DiagramTarget
 from brom_drake.watchers.diagram_watcher.diagram_watcher import DiagramWatcher
+from brom_drake.watchers.diagram_watcher.diagram_watcher_options import (
+    DiagramWatcherOptions,
+)
 from brom_drake.watchers.diagram_watcher.errors import (
     PortIsNotBeingWatchedError,
     SystemIsNotBeingWatchedError,
 )
 import numpy as np
+from pathlib import Path
 from typing import Tuple
 import unittest
 
 
 class TestDiagramWatcher(unittest.TestCase):
+    def test_output_directories(self):
+        """
+        The watcher exposes its configured plot and raw-data directories.
+        """
+        builder, _, _ = self.create_simple_affine_with_integrator_diagram()
+        base_directory = Path("./test_diagram_watcher_output")
+        watcher = DiagramWatcher(
+            builder,
+            options=DiagramWatcherOptions(base_directory=base_directory),
+        )
+
+        self.assertEqual(watcher.plot_dir, base_directory / "plots")
+        self.assertEqual(watcher.raw_data_dir, base_directory / "raw_data")
+
     def create_simple_affine_with_integrator_diagram(
         self,
     ) -> Tuple[DiagramBuilder, AffineSystem, Integrator]:

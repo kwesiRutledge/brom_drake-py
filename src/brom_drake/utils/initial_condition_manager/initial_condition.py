@@ -73,7 +73,7 @@ class InitialCondition:
         target_body_index = attached_bodies[self.target_body_index]
 
         # Set initial pose
-        plant.SetDefaultFreeBodyPose(
+        plant.SetDefaultFloatingBaseBodyPose(
             plant.get_body(target_body_index), self.pose_wrt_parent
         )
 
@@ -85,7 +85,7 @@ class InitialCondition:
             )
 
             plant.SetFreeBodySpatialVelocity(
-                body=plant.get_body(target_body_index),
-                V_PB=SpatialVelocity.Zero(),
-                context=plant.GetMyMutableContextFromRoot(diagram_context),
+                plant.GetMyMutableContextFromRoot(diagram_context),
+                plant.get_body(target_body_index),
+                SpatialVelocity.Zero(),
             )

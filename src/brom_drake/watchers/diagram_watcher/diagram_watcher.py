@@ -181,6 +181,20 @@ class DiagramWatcher:
                         f"Unable to add logger to port {target_port.get_name()} of system {target.name}",
                     )
 
+    @property
+    def plot_dir(self) -> Path:
+        """
+        The directory where this watcher saves plots.
+        """
+        return self.options.base_directory / "plots"
+
+    @property
+    def raw_data_dir(self) -> Path:
+        """
+        The directory where this watcher saves raw data.
+        """
+        return self.options.base_directory / "raw_data"
+
     def __del__(self):
         """
         **Description**
