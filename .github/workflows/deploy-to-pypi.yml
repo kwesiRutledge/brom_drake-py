@@ -15,10 +15,11 @@ jobs:
       url: https://pypi.org/p/brom_drake/
     permissions:
       id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
+      contents: read
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v3
       - name: Set up Python 3.14
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v5
         with:
           python-version: '3.14'
       - name: Install pypa/setuptools
