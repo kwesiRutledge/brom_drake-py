@@ -58,10 +58,10 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0 # Fetch all history for git tag
-      - name: Set up Python 3.14
+      - name: Set up Python ${{ vars.PYTHON_VERSION }}
         uses: actions/setup-python@v5
         with:
-          python-version: 3.14
+          python-version: ${{ vars.PYTHON_VERSION }}
       - name: Get Previous Tag
         id: previous_tag
         uses: "WyriHaximus/github-action-get-previous-tag@v1"
