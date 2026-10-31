@@ -4,5 +4,6 @@ from .conversion import *
 from .end_effector_wrench_calculator import EndEffectorWrenchCalculator
 from .network_fsm import *
 from .pose_composition import PoseCompositionSystem
+from .pose_memory_system import PoseMemorySystem
 from .rpy_integrator import RPYIntegrator
 from .switches import *

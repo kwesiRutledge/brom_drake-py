@@ -70,7 +70,7 @@ class TestGraspSelection1Script(unittest.TestCase):
 
         # Verify the type and the output ports
         self.assertIsInstance(fsm, NetworkXFSM)
-        for port_name in ["start_floor", "switch_to_memory"]:
+        for port_name in ["start_floor", "hold_gripper_pose"]:
             self.assertTrue(
                 fsm.HasOutputPort(port_name),
                 f"Expected FSM to have output port {port_name}",

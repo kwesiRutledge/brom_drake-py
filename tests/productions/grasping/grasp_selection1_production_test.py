@@ -296,6 +296,9 @@ class TestGraspSelection1Production(unittest.TestCase):
         - A grasp selection algorithm that keeps the gripper far from the flask
 
         Because the grasp is unsuccessful, the flask should fall after the floor drops.
+
+        This test also verifies that the gripper's desired pose does not jump when the
+        floor drops (i.e., the pose memory holds the world pose from the moment of the switch).
         """
         # Setup
         X_ObjectGripper_far = RigidTransform(p=np.array([-0.2, 0.0, 0.5]))
@@ -312,12 +315,45 @@ class TestGraspSelection1Production(unittest.TestCase):
         script: GraspSelection1Script = production.config.script
         t_final = script.total_time()
 
+        t_drop_start = script.start_time_of_phase(GraspSelection1Phase.kFloorDrop)
+
+        gripper_pose_memory = production.gripper_pose_memory
+        memory_context = gripper_pose_memory.GetMyContextFromRoot(diagram_context)
+
         simulator = Simulator(diagram, diagram_context)
         simulator.Initialize()
+
+        # Collect the gripper's desired pose just before the floor drops
+        simulator.AdvanceTo(t_drop_start - 0.01)
+        X_WorldGripperDesired_before = (
+            gripper_pose_memory.get_pose_out_port().Eval(memory_context)
+        )
+
+        # Collect the gripper's desired pose just after the floor drops
+        simulator.AdvanceTo(t_drop_start + 0.01)
+        X_WorldGripperDesired_after = (
+            gripper_pose_memory.get_pose_out_port().Eval(memory_context)
+        )
+
         simulator.AdvanceTo(t_final)
+        X_WorldGripperDesired_final = (
+            gripper_pose_memory.get_pose_out_port().Eval(memory_context)
+        )
+
+        # Verify that the desired pose does not jump at the switch and is then held
+        self.assertTrue(
+            X_WorldGripperDesired_after.IsNearlyEqualTo(
+                X_WorldGripperDesired_before, 1e-2
+            ),
+            f"Expected the gripper's desired pose to stay (nearly) the same when the floor drops, "
+            + f"but it went from\n{X_WorldGripperDesired_before}\nto\n{X_WorldGripperDesired_after}",
+        )
+        self.assertTrue(
+            X_WorldGripperDesired_final.IsExactlyEqualTo(X_WorldGripperDesired_after),
+            "Expected the gripper's desired pose to be held after the floor drops.",
+        )
 
         # Use the watcher to collect the states of the flask
-        t_drop_start = script.start_time_of_phase(GraspSelection1Phase.kFloorDrop)
 
         plant_name = production.plant.get_name()
         flask_state_port_name = f"{production.manipuland_name}_state"
