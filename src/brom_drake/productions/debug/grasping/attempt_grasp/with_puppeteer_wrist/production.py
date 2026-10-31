@@ -40,10 +40,7 @@ from brom_drake.motion_planning.systems.open_loop_dispensers.pose_trajectory_sou
 )
 from brom_drake.robots import find_base_link_name_in, GripperType
 from brom_drake import robots
-from brom_drake.motion_planning.systems import (
-    OpenLoopPlanDispenser,
-    OpenLoopPosePlanDispenser,
-)
+from brom_drake.motion_planning.systems import OpenLoopPlanDispenser
 from brom_drake.productions.types.debug import BasicGraspingDebuggingProduction
 from brom_drake.productions.ids import ProductionID
 from brom_drake.productions.roles.role import Role
@@ -819,26 +816,6 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         # Create defaults for plant
         self.set_initial_conditions()
         # self.add_initial_conditions_to_plant()
-
-    def connect_executive_to_gripper_puppet_controller(
-        self, trajectory_dispenser: OpenLoopPosePlanDispenser
-    ):
-        """
-        *Description*
-
-        This method connects the executive system to the trajectory dispenser
-        (i.e., provides the trigger signal to start the reference trajectory
-        for the gripper wrist).
-        """
-        # Setup
-        builder: DiagramBuilder = self.builder
-        executive: NetworkXFSM = self.executive
-
-        # Connect the executive to the trajectory dispenser
-        builder.Connect(
-            executive.GetOutputPort("enable_gripper_approach"),
-            trajectory_dispenser.GetInputPort("plan_ready"),  # Trigger input
-        )
 
     def create_executive_system(self) -> NetworkXFSM:
         """
