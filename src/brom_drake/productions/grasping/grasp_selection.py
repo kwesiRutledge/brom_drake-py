@@ -311,9 +311,7 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
         # output to keep the floor at a constant height
         # (i.e., the weight of the object)
         feedforward_term = self.builder.AddSystem(
-            ConstantVectorSource(
-                np.array([floor_mass * 9.81])
-            ),  # Weight of the object
+            ConstantVectorSource(np.array([floor_mass * 9.81])),  # Weight of the object
         )
         feedforward_term.set_name("[Floor] Feedforward")
 

@@ -94,9 +94,7 @@ class PoseMemorySystem(LeafSystem):
             type(pose_in) is RigidTransform
         ), f'Expected pose_in port to contain "RigidTransform" objects, but received type {type(pose_in)}'
 
-        state.get_mutable_abstract_state(self._remembered_pose_index).set_value(
-            pose_in
-        )
+        state.get_mutable_abstract_state(self._remembered_pose_index).set_value(pose_in)
 
     def CalcOutputPose(self, context: Context, output: AbstractValue):
         """
@@ -109,7 +107,9 @@ class PoseMemorySystem(LeafSystem):
         hold: bool = self._hold_port.Eval(context)
 
         if hold:
-            pose_out = context.get_abstract_state(self._remembered_pose_index).get_value()
+            pose_out = context.get_abstract_state(
+                self._remembered_pose_index
+            ).get_value()
         else:
             pose_out = self._pose_in_port.Eval(context)
 

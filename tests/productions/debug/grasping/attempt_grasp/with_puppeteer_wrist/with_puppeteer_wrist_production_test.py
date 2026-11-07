@@ -131,18 +131,18 @@ class TestAttemptGraspWithPuppeteerWristProduction(unittest.TestCase):
 
         # Collect the gripper's desired pose just before and just after the floor drops
         simulator.AdvanceTo(t_drop_start - 0.01)
-        X_WorldGripperDesired_before = (
-            gripper_pose_memory.get_pose_out_port().Eval(memory_context)
+        X_WorldGripperDesired_before = gripper_pose_memory.get_pose_out_port().Eval(
+            memory_context
         )
 
         simulator.AdvanceTo(t_drop_start + 0.01)
-        X_WorldGripperDesired_after = (
-            gripper_pose_memory.get_pose_out_port().Eval(memory_context)
+        X_WorldGripperDesired_after = gripper_pose_memory.get_pose_out_port().Eval(
+            memory_context
         )
 
         simulator.AdvanceTo(t_final)
-        X_WorldGripperDesired_final = (
-            gripper_pose_memory.get_pose_out_port().Eval(memory_context)
+        X_WorldGripperDesired_final = gripper_pose_memory.get_pose_out_port().Eval(
+            memory_context
         )
 
         # Verify that the desired pose does not jump when the floor drops and is then held
@@ -177,7 +177,9 @@ class TestAttemptGraspWithPuppeteerWristProduction(unittest.TestCase):
         # Compare the height of the flask when the floor starts to drop with its final height
         # (In the flask's state, the position is in indices 4 to 6, so its height is index 6)
         flask_heights = flask_state_data[6, :]
-        z_flask_at_drop = flask_heights[np.argmin(np.abs(flask_state_times - t_drop_start))]
+        z_flask_at_drop = flask_heights[
+            np.argmin(np.abs(flask_state_times - t_drop_start))
+        ]
         z_flask_final = flask_heights[-1]
 
         # The grasp should have failed, so the flask should have fallen with the floor
