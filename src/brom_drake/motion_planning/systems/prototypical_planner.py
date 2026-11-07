@@ -93,14 +93,34 @@ class PrototypicalPlannerSystem(LeafSystem):
         if self.root_context is None:
             raise ValueError("Plant context is not initialized yet!")
 
+        return self.check_collision_in_config_with_context(q_model, self.root_context)
+
+    def check_collision_in_config_with_context(
+        self,
+        q_model: np.ndarray,
+        root_context: Context,
+    ) -> bool:
+        """
+        Description
+        -----------
+        Checks for collisions with the robot at configuration q_model, using the
+        given root (diagram) context. The robot's configuration in root_context is
+        restored before returning.
+
+        Arguments
+        ---------
+        q_model : np.ndarray
+            The model configuration that we are checking for collisions.
+        root_context : Context
+            The diagram context to check collisions in. This may be the live
+            simulation context or a private copy of it.
+        """
         if self.robot_model_idx is None:
             raise ValueError("Robot model index is not set yet!")
 
         # Setup
-        plant_context = self.plant.GetMyMutableContextFromRoot(self.root_context)
-        scene_graph_context = self.scene_graph.GetMyMutableContextFromRoot(
-            self.root_context
-        )
+        plant_context = self.plant.GetMyMutableContextFromRoot(root_context)
+        scene_graph_context = self.scene_graph.GetMyMutableContextFromRoot(root_context)
         q_init = self.plant.GetPositions(plant_context, self.robot_model_idx)
 
         # Set the configuration

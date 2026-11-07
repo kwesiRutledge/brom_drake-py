@@ -32,9 +32,19 @@ To install brom_drake-py, use pip:
 Extras
 ------
 
-Add your content using ``reStructuredText`` syntax. See the
-`reStructuredText <https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html>`_
-documentation for details.
+Some features need optional dependencies, installed as pip extras:
+
+- ``video``: recording MP4 videos of simulations (see :doc:`features/recording_videos`).
+
+  .. code-block::
+
+     pip install "brom-drake[video]"
+
+- ``ros2``: resolving ROS 2 ``package://`` URIs with ``ament_index_python``.
+
+  .. code-block::
+
+     pip install "brom-drake[ros2]"
 
 
 .. toctree::

@@ -15,3 +15,4 @@ Where possible, we will link to detailed documentation for each feature in the A
     diagram_watcher
     drakeify_my_urdf
     productions/index
+    recording_videos

@@ -17,9 +17,10 @@ from pydrake.all import (
     RotationMatrix,
 )
 from pydrake.math import RollPitchYaw, RigidTransform
-from typing import Callable, List, Tuple
+from typing import Callable, List, Optional, Tuple
 
 # Internal Imports
+from brom_drake.motion_planning.systems.async_planner import AsyncPlanningConfig
 from brom_drake.directories import DEFAULT_BROM_MODELS_DIR
 from brom_drake.control import (
     GripperTarget,
@@ -38,6 +39,7 @@ from brom_drake.robots.gripper_type import GripperType
 from brom_drake.stations.classical import UR10eStation
 from brom_drake.productions.ids import ProductionID
 from brom_drake.productions.roles.role import Role
+from brom_drake.systems.video import CameraSpec
 from brom_drake.productions.types import OfflineDynamicMotionPlanningProduction
 from brom_drake.utils import Performer, AddGround, MotionPlan
 
@@ -624,6 +626,7 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
             Tuple[MotionPlan, bool],
         ],
         with_watcher: bool = False,
+        async_planning: Optional[AsyncPlanningConfig] = None,
     ) -> Tuple[Diagram, Context]:
         """
         *Description*
@@ -653,6 +656,7 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         diagram, diagram_context = super().easy_cast_and_build(
             planning_algorithm,
             with_watcher=with_watcher,
+            async_planning=async_planning,
         )
 
         # print("completed cast and build.")
@@ -760,6 +764,28 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
             raise ValueError(
                 f"It appears that the starting configuration is set, but the starting pose is not. This is unexpected behavior!"
             )
+
+    def default_cameras(self) -> List[CameraSpec]:
+        """
+        *Description*
+
+        The cameras used by ``add_cameras()`` when no cameras are given.
+        An angled overview and a side view.
+        """
+        return [
+            CameraSpec.looking_at(
+                "overview",
+                position=[2.0, -2.0, 1.7],
+                target=[0.3, 0.1, 0.4],
+                fov_y=np.deg2rad(40),
+            ),
+            CameraSpec.looking_at(
+                "side",
+                position=[0.3, -2.4, 0.8],
+                target=[0.3, 0.0, 0.5],
+                fov_y=np.deg2rad(40),
+            ),
+        ]
 
     @property
     def id(self) -> ProductionID:

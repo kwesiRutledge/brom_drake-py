@@ -13,7 +13,8 @@
 			},
 			"extensions": [
 				"ms-python.python",
-				"ms-python.black-formatter"
+				"ms-python.black-formatter",
+				"anthropic.claude-code"
 			]
 		}
 	}

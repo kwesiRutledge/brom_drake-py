@@ -138,6 +138,77 @@ class TestIdealJointPositionController(unittest.TestCase):
         # Test is passed if we can fully simulate the system
         self.assertTrue(True)
 
+    def _build_constant_target_diagram(self, q_target: np.ndarray):
+        """
+        Builds plant + controller + constant target, with NO watcher (so nothing
+        evaluates the controller's output port).
+        """
+        builder = DiagramBuilder()
+
+        plant = MultibodyPlant(1e-3)
+        arm_model_idx = Parser(plant).AddModels(self.expected_urdf_location)[0]
+        plant.WeldFrames(
+            plant.world_frame(),
+            plant.GetFrameByName(
+                find_base_link_name_in(self.expected_urdf_location), arm_model_idx
+            ),
+        )
+        plant.Finalize()
+        builder.AddSystem(plant)
+
+        controller = builder.AddSystem(
+            IdealJointPositionController(arm_model_idx, plant)
+        )
+        target = builder.AddSystem(ConstantVectorSource(q_target))
+        builder.Connect(target.get_output_port(), controller.get_input_port(0))
+
+        diagram = builder.Build()
+        diagram_context = diagram.CreateDefaultContext()
+        return diagram, diagram_context, plant, controller, arm_model_idx
+
+    def test_drives_plant_without_watcher1(self):
+        """
+        Description:
+            Without a DiagramWatcher, nothing evaluates the controller's output
+            port. The controller must still drive the plant to the desired joint
+            positions on every step (regression test: the kinematic motion
+            planning productions used to stand still unless a watcher was attached).
+        """
+        q_target = np.array([0.3, -1.0, 1.2, -0.4, 0.5, 0.1])
+        diagram, diagram_context, plant, controller, arm = (
+            self._build_constant_target_diagram(q_target)
+        )
+        controller.plant_context = diagram.GetMutableSubsystemContext(
+            plant, diagram_context
+        )
+
+        simulator = Simulator(diagram, diagram_context)
+        simulator.Initialize()
+        simulator.AdvanceTo(0.5)
+
+        plant_context = plant.GetMyContextFromRoot(simulator.get_context())
+        np.testing.assert_allclose(
+            plant.GetPositions(plant_context, arm), q_target, atol=1e-9
+        )
+        np.testing.assert_allclose(
+            plant.GetVelocities(plant_context, arm), np.zeros(6), atol=1e-9
+        )
+
+    def test_missing_plant_context1(self):
+        """
+        Description:
+            Simulating before plant_context is assigned should fail with an
+            error that says how to fix it.
+        """
+        diagram, diagram_context, _, _, _ = self._build_constant_target_diagram(
+            np.zeros(6)
+        )
+        simulator = Simulator(diagram, diagram_context)
+        with self.assertRaises(RuntimeError) as ctx:
+            simulator.Initialize()
+            simulator.AdvanceTo(0.01)
+        self.assertIn("plant_context", str(ctx.exception))
+
 
 if __name__ == "__main__":
     unittest.main()

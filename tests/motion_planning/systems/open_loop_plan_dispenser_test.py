@@ -240,6 +240,93 @@ class OpenLoopPlanDispenserTest(unittest.TestCase):
 
         self.assertTrue(True)
 
+    def test_unconnected_inputs1(self):
+        """
+        *Description*
+
+        With neither input connected (e.g., a production simulated before a
+        motion planner is cast), the dispenser treats the plan as "not ready"
+        and outputs zeros instead of raising.
+        """
+        dispenser = OpenLoopPlanDispenser(6, 1.0)
+        context = dispenser.CreateDefaultContext()
+
+        point = dispenser.GetOutputPort("point_in_plan").Eval(context)
+        np.testing.assert_array_equal(point, np.zeros(6))
+        self.assertIsNone(dispenser.planned_trajectory)
+
+    def test_ready_without_plan1(self):
+        """
+        *Description*
+
+        A ready flag with no plan connected has nothing to dispense, so it
+        must also be treated as "not ready".
+        """
+        dispenser = OpenLoopPlanDispenser(6, 1.0)
+        context = dispenser.CreateDefaultContext()
+        dispenser.GetInputPort("plan_ready").FixValue(context, AbstractValue.Make(True))
+
+        point = dispenser.GetOutputPort("point_in_plan").Eval(context)
+        np.testing.assert_array_equal(point, np.zeros(6))
+        self.assertIsNone(dispenser.planned_trajectory)
+
+    def test_plan_without_ready_flag1(self):
+        """
+        *Description*
+
+        A plan with no ready flag connected is not dispensed yet; the
+        dispenser holds the plan's first configuration.
+        """
+        plan = np.array(
+            [[0.1, 0.2, 0.3, 0.4, 0.5, 0.6], [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]]
+        )
+        dispenser = OpenLoopPlanDispenser(6, 1.0)
+        context = dispenser.CreateDefaultContext()
+        dispenser.GetInputPort("plan").FixValue(context, AbstractValue.Make(plan))
+
+        point = dispenser.GetOutputPort("point_in_plan").Eval(context)
+        np.testing.assert_allclose(point, plan[0])
+        self.assertIsNone(dispenser.planned_trajectory)
+
+    def test_single_point_plan1(self):
+        """
+        *Description*
+
+        A plan with a single configuration (the robot already starts at the
+        goal) is held, instead of failing to build a trajectory.
+        """
+        q = np.array([0.1, 0.2, 0.3, 0.4, 0.5, 0.6])
+        dispenser = OpenLoopPlanDispenser(6, 1.0)
+        context = dispenser.CreateDefaultContext()
+        dispenser.GetInputPort("plan").FixValue(
+            context, AbstractValue.Make(q.reshape(1, -1))
+        )
+        dispenser.GetInputPort("plan_ready").FixValue(context, AbstractValue.Make(True))
+
+        np.testing.assert_allclose(
+            dispenser.GetOutputPort("point_in_plan").Eval(context), q
+        )
+        self.assertEqual(dispenser.t_final, 0.0)
+
+    def test_repeated_points1(self):
+        """
+        *Description*
+
+        Consecutive duplicate configurations in a plan are skipped, so the
+        trajectory's times stay strictly increasing.
+        """
+        plan = np.array([[0.0] * 6, [0.0] * 6, [1.0] + [0.0] * 5, [1.0] + [0.0] * 5])
+        dispenser = OpenLoopPlanDispenser(6, 1.0)
+        context = dispenser.CreateDefaultContext()
+        dispenser.GetInputPort("plan").FixValue(context, AbstractValue.Make(plan))
+        dispenser.GetInputPort("plan_ready").FixValue(context, AbstractValue.Make(True))
+
+        dispenser.GetOutputPort("point_in_plan").Eval(context)
+        self.assertAlmostEqual(dispenser.t_final, 1.0)
+        np.testing.assert_allclose(
+            dispenser.planned_trajectory.value(1.0).flatten(), plan[-1]
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

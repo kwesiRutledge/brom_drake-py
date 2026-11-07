@@ -3,7 +3,13 @@ from pydrake.multibody.math import SpatialVelocity
 from pydrake.multibody.parsing import Parser
 from pydrake.multibody.plant import MultibodyPlant, CoulombFriction
 from pydrake.multibody.tree import ModelInstanceIndex
-from pydrake.systems.framework import LeafSystem, PortDataType, BasicVector, Context
+from pydrake.systems.framework import (
+    BasicVector,
+    Context,
+    EventStatus,
+    LeafSystem,
+    PortDataType,
+)
 
 import numpy as np
 
@@ -44,29 +50,58 @@ class IdealJointPositionController(LeafSystem):
             {self.time_ticket()},  # indicate that this doesn't depend on any inputs,
         )  # but should still be updated each timestep
 
+        # Drive the plant on every simulation step (and at Simulator.Initialize()).
+        # Without this event, the plant was only updated when something happened
+        # to evaluate the "measured_joint_positions" output (e.g., a DiagramWatcher),
+        # so productions built without a watcher never moved the arm or planned.
+        self.DeclarePerStepPublishEvent(self._apply_desired_positions_event)
+
+    def _apply_desired_positions(self, context: Context) -> np.ndarray:
+        """
+        **Description**
+
+        Reads the desired joint positions from the input port and writes them
+        (with zero velocities) into the plant context.
+
+        **Returns**
+
+        joint_positions: np.ndarray
+            The joint positions that were applied.
+        """
+        if self.plant_context is None:
+            raise RuntimeError(
+                "IdealJointPositionController.plant_context is not set. Assign the "
+                "plant's context from the built diagram before simulating, e.g. "
+                "controller.plant_context = diagram.GetMutableSubsystemContext(plant, diagram_context)."
+            )
+
+        joint_positions = self.desired_joint_positions_port.Eval(context)
+
+        self.plant.SetPositions(self.plant_context, self.robot_model, joint_positions)
+        self.plant.SetVelocities(
+            self.plant_context,
+            self.robot_model,
+            np.zeros(self.plant.num_velocities(self.robot_model)),
+        )
+        return joint_positions
+
+    def _apply_desired_positions_event(self, context: Context) -> EventStatus:
+        # Nothing is commanding the arm (e.g., a station simulated on its own):
+        # leave the plant alone instead of failing.
+        if not self.desired_joint_positions_port.HasValue(context):
+            return EventStatus.DidNothing()
+
+        self._apply_desired_positions(context)
+        return EventStatus.Succeeded()
+
     def SetJointPositions(self, context, output):
         """
         Description:
-            This function sets the desired pose of the block.
+            Calculation for the "measured_joint_positions" output port.
+            Applies the desired joint positions to the plant (so the output and
+            the plant agree) and reports them.
         """
-        # Setup
-        plant_context = self.plant_context
-        robot_model = self.robot_model
-
-        # Get Desired Pose from Port
-        joint_positions = self.desired_joint_positions_port.Eval(context)
-
-        # Get plant context from station context
-        # station_context = self.station_context
-        # if station_context is None:
-        #     raise RuntimeError("station_context is None")
-
-        self.plant.SetPositions(plant_context, robot_model, joint_positions)
-        self.plant.SetVelocities(
-            plant_context, robot_model, np.zeros(self.plant.num_velocities(robot_model))
-        )
-
-        output.SetFromVector(joint_positions)
+        output.SetFromVector(self._apply_desired_positions(context))
 
     def SetInitialJointPositions(self, diagram_context):
         """

@@ -24,13 +24,20 @@ class ChemLab1Test(unittest.TestCase):
         diagram = production.builder.Build()
         diagram_context = diagram.CreateDefaultContext()
 
-        # Simulate the diagram
+        # Connect the kinematic arm controller to the plant's context (this is
+        # what add_cast_and_build does for complete productions).
+        production.station.arm_controller.plant_context = (
+            diagram.GetMutableSubsystemContext(production.plant, diagram_context)
+        )
+
+        # Simulate the diagram. No motion planner has been cast, so the plan
+        # dispenser's inputs are unconnected; it treats that as "no plan yet".
         simulator = Simulator(diagram, diagram_context)
         simulator.set_target_realtime_rate(1.0)
         simulator.Initialize()
         simulator.AdvanceTo(0.010)
 
-        self.assertTrue(True)
+        self.assertIsNone(production.plan_dispenser.planned_trajectory)
 
     def test_add_cast_and_build1(self):
         """
@@ -45,8 +52,8 @@ class ChemLab1Test(unittest.TestCase):
         q_easy_goal = np.array([0.0, 0.0, -np.pi / 8.0, 0.0, 0.0, 0.0])
         production1 = ChemLab1(
             meshcat_port_number=None,
-            start_config=q_easy_start,
-            goal_config=q_easy_goal,
+            start_configuration=q_easy_start,
+            goal_configuration=q_easy_goal,
         )
 
         # Create the Planning System
@@ -72,8 +79,13 @@ class ChemLab1Test(unittest.TestCase):
 
     def test_easy_cast_and_build1(self):
         # Setup
-        easy_start_config = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
-        easy_goal_config = np.array([0.0, 0.0, np.pi / 8.0, 0.0, 0.0, 0.0])
+        # A short, collision-free motion: the production's usual start, with
+        # the elbow bent by pi/8. (The all-zeros arm pose collides with the
+        # ChemLab1 scene, so it cannot be used as an "easy" start or goal.)
+        easy_start_config = np.array([0.518, -0.643, 1.328, 2.457, -0.518, 0.0])
+        easy_goal_config = easy_start_config + np.array(
+            [0.0, 0.0, -np.pi / 8.0, 0.0, 0.0, 0.0]
+        )
         production = ChemLab1(
             meshcat_port_number=None,
             start_configuration=easy_start_config,

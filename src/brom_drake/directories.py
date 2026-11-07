@@ -19,3 +19,6 @@ DEFAULT_NETWORKX_FSM_DIR = (
 DEFAULT_PRODUCTION_REPORTS_DIR = (
     DEFAULT_BROM_DIR / "productions"
 )  #: Default subdirectory for production reports
+DEFAULT_VIDEO_DIR = (
+    DEFAULT_BROM_DIR / "videos"
+)  #: Default subdirectory for videos recorded by :py:class:`VideoRecorder<brom_drake.systems.video.VideoRecorder>`

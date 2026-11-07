@@ -35,7 +35,10 @@ if __name__ == "__main__":
             "test": [
                 "pytest",
                 "pytest-cov",
+                "imageio>=2.31",
+                "imageio-ffmpeg>=0.5",
             ],
+            "video": ["imageio>=2.31", "imageio-ffmpeg>=0.5"],
             "dev": ["ipdb", "typer", "black"],
             "ros2": ["ament-index-python"],
         },

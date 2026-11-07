@@ -14,9 +14,10 @@ from pydrake.all import (
     Quaternion,
 )
 from pydrake.math import RollPitchYaw, RigidTransform
-from typing import Callable, List, Tuple
+from typing import Callable, List, Optional, Tuple
 
 # Internal Imports
+from brom_drake.motion_planning.systems.async_planner import AsyncPlanningConfig
 from brom_drake.directories import DEFAULT_BROM_MODELS_DIR
 from brom_drake.control import (
     GripperTarget,
@@ -35,6 +36,7 @@ from brom_drake.robots.gripper_type import GripperType
 from brom_drake.stations.kinematic import UR10eStation as KinematicUR10eStation
 from brom_drake.productions.ids import ProductionID
 from brom_drake.productions.roles.role import Role
+from brom_drake.systems.video import CameraSpec
 from brom_drake.productions.types import KinematicMotionPlanningProduction
 from brom_drake.utils import Performer, AddGround, MotionPlan
 
@@ -548,6 +550,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
             Tuple[MotionPlan, bool],
         ],
         with_watcher: bool = False,
+        async_planning: Optional[AsyncPlanningConfig] = None,
     ) -> Tuple[Diagram, Context]:
         """
         *Description*
@@ -563,6 +566,12 @@ class ChemLab1(KinematicMotionPlanningProduction):
         with_watcher: bool, optional
             A Boolean that determines whether to add a watcher to the diagram.
             Default is False.
+
+        async_planning: AsyncPlanningConfig, optional
+            If given, plan in the background while the simulation runs, starting
+            from the robot's configuration at plan_start_time and releasing the
+            plan planning_latency seconds of simulation time later. Default is None
+            (plan immediately).
 
         *Returns*
 
@@ -583,6 +592,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
         diagram, diagram_context = super().easy_cast_and_build(
             planning_algorithm,
             with_watcher=with_watcher,
+            async_planning=async_planning,
         )
 
         # print("completed cast and build.")
@@ -692,6 +702,34 @@ class ChemLab1(KinematicMotionPlanningProduction):
 
         else:
             raise ValueError(f"Unexpected behavior. This should never happen.")
+
+    def default_cameras(self) -> List[CameraSpec]:
+        """
+        *Description*
+
+        The cameras used by ``add_cameras()`` when no cameras are given.
+        An angled overview, a side view, and a camera on the arm's tool0 frame.
+        """
+        return [
+            CameraSpec.looking_at(
+                "overview",
+                position=[2.0, -2.0, 1.7],
+                target=[0.3, 0.1, 0.4],
+                fov_y=np.deg2rad(40),
+            ),
+            CameraSpec.looking_at(
+                "side",
+                position=[0.3, -2.4, 0.8],
+                target=[0.3, 0.0, 0.5],
+                fov_y=np.deg2rad(40),
+            ),
+            CameraSpec(
+                "wrist",
+                X_PC=RigidTransform([0.0, -0.06, 0.02]),
+                parent_body_name="tool0",
+                fov_y=np.deg2rad(70),
+            ),
+        ]
 
     @property
     def id(self) -> ProductionID:

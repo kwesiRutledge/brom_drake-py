@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from typing import List, Tuple, Callable
+from typing import Callable, List, Optional, Tuple
 
 import networkx as nx
 import numpy as np
@@ -21,6 +21,10 @@ from pydrake.systems.framework import Diagram, Context
 from pydrake.systems.primitives import ConstantVectorSource, ConstantValueSource
 
 # Internal Imports
+from brom_drake.motion_planning.systems.async_planner import (
+    AsyncPlannerSystem,
+    AsyncPlanningConfig,
+)
 from brom_drake.motion_planning.systems.prototypical_planner import (
     PrototypicalPlannerSystem,
 )
@@ -424,6 +428,7 @@ class KinematicMotionPlanningProduction(BaseProduction):
             Tuple[MotionPlan, bool],
         ],
         with_watcher: bool = True,
+        async_planning: Optional[AsyncPlanningConfig] = None,
     ) -> Tuple[Diagram, Context]:
         """
         Description
@@ -432,6 +437,11 @@ class KinematicMotionPlanningProduction(BaseProduction):
         :param planning_algorithm: The algorithm that we will use to
         plan the motion.
         :param with_watcher: A Boolean that determines whether to add a watcher to the diagram.
+        :param async_planning: If given, plan in the background while the simulation
+            runs (see AsyncPlanningConfig): planning starts at plan_start_time from the
+            robot's configuration at that time, and the plan is released after
+            planning_latency seconds of simulation time. If None (default), plan
+            immediately, pausing the simulation while planning.
         :return:
         """
         # Setup
@@ -441,12 +451,21 @@ class KinematicMotionPlanningProduction(BaseProduction):
         print("added supporting cast")
 
         # Create a planner from the algorithm
-        prototypical_planner = PrototypicalPlannerSystem(
-            self.plant,
-            self.scene_graph,
-            planning_algorithm,
-            robot_model_idx=self.robot_model_index,
-        )
+        # (AsyncPlannerSystem plans in the background while the simulation runs,
+        # starting from the robot's configuration at async_planning.plan_start_time)
+        planner_kwargs = dict(robot_model_idx=self.robot_model_index)
+        if async_planning is None:
+            prototypical_planner = PrototypicalPlannerSystem(
+                self.plant, self.scene_graph, planning_algorithm, **planner_kwargs
+            )
+        else:
+            prototypical_planner = AsyncPlannerSystem(
+                self.plant,
+                self.scene_graph,
+                planning_algorithm,
+                config=async_planning,
+                **planner_kwargs,
+            )
 
         # Cast the production using the prototypical planner
         planner_role = self.suggested_roles()[0]

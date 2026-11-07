@@ -508,6 +508,12 @@ class UR10eStation(Diagram):
         #     self.scene_graph.get_source_pose_port(self.plant.get_source_id())
         # )
 
+        # Export the scene graph's query object (used, e.g., by cameras that record videos)
+        self.builder.ExportOutput(
+            self.scene_graph.get_query_output_port(),
+            "query_object",
+        )
+
         # Connect Meshcat, if desired
         if self.use_meshcat():
             self.ConnectToMeshcatVisualizer(port=self.meshcat_port_number)

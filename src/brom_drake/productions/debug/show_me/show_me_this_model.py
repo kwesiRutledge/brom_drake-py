@@ -15,6 +15,7 @@ from brom_drake.robots import find_base_link_name_in
 from brom_drake.productions.types import BaseProduction
 from brom_drake.productions.ids import ProductionID
 from brom_drake.productions.roles.role import Role
+from brom_drake.systems.video import CameraSpec
 from brom_drake.utils import Performer, AddMultibodyTriad
 from .show_me_system import ShowMeSystem
 
@@ -357,6 +358,19 @@ class ShowMeThisModel(BaseProduction):
         shadow_plant.Finalize()
 
         return shadow_plant.num_positions()
+
+    def default_cameras(self) -> List[CameraSpec]:
+        """
+        *Description*
+
+        The cameras used by ``add_cameras()`` when no cameras are given.
+        Framed for robot-arm-sized models standing at the origin.
+        """
+        return [
+            CameraSpec.looking_at(
+                "front", position=[1.6, 0.9, 1.1], target=[0.0, 0.0, 0.55]
+            ),
+        ]
 
     @property
     def id(self) -> ProductionID:
