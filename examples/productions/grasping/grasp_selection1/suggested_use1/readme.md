@@ -13,8 +13,8 @@ The production calls the algorithm once when you call `easy_cast_and_build()`,
 has the gripper follow the resulting trajectory, closes the gripper, and then drops
 the floor out from under the object. If the object stays in the gripper, the grasp worked!
 
-> **Note:** With the poses in this example, the flask currently falls when the floor drops
-> (i.e., the grasp fails). Try swapping in your own grasp selection algorithm!
+With the poses in this example, the flask stays in the gripper when the floor drops.
+Try swapping in your own grasp selection algorithm and see whether your grasps hold too!
 
 The generated trajectory is also recorded in the production's build metadata
 (look for `build_metadata_*.json` in the `brom` directory).

@@ -367,17 +367,19 @@ class TestGraspSelection1Production(unittest.TestCase):
         flask_state_times = flask_state_log.sample_times()
         flask_state_data = flask_state_log.data()
 
-        # Select the velocity data after the drop start time
-        flask_states_after_drop = flask_state_data[:, flask_state_times >= t_drop_start]
-        flask_velocities_after_drop = flask_states_after_drop[
-            7:13, :
-        ]  # Velocities are in indices 7 to 12
-        flask_speeds_after_drop = np.linalg.norm(flask_velocities_after_drop, axis=0)
+        # Compare the height of the flask when the floor starts to drop with its final height
+        # (In the flask's state, the position is in indices 4 to 6, so its height is index 6)
+        flask_heights = flask_state_data[6, :]
+        z_flask_at_drop = flask_heights[np.argmin(np.abs(flask_state_times - t_drop_start))]
+        z_flask_final = flask_heights[-1]
 
-        # The grasp should have failed, so the flask should be falling after the drop start time
-        self.assertTrue(
-            np.any(flask_speeds_after_drop > 1.0),
-            "Expected to find large flask speeds (due to free falling) for the flask after the drop start time, but none was found.",
+        # The grasp should have failed, so the flask should have fallen with the floor
+        # (i.e., ended up far below its height when the floor started to drop)
+        self.assertLess(
+            z_flask_final,
+            z_flask_at_drop - 1.0,
+            f"Expected the flask to fall with the floor after the drop start time, but its height went from "
+            + f"{z_flask_at_drop} to {z_flask_final}.",
         )
 
 

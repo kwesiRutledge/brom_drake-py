@@ -2,7 +2,7 @@
     <link name="flask_base_link">
         <inertial>
             <origin
-                xyz="0 0 0"
+                xyz="0.04932110944302601 0.04931698866926945 0.04957053657292305"
                 rpy="0 0 0" />
             <mass
                 value="0.5445761924742986" />
