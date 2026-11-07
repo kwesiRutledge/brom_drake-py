@@ -2,6 +2,7 @@
 	"name": "brom_drake-py",
 	"image": "mcr.microsoft.com/devcontainers/python:3.14",
 	"postCreateCommand": "bash .devcontainer/postCreateCommand.sh",
+	"postStartCommand": "git config --global --get-all safe.directory | grep -qxF '${containerWorkspaceFolder}' || git config --global --add safe.directory '${containerWorkspaceFolder}'",
 	"customizations": {
 		"vscode": {
 			"settings": {
