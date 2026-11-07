@@ -36,6 +36,12 @@ class RenderSettings:
     exposure: float, optional
         Enables tone mapping with this exposure (useful with bright lights).
 
+    shadow_map_size: int, optional
+        The resolution of the shadow maps, when shadows are on. Higher values
+        give sharper shadows with fewer dark artifacts, at some rendering cost.
+        Default is 2048 (Drake's own default, 256, leaves visible blotches on
+        large surfaces).
+
     **Usage**
 
     ::
@@ -47,6 +53,7 @@ class RenderSettings:
     lights: Optional[Sequence[LightParameter]] = None
     cast_shadows: bool = False
     exposure: Optional[float] = None
+    shadow_map_size: int = 2048
 
     def __post_init__(self):
         if self.background_rgb is not None:
@@ -57,6 +64,11 @@ class RenderSettings:
                     "RenderSettings.background_rgb must be three values in [0, 1]; "
                     f"received {self.background_rgb}."
                 )
+        if self.shadow_map_size <= 0:
+            raise ValueError(
+                "RenderSettings.shadow_map_size must be positive; "
+                f"received {self.shadow_map_size}."
+            )
         if self.cast_shadows and not self.lights:
             raise ValueError(
                 "RenderSettings.cast_shadows needs at least one light in "
@@ -110,6 +122,8 @@ class RenderSettings:
         if self.lights is not None:
             params.lights = list(self.lights)
         params.cast_shadows = self.cast_shadows
+        if self.cast_shadows:
+            params.shadow_map_size = self.shadow_map_size
         if self.exposure is not None:
             params.exposure = self.exposure
         return params

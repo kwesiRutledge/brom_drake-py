@@ -14,6 +14,7 @@ The Diagram Watcher (the `DiagramWatcher` will log + plot all output ports of yo
 The Drake-ify feature (converts your URDF file into a form that Drake can consume) | `drakeify_my_urdf()` | ![Drakeify Example](./promo/BromDrakeifyURDF0.gif)
 Productions (partially complete robot scenarios to test your algorithms) | (See [Examples Directory](https://github.com/kwesiRutledge/brom_drake-py/tree/main/examples/productions) or [the Docs](https://kwesirutledge.github.io/brom_drake-py/)) | ![Kinematic Motion Planning Example](./promo/productions/motion_planning/kinematic/Chem-Lab-Demo.gif)
 Puppeteer (Move free bodies in drake with a `RigidTransform` input) | `Puppetmaker` class's methods | ![A cube being moved using the Puppetmaker's methods.](./promo/utils/puppetmaker-demo1.gif)
+Video recording (record MP4s of any production, or your own diagram, from one or more cameras) | `production.add_cameras()` then `production.save_videos(grid=True)` | ![Three cameras recording a UR10e reaching toward a shelf, combined into one grid video.](./promo/recording_videos/shelf-grid.gif)
 
 To learn more, look through our documentation [here](https://kwesirutledge.github.io/brom_drake-py/).
 
@@ -23,6 +24,20 @@ To learn more, look through our documentation [here](https://kwesirutledge.githu
 
 ```shell
 pip install brom-drake
+```
+
+### Video recording install
+
+To record videos of your simulations (see `add_cameras()` in the docs), install the optional video extra:
+
+```shell
+pip install "brom-drake[video]"
+```
+
+On Linux machines without a display (CI, containers), Drake's renderer also needs the EGL system libraries:
+
+```shell
+sudo apt-get install libegl1 libegl-mesa0 libgl1-mesa-dri libopengl0
 ```
 
 ### ROS 2-capable install

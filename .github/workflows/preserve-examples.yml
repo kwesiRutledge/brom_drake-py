@@ -71,7 +71,11 @@ jobs:
       - name: Update version in setup.py
         run: >-
           sed -i "s/{{VERSION_PLACEHOLDER}}/${{ steps.previous_tag.outputs.tag }}/g" setup.py
-      - name: Install package
-        run: pip install .
+      - name: Install system libraries for headless rendering (video recording examples)
+        run: >-
+          sudo apt-get update &&
+          sudo apt-get install -y --no-install-recommends libegl1 libegl-mesa0 libgl1-mesa-dri libopengl0
+      - name: Install package (with the video extra, for the recording examples)
+        run: pip install .[video]
       - name: Run the current example
         run: python3 ${{ matrix.example_location }}

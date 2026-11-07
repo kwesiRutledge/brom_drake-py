@@ -104,6 +104,29 @@ class RenderSettingsTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             RenderSettings(cast_shadows=True)  # Shadows need explicit lights
 
+    def test_shadow_map_size1(self):
+        """
+        Description
+        -----------
+        With shadows on, the shadow map resolution is raised from Drake's
+        default (256) to avoid blotchy shadows; it can also be set explicitly.
+        """
+        lights = [LightParameter(type="directional", frame="world")]
+        self.assertEqual(
+            RenderSettings(lights=lights, cast_shadows=True)
+            .to_vtk_params()
+            .shadow_map_size,
+            2048,
+        )
+        self.assertEqual(
+            RenderSettings(lights=lights, cast_shadows=True, shadow_map_size=512)
+            .to_vtk_params()
+            .shadow_map_size,
+            512,
+        )
+        with self.assertRaises(ValueError):
+            RenderSettings(shadow_map_size=0)
+
     def test_to_vtk_params1(self):
         lights = [LightParameter(type="directional", frame="world")]
         params = RenderSettings(
