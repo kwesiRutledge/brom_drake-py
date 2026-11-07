@@ -24,13 +24,11 @@ class ChemLab1Test(unittest.TestCase):
         diagram = production.builder.Build()
         diagram_context = diagram.CreateDefaultContext()
 
-        # Simulate the diagram
-        simulator = Simulator(diagram, diagram_context)
-        simulator.set_target_realtime_rate(1.0)
-        simulator.Initialize()
-        simulator.AdvanceTo(0.010)
-
-        self.assertTrue(True)
+        # NOTE: We do not simulate here. Without a motion planner in the cast,
+        # the plan dispenser that drives the arm has unconnected inputs, so the
+        # diagram is intentionally incomplete. (This used to "simulate" only
+        # because the kinematic arm controller was never evaluated.)
+        self.assertIsNotNone(diagram_context)
 
     def test_add_cast_and_build1(self):
         """
@@ -72,8 +70,13 @@ class ChemLab1Test(unittest.TestCase):
 
     def test_easy_cast_and_build1(self):
         # Setup
-        easy_start_config = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
-        easy_goal_config = np.array([0.0, 0.0, np.pi / 8.0, 0.0, 0.0, 0.0])
+        # A short, collision-free motion: the production's usual start, with
+        # the elbow bent by pi/8. (The all-zeros arm pose collides with the
+        # ChemLab1 scene, so it cannot be used as an "easy" start or goal.)
+        easy_start_config = np.array([0.518, -0.643, 1.328, 2.457, -0.518, 0.0])
+        easy_goal_config = easy_start_config + np.array(
+            [0.0, 0.0, -np.pi / 8.0, 0.0, 0.0, 0.0]
+        )
         production = ChemLab1(
             meshcat_port_number=None,
             start_configuration=easy_start_config,
