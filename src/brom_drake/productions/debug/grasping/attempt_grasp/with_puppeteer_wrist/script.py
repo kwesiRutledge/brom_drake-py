@@ -83,8 +83,8 @@ class Script:
                 ),  # Make gripper move towards object
                 FSMOutputDefinition("close_gripper", False),  # Gripper trigger
                 FSMOutputDefinition(
-                    "switch_to_memory", "trajectory1"
-                ),  # Switch to memory system for gripper pose
+                    "hold_gripper_pose", False
+                ),  # Gripper follows its trajectory (relative to the object)
             ],
         )
 
@@ -117,8 +117,8 @@ class Script:
             outputs=[
                 FSMOutputDefinition("start_floor", True),
                 FSMOutputDefinition(
-                    "switch_to_memory", "memory2"
-                ),  # Switch to memory system for gripper pose
+                    "hold_gripper_pose", True
+                ),  # Gripper holds its current pose in the world frame
             ],
         )
 

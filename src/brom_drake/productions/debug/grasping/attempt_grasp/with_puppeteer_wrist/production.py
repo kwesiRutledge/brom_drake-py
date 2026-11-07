@@ -40,18 +40,16 @@ from brom_drake.motion_planning.systems.open_loop_dispensers.pose_trajectory_sou
 )
 from brom_drake.robots import find_base_link_name_in, GripperType
 from brom_drake import robots
-from brom_drake.motion_planning.systems import (
-    OpenLoopPlanDispenser,
-    OpenLoopPosePlanDispenser,
-)
+from brom_drake.motion_planning.systems import OpenLoopPlanDispenser
 from brom_drake.productions.types.debug import BasicGraspingDebuggingProduction
 from brom_drake.productions.ids import ProductionID
 from brom_drake.productions.roles.role import Role
 from brom_drake.systems.abstract_list_selection_system import (
     AbstractListSelectionSystem,
 )
-from brom_drake.systems.switches import AbstractPortSwitch, FlexiblePortSwitch
+from brom_drake.systems.switches import FlexiblePortSwitch
 from brom_drake.systems.pose_composition import PoseCompositionSystem
+from brom_drake.systems.pose_memory_system import PoseMemorySystem
 from brom_drake.systems.network_fsm import NetworkXFSM
 from brom_drake.utils import (
     Performer,
@@ -270,6 +268,9 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         # Create show me system for holding object in place
         self.show_me_system = None
 
+        # Create empty variable for the system that holds the gripper's desired pose
+        self.gripper_pose_memory = None
+
         self.floor_model_index = None
         self.floor_actuator = None
         self.floor_shape = None
@@ -299,7 +300,7 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         z_floor = self.find_floor_z_via_line_search()
 
         # Connect a PID Controller to the floor actuator
-        kp = np.array([[floor_mass * 9.81 * 1.0e0]])  # Idk how I'm picking this number.
+        kp = np.array([floor_mass * 9.81 * 1.0e0])  # Idk how I'm picking this number.
         ki = np.zeros(kp.shape)  # 0.1 * np.sqrt(kp)
         kd = 4.0 * np.sqrt(kp)
         floor_controller = self.builder.AddSystem(
@@ -311,9 +312,7 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         # output to keep the floor at a constant height
         # (i.e., the weight of the object)
         feedforward_term = self.builder.AddSystem(
-            ConstantVectorSource(
-                np.array([[floor_mass * 9.81]])
-            ),  # Weight of the object
+            ConstantVectorSource(np.array([floor_mass * 9.81])),  # Weight of the object
         )
         feedforward_term.set_name("[Floor] Feedforward")
 
@@ -514,7 +513,7 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         builder: DiagramBuilder,
         plant: MultibodyPlant,
         script: AttemptGraspWithPuppeteerWristScript,
-    ) -> Tuple[AbstractPortSwitch]:
+    ) -> PoseMemorySystem:
         # Setup
         executive: NetworkXFSM = self.executive
 
@@ -565,50 +564,28 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
             object_to_world_converter.get_pose_BC_port(),
         )
 
-        # Create a system that will "remember" the last
-        # desired pose of the gripper in world when we switch away from it
-        memory_system = builder.AddNamedSystem(
+        # Create a system that will "remember" the desired pose of the gripper
+        # in the WORLD frame at the moment that the executive tells it to hold
+        # (so that the gripper stays still while the object is free to fall out of it)
+        gripper_pose_memory: PoseMemorySystem = builder.AddNamedSystem(
             name="[AttemptGrasp] Gripper Desired Pose Memory",
-            system=ConstantValueSource(
-                AbstractValue.Make(self.X_ObjectGripper_trajectory[-1])
-            ),
+            system=PoseMemorySystem(),
         )
+        self.gripper_pose_memory = gripper_pose_memory
 
-        # Create a flexible port switch to choose between
-        # the trajectory source and the memory system
-        gripper_pose_port_switch: AbstractPortSwitch = builder.AddNamedSystem(
-            name="[AttemptGrasp] Gripper Desired Pose Port Switch",
-            system=AbstractPortSwitch(selector_type_in=str, input_type=RigidTransform),
-        )
-
-        gripper_pose_port_switch.DeclareInputPort(name="trajectory1")
-        gripper_pose_port_switch.DeclareInputPort(name="memory2")
-
-        # - Connect the output of the converter to input 0 of the port switch
+        # - Connect the output of the converter (X_WorldGripperDesired) to the memory system
         builder.Connect(
             object_to_world_converter.get_output_port(),
-            gripper_pose_port_switch.GetInputPort("trajectory1"),
+            gripper_pose_memory.get_pose_in_port(),
         )
 
-        # Connect the output of the memory system to input 1 of the port switch
+        # - The memory system is controlled by the executive
         builder.Connect(
-            memory_system.get_output_port(),
-            gripper_pose_port_switch.GetInputPort("memory2"),
+            executive.GetOutputPort("hold_gripper_pose"),
+            gripper_pose_memory.get_hold_port(),
         )
 
-        # # Connect the output of the port switch to the input of the memory system
-        # builder.Connect(
-        #     gripper_pose_port_switch.get_output_port(),
-        #     memory_system.get_input_port(),
-        # )
-
-        # - The switch is controlled by the executive
-        builder.Connect(
-            executive.GetOutputPort("switch_to_memory"),
-            gripper_pose_port_switch.get_port_selector_input_port(),
-        )
-
-        return gripper_pose_port_switch
+        return gripper_pose_memory
 
     def add_gripper_joint_controllers_and_connect(
         self, gripper_joint_input: PassThrough
@@ -819,26 +796,6 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         # Create defaults for plant
         self.set_initial_conditions()
         # self.add_initial_conditions_to_plant()
-
-    def connect_executive_to_gripper_puppet_controller(
-        self, trajectory_dispenser: OpenLoopPosePlanDispenser
-    ):
-        """
-        *Description*
-
-        This method connects the executive system to the trajectory dispenser
-        (i.e., provides the trigger signal to start the reference trajectory
-        for the gripper wrist).
-        """
-        # Setup
-        builder: DiagramBuilder = self.builder
-        executive: NetworkXFSM = self.executive
-
-        # Connect the executive to the trajectory dispenser
-        builder.Connect(
-            executive.GetOutputPort("enable_gripper_approach"),
-            trajectory_dispenser.GetInputPort("plan_ready"),  # Trigger input
-        )
 
     def create_executive_system(self) -> NetworkXFSM:
         """

@@ -341,7 +341,7 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
         z_floor = self.find_floor_z_via_line_search()
 
         # Connect a PID Controller to the floor actuator
-        kp = np.array([[floor_mass * 9.81 * 1.0e0]])  # Idk how I'm picking this number.
+        kp = np.array([floor_mass * 9.81 * 1.0e0])  # Idk how I'm picking this number.
         ki = np.zeros(kp.shape)  # 0.1 * np.sqrt(kp)
         kd = 4.0 * np.sqrt(kp)
         floor_controller = self.builder.AddSystem(
@@ -353,9 +353,7 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
         # output to keep the floor at a constant height
         # (i.e., the weight of the object)
         feedforward_term = self.builder.AddSystem(
-            ConstantVectorSource(
-                np.array([[floor_mass * 9.81]])
-            ),  # Weight of the object
+            ConstantVectorSource(np.array([floor_mass * 9.81])),  # Weight of the object
         )
         feedforward_term.set_name("[Floor] Feedforward")
 

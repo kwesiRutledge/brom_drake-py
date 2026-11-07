@@ -44,3 +44,7 @@ class ProductionID(Enum):
     #: Attempt Grasp with Static Wrist, attempts a grasp with a static wrist pose
     #: on a free object that is lying on a movable floor
     kAttemptGraspWithStaticWrist = "Attempt-Grasp-WithStaticWrist"
+
+    #: Grasp Selection 1, a copy of Attempt Grasp with Puppeteer that serves as the
+    #: starting point for grasp selection productions
+    kGraspSelection1 = "GraspSelection1"
