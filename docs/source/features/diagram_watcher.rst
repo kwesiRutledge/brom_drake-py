@@ -97,7 +97,31 @@ What will happen whenever you use this function is that:
     - It will search through all systems that the :code:`DiagramBuilder` has added.
     - For each system, the watcher will add a :code:`VectorLogger` to each output port that is a :code:`kVectorValued` port.
     - The :py:class:`DiagramWatcher<brom_drake.watchers.diagram_watcher.diagram_watcher.DiagramWatcher>` will connect all loggers to all targeted ports (in the above case, we will target all available output ports).
-- After the simulation is run and the script completes, the watcher will save all data traces for each port in .png files. These plots will be in a new :code:`brom` directory.
+- After the simulation is run and the script completes, the watcher will save all data traces for each port in .png files (or the format given by :code:`file_format`). These plots will be in the :code:`plots` subdirectory of the watcher directory (see :ref:`diagram-watcher-output-location`).
+
+.. _diagram-watcher-output-location:
+
+Where the Watcher Saves Its Output
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+By default, the watcher directory is :code:`./brom/watcher` (relative to the directory you run your script from).
+It can be changed with the :code:`watcher_dir` argument. The directory contains:
+
+- :code:`plots/`: the figures of each watched port,
+- :code:`raw_data/`: the raw signal data of each watched port (saved as :code:`.npy` files by default), and
+- :code:`activity_summary.log`: a log of what the DiagramWatcher did.
+
+.. warning::
+
+   If the watcher directory already exists when the DiagramWatcher is created, then the directory
+   and **all of its contents are deleted** and re-created. Use a different :code:`watcher_dir`
+   for each run if you want to keep earlier results.
+
+The plots and raw data are written when the DiagramWatcher object is destroyed (for example, when the script ends or
+when you delete all references to the watcher), and only if the watcher has been given the built diagram and its context.
+:py:func:`~brom_drake.watchers.diagram_watcher.add_watcher.add_watcher_and_build` does this for you; if you use
+:py:func:`~brom_drake.watchers.diagram_watcher.add_watcher.add_watcher` instead, then nothing is saved unless you
+build the diagram yourself and set the watcher's :code:`diagram` and :code:`diagram_context` attributes.
 
 Watching Specific Systems
 ^^^^^^^^^^^^^^^^^^^^^^^^^
