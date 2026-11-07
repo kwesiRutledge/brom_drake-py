@@ -7,3 +7,4 @@ from .pose_composition import PoseCompositionSystem
 from .pose_memory_system import PoseMemorySystem
 from .rpy_integrator import RPYIntegrator
 from .switches import *
+from .video import *

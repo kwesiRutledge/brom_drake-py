@@ -1,17 +1,19 @@
 import datetime
 import json
-from typing import Union, Tuple, List
+from pathlib import Path
+from typing import Dict, Union, Tuple, List, Optional, Sequence
 
 from pydrake.systems.framework import DiagramBuilder, LeafSystem, Diagram, Context
 
 # Internal Imports
-from brom_drake.directories import DEFAULT_PRODUCTION_REPORTS_DIR
+from brom_drake.directories import DEFAULT_PRODUCTION_REPORTS_DIR, DEFAULT_VIDEO_DIR
 from brom_drake.watchers.port_watcher.plotter import FigureNamingConvention
 from brom_drake.productions.roles.role import Role
 from brom_drake.productions.ids import ProductionID
 from brom_drake.utils import Performer
 from brom_drake.watchers.diagram_watcher.add_watcher import add_watcher_and_build
 from brom_drake.utils.initial_condition_manager import InitialConditionManager
+from brom_drake.systems.video import CameraSpec, VideoRecorder, add_cameras_to_builder
 
 
 class BaseProduction:
@@ -52,6 +54,10 @@ class BaseProduction:
         The InitialConditionManager used to manage initial conditions
         for the production.
 
+    video_recorders : Dict[str, VideoRecorder]
+        The VideoRecorder for each camera requested with add_cameras,
+        keyed by camera name. Empty until the production is built.
+
     """
 
     def __init__(self, **kwargs):
@@ -77,6 +83,122 @@ class BaseProduction:
         # Create metadata dictionary
         self._metadata = {}
 
+        # Cameras requested for video recording (attached during build_production)
+        self._camera_specs: List[CameraSpec] = []
+        self._video_output_dir: Path = DEFAULT_VIDEO_DIR
+        self._renderer_backend: str = ""
+        self.video_recorders: Dict[str, VideoRecorder] = {}
+
+    def add_cameras(
+        self,
+        camera_specs: Sequence[CameraSpec],
+        output_dir: Union[str, Path] = DEFAULT_VIDEO_DIR,
+        renderer_backend: str = "",
+    ):
+        """
+        *Description*
+
+        Requests that the production record a video from each of the given cameras.
+        Must be called BEFORE the production is built (e.g., before
+        add_cast_and_build). Each camera is written to ``<output_dir>/<name>.mp4``
+        once :py:meth:`save_videos` is called after the simulation.
+
+        *Parameters*
+
+        camera_specs: Sequence[CameraSpec]
+            The cameras to record from.
+
+        output_dir: Union[str, Path], optional
+            The directory to write videos to. Default is ``./brom/videos``.
+
+        renderer_backend: str, optional
+            The VTK rendering backend. Use "" for Drake's default (EGL on Linux,
+            which works without a display).
+
+        *Usage*
+
+        ::
+
+            production.add_cameras([
+                CameraSpec.looking_at("front", position=[1.5, 0, 1], target=[0, 0, 0.3]),
+            ])
+            diagram, diagram_context = production.add_cast_and_build()
+
+            simulator = Simulator(diagram, diagram_context)
+            simulator.AdvanceTo(5.0)
+
+            video_paths = production.save_videos()
+        """
+        if self.diagram is not None:
+            raise RuntimeError(
+                "add_cameras() must be called before the production is built."
+            )
+
+        existing = {spec.name for spec in self._camera_specs}
+        for spec in camera_specs:
+            if spec.name in existing:
+                raise ValueError(f"A camera named '{spec.name}' was already added.")
+            existing.add(spec.name)
+
+        self._camera_specs.extend(camera_specs)
+        self._video_output_dir = Path(output_dir)
+        self._renderer_backend = renderer_backend
+
+    def _attach_cameras(self):
+        """
+        *Description*
+
+        Adds a camera and VideoRecorder to the builder for every requested CameraSpec.
+        Called by build_production just before the diagram is built.
+        """
+        if len(self._camera_specs) == 0:
+            return
+
+        if self.scene_graph is None:
+            raise RuntimeError(
+                f"Production {type(self).__name__} has no SceneGraph, "
+                "so it cannot record videos."
+            )
+
+        if self.scene_graph not in self.builder.GetSystems():
+            raise NotImplementedError(
+                f"Production {type(self).__name__} keeps its SceneGraph inside a "
+                "nested diagram (e.g., a station). Recording videos for this kind "
+                "of production is not supported yet."
+            )
+
+        recorders = add_cameras_to_builder(
+            builder=self.builder,
+            scene_graph=self.scene_graph,
+            camera_specs=self._camera_specs,
+            plant=self.plant,
+            output_dir=self._video_output_dir,
+            renderer_backend=self._renderer_backend,
+        )
+        self.video_recorders = {
+            spec.name: recorder for spec, recorder in zip(self._camera_specs, recorders)
+        }
+
+    def save_videos(self) -> Dict[str, Path]:
+        """
+        *Description*
+
+        Finalizes every video recorded by the production. Call this after the
+        simulation is finished.
+
+        *Returns*
+
+        video_paths: Dict[str, Path]
+            The path of each written MP4, keyed by camera name. Cameras that
+            captured no frames are left out.
+        """
+        video_paths = {}
+        for name, recorder in self.video_recorders.items():
+            path = recorder.save()
+            if path is not None:
+                video_paths[name] = path
+        return video_paths
+
     def _record_metadata(self):
         """
         *Description*
@@ -88,6 +210,7 @@ class BaseProduction:
         # Record the production ID and number of performers, at least.
         self._metadata["production_id"] = self.id.value
         self._metadata["num_performers"] = len(self.performers)
+        self._metadata["cameras"] = [spec.name for spec in self._camera_specs]
 
         # Record metadata about when the "report file" will be written
         record_time_dt = datetime.datetime.now()
@@ -206,6 +329,9 @@ class BaseProduction:
                 plant=self.plant,
                 # diagram_context=self.diagram_context,
             )
+
+        # Attach any cameras requested with add_cameras()
+        self._attach_cameras()
 
         # Build the diagram
         if with_watcher:

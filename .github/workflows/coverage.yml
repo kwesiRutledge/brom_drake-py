@@ -22,6 +22,10 @@ jobs:
       - name: Update version in setup.py
         run: >-
           sed -i "s/{{VERSION_PLACEHOLDER}}/${{ steps.previous_tag.outputs.tag }}/g" setup.py
+      - name: Install system libraries for headless rendering (video recording)
+        run: >-
+          sudo apt-get update &&
+          sudo apt-get install -y --no-install-recommends libegl1 libegl-mesa0 libgl1-mesa-dri libopengl0
       - name: Install package with the "test" extra dependencies
         run: pip install .[test]
       - name: Run tests and collect coverage

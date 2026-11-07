@@ -94,7 +94,12 @@ class MeshFileConverter:
         mesh = trimesh.load_mesh(str(self.urdf_dir / self.true_mesh_file_path()))
 
         os.makedirs(self.define_output_path(output_file_path).parent, exist_ok=True)
-        mesh.export(self.define_output_path(output_file_path))
+        export_kwargs = {}
+        if self.define_output_path(output_file_path).suffix.lower() == ".obj":
+            # Always write vertex normals: Drake's VTK renderer (used by cameras)
+            # rejects OBJ files without them.
+            export_kwargs["include_normals"] = True
+        mesh.export(self.define_output_path(output_file_path), **export_kwargs)
 
         # Define the relative output path
         return self.define_output_path(output_file_path)
