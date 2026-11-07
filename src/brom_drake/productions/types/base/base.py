@@ -1,4 +1,6 @@
 import datetime
+import difflib
+import inspect
 import json
 from pathlib import Path
 from typing import Dict, Union, Tuple, List, Optional, Sequence
@@ -73,6 +75,13 @@ class BaseProduction:
     """
 
     def __init__(self, **kwargs):
+        # Every production passes its leftover keyword arguments up to here.
+        # Reject anything that no class in the hierarchy recognized, so that a
+        # typo (e.g., start_config instead of start_configuration) fails loudly
+        # instead of being silently ignored.
+        if kwargs:
+            raise self._unexpected_arguments_error(kwargs)
+
         # Create a builder for the production
         self.builder = DiagramBuilder()
 
@@ -100,6 +109,49 @@ class BaseProduction:
         self._video_output_dir: Path = DEFAULT_VIDEO_DIR
         self._renderer_backend: str = ""
         self.video_recorders: Dict[str, VideoRecorder] = {}
+
+    @classmethod
+    def accepted_arguments(cls) -> List[str]:
+        """
+        *Description*
+
+        The keyword arguments accepted by this production's constructor: the
+        named parameters of every ``__init__`` in its class hierarchy.
+
+        *Returns*
+
+        names: List[str]
+            The accepted argument names, sorted.
+        """
+        names = set()
+        for klass in cls.__mro__:
+            init = klass.__dict__.get("__init__")
+            if init is None:
+                continue
+            for parameter in inspect.signature(init).parameters.values():
+                if parameter.name == "self":
+                    continue
+                if parameter.kind in (
+                    inspect.Parameter.VAR_KEYWORD,
+                    inspect.Parameter.VAR_POSITIONAL,
+                ):
+                    continue
+                names.add(parameter.name)
+        return sorted(names)
+
+    def _unexpected_arguments_error(self, unexpected: Dict) -> TypeError:
+        accepted = self.accepted_arguments()
+        lines = [
+            f"{type(self).__name__} got unexpected keyword argument(s): "
+            + ", ".join(repr(name) for name in unexpected)
+            + "."
+        ]
+        for name in unexpected:
+            matches = difflib.get_close_matches(name, accepted, n=1, cutoff=0.6)
+            if matches:
+                lines.append(f"  Did you mean {matches[0]!r} instead of {name!r}?")
+        lines.append("  Accepted arguments: " + ", ".join(accepted) + ".")
+        return TypeError("\n".join(lines))
 
     def add_cameras(
         self,

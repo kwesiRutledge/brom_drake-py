@@ -52,8 +52,8 @@ class ChemLab1Test(unittest.TestCase):
         q_easy_goal = np.array([0.0, 0.0, -np.pi / 8.0, 0.0, 0.0, 0.0])
         production1 = ChemLab1(
             meshcat_port_number=None,
-            start_config=q_easy_start,
-            goal_config=q_easy_goal,
+            start_configuration=q_easy_start,
+            goal_configuration=q_easy_goal,
         )
 
         # Create the Planning System
