@@ -13,6 +13,12 @@ Submodules
 Classes
 -------
 
+.. autoclass:: brom_drake.motion_planning.systems.async_planner._Status
+   :members:
+.. autoclass:: brom_drake.motion_planning.systems.async_planner.AsyncPlannerSystem
+   :members:
+.. autoclass:: brom_drake.motion_planning.systems.async_planner.AsyncPlanningConfig
+   :members:
 .. autoclass:: brom_drake.motion_planning.systems.prototypical_planner.PrototypicalPlannerSystem
    :members:
 .. autoclass:: brom_drake.motion_planning.systems.rrt_plan_generator.RRTPlanGenerator
@@ -28,5 +34,5 @@ Functions
 Variables
 ---------
 
-(None found)
+.. autodata:: brom_drake.motion_planning.systems.async_planner._ONE_SHOT_PERIOD_S
 

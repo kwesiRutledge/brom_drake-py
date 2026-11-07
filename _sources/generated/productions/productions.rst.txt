@@ -8,6 +8,7 @@ Submodules
    :maxdepth: 1
 
    debug/debug
+   grasping/grasping
    motion_planning/motion_planning
    pick_and_place/pick_and_place
    roles/roles

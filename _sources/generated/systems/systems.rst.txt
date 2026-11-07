@@ -10,6 +10,7 @@ Submodules
    conversion/conversion
    network_fsm/network_fsm
    switches/switches
+   video/video
 
 Classes
 -------
@@ -19,6 +20,8 @@ Classes
 .. autoclass:: brom_drake.systems.end_effector_wrench_calculator.EndEffectorWrenchCalculator
    :members:
 .. autoclass:: brom_drake.systems.pose_composition.PoseCompositionSystem
+   :members:
+.. autoclass:: brom_drake.systems.pose_memory_system.PoseMemorySystem
    :members:
 .. autoclass:: brom_drake.systems.rpy_integrator.RPYIntegrator
    :members:

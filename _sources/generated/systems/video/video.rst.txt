@@ -1,0 +1,41 @@
+video
+=====
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+
+Classes
+-------
+
+.. autoclass:: brom_drake.systems.video.camera_spec.CameraSpec
+   :members:
+.. autoclass:: brom_drake.systems.video.grid._FrameCursor
+   :members:
+.. autoclass:: brom_drake.systems.video.grid.GridSource
+   :members:
+.. autoclass:: brom_drake.systems.video.render_settings.RenderSettings
+   :members:
+.. autoclass:: brom_drake.systems.video.video_recorder.VideoRecorder
+   :members:
+
+Functions
+---------
+
+.. autofunction:: brom_drake.systems.video.add_cameras._camera_config_from_spec
+.. autofunction:: brom_drake.systems.video.add_cameras.add_cameras_to_builder
+.. autofunction:: brom_drake.systems.video.grid._fit_into_tile
+.. autofunction:: brom_drake.systems.video.grid._grid_shape
+.. autofunction:: brom_drake.systems.video.grid._label_tile
+.. autofunction:: brom_drake.systems.video.grid.combine_videos_into_grid
+.. autofunction:: brom_drake.systems.video.video_recorder._close_unsaved_recorders
+.. autofunction:: brom_drake.systems.video.video_recorder._import_imageio
+
+Variables
+---------
+
+.. autodata:: brom_drake.systems.video.add_cameras.DEFAULT_RENDERER_NAME
+

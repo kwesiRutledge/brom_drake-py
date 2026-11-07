@@ -1,0 +1,32 @@
+grasping
+========
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+
+Classes
+-------
+
+.. autoclass:: brom_drake.productions.grasping.config.Configuration
+   :members:
+.. autoclass:: brom_drake.productions.grasping.grasp_selection.GraspSelection1
+   :members:
+.. autoclass:: brom_drake.productions.grasping.phases.GraspSelection1Phase
+   :members:
+.. autoclass:: brom_drake.productions.grasping.script.Script
+   :members:
+
+Functions
+---------
+
+(None found)
+
+Variables
+---------
+
+(None found)
+
