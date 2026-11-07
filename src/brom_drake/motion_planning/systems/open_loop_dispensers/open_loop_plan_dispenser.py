@@ -93,8 +93,20 @@ class OpenLoopPlanDispenser(LeafSystem):
 
     def GetCurrentPointInPlan(self, context: Context, output_point: BasicVector):
         # Setup
-        plan_is_ready = self.plan_ready_port.Eval(context)
-        plan = self.plan_port.Eval(context)
+        # Unconnected inputs mean "no plan yet" (e.g., a production simulated
+        # before a motion planner has been cast). A ready flag without a plan
+        # to dispense is also treated as not ready.
+        plan_is_connected = self.plan_port.HasValue(context)
+        plan = (
+            self.plan_port.Eval(context)
+            if plan_is_connected
+            else np.zeros((0, self.n_dof))
+        )
+        plan_is_ready = (
+            plan_is_connected
+            and self.plan_ready_port.HasValue(context)
+            and bool(self.plan_ready_port.Eval(context))
+        )
 
         # Get the abstract state
         abstract_state = context.get_discrete_state(self.state_of_plan_in_memory_idx)
@@ -169,19 +181,28 @@ class OpenLoopPlanDispenser(LeafSystem):
         # Get times where we should reach each point in the plan and save it into a new map
         self.plan = self.plan_port.Eval(context)
 
-        n_points_in_plan = self.plan.shape[0]
-        t_ii = 0.0
-        times = [t_ii]
-        for ii in range(n_points_in_plan - 1):
-            t_ii += self.find_time_between_two_points(
-                self.plan[ii, :], self.plan[ii + 1, :]
-            )
-            times += [t_ii]
+        # Assign a time to each point, skipping points that repeat the previous
+        # one (a zero-length segment would make the times non-increasing).
+        points = [self.plan[0, :]]
+        times = [0.0]
+        for ii in range(1, self.plan.shape[0]):
+            dt = self.find_time_between_two_points(points[-1], self.plan[ii, :])
+            if dt <= 0.0:
+                continue
+            points.append(self.plan[ii, :])
+            times.append(times[-1] + dt)
 
-        self.t_final = t_ii
-        self.planned_trajectory = PiecewisePolynomial.FirstOrderHold(
-            times, self.plan.T
-        )  # Need transpose to make each column a sample
+        self.t_final = times[-1]
+        if len(points) == 1:
+            # The plan is a single configuration (e.g., the robot already
+            # starts at the goal): hold it.
+            self.planned_trajectory = PiecewisePolynomial(
+                np.asarray(points[0]).reshape(-1, 1)
+            )
+        else:
+            self.planned_trajectory = PiecewisePolynomial.FirstOrderHold(
+                times, np.array(points).T
+            )  # Need transpose to make each column a sample
 
     def GetStateOfPlanInMemory(self, context: Context, output: AbstractValue):
         """Plan is set if and only if the internal variable is not None."""

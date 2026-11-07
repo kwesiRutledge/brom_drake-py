@@ -24,11 +24,20 @@ class ChemLab1Test(unittest.TestCase):
         diagram = production.builder.Build()
         diagram_context = diagram.CreateDefaultContext()
 
-        # NOTE: We do not simulate here. Without a motion planner in the cast,
-        # the plan dispenser that drives the arm has unconnected inputs, so the
-        # diagram is intentionally incomplete. (This used to "simulate" only
-        # because the kinematic arm controller was never evaluated.)
-        self.assertIsNotNone(diagram_context)
+        # Connect the kinematic arm controller to the plant's context (this is
+        # what add_cast_and_build does for complete productions).
+        production.station.arm_controller.plant_context = (
+            diagram.GetMutableSubsystemContext(production.plant, diagram_context)
+        )
+
+        # Simulate the diagram. No motion planner has been cast, so the plan
+        # dispenser's inputs are unconnected; it treats that as "no plan yet".
+        simulator = Simulator(diagram, diagram_context)
+        simulator.set_target_realtime_rate(1.0)
+        simulator.Initialize()
+        simulator.AdvanceTo(0.010)
+
+        self.assertIsNone(production.plan_dispenser.planned_trajectory)
 
     def test_add_cast_and_build1(self):
         """
