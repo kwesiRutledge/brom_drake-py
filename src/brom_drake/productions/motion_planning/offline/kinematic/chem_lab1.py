@@ -14,9 +14,10 @@ from pydrake.all import (
     Quaternion,
 )
 from pydrake.math import RollPitchYaw, RigidTransform
-from typing import Callable, List, Tuple
+from typing import Callable, List, Optional, Tuple
 
 # Internal Imports
+from brom_drake.motion_planning.systems.async_planner import AsyncPlanningConfig
 from brom_drake.directories import DEFAULT_BROM_MODELS_DIR
 from brom_drake.control import (
     GripperTarget,
@@ -548,6 +549,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
             Tuple[MotionPlan, bool],
         ],
         with_watcher: bool = False,
+        async_planning: Optional[AsyncPlanningConfig] = None,
     ) -> Tuple[Diagram, Context]:
         """
         *Description*
@@ -563,6 +565,12 @@ class ChemLab1(KinematicMotionPlanningProduction):
         with_watcher: bool, optional
             A Boolean that determines whether to add a watcher to the diagram.
             Default is False.
+
+        async_planning: AsyncPlanningConfig, optional
+            If given, plan in the background while the simulation runs, starting
+            from the robot's configuration at plan_start_time and releasing the
+            plan planning_latency seconds of simulation time later. Default is None
+            (plan immediately).
 
         *Returns*
 
@@ -583,6 +591,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
         diagram, diagram_context = super().easy_cast_and_build(
             planning_algorithm,
             with_watcher=with_watcher,
+            async_planning=async_planning,
         )
 
         # print("completed cast and build.")

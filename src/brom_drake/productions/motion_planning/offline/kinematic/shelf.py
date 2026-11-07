@@ -1,5 +1,5 @@
 from importlib import resources as impresources
-from typing import List, Tuple, Callable
+from typing import Callable, List, Optional, Tuple
 
 import networkx as nx
 import numpy as np
@@ -13,6 +13,7 @@ from pydrake.systems.framework import Diagram, Context
 from pydrake.systems.primitives import ConstantValueSource
 
 # Internal Imports
+from brom_drake.motion_planning.systems.async_planner import AsyncPlanningConfig
 import brom_drake.robots as robots
 from brom_drake.motion_planning.systems.open_loop_dispensers.open_loop_plan_dispenser import (
     OpenLoopPlanDispenser,
@@ -423,6 +424,7 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
             Tuple[MotionPlan, bool],
         ],
         with_watcher: bool = False,
+        async_planning: Optional[AsyncPlanningConfig] = None,
     ) -> Tuple[Diagram, Context]:
         """
         *Description*
@@ -438,6 +440,12 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
         with_watcher: bool, optional
             A Boolean that determines whether to add a watcher to the diagram.
             Default is False.
+
+        async_planning: AsyncPlanningConfig, optional
+            If given, plan in the background while the simulation runs, starting
+            from the robot's configuration at plan_start_time and releasing the
+            plan planning_latency seconds of simulation time later. Default is None
+            (plan immediately).
 
         *Returns*
 
@@ -458,6 +466,7 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
         diagram, diagram_context = super().easy_cast_and_build(
             planning_algorithm,
             with_watcher=with_watcher,
+            async_planning=async_planning,
         )
 
         # Configure the scene graph for collision detection

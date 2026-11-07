@@ -99,9 +99,14 @@ class OpenLoopPlanDispenser(LeafSystem):
         # Get the abstract state
         abstract_state = context.get_discrete_state(self.state_of_plan_in_memory_idx)
 
-        # If plan isn't ready, then skip the rest of the logic
+        # If plan isn't ready, hold the first configuration of the incoming plan
+        # (planners report the configuration to hold while they work). Fall back to
+        # zeros only if there is nothing to hold.
         if not plan_is_ready:
-            output_point.SetFromVector(np.zeros((self.n_dof,)))
+            if plan.shape[0] > 0:
+                output_point.SetFromVector(np.asarray(plan[0]).flatten())
+            else:
+                output_point.SetFromVector(np.zeros((self.n_dof,)))
             return
 
         # If this is the first time that plan_is_ready, then

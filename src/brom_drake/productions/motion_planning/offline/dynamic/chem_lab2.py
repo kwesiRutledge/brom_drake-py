@@ -17,9 +17,10 @@ from pydrake.all import (
     RotationMatrix,
 )
 from pydrake.math import RollPitchYaw, RigidTransform
-from typing import Callable, List, Tuple
+from typing import Callable, List, Optional, Tuple
 
 # Internal Imports
+from brom_drake.motion_planning.systems.async_planner import AsyncPlanningConfig
 from brom_drake.directories import DEFAULT_BROM_MODELS_DIR
 from brom_drake.control import (
     GripperTarget,
@@ -624,6 +625,7 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
             Tuple[MotionPlan, bool],
         ],
         with_watcher: bool = False,
+        async_planning: Optional[AsyncPlanningConfig] = None,
     ) -> Tuple[Diagram, Context]:
         """
         *Description*
@@ -653,6 +655,7 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         diagram, diagram_context = super().easy_cast_and_build(
             planning_algorithm,
             with_watcher=with_watcher,
+            async_planning=async_planning,
         )
 
         # print("completed cast and build.")
