@@ -73,6 +73,7 @@ class VideoRecorder(LeafSystem):
         self._writer = None
         self._num_frames = 0
         self._last_capture_time: Optional[float] = None
+        self._first_capture_time: Optional[float] = None
         self._closed = False
 
         # Fail fast if the optional dependencies are missing
@@ -93,6 +94,11 @@ class VideoRecorder(LeafSystem):
     def num_frames(self) -> int:
         """The number of frames written so far."""
         return self._num_frames
+
+    @property
+    def first_frame_time(self) -> Optional[float]:
+        """The simulation time of the first captured frame (None if no frames)."""
+        return self._first_capture_time
 
     @property
     def is_saved(self) -> bool:
@@ -122,6 +128,8 @@ class VideoRecorder(LeafSystem):
 
         self._writer.append_data(frame)
         self._num_frames += 1
+        if self._first_capture_time is None:
+            self._first_capture_time = t
         self._last_capture_time = t
         return EventStatus.Succeeded()
 

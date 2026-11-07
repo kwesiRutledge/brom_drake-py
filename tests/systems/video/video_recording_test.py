@@ -227,6 +227,62 @@ class ProductionVideoTest(unittest.TestCase):
         self.assertEqual(len(_read_video(video_paths["front"])), 21)
         self.assertEqual(len(_read_video(video_paths["top"])), 6)
 
+    def test_grid_video1(self):
+        """
+        Description
+        -----------
+        save_videos(grid=True) also writes one video showing every camera,
+        at the highest camera fps, aligned by simulation time.
+        """
+        production = self._make_production()
+        production.add_cameras(
+            [
+                CameraSpec.looking_at(
+                    "front",
+                    position=[2.5, 0, 1.2],
+                    target=[0, 0, 0.5],
+                    width=96,
+                    height=64,
+                    fps=20,
+                ),
+                CameraSpec.looking_at(
+                    "top",
+                    position=[0, 0, 3.5],
+                    target=[0, 0, 0],
+                    up=[1, 0, 0],
+                    width=64,
+                    height=64,
+                    fps=5,
+                ),
+            ],
+            output_dir=OUTPUT_DIR / "production",
+        )
+        diagram, diagram_context = production.add_cast_and_build()
+
+        simulator = Simulator(diagram, diagram_context)
+        simulator.AdvanceTo(1.0)
+        video_paths = production.save_videos(grid=True)
+
+        self.assertEqual(set(video_paths.keys()), {"front", "top", "all_cameras"})
+        grid_frames = _read_video(video_paths["all_cameras"])
+        self.assertEqual(len(grid_frames), 21)  # 20 fps over 1.0 s
+        self.assertEqual(grid_frames[0].shape, (64, 192, 3))  # 2 tiles of 96x64
+
+    def test_grid_name_collision1(self):
+        """
+        Description
+        -----------
+        The grid video cannot share its name with a camera.
+        """
+        production = self._make_production()
+        production.add_cameras(
+            [CameraSpec("all_cameras", width=64, height=48)],
+            output_dir=OUTPUT_DIR / "production",
+        )
+        production.add_cast_and_build()
+        with self.assertRaises(ValueError):
+            production.save_videos(grid=True)
+
     def test_add_cameras_after_build1(self):
         """
         Description

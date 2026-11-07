@@ -19,7 +19,13 @@ from brom_drake.productions.ids import ProductionID
 from brom_drake.utils import Performer
 from brom_drake.watchers.diagram_watcher.add_watcher import add_watcher_and_build
 from brom_drake.utils.initial_condition_manager import InitialConditionManager
-from brom_drake.systems.video import CameraSpec, VideoRecorder, add_cameras_to_builder
+from brom_drake.systems.video import (
+    CameraSpec,
+    GridSource,
+    VideoRecorder,
+    add_cameras_to_builder,
+    combine_videos_into_grid,
+)
 
 
 class BaseProduction:
@@ -217,24 +223,74 @@ class BaseProduction:
             'diagram as "query_object" to enable video recording.'
         )
 
-    def save_videos(self) -> Dict[str, Path]:
+    def save_videos(
+        self,
+        grid: bool = False,
+        grid_name: str = "all_cameras",
+        grid_columns: Optional[int] = None,
+        grid_tile_size: Optional[Tuple[int, int]] = None,
+    ) -> Dict[str, Path]:
         """
         *Description*
 
         Finalizes every video recorded by the production. Call this after the
         simulation is finished.
 
+        With ``grid=True``, also writes ``<output_dir>/<grid_name>.mp4``: one video
+        that shows every camera side by side, aligned by simulation time.
+
+        *Parameters*
+
+        grid: bool, optional
+            Whether to also write the combined grid video. Default is False.
+
+        grid_name: str, optional
+            The file name (without ".mp4") and dictionary key of the grid video.
+            Must not match a camera's name. Default is "all_cameras".
+
+        grid_columns: int, optional
+            The number of columns in the grid. Default is ceil(sqrt(n_cameras)).
+
+        grid_tile_size: Tuple[int, int], optional
+            The (width, height) of each tile. Default is the first camera's
+            resolution; other cameras are scaled to fit.
+
         *Returns*
 
         video_paths: Dict[str, Path]
-            The path of each written MP4, keyed by camera name. Cameras that
-            captured no frames are left out.
+            The path of each written MP4, keyed by camera name (and by
+            ``grid_name`` for the grid video). Cameras that captured no frames
+            are left out.
         """
+        if grid and grid_name in self.video_recorders:
+            raise ValueError(
+                f'grid_name "{grid_name}" is also the name of a camera; '
+                "choose a different grid_name."
+            )
+
         video_paths = {}
         for name, recorder in self.video_recorders.items():
             path = recorder.save()
             if path is not None:
                 video_paths[name] = path
+
+        if grid and len(video_paths) > 0:
+            sources = [
+                GridSource(
+                    name=name,
+                    path=path,
+                    fps=self.video_recorders[name].fps,
+                    first_frame_time=self.video_recorders[name].first_frame_time,
+                )
+                for name, path in video_paths.items()
+            ]
+            video_paths[grid_name] = combine_videos_into_grid(
+                sources,
+                output_path=self._video_output_dir / f"{grid_name}.mp4",
+                columns=grid_columns,
+                tile_size=grid_tile_size,
+            )
+
         return video_paths
 
     def _record_metadata(self):
