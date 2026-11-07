@@ -298,10 +298,19 @@ class ProductionVideoTest(unittest.TestCase):
         """
         Description
         -----------
-        Productions without cameras behave exactly as before.
+        Cameras are strictly opt-in: a production that never calls
+        add_cameras() gets no renderer, no camera systems and no recorders,
+        so its simulation does no rendering work at all.
         """
+        from pydrake.systems.sensors import RgbdSensor
+
         production = self._make_production()
-        production.add_cast_and_build()
+        diagram, _ = production.add_cast_and_build()
+
+        self.assertEqual(production.scene_graph.RendererCount(), 0)
+        systems = diagram.GetSystems()
+        self.assertFalse(any(isinstance(s, RgbdSensor) for s in systems))
+        self.assertFalse(any(isinstance(s, VideoRecorder) for s in systems))
         self.assertEqual(production.video_recorders, {})
         self.assertEqual(production.save_videos(), {})
 

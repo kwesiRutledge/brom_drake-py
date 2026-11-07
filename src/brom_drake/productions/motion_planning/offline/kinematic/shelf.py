@@ -21,6 +21,7 @@ from brom_drake.motion_planning.systems.open_loop_dispensers.open_loop_plan_disp
 from brom_drake.stations.kinematic import UR10eStation as KinematicUR10eStation
 from brom_drake.productions.ids import ProductionID
 from brom_drake.productions.roles.role import Role
+from brom_drake.systems.video import CameraSpec
 from brom_drake.productions.types.motion_planning import (
     KinematicMotionPlanningProduction,
 )
@@ -528,6 +529,31 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
             return self._goal_pose
         else:
             raise ValueError(f"Unexpected behavior. This should never happen.")
+
+    def default_cameras(self) -> List[CameraSpec]:
+        """
+        *Description*
+
+        The cameras used by ``add_cameras()`` when no cameras are given.
+        An angled overview, a top-down view, and a camera on the arm's tool0 frame.
+        """
+        return [
+            CameraSpec.looking_at(
+                "overview",
+                position=[2.0, -1.9, 1.6],
+                target=[0.45, 0.0, 0.5],
+                fov_y=np.deg2rad(40),
+            ),
+            CameraSpec.looking_at(
+                "top", position=[0.5, 0.25, 2.9], target=[0.5, 0.25, 0.0], up=[1, 0, 0]
+            ),
+            CameraSpec(
+                "wrist",
+                X_PC=RigidTransform([0.0, -0.06, 0.02]),
+                parent_body_name="tool0",
+                fov_y=np.deg2rad(70),
+            ),
+        ]
 
     @property
     def id(self) -> ProductionID:

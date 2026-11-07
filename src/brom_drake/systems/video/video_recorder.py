@@ -1,4 +1,6 @@
+import atexit
 import logging
+import weakref
 from pathlib import Path
 from typing import Optional, Union
 
@@ -22,6 +24,32 @@ def _import_imageio():
             "Install them with: pip install brom_drake[video]"
         ) from e
     return imageio
+
+
+# Recorders whose video file is open (frames written, not yet saved). Weak
+# references, so this registry never keeps a recorder alive by itself.
+_OPEN_RECORDERS: "weakref.WeakSet[VideoRecorder]" = weakref.WeakSet()
+
+
+@atexit.register
+def _close_unsaved_recorders():
+    """
+    Closes every video that is still open when Python exits.
+
+    An MP4 that is never closed has no index and cannot be played. Relying on
+    __del__ is not enough: during interpreter shutdown it can run too late (or
+    not at all) to finish the file.
+    """
+    for recorder in list(_OPEN_RECORDERS):
+        try:
+            logging.getLogger(__name__).warning(
+                f"VideoRecorder '{recorder.get_name()}' was never saved; closing "
+                f"{recorder.output_path} at exit. Call production.save_videos() "
+                "(or recorder.save()) after simulating to avoid this warning."
+            )
+            recorder.save()
+        except Exception:
+            pass
 
 
 class VideoRecorder(LeafSystem):
@@ -144,6 +172,7 @@ class VideoRecorder(LeafSystem):
             pixelformat="yuv420p",  # Plays in browsers, Slack, QuickTime, etc.
             macro_block_size=1,  # CameraSpec already guarantees even dimensions
         )
+        _OPEN_RECORDERS.add(self)
 
     def save(self) -> Optional[Path]:
         """
@@ -169,6 +198,7 @@ class VideoRecorder(LeafSystem):
 
         self._writer.close()
         self._writer = None
+        _OPEN_RECORDERS.discard(self)
         return self.output_path
 
     def __del__(self):

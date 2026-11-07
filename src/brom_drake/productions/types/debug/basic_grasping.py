@@ -15,6 +15,7 @@ from typing import List
 # Internal Imports
 from brom_drake.file_manipulation.urdf.drakeify import drakeify_my_urdf
 from brom_drake.productions.types.base.base import BaseProduction
+from brom_drake.systems.video import CameraSpec
 from brom_drake.utils.metadata_recording import create_summary_for_LeafSystem
 from brom_drake.utils.model_instances import (
     get_name_of_first_body_in_urdf,
@@ -269,6 +270,22 @@ class BasicGraspingDebuggingProduction(BaseProduction):
             self.meshcat,
             params=params,
         )
+
+    def default_cameras(self) -> List[CameraSpec]:
+        """
+        *Description*
+
+        The cameras used by ``add_cameras()`` when no cameras are given.
+        Two close views of the gripper and the object near the origin.
+        """
+        return [
+            CameraSpec.looking_at(
+                "closeup", position=[0.7, -0.7, 0.55], target=[0.0, 0.0, 0.15]
+            ),
+            CameraSpec.looking_at(
+                "front", position=[0.0, -0.9, 0.35], target=[0.0, 0.0, 0.15]
+            ),
+        ]
 
     def get_gripper_base_frame(self) -> Frame:
         """

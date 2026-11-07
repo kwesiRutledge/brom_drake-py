@@ -3,8 +3,6 @@ from pathlib import Path
 from typing import List, Optional, Sequence, Union
 
 from pydrake.geometry import (
-    MakeRenderEngineVtk,
-    RenderEngineVtkParams,
     SceneGraph,
 )
 from pydrake.multibody.plant import MultibodyPlant
@@ -14,6 +12,7 @@ from pydrake.systems.sensors import CameraConfig, RgbdSensor
 # Internal Imports
 from brom_drake.directories import DEFAULT_VIDEO_DIR
 from .camera_spec import CameraSpec
+from .render_settings import RenderSettings
 from .video_recorder import VideoRecorder
 
 DEFAULT_RENDERER_NAME = "brom_video_renderer"
@@ -41,6 +40,7 @@ def add_cameras_to_builder(
     renderer_name: str = DEFAULT_RENDERER_NAME,
     renderer_backend: str = "",
     query_object_port: Optional[OutputPort] = None,
+    render_settings: Optional[RenderSettings] = None,
 ) -> List[VideoRecorder]:
     """
     **Description**
@@ -84,6 +84,11 @@ def add_cameras_to_builder(
         object port; the port must belong to a system in ``builder``.
         Default is None (use ``scene_graph.get_query_output_port()``).
 
+    render_settings: RenderSettings, optional
+        Background, lights and shadows for the renderer. Only applies when this
+        call creates the renderer (it raises if a renderer named
+        ``renderer_name`` already exists). Default is None (Drake's defaults).
+
     **Returns**
 
     recorders: List[VideoRecorder]
@@ -109,10 +114,17 @@ def add_cameras_to_builder(
         )
 
     # Add a render engine, if needed
-    if not scene_graph.HasRenderer(renderer_name):
+    if scene_graph.HasRenderer(renderer_name):
+        if render_settings is not None:
+            raise ValueError(
+                f'The SceneGraph already has a renderer named "{renderer_name}", so '
+                "render_settings cannot be applied. Pass render_settings the first "
+                "time cameras are added, or use a different renderer_name."
+            )
+    else:
+        settings = render_settings if render_settings is not None else RenderSettings()
         scene_graph.AddRenderer(
-            renderer_name,
-            MakeRenderEngineVtk(RenderEngineVtkParams(backend=renderer_backend)),
+            renderer_name, settings.make_render_engine(backend=renderer_backend)
         )
 
     output_dir = Path(output_dir)

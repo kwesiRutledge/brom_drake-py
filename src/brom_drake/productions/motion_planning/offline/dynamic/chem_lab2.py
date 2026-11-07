@@ -39,6 +39,7 @@ from brom_drake.robots.gripper_type import GripperType
 from brom_drake.stations.classical import UR10eStation
 from brom_drake.productions.ids import ProductionID
 from brom_drake.productions.roles.role import Role
+from brom_drake.systems.video import CameraSpec
 from brom_drake.productions.types import OfflineDynamicMotionPlanningProduction
 from brom_drake.utils import Performer, AddGround, MotionPlan
 
@@ -763,6 +764,28 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
             raise ValueError(
                 f"It appears that the starting configuration is set, but the starting pose is not. This is unexpected behavior!"
             )
+
+    def default_cameras(self) -> List[CameraSpec]:
+        """
+        *Description*
+
+        The cameras used by ``add_cameras()`` when no cameras are given.
+        An angled overview and a side view.
+        """
+        return [
+            CameraSpec.looking_at(
+                "overview",
+                position=[2.0, -2.0, 1.7],
+                target=[0.3, 0.1, 0.4],
+                fov_y=np.deg2rad(40),
+            ),
+            CameraSpec.looking_at(
+                "side",
+                position=[0.3, -2.4, 0.8],
+                target=[0.3, 0.0, 0.5],
+                fov_y=np.deg2rad(40),
+            ),
+        ]
 
     @property
     def id(self) -> ProductionID:

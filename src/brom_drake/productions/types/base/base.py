@@ -24,6 +24,7 @@ from brom_drake.utils.initial_condition_manager import InitialConditionManager
 from brom_drake.systems.video import (
     CameraSpec,
     GridSource,
+    RenderSettings,
     VideoRecorder,
     add_cameras_to_builder,
     combine_videos_into_grid,
@@ -108,6 +109,7 @@ class BaseProduction:
         self._camera_specs: List[CameraSpec] = []
         self._video_output_dir: Path = DEFAULT_VIDEO_DIR
         self._renderer_backend: str = ""
+        self._render_settings: Optional[RenderSettings] = None
         self.video_recorders: Dict[str, VideoRecorder] = {}
 
     @classmethod
@@ -153,11 +155,31 @@ class BaseProduction:
         lines.append("  Accepted arguments: " + ", ".join(accepted) + ".")
         return TypeError("\n".join(lines))
 
+    def default_cameras(self) -> List[CameraSpec]:
+        """
+        *Description*
+
+        The cameras used by :py:meth:`add_cameras` when no cameras are given.
+        Productions override this with views framed for their scene; this
+        generic version is an angled overview of the area around the origin.
+
+        *Returns*
+
+        camera_specs: List[CameraSpec]
+            The default cameras.
+        """
+        return [
+            CameraSpec.looking_at(
+                "overview", position=[2.0, -2.0, 1.6], target=[0.0, 0.0, 0.5]
+            ),
+        ]
+
     def add_cameras(
         self,
-        camera_specs: Sequence[CameraSpec],
+        camera_specs: Optional[Sequence[CameraSpec]] = None,
         output_dir: Union[str, Path] = DEFAULT_VIDEO_DIR,
         renderer_backend: str = "",
+        render_settings: Optional[RenderSettings] = None,
     ):
         """
         *Description*
@@ -169,8 +191,9 @@ class BaseProduction:
 
         *Parameters*
 
-        camera_specs: Sequence[CameraSpec]
-            The cameras to record from.
+        camera_specs: Sequence[CameraSpec], optional
+            The cameras to record from. Default is None, which uses this
+            production's :py:meth:`default_cameras`.
 
         output_dir: Union[str, Path], optional
             The directory to write videos to. Default is ``./brom/videos``.
@@ -178,6 +201,10 @@ class BaseProduction:
         renderer_backend: str, optional
             The VTK rendering backend. Use "" for Drake's default (EGL on Linux,
             which works without a display).
+
+        render_settings: RenderSettings, optional
+            Background, lights and shadows shared by all cameras, e.g.
+            ``RenderSettings.studio()``. Default is None (Drake's defaults).
 
         *Usage*
 
@@ -198,6 +225,9 @@ class BaseProduction:
                 "add_cameras() must be called before the production is built."
             )
 
+        if camera_specs is None:
+            camera_specs = self.default_cameras()
+
         existing = {spec.name for spec in self._camera_specs}
         for spec in camera_specs:
             if spec.name in existing:
@@ -207,6 +237,8 @@ class BaseProduction:
         self._camera_specs.extend(camera_specs)
         self._video_output_dir = Path(output_dir)
         self._renderer_backend = renderer_backend
+        if render_settings is not None:
+            self._render_settings = render_settings
 
     def _attach_cameras(self):
         """
@@ -234,6 +266,7 @@ class BaseProduction:
             output_dir=self._video_output_dir,
             renderer_backend=self._renderer_backend,
             query_object_port=query_object_port,
+            render_settings=self._render_settings,
         )
         self.video_recorders = {
             spec.name: recorder for spec, recorder in zip(self._camera_specs, recorders)
