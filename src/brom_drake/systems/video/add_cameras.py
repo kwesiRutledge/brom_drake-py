@@ -8,7 +8,7 @@ from pydrake.geometry import (
     SceneGraph,
 )
 from pydrake.multibody.plant import MultibodyPlant
-from pydrake.systems.framework import DiagramBuilder
+from pydrake.systems.framework import DiagramBuilder, OutputPort
 from pydrake.systems.sensors import CameraConfig, RgbdSensor
 
 # Internal Imports
@@ -40,6 +40,7 @@ def add_cameras_to_builder(
     output_dir: Union[str, Path] = DEFAULT_VIDEO_DIR,
     renderer_name: str = DEFAULT_RENDERER_NAME,
     renderer_backend: str = "",
+    query_object_port: Optional[OutputPort] = None,
 ) -> List[VideoRecorder]:
     """
     **Description**
@@ -55,7 +56,8 @@ def add_cameras_to_builder(
     **Parameters**
 
     builder: DiagramBuilder
-        The builder to add the systems to. It must contain ``scene_graph``.
+        The builder to add the systems to. It must contain ``scene_graph``,
+        unless ``query_object_port`` is given.
 
     scene_graph: SceneGraph
         The SceneGraph that holds the geometry to render.
@@ -76,6 +78,12 @@ def add_cameras_to_builder(
         The VTK backend ("" for Drake's default, "EGL" for headless Linux, "GLX", or
         "Cocoa" on macOS). Default is "".
 
+    query_object_port: OutputPort, optional
+        The port that the cameras read geometry from. Use this when ``scene_graph``
+        lives inside a nested diagram (e.g., a station) that exports its query
+        object port; the port must belong to a system in ``builder``.
+        Default is None (use ``scene_graph.get_query_output_port()``).
+
     **Returns**
 
     recorders: List[VideoRecorder]
@@ -87,11 +95,17 @@ def add_cameras_to_builder(
     if duplicates:
         raise ValueError(f"Camera names must be unique; duplicated names: {duplicates}")
 
-    if scene_graph not in builder.GetSystems():
+    if query_object_port is None:
+        if scene_graph not in builder.GetSystems():
+            raise ValueError(
+                "The given SceneGraph is not part of this builder. If the SceneGraph "
+                "is inside a nested diagram (e.g., a station), pass that diagram's "
+                "exported query object port as query_object_port."
+            )
+        query_object_port = scene_graph.get_query_output_port()
+    elif query_object_port.get_system() not in builder.GetSystems():
         raise ValueError(
-            "The given SceneGraph is not part of this builder. If the SceneGraph is "
-            "inside a nested diagram (e.g., a station), cameras cannot be attached "
-            "from the outer builder yet."
+            "query_object_port must belong to a system that is part of this builder."
         )
 
     # Add a render engine, if needed
@@ -130,7 +144,7 @@ def add_cameras_to_builder(
         )
         sensor.set_name(f"camera_{spec.name}")
         builder.Connect(
-            scene_graph.get_query_output_port(),
+            query_object_port,
             sensor.query_object_input_port(),
         )
 

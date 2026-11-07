@@ -3,7 +3,13 @@ import json
 from pathlib import Path
 from typing import Dict, Union, Tuple, List, Optional, Sequence
 
-from pydrake.systems.framework import DiagramBuilder, LeafSystem, Diagram, Context
+from pydrake.systems.framework import (
+    Context,
+    Diagram,
+    DiagramBuilder,
+    LeafSystem,
+    OutputPort,
+)
 
 # Internal Imports
 from brom_drake.directories import DEFAULT_PRODUCTION_REPORTS_DIR, DEFAULT_VIDEO_DIR
@@ -160,12 +166,7 @@ class BaseProduction:
                 "so it cannot record videos."
             )
 
-        if self.scene_graph not in self.builder.GetSystems():
-            raise NotImplementedError(
-                f"Production {type(self).__name__} keeps its SceneGraph inside a "
-                "nested diagram (e.g., a station). Recording videos for this kind "
-                "of production is not supported yet."
-            )
+        query_object_port = self._find_camera_query_object_port()
 
         recorders = add_cameras_to_builder(
             builder=self.builder,
@@ -174,10 +175,47 @@ class BaseProduction:
             plant=self.plant,
             output_dir=self._video_output_dir,
             renderer_backend=self._renderer_backend,
+            query_object_port=query_object_port,
         )
         self.video_recorders = {
             spec.name: recorder for spec, recorder in zip(self._camera_specs, recorders)
         }
+
+    def _find_camera_query_object_port(self) -> OutputPort:
+        """
+        *Description*
+
+        Finds the port (in this production's builder) that cameras should read
+        geometry from:
+
+        - the SceneGraph's own query port, if the SceneGraph was added directly
+          to the builder, or
+        - the exported "query_object" port of a nested diagram (e.g., a station)
+          that contains the SceneGraph.
+
+        *Returns*
+
+        query_object_port: OutputPort
+            The port to connect cameras to.
+        """
+        top_level_systems = self.builder.GetSystems()
+        if self.scene_graph in top_level_systems:
+            return self.scene_graph.get_query_output_port()
+
+        for system in top_level_systems:
+            if not isinstance(system, Diagram):
+                continue
+            if not system.HasOutputPort("query_object"):
+                continue
+            if self.scene_graph in system.GetSystems():
+                return system.GetOutputPort("query_object")
+
+        raise NotImplementedError(
+            f"Production {type(self).__name__} keeps its SceneGraph inside a nested "
+            'diagram that does not export a "query_object" output port, so cameras '
+            "cannot be attached. Export the SceneGraph's query output port from that "
+            'diagram as "query_object" to enable video recording.'
+        )
 
     def save_videos(self) -> Dict[str, Path]:
         """
