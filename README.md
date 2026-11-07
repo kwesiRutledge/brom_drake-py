@@ -48,6 +48,34 @@ pip install -r requirements.txt
 pip install -e .
 ```
 
+### Recurring documentation proposals
+
+`.github/workflows/documentation-one-file.md` defines a GitHub Agentic Workflow
+that runs every Monday at 09:00 UTC or via manual dispatch. It proposes at most
+one draft PR improving one existing Sphinx page or a Python file's rendered
+docstrings, and skips proposals while a `[docs-one-file]` PR is open. Each
+proposal must preserve executable Python structure and build Sphinx HTML without
+adding warnings relative to the run's baseline.
+
+Before running it, configure the repository's `COPILOT_GITHUB_TOKEN` Actions
+secret with a Copilot-enabled token as described in the
+[engine authentication guide](https://github.github.com/gh-aw/reference/engines/#github-copilot-default),
+and enable **Allow GitHub Actions to create and approve pull requests** in
+**Settings > Actions > General**. The workflow uses `PYTHON_VERSION` if set,
+otherwise Python 3.14; the selected version must meet `setup.py`'s requirements.
+
+After editing the workflow Markdown, regenerate and commit its `.lock.yml`:
+
+```bash
+gh extension install github/gh-aw
+gh aw compile documentation-one-file
+```
+
+The checked-in lock file was generated with `gh-aw` v1.0.1. Review regenerated
+files when upgrading the compiler; do not edit the lock file by hand. Merging a
+documentation proposal does not deploy the public site: deployment remains
+tag-triggered or manually dispatched through the existing Sphinx workflow.
+
 ## Citation
 
 Feel free to cite this project if it helped with your work!
