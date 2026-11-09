@@ -53,6 +53,13 @@ def drakeify_my_urdf(
         An enum representing the strategy for replacing collision meshes.
         Default is MeshReplacementStrategy.kWithObj.
 
+    replace_colors_with: List[float] (optional)
+        An RGBA color (exactly four values) that replaces the color of every
+        visual element's material in the converted URDF. Visual elements without
+        a material get a new one. If None, colors are left unchanged.
+        A list of any other length causes a ValueError during conversion.
+        Default is None.
+
     *Returns*
 
     Path
