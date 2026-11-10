@@ -535,6 +535,19 @@ class TestProximityPosePlanDispenser(unittest.TestCase):
             DispenserInternalState.kPlanSet,
         )
 
+    def test_default_configuration1(self):
+        """
+        Description
+        -----------
+        This test verifies that dispensers created without a configuration do not share one.
+        """
+        # Setup
+        dispenser1 = ProximityPosePlanDispenser()
+        dispenser2 = ProximityPosePlanDispenser()
+
+        # Verify
+        self.assertIsNot(dispenser1.config, dispenser2.config)
+
 
 if __name__ == "__main__":
     unittest.main()

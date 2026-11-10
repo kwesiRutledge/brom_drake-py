@@ -929,6 +929,19 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
             "Expected more than one collision element after conversion.",
         )
 
+    def test_default_configuration1(self):
+        """
+        Description
+        -----------
+        This test verifies that converters created without a configuration do not share one.
+        """
+        # Setup
+        converter1 = DrakeReadyURDFConverter(self.test_urdf1_filename)
+        converter2 = DrakeReadyURDFConverter(self.test_urdf1_filename)
+
+        # Verify
+        self.assertIsNot(converter1.config, converter2.config)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -296,6 +296,25 @@ class DemonstrateStaticGraspTest(unittest.TestCase):
 
         self.assertTrue(foundBaseTriad)
 
+    def test_default_configuration1(self):
+        """
+        Description
+        -----------
+        This test verifies that productions created without a configuration do not share one.
+        """
+        # Setup
+        production1 = ShowMeThisStaticGrasp(
+            path_to_object=self.drakeified_flask_urdf,
+            path_to_gripper=self.gripper_urdf_path,
+        )
+        production2 = ShowMeThisStaticGrasp(
+            path_to_object=self.drakeified_flask_urdf,
+            path_to_gripper=self.gripper_urdf_path,
+        )
+
+        # Verify
+        self.assertIsNot(production1.config, production2.config)
+
 
 if __name__ == "__main__":
     unittest.main()

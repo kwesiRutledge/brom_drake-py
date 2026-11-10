@@ -36,11 +36,14 @@ class NetworkXFSM(LeafSystem):
     def __init__(
         self,
         fsm_graph: nx.DiGraph,
-        config: NetworkXFSMConfig = NetworkXFSMConfig(),
+        config: NetworkXFSMConfig = None,
     ):
         LeafSystem.__init__(self)
 
         # Setup
+        if config is None:
+            config = NetworkXFSMConfig()
+
         self.config = config
 
         # Prepare to Create FSM from Graph

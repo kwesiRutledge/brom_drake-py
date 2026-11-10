@@ -56,7 +56,7 @@ class ProximityPosePlanDispenser(LeafSystem):
 
     def __init__(
         self,
-        config: ProximityPosePlanDispenserConfig = ProximityPosePlanDispenserConfig(),
+        config: ProximityPosePlanDispenserConfig = None,
     ):
         """
         *Description*
@@ -69,9 +69,13 @@ class ProximityPosePlanDispenser(LeafSystem):
             The configuration for the Proximity Pose Plan Dispenser.
             See brom_drake/motion_planning/systems/proximity_pose_plan_dispenser/proximity_pose_plan_dispenser.py
             for more information.
+            Default is None, which creates a new configuration with its default values.
         """
         LeafSystem.__init__(self)
         # Setup
+        if config is None:
+            config = ProximityPosePlanDispenserConfig()
+
         self.config = config
 
         # Create empty variables for the plan and the planned trajectory

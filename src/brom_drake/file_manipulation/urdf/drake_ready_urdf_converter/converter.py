@@ -71,7 +71,7 @@ class DrakeReadyURDFConverter:
     def __init__(
         self,
         original_urdf_filename: str,
-        config: DrakeReadyURDFConverterConfig = DrakeReadyURDFConverterConfig(),
+        config: DrakeReadyURDFConverterConfig = None,
     ):
         """
         *Description*
@@ -89,8 +89,12 @@ class DrakeReadyURDFConverter:
             - whether or not to convert unsupported mesh files
             - whether or not to add missing transmissions
             - etc.
+            Default is None, which creates a new configuration with its default values.
         """
         # Setup
+        if config is None:
+            config = DrakeReadyURDFConverterConfig()
+
         self.config = config
         self.original_urdf_filename = original_urdf_filename
 
