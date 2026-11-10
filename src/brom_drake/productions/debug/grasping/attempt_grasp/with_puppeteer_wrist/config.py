@@ -27,9 +27,12 @@ class Configuration:
         Default is False.
         (TODO(Kwesi): Implement this feature)
 
-    initial_gripper_joint_positions: List[float] or np.ndarray
-        A list or array of floats representing the initial joint positions of the gripper.
-        Default is None.
+    initial_gripper_command: List[float] or np.ndarray
+        The gripper command that the gripper starts at and holds until it begins closing.
+        This is a normalized command (0 is fully open), not a joint angle.
+        Must have the same shape as the production's grasp_gripper_command.
+        See the AttemptGraspWithPuppeteerWrist documentation for the definition of a gripper command.
+        Default is None (the gripper starts fully open).
 
     target_body_on_gripper: str, optional
         The name of the body on the gripper that we use to define X_GripperObject.
@@ -56,7 +59,7 @@ class Configuration:
         default_factory=BaseConfiguration
     )  # By default, use the standard script
     show_collision_geometries: bool = False
-    initial_gripper_joint_positions: Union[List[float], np.ndarray] = None
+    initial_gripper_command: Union[List[float], np.ndarray] = None
     target_body_on_gripper: str = (
         None  # The "Gripper" Frame that we use to define X_GripperObject
     )
