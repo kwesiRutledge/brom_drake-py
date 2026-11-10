@@ -133,7 +133,7 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
     config: Configuration, optional
         The configuration for the production.
         See the Configuration dataclass for more details.
-        Default is the standard Configuration.
+        Default is None, which creates a new Configuration with its default values.
 
     *Usage*
 
@@ -190,7 +190,7 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         grasp_gripper_command: np.ndarray,
         X_ObjectGripper_trajectory: List[RigidTransform] = None,
         meshcat_port_number: int = None,
-        config: Configuration = Configuration(),
+        config: Configuration = None,
     ):
         """
         *Description*
@@ -220,8 +220,12 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         config: Configuration, optional
             The configuration for the production.
             See the Configuration dataclass for more details.
-            Default is the standard Configuration.
+            Default is None, which creates a new Configuration with its default values.
         """
+        # Each production gets its own configuration, because the constructor modifies it
+        if config is None:
+            config = Configuration()
+
         # Use the enum to choose the gripper URDF from a set of supported grippers
         if gripper_choice == GripperType.Robotiq_2f_85:
             path_to_gripper = str(

@@ -126,6 +126,34 @@ class TestAttemptGraspWithPuppeteerWristProduction(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.create_far_production(initial_gripper_command=[0.3, 0.3])
 
+    def test_default_configuration1(self):
+        """
+        Description
+        -----------
+        This test verifies that productions created without a configuration
+        do not share one (the constructor writes the Meshcat port into it).
+        """
+        # Setup
+        X_trajectory = [RigidTransform(), RigidTransform()]
+        production1 = AttemptGraspWithPuppeteerWrist(
+            path_to_object=str(self.manipuland_file),
+            gripper_choice=GripperType.Robotiq_2f_85,
+            grasp_gripper_command=np.array([0.7]),
+            X_ObjectGripper_trajectory=X_trajectory,
+        )
+        production2 = AttemptGraspWithPuppeteerWrist(
+            path_to_object=str(self.manipuland_file),
+            gripper_choice=GripperType.Robotiq_2f_85,
+            grasp_gripper_command=np.array([0.7]),
+            X_ObjectGripper_trajectory=X_trajectory,
+            meshcat_port_number=7999,
+        )
+
+        # Verify
+        self.assertIsNot(production1.config, production2.config)
+        self.assertIsNone(production1.config.base.meshcat_port_number)
+        self.assertEqual(production2.config.base.meshcat_port_number, 7999)
+
     def test_suggested_roles1(self):
         """
         Description

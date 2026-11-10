@@ -127,6 +127,36 @@ class AttemptGraspWithStaticWristTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.create_far_production(initial_gripper_command=[0.3, 0.3])
 
+    def test_default_configuration1(self):
+        """
+        Description
+        -----------
+        This test verifies that productions created without a configuration
+        do not share one (the constructor writes the Meshcat port into it).
+        """
+        # Setup
+        production1 = AttemptGraspWithStaticWrist(
+            path_to_object=self.drakeified_flask_urdf,
+            gripper_choice=GripperType.Robotiq_2f_85,
+            grasp_gripper_command=np.array([0.7]),
+            X_ObjectTarget=RigidTransform(),
+            meshcat_port_number=7999,
+        )
+        production2 = AttemptGraspWithStaticWrist(
+            path_to_object=self.drakeified_flask_urdf,
+            gripper_choice=GripperType.Robotiq_2f_85,
+            grasp_gripper_command=np.array([0.7]),
+            X_ObjectTarget=RigidTransform(),
+        )
+
+        # Verify
+        self.assertIsNot(production1.config, production2.config)
+        self.assertEqual(production1.config.base.meshcat_port_number, 7999)
+        self.assertEqual(
+            production2.config.base.meshcat_port_number,
+            BaseConfiguration().meshcat_port_number,
+        )
+
     def test_find_floor_z1(self):
         """
         Description

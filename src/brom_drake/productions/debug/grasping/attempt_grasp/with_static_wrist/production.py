@@ -87,8 +87,12 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
         X_ObjectTarget: RigidTransform = None,
         meshcat_port_number: int = None,
         script: AttemptGraspWithStaticWristScript = None,
-        config: Configuration = Configuration(),
+        config: Configuration = None,
     ):
+        # Each production gets its own configuration, because the constructor modifies it
+        if config is None:
+            config = Configuration()
+
         # Use the enum to choose the gripper URDF from a set of supported grippers
         if gripper_choice == GripperType.Robotiq_2f_85:
             path_to_gripper = str(
