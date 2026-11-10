@@ -3,11 +3,15 @@
 This example shows how you can test a *grasp selection algorithm* with the
 `GraspSelection1` production.
 
-A grasp selection algorithm is any function that takes the path to the object
+A grasp selection algorithm is any function that takes a description of the object
 being grasped and returns either:
 - a list of poses of the gripper's base frame with respect to the object
   (the last pose is the grasp pose), or
 - a single grasp pose.
+
+The type hint on the function's first parameter chooses what it receives:
+- `ObjectGeometry` gives it the object's collision shapes, with their poses in the object frame.
+- `ObjectDescription` gives it that geometry and the path to the object's model.
 
 The production calls the algorithm once when you call `easy_cast_and_build()`,
 has the gripper follow the resulting trajectory, closes the gripper, and then drops

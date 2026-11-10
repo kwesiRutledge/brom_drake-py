@@ -1,4 +1,5 @@
 from importlib import resources as impresources
+import inspect
 from typing import Callable, List, Tuple, Union
 from dataclasses import dataclass, field
 import networkx as nx
@@ -74,8 +75,15 @@ from brom_drake.utils.model_instances import (
 )
 from brom_drake.utils.triads import AddMultibodyTriad
 from .config import Configuration
+from .object_description import ObjectDescription, ObjectGeometry
 from .phases import GraspSelection1Phase
 from .script import Script as GraspSelection1Script
+
+GraspSelectionOutput = Union[List[RigidTransform], RigidTransform]
+GraspSelectionAlgorithm = Union[
+    Callable[[ObjectGeometry], GraspSelectionOutput],
+    Callable[[ObjectDescription], GraspSelectionOutput],
+]
 
 
 class GraspSelection1(BasicGraspingDebuggingProduction):
@@ -111,6 +119,17 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
     For the Robotiq 2F-85, the joint limits make commands below about 0.23 equivalent to
     fully open and commands above about 0.93 equivalent to fully closed.
 
+    *Grasp Selection Algorithms*
+
+    A grasp selection algorithm chooses its input with the type hint of its first parameter:
+
+    - ``ObjectGeometry``: The algorithm receives the object's collision shapes, with their
+      poses in the object frame.
+    - ``ObjectDescription``: The algorithm receives the object's geometry and the path to its model.
+
+    An algorithm without a type hint receives an ``ObjectDescription``.
+    Both types are defined in :py:mod:`brom_drake.productions.grasping.object_description`.
+
     *Parameters*
 
     path_to_object: str
@@ -142,13 +161,14 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
 
         from brom_drake.all import GripperType
         from brom_drake.productions.grasping.grasp_selection import GraspSelection1
+        from brom_drake.productions.grasping.object_description import ObjectGeometry
 
         # Create erlenmeyer flask urdf
         model_file = ... # Some path to your urdf file
 
         # Define a grasp selection algorithm that returns the following poses (transforms)
         # of the gripper with respect to the object:
-        def my_grasp_selection_algorithm(path_to_object: str) -> List[RigidTransform]:
+        def my_grasp_selection_algorithm(geometry: ObjectGeometry) -> List[RigidTransform]:
             # - The Grasp Pose (i.e. the target pose of the gripper wrist when grasping the object)
             X_ObjectTarget = RigidTransform(
                 p=np.array([-0.08, 0.05, 0.2]),
@@ -903,10 +923,7 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
 
     def cast_grasp_selection_algorithm(
         self,
-        grasp_selection_algorithm: Callable[
-            [str],
-            List[RigidTransform] | RigidTransform,
-        ],
+        grasp_selection_algorithm: GraspSelectionAlgorithm,
     ) -> List[RigidTransform]:
         """
         *Description*
@@ -921,8 +938,9 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
 
         *Parameters*
 
-        grasp_selection_algorithm: Callable[[str], List[RigidTransform] | RigidTransform]
-            A function that takes the path to the object being grasped and returns either:
+        grasp_selection_algorithm: GraspSelectionAlgorithm
+            A function that takes an ObjectGeometry or an ObjectDescription of the object
+            being grasped (according to the type hint of its first parameter) and returns either:
             - a sequence of poses of the Gripper Frame with respect to the object
               (the last pose is the grasp pose), or
             - a single pose of the Gripper Frame with respect to the object (the grasp pose).
@@ -933,7 +951,10 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
             The trajectory of the Gripper Frame that will be used in the production.
         """
         # Setup
-        algorithm_output = grasp_selection_algorithm(self.path_to_object)
+        algorithm_input = self.create_input_for_grasp_selection_algorithm(
+            grasp_selection_algorithm
+        )
+        algorithm_output = grasp_selection_algorithm(algorithm_input)
 
         # Convert the output into a list of poses
         if isinstance(algorithm_output, RigidTransform):
@@ -962,12 +983,57 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
 
         return X_ObjectGripper_trajectory
 
+    def create_input_for_grasp_selection_algorithm(
+        self,
+        grasp_selection_algorithm: GraspSelectionAlgorithm,
+    ) -> Union[ObjectGeometry, ObjectDescription]:
+        """
+        *Description*
+
+        This method creates the input that the grasp selection algorithm
+        asks for with the type hint of its first parameter.
+
+        *Parameters*
+
+        grasp_selection_algorithm: GraspSelectionAlgorithm
+            The algorithm that will receive the input.
+
+        *Returns*
+
+        algorithm_input: ObjectGeometry or ObjectDescription
+            The geometry of this production's object if the algorithm's first parameter is
+            hinted as ObjectGeometry. Otherwise, the description of this production's object.
+        """
+        # Find the type that the algorithm asks for
+        parameters = list(
+            inspect.signature(
+                grasp_selection_algorithm, eval_str=True
+            ).parameters.values()
+        )
+        requested_type = (
+            parameters[0].annotation if len(parameters) > 0 else inspect.Parameter.empty
+        )
+
+        if requested_type not in (
+            ObjectGeometry,
+            ObjectDescription,
+            inspect.Parameter.empty,
+        ):
+            raise TypeError(
+                "The first parameter of the grasp selection algorithm must be hinted as "
+                + f"ObjectGeometry or ObjectDescription (or have no hint); received {requested_type}."
+            )
+
+        # Create the input
+        description = ObjectDescription.from_model_file(self.path_to_object)
+        if requested_type is ObjectGeometry:
+            return description.geometry
+
+        return description
+
     def easy_cast_and_build(
         self,
-        grasp_selection_algorithm: Callable[
-            [str],
-            List[RigidTransform] | RigidTransform,
-        ],
+        grasp_selection_algorithm: GraspSelectionAlgorithm,
         with_watcher: bool = False,
     ) -> Tuple[Diagram, Context]:
         """
@@ -978,9 +1044,9 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
 
         *Parameters*
 
-        grasp_selection_algorithm: Callable[[str], List[RigidTransform] | RigidTransform]
-            A function that takes the path to the object being grasped and returns
-            the trajectory of the Gripper Frame with respect to the object
+        grasp_selection_algorithm: GraspSelectionAlgorithm
+            A function that takes an ObjectGeometry or an ObjectDescription of the object
+            being grasped and returns the trajectory of the Gripper Frame with respect to the object
             (or just the grasp pose). See cast_grasp_selection_algorithm() for details.
 
         with_watcher: bool, optional

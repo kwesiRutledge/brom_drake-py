@@ -10,6 +10,10 @@ from brom_drake.productions.grasping.config import (
     Configuration as GraspSelection1Configuration,
 )
 from brom_drake.productions.grasping.grasp_selection import GraspSelection1
+from brom_drake.productions.grasping.object_description import (
+    ObjectDescription,
+    ObjectGeometry,
+)
 from brom_drake.productions.grasping.phases import GraspSelection1Phase
 from brom_drake.productions.grasping.script import Script as GraspSelection1Script
 
@@ -64,7 +68,9 @@ class TestGraspSelection1Production(unittest.TestCase):
             config=config,
         )
 
-    def two_waypoint_algorithm(self, path_to_object: str) -> List[RigidTransform]:
+    def two_waypoint_algorithm(
+        self, object_description: ObjectDescription
+    ) -> List[RigidTransform]:
         """
         Description
         -----------
@@ -184,7 +190,7 @@ class TestGraspSelection1Production(unittest.TestCase):
 
         # Build
         diagram, diagram_context = production.easy_cast_and_build(
-            lambda path_to_object: [X_ObjectGripper_far, X_ObjectGripper_far],
+            lambda object_description: [X_ObjectGripper_far, X_ObjectGripper_far],
         )
         plant = production.plant
         plant_context = plant.GetMyContextFromRoot(diagram_context)
@@ -256,27 +262,93 @@ class TestGraspSelection1Production(unittest.TestCase):
         Description
         -----------
         This test verifies that the method:
-        - calls the algorithm with the path to the object,
+        - calls an algorithm hinted with ObjectDescription with the object's description,
         - saves the returned list of poses as the gripper trajectory, and
         - saves the last pose as the grasp pose.
         """
         # Setup
         production = self.create_production()
-        received_paths = []
+        received_inputs = []
 
-        def algorithm(path_to_object: str) -> List[RigidTransform]:
-            received_paths.append(path_to_object)
+        def algorithm(object_description: ObjectDescription) -> List[RigidTransform]:
+            received_inputs.append(object_description)
             return [self.X_ObjectPreGrasp, self.X_ObjectGrasp]
 
         # Cast the algorithm
         trajectory = production.cast_grasp_selection_algorithm(algorithm)
 
         # Verify
-        self.assertEqual(received_paths, [str(self.manipuland_file)])
+        self.assertEqual(len(received_inputs), 1)
+        self.assertIsInstance(received_inputs[0], ObjectDescription)
+        self.assertEqual(received_inputs[0].path_to_object, str(self.manipuland_file))
+        self.assertGreater(len(received_inputs[0].geometry.collision_shapes), 0)
         self.assertEqual(len(trajectory), 2)
         self.assertIs(production.X_ObjectGripper_trajectory, trajectory)
         self.assertTrue(production.X_ObjectGripper.IsExactlyEqualTo(self.X_ObjectGrasp))
         self.assertIs(production.grasp_selection_algorithm, algorithm)
+
+    def test_cast_grasp_selection_algorithm5(self):
+        """
+        Description
+        -----------
+        This test verifies that an algorithm hinted with ObjectGeometry receives the geometry.
+        """
+        # Setup
+        production = self.create_production()
+        received_inputs = []
+
+        def algorithm(geometry: ObjectGeometry) -> RigidTransform:
+            received_inputs.append(geometry)
+            return self.X_ObjectGrasp
+
+        # Cast the algorithm
+        production.cast_grasp_selection_algorithm(algorithm)
+
+        # Verify
+        self.assertEqual(len(received_inputs), 1)
+        self.assertIsInstance(received_inputs[0], ObjectGeometry)
+        self.assertGreater(len(received_inputs[0].collision_shapes), 0)
+
+    def test_cast_grasp_selection_algorithm6(self):
+        """
+        Description
+        -----------
+        This test verifies that an algorithm without a type hint receives the description.
+        """
+        # Setup
+        production = self.create_production()
+        received_inputs = []
+
+        def algorithm(object_input):
+            received_inputs.append(object_input)
+            return self.X_ObjectGrasp
+
+        # Cast the algorithm
+        production.cast_grasp_selection_algorithm(algorithm)
+
+        # Verify
+        self.assertIsInstance(received_inputs[0], ObjectDescription)
+
+    def test_cast_grasp_selection_algorithm7(self):
+        """
+        Description
+        -----------
+        This test verifies that the method raises a TypeError
+        (and does not call the algorithm) when the algorithm asks for an unsupported input.
+        """
+        # Setup
+        production = self.create_production()
+        received_inputs = []
+
+        def algorithm(path_to_object: str) -> RigidTransform:
+            received_inputs.append(path_to_object)
+            return self.X_ObjectGrasp
+
+        # Verify
+        with self.assertRaises(TypeError):
+            production.cast_grasp_selection_algorithm(algorithm)
+
+        self.assertEqual(received_inputs, [])
 
     def test_cast_grasp_selection_algorithm2(self):
         """
@@ -290,7 +362,7 @@ class TestGraspSelection1Production(unittest.TestCase):
 
         # Cast the algorithm
         trajectory = production.cast_grasp_selection_algorithm(
-            lambda path_to_object: self.X_ObjectGrasp
+            lambda object_description: self.X_ObjectGrasp
         )
 
         # Verify
@@ -309,7 +381,7 @@ class TestGraspSelection1Production(unittest.TestCase):
 
         # Verify
         with self.assertRaises(ValueError):
-            production.cast_grasp_selection_algorithm(lambda path_to_object: [])
+            production.cast_grasp_selection_algorithm(lambda object_description: [])
 
         self.assertIsNone(production.X_ObjectGripper_trajectory)
 
@@ -326,7 +398,7 @@ class TestGraspSelection1Production(unittest.TestCase):
         # Verify
         with self.assertRaises(TypeError):
             production.cast_grasp_selection_algorithm(
-                lambda path_to_object: [self.X_ObjectGrasp, np.eye(4)]
+                lambda object_description: [self.X_ObjectGrasp, np.eye(4)]
             )
 
         self.assertIsNone(production.X_ObjectGripper_trajectory)
@@ -421,7 +493,7 @@ class TestGraspSelection1Production(unittest.TestCase):
 
         # Build with watcher
         diagram, diagram_context = production.easy_cast_and_build(
-            lambda path_to_object: [X_ObjectGripper_far, X_ObjectGripper_far],
+            lambda object_description: [X_ObjectGripper_far, X_ObjectGripper_far],
             with_watcher=True,
         )
         watcher = production.watcher
