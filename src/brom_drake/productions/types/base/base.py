@@ -417,6 +417,7 @@ class BaseProduction:
         """
         pass
 
+    @property
     def suggested_roles(self) -> List[Role]:
         """
         *Description*

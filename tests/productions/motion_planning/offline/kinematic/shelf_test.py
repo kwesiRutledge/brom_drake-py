@@ -23,7 +23,7 @@ class ShelfTest(unittest.TestCase):
         # Check that defaults are in place
         self.assertEqual(shelf_planning_production.id, ProductionID.kShelfPlanning1)
         self.assertEqual(
-            shelf_planning_production.suggested_roles(), [kKinematicMotionPlanner]
+            shelf_planning_production.suggested_roles, [kKinematicMotionPlanner]
         )
 
         # Populate production with builder

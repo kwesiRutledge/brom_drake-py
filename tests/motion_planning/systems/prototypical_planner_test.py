@@ -97,7 +97,7 @@ class TestPrototypicalPlannerSystem(unittest.TestCase):
         )
 
         # Build production
-        production1.fill_role(production1.suggested_roles()[0], system1)
+        production1.fill_role(production1.suggested_roles[0], system1)
         diagram, diagram_context = production1.build_production()
 
         system1.set_internal_root_context(diagram_context)
@@ -164,7 +164,7 @@ class TestPrototypicalPlannerSystem(unittest.TestCase):
         )
 
         # Add the prototypical planner to the production
-        role1 = production1.suggested_roles()[0]
+        role1 = production1.suggested_roles[0]
         production1.fill_role(role1, prototypical_planner)
 
         diagram, diagram_context = production1.build_production()
