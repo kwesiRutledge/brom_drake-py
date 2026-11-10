@@ -97,7 +97,7 @@ def main():
     production = GraspSelection1(
         path_to_object=str(drakeified_flask_urdf),
         gripper_choice=GripperType.Robotiq_2f_85,
-        grasp_joint_positions=np.array([0.7]),
+        grasp_gripper_command=np.array([0.7]),
         meshcat_port_number=7001,  # Use None for CI
         config=GraspSelection1Configuration(),
     )

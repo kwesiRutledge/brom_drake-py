@@ -388,6 +388,54 @@ class GripperController(LeafSystem):
 
         output.SetFromVector(tau)
 
+    def find_joint_positions_for_position_target(self, target: float) -> np.ndarray:
+        """
+        *Description*
+
+        Finds the joint positions of the gripper at which a position target
+        (given in the units of the "gripper_target" port) is satisfied.
+        Targets that the gripper cannot reach are clamped to its joint limits.
+
+        *Parameters*
+
+        target: float
+            The position target (0.0 asks for the fingers to be a full gripper width apart).
+
+        *Returns*
+
+        joint_positions: np.ndarray of shape (6,)
+            The positions of all of the gripper's joints,
+            respecting the mimic relationships in the gripper's URDF.
+        """
+        # Setup
+        mimic_multipliers = np.array([1.0, -1.0, 1.0, 1.0, -1.0, 1.0])
+        finger_joint = self.plant.GetJointByName("finger_joint")
+        q_open = finger_joint.position_lower_limits()[0]
+        q_closed = finger_joint.position_upper_limits()[0]
+
+        def finger_position_at(q: float) -> float:
+            state = np.hstack([q * mimic_multipliers, np.zeros(6)])
+            return np.mean(self.ComputePosition(state))
+
+        desired_finger_position = self.gripper_width * (1.0 - target)
+
+        # Clamp unreachable targets
+        if desired_finger_position >= finger_position_at(q_open):
+            return q_open * mimic_multipliers
+        if desired_finger_position <= finger_position_at(q_closed):
+            return q_closed * mimic_multipliers
+
+        # Bisect for the angle of the joint which all others mimic
+        # (the fingers get closer together as the angle increases)
+        for _ in range(50):
+            q_middle = 0.5 * (q_open + q_closed)
+            if finger_position_at(q_middle) > desired_finger_position:
+                q_open = q_middle
+            else:
+                q_closed = q_middle
+
+        return 0.5 * (q_open + q_closed) * mimic_multipliers
+
     def initialize_gains(self, Kp: np.ndarray, Kd: np.ndarray):
         """
         *Description*

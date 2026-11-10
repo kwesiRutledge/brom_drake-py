@@ -55,17 +55,11 @@ class TestGraspSelection1Production(unittest.TestCase):
         -----------
         Creates a GraspSelection1 production for the Erlenmeyer flask
         and the Robotiq 2f-85 gripper.
-
-        A fresh configuration is created for each production
-        (to avoid sharing the default configuration between tests).
         """
-        if config is None:
-            config = GraspSelection1Configuration()
-
         return GraspSelection1(
             path_to_object=str(self.manipuland_file),
             gripper_choice=GripperType.Robotiq_2f_85,
-            grasp_joint_positions=np.array([0.7]),
+            grasp_gripper_command=np.array([0.7]),
             meshcat_port_number=None,  # Use None for CI
             config=config,
         )
@@ -90,7 +84,7 @@ class TestGraspSelection1Production(unittest.TestCase):
             GraspSelection1(
                 path_to_object=str(self.manipuland_file),
                 gripper_choice=GripperType.NoGripper,
-                grasp_joint_positions=np.array([0.7]),
+                grasp_gripper_command=np.array([0.7]),
                 config=GraspSelection1Configuration(),
             )
 
@@ -107,6 +101,129 @@ class TestGraspSelection1Production(unittest.TestCase):
         # Verify
         self.assertIsNone(production.X_ObjectGripper_trajectory)
         self.assertIsNone(production.grasp_selection_algorithm)
+
+    def test_init3(self):
+        """
+        Description
+        -----------
+        This test verifies that the initial gripper command
+        is zero when the configuration does not specify it.
+        """
+        # Setup
+        production = self.create_production()
+
+        # Verify
+        np.testing.assert_array_equal(
+            production.initial_gripper_command, np.zeros((1,))
+        )
+
+    def test_init4(self):
+        """
+        Description
+        -----------
+        This test verifies that the constructor uses the initial
+        gripper command from the configuration (given as a list).
+        """
+        # Setup
+        production = self.create_production(
+            config=GraspSelection1Configuration(initial_gripper_command=[0.3])
+        )
+
+        # Verify
+        np.testing.assert_array_equal(
+            production.initial_gripper_command, np.array([0.3])
+        )
+
+    def test_init5(self):
+        """
+        Description
+        -----------
+        This test verifies that the constructor raises a ValueError when the
+        initial gripper command does not match the shape of the grasp gripper command.
+        """
+        # Verify
+        with self.assertRaises(ValueError):
+            self.create_production(
+                config=GraspSelection1Configuration(initial_gripper_command=[0.3, 0.3])
+            )
+
+    def test_init6(self):
+        """
+        Description
+        -----------
+        This test verifies that productions created without a configuration
+        do not share one (the constructor writes the Meshcat port into it).
+        """
+        # Setup
+        production1 = self.create_production()
+        production2 = GraspSelection1(
+            path_to_object=str(self.manipuland_file),
+            gripper_choice=GripperType.Robotiq_2f_85,
+            grasp_gripper_command=np.array([0.7]),
+            meshcat_port_number=7001,
+        )
+
+        # Verify
+        self.assertIsNot(production1.config, production2.config)
+        self.assertIsNone(production1.config.base.meshcat_port_number)
+        self.assertEqual(production2.config.base.meshcat_port_number, 7001)
+
+    def test_initial_gripper_command1(self):
+        """
+        Description
+        -----------
+        This test verifies that the gripper starts partially closed when the
+        configuration asks it to, with its joints respecting the URDF's mimic signs,
+        and that it holds that position before it starts closing.
+        """
+        # Setup
+        X_ObjectGripper_far = RigidTransform(p=np.array([-0.2, 0.0, 0.5]))
+        production = self.create_production(
+            config=GraspSelection1Configuration(initial_gripper_command=[0.5])
+        )
+
+        # Build
+        diagram, diagram_context = production.easy_cast_and_build(
+            lambda path_to_object: [X_ObjectGripper_far, X_ObjectGripper_far],
+        )
+        plant = production.plant
+        plant_context = plant.GetMyContextFromRoot(diagram_context)
+
+        # Verify the start (index 0 of the gripper's positions belongs to the puppet)
+        q_start = plant.GetPositions(plant_context, production.gripper_model_index)[1:]
+        self.assertGreater(q_start[0], 0.2)
+        np.testing.assert_allclose(
+            q_start, q_start[0] * np.array([1.0, -1.0, 1.0, 1.0, -1.0, 1.0])
+        )
+
+        # Verify that the joints are still near their initial positions after some time
+        simulator = Simulator(diagram, diagram_context)
+        simulator.Initialize()
+
+        for t in [0.01, 0.1, 1.0]:
+            simulator.AdvanceTo(t)
+            q_later = plant.GetPositions(plant_context, production.gripper_model_index)[
+                1:
+            ]
+            np.testing.assert_allclose(q_later, q_start, atol=0.02)
+
+    def test_initial_gripper_command2(self):
+        """
+        Description
+        -----------
+        This test verifies that the gripper starts fully open by default.
+        """
+        # Setup
+        production = self.create_production()
+
+        # Build
+        _, diagram_context = production.easy_cast_and_build(self.two_waypoint_algorithm)
+        plant = production.plant
+        plant_context = plant.GetMyContextFromRoot(diagram_context)
+
+        # Verify
+        q_start = plant.GetPositions(plant_context, production.gripper_model_index)[1:]
+        np.testing.assert_allclose(q_start, np.zeros((6,)), atol=1e-9)
 
     def test_suggested_roles1(self):
         """
