@@ -15,6 +15,12 @@ Classes
    :members:
 .. autoclass:: brom_drake.productions.grasping.grasp_selection.GraspSelection1
    :members:
+.. autoclass:: brom_drake.productions.grasping.object_description.ObjectCollisionShape
+   :members:
+.. autoclass:: brom_drake.productions.grasping.object_description.ObjectDescription
+   :members:
+.. autoclass:: brom_drake.productions.grasping.object_description.ObjectGeometry
+   :members:
 .. autoclass:: brom_drake.productions.grasping.phases.GraspSelection1Phase
    :members:
 .. autoclass:: brom_drake.productions.grasping.script.Script
