@@ -2,7 +2,7 @@
 description: Propose one evidence-based, Sphinx-compatible documentation improvement.
 on:
   schedule:
-    - cron: "0 9 * * 1"
+    - cron: "0 9 * * 1-5"
   workflow_dispatch:
 permissions:
   contents: read
