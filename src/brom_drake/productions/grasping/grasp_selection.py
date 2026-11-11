@@ -1017,7 +1017,9 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
         """
         # Find the type that the algorithm asks for
         parameters = list(
-            inspect.signature(grasp_selection_algorithm, eval_str=True).parameters.values()
+            inspect.signature(
+                grasp_selection_algorithm, eval_str=True
+            ).parameters.values()
         )
         requested_type = (
             parameters[0].annotation if len(parameters) > 0 else inspect.Parameter.empty
