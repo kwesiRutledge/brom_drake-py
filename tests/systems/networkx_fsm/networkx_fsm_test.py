@@ -530,6 +530,19 @@ class TestNetworkXFSM(unittest.TestCase):
         output1_log_data = output1_log.data().flatten()
         self.assertEqual(int(output1_log_data[-1]), 1)
 
+    def test_default_configuration1(self):
+        """
+        Description
+        -----------
+        This test verifies that FSMs created without a configuration do not share one.
+        """
+        # Setup
+        fsm1 = NetworkXFSM(self.createSimpleTwoNodeFSM())
+        fsm2 = NetworkXFSM(self.createSimpleTwoNodeFSM())
+
+        # Verify
+        self.assertIsNot(fsm1.config, fsm2.config)
+
 
 if __name__ == "__main__":
     unittest.main()

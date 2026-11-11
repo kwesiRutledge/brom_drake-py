@@ -43,6 +43,23 @@ class TestGraspSelection1Configuration(unittest.TestCase):
         self.assertNotEqual(config2.script.drop_time, 1234.0)
         self.assertNotEqual(config2.base.time_step, 0.5)
 
+    def test_defaults3(self):
+        """
+        Description
+        -----------
+        This test verifies that the default gains of the gripper's puppet have one value
+        per puppet joint and are not shared between Configurations.
+        """
+        # Setup
+        config1 = GraspSelection1Configuration()
+        config2 = GraspSelection1Configuration()
+
+        # Verify
+        self.assertEqual(len(config1.gripper_puppet_Kp), 6)
+        self.assertEqual(len(config1.gripper_puppet_Kd), 6)
+        self.assertIsNot(config1.gripper_puppet_Kp, config2.gripper_puppet_Kp)
+        self.assertIsNot(config1.gripper_puppet_Kd, config2.gripper_puppet_Kd)
+
     def test_meshcat_port_number1(self):
         """
         Description

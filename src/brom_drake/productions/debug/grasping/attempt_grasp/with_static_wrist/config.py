@@ -15,7 +15,9 @@ class Configuration:
         default_factory=BaseConfiguration
     )  # By default, use the standard script
     show_collision_geometries: bool = False
-    initial_gripper_joint_positions: Union[List[float], np.ndarray] = None
+    # The normalized gripper command (0 is fully open; not a joint angle) that the gripper
+    # starts at and holds until it begins closing. None starts the gripper fully open.
+    initial_gripper_command: Union[List[float], np.ndarray] = None
     target_body_on_gripper: str = (
         None  # The "Gripper" Frame that we use to define X_GripperObject
     )

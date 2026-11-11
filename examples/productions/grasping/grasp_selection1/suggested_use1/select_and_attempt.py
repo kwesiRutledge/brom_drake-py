@@ -15,9 +15,12 @@ from brom_drake.productions.grasping.config import (
     Configuration as GraspSelection1Configuration,
 )
 from brom_drake.productions.grasping.grasp_selection import GraspSelection1
+from brom_drake.productions.grasping.object_description import ObjectDescription
 
 
-def side_grasp_selection_algorithm(path_to_object: str) -> List[RigidTransform]:
+def side_grasp_selection_algorithm(
+    object_description: ObjectDescription,
+) -> List[RigidTransform]:
     """
     *Description*
 
@@ -27,14 +30,14 @@ def side_grasp_selection_algorithm(path_to_object: str) -> List[RigidTransform]:
     - moves to an intermediate pose closer to the object, and
     - ends at the grasp pose.
 
-    A real grasp selection algorithm would inspect the model at ``path_to_object``
-    (e.g., its meshes or bounding box) to choose the grasp. This one always returns
+    A real grasp selection algorithm would inspect ``object_description.geometry``
+    (e.g., its collision shapes) to choose the grasp. This one always returns
     the same poses, which were chosen for the 500ml Erlenmeyer flask.
 
     *Parameters*
 
-    path_to_object: str
-        The path to the URDF/SDF of the object being grasped.
+    object_description: ObjectDescription
+        The path to the model of the object being grasped and the object's geometry.
 
     *Returns*
 
@@ -42,7 +45,11 @@ def side_grasp_selection_algorithm(path_to_object: str) -> List[RigidTransform]:
         The waypoints of the gripper's base frame with respect to the object.
         The last waypoint is the grasp pose.
     """
-    print(f"Selecting a grasp for the object at {path_to_object}")
+    n_shapes = len(object_description.geometry.collision_shapes)
+    print(
+        f"Selecting a grasp for the object at {object_description.path_to_object} "
+        + f"({n_shapes} collision shapes)"
+    )
 
     # The Grasp Pose (i.e. the target pose of the gripper wrist when grasping the object)
     X_ObjectGrasp = RigidTransform(
@@ -97,7 +104,7 @@ def main():
     production = GraspSelection1(
         path_to_object=str(drakeified_flask_urdf),
         gripper_choice=GripperType.Robotiq_2f_85,
-        grasp_joint_positions=np.array([0.7]),
+        grasp_gripper_command=np.array([0.7]),
         meshcat_port_number=7001,  # Use None for CI
         config=GraspSelection1Configuration(),
     )

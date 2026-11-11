@@ -10,6 +10,10 @@ from brom_drake.productions.grasping.config import (
     Configuration as GraspSelection1Configuration,
 )
 from brom_drake.productions.grasping.grasp_selection import GraspSelection1
+from brom_drake.productions.grasping.object_description import (
+    ObjectDescription,
+    ObjectGeometry,
+)
 from brom_drake.productions.grasping.phases import GraspSelection1Phase
 from brom_drake.productions.grasping.script import Script as GraspSelection1Script
 
@@ -55,22 +59,18 @@ class TestGraspSelection1Production(unittest.TestCase):
         -----------
         Creates a GraspSelection1 production for the Erlenmeyer flask
         and the Robotiq 2f-85 gripper.
-
-        A fresh configuration is created for each production
-        (to avoid sharing the default configuration between tests).
         """
-        if config is None:
-            config = GraspSelection1Configuration()
-
         return GraspSelection1(
             path_to_object=str(self.manipuland_file),
             gripper_choice=GripperType.Robotiq_2f_85,
-            grasp_joint_positions=np.array([0.7]),
+            grasp_gripper_command=np.array([0.7]),
             meshcat_port_number=None,  # Use None for CI
             config=config,
         )
 
-    def two_waypoint_algorithm(self, path_to_object: str) -> List[RigidTransform]:
+    def two_waypoint_algorithm(
+        self, object_description: ObjectDescription
+    ) -> List[RigidTransform]:
         """
         Description
         -----------
@@ -90,7 +90,7 @@ class TestGraspSelection1Production(unittest.TestCase):
             GraspSelection1(
                 path_to_object=str(self.manipuland_file),
                 gripper_choice=GripperType.NoGripper,
-                grasp_joint_positions=np.array([0.7]),
+                grasp_gripper_command=np.array([0.7]),
                 config=GraspSelection1Configuration(),
             )
 
@@ -107,6 +107,208 @@ class TestGraspSelection1Production(unittest.TestCase):
         # Verify
         self.assertIsNone(production.X_ObjectGripper_trajectory)
         self.assertIsNone(production.grasp_selection_algorithm)
+
+    def test_init3(self):
+        """
+        Description
+        -----------
+        This test verifies that the initial gripper command
+        is zero when the configuration does not specify it.
+        """
+        # Setup
+        production = self.create_production()
+
+        # Verify
+        np.testing.assert_array_equal(
+            production.initial_gripper_command, np.zeros((1,))
+        )
+
+    def test_init4(self):
+        """
+        Description
+        -----------
+        This test verifies that the constructor uses the initial
+        gripper command from the configuration (given as a list).
+        """
+        # Setup
+        production = self.create_production(
+            config=GraspSelection1Configuration(initial_gripper_command=[0.3])
+        )
+
+        # Verify
+        np.testing.assert_array_equal(
+            production.initial_gripper_command, np.array([0.3])
+        )
+
+    def test_init5(self):
+        """
+        Description
+        -----------
+        This test verifies that the constructor raises a ValueError when the
+        initial gripper command does not match the shape of the grasp gripper command.
+        """
+        # Verify
+        with self.assertRaises(ValueError):
+            self.create_production(
+                config=GraspSelection1Configuration(initial_gripper_command=[0.3, 0.3])
+            )
+
+    def test_init6(self):
+        """
+        Description
+        -----------
+        This test verifies that productions created without a configuration
+        do not share one (the constructor writes the Meshcat port into it).
+        """
+        # Setup
+        production1 = self.create_production()
+        production2 = GraspSelection1(
+            path_to_object=str(self.manipuland_file),
+            gripper_choice=GripperType.Robotiq_2f_85,
+            grasp_gripper_command=np.array([0.7]),
+            meshcat_port_number=7001,
+        )
+
+        # Verify
+        self.assertIsNot(production1.config, production2.config)
+        self.assertIsNone(production1.config.base.meshcat_port_number)
+        self.assertEqual(production2.config.base.meshcat_port_number, 7001)
+
+    def test_initial_gripper_command1(self):
+        """
+        Description
+        -----------
+        This test verifies that the gripper starts partially closed when the
+        configuration asks it to, with its joints respecting the URDF's mimic signs,
+        and that it holds that position before it starts closing.
+        """
+        # Setup
+        X_ObjectGripper_far = RigidTransform(p=np.array([-0.2, 0.0, 0.5]))
+        production = self.create_production(
+            config=GraspSelection1Configuration(initial_gripper_command=[0.5])
+        )
+
+        # Build
+        diagram, diagram_context = production.easy_cast_and_build(
+            lambda object_description: [X_ObjectGripper_far, X_ObjectGripper_far],
+        )
+        plant = production.plant
+        plant_context = plant.GetMyContextFromRoot(diagram_context)
+
+        # Verify the start (index 0 of the gripper's positions belongs to the puppet)
+        q_start = plant.GetPositions(plant_context, production.gripper_model_index)[1:]
+        self.assertGreater(q_start[0], 0.2)
+        np.testing.assert_allclose(
+            q_start, q_start[0] * np.array([1.0, -1.0, 1.0, 1.0, -1.0, 1.0])
+        )
+
+        # Verify that the joints are still near their initial positions after some time
+        simulator = Simulator(diagram, diagram_context)
+        simulator.Initialize()
+
+        for t in [0.01, 0.1, 1.0]:
+            simulator.AdvanceTo(t)
+            q_later = plant.GetPositions(plant_context, production.gripper_model_index)[
+                1:
+            ]
+            np.testing.assert_allclose(q_later, q_start, atol=0.02)
+
+    def test_initial_gripper_command2(self):
+        """
+        Description
+        -----------
+        This test verifies that the gripper starts fully open by default.
+        """
+        # Setup
+        production = self.create_production()
+
+        # Build
+        _, diagram_context = production.easy_cast_and_build(self.two_waypoint_algorithm)
+        plant = production.plant
+        plant_context = plant.GetMyContextFromRoot(diagram_context)
+
+        # Verify
+        q_start = plant.GetPositions(plant_context, production.gripper_model_index)[1:]
+        np.testing.assert_allclose(q_start, np.zeros((6,)), atol=1e-9)
+
+    def test_gripper_puppet_gains1(self):
+        """
+        Description
+        -----------
+        This test verifies that the constructor uses the gains from the configuration.
+        """
+        # Setup
+        Kp, Kd = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0], [6.0, 5.0, 4.0, 3.0, 2.0, 1.0]
+        production = self.create_production(
+            config=GraspSelection1Configuration(
+                gripper_puppet_Kp=Kp, gripper_puppet_Kd=Kd
+            )
+        )
+
+        # Verify
+        np.testing.assert_array_equal(production.gripper_puppet_Kp, np.array(Kp))
+        np.testing.assert_array_equal(production.gripper_puppet_Kd, np.array(Kd))
+
+    def test_gripper_puppet_gains2(self):
+        """
+        Description
+        -----------
+        This test verifies that the constructor raises a ValueError
+        when the gains do not have one value per puppet joint.
+        """
+        # Verify
+        with self.assertRaises(ValueError):
+            self.create_production(
+                config=GraspSelection1Configuration(gripper_puppet_Kp=[1.0, 2.0])
+            )
+
+        with self.assertRaises(ValueError):
+            self.create_production(
+                config=GraspSelection1Configuration(gripper_puppet_Kd=[1.0, 2.0])
+            )
+
+    def test_gripper_puppet_gains3(self):
+        """
+        Description
+        -----------
+        This test verifies that, with the default gains, the gripper
+        barely moves down when it takes the weight of the object from the floor.
+        """
+        # Setup
+        X_ObjectGrasp = RigidTransform(
+            p=np.array([-0.08, 0.05, 0.15]),
+            rpy=RollPitchYaw(0.1, (14.0 / 20.0) * np.pi, 0.1),
+        )
+        X_ObjectPreGrasp = X_ObjectGrasp.multiply(
+            RigidTransform(p=np.array([0.0, 0.0, -0.2]))
+        )
+        production = self.create_production()
+
+        # Build
+        diagram, diagram_context = production.easy_cast_and_build(
+            lambda object_description: [X_ObjectPreGrasp, X_ObjectGrasp]
+        )
+        plant = production.plant
+        plant_context = plant.GetMyContextFromRoot(diagram_context)
+        gripper_base = plant.GetBodyByName("robotiq_arg2f_base_link")
+
+        # Simulate until the floor starts to drop
+        script: GraspSelection1Script = production.config.script
+        t_drop_start = script.start_time_of_phase(GraspSelection1Phase.kFloorDrop)
+
+        simulator = Simulator(diagram, diagram_context)
+        simulator.Initialize()
+        simulator.AdvanceTo(t_drop_start)
+        z_at_drop = plant.EvalBodyPoseInWorld(
+            plant_context, gripper_base
+        ).translation()[2]
+
+        # Verify the height of the gripper while the object hangs from it
+        simulator.AdvanceTo(t_drop_start + 2.0)
+        z_later = plant.EvalBodyPoseInWorld(plant_context, gripper_base).translation()[
+            2
+        ]
+        self.assertAlmostEqual(z_later, z_at_drop, delta=5e-3)
 
     def test_suggested_roles1(self):
         """
@@ -139,27 +341,93 @@ class TestGraspSelection1Production(unittest.TestCase):
         Description
         -----------
         This test verifies that the method:
-        - calls the algorithm with the path to the object,
+        - calls an algorithm hinted with ObjectDescription with the object's description,
         - saves the returned list of poses as the gripper trajectory, and
         - saves the last pose as the grasp pose.
         """
         # Setup
         production = self.create_production()
-        received_paths = []
+        received_inputs = []
 
-        def algorithm(path_to_object: str) -> List[RigidTransform]:
-            received_paths.append(path_to_object)
+        def algorithm(object_description: ObjectDescription) -> List[RigidTransform]:
+            received_inputs.append(object_description)
             return [self.X_ObjectPreGrasp, self.X_ObjectGrasp]
 
         # Cast the algorithm
         trajectory = production.cast_grasp_selection_algorithm(algorithm)
 
         # Verify
-        self.assertEqual(received_paths, [str(self.manipuland_file)])
+        self.assertEqual(len(received_inputs), 1)
+        self.assertIsInstance(received_inputs[0], ObjectDescription)
+        self.assertEqual(received_inputs[0].path_to_object, str(self.manipuland_file))
+        self.assertGreater(len(received_inputs[0].geometry.collision_shapes), 0)
         self.assertEqual(len(trajectory), 2)
         self.assertIs(production.X_ObjectGripper_trajectory, trajectory)
         self.assertTrue(production.X_ObjectGripper.IsExactlyEqualTo(self.X_ObjectGrasp))
         self.assertIs(production.grasp_selection_algorithm, algorithm)
+
+    def test_cast_grasp_selection_algorithm5(self):
+        """
+        Description
+        -----------
+        This test verifies that an algorithm hinted with ObjectGeometry receives the geometry.
+        """
+        # Setup
+        production = self.create_production()
+        received_inputs = []
+
+        def algorithm(geometry: ObjectGeometry) -> RigidTransform:
+            received_inputs.append(geometry)
+            return self.X_ObjectGrasp
+
+        # Cast the algorithm
+        production.cast_grasp_selection_algorithm(algorithm)
+
+        # Verify
+        self.assertEqual(len(received_inputs), 1)
+        self.assertIsInstance(received_inputs[0], ObjectGeometry)
+        self.assertGreater(len(received_inputs[0].collision_shapes), 0)
+
+    def test_cast_grasp_selection_algorithm6(self):
+        """
+        Description
+        -----------
+        This test verifies that an algorithm without a type hint receives the description.
+        """
+        # Setup
+        production = self.create_production()
+        received_inputs = []
+
+        def algorithm(object_input):
+            received_inputs.append(object_input)
+            return self.X_ObjectGrasp
+
+        # Cast the algorithm
+        production.cast_grasp_selection_algorithm(algorithm)
+
+        # Verify
+        self.assertIsInstance(received_inputs[0], ObjectDescription)
+
+    def test_cast_grasp_selection_algorithm7(self):
+        """
+        Description
+        -----------
+        This test verifies that the method raises a TypeError
+        (and does not call the algorithm) when the algorithm asks for an unsupported input.
+        """
+        # Setup
+        production = self.create_production()
+        received_inputs = []
+
+        def algorithm(path_to_object: str) -> RigidTransform:
+            received_inputs.append(path_to_object)
+            return self.X_ObjectGrasp
+
+        # Verify
+        with self.assertRaises(TypeError):
+            production.cast_grasp_selection_algorithm(algorithm)
+
+        self.assertEqual(received_inputs, [])
 
     def test_cast_grasp_selection_algorithm2(self):
         """
@@ -173,7 +441,7 @@ class TestGraspSelection1Production(unittest.TestCase):
 
         # Cast the algorithm
         trajectory = production.cast_grasp_selection_algorithm(
-            lambda path_to_object: self.X_ObjectGrasp
+            lambda object_description: self.X_ObjectGrasp
         )
 
         # Verify
@@ -192,7 +460,7 @@ class TestGraspSelection1Production(unittest.TestCase):
 
         # Verify
         with self.assertRaises(ValueError):
-            production.cast_grasp_selection_algorithm(lambda path_to_object: [])
+            production.cast_grasp_selection_algorithm(lambda object_description: [])
 
         self.assertIsNone(production.X_ObjectGripper_trajectory)
 
@@ -209,7 +477,7 @@ class TestGraspSelection1Production(unittest.TestCase):
         # Verify
         with self.assertRaises(TypeError):
             production.cast_grasp_selection_algorithm(
-                lambda path_to_object: [self.X_ObjectGrasp, np.eye(4)]
+                lambda object_description: [self.X_ObjectGrasp, np.eye(4)]
             )
 
         self.assertIsNone(production.X_ObjectGripper_trajectory)
@@ -304,7 +572,7 @@ class TestGraspSelection1Production(unittest.TestCase):
 
         # Build with watcher
         diagram, diagram_context = production.easy_cast_and_build(
-            lambda path_to_object: [X_ObjectGripper_far, X_ObjectGripper_far],
+            lambda object_description: [X_ObjectGripper_far, X_ObjectGripper_far],
             with_watcher=True,
         )
         watcher = production.watcher

@@ -541,7 +541,7 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
             )
 
         # Cast the production using the prototypical planner
-        planner_role = self.suggested_roles()[0]
+        planner_role = self.suggested_roles[0]
 
         # Fulfill each role-performer pair in the casting_call list
         self.fill_role(planner_role, prototypical_planner)
@@ -767,6 +767,7 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
                 "This function should be implemented by the subclass."
             )
 
+    @property
     def suggested_roles(self) -> List[Role]:
         """
         *Description*

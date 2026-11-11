@@ -65,7 +65,7 @@ class ChemLab1Test(unittest.TestCase):
         )
 
         # Add the prototypical planner to the production
-        role1 = production1.suggested_roles()[0]
+        role1 = production1.suggested_roles[0]
         diagram, diagram_context = production1.add_cast_and_build(
             cast=[(role1, planning_system)],
         )

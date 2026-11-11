@@ -40,8 +40,12 @@ class ShowMeThisStaticGrasp(BasicGraspingDebuggingProduction):
         path_to_gripper: str,
         X_ObjectGripper: RigidTransform = None,
         gripper_joint_positions: Union[List[float], np.ndarray] = None,
-        config: ShowMeThisStaticGraspConfiguration = ShowMeThisStaticGraspConfiguration(),
+        config: ShowMeThisStaticGraspConfiguration = None,
     ):
+        # Each production gets its own configuration
+        if config is None:
+            config = ShowMeThisStaticGraspConfiguration()
+
         # Call the parent constructor
         super().__init__(
             path_to_object=path_to_object,

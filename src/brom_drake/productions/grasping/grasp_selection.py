@@ -1,4 +1,5 @@
 from importlib import resources as impresources
+import inspect
 from typing import Callable, List, Tuple, Union
 from dataclasses import dataclass, field
 import networkx as nx
@@ -49,7 +50,6 @@ from brom_drake.productions.roles.role import Role
 from brom_drake.systems.abstract_list_selection_system import (
     AbstractListSelectionSystem,
 )
-from brom_drake.systems.switches import FlexiblePortSwitch
 from brom_drake.systems.pose_composition import PoseCompositionSystem
 from brom_drake.systems.pose_memory_system import PoseMemorySystem
 from brom_drake.systems.network_fsm import NetworkXFSM
@@ -75,8 +75,15 @@ from brom_drake.utils.model_instances import (
 )
 from brom_drake.utils.triads import AddMultibodyTriad
 from .config import Configuration
+from .object_description import ObjectDescription, ObjectGeometry
 from .phases import GraspSelection1Phase
 from .script import Script as GraspSelection1Script
+
+GraspSelectionOutput = Union[List[RigidTransform], RigidTransform]
+GraspSelectionAlgorithm = Union[
+    Callable[[ObjectGeometry], GraspSelectionOutput],
+    Callable[[ObjectDescription], GraspSelectionOutput],
+]
 
 
 class GraspSelection1(BasicGraspingDebuggingProduction):
@@ -87,7 +94,7 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
 
     - An object to be grasped
     - A gripper
-    - The joint positions for the gripper to be in when performing the grasp
+    - The gripper command to apply when performing the grasp
     - A grasp selection algorithm that generates a pose trajectory for a given gripper frame
       (usually at the base of the gripper)
 
@@ -101,6 +108,28 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
     (an object of :py:class:`the corresponding Script type<brom_drake.productions.grasping.script.Script>`)
     accessible by accessing the ``config.script`` variable of this object.
 
+    *Gripper Commands*
+
+    How far the gripper is closed is specified with a *gripper command*: a unitless, normalized
+    number that is **not** a joint angle in radians. A command ``c`` asks the gripper controller to
+    place each finger pad a distance of ``width * (1 - c)`` from the center of the gripper, where
+    ``width`` is the controller's ``gripper_width`` (0.06 m for the Robotiq 2F-85).
+
+    A command of 0 is fully open and larger commands close the gripper further.
+    For the Robotiq 2F-85, the joint limits make commands below about 0.23 equivalent to
+    fully open and commands above about 0.93 equivalent to fully closed.
+
+    *Grasp Selection Algorithms*
+
+    A grasp selection algorithm chooses its input with the type hint of its first parameter:
+
+    - ``ObjectGeometry``: The algorithm receives the object's collision shapes, with their
+      poses in the object frame.
+    - ``ObjectDescription``: The algorithm receives the object's geometry and the path to its model.
+
+    An algorithm without a type hint receives an ``ObjectDescription``.
+    Both types are defined in :py:mod:`brom_drake.productions.grasping.object_description`.
+
     *Parameters*
 
     path_to_object: str
@@ -109,8 +138,9 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
     gripper_choice: GripperType
         An enum value from GripperType that specifies which gripper to use for the grasping attempt.
 
-    grasp_joint_positions: np.ndarray
-        An array of floats representing the joint positions the gripper should be in when performing the grasp.
+    grasp_gripper_command: np.ndarray
+        The gripper command (of shape (1,)) to close the gripper to when performing the grasp.
+        See *Gripper Commands* above.
 
     meshcat_port_number: int, optional
         The port number for Meshcat visualization.
@@ -118,21 +148,27 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
     config: Configuration, optional
         The configuration for the production.
         See the Configuration dataclass for more details.
-        Default is the standard Configuration.
+        Default is None, which creates a new Configuration with its default values.
 
     *Usage*
 
     The user can create an instance of this production and simulate it to see if the grasp is successful in the following way: ::
 
-        from brom_drake.all import drakeify_my_urdf, GripperType, MeshReplacementStrategy
+        from typing import List
+
+        import numpy as np
+        from pydrake.all import RigidTransform, RollPitchYaw, Simulator
+
+        from brom_drake.all import GripperType
         from brom_drake.productions.grasping.grasp_selection import GraspSelection1
+        from brom_drake.productions.grasping.object_description import ObjectGeometry
 
         # Create erlenmeyer flask urdf
         model_file = ... # Some path to your urdf file
 
         # Define a grasp selection algorithm that returns the following poses (transforms)
         # of the gripper with respect to the object:
-        def my_grasp_selection_algorithm(path_to_object: str) -> List[RigidTransform]:
+        def my_grasp_selection_algorithm(geometry: ObjectGeometry) -> List[RigidTransform]:
             # - The Grasp Pose (i.e. the target pose of the gripper wrist when grasping the object)
             X_ObjectTarget = RigidTransform(
                 p=np.array([-0.08, 0.05, 0.2]),
@@ -153,7 +189,7 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
         production = GraspSelection1(
             path_to_object=model_file,
             gripper_choice=GripperType.Robotiq_2f_85,
-            grasp_joint_positions=np.array([0.7]),
+            grasp_gripper_command=np.array([0.7]),
             meshcat_port_number=7001, # Use None for CI
         )
 
@@ -170,7 +206,7 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
         simulator.Initialize()
         simulator.AdvanceTo(script.total_time())
 
-    There are also several examples in the `examples/productions/debug/grasping/attempt_grasp_with_puppeteer_wrist` folder.
+    There is also a complete example in the `examples/productions/grasping/grasp_selection1/suggested_use1` folder.
 
     """
 
@@ -178,13 +214,15 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
         self,
         path_to_object: str,
         gripper_choice: GripperType,
-        grasp_joint_positions: np.ndarray,
+        grasp_gripper_command: np.ndarray,
         meshcat_port_number: int = None,
-        config: Configuration = Configuration(),
+        config: Configuration = None,
     ):
         """
         *Description*
 
+        Creates the production. The grasp selection algorithm is provided later,
+        when the production is built with easy_cast_and_build().
 
         *Parameters*
 
@@ -194,8 +232,10 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
         gripper_choice: GripperType
             An enum value from GripperType that specifies which gripper to use for the grasping attempt.
 
-        grasp_joint_positions: np.ndarray
-            An array of floats representing the joint positions the gripper should be in when performing the grasp.
+        grasp_gripper_command: np.ndarray
+            The gripper command (of shape (1,)) to close the gripper to when performing the grasp.
+            This is a normalized command, not a joint angle.
+            See the class documentation for the definition of a gripper command.
 
         meshcat_port_number: int, optional
             The port number for Meshcat visualization.
@@ -203,8 +243,12 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
         config: Configuration, optional
             The configuration for the production.
             See the Configuration dataclass for more details.
-            Default is the standard Configuration.
+            Default is None, which creates a new Configuration with its default values.
         """
+        # Each production gets its own configuration, because the constructor modifies it
+        if config is None:
+            config = Configuration()
+
         # Use the enum to choose the gripper URDF from a set of supported grippers
         if gripper_choice == GripperType.Robotiq_2f_85:
             path_to_gripper = str(
@@ -235,7 +279,7 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
         # This will define the following fields for the production:
         # - path_to_object
         # - path_to_gripper
-        # - X_ObjectTarget
+        # - X_ObjectGripper
         # - meshcat_port_number
         # - time_step
         # - target_body_on_gripper
@@ -245,11 +289,30 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
         # - plant
         # - scene_graph
 
-        # TODO(kwesi): Figure out a better way to CHECK the initial joint positions
-        # Create INITIAL joint position array
-        self.initial_gripper_joint_positions = np.zeros(
-            grasp_joint_positions.shape
-        )  # initial_gripper_joint_positions
+        # Collect the gains of the controller for the gripper's puppet (one per puppet joint)
+        self.gripper_puppet_Kp = np.array(config.gripper_puppet_Kp, dtype=float)
+        self.gripper_puppet_Kd = np.array(config.gripper_puppet_Kd, dtype=float)
+
+        if self.gripper_puppet_Kp.shape != (6,) or self.gripper_puppet_Kd.shape != (6,):
+            raise ValueError(
+                "Expected config.gripper_puppet_Kp and config.gripper_puppet_Kd to have shape (6,); "
+                + f"received shapes {self.gripper_puppet_Kp.shape} and {self.gripper_puppet_Kd.shape}."
+            )
+
+        # Create INITIAL gripper command (the gripper starts fully open, by default)
+        if config.initial_gripper_command is None:
+            self.initial_gripper_command = np.zeros(grasp_gripper_command.shape)
+        else:
+            self.initial_gripper_command = np.array(
+                config.initial_gripper_command, dtype=float
+            )
+
+        if self.initial_gripper_command.shape != grasp_gripper_command.shape:
+            raise ValueError(
+                "Expected config.initial_gripper_command to have the same shape "
+                + f"as grasp_gripper_command ({grasp_gripper_command.shape}); "
+                + f"received shape {self.initial_gripper_command.shape}."
+            )
 
         # Create empty variables for the trajectory of the gripper frame
         # and the algorithm that generates it (defined in easy_cast_and_build())
@@ -258,7 +321,7 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
         self.X_ObjectGripper_trajectory = None
         self.grasp_selection_algorithm = None
 
-        self.grasp_joint_positions = grasp_joint_positions
+        self.grasp_gripper_command = grasp_gripper_command
         self.config = config
 
         # Add Name to plantPlant and Scene Graph for easy simulation
@@ -269,6 +332,9 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
 
         # Create empty variable for the system that holds the gripper's desired pose
         self.gripper_pose_memory = None
+
+        # Create empty variable for the controller of the gripper's joints
+        self.gripper_controller = None
 
         self.floor_model_index = None
         self.floor_actuator = None
@@ -604,6 +670,7 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
             ),
         )
         gripper_controller.set_name("[Gripper] Gripper Controller")
+        self.gripper_controller = gripper_controller
 
         # Connect the gripper controller to the gripper
         builder.Connect(
@@ -661,20 +728,21 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
         *Description*
 
         This method creates a LeafSystem that outputs a PiecewisePolynomial
-        trajectory for the gripper joints to follow during the grasping attempt.
+        trajectory of gripper commands to follow during the grasping attempt.
+        (See the class documentation for the definition of a gripper command.)
 
         *Returns*
 
         gripper_trajectory_source: TrajectorySource
-            A TrajectorySource system that outputs the desired gripper joint trajectory.
+            A TrajectorySource system that outputs the desired gripper command trajectory.
         """
         # Setup
         builder: DiagramBuilder = self.builder
         script: GraspSelection1Script = self.config.script
 
-        # Collect gripper initial and final positions
-        p_gripper0 = self.initial_gripper_joint_positions
-        p_gripper_final = self.grasp_joint_positions
+        # Collect the initial and final gripper commands
+        initial_command = self.initial_gripper_command
+        final_command = self.grasp_gripper_command
 
         # Find times for each phase
         t_gripper_close_start = script.start_time_of_phase(
@@ -685,14 +753,14 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
         )
 
         # Create a piecewise trajectory for the gripper to follow
-        joint_position_samples = []
-        joint_position_samples.append(
-            p_gripper0.reshape(-1, 1).tolist()
+        command_samples = []
+        command_samples.append(
+            initial_command.reshape(-1, 1).tolist()
         )  # This wild compression is needed because of bugs in Drake. :'(
-        joint_position_samples.append(p_gripper0.reshape(-1, 1).tolist())
-        joint_position_samples.append(p_gripper_final.reshape(-1, 1).tolist())
+        command_samples.append(initial_command.reshape(-1, 1).tolist())
+        command_samples.append(final_command.reshape(-1, 1).tolist())
         gripper_trajectory = PiecewisePolynomial.FirstOrderHold(
-            samples=joint_position_samples,
+            samples=command_samples,
             breaks=[0.0, t_gripper_close_start, t_object_settling_in_grasp_start],
         )
 
@@ -787,7 +855,8 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
             maker0.add_puppet_controller_for(
                 self.puppet_signature,
                 self.builder,
-                Kp=np.array([1e2, 1e2, 1e2, 1e1, 1e1, 6e0]),
+                Kp=self.gripper_puppet_Kp,
+                Kd=self.gripper_puppet_Kd,
             )
         )
 
@@ -818,9 +887,7 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
 
         return executive
 
-    def create_floor_trajectory_source(
-        self, z_floor: float
-    ) -> Tuple[FlexiblePortSwitch]:
+    def create_floor_trajectory_source(self, z_floor: float) -> OpenLoopPlanDispenser:
         """
         *Description*
 
@@ -834,10 +901,9 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
 
         *Returns*
 
-        floor_target_height_source: FlexiblePortSwitch
+        floor_target_height_source: OpenLoopPlanDispenser
             A LeafSystem which outputs a reference trajectory for the floor height during the production.
-            It is a "switch" system that can switch between different input ports
-            based on the executive's commands.
+            It holds the floor at its initial height until the executive triggers its "plan_ready" input.
         """
         # Setup
         builder: DiagramBuilder = self.builder
@@ -868,10 +934,7 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
 
     def cast_grasp_selection_algorithm(
         self,
-        grasp_selection_algorithm: Callable[
-            [str],
-            List[RigidTransform] | RigidTransform,
-        ],
+        grasp_selection_algorithm: GraspSelectionAlgorithm,
     ) -> List[RigidTransform]:
         """
         *Description*
@@ -886,8 +949,9 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
 
         *Parameters*
 
-        grasp_selection_algorithm: Callable[[str], List[RigidTransform] | RigidTransform]
-            A function that takes the path to the object being grasped and returns either:
+        grasp_selection_algorithm: GraspSelectionAlgorithm
+            A function that takes an ObjectGeometry or an ObjectDescription of the object
+            being grasped (according to the type hint of its first parameter) and returns either:
             - a sequence of poses of the Gripper Frame with respect to the object
               (the last pose is the grasp pose), or
             - a single pose of the Gripper Frame with respect to the object (the grasp pose).
@@ -898,7 +962,10 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
             The trajectory of the Gripper Frame that will be used in the production.
         """
         # Setup
-        algorithm_output = grasp_selection_algorithm(self.path_to_object)
+        algorithm_input = self.create_input_for_grasp_selection_algorithm(
+            grasp_selection_algorithm
+        )
+        algorithm_output = grasp_selection_algorithm(algorithm_input)
 
         # Convert the output into a list of poses
         if isinstance(algorithm_output, RigidTransform):
@@ -927,12 +994,57 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
 
         return X_ObjectGripper_trajectory
 
+    def create_input_for_grasp_selection_algorithm(
+        self,
+        grasp_selection_algorithm: GraspSelectionAlgorithm,
+    ) -> Union[ObjectGeometry, ObjectDescription]:
+        """
+        *Description*
+
+        This method creates the input that the grasp selection algorithm
+        asks for with the type hint of its first parameter.
+
+        *Parameters*
+
+        grasp_selection_algorithm: GraspSelectionAlgorithm
+            The algorithm that will receive the input.
+
+        *Returns*
+
+        algorithm_input: ObjectGeometry or ObjectDescription
+            The geometry of this production's object if the algorithm's first parameter is
+            hinted as ObjectGeometry. Otherwise, the description of this production's object.
+        """
+        # Find the type that the algorithm asks for
+        parameters = list(
+            inspect.signature(
+                grasp_selection_algorithm, eval_str=True
+            ).parameters.values()
+        )
+        requested_type = (
+            parameters[0].annotation if len(parameters) > 0 else inspect.Parameter.empty
+        )
+
+        if requested_type not in (
+            ObjectGeometry,
+            ObjectDescription,
+            inspect.Parameter.empty,
+        ):
+            raise TypeError(
+                "The first parameter of the grasp selection algorithm must be hinted as "
+                + f"ObjectGeometry or ObjectDescription (or have no hint); received {requested_type}."
+            )
+
+        # Create the input
+        description = ObjectDescription.from_model_file(self.path_to_object)
+        if requested_type is ObjectGeometry:
+            return description.geometry
+
+        return description
+
     def easy_cast_and_build(
         self,
-        grasp_selection_algorithm: Callable[
-            [str],
-            List[RigidTransform] | RigidTransform,
-        ],
+        grasp_selection_algorithm: GraspSelectionAlgorithm,
         with_watcher: bool = False,
     ) -> Tuple[Diagram, Context]:
         """
@@ -943,9 +1055,9 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
 
         *Parameters*
 
-        grasp_selection_algorithm: Callable[[str], List[RigidTransform] | RigidTransform]
-            A function that takes the path to the object being grasped and returns
-            the trajectory of the Gripper Frame with respect to the object
+        grasp_selection_algorithm: GraspSelectionAlgorithm
+            A function that takes an ObjectGeometry or an ObjectDescription of the object
+            being grasped and returns the trajectory of the Gripper Frame with respect to the object
             (or just the grasp pose). See cast_grasp_selection_algorithm() for details.
 
         with_watcher: bool, optional
@@ -1393,7 +1505,7 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
                 )
 
         # Set the initial configuration of the gripper
-        # - Set the gripper positions (i.e., initial positions of the joints)
+        # - Set the gripper positions (i.e., the joint angles that satisfy the initial gripper command)
         #   (Because of the puppeteer, this has an additional fixed joint at the base)
         n_gripper_positions1 = plant.num_positions(self.gripper_model_index)
 
@@ -1401,7 +1513,11 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
         initial_gripper_configuration[0] = (
             X_World_PreGrasp.rotation().ToRollPitchYaw().roll_angle()
         )
-        initial_gripper_configuration[1:] = self.initial_gripper_joint_positions
+        initial_gripper_configuration[1:] = (
+            self.gripper_controller.find_joint_positions_for_position_target(
+                self.initial_gripper_command.item()
+            )
+        )
 
         ic_manager.add_initial_configuration(
             model_instance_index=self.gripper_model_index,

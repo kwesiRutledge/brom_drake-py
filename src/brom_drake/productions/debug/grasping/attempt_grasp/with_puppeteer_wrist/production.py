@@ -85,7 +85,7 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
 
     - An object to be grasped
     - A gripper
-    - The joint positions for the gripper to be in when performing the grasp
+    - The gripper command to apply when performing the grasp
     - A pose trajectory for a given gripper frame (usually at the base of the gripper)
 
     and test whether or not the gripper can successfully grasp the object using the desired approach
@@ -98,6 +98,17 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
     (an object of :py:class:`the corresponding Script type<brom_drake.productions.debug.grasping.attempt_grasp.with_puppeteer_wrist.script.Script>`)
     accessible by accessing the ``config.script`` variable of this object.
 
+    *Gripper Commands*
+
+    How far the gripper is closed is specified with a *gripper command*: a unitless, normalized
+    number that is **not** a joint angle in radians. A command ``c`` asks the gripper controller to
+    place each finger pad a distance of ``width * (1 - c)`` from the center of the gripper, where
+    ``width`` is the controller's ``gripper_width`` (0.06 m for the Robotiq 2F-85).
+
+    A command of 0 is fully open and larger commands close the gripper further.
+    For the Robotiq 2F-85, the joint limits make commands below about 0.23 equivalent to
+    fully open and commands above about 0.93 equivalent to fully closed.
+
     *Parameters*
 
     path_to_object: str
@@ -106,8 +117,9 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
     gripper_choice: GripperType
         An enum value from GripperType that specifies which gripper to use for the grasping attempt.
 
-    grasp_joint_positions: np.ndarray
-        An array of floats representing the joint positions the gripper should be in when performing the grasp.
+    grasp_gripper_command: np.ndarray
+        The gripper command (of shape (1,)) to close the gripper to when performing the grasp.
+        See *Gripper Commands* above.
 
     X_ObjectGripper_trajectory: List[RigidTransform], optional
         The desired trajectory for the Gripper Frame.
@@ -121,7 +133,7 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
     config: Configuration, optional
         The configuration for the production.
         See the Configuration dataclass for more details.
-        Default is the standard Configuration.
+        Default is None, which creates a new Configuration with its default values.
 
     *Usage*
 
@@ -152,7 +164,7 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         production = AttemptGraspWithPuppeteerWrist(
             path_to_object=model_file,
             gripper_choice=GripperType.Robotiq_2f_85,
-            grasp_joint_positions=np.array([0.7]),
+            grasp_gripper_command=np.array([0.7]),
             X_ObjectGripper_trajectory=[X_WorldPreGrasp, X_ObjectTarget],
             meshcat_port_number=7001, # Use None for CI
         )
@@ -175,10 +187,10 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         self,
         path_to_object: str,
         gripper_choice: GripperType,
-        grasp_joint_positions: np.ndarray,
+        grasp_gripper_command: np.ndarray,
         X_ObjectGripper_trajectory: List[RigidTransform] = None,
         meshcat_port_number: int = None,
-        config: Configuration = Configuration(),
+        config: Configuration = None,
     ):
         """
         *Description*
@@ -192,8 +204,10 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         gripper_choice: GripperType
             An enum value from GripperType that specifies which gripper to use for the grasping attempt.
 
-        grasp_joint_positions: np.ndarray
-            An array of floats representing the joint positions the gripper should be in when performing the grasp.
+        grasp_gripper_command: np.ndarray
+            The gripper command (of shape (1,)) to close the gripper to when performing the grasp.
+            This is a normalized command, not a joint angle.
+            See the class documentation for the definition of a gripper command.
 
         X_ObjectGripper_trajectory: List[RigidTransform]
             The desired trajectory for the Gripper Frame.
@@ -206,8 +220,12 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         config: Configuration, optional
             The configuration for the production.
             See the Configuration dataclass for more details.
-            Default is the standard Configuration.
+            Default is None, which creates a new Configuration with its default values.
         """
+        # Each production gets its own configuration, because the constructor modifies it
+        if config is None:
+            config = Configuration()
+
         # Use the enum to choose the gripper URDF from a set of supported grippers
         if gripper_choice == GripperType.Robotiq_2f_85:
             path_to_gripper = str(
@@ -248,18 +266,27 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         # - plant
         # - scene_graph
 
-        # TODO(kwesi): Figure out a better way to CHECK the initial joint positions
-        # Create INITIAL joint position array
-        self.initial_gripper_joint_positions = np.zeros(
-            grasp_joint_positions.shape
-        )  # initial_gripper_joint_positions
+        # Create INITIAL gripper command (the gripper starts fully open, by default)
+        if config.initial_gripper_command is None:
+            self.initial_gripper_command = np.zeros(grasp_gripper_command.shape)
+        else:
+            self.initial_gripper_command = np.array(
+                config.initial_gripper_command, dtype=float
+            )
+
+        if self.initial_gripper_command.shape != grasp_gripper_command.shape:
+            raise ValueError(
+                "Expected config.initial_gripper_command to have the same shape "
+                + f"as grasp_gripper_command ({grasp_gripper_command.shape}); "
+                + f"received shape {self.initial_gripper_command.shape}."
+            )
 
         # Save the trajectory of the gripper frame
         self.X_ObjectGripper_trajectory = X_ObjectGripper_trajectory
         # - These will be visualized as frames in the world AFTER
         #   the manipuland is initialized (because the frames are defined relative to the object)
 
-        self.grasp_joint_positions = grasp_joint_positions
+        self.grasp_gripper_command = grasp_gripper_command
         self.config = config
 
         # Add Name to plantPlant and Scene Graph for easy simulation
@@ -270,6 +297,9 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
 
         # Create empty variable for the system that holds the gripper's desired pose
         self.gripper_pose_memory = None
+
+        # Create empty variable for the controller of the gripper's joints
+        self.gripper_controller = None
 
         self.floor_model_index = None
         self.floor_actuator = None
@@ -605,6 +635,7 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
             ),
         )
         gripper_controller.set_name("[Gripper] Gripper Controller")
+        self.gripper_controller = gripper_controller
 
         # Connect the gripper controller to the gripper
         builder.Connect(
@@ -662,20 +693,21 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         *Description*
 
         This method creates a LeafSystem that outputs a PiecewisePolynomial
-        trajectory for the gripper joints to follow during the grasping attempt.
+        trajectory of gripper commands to follow during the grasping attempt.
+        (See the class documentation for the definition of a gripper command.)
 
         *Returns*
 
         gripper_trajectory_source: TrajectorySource
-            A TrajectorySource system that outputs the desired gripper joint trajectory.
+            A TrajectorySource system that outputs the desired gripper command trajectory.
         """
         # Setup
         builder: DiagramBuilder = self.builder
         script: AttemptGraspWithPuppeteerWristScript = self.config.script
 
-        # Collect gripper initial and final positions
-        p_gripper0 = self.initial_gripper_joint_positions
-        p_gripper_final = self.grasp_joint_positions
+        # Collect the initial and final gripper commands
+        initial_command = self.initial_gripper_command
+        final_command = self.grasp_gripper_command
 
         # Find times for each phase
         t_gripper_close_start = script.start_time_of_phase(
@@ -686,14 +718,14 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         )
 
         # Create a piecewise trajectory for the gripper to follow
-        joint_position_samples = []
-        joint_position_samples.append(
-            p_gripper0.reshape(-1, 1).tolist()
+        command_samples = []
+        command_samples.append(
+            initial_command.reshape(-1, 1).tolist()
         )  # This wild compression is needed because of bugs in Drake. :'(
-        joint_position_samples.append(p_gripper0.reshape(-1, 1).tolist())
-        joint_position_samples.append(p_gripper_final.reshape(-1, 1).tolist())
+        command_samples.append(initial_command.reshape(-1, 1).tolist())
+        command_samples.append(final_command.reshape(-1, 1).tolist())
         gripper_trajectory = PiecewisePolynomial.FirstOrderHold(
-            samples=joint_position_samples,
+            samples=command_samples,
             breaks=[0.0, t_gripper_close_start, t_object_settling_in_grasp_start],
         )
 
@@ -1270,7 +1302,7 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
                 )
 
         # Set the initial configuration of the gripper
-        # - Set the gripper positions (i.e., initial positions of the joints)
+        # - Set the gripper positions (i.e., the joint angles that satisfy the initial gripper command)
         #   (Because of the puppeteer, this has an additional fixed joint at the base)
         n_gripper_positions1 = plant.num_positions(self.gripper_model_index)
 
@@ -1278,7 +1310,11 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
         initial_gripper_configuration[0] = (
             X_World_PreGrasp.rotation().ToRollPitchYaw().roll_angle()
         )
-        initial_gripper_configuration[1:] = self.initial_gripper_joint_positions
+        initial_gripper_configuration[1:] = (
+            self.gripper_controller.find_joint_positions_for_position_target(
+                self.initial_gripper_command.item()
+            )
+        )
 
         ic_manager.add_initial_configuration(
             model_instance_index=self.gripper_model_index,

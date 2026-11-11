@@ -45,7 +45,6 @@ from brom_drake.utils import (
 )
 from brom_drake.utils.model_instances import (
     get_name_of_first_body_in_urdf,
-    find_number_of_positions_in_welded_model,
     summarize_model_instance_with_dict,
 )
 from brom_drake.productions.debug.show_me.show_me_system import ShowMeSystem
@@ -55,17 +54,45 @@ from .script import Script as AttemptGraspWithStaticWristScript
 
 
 class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
+    """
+    *Description*
+
+    A production that tests whether a gripper, welded in place at a given pose,
+    can hold an object after the floor beneath the object drops away.
+
+    *Gripper Commands*
+
+    How far the gripper is closed is specified with a *gripper command*: a unitless, normalized
+    number that is **not** a joint angle in radians. A command ``c`` asks the gripper controller to
+    place each finger pad a distance of ``width * (1 - c)`` from the center of the gripper, where
+    ``width`` is the controller's ``gripper_width`` (0.06 m for the Robotiq 2F-85).
+
+    A command of 0 is fully open and larger commands close the gripper further.
+    For the Robotiq 2F-85, the joint limits make commands below about 0.23 equivalent to
+    fully open and commands above about 0.93 equivalent to fully closed.
+
+    *Parameters*
+
+    grasp_gripper_command: np.ndarray
+        The gripper command (of shape (1,)) to close the gripper to when performing the grasp.
+        See *Gripper Commands* above.
+    """
+
     # Member functions
     def __init__(
         self,
         path_to_object: str,
         gripper_choice: GripperType,
-        grasp_joint_positions: np.ndarray,
+        grasp_gripper_command: np.ndarray,
         X_ObjectTarget: RigidTransform = None,
         meshcat_port_number: int = None,
         script: AttemptGraspWithStaticWristScript = None,
-        config: Configuration = Configuration(),
+        config: Configuration = None,
     ):
+        # Each production gets its own configuration, because the constructor modifies it
+        if config is None:
+            config = Configuration()
+
         # Use the enum to choose the gripper URDF from a set of supported grippers
         if gripper_choice == GripperType.Robotiq_2f_85:
             path_to_gripper = str(
@@ -111,23 +138,23 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
         # - show_collision_geometries
         # - plant
 
-        # TODO(kwesi): Figure out a better way to handle the initial joint positions
-        # Create INITIAL joint position array
-        n_gripper_positions = find_number_of_positions_in_welded_model(
-            self.path_to_gripper
-        )
-        # if initial_gripper_joint_positions is None:
-        #     initial_gripper_joint_positions = [0.0] * n_gripper_positions
-        self.initial_gripper_joint_positions = np.zeros(
-            grasp_joint_positions.shape
-        )  # initial_gripper_joint_positions
+        # Create INITIAL gripper command (the gripper starts fully open, by default)
+        if config.initial_gripper_command is None:
+            self.initial_gripper_command = np.zeros(grasp_gripper_command.shape)
+        else:
+            self.initial_gripper_command = np.array(
+                config.initial_gripper_command, dtype=float
+            )
 
-        # Save target joint position array
-        # assert len(grasp_joint_positions) != n_gripper_positions, \
-        #     f"Expected for the \"grasp_joint_positions\" array to contain {n_gripper_positions} values (the number of positions)" + \
-        #     f"in the model, but received length {len(grasp_joint_positions)} array."
+        if self.initial_gripper_command.shape != grasp_gripper_command.shape:
+            raise ValueError(
+                "Expected config.initial_gripper_command to have the same shape "
+                + f"as grasp_gripper_command ({grasp_gripper_command.shape}); "
+                + f"received shape {self.initial_gripper_command.shape}."
+            )
 
-        self.grasp_joint_positions = grasp_joint_positions
+        # Save the gripper command for the grasp
+        self.grasp_gripper_command = grasp_gripper_command
         self.config = config
 
         # Add Name to plantPlant and Scene Graph for easy simulation
@@ -135,6 +162,9 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
 
         # Create show me system for holding object in place
         self.show_me_system = None
+
+        # Create empty variable for the controller of the gripper's joints
+        self.gripper_controller = None
 
         self.floor_model_index = None
         self.floor_actuator = None
@@ -224,7 +254,6 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
         X_WorldGripper = self.find_X_WorldGripper(
             X_ObjectGripper=self.X_ObjectGripper,
             target_frame_name=self.target_body_name_on_gripper,
-            desired_joint_positions=self.initial_gripper_joint_positions,
         )
         self.add_gripper_to_plant(
             and_weld_to=plant.world_frame(),
@@ -255,9 +284,9 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
         builder: DiagramBuilder = self.builder
         script: AttemptGraspWithStaticWristScript = self.config.script
 
-        # Collect gripper initial and final positions
-        p_gripper0 = self.initial_gripper_joint_positions
-        p_gripper_final = self.grasp_joint_positions
+        # Collect the initial and final gripper commands
+        initial_command = self.initial_gripper_command
+        final_command = self.grasp_gripper_command
 
         # Find time to start closing the gripper from the script
         t_gripper_close_start = script.start_time_of_phase(
@@ -268,14 +297,14 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
         )
 
         # Create a piecewise trajectory for the gripper to follow'
-        joint_position_samples = []
-        joint_position_samples.append(
-            p_gripper0.reshape(-1, 1).tolist()
+        command_samples = []
+        command_samples.append(
+            initial_command.reshape(-1, 1).tolist()
         )  # This wild compression is needed because of bugs in Drake. :'(
-        joint_position_samples.append(p_gripper0.reshape(-1, 1).tolist())
-        joint_position_samples.append(p_gripper_final.reshape(-1, 1).tolist())
+        command_samples.append(initial_command.reshape(-1, 1).tolist())
+        command_samples.append(final_command.reshape(-1, 1).tolist())
         gripper_trajectory = PiecewisePolynomial.FirstOrderHold(
-            samples=joint_position_samples,
+            samples=command_samples,
             breaks=[0.0, t_gripper_close_start, t_object_settling_in_grasp_start],
         )
 
@@ -302,6 +331,7 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
             ),
         )
         gripper_controller.set_name("[Gripper] Gripper Controller")
+        self.gripper_controller = gripper_controller
 
         # Connect the gripper controller to the gripper
         builder.Connect(
@@ -581,16 +611,12 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
         self,
         X_ObjectGripper: RigidTransform,
         target_frame_name: str,
-        desired_joint_positions: List[float],
     ) -> RigidTransform:
         """
         Description
         -----------
         This method will return the transform from the world frame to the gripper frame.
         """
-        # Setup
-        desired_joint_positions = np.array(desired_joint_positions)
-
         # Create shadow plant containing just the gripper
         shadow_plant = MultibodyPlant(self.time_step)
         model_idcs = Parser(plant=shadow_plant).AddModels(self.path_to_gripper)
@@ -614,13 +640,6 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
         shadow_builder.AddSystem(shadow_plant)
         diagram = shadow_builder.Build()
         shadow_diagram_context = diagram.CreateDefaultContext()
-
-        # Set the joint positions
-        # shadow_plant.SetPositions(
-        #     shadow_plant.GetMyContextFromRoot(shadow_diagram_context),
-        #     shadow_model_idx,
-        #     desired_joint_positions,
-        # )
 
         # Get the transform of the gripper's base in the static world frame
         X_GripperBase_GripperTarget = shadow_plant.EvalBodyPoseInWorld(
@@ -720,12 +739,12 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
             np.array([z_floor]),
         )
 
-        n_gripper_positions = find_number_of_positions_in_welded_model(
-            self.path_to_gripper
-        )
+        # Set the gripper's joints to the angles that satisfy the initial gripper command
         plant.SetDefaultPositions(
             self.gripper_model_index,
-            np.zeros((n_gripper_positions,)),
+            self.gripper_controller.find_joint_positions_for_position_target(
+                self.initial_gripper_command.item()
+            ),
         )
 
     @property

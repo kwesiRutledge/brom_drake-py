@@ -48,7 +48,7 @@ def main():
     production = AttemptGraspWithStaticWrist(
         path_to_object=str(drakeified_flask_urdf),
         gripper_choice=GripperType.Robotiq_2f_85,
-        grasp_joint_positions=np.array([0.7]),
+        grasp_gripper_command=np.array([0.7]),
         X_ObjectTarget=X_ObjectTarget,
         config=config,
     )
