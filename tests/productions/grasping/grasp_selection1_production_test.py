@@ -231,6 +231,85 @@ class TestGraspSelection1Production(unittest.TestCase):
         q_start = plant.GetPositions(plant_context, production.gripper_model_index)[1:]
         np.testing.assert_allclose(q_start, np.zeros((6,)), atol=1e-9)
 
+    def test_gripper_puppet_gains1(self):
+        """
+        Description
+        -----------
+        This test verifies that the constructor uses the gains from the configuration.
+        """
+        # Setup
+        Kp, Kd = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0], [6.0, 5.0, 4.0, 3.0, 2.0, 1.0]
+        production = self.create_production(
+            config=GraspSelection1Configuration(
+                gripper_puppet_Kp=Kp, gripper_puppet_Kd=Kd
+            )
+        )
+
+        # Verify
+        np.testing.assert_array_equal(production.gripper_puppet_Kp, np.array(Kp))
+        np.testing.assert_array_equal(production.gripper_puppet_Kd, np.array(Kd))
+
+    def test_gripper_puppet_gains2(self):
+        """
+        Description
+        -----------
+        This test verifies that the constructor raises a ValueError
+        when the gains do not have one value per puppet joint.
+        """
+        # Verify
+        with self.assertRaises(ValueError):
+            self.create_production(
+                config=GraspSelection1Configuration(gripper_puppet_Kp=[1.0, 2.0])
+            )
+
+        with self.assertRaises(ValueError):
+            self.create_production(
+                config=GraspSelection1Configuration(gripper_puppet_Kd=[1.0, 2.0])
+            )
+
+    def test_gripper_puppet_gains3(self):
+        """
+        Description
+        -----------
+        This test verifies that, with the default gains, the gripper
+        barely moves down when it takes the weight of the object from the floor.
+        """
+        # Setup
+        X_ObjectGrasp = RigidTransform(
+            p=np.array([-0.08, 0.05, 0.15]),
+            rpy=RollPitchYaw(0.1, (14.0 / 20.0) * np.pi, 0.1),
+        )
+        X_ObjectPreGrasp = X_ObjectGrasp.multiply(
+            RigidTransform(p=np.array([0.0, 0.0, -0.2]))
+        )
+        production = self.create_production()
+
+        # Build
+        diagram, diagram_context = production.easy_cast_and_build(
+            lambda object_description: [X_ObjectPreGrasp, X_ObjectGrasp]
+        )
+        plant = production.plant
+        plant_context = plant.GetMyContextFromRoot(diagram_context)
+        gripper_base = plant.GetBodyByName("robotiq_arg2f_base_link")
+
+        # Simulate until the floor starts to drop
+        script: GraspSelection1Script = production.config.script
+        t_drop_start = script.start_time_of_phase(GraspSelection1Phase.kFloorDrop)
+
+        simulator = Simulator(diagram, diagram_context)
+        simulator.Initialize()
+        simulator.AdvanceTo(t_drop_start)
+        z_at_drop = plant.EvalBodyPoseInWorld(
+            plant_context, gripper_base
+        ).translation()[2]
+
+        # Verify the height of the gripper while the object hangs from it
+        simulator.AdvanceTo(t_drop_start + 2.0)
+        z_later = plant.EvalBodyPoseInWorld(plant_context, gripper_base).translation()[
+            2
+        ]
+        self.assertAlmostEqual(z_later, z_at_drop, delta=5e-3)
+
     def test_suggested_roles1(self):
         """
         Description

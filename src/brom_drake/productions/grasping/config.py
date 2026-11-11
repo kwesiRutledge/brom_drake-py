@@ -53,6 +53,22 @@ class Configuration:
         The script configuration for the production.
         Default is the standard GraspSelection1Script.
 
+    gripper_puppet_Kp: List[float] or np.ndarray, optional
+        The proportional gains of the controller that moves the gripper's wrist,
+        ordered as [x, y, z, yaw, pitch, roll]. Translational gains are in N/m
+        and rotational gains are in N*m/rad.
+
+    gripper_puppet_Kd: List[float] or np.ndarray, optional
+        The derivative gains of the controller that moves the gripper's wrist,
+        in the same order as gripper_puppet_Kp.
+
+        .. warning::
+
+            Large gains can make the simulation unstable, sometimes without raising an error
+            (the gripper simply spins or flies away). Stability depends on the orientation of
+            the grasp, so check new gains at the orientations that you plan to test. The derivative
+            gains for z and roll are the most sensitive.
+
     """
 
     base: BaseConfiguration = field(
@@ -68,6 +84,19 @@ class Configuration:
     script: GraspSelection1Script = field(
         default_factory=GraspSelection1Script
     )  # By default, use the standard script
+    gripper_puppet_Kp: Union[List[float], np.ndarray] = field(
+        default_factory=lambda: [1e2, 1e2, 3e3, 1e1, 1e1, 6e0]
+    )
+    gripper_puppet_Kd: Union[List[float], np.ndarray] = field(
+        default_factory=lambda: [
+            1e1,
+            1e1,
+            5e1,
+            np.sqrt(1e1),
+            np.sqrt(1e1),
+            np.sqrt(6e0),
+        ]
+    )
 
     @property
     def meshcat_port_number(self):

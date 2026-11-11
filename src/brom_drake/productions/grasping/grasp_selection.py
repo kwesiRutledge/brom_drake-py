@@ -289,6 +289,16 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
         # - plant
         # - scene_graph
 
+        # Collect the gains of the controller for the gripper's puppet (one per puppet joint)
+        self.gripper_puppet_Kp = np.array(config.gripper_puppet_Kp, dtype=float)
+        self.gripper_puppet_Kd = np.array(config.gripper_puppet_Kd, dtype=float)
+
+        if self.gripper_puppet_Kp.shape != (6,) or self.gripper_puppet_Kd.shape != (6,):
+            raise ValueError(
+                "Expected config.gripper_puppet_Kp and config.gripper_puppet_Kd to have shape (6,); "
+                + f"received shapes {self.gripper_puppet_Kp.shape} and {self.gripper_puppet_Kd.shape}."
+            )
+
         # Create INITIAL gripper command (the gripper starts fully open, by default)
         if config.initial_gripper_command is None:
             self.initial_gripper_command = np.zeros(grasp_gripper_command.shape)
@@ -845,7 +855,8 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
             maker0.add_puppet_controller_for(
                 self.puppet_signature,
                 self.builder,
-                Kp=np.array([1e2, 1e2, 1e2, 1e1, 1e1, 6e0]),
+                Kp=self.gripper_puppet_Kp,
+                Kd=self.gripper_puppet_Kd,
             )
         )
 
@@ -1006,9 +1017,7 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
         """
         # Find the type that the algorithm asks for
         parameters = list(
-            inspect.signature(
-                grasp_selection_algorithm, eval_str=True
-            ).parameters.values()
+            inspect.signature(grasp_selection_algorithm, eval_str=True).parameters.values()
         )
         requested_type = (
             parameters[0].annotation if len(parameters) > 0 else inspect.Parameter.empty
