@@ -24,6 +24,9 @@ class ProductionID(Enum):
     #: Chem Lab Planning 2 Production, a more complex dynamic motion planning task
     kChemLab2 = "ChemLab-Planning2"
 
+    #: Cornell Tech 1 Production, a dynamic motion planning task for a Kinova Gen3 arm on a robot cart
+    kCornellTech1 = "CornellTech1"
+
     """
     Chem Lab 3, a Pick and Place task in the Chem Lab environment
 

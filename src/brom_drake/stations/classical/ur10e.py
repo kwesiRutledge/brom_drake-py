@@ -51,26 +51,65 @@ class UR10eStation(Diagram):
         (Vector, np.array)                  |               |
                                             |               |
                                             -----------------
+
+    The arm is driven by an ``InverseDynamicsController`` that uses a separate
+    model of the robot (``controller_plant``). By default, that model includes a
+    static copy of the gripper welded to the arm (``controller_gripper``), so the
+    controller compensates for the gripper's weight and ``measured_ee_wrench`` does
+    not include it. Pass ``model_gripper_in_controller=False`` to model the arm alone.
+
+    Subclasses can reuse this station for other arms by overriding
+    ``station_name``, ``arm_port_prefix`` and ``AddArm()``
+    (see ``KinovaGen3Station``).
     """
+
+    #: Name given to the station diagram (and used as a prefix for its subsystems)
+    station_name: str = "UR10e_Station"
+
+    #: Prefix for the arm-related output ports (e.g., ``ur10e_arm_position_measured``)
+    arm_port_prefix: str = "ur10e"
 
     def __init__(
         self,
         time_step: float = 0.002,
         meshcat_port_number: int = 7001,
         gripper_type: GripperType = GripperType.Robotiq_2f_85,
+        model_gripper_in_controller: bool = True,
     ):
         """
         *Description*
 
         This class defines the UR10e Station.
+
+        *Parameters*
+
+        time_step: float, optional
+            The time step of the station's plants, by default 0.002.
+
+        meshcat_port_number: int, optional
+            The port number for meshcat visualization, by default 7001.
+            Use None to disable meshcat.
+
+        gripper_type: GripperType, optional
+            The type of gripper to use, by default GripperType.Robotiq_2f_85.
+
+        model_gripper_in_controller: bool, optional
+            Whether the arm controller's model of the robot includes the gripper
+            (as a rigid load on the arm's flange), by default True.
+            When False, the controller does not compensate for the gripper's weight,
+            and the measured end effector wrench includes it.
         """
         # Input Processing
         self.meshcat_port_number = meshcat_port_number
         self.time_step = time_step
+        self.model_gripper_in_controller = model_gripper_in_controller
+
+        # The gripper in the controller plant (if any) is created with the gripper
+        self.controller_gripper = None
 
         # Initialize the Diagram
         Diagram.__init__(self)
-        self.set_name("UR10e_Station")
+        self.set_name(self.station_name)
 
         # Create a diagram builder
         self.builder = DiagramBuilder()
@@ -210,26 +249,49 @@ class UR10eStation(Diagram):
         )
         self.gripper = Parser(plant=self.plant).AddModels(gripper_urdf_path)[0]
 
-        X_grip = RigidTransform()
-        X_grip.set_rotation(RotationMatrix(RollPitchYaw([0.0, 0.0, np.pi / 2])))
+        # Pose of the gripper's base in the arm's end effector (flange) frame
+        self.X_FlangeGripper = RigidTransform(
+            RotationMatrix(RollPitchYaw([0.0, 0.0, np.pi / 2])),
+        )
         self.plant.WeldFrames(
-            self.plant.GetFrameByName("tool0", self.arm),
+            self.plant.GetFrameByName(self.end_effector_frame_name, self.arm),
             self.plant.GetFrameByName("robotiq_arg2f_base_link", self.gripper),
-            X_grip,
+            self.X_FlangeGripper,
         )
 
-        # # Add a gripper without actuation to the controller plant
-        # gripper_static_urdf = str(
-        #     impresources.files(robots) / "models/robotiq/2f_85_gripper-no-mimic/urdf/robotiq_2f_85_static.urdf"
-        # )
-        # static_gripper = Parser(plant=self.controller_plant).AddModels(
-        #     gripper_static_urdf
-        # )[0]
+        if self.model_gripper_in_controller:
+            self.add_static_gripper_to_controller_plant()
 
-        # self.controller_plant.WeldFrames(
-        #     self.controller_plant.GetFrameByName("tool0", self.controller_arm),
-        #     self.controller_plant.GetFrameByName("robotiq_arg2f_base_link", static_gripper),
-        #     X_grip)
+    def add_static_gripper_to_controller_plant(self):
+        """
+        *Description*
+
+        Welds a static (joint-free) copy of the Robotiq 2F-85 gripper to the arm
+        in the controller plant, at the same pose as the gripper in the simulated plant.
+
+        This way, the arm controller's model includes the gripper's mass and inertia,
+        so it compensates for the gripper's weight and the measured end effector wrench
+        does not include it. The static gripper is modeled with its fingers open.
+        """
+        # Setup
+        gripper_static_urdf = str(
+            impresources.files(robots)
+            / "models/robotiq/2f_85_gripper/urdf/robotiq_2f_85_static.urdf"
+        )
+
+        # Add the static gripper to the controller plant
+        self.controller_gripper = Parser(plant=self.controller_plant).AddModels(
+            gripper_static_urdf
+        )[0]
+        self.controller_plant.WeldFrames(
+            self.controller_plant.GetFrameByName(
+                self.end_effector_frame_name, self.controller_arm
+            ),
+            self.controller_plant.GetFrameByName(
+                "robotiq_arg2f_base_link", self.controller_gripper
+            ),
+            self.X_FlangeGripper,
+        )
 
     def ConnectToMeshcatVisualizer(self, port=None):
         self.meshcat = Meshcat(port)
@@ -411,7 +473,7 @@ class UR10eStation(Diagram):
         # Create commanded arm torque output
         self.builder.ExportOutput(
             self.controller.get_output_port_control(),
-            "ur10e_arm_torque_commanded",
+            f"{self.arm_port_prefix}_arm_torque_commanded",
         )
 
         # Create desired position input
@@ -424,7 +486,7 @@ class UR10eStation(Diagram):
                 self.plant.num_positions(self.arm),
             ),
         )
-        demux.set_name("UR10e_Station_Demux")
+        demux.set_name(f"{self.station_name}_Demux")
 
         self.builder.Connect(
             self.plant.get_state_output_port(self.arm),
@@ -432,11 +494,11 @@ class UR10eStation(Diagram):
         )
         self.builder.ExportOutput(
             demux.get_output_port(0),
-            "ur10e_arm_position_measured",
+            f"{self.arm_port_prefix}_arm_position_measured",
         )
         self.builder.ExportOutput(
             demux.get_output_port(1),
-            "ur10e_arm_velocity_measured",
+            f"{self.arm_port_prefix}_arm_velocity_measured",
         )
 
         # Compute and output end-effector wrenches based on measured joint torques
