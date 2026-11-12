@@ -51,7 +51,17 @@ class UR10eStation(Diagram):
         (Vector, np.array)                  |               |
                                             |               |
                                             -----------------
+
+    Subclasses can reuse this station for other arms by overriding
+    ``station_name``, ``arm_port_prefix`` and ``AddArm()``
+    (see ``KinovaGen3Station``).
     """
+
+    #: Name given to the station diagram (and used as a prefix for its subsystems)
+    station_name: str = "UR10e_Station"
+
+    #: Prefix for the arm-related output ports (e.g., ``ur10e_arm_position_measured``)
+    arm_port_prefix: str = "ur10e"
 
     def __init__(
         self,
@@ -70,7 +80,7 @@ class UR10eStation(Diagram):
 
         # Initialize the Diagram
         Diagram.__init__(self)
-        self.set_name("UR10e_Station")
+        self.set_name(self.station_name)
 
         # Create a diagram builder
         self.builder = DiagramBuilder()
@@ -213,7 +223,7 @@ class UR10eStation(Diagram):
         X_grip = RigidTransform()
         X_grip.set_rotation(RotationMatrix(RollPitchYaw([0.0, 0.0, np.pi / 2])))
         self.plant.WeldFrames(
-            self.plant.GetFrameByName("tool0", self.arm),
+            self.plant.GetFrameByName(self.end_effector_frame_name, self.arm),
             self.plant.GetFrameByName("robotiq_arg2f_base_link", self.gripper),
             X_grip,
         )
@@ -411,7 +421,7 @@ class UR10eStation(Diagram):
         # Create commanded arm torque output
         self.builder.ExportOutput(
             self.controller.get_output_port_control(),
-            "ur10e_arm_torque_commanded",
+            f"{self.arm_port_prefix}_arm_torque_commanded",
         )
 
         # Create desired position input
@@ -424,7 +434,7 @@ class UR10eStation(Diagram):
                 self.plant.num_positions(self.arm),
             ),
         )
-        demux.set_name("UR10e_Station_Demux")
+        demux.set_name(f"{self.station_name}_Demux")
 
         self.builder.Connect(
             self.plant.get_state_output_port(self.arm),
@@ -432,11 +442,11 @@ class UR10eStation(Diagram):
         )
         self.builder.ExportOutput(
             demux.get_output_port(0),
-            "ur10e_arm_position_measured",
+            f"{self.arm_port_prefix}_arm_position_measured",
         )
         self.builder.ExportOutput(
             demux.get_output_port(1),
-            "ur10e_arm_velocity_measured",
+            f"{self.arm_port_prefix}_arm_velocity_measured",
         )
 
         # Compute and output end-effector wrenches based on measured joint torques

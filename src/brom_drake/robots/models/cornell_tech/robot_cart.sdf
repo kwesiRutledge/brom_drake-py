@@ -1,0 +1,261 @@
+<?xml version="1.0"?>
+<!--
+  Mobile robot cart (aluminum extrusion frame) modeled after the Cornell Tech
+  workcell. Frame origin: center of the cart's top surface; +x along the cart's
+  length, +y toward the back of the cart. Generated from primitives.
+-->
+<sdf version="1.7">
+  <model name="cornell_tech_robot_cart">
+    <link name="cart_body">
+      <visual name="top_plate">
+        <pose>0 -0.065 -0.01 0 0 0</pose>
+        <geometry><box><size>1.5 0.62 0.02</size></box></geometry>
+        <material><diffuse>0.08 0.08 0.08 1</diffuse></material>
+      </visual>
+      <collision name="top_plate">
+        <pose>0 -0.065 -0.01 0 0 0</pose>
+        <geometry><box><size>1.5 0.62 0.02</size></box></geometry>
+      </collision>
+      <visual name="back_strip">
+        <pose>0 0.31 -0.02 0 0 0</pose>
+        <geometry><box><size>1.5 0.13 0.04</size></box></geometry>
+        <material><diffuse>0.13 0.55 0.72 1</diffuse></material>
+      </visual>
+      <collision name="back_strip">
+        <pose>0 0.31 -0.02 0 0 0</pose>
+        <geometry><box><size>1.5 0.13 0.04</size></box></geometry>
+      </collision>
+      <visual name="kinova_mount_plate">
+        <pose>0.375 0.31 -0.001 0 0 0</pose>
+        <geometry><box><size>0.25 0.13 0.002</size></box></geometry>
+        <material><diffuse>0.08 0.08 0.08 1</diffuse></material>
+      </visual>
+      <visual name="lower_shelf">
+        <pose>0 0 -0.27 0 0 0</pose>
+        <geometry><box><size>1.41 0.66 0.015</size></box></geometry>
+        <material><diffuse>0.08 0.08 0.08 1</diffuse></material>
+      </visual>
+      <visual name="back_rail_0">
+        <pose>0 0.275 0.0005 0 0 0</pose>
+        <geometry><box><size>1.5 0.03 0.002</size></box></geometry>
+        <material><diffuse>0.1 0.4 0.55 1</diffuse></material>
+      </visual>
+      <visual name="back_rail_1">
+        <pose>0 0.315 0.0005 0 0 0</pose>
+        <geometry><box><size>1.5 0.03 0.002</size></box></geometry>
+        <material><diffuse>0.1 0.4 0.55 1</diffuse></material>
+      </visual>
+      <visual name="back_rail_2">
+        <pose>0 0.355 0.0005 0 0 0</pose>
+        <geometry><box><size>1.5 0.03 0.002</size></box></geometry>
+        <material><diffuse>0.1 0.4 0.55 1</diffuse></material>
+      </visual>
+      <visual name="upper_front_rail">
+        <pose>0 -0.3525 -0.0425 0 0 0</pose>
+        <geometry><box><size>1.5 0.045 0.045</size></box></geometry>
+        <material><diffuse>0.13 0.55 0.72 1</diffuse></material>
+      </visual>
+      <visual name="upper_back_rail">
+        <pose>0 0.3525 -0.0425 0 0 0</pose>
+        <geometry><box><size>1.5 0.045 0.045</size></box></geometry>
+        <material><diffuse>0.13 0.55 0.72 1</diffuse></material>
+      </visual>
+      <visual name="upper_left_rail">
+        <pose>-0.7275 0 -0.0425 0 0 0</pose>
+        <geometry><box><size>0.045 0.75 0.045</size></box></geometry>
+        <material><diffuse>0.13 0.55 0.72 1</diffuse></material>
+      </visual>
+      <visual name="upper_right_rail">
+        <pose>0.7275 0 -0.0425 0 0 0</pose>
+        <geometry><box><size>0.045 0.75 0.045</size></box></geometry>
+        <material><diffuse>0.13 0.55 0.72 1</diffuse></material>
+      </visual>
+      <visual name="lower_front_rail">
+        <pose>0 -0.3525 -0.3 0 0 0</pose>
+        <geometry><box><size>1.5 0.045 0.045</size></box></geometry>
+        <material><diffuse>0.13 0.55 0.72 1</diffuse></material>
+      </visual>
+      <visual name="lower_back_rail">
+        <pose>0 0.3525 -0.3 0 0 0</pose>
+        <geometry><box><size>1.5 0.045 0.045</size></box></geometry>
+        <material><diffuse>0.13 0.55 0.72 1</diffuse></material>
+      </visual>
+      <visual name="lower_left_rail">
+        <pose>-0.7275 0 -0.3 0 0 0</pose>
+        <geometry><box><size>0.045 0.75 0.045</size></box></geometry>
+        <material><diffuse>0.13 0.55 0.72 1</diffuse></material>
+      </visual>
+      <visual name="lower_right_rail">
+        <pose>0.7275 0 -0.3 0 0 0</pose>
+        <geometry><box><size>0.045 0.75 0.045</size></box></geometry>
+        <material><diffuse>0.13 0.55 0.72 1</diffuse></material>
+      </visual>
+      <visual name="post_lf">
+        <pose>-0.7275 -0.3525 -0.16 0 0 0</pose>
+        <geometry><box><size>0.045 0.045 0.28</size></box></geometry>
+        <material><diffuse>0.13 0.55 0.72 1</diffuse></material>
+      </visual>
+      <visual name="gusset_top_lf">
+        <pose>-0.65 -0.378 -0.1 0 0 0</pose>
+        <geometry><box><size>0.2 0.006 0.17</size></box></geometry>
+        <material><diffuse>0.36 0.27 0.62 1</diffuse></material>
+      </visual>
+      <visual name="gusset_bot_lf">
+        <pose>-0.65 -0.378 -0.3 0 0 0</pose>
+        <geometry><box><size>0.2 0.006 0.06</size></box></geometry>
+        <material><diffuse>0.36 0.27 0.62 1</diffuse></material>
+      </visual>
+      <visual name="gusset_side_lf">
+        <pose>-0.753 -0.275 -0.1 0 0 0</pose>
+        <geometry><box><size>0.006 0.2 0.17</size></box></geometry>
+        <material><diffuse>0.36 0.27 0.62 1</diffuse></material>
+      </visual>
+      <visual name="caster_body_lf">
+        <pose>-0.65 -0.29 -0.346 0 0 0</pose>
+        <geometry><box><size>0.09 0.09 0.047</size></box></geometry>
+        <material><diffuse>0.92 0.92 0.9 1</diffuse></material>
+      </visual>
+      <visual name="caster_wheel_lf">
+        <pose>-0.65 -0.29 -0.395 1.5708 0 0</pose>
+        <geometry><cylinder><radius>0.025</radius><length>0.04</length></cylinder></geometry>
+        <material><diffuse>0.92 0.92 0.9 1</diffuse></material>
+      </visual>
+      <visual name="post_lb">
+        <pose>-0.7275 0.3525 -0.16 0 0 0</pose>
+        <geometry><box><size>0.045 0.045 0.28</size></box></geometry>
+        <material><diffuse>0.13 0.55 0.72 1</diffuse></material>
+      </visual>
+      <visual name="gusset_top_lb">
+        <pose>-0.65 0.378 -0.1 0 0 0</pose>
+        <geometry><box><size>0.2 0.006 0.17</size></box></geometry>
+        <material><diffuse>0.36 0.27 0.62 1</diffuse></material>
+      </visual>
+      <visual name="gusset_bot_lb">
+        <pose>-0.65 0.378 -0.3 0 0 0</pose>
+        <geometry><box><size>0.2 0.006 0.06</size></box></geometry>
+        <material><diffuse>0.36 0.27 0.62 1</diffuse></material>
+      </visual>
+      <visual name="gusset_side_lb">
+        <pose>-0.753 0.275 -0.1 0 0 0</pose>
+        <geometry><box><size>0.006 0.2 0.17</size></box></geometry>
+        <material><diffuse>0.36 0.27 0.62 1</diffuse></material>
+      </visual>
+      <visual name="caster_body_lb">
+        <pose>-0.65 0.29 -0.346 0 0 0</pose>
+        <geometry><box><size>0.09 0.09 0.047</size></box></geometry>
+        <material><diffuse>0.92 0.92 0.9 1</diffuse></material>
+      </visual>
+      <visual name="caster_wheel_lb">
+        <pose>-0.65 0.29 -0.395 1.5708 0 0</pose>
+        <geometry><cylinder><radius>0.025</radius><length>0.04</length></cylinder></geometry>
+        <material><diffuse>0.92 0.92 0.9 1</diffuse></material>
+      </visual>
+      <visual name="post_rf">
+        <pose>0.7275 -0.3525 -0.16 0 0 0</pose>
+        <geometry><box><size>0.045 0.045 0.28</size></box></geometry>
+        <material><diffuse>0.13 0.55 0.72 1</diffuse></material>
+      </visual>
+      <visual name="gusset_top_rf">
+        <pose>0.65 -0.378 -0.1 0 0 0</pose>
+        <geometry><box><size>0.2 0.006 0.17</size></box></geometry>
+        <material><diffuse>0.36 0.27 0.62 1</diffuse></material>
+      </visual>
+      <visual name="gusset_bot_rf">
+        <pose>0.65 -0.378 -0.3 0 0 0</pose>
+        <geometry><box><size>0.2 0.006 0.06</size></box></geometry>
+        <material><diffuse>0.36 0.27 0.62 1</diffuse></material>
+      </visual>
+      <visual name="gusset_side_rf">
+        <pose>0.753 -0.275 -0.1 0 0 0</pose>
+        <geometry><box><size>0.006 0.2 0.17</size></box></geometry>
+        <material><diffuse>0.36 0.27 0.62 1</diffuse></material>
+      </visual>
+      <visual name="caster_body_rf">
+        <pose>0.65 -0.29 -0.346 0 0 0</pose>
+        <geometry><box><size>0.09 0.09 0.047</size></box></geometry>
+        <material><diffuse>0.92 0.92 0.9 1</diffuse></material>
+      </visual>
+      <visual name="caster_wheel_rf">
+        <pose>0.65 -0.29 -0.395 1.5708 0 0</pose>
+        <geometry><cylinder><radius>0.025</radius><length>0.04</length></cylinder></geometry>
+        <material><diffuse>0.92 0.92 0.9 1</diffuse></material>
+      </visual>
+      <visual name="post_rb">
+        <pose>0.7275 0.3525 -0.16 0 0 0</pose>
+        <geometry><box><size>0.045 0.045 0.28</size></box></geometry>
+        <material><diffuse>0.13 0.55 0.72 1</diffuse></material>
+      </visual>
+      <visual name="gusset_top_rb">
+        <pose>0.65 0.378 -0.1 0 0 0</pose>
+        <geometry><box><size>0.2 0.006 0.17</size></box></geometry>
+        <material><diffuse>0.36 0.27 0.62 1</diffuse></material>
+      </visual>
+      <visual name="gusset_bot_rb">
+        <pose>0.65 0.378 -0.3 0 0 0</pose>
+        <geometry><box><size>0.2 0.006 0.06</size></box></geometry>
+        <material><diffuse>0.36 0.27 0.62 1</diffuse></material>
+      </visual>
+      <visual name="gusset_side_rb">
+        <pose>0.753 0.275 -0.1 0 0 0</pose>
+        <geometry><box><size>0.006 0.2 0.17</size></box></geometry>
+        <material><diffuse>0.36 0.27 0.62 1</diffuse></material>
+      </visual>
+      <visual name="caster_body_rb">
+        <pose>0.65 0.29 -0.346 0 0 0</pose>
+        <geometry><box><size>0.09 0.09 0.047</size></box></geometry>
+        <material><diffuse>0.92 0.92 0.9 1</diffuse></material>
+      </visual>
+      <visual name="caster_wheel_rb">
+        <pose>0.65 0.29 -0.395 1.5708 0 0</pose>
+        <geometry><cylinder><radius>0.025</radius><length>0.04</length></cylinder></geometry>
+        <material><diffuse>0.92 0.92 0.9 1</diffuse></material>
+      </visual>
+      <visual name="gusset_mid_f">
+        <pose>0 -0.378 -0.17 0 0 0</pose>
+        <geometry><box><size>0.06 0.006 0.31</size></box></geometry>
+        <material><diffuse>0.36 0.27 0.62 1</diffuse></material>
+      </visual>
+      <visual name="gusset_mid_b">
+        <pose>0 0.378 -0.17 0 0 0</pose>
+        <geometry><box><size>0.06 0.006 0.31</size></box></geometry>
+        <material><diffuse>0.36 0.27 0.62 1</diffuse></material>
+      </visual>
+      <visual name="estop_housing">
+        <pose>-0.285 0.31 0.03 0 0 0</pose>
+        <geometry><box><size>0.08 0.1 0.06</size></box></geometry>
+        <material><diffuse>0.95 0.8 0.1 1</diffuse></material>
+      </visual>
+      <collision name="estop_housing">
+        <pose>-0.285 0.31 0.03 0 0 0</pose>
+        <geometry><box><size>0.08 0.1 0.06</size></box></geometry>
+      </collision>
+      <visual name="estop_cap">
+        <pose>-0.285 0.31 0.065 0 0 0</pose>
+        <geometry><box><size>0.08 0.1 0.01</size></box></geometry>
+        <material><diffuse>0.08 0.08 0.08 1</diffuse></material>
+      </visual>
+      <visual name="estop_button">
+        <pose>-0.285 0.31 0.08 0 0 0</pose>
+        <geometry><cylinder><radius>0.022</radius><length>0.02</length></cylinder></geometry>
+        <material><diffuse>0.8 0.08 0.08 1</diffuse></material>
+      </visual>
+      <collision name="estop_button">
+        <pose>-0.285 0.31 0.08 0 0 0</pose>
+        <geometry><cylinder><radius>0.022</radius><length>0.02</length></cylinder></geometry>
+      </collision>
+      <visual name="cardboard_box">
+        <pose>-0.51 -0.21 0.06 0 0 0</pose>
+        <geometry><box><size>0.33 0.3 0.12</size></box></geometry>
+        <material><diffuse>0.66 0.5 0.33 1</diffuse></material>
+      </visual>
+      <collision name="cardboard_box">
+        <pose>-0.51 -0.21 0.06 0 0 0</pose>
+        <geometry><box><size>0.33 0.3 0.12</size></box></geometry>
+      </collision>
+      <collision name="cart_body">
+        <pose>0 0 -0.23 0 0 0</pose>
+        <geometry><box><size>1.5 0.75 0.38</size></box></geometry>
+      </collision>
+    </link>
+  </model>
+</sdf>
