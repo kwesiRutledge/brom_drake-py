@@ -27,7 +27,7 @@ from brom_drake.productions.ids import ProductionID
 from brom_drake.productions.roles.role import Role
 from brom_drake.productions.types import OfflineDynamicMotionPlanningProduction
 from brom_drake.robots.gripper_type import GripperType
-from brom_drake.stations.classical import KinovaGen3Station
+from brom_drake.stations.classical import KinovaGen3Station, KinovaGen3Variant
 from brom_drake.systems.video import CameraSpec
 from brom_drake.utils import AddGround, MotionPlan, Performer
 
@@ -36,7 +36,7 @@ class CornellTech1(OfflineDynamicMotionPlanningProduction):
     """
     *Description*
 
-    A dynamic, offline motion planning production for a 7-DoF Kinova Gen3 arm
+    A dynamic, offline motion planning production for a Kinova Gen3 arm (7-DoF or 6-DoF)
     mounted on a mobile robot cart, modeled after the robot workcell at Cornell Tech.
 
     The scene contains:
@@ -69,7 +69,7 @@ class CornellTech1(OfflineDynamicMotionPlanningProduction):
         Use None to disable meshcat.
 
     plan_execution_speed: float, optional
-        The speed at which to execute the motion plan, by default 0.2.
+        The speed at which to execute the motion plan, by default 0.3.
 
     pose_WorldBeaker: RigidTransform, optional
         The pose of the beaker in the world frame, by default None
@@ -85,6 +85,10 @@ class CornellTech1(OfflineDynamicMotionPlanningProduction):
 
     gripper_type: GripperType, optional
         The type of gripper to use, by default GripperType.Robotiq_2f_85.
+
+    arm_variant: KinovaGen3Variant, optional
+        Which Kinova Gen3 arm to use, by default KinovaGen3Variant.kSevenDof.
+        Start and goal configurations (if given) must have ``arm_variant.num_dofs`` entries.
 
     *Usage*
 
@@ -126,11 +130,12 @@ class CornellTech1(OfflineDynamicMotionPlanningProduction):
         self,
         time_step: float = 1e-3,
         meshcat_port_number: int = 7001,
-        plan_execution_speed: float = 0.2,
+        plan_execution_speed: float = 0.3,
         pose_WorldBeaker: RigidTransform = None,
         pose_WorldCart: RigidTransform = None,
         pose_WorldDesk: RigidTransform = None,
         gripper_type: GripperType = GripperType.Robotiq_2f_85,
+        arm_variant: KinovaGen3Variant = KinovaGen3Variant.kSevenDof,
         **kwargs,
     ):
         """
@@ -147,6 +152,7 @@ class CornellTech1(OfflineDynamicMotionPlanningProduction):
         self.meshcat_port_number = meshcat_port_number
         self.plan_execution_speed = plan_execution_speed
         self.gripper_type = gripper_type
+        self.arm_variant = arm_variant
 
         # Initialize pose data
         self.pose_WorldBeaker = pose_WorldBeaker
@@ -159,6 +165,7 @@ class CornellTech1(OfflineDynamicMotionPlanningProduction):
             time_step=self.time_step,
             meshcat_port_number=self.meshcat_port_number,
             gripper_type=self.gripper_type,
+            variant=self.arm_variant,
         )
         self.arm = self.station.arm
         self.robot_model_idx_ = self.arm
@@ -565,6 +572,7 @@ class CornellTech1(OfflineDynamicMotionPlanningProduction):
             time_step=self.time_step,
             meshcat_port_number=None,
             gripper_type=self.gripper_type,
+            variant=self.arm_variant,
         )
         shadow_station.Finalize()
         shadow_plant = shadow_station.plant

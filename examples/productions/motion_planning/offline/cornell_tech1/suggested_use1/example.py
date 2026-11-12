@@ -4,6 +4,7 @@ Description:
 
     In this script, we use the CornellTech1 production (a Kinova Gen3 arm mounted on
     a robot cart) to test a basic motion planning algorithm.
+    We use the 6-DoF variant of the Gen3 (the production's default is the 7-DoF variant).
     This shows one how to use the `easy_cast_and_build` method to simplify how to build
     a Production.
 
@@ -22,6 +23,7 @@ from brom_drake.motion_planning.algorithms.rrt.bidirectional_connect import (
     BidirectionalRRTConnectPlannerConfig,
 )
 from brom_drake.productions.all import CornellTech1
+from brom_drake.stations.classical import KinovaGen3Variant
 
 
 def main(meshcat_port_number: int = 7001, record_videos: bool = False):
@@ -32,6 +34,7 @@ def main(meshcat_port_number: int = 7001, record_videos: bool = False):
     # Create the production
     production = CornellTech1(
         meshcat_port_number=meshcat_port_number,  # Use None for CI
+        arm_variant=KinovaGen3Variant.kSixDof,
     )
 
     if record_videos:

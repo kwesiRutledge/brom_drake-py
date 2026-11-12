@@ -10,12 +10,15 @@ from brom_drake.productions.motion_planning.offline.dynamic.cornell_tech1 import
     CornellTech1,
 )
 from brom_drake.productions.ids import ProductionID
+from brom_drake.stations.classical import KinovaGen3Variant
 
 
 class CornellTech1Test(unittest.TestCase):
-    def build_production(self) -> CornellTech1:
+    def build_production(
+        self, arm_variant: KinovaGen3Variant = KinovaGen3Variant.kSevenDof
+    ) -> CornellTech1:
         """Builds the production (with an RRT planner) and returns it."""
-        production = CornellTech1(meshcat_port_number=None)
+        production = CornellTech1(meshcat_port_number=None, arm_variant=arm_variant)
         planner = BidirectionalRRTConnectPlanner(
             production.arm,
             production.plant,
@@ -54,6 +57,27 @@ class CornellTech1Test(unittest.TestCase):
             planner.check_collision_in_config(production.goal_configuration)
         )
 
+    def test_easy_cast_and_build_six_dof1(self):
+        """
+        Description
+        -----------
+        This test verifies that we can build CornellTech1 with the 6-DoF arm and
+        that its start and goal configurations have 6 entries and are collision free.
+        """
+        np.random.seed(0)
+        production = self.build_production(arm_variant=KinovaGen3Variant.kSixDof)
+        planner = production.performers[0]
+
+        self.assertEqual(production.plant.num_positions(production.arm), 6)
+        self.assertEqual(production.start_configuration.shape, (6,))
+        self.assertEqual(production.goal_configuration.shape, (6,))
+        self.assertFalse(
+            planner.check_collision_in_config(production.start_configuration)
+        )
+        self.assertFalse(
+            planner.check_collision_in_config(production.goal_configuration)
+        )
+
     def test_start_and_goal_configurations1(self):
         """
         Description
@@ -62,7 +86,13 @@ class CornellTech1Test(unittest.TestCase):
         (computed with inverse kinematics) put the end effector at the
         start and goal poses.
         """
-        production = CornellTech1(meshcat_port_number=None)
+        for variant in KinovaGen3Variant:
+            with self.subTest(variant=variant):
+                self.check_start_and_goal_configurations(variant)
+
+    def check_start_and_goal_configurations(self, variant: KinovaGen3Variant):
+        """Checks the start/goal configurations of the production with this variant."""
+        production = CornellTech1(meshcat_port_number=None, arm_variant=variant)
         production.station.Finalize()
 
         for q, pose in [
