@@ -66,7 +66,7 @@ pip install -e .
 ### Recurring documentation proposals
 
 `.github/workflows/documentation-one-file.md` defines a GitHub Agentic Workflow
-that runs every Monday at 09:00 UTC or via manual dispatch. It proposes at most
+that runs every weekday at 09:00 UTC or via manual dispatch. It proposes at most
 one draft PR improving one existing Sphinx page or a Python file's rendered
 docstrings, and skips proposals while a `[docs-one-file]` PR is open. Each
 proposal must preserve executable Python structure and build Sphinx HTML without
