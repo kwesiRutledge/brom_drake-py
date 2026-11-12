@@ -13,6 +13,7 @@ from pydrake.all import (
     RigidTransform,
     RollPitchYaw,
     RotationMatrix,
+    Solve,
 )
 
 # Internal Imports
@@ -46,12 +47,12 @@ class CornellTech1(OfflineDynamicMotionPlanningProduction):
     - The robot cart (aluminum extrusion frame), whose top surface is at z = 0,
       along with an emergency stop and a cardboard box sitting on it
     - An office desk with two monitors behind the cart
-    - A beaker (free body) sitting on the cart
+    - A beaker (free body) sitting on the desk, right behind the arm
     - The floor, 0.42 m below the top of the cart
 
     The robot must move its end effector from a start pose above the front-right
-    corner of the cart to a goal pose above the beaker, using the full dynamics of
-    the arm (just like :py:class:`ChemLab2`).
+    corner of the cart to a goal pose above the beaker on the desk behind it, using
+    the full dynamics of the arm (just like :py:class:`ChemLab2`).
 
     *Coordinate Frames*
 
@@ -73,7 +74,7 @@ class CornellTech1(OfflineDynamicMotionPlanningProduction):
 
     pose_WorldBeaker: RigidTransform, optional
         The pose of the beaker in the world frame, by default None
-        (the beaker sits on the cart, to the left of the arm).
+        (the beaker sits on the desk, right behind the arm).
 
     pose_WorldCart: RigidTransform, optional
         The pose of the cart's frame (center of its top surface) in the world frame,
@@ -125,6 +126,13 @@ class CornellTech1(OfflineDynamicMotionPlanningProduction):
 
     #: Height of the top of the cart above the floor (m)
     cart_height: float = 0.42
+
+    #: Height of the top of the desk above the floor (m)
+    desk_height: float = 0.75
+
+    #: Number of initial guesses that the inverse kinematics solver tries
+    #: (the first is the plant's default configuration, the rest are random)
+    n_ik_initial_guesses: int = 50
 
     def __init__(
         self,
@@ -211,13 +219,15 @@ class CornellTech1(OfflineDynamicMotionPlanningProduction):
                 np.array([-0.55, 0.475, -self.cart_height])
             )
 
-        # The beaker sits on the cart, to the left of the arm
-        # (the beaker mesh's "up" direction is +y, hence the roll)
+        # The beaker sits on the desk, right behind the arm
+        # (the desk frame is on the floor, below the center of the desktop;
+        # the beaker mesh's "up" direction is +y, hence the roll)
         if self.pose_WorldBeaker is None:
-            self.pose_WorldBeaker = RigidTransform(
+            pose_DeskBeaker = RigidTransform(
                 RollPitchYaw(np.pi / 2.0, 0.0, 0.0),
-                np.array([-0.55, -0.20, 0.012]),
+                np.array([0.55, -0.125, self.desk_height + 0.012]),
             )
+            self.pose_WorldBeaker = self.pose_WorldDesk.multiply(pose_DeskBeaker)
 
     def add_supporting_cast(self):
         """
@@ -432,11 +442,67 @@ class CornellTech1(OfflineDynamicMotionPlanningProduction):
         Solves the inverse kinematics problem for the Kinova arm.
         By default, the target frame is the station's ``end_effector`` frame
         (located between the gripper's fingertips).
+
+        The solver is local, so it can fail from a poor initial guess (e.g., the
+        arm pointing straight up when the target is close behind the arm's base).
+        We therefore try the plant's default configuration first, and then up to
+        ``n_ik_initial_guesses - 1`` random arm configurations (with a fixed seed,
+        so the result is repeatable), returning the first solution found.
+
+        *Parameters*
+
+        pose_WorldTarget: RigidTransform
+            The desired pose of the target frame in the world frame.
+
+        frame_name: str, optional
+            The name of the target frame on the arm, by default "end_effector".
+
+        robot_joint_names: list, optional
+            The names of the positions to return (in the plant's order).
+            By default None, which returns the arm's positions.
+
+        *Returns*
+
+        q_arm: np.ndarray
+            The arm's configuration that achieves the target pose.
         """
-        return super().solve_pose_ik_problem(
-            pose_WorldTarget,
-            frame_name=frame_name,
-            robot_joint_names=robot_joint_names,
+        plant = self.plant
+        ik_problem = self.define_pose_ik_problem(pose_WorldTarget, frame_name)
+        ik_program = ik_problem.prog()
+
+        # Initial guesses: the default configuration, then random arm configurations
+        rng = np.random.default_rng(0)
+        guess_context = plant.CreateDefaultContext()
+        lower = plant.GetPositionsFromArray(self.arm, plant.GetPositionLowerLimits())
+        upper = plant.GetPositionsFromArray(self.arm, plant.GetPositionUpperLimits())
+
+        for ii in range(self.n_ik_initial_guesses):
+            if ii > 0:
+                plant.SetPositions(guess_context, self.arm, rng.uniform(lower, upper))
+
+            ik_result = Solve(ik_program, plant.GetPositions(guess_context))
+            if ik_result.is_success():
+                break
+        else:
+            raise RuntimeError(
+                f"Could not solve the inverse kinematics problem for the pose\n"
+                f"{pose_WorldTarget}\nof frame {frame_name} after "
+                f"{self.n_ik_initial_guesses} initial guesses "
+                f"(last result: {ik_result.get_solution_result()})."
+            )
+
+        q_solution = ik_result.get_x_val()
+
+        # Extract the positions that we want
+        if robot_joint_names is None:
+            return plant.GetPositionsFromArray(self.arm, q_solution)
+
+        return np.array(
+            [
+                q_ii
+                for name_ii, q_ii in zip(plant.GetPositionNames(), q_solution)
+                if name_ii in robot_joint_names
+            ]
         )
 
     def easy_cast_and_build(
@@ -530,7 +596,7 @@ class CornellTech1(OfflineDynamicMotionPlanningProduction):
 
         Get the goal pose of the end effector frame.
         By default, the end effector points straight down, 0.2 m above the
-        bottom of the beaker.
+        bottom of the beaker (which sits on the desk behind the arm).
 
         *Returns*
 

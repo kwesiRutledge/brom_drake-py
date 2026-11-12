@@ -1,4 +1,5 @@
 import numpy as np
+from pydrake.all import RigidTransform, RollPitchYaw, Solve
 import unittest
 
 # Internal Imports
@@ -108,6 +109,96 @@ class CornellTech1Test(unittest.TestCase):
             # End effector should point (approximately) down
             z_axis = pose_from_q.rotation().matrix()[:, 2]
             self.assertLess(z_axis[2], -np.cos(np.pi / 8.0) + 1e-3)
+
+    def test_beaker_on_desk1(self):
+        """
+        Description
+        -----------
+        This test verifies that, by default, the beaker sits on the desk right
+        behind the arm, and that the goal pose is above the beaker.
+        """
+        production = CornellTech1(meshcat_port_number=None)
+        p_beaker = production.pose_WorldBeaker.translation()
+
+        # On top of the desk (desk frame is on the floor), slightly above to avoid penetration
+        desk_top_z = (
+            production.pose_WorldDesk.translation()[2] + production.desk_height
+        )
+        self.assertAlmostEqual(p_beaker[2], desk_top_z + 0.012, places=9)
+
+        # Directly behind the arm (whose base is at the origin), over the desktop
+        self.assertAlmostEqual(p_beaker[0], 0.0, places=9)
+        self.assertGreater(p_beaker[1], 0.1)  # the desk's front edge is at y = 0.1
+
+        # The goal is 0.2 m above the beaker, pointing down
+        p_goal = production.goal_pose.translation()
+        np.testing.assert_allclose(p_goal, p_beaker + np.array([0.0, 0.0, 0.2]))
+        z_axis = production.goal_pose.rotation().matrix()[:, 2]
+        np.testing.assert_allclose(z_axis, [0.0, 0.0, -1.0], atol=1e-12)
+
+    def test_beaker_follows_desk1(self):
+        """
+        Description
+        -----------
+        This test verifies that the default beaker pose moves with the desk.
+        """
+        default = CornellTech1(meshcat_port_number=None)
+        shift = np.array([-0.2, 0.1, 0.0])
+        moved = CornellTech1(
+            meshcat_port_number=None,
+            pose_WorldDesk=RigidTransform(
+                default.pose_WorldDesk.translation() + shift
+            ),
+        )
+        np.testing.assert_allclose(
+            moved.pose_WorldBeaker.translation(),
+            default.pose_WorldBeaker.translation() + shift,
+        )
+
+    def test_ik_needs_more_than_default_guess1(self):
+        """
+        Description
+        -----------
+        This test verifies that solve_pose_ik_problem finds the goal configuration
+        even though a single solve from the default configuration fails
+        (which is why it tries several initial guesses).
+        """
+        for variant in KinovaGen3Variant:
+            with self.subTest(variant=variant):
+                production = CornellTech1(meshcat_port_number=None, arm_variant=variant)
+                production.station.Finalize()
+
+                # A single solve from the default configuration fails...
+                ik_problem = production.define_pose_ik_problem(
+                    production.goal_pose, "end_effector"
+                )
+                default_positions = production.plant.GetPositions(
+                    production.plant.CreateDefaultContext()
+                )
+                self.assertFalse(
+                    Solve(ik_problem.prog(), default_positions).is_success()
+                )
+
+                # ... but solve_pose_ik_problem succeeds, deterministically
+                q1 = production.solve_pose_ik_problem(production.goal_pose)
+                q2 = production.solve_pose_ik_problem(production.goal_pose)
+                self.assertEqual(q1.shape, (variant.num_dofs,))
+                np.testing.assert_array_equal(q1, q2)
+
+    def test_ik_unreachable_pose1(self):
+        """
+        Description
+        -----------
+        This test verifies that solve_pose_ik_problem raises a helpful error
+        for a pose that the arm cannot reach.
+        """
+        production = CornellTech1(meshcat_port_number=None)
+        production.n_ik_initial_guesses = 3
+        production.station.Finalize()
+
+        unreachable = RigidTransform(RollPitchYaw(np.pi, 0.0, 0.0), [3.0, 0.0, 0.5])
+        with self.assertRaisesRegex(RuntimeError, "after 3 initial guesses"):
+            production.solve_pose_ik_problem(unreachable)
 
     def test_goal_pose1(self):
         """
