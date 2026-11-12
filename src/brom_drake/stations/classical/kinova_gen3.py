@@ -70,6 +70,10 @@ class KinovaGen3Station(UR10eStation):
     variant: KinovaGen3Variant, optional
         Which Gen3 arm to use, by default KinovaGen3Variant.kSevenDof.
 
+    model_gripper_in_controller: bool, optional
+        Whether the arm controller's model of the robot includes the gripper
+        (as a rigid load on the arm's flange), by default True.
+
     *Diagram*
 
     The diagram's inputs and outputs can be represented as: ::
@@ -102,6 +106,7 @@ class KinovaGen3Station(UR10eStation):
         meshcat_port_number: int = 7001,
         gripper_type: GripperType = GripperType.Robotiq_2f_85,
         variant: KinovaGen3Variant = KinovaGen3Variant.kSevenDof,
+        model_gripper_in_controller: bool = True,
     ):
         # The variant must be known before the parent constructor calls AddArm()
         self.variant = variant
@@ -110,6 +115,7 @@ class KinovaGen3Station(UR10eStation):
             time_step=time_step,
             meshcat_port_number=meshcat_port_number,
             gripper_type=gripper_type,
+            model_gripper_in_controller=model_gripper_in_controller,
         )
 
     def AddArm(self):

@@ -111,9 +111,9 @@ class TestKinovaGen3Station(unittest.TestCase):
         q = station.GetOutputPort("kinova_gen3_arm_position_measured").Eval(
             station.GetMyContextFromRoot(simulator.get_context())
         )
-        # The controller's model of the arm does not include the gripper,
-        # so the light wrist joints sag a little under the gripper's weight.
-        np.testing.assert_allclose(q, q_des, atol=0.1)
+        # The controller's model of the arm includes the gripper,
+        # so it compensates for the gripper's weight.
+        np.testing.assert_allclose(q, q_des, atol=1e-3)
 
 
 if __name__ == "__main__":
