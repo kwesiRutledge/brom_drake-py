@@ -11,6 +11,10 @@ Submodules
 Classes
 -------
 
+.. autoclass:: brom_drake.stations.classical.kinova_gen3.KinovaGen3Station
+   :members:
+.. autoclass:: brom_drake.stations.classical.kinova_gen3.KinovaGen3Variant
+   :members:
 .. autoclass:: brom_drake.stations.classical.ur10e.UR10eStation
    :members:
 

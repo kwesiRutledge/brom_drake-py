@@ -10,8 +10,10 @@ Submodules
    beaker/beaker
    bookshelf/bookshelf
    centrifuge/centrifuge
+   cornell_tech/cornell_tech
    cupboard/cupboard
    erlenmeyer_flask/erlenmeyer_flask
+   kinova/kinova
    michigan_block_m/michigan_block_m
    robotiq/robotiq
    test_tube_holder/test_tube_holder

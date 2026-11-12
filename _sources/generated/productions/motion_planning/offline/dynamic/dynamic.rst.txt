@@ -13,6 +13,8 @@ Classes
 
 .. autoclass:: brom_drake.productions.motion_planning.offline.dynamic.chem_lab2.ChemLab2
    :members:
+.. autoclass:: brom_drake.productions.motion_planning.offline.dynamic.cornell_tech1.CornellTech1
+   :members:
 
 Functions
 ---------
