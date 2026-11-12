@@ -384,9 +384,18 @@ class KinematicMotionPlanningProduction(BaseProduction):
         """
         Description
         -----------
-        Sets up the inverse kinematics problem for the start pose
-        input to theis function.
-        :return:
+        Sets up the inverse kinematics problem for reaching a target pose
+        with one frame of the plant. The translation of the target is enforced
+        as a hard constraint (within a box of half-width ``eps0`` around the
+        target translation), while the target orientation is only added as a
+        soft cost. The problem does not include any collision avoidance.
+
+        :param pose_WorldTarget: The desired pose of the target frame, expressed in the world frame.
+        :param target_frame_name: The name of the plant frame that should reach the pose.
+        :param eps0: Half-width (in meters) of the box, along each world axis,
+            that the target frame's origin must lie in.
+        :param orientation_cost_scaling: The weight of the orientation cost.
+        :return: The (unsolved) inverse kinematics problem.
         """
         # Setup
 
@@ -482,8 +491,11 @@ class KinematicMotionPlanningProduction(BaseProduction):
     @property
     def goal_configuration(self) -> np.ndarray:
         """
-        Get the goal pose. This should be defined by the subclass.
-        :return:
+        Get the goal configuration. If the production was given a goal
+        configuration, it is returned directly. Otherwise, if it was given a goal
+        pose, the configuration is computed with solve_pose_ik_problem
+        (which ignores obstacles). If neither was defined, a NotImplementedError is raised.
+        :return: The goal joint configuration of the robot.
         """
         if self._goal_config is not None:
             return self._goal_config
@@ -622,9 +634,21 @@ class KinematicMotionPlanningProduction(BaseProduction):
         robot_joint_names: list = None,
     ) -> np.ndarray:
         """
-        Description:
-        :param input_pose_vec: An n-dimensional vector
-        :return:
+        Description
+        -----------
+        Solves an inverse kinematics problem (see define_pose_ik_problem)
+        for the given pose and returns the resulting joint configuration of the robot.
+        Obstacles are ignored, so the returned configuration may be in collision.
+
+        :param pose_WorldTarget: The desired pose of the target frame, expressed in the world frame.
+        :param frame_name: The name of the plant frame that should reach the pose
+            (default ``"ft_frame"``).
+        :param robot_joint_names: The position names (with model instance prefix)
+            to extract from the IK solution. If None, all position names of the
+            production's robot model instance are used.
+        :return: The joint positions of the robot, in the order they appear in the plant.
+        :raises AssertionError: If the plant is not defined or the solver
+            does not find a solution.
         """
         # Input Processing
         assert (
