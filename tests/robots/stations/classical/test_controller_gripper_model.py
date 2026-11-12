@@ -130,9 +130,12 @@ class TestControllerGripperModelStructure(unittest.TestCase):
                 station.Finalize()
 
                 self.assertIsNotNone(station.controller_gripper)
-                self.assertTrue(station.controller_plant.HasFrameNamed(GRIPPER_BASE_FRAME))
+                self.assertTrue(
+                    station.controller_plant.HasFrameNamed(GRIPPER_BASE_FRAME)
+                )
                 self.assertEqual(
-                    station.controller_plant.num_positions(station.controller_gripper), 0
+                    station.controller_plant.num_positions(station.controller_gripper),
+                    0,
                 )
 
                 n_arm = station.plant.num_positions(station.arm)
@@ -307,9 +310,7 @@ class TestControllerGripperModelStructure(unittest.TestCase):
                 tau_g_controller = controller_plant.CalcGravityGeneralizedForces(
                     controller_context
                 )
-                self.assertGreater(
-                    np.max(np.abs(tau_g_controller - tau_g_plant)), 0.1
-                )
+                self.assertGreater(np.max(np.abs(tau_g_controller - tau_g_plant)), 0.1)
 
     def test_arm_mass_matrix_matches1(self):
         """
@@ -338,7 +339,9 @@ class TestControllerGripperModelStructure(unittest.TestCase):
                     M_arm = M_plant[np.ix_(arm_v_indices, arm_v_indices)]
                     M_controller = controller_plant.CalcMassMatrix(controller_context)
 
-                    np.testing.assert_allclose(M_controller, M_arm, rtol=1e-9, atol=1e-9)
+                    np.testing.assert_allclose(
+                        M_controller, M_arm, rtol=1e-9, atol=1e-9
+                    )
 
 
 class TestControllerGripperModelBehavior(unittest.TestCase):

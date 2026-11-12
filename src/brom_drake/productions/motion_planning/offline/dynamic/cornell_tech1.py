@@ -294,7 +294,9 @@ class CornellTech1(OfflineDynamicMotionPlanningProduction):
         Adds the robot cart (and the e-stop and cardboard box on top of it)
         to the production's plant and welds it to the world frame.
         """
-        sdf_path = str(impresources.files(robots) / "models/cornell_tech/robot_cart.sdf")
+        sdf_path = str(
+            impresources.files(robots) / "models/cornell_tech/robot_cart.sdf"
+        )
         self.cart_model_index = Parser(plant=self.plant).AddModels(sdf_path)[0]
         self.plant.WeldFrames(
             self.plant.world_frame(),

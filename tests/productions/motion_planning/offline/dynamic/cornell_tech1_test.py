@@ -121,9 +121,7 @@ class CornellTech1Test(unittest.TestCase):
         p_beaker = production.pose_WorldBeaker.translation()
 
         # On top of the desk (desk frame is on the floor), slightly above to avoid penetration
-        desk_top_z = (
-            production.pose_WorldDesk.translation()[2] + production.desk_height
-        )
+        desk_top_z = production.pose_WorldDesk.translation()[2] + production.desk_height
         self.assertAlmostEqual(p_beaker[2], desk_top_z + 0.012, places=9)
 
         # Directly behind the arm (whose base is at the origin), over the desktop
@@ -146,9 +144,7 @@ class CornellTech1Test(unittest.TestCase):
         shift = np.array([-0.2, 0.1, 0.0])
         moved = CornellTech1(
             meshcat_port_number=None,
-            pose_WorldDesk=RigidTransform(
-                default.pose_WorldDesk.translation() + shift
-            ),
+            pose_WorldDesk=RigidTransform(default.pose_WorldDesk.translation() + shift),
         )
         np.testing.assert_allclose(
             moved.pose_WorldBeaker.translation(),
