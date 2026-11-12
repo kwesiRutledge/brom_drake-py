@@ -77,3 +77,24 @@ If you want to have more accurate collision checking, then using convex decompos
 This often requires breaking up your single non-convex body into multiple convex bodies, which is what convex decomposition flag does for you here.
 
 Again, examples of this use case can be found in the :code:`examples/conversion` directory of the repository.
+
+Replacing Colors
+----------------
+
+You can also give every visual element in the converted URDF the same color by passing ``replace_colors_with``
+to :py:func:`~brom_drake.file_manipulation.urdf.drakeify.drakeify_my_urdf`.
+The value must be an RGBA list of exactly four numbers:
+
+.. code-block:: python
+
+    new_urdf_path = drakeify_my_urdf(
+        urdf_file_path,
+        overwrite_old_logs=True,
+        log_file_name="drakeify-my-urdf1.log",
+        replace_colors_with=[1.0, 0.5, 0.2, 0.1],
+    )
+
+Every ``<material>`` in the converted file then contains ``<color rgba="1.0 0.5 0.2 0.1"/>``.
+Visual elements that had no material receive a new one, and any existing color is overwritten.
+If ``replace_colors_with`` is ``None`` (the default), colors are left unchanged.
+A list that does not contain exactly four values raises a ``ValueError`` when the conversion runs.
