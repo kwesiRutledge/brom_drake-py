@@ -94,9 +94,12 @@ The :code:`plan_function` value is a function that:
     - q_start: An initial joint configuration from which the plan must start,
     - q_goal: The goal joint configuration from which the robot must go, and
     - collision_checking_algorithm: The collision checking algorithm will be used as follows collision_checking_algorithm(q)=in_collision_or_not. It returns a boolean which describes whether or not a given configuration is in collision with the environment.
-- Returns as output:
-    - plan: A :code:`networkx.Digraph` or numpy array (coming soon!) describing the sequence of configurations that will reach from start to goal.
-    - found_path: A boolean describing whether or not a path was found between the two configurations.
+- Returns as output one of the following (see :code:`PrototypicalPlannerSystem.planning_result_to_array`):
+    - A tuple :code:`(plan, goal_node_index)`, where :code:`plan` is a :code:`networkx.DiGraph` or numpy array and :code:`goal_node_index` is an integer. The built-in RRT planners return this form. If :code:`goal_node_index` is :code:`-1`, no path was found and a :code:`RuntimeError` is raised.
+    - A :code:`networkx.DiGraph` alone. The path runs from node :code:`0` to the node with the last id in :code:`plan.nodes`.
+    - A numpy array alone, which is used directly as the sequence of configurations.
+
+When :code:`plan` is a :code:`networkx.DiGraph`, node :code:`0` must be the start configuration, and every node must store its joint configuration in the :code:`"q"` attribute. Brom extracts the shortest path from node :code:`0` to the goal node and converts it to an array of configurations.
 
 You can make the :code:`plan_function` using any library you want. It doesn't need to be made using drake components at all, if you don't want it to be. 
 
