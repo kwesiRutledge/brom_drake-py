@@ -494,8 +494,11 @@ class KinematicMotionPlanningProduction(BaseProduction):
         Get the goal configuration. If the production was given a goal
         configuration, it is returned directly. Otherwise, if it was given a goal
         pose, the configuration is computed with solve_pose_ik_problem
-        (which ignores obstacles). If neither was defined, a NotImplementedError is raised.
+        (which ignores obstacles, so the result may be in collision).
+        If neither was defined, a NotImplementedError is raised.
+
         :return: The goal joint configuration of the robot.
+        :raises NotImplementedError: If neither a goal configuration nor a goal pose is defined.
         """
         if self._goal_config is not None:
             return self._goal_config
@@ -511,8 +514,13 @@ class KinematicMotionPlanningProduction(BaseProduction):
     @property
     def goal_pose(self) -> RigidTransform:
         """
-        Get the goal pose. This should be defined by the subclass.
-        :return:
+        Get the goal pose. If the production was given a goal pose, it is
+        returned directly. A goal pose is NOT computed from a goal configuration,
+        because that requires forward kinematics for your specific scene.
+
+        :return: The goal pose of the robot's target frame.
+        :raises NotImplementedError: If no goal pose was given (including when
+            only a goal configuration was given); subclasses may override this property.
         """
         if self._goal_pose is not None:
             return self._goal_pose
@@ -585,8 +593,14 @@ class KinematicMotionPlanningProduction(BaseProduction):
     @property
     def start_configuration(self) -> np.ndarray:
         """
-        Description:
-            This function returns the start and goal poses as a single array.
+        Get the start configuration. If the production was given a start
+        configuration, it is returned directly. Otherwise, if it was given a start
+        pose, the configuration is computed with solve_pose_ik_problem
+        (which ignores obstacles, so the result may be in collision).
+        If neither was defined, a NotImplementedError is raised.
+
+        :return: The start joint configuration of the robot.
+        :raises NotImplementedError: If neither a start configuration nor a start pose is defined.
         """
         if self._start_config is not None:
             return self._start_config
@@ -602,8 +616,13 @@ class KinematicMotionPlanningProduction(BaseProduction):
     @property
     def start_pose(self) -> RigidTransform:
         """
-        Get the start pose. This should be defined by the subclass.
-        :return:
+        Get the start pose. If the production was given a start pose, it is
+        returned directly. A start pose is NOT computed from a start configuration,
+        because that requires forward kinematics for your specific scene.
+
+        :return: The start pose of the robot's target frame.
+        :raises NotImplementedError: If no start pose was given (including when
+            only a start configuration was given); subclasses may override this property.
         """
         if self._start_pose is not None:
             return self._start_pose
