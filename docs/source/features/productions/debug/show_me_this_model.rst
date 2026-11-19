@@ -37,7 +37,7 @@ In the following section, we will also include one example to demonstrate how to
     #Internal imports
     from brom_drake import robots
     from brom_drake.all import drakeify_my_urdf
-    from brom_drake.scenes import ShowMeThisModel
+    from brom_drake.productions.all import ShowMeThisModel
 
     def main():
         # Setup
@@ -89,7 +89,11 @@ In the above snippet, we see a couple of things:
 - The inputs to the Production are:
   - path_to_model: (Required) A string describing the location of the URDF (or other model) that you want to visualize.
   - with_these_joint_positions: (Optional) A list describing what position you want each joint to be in.
+  - base_link_name: (Optional) The name of the link that is welded to the world frame. If it is not given, the first link found in the model file is used.
   - time_step: (Optional) The time step to use in the MultibodyPlant created internally in this Production.
+  - meshcat_port_number: (Optional) The port on which Meshcat serves the visualization (default :code:`7001`). Pass :code:`None` to skip creating Meshcat, e.g., when running in CI.
+  - show_collision_geometries: (Optional) See `Showing Collision Geometries`_ below.
+- A :code:`ValueError` is raised if :code:`path_to_model` does not exist. If :code:`with_these_joint_positions` is given, its length must equal the number of positions in the model (the check runs when the cast is added, i.e., in :code:`add_cast_and_build`); if it is omitted, all joints are set to zero.
 - Once the production is created we can use the normal workflow (i.e., build the Production and then use the resulting Diagram object in your simulation) to view the robot in the desired joint configuration.
 
 .. note::
