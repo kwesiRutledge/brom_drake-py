@@ -26,13 +26,12 @@ class DrakeReadyURDFConverterFileManager:
         """
         Description
         -----------
-        This method will clean up the models directory.
+        This method will clean up the directory for the original URDF model.
         """
-        # Make sure that the models directory exists
-        os.makedirs(
-            self.models_directory, exist_ok=True
-        )  # TODO: Can we just use Pathlib here to check for existence?
-        shutil.rmtree(self.models_directory, ignore_errors=True)
+        model_directory = self.models_directory / self.original_urdf_path.name.replace(
+            ".urdf", ""
+        )
+        shutil.rmtree(model_directory, ignore_errors=True)
 
     def output_file_directory(self) -> Path:
         """
