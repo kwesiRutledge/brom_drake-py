@@ -3,7 +3,13 @@ from .search import (
     find_all_systems_with_output_port,
 )
 from .constants import Performer, MotionPlan
-from .collision_checking import using_point_pair_penetration
+from .collision_checking import (
+    CollisionCheckMethod,
+    CollisionPair,
+    count_collisions,
+    find_collisions,
+    using_point_pair_penetration,
+)
 from .ground import AddGround, GroundShape
 from .triads import AddMultibodyTriad, AddTriad
 
@@ -16,6 +22,10 @@ __all__ = [
     "AddTriad",
     "BoolToVectorSystem",
     "using_point_pair_penetration",
+    "CollisionCheckMethod",
+    "CollisionPair",
+    "count_collisions",
+    "find_collisions",
     "EndEffectorWrenchCalculator",
     "find_all_systems_with_input_port",
     "find_all_systems_with_output_port",
