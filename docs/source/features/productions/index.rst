@@ -14,6 +14,14 @@ In case you want to "dive right in" to using Productions, we'll list a few here 
    kinematic_motion_planning
    debug/show_me_this_static_grasp
 
+Writing Productions
+-------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   scenarios
+
 What is a Production?
 ---------------------
 
