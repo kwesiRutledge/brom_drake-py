@@ -56,8 +56,18 @@ def add_watcher(
     builder : DiagramBuilder
         The diagram builder to which we want to add the watcher.
 
-    targets : List[Tuple[Union[str, int]]]
-        The targets that we want to watch.
+    targets : List[Union[str, Tuple[Union[str, int], Union[str, int, List[Union[str, int]]]]]], optional
+        The targets that we want to watch. If None (the default), the watcher
+        considers every system in the diagram. Otherwise, this must be a non-empty list
+        (an empty list or a non-list raises a ValueError) whose elements are each one of:
+
+        - a system name (str), to watch all of that system's output ports, or
+        - a tuple of (system, ports), where ``system`` is the system's name (str) or its index (int)
+          in ``builder.GetSystems()``, and ``ports`` is an output port index (int), an output port name (str),
+          or a list of such indices and names.
+
+        A tuple must have two elements; a one-element tuple such as ``("plant",)`` is not accepted.
+        A system index outside the range of ``builder.GetSystems()`` or an unknown output port name raises a ValueError.
 
     watcher_dir : str, optional
         The directory in which we will store the data collected by the DiagramWatcher.
@@ -88,13 +98,15 @@ def add_watcher(
 
     - A string representing the name of the system to watch (all ports will be watched), or
     - A tuple of (system_name: str, port_index: int) to watch a specific port of a system, or
-    - A tuple of (system_index: int, port_index: int) to watch a specific port of a system by its index.
+    - A tuple of (system_index: int, port_index: int) to watch a specific port of a system by its index, or
+    - A tuple whose second element is an output port name (str) or a list of port indices and/or names.
 
     Here are some examples of how to specify targets:
 
     .. code-block:: python
 
         watcher = add_watcher(builder, [("plant", 0), ("controller", 0)])
+        watcher = add_watcher(builder, ["plant", ("controller", "u")])
 
     **Returns**
 
@@ -152,13 +164,13 @@ def add_watcher_and_build(
 
     .. code-block:: python
 
-        watcher = add_watcher_and_build(builder)
+        watcher, diagram, diagram_context = add_watcher_and_build(builder)
 
     In addition, one can specify which systems to watch:
 
     .. code-block:: python
 
-        watcher = add_watcher_and_build(builder, targets=[("plant",)])
+        watcher, diagram, diagram_context = add_watcher_and_build(builder, targets=["plant"])
 
     The DiagramWatcher will then watch all supported ports of the "plant" system
     that it can find.
@@ -167,7 +179,9 @@ def add_watcher_and_build(
 
     .. code-block:: python
 
-        watcher = add_watcher_and_build(builder, targets=[("plant", 0), ("controller", 0)])
+        watcher, diagram, diagram_context = add_watcher_and_build(
+            builder, targets=[("plant", 0), ("controller", 0)]
+        )
 
     This will watch output port 0 of both the "plant" and "controller" systems, if possible.
 
@@ -176,8 +190,10 @@ def add_watcher_and_build(
     builder: DiagramBuilder
         The diagram builder to which we want to add the watcher.
 
-    targets: List[Tuple[Union[str, int]]]
-        The targets that we want to watch.
+    targets: List[Union[str, Tuple[Union[str, int], Union[str, int, List[Union[str, int]]]]]], optional
+        The targets that we want to watch, in the same format as in
+        :py:func:`~brom_drake.watchers.diagram_watcher.add_watcher.add_watcher`.
+        If None (the default), all systems in the diagram are considered.
 
     watcher_dir: str
         The directory in which we will store the data collected by the DiagramWatcher.
