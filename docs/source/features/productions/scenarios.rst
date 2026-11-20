@@ -57,11 +57,21 @@ Parameter types
    * - ``VectorParam(length, min, max, units="")``
      - a list of ``length`` numbers
      - ``min[i]`` to ``max[i]`` for each entry
+   * - ``VectorParam(None, min, max, units="")``
+     - a non-empty list of any length
+     - ``min`` to ``max`` (single numbers) for every entry
    * - ``PoseParam(xyz_min, xyz_max, rpy_min, rpy_max)``
      - ``{"xyz": [...], "rpy": [...]}`` or ``{"xyz": [...], "wxyz": [...]}``
      - per component; see below
 
 ``true`` and ``false``, NaN and infinity are never accepted as numbers.
+
+The base production types (``KinematicMotionPlanningProduction``,
+``OfflineDynamicMotionPlanningProduction`` and
+``MotionPlanningAndGraspingProduction``) declare their start and goal fields
+with loose bounds and ``VectorParam(None, ...)``, because the joint count
+depends on the arm. A production should re-declare those fields with its
+arm's joint count and limits and its own workspace.
 
 .. _pose-orientation-convention:
 

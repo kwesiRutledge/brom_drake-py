@@ -229,19 +229,42 @@ class VectorParam:
     """
     *Description*
 
-    A fixed-length list of real numbers, each within its own ``[min[i], max[i]]``.
+    A list of real numbers.
+
+    - With a ``length``, ``min`` and ``max`` are sequences of that length and
+      entry ``i`` must lie in ``[min[i], max[i]]``.
+    - With ``length=None``, any non-empty length is accepted and ``min`` and
+      ``max`` are single numbers that bound every entry. Base production
+      classes use this for joint vectors, whose length depends on the arm;
+      a concrete production should re-declare the field with its exact length
+      and per-joint bounds.
     """
 
-    length: int
-    min: Tuple[float, ...]
-    max: Tuple[float, ...]
+    length: Optional[int]
+    min: Union[float, Tuple[float, ...]]
+    max: Union[float, Tuple[float, ...]]
     units: str = ""
 
     kind: ClassVar[str] = "vector"
 
     def __post_init__(self):
+        if self.length is None:
+            if not (_is_number(self.min) and _is_number(self.max)):
+                raise TypeError(
+                    "VectorParam with length=None needs single numbers for min "
+                    f"and max (they bound every entry), got {self.min!r} and "
+                    f"{self.max!r}"
+                )
+            lo, hi = _as_float_tuple((self.min, self.max), "VectorParam bounds")
+            _check_bounds((lo,), (hi,), "VectorParam")
+            object.__setattr__(self, "min", lo)
+            object.__setattr__(self, "max", hi)
+            return
+
         if isinstance(self.length, bool) or not isinstance(self.length, int):
-            raise TypeError(f"VectorParam length must be an int, got {self.length!r}")
+            raise TypeError(
+                f"VectorParam length must be an int or None, got {self.length!r}"
+            )
         if self.length < 1:
             raise ValueError(f"VectorParam length must be positive, got {self.length}")
         lo = _as_float_tuple(self.min, "VectorParam min")
@@ -256,11 +279,26 @@ class VectorParam:
         object.__setattr__(self, "max", hi)
 
     def bounds(self) -> Dict[str, Any]:
+        if self.length is None:
+            return {"length": None, "min": self.min, "max": self.max}
         return {"length": self.length, "min": list(self.min), "max": list(self.max)}
 
     def check(
         self, value: Any, label: str, problems: List[str]
     ) -> Optional[List[float]]:
+        if self.length is None:
+            if not isinstance(value, (list, tuple, np.ndarray)):
+                problems.append(
+                    f"{label}: expected a list of numbers, got {type(value).__name__}"
+                )
+                return None
+            if len(value) == 0:
+                problems.append(f"{label}: expected a non-empty list of numbers")
+                return None
+            n = len(value)
+            return _check_number_list(
+                value, n, (self.min,) * n, (self.max,) * n, label, problems
+            )
         return _check_number_list(
             value, self.length, self.min, self.max, label, problems
         )
@@ -451,7 +489,8 @@ class PoseParam:
         from pydrake.math import RollPitchYaw
 
         q = Quaternion(np.array(wxyz) / norm)
-        rpy = [float(a) for a in RollPitchYaw(q).vector()]
+        # "+ 0.0" turns -0.0 into 0.0 so the JSON reads cleanly.
+        rpy = [float(a) + 0.0 for a in RollPitchYaw(q).vector()]
         outside = [
             f"{ANGLE_NAMES[i]} = {a:.6g} rad (allowed "
             f"[{self.rpy_min[i]:.6g}, {self.rpy_max[i]:.6g}])"

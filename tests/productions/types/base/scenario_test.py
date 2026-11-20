@@ -397,6 +397,49 @@ class PoseParamDeclarationTest(unittest.TestCase):
             VectorParam(3, (0.0, 0.0), (1.0, 1.0))
 
 
+class VectorParamAnyLengthTest(unittest.TestCase):
+    """
+    Description
+    -----------
+    VectorParam(length=None) accepts any non-empty length, with one shared
+    min and max for every entry. Base production types use it for joint
+    vectors, whose length depends on the arm.
+    """
+
+    spec = VectorParam(None, -1.0, 1.0, "rad")
+
+    def check(self, value):
+        problems = []
+        return self.spec.check(value, "q", problems), problems
+
+    def test_any_length_is_accepted1(self):
+        for n in (1, 6, 7):
+            with self.subTest(length=n):
+                self.assertEqual(self.check([0.5] * n), ([0.5] * n, []))
+
+    def test_shared_bounds_apply_to_every_entry1(self):
+        value, problems = self.check([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.5])
+        self.assertIsNone(value)
+        self.assertEqual(
+            problems, ["q[6]: 1.5 is outside the allowed range [-1.0, 1.0]"]
+        )
+
+    def test_empty_and_non_list_are_refused1(self):
+        self.assertEqual(self.check([])[1], ["q: expected a non-empty list of numbers"])
+        self.assertEqual(
+            self.check(0.5)[1], ["q: expected a list of numbers, got float"]
+        )
+
+    def test_bounds_must_be_single_numbers1(self):
+        with self.assertRaises(TypeError):
+            VectorParam(None, (-1.0, -1.0), (1.0, 1.0))
+        with self.assertRaises(ValueError):
+            VectorParam(None, 1.0, -1.0)
+
+    def test_schema_bounds1(self):
+        self.assertEqual(self.spec.bounds(), {"length": None, "min": -1.0, "max": 1.0})
+
+
 class ScenarioDeclarationTest(unittest.TestCase):
     def test_subclass_without_dataclass_is_refused1(self):
         class Forgotten(ExampleScenario):
