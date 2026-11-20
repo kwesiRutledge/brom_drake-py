@@ -113,6 +113,68 @@ Keep pitch bounds inside [-π/2, π/2] when you can. A pitch beyond ±π/2 given
 inside ±π/2 with roll and yaw shifted by π, so it can pass as ``rpy`` and fail
 as ``wxyz``.
 
+Shared presets
+--------------
+
+``brom_drake.productions.scenario_presets`` holds the specs Brom's own
+productions use, so productions with the same arm share the same numbers:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Name
+     - What it allows
+   * - ``UR10E_CONFIGURATION``
+     - 6 joints, each within +/-2*pi except the elbow (+/-pi), from the UR10e URDF
+   * - ``UR10E_TARGET_POSE``
+     - x and y within +/-1.3 m, z from -0.2 to 1.5 m (the UR10e's reach)
+   * - ``KINOVA_GEN3_CONFIGURATION``
+     - any number of joints (6 or 7, following ``arm_variant``), each within +/-pi
+   * - ``KINOVA_GEN3_TARGET_POSE``
+     - x and y within +/-0.9 m, z from -0.2 to 1.2 m (the Gen3's reach)
+   * - ``placed_object_pose(xyz_min, xyz_max, roll=0.0)``
+     - an object that may turn about the vertical axis but not tip over
+       (roll and pitch within 0.05 rad of ``roll`` and 0)
+   * - ``SHELF_POSE``, ``TABLE_LENGTH``, ``TABLE_WIDTH``, ``TABLE_HEIGHT``
+     - the shelf and table ranges of the ChemLab productions
+
+Joint limits are copied by hand from the arm models, since reading them from
+the plant would mean building it. Workspace boxes are in the world frame, whose
+origin is at the arm's base.
+
+To declare a Scenario for a new production, extend its production type's
+Scenario and re-declare the start and goal fields with your arm's preset:
+
+.. code-block:: python
+
+    from dataclasses import dataclass
+
+    from brom_drake.productions.scenario_presets import (
+        UR10E_CONFIGURATION,
+        UR10E_TARGET_POSE,
+        placed_object_pose,
+    )
+    from brom_drake.productions.types.base import param
+
+
+    class MyLab(KinematicMotionPlanningProduction):
+        @dataclass
+        class Scenario(KinematicMotionPlanningProduction.Scenario):
+            start_configuration: list = param(UR10E_CONFIGURATION)
+            start_pose: dict = param(UR10E_TARGET_POSE)
+            goal_configuration: list = param(UR10E_CONFIGURATION)
+            goal_pose: dict = param(UR10E_TARGET_POSE)
+            box_pose: dict = param(
+                placed_object_pose(xyz_min=(-1.0, -1.0, 0.0), xyz_max=(1.0, 1.0, 1.0))
+            )
+
+        def __init__(self, box_pose=None, **kwargs):
+            ...
+
+A test in Brom (``tests/productions/scenario_contract_test.py``) checks every
+production with a Scenario: each field must be a constructor keyword argument
+with the same default.
+
 Reading the schema
 ------------------
 
