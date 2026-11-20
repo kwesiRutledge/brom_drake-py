@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from importlib import resources as impresources
 import networkx as nx
 import numpy as np
@@ -42,6 +43,16 @@ from brom_drake.productions.roles.role import Role
 from brom_drake.systems.video import CameraSpec
 from brom_drake.productions.types import OfflineDynamicMotionPlanningProduction
 from brom_drake.utils import Performer, AddGround, MotionPlan
+from brom_drake.productions.scenario_presets import (
+    SHELF_POSE,
+    TABLE_HEIGHT,
+    TABLE_LENGTH,
+    TABLE_WIDTH,
+    UR10E_CONFIGURATION,
+    UR10E_TARGET_POSE,
+    placed_object_pose,
+)
+from brom_drake.productions.types.base.scenario import param
 
 
 class ChemLab2(OfflineDynamicMotionPlanningProduction):
@@ -132,6 +143,52 @@ class ChemLab2(OfflineDynamicMotionPlanningProduction):
         simulator.AdvanceTo(planned_trajectory.end_time()+2.0)
 
     """
+
+    @dataclass
+    class Scenario(OfflineDynamicMotionPlanningProduction.Scenario):
+        """
+        *Description*
+
+        The initial conditions of ChemLab2 that a caller may change. Each field
+        is a keyword argument of the constructor, with the same default.
+        Start and goal fields use the UR10e joint limits and reach.
+        """
+
+        start_configuration: list = param(
+            UR10E_CONFIGURATION,
+            description="Joint positions of the arm at the start.",
+        )
+        start_pose: dict = param(
+            UR10E_TARGET_POSE,
+            description="Pose of the arm's target frame at the start, in the world frame.",
+        )
+        goal_configuration: list = param(
+            UR10E_CONFIGURATION,
+            description="Joint positions of the arm at the goal.",
+        )
+        goal_pose: dict = param(
+            UR10E_TARGET_POSE,
+            description="Pose of the arm's target frame at the goal, in the world frame.",
+        )
+        pose_WorldBeaker: dict = param(
+            placed_object_pose(
+                xyz_min=(-1.0, -1.0, 0.05), xyz_max=(1.0, 1.0, 1.0), roll=np.pi / 2.0
+            ),
+            description="Pose of the beaker in the world frame (None: the production's default).",
+        )
+        table_length: float = param(
+            TABLE_LENGTH, default=0.6, description="Length of the table."
+        )
+        table_width: float = param(
+            TABLE_WIDTH, default=2.0, description="Width of the table."
+        )
+        table_height: float = param(
+            TABLE_HEIGHT, default=0.1, description="Height of the table."
+        )
+        shelf_pose: dict = param(
+            SHELF_POSE,
+            description="Pose of the shelf in the world frame (None: the production's default).",
+        )
 
     def __init__(
         self,

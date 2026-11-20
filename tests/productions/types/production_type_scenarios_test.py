@@ -114,20 +114,32 @@ class ProductionTypeScenarioTest(unittest.TestCase):
             MotionPlanningAndGraspingProduction.Scenario.validate({"goal_pose": POSE})
         self.assertIn("unknown parameter 'goal_pose'", ctx.exception.problems[0])
 
-    def test_productions_inherit_their_type_scenario1(self):
+    def test_production_scenarios_extend_their_type_scenario1(self):
         """
         Description
         -----------
-        Until a production declares its own Scenario, it inherits its type's.
+        A production's Scenario extends its type's, so the type's start and
+        goal fields and exclusive pairs carry over (with narrower bounds).
         """
-        self.assertIs(ChemLab1.Scenario, KinematicMotionPlanningProduction.Scenario)
-        self.assertIs(
-            ShelfPlanning1.Scenario, KinematicMotionPlanningProduction.Scenario
-        )
-        self.assertIs(
-            ChemLab2.Scenario, OfflineDynamicMotionPlanningProduction.Scenario
-        )
-        self.assertIs(ChemLab3.Scenario, MotionPlanningAndGraspingProduction.Scenario)
+        cases = [
+            (ChemLab1, KinematicMotionPlanningProduction),
+            (ShelfPlanning1, KinematicMotionPlanningProduction),
+            (ChemLab2, OfflineDynamicMotionPlanningProduction),
+            (ChemLab3, MotionPlanningAndGraspingProduction),
+        ]
+        for production, production_type in cases:
+            with self.subTest(production=production.__name__):
+                self.assertTrue(
+                    issubclass(production.Scenario, production_type.Scenario)
+                )
+                schema = production.Scenario.schema()
+                type_schema = production_type.Scenario.schema()
+                names = [f["name"] for f in schema["fields"]]
+                type_names = [f["name"] for f in type_schema["fields"]]
+                self.assertEqual(names[: len(type_names)], type_names)
+                self.assertEqual(
+                    schema["mutually_exclusive"], type_schema["mutually_exclusive"]
+                )
 
 
 if __name__ == "__main__":

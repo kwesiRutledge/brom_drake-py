@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from importlib import resources as impresources
 from typing import Callable, List, Optional, Tuple
 
@@ -26,6 +27,12 @@ from brom_drake.productions.types.motion_planning import (
     KinematicMotionPlanningProduction,
 )
 from brom_drake.utils import Performer, GroundShape, AddGround, MotionPlan
+from brom_drake.productions.scenario_presets import (
+    SHELF_POSE,
+    UR10E_CONFIGURATION,
+    UR10E_TARGET_POSE,
+)
+from brom_drake.productions.types.base.scenario import param
 
 
 class ShelfPlanning1(KinematicMotionPlanningProduction):
@@ -113,6 +120,37 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
 
 
     """
+
+    @dataclass
+    class Scenario(KinematicMotionPlanningProduction.Scenario):
+        """
+        *Description*
+
+        The initial conditions of ShelfPlanning1 that a caller may change. Each field
+        is a keyword argument of the constructor, with the same default.
+        Start and goal fields use the UR10e joint limits and reach.
+        """
+
+        start_configuration: list = param(
+            UR10E_CONFIGURATION,
+            description="Joint positions of the arm at the start.",
+        )
+        start_pose: dict = param(
+            UR10E_TARGET_POSE,
+            description="Pose of the arm's target frame at the start, in the world frame.",
+        )
+        goal_configuration: list = param(
+            UR10E_CONFIGURATION,
+            description="Joint positions of the arm at the goal.",
+        )
+        goal_pose: dict = param(
+            UR10E_TARGET_POSE,
+            description="Pose of the arm's target frame at the goal, in the world frame.",
+        )
+        shelf_pose: dict = param(
+            SHELF_POSE,
+            description="Pose of the shelf in the world frame (None: the production's default).",
+        )
 
     def __init__(
         self,
