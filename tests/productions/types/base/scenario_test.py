@@ -512,6 +512,43 @@ class ScenarioDeclarationTest(unittest.TestCase):
             )
 
 
+class ConstructorKwargsTest(unittest.TestCase):
+    def test_values_become_constructor_arguments1(self):
+        """
+        Description
+        -----------
+        Floats stay floats, vectors become numpy arrays, poses become
+        RigidTransforms and None stays None.
+        """
+        from pydrake.math import RigidTransform
+
+        kwargs = ExampleScenario.constructor_kwargs(
+            {
+                "table_height": 0.2,
+                "start_configuration": [0.1] * 6,
+                "start_pose": None,
+                "shelf_pose": valid_pose(wxyz=[0.7071, 0.0, 0.0, 0.7071]),
+            }
+        )
+        self.assertEqual(kwargs["table_height"], 0.2)
+        self.assertIsNone(kwargs["start_pose"])
+        self.assertIsInstance(kwargs["start_configuration"], np.ndarray)
+        np.testing.assert_array_equal(kwargs["start_configuration"], [0.1] * 6)
+
+        X = kwargs["shelf_pose"]
+        self.assertIsInstance(X, RigidTransform)
+        np.testing.assert_allclose(X.translation(), [0.0, 0.5, 0.5])
+        np.testing.assert_allclose(
+            X.rotation().matrix(),
+            [[0.0, -1.0, 0.0], [1.0, 0.0, 0.0], [0.0, 0.0, 1.0]],
+            atol=1e-12,
+        )
+
+    def test_invalid_values_raise1(self):
+        with self.assertRaises(ScenarioError):
+            ExampleScenario.constructor_kwargs({"table_height": 2.0})
+
+
 class ScenarioSchemaTest(unittest.TestCase):
     def test_schema_is_json_and_describes_each_field1(self):
         schema = ExampleScenario.schema()

@@ -205,6 +205,10 @@ class FloatParam:
         object.__setattr__(self, "max", hi)
         _check_bounds((lo,), (hi,), "FloatParam")
 
+    def to_python(self, value: float) -> float:
+        """The constructor argument for a validated value."""
+        return value
+
     def bounds(self) -> Dict[str, Any]:
         return {"min": self.min, "max": self.max}
 
@@ -277,6 +281,10 @@ class VectorParam:
         _check_bounds(lo, hi, "VectorParam")
         object.__setattr__(self, "min", lo)
         object.__setattr__(self, "max", hi)
+
+    def to_python(self, value: List[float]) -> np.ndarray:
+        """The constructor argument for a validated value: a numpy array."""
+        return np.array(value, dtype=float)
 
     def bounds(self) -> Dict[str, Any]:
         if self.length is None:
@@ -371,6 +379,15 @@ class PoseParam:
                 + _suggest_rpy_bounds(self.rpy_min, self.rpy_max)
                 + f"\nSee {POSE_CONVENTION_DOCS_URL}"
             )
+
+    def to_python(self, value: Dict[str, List[float]]):
+        """
+        The constructor argument for a validated pose: a Drake
+        ``RigidTransform(RollPitchYaw(r, p, y), [x, y, z])``.
+        """
+        from pydrake.math import RigidTransform, RollPitchYaw
+
+        return RigidTransform(RollPitchYaw(value["rpy"]), np.array(value["xyz"]))
 
     def bounds(self) -> Dict[str, Any]:
         return {
@@ -710,6 +727,32 @@ class Scenario:
         if problems:
             raise ScenarioError(problems)
         return overrides
+
+    @classmethod
+    def constructor_kwargs(cls, values: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        *Description*
+
+        Validate ``values`` and convert them to the production constructor's
+        keyword arguments: floats stay floats, vectors become numpy arrays and
+        poses become ``RigidTransform`` objects. ``None`` stays ``None``.
+
+        Use it to build a production from scenario values in Python::
+
+            kwargs = ChemLab1.Scenario.constructor_kwargs({"table_height": 0.2})
+            production = ChemLab1(**kwargs)
+
+        *Raises*
+
+        ScenarioError
+            As :meth:`validate` does.
+        """
+        overrides = cls.validate(values)
+        specs = {f.name: spec for f, spec in cls.param_fields()}
+        return {
+            name: None if value is None else specs[name].to_python(value)
+            for name, value in overrides.items()
+        }
 
 
 def _field_default(f: dataclasses.Field) -> Any:

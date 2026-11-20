@@ -120,3 +120,17 @@ Reading the schema
 ``kind``, ``default``, ``units``, ``description`` and the bounds) and the
 ``mutually_exclusive`` groups. A pose entry also lists
 ``"orientation_keys": ["rpy", "wxyz"]``.
+
+Building a production from scenario values
+------------------------------------------
+
+``Scenario.constructor_kwargs(values)`` validates the values and converts them
+to constructor arguments: vectors become numpy arrays and poses become Drake
+``RigidTransform`` objects.
+
+.. code-block:: python
+
+    kwargs = ShelfPlanning1.Scenario.constructor_kwargs(
+        {"shelf_pose": {"xyz": [0.4, 1.2, 0.6], "rpy": [0.0, 0.0, 0.52]}}
+    )
+    production = ShelfPlanning1(**kwargs)
