@@ -108,7 +108,7 @@ where ``brom/models`` is relative to the directory the program is run from.
 The log file (``log_file_name``) is written to the same directory as the converted URDF.
 The new file and its log are created for each conversion, so rerunning on the same URDF replaces the previous output at that location.
 
-The ``overwrite_old_models`` flag is broader than it may sound.
-When it is ``True``, the whole ``brom/models`` directory is deleted before the conversion starts,
-including the converted models of *other* URDF files.
-It is ``False`` by default, in which case existing files in ``brom/models`` are left alone.
+When ``overwrite_old_models`` is ``True``, the directory for the input URDF under ``brom/models``
+is removed before conversion, replacing only that model's generated files.
+Files for other models, and files directly under ``brom/models``, are preserved.
+The flag is ``False`` by default, in which case existing files for the target model are left alone.

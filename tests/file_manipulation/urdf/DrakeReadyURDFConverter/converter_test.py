@@ -8,7 +8,9 @@ Description:
 from importlib import resources as impresources
 import numpy as np
 from pathlib import Path
+import tempfile
 import unittest
+from unittest.mock import patch
 from xml.etree.ElementTree import ElementTree
 
 from pydrake.systems.analysis import Simulator
@@ -74,6 +76,57 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
             / "test6_multiple_collision_geometries.urdf",
             impresources.files(resources_dir) / "test8_beaker.urdf",
         ]
+
+    def test_overwrite_old_models_only_removes_target_model_files(self):
+        test_urdf = self.test_urdfs[0]
+        with tempfile.TemporaryDirectory() as temp_dir:
+            models_directory = Path(temp_dir) / "models"
+            target_marker = models_directory / "test1" / "old_generated_file.obj"
+            unrelated_marker = models_directory / "other_model" / "keep.obj"
+            root_marker = models_directory / "keep.txt"
+            target_marker.parent.mkdir(parents=True)
+            unrelated_marker.parent.mkdir(parents=True)
+            target_marker.touch()
+            unrelated_marker.touch()
+            root_marker.touch()
+
+            with patch(
+                "brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.converter.DEFAULT_BROM_MODELS_DIR",
+                models_directory,
+            ):
+                DrakeReadyURDFConverter(
+                    str(test_urdf),
+                    config=DrakeReadyURDFConverterConfig(
+                        overwrite_old_models=True,
+                        log_file_name="overwrite_enabled.log",
+                    ),
+                )
+
+            self.assertFalse(target_marker.exists())
+            self.assertTrue(unrelated_marker.exists())
+            self.assertTrue(root_marker.exists())
+
+    def test_without_overwrite_old_models_preserves_target_model_files(self):
+        test_urdf = self.test_urdfs[0]
+        with tempfile.TemporaryDirectory() as temp_dir:
+            models_directory = Path(temp_dir) / "models"
+            target_marker = models_directory / "test1" / "old_generated_file.obj"
+            target_marker.parent.mkdir(parents=True)
+            target_marker.touch()
+
+            with patch(
+                "brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.converter.DEFAULT_BROM_MODELS_DIR",
+                models_directory,
+            ):
+                DrakeReadyURDFConverter(
+                    str(test_urdf),
+                    config=DrakeReadyURDFConverterConfig(
+                        overwrite_old_models=False,
+                        log_file_name="overwrite_disabled.log",
+                    ),
+                )
+
+            self.assertTrue(target_marker.exists())
 
     def test_convert_tree1(self):
         """
