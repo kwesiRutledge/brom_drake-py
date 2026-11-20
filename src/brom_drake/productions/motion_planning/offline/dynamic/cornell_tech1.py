@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from importlib import resources as impresources
 from typing import Callable, List, Optional, Tuple
 
@@ -31,6 +32,12 @@ from brom_drake.robots.gripper_type import GripperType
 from brom_drake.stations.classical import KinovaGen3Station, KinovaGen3Variant
 from brom_drake.systems.video import CameraSpec
 from brom_drake.utils import AddGround, MotionPlan, Performer
+from brom_drake.productions.scenario_presets import (
+    KINOVA_GEN3_CONFIGURATION,
+    KINOVA_GEN3_TARGET_POSE,
+    placed_object_pose,
+)
+from brom_drake.productions.types.base.scenario import param
 
 
 class CornellTech1(OfflineDynamicMotionPlanningProduction):
@@ -133,6 +140,39 @@ class CornellTech1(OfflineDynamicMotionPlanningProduction):
     #: Number of initial guesses that the inverse kinematics solver tries
     #: (the first is the plant's default configuration, the rest are random)
     n_ik_initial_guesses: int = 50
+
+    @dataclass
+    class Scenario(OfflineDynamicMotionPlanningProduction.Scenario):
+        """
+        *Description*
+
+        The initial conditions of CornellTech1 that a caller may change. Each field
+        is a keyword argument of the constructor, with the same default.
+        Start and goal fields use the Kinova Gen3 joint limits and reach.
+        """
+
+        start_configuration: list = param(
+            KINOVA_GEN3_CONFIGURATION,
+            description="Joint positions of the arm at the start.",
+        )
+        start_pose: dict = param(
+            KINOVA_GEN3_TARGET_POSE,
+            description="Pose of the arm's target frame at the start, in the world frame.",
+        )
+        goal_configuration: list = param(
+            KINOVA_GEN3_CONFIGURATION,
+            description="Joint positions of the arm at the goal.",
+        )
+        goal_pose: dict = param(
+            KINOVA_GEN3_TARGET_POSE,
+            description="Pose of the arm's target frame at the goal, in the world frame.",
+        )
+        pose_WorldBeaker: dict = param(
+            placed_object_pose(
+                xyz_min=(-1.2, 0.0, 0.3), xyz_max=(0.5, 1.0, 0.6), roll=np.pi / 2.0
+            ),
+            description="Pose of the beaker in the world frame (None: the production's default).",
+        )
 
     def __init__(
         self,

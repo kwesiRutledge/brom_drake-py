@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 import os
 from pathlib import Path
 from typing import Callable, List, Optional, Tuple
@@ -29,6 +30,12 @@ from brom_drake.motion_planning.systems.prototypical_planner import (
     PrototypicalPlannerSystem,
 )
 from brom_drake.productions.types import BaseProduction
+from brom_drake.productions.types.base.scenario import (
+    PoseParam,
+    Scenario as BaseScenario,
+    VectorParam,
+    param,
+)
 from brom_drake.productions.roles.all import kKinematicMotionPlanner, Role
 from brom_drake.file_manipulation.urdf.shapes.sphere import SphereDefinition
 from brom_drake.file_manipulation.urdf.simple_writer.urdf_definition import (
@@ -68,6 +75,51 @@ class KinematicMotionPlanningProduction(BaseProduction):
     goal_pose: RigidTransform, optional
         The goal pose of the robot, by default None.
     """
+
+    @dataclass
+    class Scenario(BaseScenario):
+        """
+        *Description*
+
+        The initial conditions of a kinematic motion planning production
+        that a caller may
+        change (see :py:class:`~brom_drake.productions.types.base.scenario.Scenario`).
+        Each field is a keyword argument of the constructor; a configuration
+        and a pose are alternatives, so at most one of each pair may be set.
+
+        The bounds here are loose because they cannot depend on the arm.
+        A concrete production should re-declare these fields with its arm's
+        joint count and limits and its own workspace.
+        """
+
+        mutually_exclusive = (
+            ("start_configuration", "start_pose"),
+            ("goal_configuration", "goal_pose"),
+        )
+
+        start_configuration: list = param(
+            VectorParam(None, -2.0 * np.pi, 2.0 * np.pi, "rad"),
+            description="Joint positions of the arm at the start.",
+        )
+        start_pose: dict = param(
+            PoseParam(xyz_min=(-2.0, -2.0, -0.5), xyz_max=(2.0, 2.0, 2.5)),
+            description=(
+                "Pose of the robot's target frame (for example its gripper) at "
+                "the start, in the world frame."
+            ),
+        )
+
+        goal_configuration: list = param(
+            VectorParam(None, -2.0 * np.pi, 2.0 * np.pi, "rad"),
+            description="Joint positions of the arm at the goal.",
+        )
+        goal_pose: dict = param(
+            PoseParam(xyz_min=(-2.0, -2.0, -0.5), xyz_max=(2.0, 2.0, 2.5)),
+            description=(
+                "Pose of the robot's target frame (for example its gripper) at "
+                "the goal, in the world frame."
+            ),
+        )
 
     def __init__(
         self,
