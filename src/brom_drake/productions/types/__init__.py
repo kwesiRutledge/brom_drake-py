@@ -1,4 +1,12 @@
 from brom_drake.productions.types.base.base import BaseProduction
+from brom_drake.productions.types.base.scenario import (
+    FloatParam,
+    PoseParam,
+    Scenario,
+    ScenarioError,
+    VectorParam,
+    param,
+)
 from brom_drake.productions.types.motion_planning.offline import (
     KinematicMotionPlanningProduction,
     OfflineDynamicMotionPlanningProduction,
@@ -9,7 +17,13 @@ from brom_drake.productions.types.pick_and_place import (
 
 __all__ = [
     "BaseProduction",
+    "FloatParam",
     "KinematicMotionPlanningProduction",
     "MotionPlanningAndGraspingProduction",
     "OfflineDynamicMotionPlanningProduction",
+    "PoseParam",
+    "Scenario",
+    "ScenarioError",
+    "VectorParam",
+    "param",
 ]
