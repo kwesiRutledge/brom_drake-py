@@ -181,6 +181,8 @@ class ChemLab1(KinematicMotionPlanningProduction):
                 RollPitchYaw(0.0, 0.0, -np.pi / 2.0).ToQuaternion(),
                 np.array([0.0, 0.75, 0.66]),
             )
+        else:
+            self.pose_WorldShelf = self.shelf_pose
 
         # Set Beaker Pose
         self.pose_WorldBeaker = RigidTransform(

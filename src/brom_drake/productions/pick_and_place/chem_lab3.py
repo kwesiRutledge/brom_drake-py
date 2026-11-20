@@ -677,6 +677,8 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
                 RollPitchYaw(0.0, 0.0, -np.pi / 2.0).ToQuaternion(),
                 np.array([0.0, 0.95, 0.66]),
             )
+        else:
+            self.pose_WorldShelf = self.shelf_pose
 
         # Define poses for the two halves of the table
         self.pose_WorldTableHalf1 = RigidTransform(
