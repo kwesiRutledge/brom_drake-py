@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html"><link rel="next" title="Kinematic Motion Planning" href="../kinematic_motion_planning.html"><link rel="prev" title="Productions" href="../index.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>Show Me This Model - brom_drake-py 1.0.3 documentation</title>
+        <title>Show Me This Model - brom_drake-py 1.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -162,7 +162,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">brom_drake-py 1.0.3 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">brom_drake-py 1.1.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +183,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 1.0.3 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 1.1.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -200,6 +200,7 @@
 <li class="toctree-l3 current current-page"><a class="current reference internal" href="#">Show Me This Model</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../kinematic_motion_planning.html">Kinematic Motion Planning</a></li>
 <li class="toctree-l3"><a class="reference internal" href="show_me_this_static_grasp.html">Show Me This Static Grasp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarios.html">Scenarios</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../recording_videos.html">Recording Videos</a></li>
@@ -611,7 +612,7 @@ In the following section, we will also include one example to demonstrate how to
 <span class="c1">#Internal imports</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake</span><span class="w"> </span><span class="kn">import</span> <span class="n">robots</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.all</span><span class="w"> </span><span class="kn">import</span> <span class="n">drakeify_my_urdf</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.scenes</span><span class="w"> </span><span class="kn">import</span> <span class="n">ShowMeThisModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.productions.all</span><span class="w"> </span><span class="kn">import</span> <span class="n">ShowMeThisModel</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="c1"># Setup</span>
@@ -659,7 +660,11 @@ In the following section, we will also include one example to demonstrate how to
 <li><p>The inputs to the Production are:
 - path_to_model: (Required) A string describing the location of the URDF (or other model) that you want to visualize.
 - with_these_joint_positions: (Optional) A list describing what position you want each joint to be in.
-- time_step: (Optional) The time step to use in the MultibodyPlant created internally in this Production.</p></li>
+- base_link_name: (Optional) The name of the link that is welded to the world frame. If it is not given, the first link found in the model file is used.
+- time_step: (Optional) The time step to use in the MultibodyPlant created internally in this Production.
+- meshcat_port_number: (Optional) The port on which Meshcat serves the visualization (default <code class="code docutils literal notranslate"><span class="pre">7001</span></code>). Pass <code class="code docutils literal notranslate"><span class="pre">None</span></code> to skip creating Meshcat, e.g., when running in CI.
+- show_collision_geometries: (Optional) See <a class="reference internal" href="#showing-collision-geometries">Showing Collision Geometries</a> below.</p></li>
+<li><p>A <code class="code docutils literal notranslate"><span class="pre">ValueError</span></code> is raised if <code class="code docutils literal notranslate"><span class="pre">path_to_model</span></code> does not exist. If <code class="code docutils literal notranslate"><span class="pre">with_these_joint_positions</span></code> is given, its length must equal the number of positions in the model (the check runs when the cast is added, i.e., in <code class="code docutils literal notranslate"><span class="pre">add_cast_and_build</span></code>); if it is omitted, all joints are set to zero.</p></li>
 <li><p>Once the production is created we can use the normal workflow (i.e., build the Production and then use the resulting Diagram object in your simulation) to view the robot in the desired joint configuration.</p></li>
 </ul>
 <div class="admonition note">
@@ -762,7 +767,7 @@ If the collision geometry is very different from the visual geometry, then you m
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=baaebd52"></script>
+</div><script src="../../../_static/documentation_options.js?v=fc837d61"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>

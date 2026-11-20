@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html"><link rel="next" title="debug" href="../debug/debug.html"><link rel="prev" title="types" href="../types.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>base - brom_drake-py 1.0.3 documentation</title>
+        <title>base - brom_drake-py 1.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -162,7 +162,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">brom_drake-py 1.0.3 documentation</div></a>
+      <a href="../../../../index.html"><div class="brand">brom_drake-py 1.1.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +183,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 1.0.3 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 1.1.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -200,6 +200,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../../../features/productions/debug/show_me_this_model.html">Show Me This Model</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../features/productions/kinematic_motion_planning.html">Kinematic Motion Planning</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../features/productions/debug/show_me_this_static_grasp.html">Show Me This Static Grasp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../features/productions/scenarios.html">Scenarios</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../features/recording_videos.html">Recording Videos</a></li>
@@ -802,14 +803,307 @@ It should return a list of roles that are suggested for the production.</p>
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brom_drake.productions.types.base.configuration.</span></span><span class="sig-name descname"><span class="pre">Configuration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meshcat_port_number</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">7001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.001</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/brom_drake/productions/types/base/configuration.html#Configuration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.base.configuration.Configuration" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="py class">
+<dt class="sig sig-object py" id="brom_drake.productions.types.base.scenario.FloatParam">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brom_drake.productions.types.base.scenario.</span></span><span class="sig-name descname"><span class="pre">FloatParam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/brom_drake/productions/types/base/scenario.html#FloatParam"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.base.scenario.FloatParam" title="Link to this definition">¶</a></dt>
+<dd><p><em>Description</em></p>
+<p>A single real number in <code class="docutils literal notranslate"><span class="pre">[min,</span> <span class="pre">max]</span></code>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="brom_drake.productions.types.base.scenario.FloatParam.to_python">
+<span class="sig-name descname"><span class="pre">to_python</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/brom_drake/productions/types/base/scenario.html#FloatParam.to_python"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.base.scenario.FloatParam.to_python" title="Link to this definition">¶</a></dt>
+<dd><p>The constructor argument for a validated value.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="brom_drake.productions.types.base.scenario.PoseParam">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brom_drake.productions.types.base.scenario.</span></span><span class="sig-name descname"><span class="pre">PoseParam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyz_min</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xyz_max</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rpy_min</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(-3.141592653589793,</span> <span class="pre">-3.141592653589793,</span> <span class="pre">-3.141592653589793)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rpy_max</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(3.141592653589793,</span> <span class="pre">3.141592653589793,</span> <span class="pre">3.141592653589793)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/brom_drake/productions/types/base/scenario.html#PoseParam"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.base.scenario.PoseParam" title="Link to this definition">¶</a></dt>
+<dd><p><em>Description</em></p>
+<p>A rigid pose with per-component bounds on position and roll-pitch-yaw.</p>
+<p>The position is <code class="docutils literal notranslate"><span class="pre">&quot;xyz&quot;</span></code> in metres. The orientation is given as exactly
+one of:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;rpy&quot;</span></code>: <code class="docutils literal notranslate"><span class="pre">[roll,</span> <span class="pre">pitch,</span> <span class="pre">yaw]</span></code> in radians, or</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;wxyz&quot;</span></code>: a unit quaternion <code class="docutils literal notranslate"><span class="pre">[w,</span> <span class="pre">x,</span> <span class="pre">y,</span> <span class="pre">z]</span></code> (scalar first, as in
+<code class="docutils literal notranslate"><span class="pre">pydrake.common.eigen_geometry.Quaternion</span></code>).</p></li>
+</ul>
+<p>A quaternion is converted to roll-pitch-yaw with Drake’s <code class="docutils literal notranslate"><span class="pre">RollPitchYaw</span></code>
+and checked against the <code class="docutils literal notranslate"><span class="pre">rpy</span></code> bounds, so validated poses are always
+<code class="docutils literal notranslate"><span class="pre">{&quot;xyz&quot;:</span> <span class="pre">[...],</span> <span class="pre">&quot;rpy&quot;:</span> <span class="pre">[...]}</span></code>.</p>
+<p><strong>Orientation convention.</strong> Every angle is expressed in <code class="docutils literal notranslate"><span class="pre">[-pi,</span> <span class="pre">pi]</span></code>, so
+<code class="docutils literal notranslate"><span class="pre">rpy_min</span></code> and <code class="docutils literal notranslate"><span class="pre">rpy_max</span></code> must lie inside <code class="docutils literal notranslate"><span class="pre">[-pi,</span> <span class="pre">pi]</span></code>. A quaternion’s
+converted angles always do (Drake also keeps pitch in <code class="docutils literal notranslate"><span class="pre">[-pi/2,</span> <span class="pre">pi/2]</span></code>),
+which is what lets the same bounds apply to both input forms. See
+<a class="reference internal" href="#brom_drake.productions.types.base.scenario.POSE_CONVENTION_DOCS_URL" title="brom_drake.productions.types.base.scenario.POSE_CONVENTION_DOCS_URL"><code class="xref py py-data docutils literal notranslate"><span class="pre">POSE_CONVENTION_DOCS_URL</span></code></a>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="brom_drake.productions.types.base.scenario.PoseParam.to_python">
+<span class="sig-name descname"><span class="pre">to_python</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/brom_drake/productions/types/base/scenario.html#PoseParam.to_python"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.base.scenario.PoseParam.to_python" title="Link to this definition">¶</a></dt>
+<dd><p>The constructor argument for a validated pose: a Drake
+<code class="docutils literal notranslate"><span class="pre">RigidTransform(RollPitchYaw(r,</span> <span class="pre">p,</span> <span class="pre">y),</span> <span class="pre">[x,</span> <span class="pre">y,</span> <span class="pre">z])</span></code>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="brom_drake.productions.types.base.scenario.Scenario">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brom_drake.productions.types.base.scenario.</span></span><span class="sig-name descname"><span class="pre">Scenario</span></span><a class="reference internal" href="../../../../_modules/brom_drake/productions/types/base/scenario.html#Scenario"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.base.scenario.Scenario" title="Link to this definition">¶</a></dt>
+<dd><p><em>Description</em></p>
+<p>Base class for a production’s scenario: the initial conditions a case may
+change. Subclasses must be decorated with <code class="docutils literal notranslate"><span class="pre">&#64;dataclass</span></code> and declare every
+field with <a class="reference internal" href="#brom_drake.productions.types.base.scenario.param" title="brom_drake.productions.types.base.scenario.param"><code class="xref py py-func docutils literal notranslate"><span class="pre">param()</span></code></a>.</p>
+<p><em>Class attributes</em></p>
+<dl class="simple">
+<dt>mutually_exclusive: tuple[tuple[str, …], …]</dt><dd><p>Groups of field names of which at most one may be set (not <code class="docutils literal notranslate"><span class="pre">None</span></code>)
+in a single call to <a class="reference internal" href="#brom_drake.productions.types.base.scenario.Scenario.validate" title="brom_drake.productions.types.base.scenario.Scenario.validate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">validate()</span></code></a>, for example
+<code class="docutils literal notranslate"><span class="pre">((&quot;start_configuration&quot;,</span> <span class="pre">&quot;start_pose&quot;),)</span></code>.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="brom_drake.productions.types.base.scenario.Scenario.constructor_kwargs">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">constructor_kwargs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../_modules/brom_drake/productions/types/base/scenario.html#Scenario.constructor_kwargs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.base.scenario.Scenario.constructor_kwargs" title="Link to this definition">¶</a></dt>
+<dd><p><em>Description</em></p>
+<p>Validate <code class="docutils literal notranslate"><span class="pre">values</span></code> and convert them to the production constructor’s
+keyword arguments: floats stay floats, vectors become numpy arrays and
+poses become <code class="docutils literal notranslate"><span class="pre">RigidTransform</span></code> objects. <code class="docutils literal notranslate"><span class="pre">None</span></code> stays <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+<p>Use it to build a production from scenario values in Python:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">ChemLab1</span><span class="o">.</span><span class="n">Scenario</span><span class="o">.</span><span class="n">constructor_kwargs</span><span class="p">({</span><span class="s2">"table_height"</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">})</span>
+<span class="n">production</span> <span class="o">=</span> <span class="n">ChemLab1</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><em>Raises</em></p>
+<dl class="simple">
+<dt>ScenarioError</dt><dd><p>As <a class="reference internal" href="#brom_drake.productions.types.base.scenario.Scenario.validate" title="brom_drake.productions.types.base.scenario.Scenario.validate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">validate()</span></code></a> does.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brom_drake.productions.types.base.scenario.Scenario.param_fields">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">param_fields</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Field</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#brom_drake.productions.types.base.scenario.FloatParam" title="brom_drake.productions.types.base.scenario.FloatParam"><span class="pre">FloatParam</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#brom_drake.productions.types.base.scenario.VectorParam" title="brom_drake.productions.types.base.scenario.VectorParam"><span class="pre">VectorParam</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#brom_drake.productions.types.base.scenario.PoseParam" title="brom_drake.productions.types.base.scenario.PoseParam"><span class="pre">PoseParam</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../_modules/brom_drake/productions/types/base/scenario.html#Scenario.param_fields"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.base.scenario.Scenario.param_fields" title="Link to this definition">¶</a></dt>
+<dd><p><em>Description</em></p>
+<p>Return each field with its parameter spec, after checking that the
+class is declared correctly (raises <code class="docutils literal notranslate"><span class="pre">TypeError</span></code> otherwise).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brom_drake.productions.types.base.scenario.Scenario.schema">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">schema</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../_modules/brom_drake/productions/types/base/scenario.html#Scenario.schema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.base.scenario.Scenario.schema" title="Link to this definition">¶</a></dt>
+<dd><p><em>Description</em></p>
+<p>Describe this scenario as JSON-serializable data.</p>
+<p><em>Returns</em></p>
+<dl class="simple">
+<dt>schema: dict</dt><dd><p><code class="docutils literal notranslate"><span class="pre">{&quot;fields&quot;:</span> <span class="pre">[...],</span> <span class="pre">&quot;mutually_exclusive&quot;:</span> <span class="pre">[[...],</span> <span class="pre">...]}</span></code>, with one
+entry per field: <code class="docutils literal notranslate"><span class="pre">name</span></code>, <code class="docutils literal notranslate"><span class="pre">kind</span></code> (<code class="docutils literal notranslate"><span class="pre">&quot;float&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;vector&quot;</span></code> or
+<code class="docutils literal notranslate"><span class="pre">&quot;pose&quot;</span></code>), <code class="docutils literal notranslate"><span class="pre">default</span></code>, <code class="docutils literal notranslate"><span class="pre">units</span></code>, <code class="docutils literal notranslate"><span class="pre">description</span></code> and the
+kind’s bounds (<code class="docutils literal notranslate"><span class="pre">min</span></code>/<code class="docutils literal notranslate"><span class="pre">max</span></code>, plus <code class="docutils literal notranslate"><span class="pre">length</span></code> for a vector;
+<code class="docutils literal notranslate"><span class="pre">xyz_min</span></code>/<code class="docutils literal notranslate"><span class="pre">xyz_max</span></code>/<code class="docutils literal notranslate"><span class="pre">rpy_min</span></code>/<code class="docutils literal notranslate"><span class="pre">rpy_max</span></code> for a pose).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brom_drake.productions.types.base.scenario.Scenario.validate">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../_modules/brom_drake/productions/types/base/scenario.html#Scenario.validate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.base.scenario.Scenario.validate" title="Link to this definition">¶</a></dt>
+<dd><p><em>Description</em></p>
+<p>Check override values against this scenario’s declaration.</p>
+<p><em>Parameters</em></p>
+<dl class="simple">
+<dt>values: dict</dt><dd><p>Field name to value, in the wire format. <code class="docutils literal notranslate"><span class="pre">None</span></code> is accepted only
+for a field whose default is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+<p><em>Returns</em></p>
+<dl class="simple">
+<dt>overrides: dict</dt><dd><p>Only the keys that were given, normalized to plain JSON (floats as
+<code class="docutils literal notranslate"><span class="pre">float</span></code>, vectors as lists of floats, poses with both <code class="docutils literal notranslate"><span class="pre">xyz</span></code> and
+<code class="docutils literal notranslate"><span class="pre">rpy</span></code>).</p>
+</dd>
+</dl>
+<p><em>Raises</em></p>
+<dl class="simple">
+<dt>ScenarioError</dt><dd><p>With every problem found in <code class="docutils literal notranslate"><span class="pre">problems</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="brom_drake.productions.types.base.scenario.ScenarioError">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brom_drake.productions.types.base.scenario.</span></span><span class="sig-name descname"><span class="pre">ScenarioError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">problems</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/brom_drake/productions/types/base/scenario.html#ScenarioError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.base.scenario.ScenarioError" title="Link to this definition">¶</a></dt>
+<dd><p><em>Description</em></p>
+<p>Raised when scenario values (or a <code class="docutils literal notranslate"><span class="pre">Scenario</span></code> declaration) are invalid.</p>
+<p><em>Attributes</em></p>
+<dl class="simple">
+<dt>problems: list[str]</dt><dd><p>Every problem found, not just the first.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="brom_drake.productions.types.base.scenario.VectorParam">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brom_drake.productions.types.base.scenario.</span></span><span class="sig-name descname"><span class="pre">VectorParam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/brom_drake/productions/types/base/scenario.html#VectorParam"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.base.scenario.VectorParam" title="Link to this definition">¶</a></dt>
+<dd><p><em>Description</em></p>
+<p>A list of real numbers.</p>
+<ul class="simple">
+<li><p>With a <code class="docutils literal notranslate"><span class="pre">length</span></code>, <code class="docutils literal notranslate"><span class="pre">min</span></code> and <code class="docutils literal notranslate"><span class="pre">max</span></code> are sequences of that length and
+entry <code class="docutils literal notranslate"><span class="pre">i</span></code> must lie in <code class="docutils literal notranslate"><span class="pre">[min[i],</span> <span class="pre">max[i]]</span></code>.</p></li>
+<li><p>With <code class="docutils literal notranslate"><span class="pre">length=None</span></code>, any non-empty length is accepted and <code class="docutils literal notranslate"><span class="pre">min</span></code> and
+<code class="docutils literal notranslate"><span class="pre">max</span></code> are single numbers that bound every entry. Base production
+classes use this for joint vectors, whose length depends on the arm;
+a concrete production should re-declare the field with its exact length
+and per-joint bounds.</p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="brom_drake.productions.types.base.scenario.VectorParam.to_python">
+<span class="sig-name descname"><span class="pre">to_python</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../../../../_modules/brom_drake/productions/types/base/scenario.html#VectorParam.to_python"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.base.scenario.VectorParam.to_python" title="Link to this definition">¶</a></dt>
+<dd><p>The constructor argument for a validated value: a numpy array.</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="functions">
 <h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
-<p>(None found)</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="brom_drake.productions.types.base.scenario._angle_in_convention">
+<span class="sig-prename descclassname"><span class="pre">brom_drake.productions.types.base.scenario.</span></span><span class="sig-name descname"><span class="pre">_angle_in_convention</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../../_modules/brom_drake/productions/types/base/scenario.html#_angle_in_convention"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.base.scenario._angle_in_convention" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brom_drake.productions.types.base.scenario._as_float_tuple">
+<span class="sig-prename descclassname"><span class="pre">brom_drake.productions.types.base.scenario.</span></span><span class="sig-name descname"><span class="pre">_as_float_tuple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../_modules/brom_drake/productions/types/base/scenario.html#_as_float_tuple"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.base.scenario._as_float_tuple" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brom_drake.productions.types.base.scenario._check_bounds">
+<span class="sig-prename descclassname"><span class="pre">brom_drake.productions.types.base.scenario.</span></span><span class="sig-name descname"><span class="pre">_check_bounds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/brom_drake/productions/types/base/scenario.html#_check_bounds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.base.scenario._check_bounds" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brom_drake.productions.types.base.scenario._check_number_list">
+<span class="sig-prename descclassname"><span class="pre">brom_drake.productions.types.base.scenario.</span></span><span class="sig-name descname"><span class="pre">_check_number_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">problems</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../../../_modules/brom_drake/productions/types/base/scenario.html#_check_number_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.base.scenario._check_number_list" title="Link to this definition">¶</a></dt>
+<dd><p>Check a list of numbers against a length and per-element bounds.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brom_drake.productions.types.base.scenario._field_default">
+<span class="sig-prename descclassname"><span class="pre">brom_drake.productions.types.base.scenario.</span></span><span class="sig-name descname"><span class="pre">_field_default</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Field</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="../../../../_modules/brom_drake/productions/types/base/scenario.html#_field_default"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.base.scenario._field_default" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brom_drake.productions.types.base.scenario._fmt_angles">
+<span class="sig-prename descclassname"><span class="pre">brom_drake.productions.types.base.scenario.</span></span><span class="sig-name descname"><span class="pre">_fmt_angles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">angles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../../_modules/brom_drake/productions/types/base/scenario.html#_fmt_angles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.base.scenario._fmt_angles" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brom_drake.productions.types.base.scenario._is_number">
+<span class="sig-prename descclassname"><span class="pre">brom_drake.productions.types.base.scenario.</span></span><span class="sig-name descname"><span class="pre">_is_number</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../../_modules/brom_drake/productions/types/base/scenario.html#_is_number"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.base.scenario._is_number" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brom_drake.productions.types.base.scenario._suggest_rpy_bounds">
+<span class="sig-prename descclassname"><span class="pre">brom_drake.productions.types.base.scenario.</span></span><span class="sig-name descname"><span class="pre">_suggest_rpy_bounds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../../_modules/brom_drake/productions/types/base/scenario.html#_suggest_rpy_bounds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.base.scenario._suggest_rpy_bounds" title="Link to this definition">¶</a></dt>
+<dd><p>Explain how to rewrite rpy bounds that fall outside [-pi, pi]: wrap each
+range into [-pi, pi] when it stays one interval, or say that it cannot.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brom_drake.productions.types.base.scenario._wrap_angle">
+<span class="sig-prename descclassname"><span class="pre">brom_drake.productions.types.base.scenario.</span></span><span class="sig-name descname"><span class="pre">_wrap_angle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/brom_drake/productions/types/base/scenario.html#_wrap_angle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.base.scenario._wrap_angle" title="Link to this definition">¶</a></dt>
+<dd><p>The same angle expressed in [-pi, pi).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brom_drake.productions.types.base.scenario.param">
+<span class="sig-prename descclassname"><span class="pre">brom_drake.productions.types.base.scenario.</span></span><span class="sig-name descname"><span class="pre">param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#brom_drake.productions.types.base.scenario.FloatParam" title="brom_drake.productions.types.base.scenario.FloatParam"><span class="pre">FloatParam</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#brom_drake.productions.types.base.scenario.VectorParam" title="brom_drake.productions.types.base.scenario.VectorParam"><span class="pre">VectorParam</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#brom_drake.productions.types.base.scenario.PoseParam" title="brom_drake.productions.types.base.scenario.PoseParam"><span class="pre">PoseParam</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="../../../../_modules/brom_drake/productions/types/base/scenario.html#param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.base.scenario.param" title="Link to this definition">¶</a></dt>
+<dd><p><em>Description</em></p>
+<p>Declare a <code class="docutils literal notranslate"><span class="pre">Scenario</span></code> field. Use it as the field’s default value:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Scenario</span><span class="p">(</span><span class="n">BaseScenario</span><span class="p">):</span>
+    <span class="n">table_height</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">param</span><span class="p">(</span><span class="n">FloatParam</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s2">"m"</span><span class="p">),</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><em>Parameters</em></p>
+<dl class="simple">
+<dt>spec: FloatParam | VectorParam | PoseParam</dt><dd><p>The parameter’s type and allowed range.</p>
+</dd>
+<dt>default: Any, optional</dt><dd><p>The value used when a case does not override this field, in the wire
+format. <code class="docutils literal notranslate"><span class="pre">None</span></code> (the default) means “use the production constructor’s
+own default”.</p>
+</dd>
+<dt>description: str, optional</dt><dd><p>A short human-readable description, included in <a class="reference internal" href="#brom_drake.productions.types.base.scenario.Scenario.schema" title="brom_drake.productions.types.base.scenario.Scenario.schema"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Scenario.schema()</span></code></a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 <section id="variables">
 <h2>Variables<a class="headerlink" href="#variables" title="Link to this heading">¶</a></h2>
-<p>(None found)</p>
+<dl class="py data">
+<dt class="sig sig-object py" id="brom_drake.productions.types.base.scenario._ANGLE_TOLERANCE">
+<span class="sig-prename descclassname"><span class="pre">brom_drake.productions.types.base.scenario.</span></span><span class="sig-name descname"><span class="pre">_ANGLE_TOLERANCE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1e-09</span></span><a class="headerlink" href="#brom_drake.productions.types.base.scenario._ANGLE_TOLERANCE" title="Link to this definition">¶</a></dt>
+<dd><p>Convert a string or number to a floating-point number, if possible.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="brom_drake.productions.types.base.scenario.ANGLE_NAMES">
+<span class="sig-prename descclassname"><span class="pre">brom_drake.productions.types.base.scenario.</span></span><span class="sig-name descname"><span class="pre">ANGLE_NAMES</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('roll',</span> <span class="pre">'pitch',</span> <span class="pre">'yaw')</span></span><a class="headerlink" href="#brom_drake.productions.types.base.scenario.ANGLE_NAMES" title="Link to this definition">¶</a></dt>
+<dd><p>Built-in immutable sequence.</p>
+<p>If no argument is given, the constructor returns an empty tuple.
+If iterable is specified the tuple is initialized from iterable’s items.</p>
+<p>If the argument is a tuple, the return value is the same object.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="brom_drake.productions.types.base.scenario.PARAM_METADATA_KEY">
+<span class="sig-prename descclassname"><span class="pre">brom_drake.productions.types.base.scenario.</span></span><span class="sig-name descname"><span class="pre">PARAM_METADATA_KEY</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'brom_param'</span></span><a class="headerlink" href="#brom_drake.productions.types.base.scenario.PARAM_METADATA_KEY" title="Link to this definition">¶</a></dt>
+<dd><p>str(object=’’) -&gt; str
+str(bytes_or_buffer[, encoding[, errors]]) -&gt; str</p>
+<p>Create a new string object from the given object. If encoding or
+errors is specified, then the object must expose a data buffer
+that will be decoded using the given encoding and error handler.
+Otherwise, returns the result of object.__str__() (if defined)
+or repr(object).
+encoding defaults to ‘utf-8’.
+errors defaults to ‘strict’.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="brom_drake.productions.types.base.scenario.POSE_CONVENTION_DOCS_URL">
+<span class="sig-prename descclassname"><span class="pre">brom_drake.productions.types.base.scenario.</span></span><span class="sig-name descname"><span class="pre">POSE_CONVENTION_DOCS_URL</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'https://kwesirutledge.github.io/brom_drake-py/features/productions/scenarios.html#pose-orientation-convention'</span></span><a class="headerlink" href="#brom_drake.productions.types.base.scenario.POSE_CONVENTION_DOCS_URL" title="Link to this definition">¶</a></dt>
+<dd><p>str(object=’’) -&gt; str
+str(bytes_or_buffer[, encoding[, errors]]) -&gt; str</p>
+<p>Create a new string object from the given object. If encoding or
+errors is specified, then the object must expose a data buffer
+that will be decoded using the given encoding and error handler.
+Otherwise, returns the result of object.__str__() (if defined)
+or repr(object).
+encoding defaults to ‘utf-8’.
+errors defaults to ‘strict’.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="brom_drake.productions.types.base.scenario.QUATERNION_NORM_TOLERANCE">
+<span class="sig-prename descclassname"><span class="pre">brom_drake.productions.types.base.scenario.</span></span><span class="sig-name descname"><span class="pre">QUATERNION_NORM_TOLERANCE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.001</span></span><a class="headerlink" href="#brom_drake.productions.types.base.scenario.QUATERNION_NORM_TOLERANCE" title="Link to this definition">¶</a></dt>
+<dd><p>Convert a string or number to a floating-point number, if possible.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="brom_drake.productions.types.base.scenario.SCENARIO_DOCS_URL">
+<span class="sig-prename descclassname"><span class="pre">brom_drake.productions.types.base.scenario.</span></span><span class="sig-name descname"><span class="pre">SCENARIO_DOCS_URL</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'https://kwesirutledge.github.io/brom_drake-py/features/productions/scenarios.html'</span></span><a class="headerlink" href="#brom_drake.productions.types.base.scenario.SCENARIO_DOCS_URL" title="Link to this definition">¶</a></dt>
+<dd><p>str(object=’’) -&gt; str
+str(bytes_or_buffer[, encoding[, errors]]) -&gt; str</p>
+<p>Create a new string object from the given object. If encoding or
+errors is specified, then the object must expose a data buffer
+that will be decoded using the given encoding and error handler.
+Otherwise, returns the result of object.__str__() (if defined)
+or repr(object).
+encoding defaults to ‘utf-8’.
+errors defaults to ‘strict’.</p>
+</dd></dl>
+
 </section>
 </section>
 
@@ -884,10 +1178,50 @@ It should return a list of roles that are suggested for the production.</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#brom_drake.productions.types.base.configuration.Configuration"><code class="docutils literal notranslate"><span class="pre">Configuration</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.productions.types.base.scenario.FloatParam"><code class="docutils literal notranslate"><span class="pre">FloatParam</span></code></a><ul>
+<li><a class="reference internal" href="#brom_drake.productions.types.base.scenario.FloatParam.to_python"><code class="docutils literal notranslate"><span class="pre">FloatParam.to_python()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#functions">Functions</a></li>
-<li><a class="reference internal" href="#variables">Variables</a></li>
+<li><a class="reference internal" href="#brom_drake.productions.types.base.scenario.PoseParam"><code class="docutils literal notranslate"><span class="pre">PoseParam</span></code></a><ul>
+<li><a class="reference internal" href="#brom_drake.productions.types.base.scenario.PoseParam.to_python"><code class="docutils literal notranslate"><span class="pre">PoseParam.to_python()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#brom_drake.productions.types.base.scenario.Scenario"><code class="docutils literal notranslate"><span class="pre">Scenario</span></code></a><ul>
+<li><a class="reference internal" href="#brom_drake.productions.types.base.scenario.Scenario.constructor_kwargs"><code class="docutils literal notranslate"><span class="pre">Scenario.constructor_kwargs()</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.productions.types.base.scenario.Scenario.param_fields"><code class="docutils literal notranslate"><span class="pre">Scenario.param_fields()</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.productions.types.base.scenario.Scenario.schema"><code class="docutils literal notranslate"><span class="pre">Scenario.schema()</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.productions.types.base.scenario.Scenario.validate"><code class="docutils literal notranslate"><span class="pre">Scenario.validate()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#brom_drake.productions.types.base.scenario.ScenarioError"><code class="docutils literal notranslate"><span class="pre">ScenarioError</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.productions.types.base.scenario.VectorParam"><code class="docutils literal notranslate"><span class="pre">VectorParam</span></code></a><ul>
+<li><a class="reference internal" href="#brom_drake.productions.types.base.scenario.VectorParam.to_python"><code class="docutils literal notranslate"><span class="pre">VectorParam.to_python()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#functions">Functions</a><ul>
+<li><a class="reference internal" href="#brom_drake.productions.types.base.scenario._angle_in_convention"><code class="docutils literal notranslate"><span class="pre">_angle_in_convention()</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.productions.types.base.scenario._as_float_tuple"><code class="docutils literal notranslate"><span class="pre">_as_float_tuple()</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.productions.types.base.scenario._check_bounds"><code class="docutils literal notranslate"><span class="pre">_check_bounds()</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.productions.types.base.scenario._check_number_list"><code class="docutils literal notranslate"><span class="pre">_check_number_list()</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.productions.types.base.scenario._field_default"><code class="docutils literal notranslate"><span class="pre">_field_default()</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.productions.types.base.scenario._fmt_angles"><code class="docutils literal notranslate"><span class="pre">_fmt_angles()</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.productions.types.base.scenario._is_number"><code class="docutils literal notranslate"><span class="pre">_is_number()</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.productions.types.base.scenario._suggest_rpy_bounds"><code class="docutils literal notranslate"><span class="pre">_suggest_rpy_bounds()</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.productions.types.base.scenario._wrap_angle"><code class="docutils literal notranslate"><span class="pre">_wrap_angle()</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.productions.types.base.scenario.param"><code class="docutils literal notranslate"><span class="pre">param()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#variables">Variables</a><ul>
+<li><a class="reference internal" href="#brom_drake.productions.types.base.scenario._ANGLE_TOLERANCE"><code class="docutils literal notranslate"><span class="pre">_ANGLE_TOLERANCE</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.productions.types.base.scenario.ANGLE_NAMES"><code class="docutils literal notranslate"><span class="pre">ANGLE_NAMES</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.productions.types.base.scenario.PARAM_METADATA_KEY"><code class="docutils literal notranslate"><span class="pre">PARAM_METADATA_KEY</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.productions.types.base.scenario.POSE_CONVENTION_DOCS_URL"><code class="docutils literal notranslate"><span class="pre">POSE_CONVENTION_DOCS_URL</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.productions.types.base.scenario.QUATERNION_NORM_TOLERANCE"><code class="docutils literal notranslate"><span class="pre">QUATERNION_NORM_TOLERANCE</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.productions.types.base.scenario.SCENARIO_DOCS_URL"><code class="docutils literal notranslate"><span class="pre">SCENARIO_DOCS_URL</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -899,7 +1233,7 @@ It should return a list of roles that are suggested for the production.</p>
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=baaebd52"></script>
+</div><script src="../../../../_static/documentation_options.js?v=fc837d61"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>

@@ -15,14 +15,38 @@ Classes
    :members:
 .. autoclass:: brom_drake.productions.types.base.configuration.Configuration
    :members:
+.. autoclass:: brom_drake.productions.types.base.scenario.FloatParam
+   :members:
+.. autoclass:: brom_drake.productions.types.base.scenario.PoseParam
+   :members:
+.. autoclass:: brom_drake.productions.types.base.scenario.Scenario
+   :members:
+.. autoclass:: brom_drake.productions.types.base.scenario.ScenarioError
+   :members:
+.. autoclass:: brom_drake.productions.types.base.scenario.VectorParam
+   :members:
 
 Functions
 ---------
 
-(None found)
+.. autofunction:: brom_drake.productions.types.base.scenario._angle_in_convention
+.. autofunction:: brom_drake.productions.types.base.scenario._as_float_tuple
+.. autofunction:: brom_drake.productions.types.base.scenario._check_bounds
+.. autofunction:: brom_drake.productions.types.base.scenario._check_number_list
+.. autofunction:: brom_drake.productions.types.base.scenario._field_default
+.. autofunction:: brom_drake.productions.types.base.scenario._fmt_angles
+.. autofunction:: brom_drake.productions.types.base.scenario._is_number
+.. autofunction:: brom_drake.productions.types.base.scenario._suggest_rpy_bounds
+.. autofunction:: brom_drake.productions.types.base.scenario._wrap_angle
+.. autofunction:: brom_drake.productions.types.base.scenario.param
 
 Variables
 ---------
 
-(None found)
+.. autodata:: brom_drake.productions.types.base.scenario._ANGLE_TOLERANCE
+.. autodata:: brom_drake.productions.types.base.scenario.ANGLE_NAMES
+.. autodata:: brom_drake.productions.types.base.scenario.PARAM_METADATA_KEY
+.. autodata:: brom_drake.productions.types.base.scenario.POSE_CONVENTION_DOCS_URL
+.. autodata:: brom_drake.productions.types.base.scenario.QUATERNION_NORM_TOLERANCE
+.. autodata:: brom_drake.productions.types.base.scenario.SCENARIO_DOCS_URL
 

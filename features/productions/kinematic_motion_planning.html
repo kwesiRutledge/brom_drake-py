@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html"><link rel="next" title="Show Me This Static Grasp" href="debug/show_me_this_static_grasp.html"><link rel="prev" title="Show Me This Model" href="debug/show_me_this_model.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>Kinematic Motion Planning - brom_drake-py 1.0.3 documentation</title>
+        <title>Kinematic Motion Planning - brom_drake-py 1.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -162,7 +162,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">brom_drake-py 1.0.3 documentation</div></a>
+      <a href="../../index.html"><div class="brand">brom_drake-py 1.1.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +183,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 1.0.3 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 1.1.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -200,6 +200,7 @@
 <li class="toctree-l3"><a class="reference internal" href="debug/show_me_this_model.html">Show Me This Model</a></li>
 <li class="toctree-l3 current current-page"><a class="current reference internal" href="#">Kinematic Motion Planning</a></li>
 <li class="toctree-l3"><a class="reference internal" href="debug/show_me_this_static_grasp.html">Show Me This Static Grasp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="scenarios.html">Scenarios</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../recording_videos.html">Recording Videos</a></li>
@@ -673,14 +674,16 @@ Then, we will describe what is happening internally with each production.</p>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>Returns as output:</dt><dd><ul>
-<li><p>plan: A <code class="code docutils literal notranslate"><span class="pre">networkx.Digraph</span></code> or numpy array (coming soon!) describing the sequence of configurations that will reach from start to goal.</p></li>
-<li><p>found_path: A boolean describing whether or not a path was found between the two configurations.</p></li>
+<dt>Returns as output one of the following (see <code class="code docutils literal notranslate"><span class="pre">PrototypicalPlannerSystem.planning_result_to_array</span></code>):</dt><dd><ul>
+<li><p>A tuple <code class="code docutils literal notranslate"><span class="pre">(plan,</span> <span class="pre">goal_node_index)</span></code>, where <code class="code docutils literal notranslate"><span class="pre">plan</span></code> is a <code class="code docutils literal notranslate"><span class="pre">networkx.DiGraph</span></code> or numpy array and <code class="code docutils literal notranslate"><span class="pre">goal_node_index</span></code> is an integer. The built-in RRT planners return this form. If <code class="code docutils literal notranslate"><span class="pre">goal_node_index</span></code> is <code class="code docutils literal notranslate"><span class="pre">-1</span></code>, no path was found and a <code class="code docutils literal notranslate"><span class="pre">RuntimeError</span></code> is raised.</p></li>
+<li><p>A <code class="code docutils literal notranslate"><span class="pre">networkx.DiGraph</span></code> alone. The path runs from node <code class="code docutils literal notranslate"><span class="pre">0</span></code> to the node with the last id in <code class="code docutils literal notranslate"><span class="pre">plan.nodes</span></code>.</p></li>
+<li><p>A numpy array alone, which is used directly as the sequence of configurations.</p></li>
 </ul>
 </dd>
 </dl>
 </li>
 </ul>
+<p>When <code class="code docutils literal notranslate"><span class="pre">plan</span></code> is a <code class="code docutils literal notranslate"><span class="pre">networkx.DiGraph</span></code>, node <code class="code docutils literal notranslate"><span class="pre">0</span></code> must be the start configuration, and every node must store its joint configuration in the <code class="code docutils literal notranslate"><span class="pre">&quot;q&quot;</span></code> attribute. Brom extracts the shortest path from node <code class="code docutils literal notranslate"><span class="pre">0</span></code> to the goal node and converts it to an array of configurations.</p>
 <p>You can make the <code class="code docutils literal notranslate"><span class="pre">plan_function</span></code> using any library you want. It doesn’t need to be made using drake components at all, if you don’t want it to be.</p>
 </section>
 </section>
@@ -759,7 +762,7 @@ Then, we will describe what is happening internally with each production.</p>
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=baaebd52"></script>
+</div><script src="../../_static/documentation_options.js?v=fc837d61"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>

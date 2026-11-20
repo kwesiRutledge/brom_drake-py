@@ -23,10 +23,12 @@ Classes
 Functions
 ---------
 
-(None found)
+.. autofunction:: brom_drake.productions.scenario_presets.placed_object_pose
 
 Variables
 ---------
 
-(None found)
+.. autodata:: brom_drake.productions.scenario_presets.TWO_PI
+.. autodata:: brom_drake.productions.scenario_presets.UPRIGHT_TOLERANCE
+.. autodata:: brom_drake.productions.scenario_presets.UR10E_JOINT_LIMITS
 

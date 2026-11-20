@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html"><link rel="next" title="debug" href="debug/debug.html"><link rel="prev" title="proximity_pose_plan_dispenser" href="../motion_planning/systems/proximity_pose_plan_dispenser/proximity_pose_plan_dispenser.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>productions - brom_drake-py 1.0.3 documentation</title>
+        <title>productions - brom_drake-py 1.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -162,7 +162,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">brom_drake-py 1.0.3 documentation</div></a>
+      <a href="../../index.html"><div class="brand">brom_drake-py 1.1.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +183,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 1.0.3 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 1.1.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -200,6 +200,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../features/productions/debug/show_me_this_model.html">Show Me This Model</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../features/productions/kinematic_motion_planning.html">Kinematic Motion Planning</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../features/productions/debug/show_me_this_static_grasp.html">Show Me This Static Grasp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../features/productions/scenarios.html">Scenarios</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../features/recording_videos.html">Recording Videos</a></li>
@@ -680,11 +681,47 @@ starting point for grasp selection productions</p>
 </section>
 <section id="functions">
 <h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
-<p>(None found)</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="brom_drake.productions.scenario_presets.placed_object_pose">
+<span class="sig-prename descclassname"><span class="pre">brom_drake.productions.scenario_presets.</span></span><span class="sig-name descname"><span class="pre">placed_object_pose</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyz_min</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xyz_max</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">roll</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="types/base/base.html#brom_drake.productions.types.base.scenario.PoseParam" title="brom_drake.productions.types.base.scenario.PoseParam"><span class="pre">PoseParam</span></a></span></span><a class="reference internal" href="../../_modules/brom_drake/productions/scenario_presets.html#placed_object_pose"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.scenario_presets.placed_object_pose" title="Link to this definition">¶</a></dt>
+<dd><p><em>Description</em></p>
+<p>A pose for an object that keeps its placed orientation (<code class="docutils literal notranslate"><span class="pre">roll</span></code> about x,
+no pitch) up to <a class="reference internal" href="#brom_drake.productions.scenario_presets.UPRIGHT_TOLERANCE" title="brom_drake.productions.scenario_presets.UPRIGHT_TOLERANCE"><code class="xref py py-data docutils literal notranslate"><span class="pre">UPRIGHT_TOLERANCE</span></code></a>, and may turn freely about the
+vertical axis (any yaw).</p>
+<p><em>Parameters</em></p>
+<dl class="simple">
+<dt>xyz_min, xyz_max: tuple[float, float, float]</dt><dd><p>Bounds on the object’s position, in metres.</p>
+</dd>
+<dt>roll: float, optional</dt><dd><p>The object’s nominal roll, for example <code class="docutils literal notranslate"><span class="pre">pi</span> <span class="pre">/</span> <span class="pre">2</span></code> for the beaker
+meshes, whose “up” direction is +y.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 <section id="variables">
 <h2>Variables<a class="headerlink" href="#variables" title="Link to this heading">¶</a></h2>
-<p>(None found)</p>
+<dl class="py data">
+<dt class="sig sig-object py" id="brom_drake.productions.scenario_presets.TWO_PI">
+<span class="sig-prename descclassname"><span class="pre">brom_drake.productions.scenario_presets.</span></span><span class="sig-name descname"><span class="pre">TWO_PI</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">6.283185307179586</span></span><a class="headerlink" href="#brom_drake.productions.scenario_presets.TWO_PI" title="Link to this definition">¶</a></dt>
+<dd><p>Convert a string or number to a floating-point number, if possible.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="brom_drake.productions.scenario_presets.UPRIGHT_TOLERANCE">
+<span class="sig-prename descclassname"><span class="pre">brom_drake.productions.scenario_presets.</span></span><span class="sig-name descname"><span class="pre">UPRIGHT_TOLERANCE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.05</span></span><a class="headerlink" href="#brom_drake.productions.scenario_presets.UPRIGHT_TOLERANCE" title="Link to this definition">¶</a></dt>
+<dd><p>Convert a string or number to a floating-point number, if possible.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="brom_drake.productions.scenario_presets.UR10E_JOINT_LIMITS">
+<span class="sig-prename descclassname"><span class="pre">brom_drake.productions.scenario_presets.</span></span><span class="sig-name descname"><span class="pre">UR10E_JOINT_LIMITS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(6.283185307179586,</span> <span class="pre">6.283185307179586,</span> <span class="pre">3.141592653589793,</span> <span class="pre">6.283185307179586,</span> <span class="pre">6.283185307179586,</span> <span class="pre">6.283185307179586)</span></span><a class="headerlink" href="#brom_drake.productions.scenario_presets.UR10E_JOINT_LIMITS" title="Link to this definition">¶</a></dt>
+<dd><p>Built-in immutable sequence.</p>
+<p>If no argument is given, the constructor returns an empty tuple.
+If iterable is specified the tuple is initialized from iterable’s items.</p>
+<p>If the argument is a tuple, the return value is the same object.</p>
+</dd></dl>
+
 </section>
 </section>
 
@@ -761,8 +798,16 @@ starting point for grasp selection productions</p>
 </li>
 </ul>
 </li>
-<li><a class="reference internal" href="#functions">Functions</a></li>
-<li><a class="reference internal" href="#variables">Variables</a></li>
+<li><a class="reference internal" href="#functions">Functions</a><ul>
+<li><a class="reference internal" href="#brom_drake.productions.scenario_presets.placed_object_pose"><code class="docutils literal notranslate"><span class="pre">placed_object_pose()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#variables">Variables</a><ul>
+<li><a class="reference internal" href="#brom_drake.productions.scenario_presets.TWO_PI"><code class="docutils literal notranslate"><span class="pre">TWO_PI</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.productions.scenario_presets.UPRIGHT_TOLERANCE"><code class="docutils literal notranslate"><span class="pre">UPRIGHT_TOLERANCE</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.productions.scenario_presets.UR10E_JOINT_LIMITS"><code class="docutils literal notranslate"><span class="pre">UR10E_JOINT_LIMITS</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -774,7 +819,7 @@ starting point for grasp selection productions</p>
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=baaebd52"></script>
+</div><script src="../../_static/documentation_options.js?v=fc837d61"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>

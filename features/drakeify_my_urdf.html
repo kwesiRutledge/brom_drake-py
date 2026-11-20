@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Productions" href="productions/index.html"><link rel="prev" title="DiagramWatcher" href="diagram_watcher.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>“Drakeify”-My-URDF - brom_drake-py 1.0.3 documentation</title>
+        <title>“Drakeify”-My-URDF - brom_drake-py 1.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -162,7 +162,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">brom_drake-py 1.0.3 documentation</div></a>
+      <a href="../index.html"><div class="brand">brom_drake-py 1.1.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +183,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 1.0.3 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 1.1.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -200,6 +200,7 @@
 <li class="toctree-l3"><a class="reference internal" href="productions/debug/show_me_this_model.html">Show Me This Model</a></li>
 <li class="toctree-l3"><a class="reference internal" href="productions/kinematic_motion_planning.html">Kinematic Motion Planning</a></li>
 <li class="toctree-l3"><a class="reference internal" href="productions/debug/show_me_this_static_grasp.html">Show Me This Static Grasp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="productions/scenarios.html">Scenarios</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="recording_videos.html">Recording Videos</a></li>
@@ -668,6 +669,18 @@ Visual elements that had no material receive a new one, and any existing color i
 If <code class="docutils literal notranslate"><span class="pre">replace_colors_with</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code> (the default), colors are left unchanged.
 A list that does not contain exactly four values raises a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> when the conversion runs.</p>
 </section>
+<section id="where-the-output-goes">
+<h2>Where the Output Goes<a class="headerlink" href="#where-the-output-goes" title="Link to this heading">¶</a></h2>
+<p><a class="reference internal" href="../generated/file_manipulation/urdf/urdf.html#brom_drake.file_manipulation.urdf.drakeify.drakeify_my_urdf" title="brom_drake.file_manipulation.urdf.drakeify.drakeify_my_urdf"><code class="xref py py-func docutils literal notranslate"><span class="pre">drakeify_my_urdf()</span></code></a> returns the path of the new file.
+By default, for an input named <code class="docutils literal notranslate"><span class="pre">ur10e.urdf</span></code>, the converted file is written to <code class="docutils literal notranslate"><span class="pre">brom/models/ur10e/ur10e.drake.urdf</span></code>,
+where <code class="docutils literal notranslate"><span class="pre">brom/models</span></code> is relative to the directory the program is run from.
+The log file (<code class="docutils literal notranslate"><span class="pre">log_file_name</span></code>) is written to the same directory as the converted URDF.
+The new file and its log are created for each conversion, so rerunning on the same URDF replaces the previous output at that location.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">overwrite_old_models</span></code> flag is broader than it may sound.
+When it is <code class="docutils literal notranslate"><span class="pre">True</span></code>, the whole <code class="docutils literal notranslate"><span class="pre">brom/models</span></code> directory is deleted before the conversion starts,
+including the converted models of <em>other</em> URDF files.
+It is <code class="docutils literal notranslate"><span class="pre">False</span></code> by default, in which case existing files in <code class="docutils literal notranslate"><span class="pre">brom/models</span></code> are left alone.</p>
+</section>
 </section>
 
         </article>
@@ -729,6 +742,7 @@ A list that does not contain exactly four values raises a <code class="docutils 
 <li><a class="reference internal" href="#summary">Summary</a></li>
 <li><a class="reference internal" href="#example-usage">Example Usage</a></li>
 <li><a class="reference internal" href="#replacing-colors">Replacing Colors</a></li>
+<li><a class="reference internal" href="#where-the-output-goes">Where the Output Goes</a></li>
 </ul>
 </li>
 </ul>
@@ -740,7 +754,7 @@ A list that does not contain exactly four values raises a <code class="docutils 
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=baaebd52"></script>
+</div><script src="../_static/documentation_options.js?v=fc837d61"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>

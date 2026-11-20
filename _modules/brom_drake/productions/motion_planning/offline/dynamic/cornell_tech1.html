@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../../search.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>brom_drake.productions.motion_planning.offline.dynamic.cornell_tech1 - brom_drake-py 1.0.3 documentation</title>
+        <title>brom_drake.productions.motion_planning.offline.dynamic.cornell_tech1 - brom_drake-py 1.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../../index.html"><div class="brand">brom_drake-py 1.0.3 documentation</div></a>
+      <a href="../../../../../../index.html"><div class="brand">brom_drake-py 1.1.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 1.0.3 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 1.1.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -199,6 +199,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../../../../../features/productions/debug/show_me_this_model.html">Show Me This Model</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../../../features/productions/kinematic_motion_planning.html">Kinematic Motion Planning</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../../../features/productions/debug/show_me_this_static_grasp.html">Show Me This Static Grasp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../../features/productions/scenarios.html">Scenarios</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../../../features/recording_videos.html">Recording Videos</a></li>
@@ -579,7 +580,8 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for brom_drake.productions.motion_planning.offline.dynamic.cornell_tech1</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">importlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">resources</span> <span class="k">as</span> <span class="n">impresources</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">importlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">resources</span> <span class="k">as</span> <span class="n">impresources</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -612,6 +614,12 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.stations.classical</span><span class="w"> </span><span class="kn">import</span> <span class="n">KinovaGen3Station</span><span class="p">,</span> <span class="n">KinovaGen3Variant</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.systems.video</span><span class="w"> </span><span class="kn">import</span> <span class="n">CameraSpec</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">AddGround</span><span class="p">,</span> <span class="n">MotionPlan</span><span class="p">,</span> <span class="n">Performer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.productions.scenario_presets</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">KINOVA_GEN3_CONFIGURATION</span><span class="p">,</span>
+    <span class="n">KINOVA_GEN3_TARGET_POSE</span><span class="p">,</span>
+    <span class="n">placed_object_pose</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.productions.types.base.scenario</span><span class="w"> </span><span class="kn">import</span> <span class="n">param</span>
 
 
 <div class="viewcode-block" id="CornellTech1">
@@ -716,6 +724,42 @@
     <span class="c1">#: Number of initial guesses that the inverse kinematics solver tries</span>
     <span class="c1">#: (the first is the plant's default configuration, the rest are random)</span>
     <span class="n">n_ik_initial_guesses</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span>
+
+<div class="viewcode-block" id="CornellTech1.Scenario">
+<a class="viewcode-back" href="../../../../../../generated/productions/motion_planning/offline/dynamic/dynamic.html#brom_drake.productions.motion_planning.offline.dynamic.cornell_tech1.CornellTech1.Scenario">[docs]</a>
+    <span class="nd">@dataclass</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Scenario</span><span class="p">(</span><span class="n">OfflineDynamicMotionPlanningProduction</span><span class="o">.</span><span class="n">Scenario</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        *Description*</span>
+
+<span class="sd">        The initial conditions of CornellTech1 that a caller may change. Each field</span>
+<span class="sd">        is a keyword argument of the constructor, with the same default.</span>
+<span class="sd">        Start and goal fields use the Kinova Gen3 joint limits and reach.</span>
+<span class="sd">        """</span>
+
+        <span class="n">start_configuration</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">param</span><span class="p">(</span>
+            <span class="n">KINOVA_GEN3_CONFIGURATION</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">"Joint positions of the arm at the start."</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">start_pose</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">param</span><span class="p">(</span>
+            <span class="n">KINOVA_GEN3_TARGET_POSE</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">"Pose of the arm's target frame at the start, in the world frame."</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">goal_configuration</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">param</span><span class="p">(</span>
+            <span class="n">KINOVA_GEN3_CONFIGURATION</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">"Joint positions of the arm at the goal."</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">goal_pose</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">param</span><span class="p">(</span>
+            <span class="n">KINOVA_GEN3_TARGET_POSE</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">"Pose of the arm's target frame at the goal, in the world frame."</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">pose_WorldBeaker</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">param</span><span class="p">(</span>
+            <span class="n">placed_object_pose</span><span class="p">(</span>
+                <span class="n">xyz_min</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">1.2</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">),</span> <span class="n">xyz_max</span><span class="o">=</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">),</span> <span class="n">roll</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.0</span>
+            <span class="p">),</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">"Pose of the beaker in the world frame (None: the production's default)."</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -1350,7 +1394,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../../_static/documentation_options.js?v=baaebd52"></script>
+</div><script src="../../../../../../_static/documentation_options.js?v=fc837d61"></script>
     <script src="../../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

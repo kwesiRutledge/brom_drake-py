@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html"><link rel="next" title="roles" href="../roles/roles.html"><link rel="prev" title="kinematic" href="../motion_planning/offline/kinematic/kinematic.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>pick_and_place - brom_drake-py 1.0.3 documentation</title>
+        <title>pick_and_place - brom_drake-py 1.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -162,7 +162,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">brom_drake-py 1.0.3 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">brom_drake-py 1.1.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +183,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 1.0.3 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 1.1.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -200,6 +200,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../../features/productions/debug/show_me_this_model.html">Show Me This Model</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../features/productions/kinematic_motion_planning.html">Kinematic Motion Planning</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../features/productions/debug/show_me_this_static_grasp.html">Show Me This Static Grasp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../features/productions/scenarios.html">Scenarios</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../features/recording_videos.html">Recording Videos</a></li>
@@ -601,6 +602,15 @@
 <p>This production is the first in the chemistry lab series.
 It is used to test the pick and place capabilities of the robot
 in a chemistry lab setting with minimal constraints.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="brom_drake.productions.pick_and_place.chem_lab3.ChemLab3.Scenario">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">Scenario</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_configuration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_pose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_height</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shelf_pose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/brom_drake/productions/pick_and_place/chem_lab3.html#ChemLab3.Scenario"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.pick_and_place.chem_lab3.ChemLab3.Scenario" title="Link to this definition">¶</a></dt>
+<dd><p><em>Description</em></p>
+<p>The initial conditions of ChemLab3 that a caller may change. Each field
+is a keyword argument of the constructor, with the same default.
+Start and goal fields use the UR10e joint limits and reach.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.pick_and_place.chem_lab3.ChemLab3.add_cast_and_build">
 <span class="sig-name descname"><span class="pre">add_cast_and_build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cast</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../roles/roles.html#brom_drake.productions.roles.role.Role" title="brom_drake.productions.roles.role.Role"><span class="pre">Role</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">LeafSystem</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Diagram</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_watcher</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Diagram</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Context</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/brom_drake/productions/pick_and_place/chem_lab3.html#ChemLab3.add_cast_and_build"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.pick_and_place.chem_lab3.ChemLab3.add_cast_and_build" title="Link to this definition">¶</a></dt>
@@ -853,6 +863,7 @@ This should be defined by the subclass.
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#classes">Classes</a><ul>
 <li><a class="reference internal" href="#brom_drake.productions.pick_and_place.chem_lab3.ChemLab3"><code class="docutils literal notranslate"><span class="pre">ChemLab3</span></code></a><ul>
+<li><a class="reference internal" href="#brom_drake.productions.pick_and_place.chem_lab3.ChemLab3.Scenario"><code class="docutils literal notranslate"><span class="pre">ChemLab3.Scenario</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.pick_and_place.chem_lab3.ChemLab3.add_cast_and_build"><code class="docutils literal notranslate"><span class="pre">ChemLab3.add_cast_and_build()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.pick_and_place.chem_lab3.ChemLab3.add_dummy_gripper_components"><code class="docutils literal notranslate"><span class="pre">ChemLab3.add_dummy_gripper_components()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.pick_and_place.chem_lab3.ChemLab3.add_erlenmeyer_flask"><code class="docutils literal notranslate"><span class="pre">ChemLab3.add_erlenmeyer_flask()</span></code></a></li>
@@ -887,7 +898,7 @@ This should be defined by the subclass.
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=baaebd52"></script>
+</div><script src="../../../_static/documentation_options.js?v=fc837d61"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>

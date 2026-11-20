@@ -61,7 +61,7 @@ To learn more about this type, read about the `PortDataType`_ and `OutputPort`_ 
 Easily Log Your Diagram's Signals
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-It is recommended that you use the convenience function :py:func:`~brom_drake.utils.watcher.add_watcher.add_watcher_and_build` to add a
+It is recommended that you use the convenience function :py:func:`~brom_drake.watchers.diagram_watcher.add_watcher.add_watcher_and_build` to add a
 :py:class:`DiagramWatcher<brom_drake.watchers.diagram_watcher.diagram_watcher.DiagramWatcher>` to your diagram.
 
 .. code-block:: python

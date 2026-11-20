@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html"><link rel="next" title="pick_and_place" href="../../pick_and_place/pick_and_place.html"><link rel="prev" title="motion_planning" href="../motion_planning.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>offline - brom_drake-py 1.0.3 documentation</title>
+        <title>offline - brom_drake-py 1.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
@@ -162,7 +162,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../index.html"><div class="brand">brom_drake-py 1.0.3 documentation</div></a>
+      <a href="../../../../../index.html"><div class="brand">brom_drake-py 1.1.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +183,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 1.0.3 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 1.1.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -200,6 +200,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../../../../features/productions/debug/show_me_this_model.html">Show Me This Model</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../../features/productions/kinematic_motion_planning.html">Kinematic Motion Planning</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../../features/productions/debug/show_me_this_static_grasp.html">Show Me This Static Grasp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../features/productions/scenarios.html">Scenarios</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../../features/recording_videos.html">Recording Videos</a></li>
@@ -639,6 +640,20 @@ the ChemLab2Production class.</p>
         <span class="c1"># Your custom code to add the supporting cast</span>
 </pre></div>
 </div>
+<dl class="py class">
+<dt class="sig sig-object py" id="brom_drake.productions.types.motion_planning.offline.dynamic.OfflineDynamicMotionPlanningProduction.Scenario">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">Scenario</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_configuration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_pose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">goal_configuration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">goal_pose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/brom_drake/productions/types/motion_planning/offline/dynamic.html#OfflineDynamicMotionPlanningProduction.Scenario"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.motion_planning.offline.dynamic.OfflineDynamicMotionPlanningProduction.Scenario" title="Link to this definition">¶</a></dt>
+<dd><p><em>Description</em></p>
+<p>The initial conditions of a dynamic motion planning production
+that a caller may
+change (see <a class="reference internal" href="../../base/base.html#brom_drake.productions.types.base.scenario.Scenario" title="brom_drake.productions.types.base.scenario.Scenario"><code class="xref py py-class docutils literal notranslate"><span class="pre">Scenario</span></code></a>).
+Each field is a keyword argument of the constructor; a configuration
+and a pose are alternatives, so at most one of each pair may be set.</p>
+<p>The bounds here are loose because they cannot depend on the arm.
+A concrete production should re-declare these fields with its arm’s
+joint count and limits and its own workspace.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.types.motion_planning.offline.dynamic.OfflineDynamicMotionPlanningProduction.add_goal_source_system">
 <span class="sig-name descname"><span class="pre">add_goal_source_system</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/brom_drake/productions/types/motion_planning/offline/dynamic.html#OfflineDynamicMotionPlanningProduction.add_goal_source_system"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.motion_planning.offline.dynamic.OfflineDynamicMotionPlanningProduction.add_goal_source_system" title="Link to this definition">¶</a></dt>
@@ -941,6 +956,20 @@ Similarly, either the goal pose or configuration must be defined.</p>
 <dt>goal_pose: RigidTransform, optional</dt><dd><p>The goal pose of the robot, by default None.</p>
 </dd>
 </dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="brom_drake.productions.types.motion_planning.offline.kinematic.KinematicMotionPlanningProduction.Scenario">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">Scenario</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_configuration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_pose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">goal_configuration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">goal_pose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/brom_drake/productions/types/motion_planning/offline/kinematic.html#KinematicMotionPlanningProduction.Scenario"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.motion_planning.offline.kinematic.KinematicMotionPlanningProduction.Scenario" title="Link to this definition">¶</a></dt>
+<dd><p><em>Description</em></p>
+<p>The initial conditions of a kinematic motion planning production
+that a caller may
+change (see <a class="reference internal" href="../../base/base.html#brom_drake.productions.types.base.scenario.Scenario" title="brom_drake.productions.types.base.scenario.Scenario"><code class="xref py py-class docutils literal notranslate"><span class="pre">Scenario</span></code></a>).
+Each field is a keyword argument of the constructor; a configuration
+and a pose are alternatives, so at most one of each pair may be set.</p>
+<p>The bounds here are loose because they cannot depend on the arm.
+A concrete production should re-declare these fields with its arm’s
+joint count and limits and its own workspace.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.types.motion_planning.offline.kinematic.KinematicMotionPlanningProduction.add_goal_source_system">
 <span class="sig-name descname"><span class="pre">add_goal_source_system</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/brom_drake/productions/types/motion_planning/offline/kinematic.html#KinematicMotionPlanningProduction.add_goal_source_system"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.motion_planning.offline.kinematic.KinematicMotionPlanningProduction.add_goal_source_system" title="Link to this definition">¶</a></dt>
@@ -1131,15 +1160,33 @@ immediately, pausing the simulation while planning.</p>
 <dd><p>Get the goal configuration. If the production was given a goal
 configuration, it is returned directly. Otherwise, if it was given a goal
 pose, the configuration is computed with solve_pose_ik_problem
-(which ignores obstacles). If neither was defined, a NotImplementedError is raised.
-:return: The goal joint configuration of the robot.</p>
+(which ignores obstacles, so the result may be in collision).
+If neither was defined, a NotImplementedError is raised.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The goal joint configuration of the robot.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>NotImplementedError</strong> – If neither a goal configuration nor a goal pose is defined.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="brom_drake.productions.types.motion_planning.offline.kinematic.KinematicMotionPlanningProduction.goal_pose">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">goal_pose</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">RigidTransform</span></span><a class="headerlink" href="#brom_drake.productions.types.motion_planning.offline.kinematic.KinematicMotionPlanningProduction.goal_pose" title="Link to this definition">¶</a></dt>
-<dd><p>Get the goal pose. This should be defined by the subclass.
-:return:</p>
+<dd><p>Get the goal pose. If the production was given a goal pose, it is
+returned directly. A goal pose is NOT computed from a goal configuration,
+because that requires forward kinematics for your specific scene.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The goal pose of the robot’s target frame.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>NotImplementedError</strong> – If no goal pose was given (including when
+only a goal configuration was given); subclasses may override this property.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
@@ -1184,8 +1231,17 @@ does not find a solution.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="brom_drake.productions.types.motion_planning.offline.kinematic.KinematicMotionPlanningProduction.start_configuration">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">start_configuration</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></span><a class="headerlink" href="#brom_drake.productions.types.motion_planning.offline.kinematic.KinematicMotionPlanningProduction.start_configuration" title="Link to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>Description:</dt><dd><p>This function returns the start and goal poses as a single array.</p>
+<dd><p>Get the start configuration. If the production was given a start
+configuration, it is returned directly. Otherwise, if it was given a start
+pose, the configuration is computed with solve_pose_ik_problem
+(which ignores obstacles, so the result may be in collision).
+If neither was defined, a NotImplementedError is raised.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The start joint configuration of the robot.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>NotImplementedError</strong> – If neither a start configuration nor a start pose is defined.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1193,8 +1249,18 @@ does not find a solution.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="brom_drake.productions.types.motion_planning.offline.kinematic.KinematicMotionPlanningProduction.start_pose">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">start_pose</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">RigidTransform</span></span><a class="headerlink" href="#brom_drake.productions.types.motion_planning.offline.kinematic.KinematicMotionPlanningProduction.start_pose" title="Link to this definition">¶</a></dt>
-<dd><p>Get the start pose. This should be defined by the subclass.
-:return:</p>
+<dd><p>Get the start pose. If the production was given a start pose, it is
+returned directly. A start pose is NOT computed from a start configuration,
+because that requires forward kinematics for your specific scene.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The start pose of the robot’s target frame.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>NotImplementedError</strong> – If no start pose was given (including when
+only a start configuration was given); subclasses may override this property.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
@@ -1282,6 +1348,7 @@ It should return a list of roles that are suggested for the production.</p>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#classes">Classes</a><ul>
 <li><a class="reference internal" href="#brom_drake.productions.types.motion_planning.offline.dynamic.OfflineDynamicMotionPlanningProduction"><code class="docutils literal notranslate"><span class="pre">OfflineDynamicMotionPlanningProduction</span></code></a><ul>
+<li><a class="reference internal" href="#brom_drake.productions.types.motion_planning.offline.dynamic.OfflineDynamicMotionPlanningProduction.Scenario"><code class="docutils literal notranslate"><span class="pre">OfflineDynamicMotionPlanningProduction.Scenario</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.types.motion_planning.offline.dynamic.OfflineDynamicMotionPlanningProduction.add_goal_source_system"><code class="docutils literal notranslate"><span class="pre">OfflineDynamicMotionPlanningProduction.add_goal_source_system()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.types.motion_planning.offline.dynamic.OfflineDynamicMotionPlanningProduction.add_main_cast"><code class="docutils literal notranslate"><span class="pre">OfflineDynamicMotionPlanningProduction.add_main_cast()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.types.motion_planning.offline.dynamic.OfflineDynamicMotionPlanningProduction.add_robot_source_system"><code class="docutils literal notranslate"><span class="pre">OfflineDynamicMotionPlanningProduction.add_robot_source_system()</span></code></a></li>
@@ -1304,6 +1371,7 @@ It should return a list of roles that are suggested for the production.</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#brom_drake.productions.types.motion_planning.offline.kinematic.KinematicMotionPlanningProduction"><code class="docutils literal notranslate"><span class="pre">KinematicMotionPlanningProduction</span></code></a><ul>
+<li><a class="reference internal" href="#brom_drake.productions.types.motion_planning.offline.kinematic.KinematicMotionPlanningProduction.Scenario"><code class="docutils literal notranslate"><span class="pre">KinematicMotionPlanningProduction.Scenario</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.types.motion_planning.offline.kinematic.KinematicMotionPlanningProduction.add_goal_source_system"><code class="docutils literal notranslate"><span class="pre">KinematicMotionPlanningProduction.add_goal_source_system()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.types.motion_planning.offline.kinematic.KinematicMotionPlanningProduction.add_main_cast"><code class="docutils literal notranslate"><span class="pre">KinematicMotionPlanningProduction.add_main_cast()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.types.motion_planning.offline.kinematic.KinematicMotionPlanningProduction.add_robot_source_system"><code class="docutils literal notranslate"><span class="pre">KinematicMotionPlanningProduction.add_robot_source_system()</span></code></a></li>
@@ -1338,7 +1406,7 @@ It should return a list of roles that are suggested for the production.</p>
       
     </aside>
   </div>
-</div><script src="../../../../../_static/documentation_options.js?v=baaebd52"></script>
+</div><script src="../../../../../_static/documentation_options.js?v=fc837d61"></script>
     <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>
