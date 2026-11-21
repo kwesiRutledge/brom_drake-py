@@ -11,6 +11,8 @@ from pydrake.geometry import SceneGraph
 from pydrake.multibody.plant import MultibodyPlant
 from pydrake.multibody.tree import ModelInstanceIndex
 
+from brom_drake.utils.collision_checking import CollisionCheckMethod, find_collisions
+
 
 class MotionPlanner:
     def __init__(
@@ -19,15 +21,22 @@ class MotionPlanner:
         plant: MultibodyPlant,
         scene_graph: SceneGraph,
         random_seed: int = 23,
+        collision_threshold: float = 1e-2,
     ):
         """
         Description:
             This function initializes the motion planner.
+
+        Arguments:
+            collision_threshold: Safety margin in meters. A configuration counts as
+                colliding when any pair of geometries is closer than this
+                (signed distance). Defaults to 1e-2.
         """
         # Input Processing
         self.robot_model_idx = robot_model_idx
         self.plant = plant
         self.scene_graph = scene_graph
+        self.collision_threshold = collision_threshold
 
         # Setup
         self.root_context = None  # Usually, the diagram context that we can use to extract the plant's context
@@ -57,31 +66,18 @@ class MotionPlanner:
         if self.root_context is None:
             raise ValueError("Plant context is not initialized yet!")
 
-        # Setup
-        plant_context = self.plant.GetMyMutableContextFromRoot(self.root_context)
-        scene_graph_context = self.scene_graph.GetMyMutableContextFromRoot(
-            self.root_context
-        )
-
         # Set the configuration
+        plant_context = self.plant.GetMyMutableContextFromRoot(self.root_context)
         self.plant.SetPositions(plant_context, self.robot_model_idx, q_model)
 
-        # Note: This method will be inaccurate if using arbitrary, nonconvex meshes!
-        # https://drake.mit.edu/pydrake/pydrake.geometry.html?highlight=queryobject#pydrake.geometry.QueryObject.HasCollisions
-        query_object = self.scene_graph.get_query_output_port().Eval(
-            scene_graph_context
+        # Any pair closer than collision_threshold counts as a collision
+        collisions = find_collisions(
+            self.scene_graph,
+            self.root_context,
+            threshold=self.collision_threshold,
+            method=CollisionCheckMethod.SIGNED_DISTANCE,
         )
-        # return query_object.HasCollisions()
-
-        # Alternative method to check for collisions
-        closest_points = query_object.ComputeSignedDistancePairwiseClosestPoints()
-        eps0 = 1e-2
-        for pair in closest_points:
-            if pair.distance < eps0:
-                return True
-
-        # Otherwise return false
-        return False
+        return len(collisions) > 0
 
     @property
     def joint_limits(self) -> np.ndarray:
