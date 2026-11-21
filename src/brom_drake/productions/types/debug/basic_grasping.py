@@ -62,6 +62,7 @@ class BasicGraspingDebuggingProduction(BaseProduction):
         meshcat_port_number: int (Optional, default=None)
             An integer representing the port number for the meshcat server.
             If this is None, the meshcat server will not be started.
+            Negative values raise ValueError.
         time_step: float (Optional, default=0.001)
             A float representing the time step for the simulation.
         target_body_on_gripper: str (Optional, default=None)

@@ -34,6 +34,7 @@ from brom_drake.file_manipulation.urdf import (
 
 from brom_drake import robots
 from brom_drake.directories import get_brom_dir
+from brom_drake.utils.meshcat import validate_meshcat_port_number
 
 
 class UR10eStation(Diagram):
@@ -63,7 +64,7 @@ class UR10eStation(Diagram):
         """
         # Input Processing
         self.force_conversion_of_original_urdf = force_conversion_of_original_urdf
-        self.meshcat_port_number = meshcat_port_number
+        self.meshcat_port_number = validate_meshcat_port_number(meshcat_port_number)
         self.end_effector_frame_name = end_effector_frame_name
 
         # Initialize the Diagram
@@ -316,8 +317,9 @@ class UR10eStation(Diagram):
         port: int, optional
             The port number for the Meshcat server.
             If None, the default port will be used.
+            Negative values raise ValueError.
         """
-        self.meshcat = Meshcat(port)
+        self.meshcat = Meshcat(validate_meshcat_port_number(port))
         m = MeshcatVisualizer(self.meshcat)
         m.AddToBuilder(
             self.builder,

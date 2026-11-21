@@ -23,6 +23,7 @@ from brom_drake.productions.ids import ProductionID
 from brom_drake.utils import Performer
 from brom_drake.watchers.diagram_watcher.add_watcher import add_watcher_and_build
 from brom_drake.utils.initial_condition_manager import InitialConditionManager
+from brom_drake.utils.meshcat import validate_meshcat_port_number
 from brom_drake.systems.video import (
     CameraSpec,
     GridSource,
@@ -115,6 +116,14 @@ class BaseProduction:
         self._renderer_backend: str = ""
         self._render_settings: Optional[RenderSettings] = None
         self.video_recorders: Dict[str, VideoRecorder] = {}
+
+    @property
+    def meshcat_port_number(self):
+        return self._meshcat_port_number
+
+    @meshcat_port_number.setter
+    def meshcat_port_number(self, port):
+        self._meshcat_port_number = validate_meshcat_port_number(port)
 
     @classmethod
     def accepted_arguments(cls) -> List[str]:
