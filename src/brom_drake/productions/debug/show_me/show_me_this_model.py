@@ -55,6 +55,7 @@ class ShowMeThisModel(BaseProduction):
     meshcat_port_number: int, optional
         The port number to use for Meshcat visualization.
         If None, Meshcat visualization will be disabled.
+        Negative values raise ValueError.
         Default is 7001.
 
     show_collision_geometries: bool, optional

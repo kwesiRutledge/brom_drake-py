@@ -25,6 +25,7 @@ from brom_drake.file_manipulation.urdf import DrakeReadyURDFConverter
 from brom_drake.systems.end_effector_wrench_calculator import (
     EndEffectorWrenchCalculator,
 )
+from brom_drake.utils.meshcat import validate_meshcat_port_number
 
 from brom_drake import robots
 
@@ -88,7 +89,7 @@ class UR10eStation(Diagram):
 
         meshcat_port_number: int, optional
             The port number for meshcat visualization, by default 7001.
-            Use None to disable meshcat.
+            Use None to disable meshcat. Negative values raise ValueError.
 
         gripper_type: GripperType, optional
             The type of gripper to use, by default GripperType.Robotiq_2f_85.
@@ -100,7 +101,7 @@ class UR10eStation(Diagram):
             and the measured end effector wrench includes it.
         """
         # Input Processing
-        self.meshcat_port_number = meshcat_port_number
+        self.meshcat_port_number = validate_meshcat_port_number(meshcat_port_number)
         self.time_step = time_step
         self.model_gripper_in_controller = model_gripper_in_controller
 
@@ -294,7 +295,7 @@ class UR10eStation(Diagram):
         )
 
     def ConnectToMeshcatVisualizer(self, port=None):
-        self.meshcat = Meshcat(port)
+        self.meshcat = Meshcat(validate_meshcat_port_number(port))
         m = MeshcatVisualizer(self.meshcat)
         m.AddToBuilder(self.builder, self.scene_graph, self.meshcat)
 
