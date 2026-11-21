@@ -49,6 +49,10 @@ from brom_drake.file_manipulation.urdf.simple_writer.urdf_definition import (
     SimpleShapeURDFDefinition,
 )
 from brom_drake.utils import Performer, MotionPlan
+from brom_drake.utils.collision_checking import (
+    DEFAULT_PLANNER_COLLISION_THRESHOLD,
+    CollisionCheckMethod,
+)
 from brom_drake.utils.metadata_recording import create_summary_for_LeafSystem
 from brom_drake.utils.model_instances import summarize_model_instance_with_dict
 
@@ -557,6 +561,8 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
         with_watcher: bool = True,
         async_planning: Optional[AsyncPlanningConfig] = None,
         watcher_options: Optional[DiagramWatcherOptions] = None,
+        collision_threshold: float = DEFAULT_PLANNER_COLLISION_THRESHOLD,
+        collision_check_method: CollisionCheckMethod = CollisionCheckMethod.PENETRATION,
     ) -> Tuple[Diagram, Context]:
         """
         *Description*
@@ -574,6 +580,12 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
 
         watcher_options: DiagramWatcherOptions, optional
             Watcher configuration; None preserves the default settings.
+
+        collision_threshold: float, optional
+            Collision threshold in meters (default 1 cm).
+
+        collision_check_method: CollisionCheckMethod or str, optional
+            Penetration depth (default) or signed distance.
 
         async_planning: AsyncPlanningConfig, optional
             If given, plan in the background while the simulation runs: planning
@@ -598,7 +610,11 @@ class OfflineDynamicMotionPlanningProduction(BaseProduction):
         # Create a planner from the algorithm
         # (AsyncPlannerSystem plans in the background while the simulation runs,
         # starting from the robot's configuration at async_planning.plan_start_time)
-        planner_kwargs = dict(robot_model_idx=self.robot_model_index)
+        planner_kwargs = dict(
+            robot_model_idx=self.robot_model_index,
+            collision_threshold=collision_threshold,
+            collision_check_method=collision_check_method,
+        )
         planner_kwargs["controller_plant"] = self.station.controller_plant
         if async_planning is None:
             prototypical_planner = PrototypicalPlannerSystem(

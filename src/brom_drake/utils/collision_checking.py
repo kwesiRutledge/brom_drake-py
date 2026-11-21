@@ -13,6 +13,8 @@ from pydrake.all import (
     SignedDistancePair,
 )
 
+DEFAULT_PLANNER_COLLISION_THRESHOLD = 1e-2
+
 
 class CollisionCheckMethod(str, Enum):
     """
@@ -104,7 +106,9 @@ def find_collisions(
         If given, colliding geometries are named by ``model_instance::body``.
     threshold : float
         Meters. See ``CollisionCheckMethod`` for how it is interpreted.
-        Defaults to 1e-3.
+        Defaults to 1e-3. Planner systems retain their historical 1e-2
+        penetration threshold; pass the planner's threshold and method here
+        to evaluate with the same collision criterion.
     method : CollisionCheckMethod or str
         ``"penetration"`` (default) or ``"signed_distance"``.
 

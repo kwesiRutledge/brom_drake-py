@@ -23,6 +23,7 @@ from brom_drake.motion_planning.systems.async_planner import AsyncPlannerSystem
 from brom_drake.motion_planning.systems.prototypical_planner import (
     PrototypicalPlannerSystem,
 )
+from brom_drake.utils.collision_checking import CollisionCheckMethod, find_collisions
 
 SIDE = 0.1  # Both boxes are 0.1 m cubes
 
@@ -117,6 +118,38 @@ class CollisionThresholdTest(unittest.TestCase):
         system = self._planner_system(AsyncPlannerSystem, collision_threshold=1e-3)
         self.assertEqual(system.collision_threshold, 1e-3)
         self.assertTrue(system.check_collision_in_config(np.array([0.095])))
+
+    def test_planner_methods_match_collision_utility(self):
+        for cls in (PrototypicalPlannerSystem, AsyncPlannerSystem):
+            for method in (CollisionCheckMethod.PENETRATION, "signed_distance"):
+                with self.subTest(cls=cls, method=method):
+                    system = self._planner_system(
+                        cls, collision_threshold=1e-3, collision_check_method=method
+                    )
+                    self.assertEqual(system.collision_check_method, method)
+                    for q in (0.095, 0.1005, 0.12):
+                        actual = system.check_collision_in_config(np.array([q]))
+                        plant_context = self.plant.GetMyMutableContextFromRoot(
+                            self.root_context
+                        )
+                        self.plant.SetPositions(plant_context, self.slider, [q])
+                        expected = bool(
+                            find_collisions(
+                                self.scene_graph,
+                                self.root_context,
+                                threshold=system.collision_threshold,
+                                method=system.collision_check_method,
+                            )
+                        )
+                        self.assertEqual(actual, expected)
+                        if q == 0.1005:
+                            self.assertEqual(
+                                actual, method == CollisionCheckMethod.SIGNED_DISTANCE
+                            )
+
+    def test_planner_rejects_invalid_method(self):
+        with self.assertRaises(ValueError):
+            self._planner_system(collision_check_method="invalid")
 
     def test_motion_planner_default_margin1(self):
         planner = self._motion_planner()
