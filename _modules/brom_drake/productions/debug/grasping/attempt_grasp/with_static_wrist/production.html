@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../../../search.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>brom_drake.productions.debug.grasping.attempt_grasp.with_static_wrist.production - brom_drake-py 1.1.1 documentation</title>
+        <title>brom_drake.productions.debug.grasping.attempt_grasp.with_static_wrist.production - brom_drake-py 1.1.1+1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../../../index.html"><div class="brand">brom_drake-py 1.1.1 documentation</div></a>
+      <a href="../../../../../../../index.html"><div class="brand">brom_drake-py 1.1.1+1 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 1.1.1 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 1.1.1+1 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -581,7 +581,10 @@
         <article role="main" id="furo-main-content">
           <h1>Source code for brom_drake.productions.debug.grasping.attempt_grasp.with_static_wrist.production</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span><span class="w"> </span><span class="nn">importlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">resources</span> <span class="k">as</span> <span class="n">impresources</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.watchers.diagram_watcher.diagram_watcher_options</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DiagramWatcherOptions</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">networkx</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nx</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -759,16 +762,28 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">create_executive_system</span><span class="p">()</span>
         <span class="p">)</span>  <span class="c1"># The executive system that coordinates ALL the systems</span>
 
+<div class="viewcode-block" id="AttemptGraspWithStaticWrist.add_cast_and_build">
+<a class="viewcode-back" href="../../../../../../../generated/productions/debug/grasping/attempt_grasp/with_static_wrist/with_static_wrist.html#brom_drake.productions.debug.grasping.attempt_grasp.with_static_wrist.production.AttemptGraspWithStaticWrist.add_cast_and_build">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_cast_and_build</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">cast</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Role</span><span class="p">,</span> <span class="n">Performer</span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
         <span class="n">figure_naming_convention</span><span class="p">:</span> <span class="n">FigureNamingConvention</span> <span class="o">=</span> <span class="n">FigureNamingConvention</span><span class="o">.</span><span class="n">kHierarchical</span><span class="p">,</span>
+        <span class="n">watcher_options</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DiagramWatcherOptions</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Diagram</span><span class="p">,</span> <span class="n">Context</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Build the grasp attempt with a watcher.</span>
+
+<span class="sd">        :param watcher_options: Watcher configuration; None preserves the default settings.</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">add_cast_and_build</span><span class="p">(</span>
-            <span class="n">cast</span><span class="p">,</span> <span class="n">with_watcher</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figure_naming_convention</span><span class="o">=</span><span class="n">figure_naming_convention</span>
+            <span class="n">cast</span><span class="p">,</span>
+            <span class="n">with_watcher</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">figure_naming_convention</span><span class="o">=</span><span class="n">figure_naming_convention</span><span class="p">,</span>
+            <span class="n">watcher_options</span><span class="o">=</span><span class="n">watcher_options</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">diagram</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">diagram_context</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">diagram</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">diagram_context</span></div>
+
 
 <div class="viewcode-block" id="AttemptGraspWithStaticWrist.add_floor_to_plant">
 <a class="viewcode-back" href="../../../../../../../generated/productions/debug/grasping/attempt_grasp/with_static_wrist/with_static_wrist.html#brom_drake.productions.debug.grasping.attempt_grasp.with_static_wrist.production.AttemptGraspWithStaticWrist.add_floor_to_plant">[docs]</a>
@@ -1385,7 +1400,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../../../_static/documentation_options.js?v=58fbf978"></script>
+</div><script src="../../../../../../../_static/documentation_options.js?v=2ee4db93"></script>
     <script src="../../../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

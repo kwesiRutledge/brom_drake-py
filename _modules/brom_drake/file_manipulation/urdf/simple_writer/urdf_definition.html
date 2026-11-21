@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>brom_drake.file_manipulation.urdf.simple_writer.urdf_definition - brom_drake-py 1.1.1 documentation</title>
+        <title>brom_drake.file_manipulation.urdf.simple_writer.urdf_definition - brom_drake-py 1.1.1+1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../index.html"><div class="brand">brom_drake-py 1.1.1 documentation</div></a>
+      <a href="../../../../../index.html"><div class="brand">brom_drake-py 1.1.1+1 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 1.1.1 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 1.1.1+1 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -587,7 +587,7 @@
 <span class="sd">"""</span>
 
 <span class="c1"># External Imports</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntEnum</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">xml.etree.ElementTree</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ET</span>
@@ -604,7 +604,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.file_manipulation.urdf.simple_writer.inertia_definition</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">InertiaDefinition</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.directories</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_BROM_MODELS_DIR</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.directories</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_brom_dir</span>
 
 
 <div class="viewcode-block" id="SimpleShapeURDFDefinition">
@@ -668,6 +668,12 @@
     <span class="n">mu_static</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.7</span>
     <span class="n">mu_dynamic</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.4</span>
     <span class="n">is_hydroelastic</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># Whether to use hydroelastic collision for the shape</span>
+    <span class="n">_models_directory</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">get_brom_dir</span><span class="p">()</span> <span class="o">/</span> <span class="s2">"models"</span><span class="p">,</span>
+        <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">compare</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span>
 
 <div class="viewcode-block" id="SimpleShapeURDFDefinition.as_urdf">
 <a class="viewcode-back" href="../../../../../generated/file_manipulation/urdf/simple_writer/simple_writer.html#brom_drake.file_manipulation.urdf.simple_writer.urdf_definition.SimpleShapeURDFDefinition.as_urdf">[docs]</a>
@@ -902,6 +908,8 @@
 
 <span class="sd">        file_path: str</span>
 <span class="sd">            The path to the file where the URDF will be written.</span>
+<span class="sd">            Defaults to ``&lt;BROM_DIR&gt;/models/shapes/&lt;name&gt;.urdf``, with BROM_DIR</span>
+<span class="sd">            resolved when this definition is created. Existing files are overwritten.</span>
 
 <span class="sd">        *Returns*</span>
 
@@ -915,7 +923,7 @@
 
         <span class="c1"># Input Processing</span>
         <span class="k">if</span> <span class="n">file_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">file_path</span> <span class="o">=</span> <span class="n">DEFAULT_BROM_MODELS_DIR</span> <span class="o">/</span> <span class="s2">"shapes"</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">.urdf"</span>
+            <span class="n">file_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_models_directory</span> <span class="o">/</span> <span class="s2">"shapes"</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">.urdf"</span>
 
         <span class="c1"># Create the directory if it doesn't exist</span>
         <span class="n">fp_as_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
@@ -959,7 +967,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../_static/documentation_options.js?v=58fbf978"></script>
+</div><script src="../../../../../_static/documentation_options.js?v=2ee4db93"></script>
     <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

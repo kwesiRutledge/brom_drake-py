@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html"><link rel="next" title="shapes" href="../shapes/shapes.html"><link rel="prev" title="urdf" href="../urdf.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>drake_ready_urdf_converter - brom_drake-py 1.1.1 documentation</title>
+        <title>drake_ready_urdf_converter - brom_drake-py 1.1.1+1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -162,7 +162,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">brom_drake-py 1.1.1 documentation</div></a>
+      <a href="../../../../index.html"><div class="brand">brom_drake-py 1.1.1+1 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +183,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 1.1.1 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 1.1.1+1 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -607,6 +607,14 @@ should convert the URDF file.</p>
 </dd>
 <dt>coacd_log_level: str</dt><dd><p>The log level for the coacd tool. Options are “off”, “info”, “error”.</p>
 </dd>
+<dt>overwrite_old_models: bool</dt><dd><p>Retained for compatibility; does not delete existing model directories.
+Conversion can still overwrite individual output files. To remove an
+entire model directory explicitly, use <code class="docutils literal notranslate"><span class="pre">file_manager.clean_up_models_dir()</span></code>
+only when no other process uses it.</p>
+</dd>
+<dt>overwrite_old_logs: bool</dt><dd><p>Truncate the conversion log instead of appending. Do not enable this
+when another converter uses the same log path.</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -799,7 +807,9 @@ change in the future.</p>
 <dt class="sig sig-object py" id="brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.converter.DrakeReadyURDFConverter.create_logger">
 <span class="sig-name descname"><span class="pre">create_logger</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Logger</span></span></span><a class="reference internal" href="../../../../_modules/brom_drake/file_manipulation/urdf/drake_ready_urdf_converter/converter.html#DrakeReadyURDFConverter.create_logger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.converter.DrakeReadyURDFConverter.create_logger" title="Link to this definition">¶</a></dt>
 <dd><p><em>Description</em></p>
-<p>This method configures the <cite>logging</cite> logger for the URDF conversion.</p>
+<p>This method configures the <cite>logging</cite> logger for the URDF conversion.
+Existing logs are appended unless <code class="docutils literal notranslate"><span class="pre">overwrite_old_logs</span></code> is enabled.
+Overwriting logs is not safe when another converter shares the path.</p>
 <p><em>Returns</em></p>
 <dl class="simple">
 <dt>logging.Logger</dt><dd><p>The configured logger.</p>
@@ -896,7 +906,7 @@ later on.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.file_manager.DrakeReadyURDFConverterFileManager">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.file_manager.</span></span><span class="sig-name descname"><span class="pre">DrakeReadyURDFConverterFileManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">original_urdf_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">models_directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PosixPath('brom/models')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_output_urdf_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/brom_drake/file_manipulation/urdf/drake_ready_urdf_converter/file_manager.html#DrakeReadyURDFConverterFileManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.file_manager.DrakeReadyURDFConverterFileManager" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.file_manager.</span></span><span class="sig-name descname"><span class="pre">DrakeReadyURDFConverterFileManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">original_urdf_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">models_directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_output_urdf_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/brom_drake/file_manipulation/urdf/drake_ready_urdf_converter/file_manager.html#DrakeReadyURDFConverterFileManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.file_manager.DrakeReadyURDFConverterFileManager" title="Link to this definition">¶</a></dt>
 <dd><section id="description">
 <h3>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h3>
 <p>A dataclass that specifies how the DrakeReadyURDFConverter
@@ -907,6 +917,12 @@ should manage files.</p>
 <dd><section id="id1">
 <h4>Description<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h4>
 <p>This method will clean up the directory for the original URDF model.</p>
+</section>
+<section id="warning">
+<h4>Warning<a class="headerlink" href="#warning" title="Link to this heading">¶</a></h4>
+<p>Deletes the entire model directory, including files created by other
+converters or processes. Only call this explicitly when no other user
+depends on that directory. Converter construction never calls it.</p>
 </section>
 </dd></dl>
 
@@ -1401,7 +1417,7 @@ errors defaults to ‘strict’.</p>
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=58fbf978"></script>
+</div><script src="../../../../_static/documentation_options.js?v=2ee4db93"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>

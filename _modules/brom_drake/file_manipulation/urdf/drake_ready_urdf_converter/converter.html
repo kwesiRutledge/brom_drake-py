@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.converter - brom_drake-py 1.1.1 documentation</title>
+        <title>brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.converter - brom_drake-py 1.1.1+1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../index.html"><div class="brand">brom_drake-py 1.1.1 documentation</div></a>
+      <a href="../../../../../index.html"><div class="brand">brom_drake-py 1.1.1+1 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 1.1.1 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 1.1.1+1 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -604,7 +604,6 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">xml.etree.ElementTree</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ET</span>
 
 <span class="c1"># Internal Imports</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.directories</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_BROM_MODELS_DIR</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">DrakeReadyURDFConverterConfig</span><span class="p">,</span> <span class="n">MeshReplacementStrategy</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.file_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">DrakeReadyURDFConverterFileManager</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.mesh_file_converter</span><span class="w"> </span><span class="kn">import</span> <span class="n">MeshFileConverter</span>
@@ -687,20 +686,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">file_manager</span><span class="p">:</span> <span class="n">DrakeReadyURDFConverterFileManager</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">DrakeReadyURDFConverterFileManager</span><span class="p">(</span>
                 <span class="n">original_urdf_path</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">original_urdf_filename</span><span class="p">),</span>
-                <span class="n">models_directory</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="n">DEFAULT_BROM_MODELS_DIR</span><span class="p">),</span>
                 <span class="n">log_file_name</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">log_file_name</span><span class="p">,</span>
                 <span class="n">_output_urdf_path</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">output_urdf_file_path</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="p">)</span>
 
-        <span class="c1"># Define conversion data directory in brom</span>
-        <span class="c1"># (If it already exists, then we will overwrite it with the proper flag set)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">file_manager</span><span class="o">.</span><span class="n">models_directory</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">DEFAULT_BROM_MODELS_DIR</span><span class="p">)</span>
-
-        <span class="n">overwrite_old_models</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">overwrite_old_models</span>
-
-        <span class="k">if</span> <span class="n">overwrite_old_models</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">file_manager</span><span class="o">.</span><span class="n">clean_up_models_dir</span><span class="p">()</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_manager</span><span class="o">.</span><span class="n">models_directory</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="c1"># Input Processing</span>
@@ -731,6 +721,8 @@
 <span class="sd">        *Description*</span>
 
 <span class="sd">        This method configures the `logging` logger for the URDF conversion.</span>
+<span class="sd">        Existing logs are appended unless ``overwrite_old_logs`` is enabled.</span>
+<span class="sd">        Overwriting logs is not safe when another converter shares the path.</span>
 
 <span class="sd">        *Returns*</span>
 
@@ -739,17 +731,12 @@
 <span class="sd">        """</span>
         <span class="c1"># Setup</span>
         <span class="n">log_file_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">log_file_name</span>
-        <span class="n">target_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_urdf_filename</span>
-
-        <span class="c1"># Check if the log level exists in the logging module</span>
         <span class="n">overwrite_old_logs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">overwrite_old_logs</span>
-        <span class="k">if</span> <span class="n">overwrite_old_logs</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">file_manager</span><span class="o">.</span><span class="n">output_file_directory</span><span class="p">()</span> <span class="o">/</span> <span class="n">log_file_name</span>
-        <span class="p">):</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_manager</span><span class="o">.</span><span class="n">output_file_directory</span><span class="p">()</span> <span class="o">/</span> <span class="n">log_file_name</span><span class="p">)</span>
 
-        <span class="c1"># Create (or collect) a logger for the given file</span>
-        <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"DrakeReadyURDFConverter (</span><span class="si">{target_file}</span><span class="s2">)"</span><span class="p">)</span>
+        <span class="c1"># Keep handlers local to this converter, even when paths are shared.</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Logger</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"DrakeReadyURDFConverter (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">original_urdf_filename</span><span class="si">}</span><span class="s2">)"</span>
+        <span class="p">)</span>
 
         <span class="c1"># Create the file handler</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_manager</span><span class="o">.</span><span class="n">output_file_directory</span><span class="p">()</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
@@ -757,7 +744,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">file_manager</span><span class="o">.</span><span class="n">output_file_directory</span><span class="p">()</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="n">file_handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">file_manager</span><span class="o">.</span><span class="n">output_file_directory</span><span class="p">()</span> <span class="o">/</span> <span class="n">log_file_name</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"w"</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">file_manager</span><span class="o">.</span><span class="n">output_file_directory</span><span class="p">()</span> <span class="o">/</span> <span class="n">log_file_name</span><span class="p">,</span>
+            <span class="n">mode</span><span class="o">=</span><span class="s2">"w"</span> <span class="k">if</span> <span class="n">overwrite_old_logs</span> <span class="k">else</span> <span class="s2">"a"</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">file_handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
 
@@ -1593,7 +1581,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../_static/documentation_options.js?v=58fbf978"></script>
+</div><script src="../../../../../_static/documentation_options.js?v=2ee4db93"></script>
     <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

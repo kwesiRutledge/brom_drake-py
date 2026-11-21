@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../../search.html"><link rel="next" title="show_me_this_static_grasp" href="../../show_me_this_static_grasp/show_me_this_static_grasp.html"><link rel="prev" title="with_puppeteer_wrist" href="../with_puppeteer_wrist/with_puppeteer_wrist.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>with_static_wrist - brom_drake-py 1.1.1 documentation</title>
+        <title>with_static_wrist - brom_drake-py 1.1.1+1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/copybutton.css?v=76b2166b" />
@@ -162,7 +162,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../../index.html"><div class="brand">brom_drake-py 1.1.1 documentation</div></a>
+      <a href="../../../../../../index.html"><div class="brand">brom_drake-py 1.1.1+1 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +183,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 1.1.1 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 1.1.1+1 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -626,6 +626,17 @@ See <em>Gripper Commands</em> above.</p>
 </dd>
 </dl>
 <dl class="py method">
+<dt class="sig sig-object py" id="brom_drake.productions.debug.grasping.attempt_grasp.with_static_wrist.production.AttemptGraspWithStaticWrist.add_cast_and_build">
+<span class="sig-name descname"><span class="pre">add_cast_and_build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cast</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../../../roles/roles.html#brom_drake.productions.roles.role.Role" title="brom_drake.productions.roles.role.Role"><span class="pre">Role</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">LeafSystem</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Diagram</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figure_naming_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../../../../watchers/port_watcher/port_watcher.html#brom_drake.watchers.port_watcher.port_watcher_options.FigureNamingConvention" title="brom_drake.watchers.port_watcher.port_watcher_options.FigureNamingConvention"><span class="pre">FigureNamingConvention</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">FigureNamingConvention.kHierarchical</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">watcher_options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../../../../watchers/diagram_watcher/diagram_watcher.html#brom_drake.watchers.diagram_watcher.diagram_watcher_options.DiagramWatcherOptions" title="brom_drake.watchers.diagram_watcher.diagram_watcher_options.DiagramWatcherOptions"><span class="pre">DiagramWatcherOptions</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Diagram</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Context</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../../../_modules/brom_drake/productions/debug/grasping/attempt_grasp/with_static_wrist/production.html#AttemptGraspWithStaticWrist.add_cast_and_build"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.debug.grasping.attempt_grasp.with_static_wrist.production.AttemptGraspWithStaticWrist.add_cast_and_build" title="Link to this definition">¶</a></dt>
+<dd><p>Build the grasp attempt with a watcher.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>watcher_options</strong> – Watcher configuration; None preserves the default settings.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.debug.grasping.attempt_grasp.with_static_wrist.production.AttemptGraspWithStaticWrist.add_floor_to_plant">
 <span class="sig-name descname"><span class="pre">add_floor_to_plant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">floor_mass</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plant</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MultibodyPlant</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ModelInstanceIndex</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">JointActuator</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../../../_modules/brom_drake/productions/debug/grasping/attempt_grasp/with_static_wrist/production.html#AttemptGraspWithStaticWrist.add_floor_to_plant"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.debug.grasping.attempt_grasp.with_static_wrist.production.AttemptGraspWithStaticWrist.add_floor_to_plant" title="Link to this definition">¶</a></dt>
 <dd><section id="description">
@@ -797,6 +808,7 @@ AttemptGrasp production.</p>
 <li><a class="reference internal" href="#brom_drake.productions.debug.grasping.attempt_grasp.with_static_wrist.config.Configuration"><code class="docutils literal notranslate"><span class="pre">Configuration</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.debug.grasping.attempt_grasp.with_static_wrist.phases.AttemptGraspWithStaticWristPhase"><code class="docutils literal notranslate"><span class="pre">AttemptGraspWithStaticWristPhase</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.debug.grasping.attempt_grasp.with_static_wrist.production.AttemptGraspWithStaticWrist"><code class="docutils literal notranslate"><span class="pre">AttemptGraspWithStaticWrist</span></code></a><ul>
+<li><a class="reference internal" href="#brom_drake.productions.debug.grasping.attempt_grasp.with_static_wrist.production.AttemptGraspWithStaticWrist.add_cast_and_build"><code class="docutils literal notranslate"><span class="pre">AttemptGraspWithStaticWrist.add_cast_and_build()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.debug.grasping.attempt_grasp.with_static_wrist.production.AttemptGraspWithStaticWrist.add_floor_to_plant"><code class="docutils literal notranslate"><span class="pre">AttemptGraspWithStaticWrist.add_floor_to_plant()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.debug.grasping.attempt_grasp.with_static_wrist.production.AttemptGraspWithStaticWrist.add_supporting_cast"><code class="docutils literal notranslate"><span class="pre">AttemptGraspWithStaticWrist.add_supporting_cast()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.debug.grasping.attempt_grasp.with_static_wrist.production.AttemptGraspWithStaticWrist.find_X_WorldGripper"><code class="docutils literal notranslate"><span class="pre">AttemptGraspWithStaticWrist.find_X_WorldGripper()</span></code></a></li>
@@ -823,7 +835,7 @@ AttemptGrasp production.</p>
       
     </aside>
   </div>
-</div><script src="../../../../../../_static/documentation_options.js?v=58fbf978"></script>
+</div><script src="../../../../../../_static/documentation_options.js?v=2ee4db93"></script>
     <script src="../../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

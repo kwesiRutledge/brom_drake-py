@@ -26,7 +26,7 @@ Classes
 Functions
 ---------
 
-(None found)
+.. autofunction:: brom_drake.directories.get_brom_dir
 
 Variables
 ---------
