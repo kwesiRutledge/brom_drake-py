@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>brom_drake.motion_planning.algorithms.motion_planner - brom_drake-py 1.1.0 documentation</title>
+        <title>brom_drake.motion_planning.algorithms.motion_planner - brom_drake-py 1.1.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">brom_drake-py 1.1.0 documentation</div></a>
+      <a href="../../../../index.html"><div class="brand">brom_drake-py 1.1.1 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 1.1.0 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 1.1.1 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -593,6 +593,8 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.multibody.plant</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultibodyPlant</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.multibody.tree</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelInstanceIndex</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.utils.collision_checking</span><span class="w"> </span><span class="kn">import</span> <span class="n">CollisionCheckMethod</span><span class="p">,</span> <span class="n">find_collisions</span>
+
 
 <div class="viewcode-block" id="MotionPlanner">
 <a class="viewcode-back" href="../../../../generated/motion_planning/algorithms/algorithms.html#brom_drake.motion_planning.algorithms.motion_planner.MotionPlanner">[docs]</a>
@@ -603,15 +605,22 @@
         <span class="n">plant</span><span class="p">:</span> <span class="n">MultibodyPlant</span><span class="p">,</span>
         <span class="n">scene_graph</span><span class="p">:</span> <span class="n">SceneGraph</span><span class="p">,</span>
         <span class="n">random_seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">23</span><span class="p">,</span>
+        <span class="n">collision_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-2</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Description:</span>
 <span class="sd">            This function initializes the motion planner.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            collision_threshold: Safety margin in meters. A configuration counts as</span>
+<span class="sd">                colliding when any pair of geometries is closer than this</span>
+<span class="sd">                (signed distance). Defaults to 1e-2.</span>
 <span class="sd">        """</span>
         <span class="c1"># Input Processing</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">robot_model_idx</span> <span class="o">=</span> <span class="n">robot_model_idx</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plant</span> <span class="o">=</span> <span class="n">plant</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scene_graph</span> <span class="o">=</span> <span class="n">scene_graph</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">collision_threshold</span> <span class="o">=</span> <span class="n">collision_threshold</span>
 
         <span class="c1"># Setup</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">root_context</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Usually, the diagram context that we can use to extract the plant's context</span>
@@ -643,31 +652,18 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_context</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Plant context is not initialized yet!"</span><span class="p">)</span>
 
-        <span class="c1"># Setup</span>
-        <span class="n">plant_context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetMyMutableContextFromRoot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root_context</span><span class="p">)</span>
-        <span class="n">scene_graph_context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scene_graph</span><span class="o">.</span><span class="n">GetMyMutableContextFromRoot</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">root_context</span>
-        <span class="p">)</span>
-
         <span class="c1"># Set the configuration</span>
+        <span class="n">plant_context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">GetMyMutableContextFromRoot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root_context</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">SetPositions</span><span class="p">(</span><span class="n">plant_context</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">robot_model_idx</span><span class="p">,</span> <span class="n">q_model</span><span class="p">)</span>
 
-        <span class="c1"># Note: This method will be inaccurate if using arbitrary, nonconvex meshes!</span>
-        <span class="c1"># https://drake.mit.edu/pydrake/pydrake.geometry.html?highlight=queryobject#pydrake.geometry.QueryObject.HasCollisions</span>
-        <span class="n">query_object</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scene_graph</span><span class="o">.</span><span class="n">get_query_output_port</span><span class="p">()</span><span class="o">.</span><span class="n">Eval</span><span class="p">(</span>
-            <span class="n">scene_graph_context</span>
+        <span class="c1"># Any pair closer than collision_threshold counts as a collision</span>
+        <span class="n">collisions</span> <span class="o">=</span> <span class="n">find_collisions</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">scene_graph</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">root_context</span><span class="p">,</span>
+            <span class="n">threshold</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">collision_threshold</span><span class="p">,</span>
+            <span class="n">method</span><span class="o">=</span><span class="n">CollisionCheckMethod</span><span class="o">.</span><span class="n">SIGNED_DISTANCE</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="c1"># return query_object.HasCollisions()</span>
-
-        <span class="c1"># Alternative method to check for collisions</span>
-        <span class="n">closest_points</span> <span class="o">=</span> <span class="n">query_object</span><span class="o">.</span><span class="n">ComputeSignedDistancePairwiseClosestPoints</span><span class="p">()</span>
-        <span class="n">eps0</span> <span class="o">=</span> <span class="mf">1e-2</span>
-        <span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> <span class="n">closest_points</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">pair</span><span class="o">.</span><span class="n">distance</span> <span class="o">&lt;</span> <span class="n">eps0</span><span class="p">:</span>
-                <span class="k">return</span> <span class="kc">True</span>
-
-        <span class="c1"># Otherwise return false</span>
-        <span class="k">return</span> <span class="kc">False</span></div>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">collisions</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span></div>
 
 
     <span class="nd">@property</span>
@@ -743,7 +739,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=fc837d61"></script>
+</div><script src="../../../../_static/documentation_options.js?v=58fbf978"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>

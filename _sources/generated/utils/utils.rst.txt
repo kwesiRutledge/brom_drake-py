@@ -16,6 +16,10 @@ Classes
 
 .. autoclass:: brom_drake.utils.angles.RollPitchYawAngle
    :members:
+.. autoclass:: brom_drake.utils.collision_checking.CollisionCheckMethod
+   :members:
+.. autoclass:: brom_drake.utils.collision_checking.CollisionPair
+   :members:
 .. autoclass:: brom_drake.utils.ground.GroundShape
    :members:
 
@@ -23,6 +27,9 @@ Functions
 ---------
 
 .. autofunction:: brom_drake.utils.angles.rpy_equivalent_body_rotation_order
+.. autofunction:: brom_drake.utils.collision_checking._name_of
+.. autofunction:: brom_drake.utils.collision_checking.count_collisions
+.. autofunction:: brom_drake.utils.collision_checking.find_collisions
 .. autofunction:: brom_drake.utils.collision_checking.using_point_pair_penetration
 .. autofunction:: brom_drake.utils.ground.AddGround
 .. autofunction:: brom_drake.utils.metadata_recording.create_summary_for_LeafSystem

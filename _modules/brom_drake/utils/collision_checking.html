@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>brom_drake.utils.collision_checking - brom_drake-py 1.1.0 documentation</title>
+        <title>brom_drake.utils.collision_checking - brom_drake-py 1.1.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">brom_drake-py 1.1.0 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">brom_drake-py 1.1.1 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 1.1.0 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 1.1.1 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -580,15 +580,202 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for brom_drake.utils.collision_checking</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.all</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.all</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">Context</span><span class="p">,</span>
-    <span class="n">Diagram</span><span class="p">,</span>
+    <span class="n">GeometryId</span><span class="p">,</span>
     <span class="n">MultibodyPlant</span><span class="p">,</span>
     <span class="n">PenetrationAsPointPair</span><span class="p">,</span>
     <span class="n">QueryObject</span><span class="p">,</span>
     <span class="n">SceneGraph</span><span class="p">,</span>
+    <span class="n">SceneGraphInspector</span><span class="p">,</span>
+    <span class="n">SignedDistancePair</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
+
+
+<div class="viewcode-block" id="CollisionCheckMethod">
+<a class="viewcode-back" href="../../../generated/utils/utils.html#brom_drake.utils.collision_checking.CollisionCheckMethod">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CollisionCheckMethod</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Description</span>
+<span class="sd">    -----------</span>
+<span class="sd">    How ``find_collisions`` decides that two geometries are "in collision".</span>
+
+<span class="sd">    - ``PENETRATION``: the pair penetrates by *more* than ``threshold`` (meters).</span>
+<span class="sd">      Uses ``QueryObject.ComputePointPairPenetration()``. Touching or shallow</span>
+<span class="sd">      resting contact (depth &lt;= threshold) is not reported.</span>
+<span class="sd">    - ``SIGNED_DISTANCE``: the pair's signed distance is *less* than ``threshold``.</span>
+<span class="sd">      Uses ``QueryObject.ComputeSignedDistancePairwiseClosestPoints(max_distance=threshold)``.</span>
+<span class="sd">      With a positive threshold this acts as a safety margin (near misses count).</span>
+<span class="sd">    """</span>
+
+    <span class="n">PENETRATION</span> <span class="o">=</span> <span class="s2">"penetration"</span>
+    <span class="n">SIGNED_DISTANCE</span> <span class="o">=</span> <span class="s2">"signed_distance"</span></div>
+
+
+
+<div class="viewcode-block" id="CollisionPair">
+<a class="viewcode-back" href="../../../generated/utils/utils.html#brom_drake.utils.collision_checking.CollisionPair">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CollisionPair</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Description</span>
+<span class="sd">    -----------</span>
+<span class="sd">    One pair of geometries that ``find_collisions`` reports as colliding.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    id_A, id_B : GeometryId</span>
+<span class="sd">        The SceneGraph geometry ids of the pair (ordered as Drake returned them).</span>
+<span class="sd">    name_A, name_B : str</span>
+<span class="sd">        Human readable names. When a plant is given these are body names</span>
+<span class="sd">        (e.g. ``"wrist_3_link"``); otherwise they are SceneGraph geometry names.</span>
+<span class="sd">    depth : float</span>
+<span class="sd">        Penetration depth in meters (positive means overlapping). For the</span>
+<span class="sd">        signed-distance method this is ``-distance``, so it is still "how far</span>
+<span class="sd">        inside each other" the pair is and is negative for near misses.</span>
+<span class="sd">    """</span>
+
+    <span class="n">id_A</span><span class="p">:</span> <span class="n">GeometryId</span>
+    <span class="n">id_B</span><span class="p">:</span> <span class="n">GeometryId</span>
+    <span class="n">name_A</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">name_B</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">depth</span><span class="p">:</span> <span class="nb">float</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">key</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""An order-independent key for this pair of names (useful for counting)."""</span>
+        <span class="k">return</span> <span class="nb">frozenset</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">name_A</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name_B</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="_name_of">
+<a class="viewcode-back" href="../../../generated/utils/utils.html#brom_drake.utils.collision_checking._name_of">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">_name_of</span><span class="p">(</span>
+    <span class="n">geometry_id</span><span class="p">:</span> <span class="n">GeometryId</span><span class="p">,</span>
+    <span class="n">inspector</span><span class="p">:</span> <span class="n">SceneGraphInspector</span><span class="p">,</span>
+    <span class="n">plant</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MultibodyPlant</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">plant</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">body</span> <span class="o">=</span> <span class="n">plant</span><span class="o">.</span><span class="n">GetBodyFromFrameId</span><span class="p">(</span><span class="n">inspector</span><span class="o">.</span><span class="n">GetFrameId</span><span class="p">(</span><span class="n">geometry_id</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">body</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">model_name</span> <span class="o">=</span> <span class="n">plant</span><span class="o">.</span><span class="n">GetModelInstanceName</span><span class="p">(</span><span class="n">body</span><span class="o">.</span><span class="n">model_instance</span><span class="p">())</span>
+                <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">::</span><span class="si">{</span><span class="n">body</span><span class="o">.</span><span class="n">name</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span>
+        <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="k">return</span> <span class="n">inspector</span><span class="o">.</span><span class="n">GetName</span><span class="p">(</span><span class="n">geometry_id</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="find_collisions">
+<a class="viewcode-back" href="../../../generated/utils/utils.html#brom_drake.utils.collision_checking.find_collisions">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_collisions</span><span class="p">(</span>
+    <span class="n">scene_graph</span><span class="p">:</span> <span class="n">SceneGraph</span><span class="p">,</span>
+    <span class="n">root_context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span>
+    <span class="n">plant</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MultibodyPlant</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-3</span><span class="p">,</span>
+    <span class="n">method</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">CollisionCheckMethod</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">CollisionCheckMethod</span><span class="o">.</span><span class="n">PENETRATION</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">CollisionPair</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Description</span>
+<span class="sd">    -----------</span>
+<span class="sd">    Returns every pair of geometries that is in collision in the given context.</span>
+<span class="sd">    Collision filters configured on the SceneGraph context (e.g. a production's</span>
+<span class="sd">    ``configure_collision_filter``) are respected.</span>
+
+<span class="sd">    Arguments</span>
+<span class="sd">    ---------</span>
+<span class="sd">    scene_graph : SceneGraph</span>
+<span class="sd">        The scene graph to query.</span>
+<span class="sd">    root_context : Context</span>
+<span class="sd">        The context of the root diagram that contains ``scene_graph``.</span>
+<span class="sd">    plant : MultibodyPlant, optional</span>
+<span class="sd">        If given, colliding geometries are named by ``model_instance::body``.</span>
+<span class="sd">    threshold : float</span>
+<span class="sd">        Meters. See ``CollisionCheckMethod`` for how it is interpreted.</span>
+<span class="sd">        Defaults to 1e-3.</span>
+<span class="sd">    method : CollisionCheckMethod or str</span>
+<span class="sd">        ``"penetration"`` (default) or ``"signed_distance"``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    collisions : List[CollisionPair]</span>
+<span class="sd">        Empty when the scene is collision free, sorted deepest first.</span>
+<span class="sd">    """</span>
+    <span class="n">method</span> <span class="o">=</span> <span class="n">CollisionCheckMethod</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+
+    <span class="n">scene_graph_context</span> <span class="o">=</span> <span class="n">scene_graph</span><span class="o">.</span><span class="n">GetMyContextFromRoot</span><span class="p">(</span><span class="n">root_context</span><span class="p">)</span>
+    <span class="n">query_object</span><span class="p">:</span> <span class="n">QueryObject</span> <span class="o">=</span> <span class="n">scene_graph</span><span class="o">.</span><span class="n">get_query_output_port</span><span class="p">()</span><span class="o">.</span><span class="n">Eval</span><span class="p">(</span>
+        <span class="n">scene_graph_context</span>
+    <span class="p">)</span>
+    <span class="n">inspector</span> <span class="o">=</span> <span class="n">query_object</span><span class="o">.</span><span class="n">inspector</span><span class="p">()</span>
+
+    <span class="n">collisions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">CollisionPair</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="n">CollisionCheckMethod</span><span class="o">.</span><span class="n">PENETRATION</span><span class="p">:</span>
+        <span class="n">pairs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">PenetrationAsPointPair</span><span class="p">]</span> <span class="o">=</span> <span class="n">query_object</span><span class="o">.</span><span class="n">ComputePointPairPenetration</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> <span class="n">pairs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">pair</span><span class="o">.</span><span class="n">depth</span> <span class="o">&gt;</span> <span class="n">threshold</span><span class="p">:</span>
+                <span class="n">collisions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">CollisionPair</span><span class="p">(</span>
+                        <span class="n">id_A</span><span class="o">=</span><span class="n">pair</span><span class="o">.</span><span class="n">id_A</span><span class="p">,</span>
+                        <span class="n">id_B</span><span class="o">=</span><span class="n">pair</span><span class="o">.</span><span class="n">id_B</span><span class="p">,</span>
+                        <span class="n">name_A</span><span class="o">=</span><span class="n">_name_of</span><span class="p">(</span><span class="n">pair</span><span class="o">.</span><span class="n">id_A</span><span class="p">,</span> <span class="n">inspector</span><span class="p">,</span> <span class="n">plant</span><span class="p">),</span>
+                        <span class="n">name_B</span><span class="o">=</span><span class="n">_name_of</span><span class="p">(</span><span class="n">pair</span><span class="o">.</span><span class="n">id_B</span><span class="p">,</span> <span class="n">inspector</span><span class="p">,</span> <span class="n">plant</span><span class="p">),</span>
+                        <span class="n">depth</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">pair</span><span class="o">.</span><span class="n">depth</span><span class="p">),</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pairs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">SignedDistancePair</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">query_object</span><span class="o">.</span><span class="n">ComputeSignedDistancePairwiseClosestPoints</span><span class="p">(</span>
+                <span class="n">max_distance</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">threshold</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> <span class="n">pairs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">pair</span><span class="o">.</span><span class="n">distance</span> <span class="o">&lt;</span> <span class="n">threshold</span><span class="p">:</span>
+                <span class="n">collisions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">CollisionPair</span><span class="p">(</span>
+                        <span class="n">id_A</span><span class="o">=</span><span class="n">pair</span><span class="o">.</span><span class="n">id_A</span><span class="p">,</span>
+                        <span class="n">id_B</span><span class="o">=</span><span class="n">pair</span><span class="o">.</span><span class="n">id_B</span><span class="p">,</span>
+                        <span class="n">name_A</span><span class="o">=</span><span class="n">_name_of</span><span class="p">(</span><span class="n">pair</span><span class="o">.</span><span class="n">id_A</span><span class="p">,</span> <span class="n">inspector</span><span class="p">,</span> <span class="n">plant</span><span class="p">),</span>
+                        <span class="n">name_B</span><span class="o">=</span><span class="n">_name_of</span><span class="p">(</span><span class="n">pair</span><span class="o">.</span><span class="n">id_B</span><span class="p">,</span> <span class="n">inspector</span><span class="p">,</span> <span class="n">plant</span><span class="p">),</span>
+                        <span class="n">depth</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="o">-</span><span class="n">pair</span><span class="o">.</span><span class="n">distance</span><span class="p">),</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+
+    <span class="n">collisions</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">c</span><span class="p">:</span> <span class="n">c</span><span class="o">.</span><span class="n">depth</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">collisions</span></div>
+
+
+
+<div class="viewcode-block" id="count_collisions">
+<a class="viewcode-back" href="../../../generated/utils/utils.html#brom_drake.utils.collision_checking.count_collisions">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">count_collisions</span><span class="p">(</span>
+    <span class="n">scene_graph</span><span class="p">:</span> <span class="n">SceneGraph</span><span class="p">,</span>
+    <span class="n">root_context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span>
+    <span class="n">plant</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MultibodyPlant</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-3</span><span class="p">,</span>
+    <span class="n">method</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">CollisionCheckMethod</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">CollisionCheckMethod</span><span class="o">.</span><span class="n">PENETRATION</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Description</span>
+<span class="sd">    -----------</span>
+<span class="sd">    The number of colliding geometry pairs in ``root_context``.</span>
+<span class="sd">    See ``find_collisions`` for the arguments.</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span>
+        <span class="n">find_collisions</span><span class="p">(</span>
+            <span class="n">scene_graph</span><span class="p">,</span>
+            <span class="n">root_context</span><span class="p">,</span>
+            <span class="n">plant</span><span class="o">=</span><span class="n">plant</span><span class="p">,</span>
+            <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
+            <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">)</span></div>
+
 
 
 <div class="viewcode-block" id="using_point_pair_penetration">
@@ -604,41 +791,35 @@
 <span class="sd">    Description</span>
 <span class="sd">    -----------</span>
 <span class="sd">    Check for any collisions using the point pair penetration method.</span>
-<span class="sd">    Returns True if any collisions are detected, otherwise False.</span>
+<span class="sd">    Returns True if any pair penetrates deeper than ``min_acceptable_distance``.</span>
+
+<span class="sd">    Kept for backwards compatibility; prefer ``find_collisions``.</span>
 
 <span class="sd">    Arguments</span>
 <span class="sd">    ---------</span>
 <span class="sd">    plant : MultibodyPlant</span>
-<span class="sd">        The plant to check for collisions. (Seems unnecessary)</span>
+<span class="sd">        The plant to check for collisions (used to name bodies in debug output).</span>
 <span class="sd">    scene_graph : SceneGraph</span>
 <span class="sd">        The scene graph associated with the plant.</span>
 <span class="sd">    root_context : Context</span>
 <span class="sd">        The context of the root diagram.</span>
 <span class="sd">    min_acceptable_distance : float</span>
-<span class="sd">        The minimum distance to consider as a collision. Defaults to 1e-2.</span>
+<span class="sd">        The penetration depth above which a pair counts as a collision.</span>
+<span class="sd">        Defaults to 1e-3.</span>
 <span class="sd">    """</span>
-    <span class="c1"># Setup</span>
-    <span class="n">scene_graph_context</span> <span class="o">=</span> <span class="n">scene_graph</span><span class="o">.</span><span class="n">GetMyContextFromRoot</span><span class="p">(</span><span class="n">root_context</span><span class="p">)</span>
-    <span class="n">query_object</span><span class="p">:</span> <span class="n">QueryObject</span> <span class="o">=</span> <span class="n">scene_graph</span><span class="o">.</span><span class="n">get_query_output_port</span><span class="p">()</span><span class="o">.</span><span class="n">Eval</span><span class="p">(</span>
-        <span class="n">scene_graph_context</span>
+    <span class="n">collisions</span> <span class="o">=</span> <span class="n">find_collisions</span><span class="p">(</span>
+        <span class="n">scene_graph</span><span class="p">,</span>
+        <span class="n">root_context</span><span class="p">,</span>
+        <span class="n">plant</span><span class="o">=</span><span class="n">plant</span><span class="p">,</span>
+        <span class="n">threshold</span><span class="o">=</span><span class="n">min_acceptable_distance</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="n">CollisionCheckMethod</span><span class="o">.</span><span class="n">PENETRATION</span><span class="p">,</span>
     <span class="p">)</span>
-
-    <span class="c1"># Check for collisions</span>
-    <span class="n">closest_points</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">PenetrationAsPointPair</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">query_object</span><span class="o">.</span><span class="n">ComputePointPairPenetration</span><span class="p">()</span>
-    <span class="p">)</span>
-    <span class="n">collision_detected</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="k">for</span> <span class="n">pair_ii</span> <span class="ow">in</span> <span class="n">closest_points</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">pair_ii</span><span class="o">.</span><span class="n">depth</span> <span class="o">&gt;</span> <span class="n">min_acceptable_distance</span><span class="p">:</span>
-            <span class="n">collision_detected</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="k">if</span> <span class="n">debug_flag</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">"Collision detected between </span><span class="si">{</span><span class="n">pair_ii</span><span class="o">.</span><span class="n">id_A</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">pair_ii</span><span class="o">.</span><span class="n">id_B</span><span class="si">}</span><span class="s2"> with depth </span><span class="si">{</span><span class="n">pair_ii</span><span class="o">.</span><span class="n">depth</span><span class="si">}</span><span class="s2">"</span>
-                <span class="p">)</span>
-
-            <span class="k">break</span>
-
-    <span class="k">return</span> <span class="n">collision_detected</span></div>
+    <span class="k">if</span> <span class="n">debug_flag</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">collisions</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Collision detected between </span><span class="si">{</span><span class="n">c</span><span class="o">.</span><span class="n">name_A</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">c</span><span class="o">.</span><span class="n">name_B</span><span class="si">}</span><span class="s2"> with depth </span><span class="si">{</span><span class="n">c</span><span class="o">.</span><span class="n">depth</span><span class="si">}</span><span class="s2">"</span>
+            <span class="p">)</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">collisions</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span></div>
 
 </pre></div>
         </article>
@@ -672,7 +853,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=fc837d61"></script>
+</div><script src="../../../_static/documentation_options.js?v=58fbf978"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>

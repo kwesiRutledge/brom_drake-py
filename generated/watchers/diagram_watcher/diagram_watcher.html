@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html"><link rel="next" title="port_watcher" href="../port_watcher/port_watcher.html"><link rel="prev" title="watchers" href="../watchers.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>diagram_watcher - brom_drake-py 1.1.0 documentation</title>
+        <title>diagram_watcher - brom_drake-py 1.1.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -162,7 +162,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">brom_drake-py 1.1.0 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">brom_drake-py 1.1.1 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +183,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 1.1.0 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 1.1.1 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -772,10 +772,20 @@ The diagram is not finalized yet and so it is accessible via the <cite>builder</
 The watcher will insert LogVectorSink systems to log the output ports of the systems specified in the <cite>targets</cite> argument.</p>
 <p>Importantly, this function does NOT build the diagram.</p>
 <p><strong>Parameters</strong></p>
-<dl class="simple">
+<dl>
 <dt>builder<span class="classifier">DiagramBuilder</span></dt><dd><p>The diagram builder to which we want to add the watcher.</p>
 </dd>
-<dt>targets<span class="classifier">List[Tuple[Union[str, int]]]</span></dt><dd><p>The targets that we want to watch.</p>
+<dt>targets<span class="classifier">List[Union[str, Tuple[Union[str, int], Union[str, int, List[Union[str, int]]]]]], optional</span></dt><dd><p>The targets that we want to watch. If None (the default), the watcher
+considers every system in the diagram. Otherwise, this must be a non-empty list
+(an empty list or a non-list raises a ValueError) whose elements are each one of:</p>
+<ul class="simple">
+<li><p>a system name (str), to watch all of that system’s output ports, or</p></li>
+<li><p>a tuple of (system, ports), where <code class="docutils literal notranslate"><span class="pre">system</span></code> is the system’s name (str) or its index (int)
+in <code class="docutils literal notranslate"><span class="pre">builder.GetSystems()</span></code>, and <code class="docutils literal notranslate"><span class="pre">ports</span></code> is an output port index (int), an output port name (str),
+or a list of such indices and names.</p></li>
+</ul>
+<p>A tuple must have two elements; a one-element tuple such as <code class="docutils literal notranslate"><span class="pre">(&quot;plant&quot;,)</span></code> is not accepted.
+A system index outside the range of <code class="docutils literal notranslate"><span class="pre">builder.GetSystems()</span></code> or an unknown output port name raises a ValueError.</p>
 </dd>
 <dt>watcher_dir<span class="classifier">str, optional</span></dt><dd><p>The directory in which we will store the data collected by the DiagramWatcher.
 By default, <code class="xref py py-const docutils literal notranslate"><span class="pre">DEFAULT_WATCHER_DIR</span></code>.</p>
@@ -800,10 +810,12 @@ Each target can be specified as either:</p>
 <ul class="simple">
 <li><p>A string representing the name of the system to watch (all ports will be watched), or</p></li>
 <li><p>A tuple of (system_name: str, port_index: int) to watch a specific port of a system, or</p></li>
-<li><p>A tuple of (system_index: int, port_index: int) to watch a specific port of a system by its index.</p></li>
+<li><p>A tuple of (system_index: int, port_index: int) to watch a specific port of a system by its index, or</p></li>
+<li><p>A tuple whose second element is an output port name (str) or a list of port indices and/or names.</p></li>
 </ul>
 <p>Here are some examples of how to specify targets:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">watcher</span> <span class="o">=</span> <span class="n">add_watcher</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="p">[(</span><span class="s2">"plant"</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="s2">"controller"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)])</span>
+<span class="n">watcher</span> <span class="o">=</span> <span class="n">add_watcher</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="p">[</span><span class="s2">"plant"</span><span class="p">,</span> <span class="p">(</span><span class="s2">"controller"</span><span class="p">,</span> <span class="s2">"u"</span><span class="p">)])</span>
 </pre></div>
 </div>
 <p><strong>Returns</strong></p>
@@ -823,17 +835,19 @@ The watcher will insert LogVectorSink systems to log the output ports of the sys
 <p>Once all of the LogVectorSink systems have been added, the diagram is built and a reference to the built diagram
 and its default context is added to the DiagramWatcher object.</p>
 <p>Example Usage:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">watcher</span> <span class="o">=</span> <span class="n">add_watcher_and_build</span><span class="p">(</span><span class="n">builder</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">watcher</span><span class="p">,</span> <span class="n">diagram</span><span class="p">,</span> <span class="n">diagram_context</span> <span class="o">=</span> <span class="n">add_watcher_and_build</span><span class="p">(</span><span class="n">builder</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>In addition, one can specify which systems to watch:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">watcher</span> <span class="o">=</span> <span class="n">add_watcher_and_build</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="p">[(</span><span class="s2">"plant"</span><span class="p">,)])</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">watcher</span><span class="p">,</span> <span class="n">diagram</span><span class="p">,</span> <span class="n">diagram_context</span> <span class="o">=</span> <span class="n">add_watcher_and_build</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="p">[</span><span class="s2">"plant"</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>The DiagramWatcher will then watch all supported ports of the “plant” system
 that it can find.</p>
 <p>Furthermore, to specify which systems and specific ports to watch:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">watcher</span> <span class="o">=</span> <span class="n">add_watcher_and_build</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="p">[(</span><span class="s2">"plant"</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="s2">"controller"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)])</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">watcher</span><span class="p">,</span> <span class="n">diagram</span><span class="p">,</span> <span class="n">diagram_context</span> <span class="o">=</span> <span class="n">add_watcher_and_build</span><span class="p">(</span>
+    <span class="n">builder</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="p">[(</span><span class="s2">"plant"</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="s2">"controller"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 <p>This will watch output port 0 of both the “plant” and “controller” systems, if possible.</p>
@@ -841,7 +855,9 @@ that it can find.</p>
 <dl class="simple">
 <dt>builder: DiagramBuilder</dt><dd><p>The diagram builder to which we want to add the watcher.</p>
 </dd>
-<dt>targets: List[Tuple[Union[str, int]]]</dt><dd><p>The targets that we want to watch.</p>
+<dt>targets: List[Union[str, Tuple[Union[str, int], Union[str, int, List[Union[str, int]]]]]], optional</dt><dd><p>The targets that we want to watch, in the same format as in
+<a class="reference internal" href="#brom_drake.watchers.diagram_watcher.add_watcher.add_watcher" title="brom_drake.watchers.diagram_watcher.add_watcher.add_watcher"><code class="xref py py-func docutils literal notranslate"><span class="pre">add_watcher()</span></code></a>.
+If None (the default), all systems in the diagram are considered.</p>
 </dd>
 <dt>watcher_dir: str</dt><dd><p>The directory in which we will store the data collected by the DiagramWatcher.</p>
 </dd>
@@ -1010,7 +1026,7 @@ The argument must be an iterable if specified.</p>
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=fc837d61"></script>
+</div><script src="../../../_static/documentation_options.js?v=58fbf978"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>

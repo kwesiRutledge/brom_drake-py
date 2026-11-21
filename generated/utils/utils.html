@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html"><link rel="next" title="initial_condition_manager" href="initial_condition_manager/initial_condition_manager.html"><link rel="prev" title="video" href="../systems/video/video.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>utils - brom_drake-py 1.1.0 documentation</title>
+        <title>utils - brom_drake-py 1.1.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -162,7 +162,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">brom_drake-py 1.1.0 documentation</div></a>
+      <a href="../../index.html"><div class="brand">brom_drake-py 1.1.1 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +183,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 1.1.0 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 1.1.1 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -606,6 +606,52 @@
 <dd></dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="brom_drake.utils.collision_checking.CollisionCheckMethod">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brom_drake.utils.collision_checking.</span></span><span class="sig-name descname"><span class="pre">CollisionCheckMethod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/brom_drake/utils/collision_checking.html#CollisionCheckMethod"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.utils.collision_checking.CollisionCheckMethod" title="Link to this definition">¶</a></dt>
+<dd><section id="description">
+<h3>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h3>
+<p>How <code class="docutils literal notranslate"><span class="pre">find_collisions</span></code> decides that two geometries are “in collision”.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">PENETRATION</span></code>: the pair penetrates by <em>more</em> than <code class="docutils literal notranslate"><span class="pre">threshold</span></code> (meters).
+Uses <code class="docutils literal notranslate"><span class="pre">QueryObject.ComputePointPairPenetration()</span></code>. Touching or shallow
+resting contact (depth &lt;= threshold) is not reported.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SIGNED_DISTANCE</span></code>: the pair’s signed distance is <em>less</em> than <code class="docutils literal notranslate"><span class="pre">threshold</span></code>.
+Uses <code class="docutils literal notranslate"><span class="pre">QueryObject.ComputeSignedDistancePairwiseClosestPoints(max_distance=threshold)</span></code>.
+With a positive threshold this acts as a safety margin (near misses count).</p></li>
+</ul>
+</section>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="brom_drake.utils.collision_checking.CollisionPair">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brom_drake.utils.collision_checking.</span></span><span class="sig-name descname"><span class="pre">CollisionPair</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id_A</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GeometryId</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_B</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GeometryId</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_A</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_B</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/brom_drake/utils/collision_checking.html#CollisionPair"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.utils.collision_checking.CollisionPair" title="Link to this definition">¶</a></dt>
+<dd><section id="id1">
+<h3>Description<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
+<p>One pair of geometries that <code class="docutils literal notranslate"><span class="pre">find_collisions</span></code> reports as colliding.</p>
+</section>
+<section id="attributes">
+<h3>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>id_A, id_B<span class="classifier">GeometryId</span></dt><dd><p>The SceneGraph geometry ids of the pair (ordered as Drake returned them).</p>
+</dd>
+<dt>name_A, name_B<span class="classifier">str</span></dt><dd><p>Human readable names. When a plant is given these are body names
+(e.g. <code class="docutils literal notranslate"><span class="pre">&quot;wrist_3_link&quot;</span></code>); otherwise they are SceneGraph geometry names.</p>
+</dd>
+<dt>depth<span class="classifier">float</span></dt><dd><p>Penetration depth in meters (positive means overlapping). For the
+signed-distance method this is <code class="docutils literal notranslate"><span class="pre">-distance</span></code>, so it is still “how far
+inside each other” the pair is and is negative for near misses.</p>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="brom_drake.utils.collision_checking.CollisionPair.key">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">key</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">frozenset</span></span><a class="headerlink" href="#brom_drake.utils.collision_checking.CollisionPair.key" title="Link to this definition">¶</a></dt>
+<dd><p>An order-independent key for this pair of names (useful for counting).</p>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="brom_drake.utils.ground.GroundShape">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brom_drake.utils.ground.</span></span><span class="sig-name descname"><span class="pre">GroundShape</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/brom_drake/utils/ground.html#GroundShape"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.utils.ground.GroundShape" title="Link to this definition">¶</a></dt>
 <dd><dl class="simple">
@@ -625,23 +671,74 @@
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="brom_drake.utils.collision_checking.using_point_pair_penetration">
-<span class="sig-prename descclassname"><span class="pre">brom_drake.utils.collision_checking.</span></span><span class="sig-name descname"><span class="pre">using_point_pair_penetration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plant</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MultibodyPlant</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scene_graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SceneGraph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root_context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_acceptable_distance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug_flag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/brom_drake/utils/collision_checking.html#using_point_pair_penetration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.utils.collision_checking.using_point_pair_penetration" title="Link to this definition">¶</a></dt>
-<dd><section id="description">
-<h3>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h3>
-<p>Check for any collisions using the point pair penetration method.
-Returns True if any collisions are detected, otherwise False.</p>
+<dt class="sig sig-object py" id="brom_drake.utils.collision_checking._name_of">
+<span class="sig-prename descclassname"><span class="pre">brom_drake.utils.collision_checking.</span></span><span class="sig-name descname"><span class="pre">_name_of</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GeometryId</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inspector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SceneGraphInspector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plant</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MultibodyPlant</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/brom_drake/utils/collision_checking.html#_name_of"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.utils.collision_checking._name_of" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brom_drake.utils.collision_checking.count_collisions">
+<span class="sig-prename descclassname"><span class="pre">brom_drake.utils.collision_checking.</span></span><span class="sig-name descname"><span class="pre">count_collisions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scene_graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SceneGraph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root_context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plant</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MultibodyPlant</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#brom_drake.utils.collision_checking.CollisionCheckMethod" title="brom_drake.utils.collision_checking.CollisionCheckMethod"><span class="pre">CollisionCheckMethod</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">CollisionCheckMethod.PENETRATION</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../../_modules/brom_drake/utils/collision_checking.html#count_collisions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.utils.collision_checking.count_collisions" title="Link to this definition">¶</a></dt>
+<dd><section id="id2">
+<h3>Description<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h3>
+<p>The number of colliding geometry pairs in <code class="docutils literal notranslate"><span class="pre">root_context</span></code>.
+See <code class="docutils literal notranslate"><span class="pre">find_collisions</span></code> for the arguments.</p>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brom_drake.utils.collision_checking.find_collisions">
+<span class="sig-prename descclassname"><span class="pre">brom_drake.utils.collision_checking.</span></span><span class="sig-name descname"><span class="pre">find_collisions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scene_graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SceneGraph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root_context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plant</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MultibodyPlant</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#brom_drake.utils.collision_checking.CollisionCheckMethod" title="brom_drake.utils.collision_checking.CollisionCheckMethod"><span class="pre">CollisionCheckMethod</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">CollisionCheckMethod.PENETRATION</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#brom_drake.utils.collision_checking.CollisionPair" title="brom_drake.utils.collision_checking.CollisionPair"><span class="pre">CollisionPair</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/brom_drake/utils/collision_checking.html#find_collisions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.utils.collision_checking.find_collisions" title="Link to this definition">¶</a></dt>
+<dd><section id="id3">
+<h3>Description<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h3>
+<p>Returns every pair of geometries that is in collision in the given context.
+Collision filters configured on the SceneGraph context (e.g. a production’s
+<code class="docutils literal notranslate"><span class="pre">configure_collision_filter</span></code>) are respected.</p>
 </section>
 <section id="arguments">
 <h3>Arguments<a class="headerlink" href="#arguments" title="Link to this heading">¶</a></h3>
 <dl class="simple">
-<dt>plant<span class="classifier">MultibodyPlant</span></dt><dd><p>The plant to check for collisions. (Seems unnecessary)</p>
+<dt>scene_graph<span class="classifier">SceneGraph</span></dt><dd><p>The scene graph to query.</p>
+</dd>
+<dt>root_context<span class="classifier">Context</span></dt><dd><p>The context of the root diagram that contains <code class="docutils literal notranslate"><span class="pre">scene_graph</span></code>.</p>
+</dd>
+<dt>plant<span class="classifier">MultibodyPlant, optional</span></dt><dd><p>If given, colliding geometries are named by <code class="docutils literal notranslate"><span class="pre">model_instance::body</span></code>.</p>
+</dd>
+<dt>threshold<span class="classifier">float</span></dt><dd><p>Meters. See <code class="docutils literal notranslate"><span class="pre">CollisionCheckMethod</span></code> for how it is interpreted.
+Defaults to 1e-3.</p>
+</dd>
+<dt>method<span class="classifier">CollisionCheckMethod or str</span></dt><dd><p><code class="docutils literal notranslate"><span class="pre">&quot;penetration&quot;</span></code> (default) or <code class="docutils literal notranslate"><span class="pre">&quot;signed_distance&quot;</span></code>.</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h3>Returns<a class="headerlink" href="#returns" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>collisions<span class="classifier">List[CollisionPair]</span></dt><dd><p>Empty when the scene is collision free, sorted deepest first.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brom_drake.utils.collision_checking.using_point_pair_penetration">
+<span class="sig-prename descclassname"><span class="pre">brom_drake.utils.collision_checking.</span></span><span class="sig-name descname"><span class="pre">using_point_pair_penetration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plant</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MultibodyPlant</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scene_graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SceneGraph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root_context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_acceptable_distance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug_flag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/brom_drake/utils/collision_checking.html#using_point_pair_penetration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.utils.collision_checking.using_point_pair_penetration" title="Link to this definition">¶</a></dt>
+<dd><section id="id4">
+<h3>Description<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h3>
+<p>Check for any collisions using the point pair penetration method.
+Returns True if any pair penetrates deeper than <code class="docutils literal notranslate"><span class="pre">min_acceptable_distance</span></code>.</p>
+<p>Kept for backwards compatibility; prefer <code class="docutils literal notranslate"><span class="pre">find_collisions</span></code>.</p>
+</section>
+<section id="id5">
+<h3>Arguments<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>plant<span class="classifier">MultibodyPlant</span></dt><dd><p>The plant to check for collisions (used to name bodies in debug output).</p>
 </dd>
 <dt>scene_graph<span class="classifier">SceneGraph</span></dt><dd><p>The scene graph associated with the plant.</p>
 </dd>
 <dt>root_context<span class="classifier">Context</span></dt><dd><p>The context of the root diagram.</p>
 </dd>
-<dt>min_acceptable_distance<span class="classifier">float</span></dt><dd><p>The minimum distance to consider as a collision. Defaults to 1e-2.</p>
+<dt>min_acceptable_distance<span class="classifier">float</span></dt><dd><p>The penetration depth above which a pair counts as a collision.
+Defaults to 1e-3.</p>
 </dd>
 </dl>
 </section>
@@ -650,12 +747,12 @@ Returns True if any collisions are detected, otherwise False.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="brom_drake.utils.ground.AddGround">
 <span class="sig-prename descclassname"><span class="pre">brom_drake.utils.ground.</span></span><span class="sig-name descname"><span class="pre">AddGround</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plant</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MultibodyPlant</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#brom_drake.utils.ground.GroundShape" title="brom_drake.utils.ground.GroundShape"><span class="pre">GroundShape</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">GroundShape.kBox</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_ground</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ground_thickness</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/brom_drake/utils/ground.html#AddGround"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.utils.ground.AddGround" title="Link to this definition">¶</a></dt>
-<dd><section id="id1">
-<h3>Description<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
+<dd><section id="id6">
+<h3>Description<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h3>
 <p>Add a flat ground with friction</p>
 </section>
-<section id="id2">
-<h3>Arguments<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h3>
+<section id="id7">
+<h3>Arguments<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h3>
 <dl class="simple">
 <dt>plant: MultibodyPlant</dt><dd><p>The plant to add the ground to.</p>
 </dd>
@@ -677,16 +774,16 @@ This can be used to record metadata about the system.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="brom_drake.utils.model_instances.find_number_of_positions_in_welded_model">
 <span class="sig-prename descclassname"><span class="pre">brom_drake.utils.model_instances.</span></span><span class="sig-name descname"><span class="pre">find_number_of_positions_in_welded_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_to_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../../_modules/brom_drake/utils/model_instances.html#find_number_of_positions_in_welded_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.utils.model_instances.find_number_of_positions_in_welded_model" title="Link to this definition">¶</a></dt>
-<dd><section id="id3">
-<h3>Description<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h3>
+<dd><section id="id8">
+<h3>Description<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h3>
 <p>This method will return the number of positions in the
 model described at path_to_model WHEN the base link is welded
 to the world frame.</p>
 <p>This is most useful for finding things like the number of positions in
 a robot.</p>
 </section>
-<section id="returns">
-<h3>Returns<a class="headerlink" href="#returns" title="Link to this heading">¶</a></h3>
+<section id="id9">
+<h3>Returns<a class="headerlink" href="#id9" title="Link to this heading">¶</a></h3>
 <dl class="simple">
 <dt>int</dt><dd><p>The number of positions in the model.</p>
 </dd>
@@ -719,8 +816,8 @@ urdf given by urdf_in.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="brom_drake.utils.model_instances.get_name_of_first_body_in_urdf">
 <span class="sig-prename descclassname"><span class="pre">brom_drake.utils.model_instances.</span></span><span class="sig-name descname"><span class="pre">get_name_of_first_body_in_urdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">urdf_in</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/brom_drake/utils/model_instances.html#get_name_of_first_body_in_urdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.utils.model_instances.get_name_of_first_body_in_urdf" title="Link to this definition">¶</a></dt>
-<dd><section id="id4">
-<h3>Description<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h3>
+<dd><section id="id10">
+<h3>Description<a class="headerlink" href="#id10" title="Link to this heading">¶</a></h3>
 <p>This method returns the name of the first body found in the
 urdf given by urdf_in.</p>
 </section>
@@ -743,8 +840,8 @@ urdf given by urdf_in.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="brom_drake.utils.search.find_all_systems_with_input_port">
 <span class="sig-prename descclassname"><span class="pre">brom_drake.utils.search.</span></span><span class="sig-name descname"><span class="pre">find_all_systems_with_input_port</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">builder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DiagramBuilder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_port_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">LeafSystem</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Diagram</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/brom_drake/utils/search.html#find_all_systems_with_input_port"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.utils.search.find_all_systems_with_input_port" title="Link to this definition">¶</a></dt>
-<dd><section id="id5">
-<h3>Description<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
+<dd><section id="id11">
+<h3>Description<a class="headerlink" href="#id11" title="Link to this heading">¶</a></h3>
 <p>This method looks through the builder and finds all systems that have
 an input port with the given name.
 :param builder:
@@ -756,8 +853,8 @@ an input port with the given name.
 <dl class="py function">
 <dt class="sig sig-object py" id="brom_drake.utils.search.find_all_systems_with_name">
 <span class="sig-prename descclassname"><span class="pre">brom_drake.utils.search.</span></span><span class="sig-name descname"><span class="pre">find_all_systems_with_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">builder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DiagramBuilder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_system_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">LeafSystem</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Diagram</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/brom_drake/utils/search.html#find_all_systems_with_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.utils.search.find_all_systems_with_name" title="Link to this definition">¶</a></dt>
-<dd><section id="id6">
-<h3>Description<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h3>
+<dd><section id="id12">
+<h3>Description<a class="headerlink" href="#id12" title="Link to this heading">¶</a></h3>
 <p>This method looks through the builder and finds all systems that have
 an output port with the given name.
 :param builder:
@@ -769,8 +866,8 @@ an output port with the given name.
 <dl class="py function">
 <dt class="sig sig-object py" id="brom_drake.utils.search.find_all_systems_with_output_port">
 <span class="sig-prename descclassname"><span class="pre">brom_drake.utils.search.</span></span><span class="sig-name descname"><span class="pre">find_all_systems_with_output_port</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">builder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DiagramBuilder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_port_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">LeafSystem</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Diagram</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/brom_drake/utils/search.html#find_all_systems_with_output_port"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.utils.search.find_all_systems_with_output_port" title="Link to this definition">¶</a></dt>
-<dd><section id="id7">
-<h3>Description<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h3>
+<dd><section id="id13">
+<h3>Description<a class="headerlink" href="#id13" title="Link to this heading">¶</a></h3>
 <p>This method looks through the builder and finds all systems that have
 an output port with the given name.
 :param builder:
@@ -806,8 +903,8 @@ name: the added geometry will have names name + “ x-axis”, etc.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="brom_drake.utils.type_checking.is_rigid_transform">
 <span class="sig-prename descclassname"><span class="pre">brom_drake.utils.type_checking.</span></span><span class="sig-name descname"><span class="pre">is_rigid_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/brom_drake/utils/type_checking.html#is_rigid_transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.utils.type_checking.is_rigid_transform" title="Link to this definition">¶</a></dt>
-<dd><section id="id8">
-<h3>Description<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h3>
+<dd><section id="id14">
+<h3>Description<a class="headerlink" href="#id14" title="Link to this heading">¶</a></h3>
 <p>This function checks if the object is a RigidTransform.
 We will perform 2 checks.
 1. Check if the object is a RigidTransform object directly, and then
@@ -881,11 +978,19 @@ We will perform 2 checks.
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#classes">Classes</a><ul>
 <li><a class="reference internal" href="#brom_drake.utils.angles.RollPitchYawAngle"><code class="docutils literal notranslate"><span class="pre">RollPitchYawAngle</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.utils.collision_checking.CollisionCheckMethod"><code class="docutils literal notranslate"><span class="pre">CollisionCheckMethod</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.utils.collision_checking.CollisionPair"><code class="docutils literal notranslate"><span class="pre">CollisionPair</span></code></a><ul>
+<li><a class="reference internal" href="#brom_drake.utils.collision_checking.CollisionPair.key"><code class="docutils literal notranslate"><span class="pre">CollisionPair.key</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#brom_drake.utils.ground.GroundShape"><code class="docutils literal notranslate"><span class="pre">GroundShape</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#functions">Functions</a><ul>
 <li><a class="reference internal" href="#brom_drake.utils.angles.rpy_equivalent_body_rotation_order"><code class="docutils literal notranslate"><span class="pre">rpy_equivalent_body_rotation_order()</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.utils.collision_checking._name_of"><code class="docutils literal notranslate"><span class="pre">_name_of()</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.utils.collision_checking.count_collisions"><code class="docutils literal notranslate"><span class="pre">count_collisions()</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.utils.collision_checking.find_collisions"><code class="docutils literal notranslate"><span class="pre">find_collisions()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.utils.collision_checking.using_point_pair_penetration"><code class="docutils literal notranslate"><span class="pre">using_point_pair_penetration()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.utils.ground.AddGround"><code class="docutils literal notranslate"><span class="pre">AddGround()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.utils.metadata_recording.create_summary_for_LeafSystem"><code class="docutils literal notranslate"><span class="pre">create_summary_for_LeafSystem()</span></code></a></li>
@@ -916,7 +1021,7 @@ We will perform 2 checks.
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=fc837d61"></script>
+</div><script src="../../_static/documentation_options.js?v=58fbf978"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>

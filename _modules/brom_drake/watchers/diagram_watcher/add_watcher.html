@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>brom_drake.watchers.diagram_watcher.add_watcher - brom_drake-py 1.1.0 documentation</title>
+        <title>brom_drake.watchers.diagram_watcher.add_watcher - brom_drake-py 1.1.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">brom_drake-py 1.1.0 documentation</div></a>
+      <a href="../../../../index.html"><div class="brand">brom_drake-py 1.1.1 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 1.1.0 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 1.1.1 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -640,8 +640,18 @@
 <span class="sd">    builder : DiagramBuilder</span>
 <span class="sd">        The diagram builder to which we want to add the watcher.</span>
 
-<span class="sd">    targets : List[Tuple[Union[str, int]]]</span>
-<span class="sd">        The targets that we want to watch.</span>
+<span class="sd">    targets : List[Union[str, Tuple[Union[str, int], Union[str, int, List[Union[str, int]]]]]], optional</span>
+<span class="sd">        The targets that we want to watch. If None (the default), the watcher</span>
+<span class="sd">        considers every system in the diagram. Otherwise, this must be a non-empty list</span>
+<span class="sd">        (an empty list or a non-list raises a ValueError) whose elements are each one of:</span>
+
+<span class="sd">        - a system name (str), to watch all of that system's output ports, or</span>
+<span class="sd">        - a tuple of (system, ports), where ``system`` is the system's name (str) or its index (int)</span>
+<span class="sd">          in ``builder.GetSystems()``, and ``ports`` is an output port index (int), an output port name (str),</span>
+<span class="sd">          or a list of such indices and names.</span>
+
+<span class="sd">        A tuple must have two elements; a one-element tuple such as ``("plant",)`` is not accepted.</span>
+<span class="sd">        A system index outside the range of ``builder.GetSystems()`` or an unknown output port name raises a ValueError.</span>
 
 <span class="sd">    watcher_dir : str, optional</span>
 <span class="sd">        The directory in which we will store the data collected by the DiagramWatcher.</span>
@@ -672,13 +682,15 @@
 
 <span class="sd">    - A string representing the name of the system to watch (all ports will be watched), or</span>
 <span class="sd">    - A tuple of (system_name: str, port_index: int) to watch a specific port of a system, or</span>
-<span class="sd">    - A tuple of (system_index: int, port_index: int) to watch a specific port of a system by its index.</span>
+<span class="sd">    - A tuple of (system_index: int, port_index: int) to watch a specific port of a system by its index, or</span>
+<span class="sd">    - A tuple whose second element is an output port name (str) or a list of port indices and/or names.</span>
 
 <span class="sd">    Here are some examples of how to specify targets:</span>
 
 <span class="sd">    .. code-block:: python</span>
 
 <span class="sd">        watcher = add_watcher(builder, [("plant", 0), ("controller", 0)])</span>
+<span class="sd">        watcher = add_watcher(builder, ["plant", ("controller", "u")])</span>
 
 <span class="sd">    **Returns**</span>
 
@@ -739,13 +751,13 @@
 
 <span class="sd">    .. code-block:: python</span>
 
-<span class="sd">        watcher = add_watcher_and_build(builder)</span>
+<span class="sd">        watcher, diagram, diagram_context = add_watcher_and_build(builder)</span>
 
 <span class="sd">    In addition, one can specify which systems to watch:</span>
 
 <span class="sd">    .. code-block:: python</span>
 
-<span class="sd">        watcher = add_watcher_and_build(builder, targets=[("plant",)])</span>
+<span class="sd">        watcher, diagram, diagram_context = add_watcher_and_build(builder, targets=["plant"])</span>
 
 <span class="sd">    The DiagramWatcher will then watch all supported ports of the "plant" system</span>
 <span class="sd">    that it can find.</span>
@@ -754,7 +766,9 @@
 
 <span class="sd">    .. code-block:: python</span>
 
-<span class="sd">        watcher = add_watcher_and_build(builder, targets=[("plant", 0), ("controller", 0)])</span>
+<span class="sd">        watcher, diagram, diagram_context = add_watcher_and_build(</span>
+<span class="sd">            builder, targets=[("plant", 0), ("controller", 0)]</span>
+<span class="sd">        )</span>
 
 <span class="sd">    This will watch output port 0 of both the "plant" and "controller" systems, if possible.</span>
 
@@ -763,8 +777,10 @@
 <span class="sd">    builder: DiagramBuilder</span>
 <span class="sd">        The diagram builder to which we want to add the watcher.</span>
 
-<span class="sd">    targets: List[Tuple[Union[str, int]]]</span>
-<span class="sd">        The targets that we want to watch.</span>
+<span class="sd">    targets: List[Union[str, Tuple[Union[str, int], Union[str, int, List[Union[str, int]]]]]], optional</span>
+<span class="sd">        The targets that we want to watch, in the same format as in</span>
+<span class="sd">        :py:func:`~brom_drake.watchers.diagram_watcher.add_watcher.add_watcher`.</span>
+<span class="sd">        If None (the default), all systems in the diagram are considered.</span>
 
 <span class="sd">    watcher_dir: str</span>
 <span class="sd">        The directory in which we will store the data collected by the DiagramWatcher.</span>
@@ -981,7 +997,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=fc837d61"></script>
+</div><script src="../../../../_static/documentation_options.js?v=58fbf978"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>
