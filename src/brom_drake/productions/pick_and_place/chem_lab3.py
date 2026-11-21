@@ -44,6 +44,10 @@ from brom_drake.productions.ids import ProductionID
 from brom_drake.productions.roles.role import Role
 from brom_drake.productions.types import MotionPlanningAndGraspingProduction
 from brom_drake.utils import Performer, AddGround, MotionPlan
+from brom_drake.utils.collision_checking import (
+    DEFAULT_PLANNER_COLLISION_THRESHOLD,
+    CollisionCheckMethod,
+)
 from brom_drake.productions.scenario_presets import (
     SHELF_POSE,
     TABLE_HEIGHT,
@@ -605,6 +609,8 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
         ],
         with_watcher: bool = False,
         watcher_options: Optional[DiagramWatcherOptions] = None,
+        collision_threshold: float = DEFAULT_PLANNER_COLLISION_THRESHOLD,
+        collision_check_method: CollisionCheckMethod = CollisionCheckMethod.PENETRATION,
     ) -> Tuple[Diagram, Context]:
         """
         Description
@@ -614,6 +620,8 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
         plan the motion.
         :param with_watcher: A Boolean that determines whether to add a watcher to the diagram.
         :param watcher_options: Watcher configuration; None preserves the default settings.
+        :param collision_threshold: Collision threshold in meters (default 1 cm).
+        :param collision_check_method: Penetration depth (default) or signed distance.
         :return:
         """
         # Setup
@@ -623,6 +631,8 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
             planning_algorithm,
             with_watcher=with_watcher,
             watcher_options=watcher_options,
+            collision_threshold=collision_threshold,
+            collision_check_method=collision_check_method,
         )
 
         # print("completed cast and build.")

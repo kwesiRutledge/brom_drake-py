@@ -42,6 +42,10 @@ from brom_drake.productions.roles.role import Role
 from brom_drake.systems.video import CameraSpec
 from brom_drake.productions.types import KinematicMotionPlanningProduction
 from brom_drake.utils import Performer, AddGround, MotionPlan
+from brom_drake.utils.collision_checking import (
+    DEFAULT_PLANNER_COLLISION_THRESHOLD,
+    CollisionCheckMethod,
+)
 from brom_drake.productions.scenario_presets import (
     SHELF_POSE,
     TABLE_HEIGHT,
@@ -611,6 +615,8 @@ class ChemLab1(KinematicMotionPlanningProduction):
         with_watcher: bool = False,
         async_planning: Optional[AsyncPlanningConfig] = None,
         watcher_options: Optional[DiagramWatcherOptions] = None,
+        collision_threshold: float = DEFAULT_PLANNER_COLLISION_THRESHOLD,
+        collision_check_method: CollisionCheckMethod = CollisionCheckMethod.PENETRATION,
     ) -> Tuple[Diagram, Context]:
         """
         *Description*
@@ -629,6 +635,12 @@ class ChemLab1(KinematicMotionPlanningProduction):
 
         watcher_options: DiagramWatcherOptions, optional
             Watcher configuration; None preserves the default settings.
+
+        collision_threshold: float, optional
+            Collision threshold in meters (default 1 cm).
+
+        collision_check_method: CollisionCheckMethod or str, optional
+            Penetration depth (default) or signed distance.
 
         async_planning: AsyncPlanningConfig, optional
             If given, plan in the background while the simulation runs, starting
@@ -657,6 +669,8 @@ class ChemLab1(KinematicMotionPlanningProduction):
             with_watcher=with_watcher,
             async_planning=async_planning,
             watcher_options=watcher_options,
+            collision_threshold=collision_threshold,
+            collision_check_method=collision_check_method,
         )
 
         # print("completed cast and build.")

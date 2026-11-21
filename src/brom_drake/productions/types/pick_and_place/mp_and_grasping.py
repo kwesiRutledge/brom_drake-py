@@ -46,6 +46,10 @@ from brom_drake.file_manipulation.urdf.simple_writer.urdf_definition import (
     SimpleShapeURDFDefinition,
 )
 from brom_drake.utils import Performer, MotionPlan
+from brom_drake.utils.collision_checking import (
+    DEFAULT_PLANNER_COLLISION_THRESHOLD,
+    CollisionCheckMethod,
+)
 from brom_drake.systems.network_fsm import NetworkXFSM, FSMOutputDefinition
 from brom_drake.utils.model_instances import summarize_model_instance_with_dict
 from brom_drake.utils.pick_and_place.phase import PickAndPlacePhase
@@ -498,6 +502,8 @@ class MotionPlanningAndGraspingProduction(BaseProduction):
         ],
         with_watcher: bool = True,
         watcher_options: Optional[DiagramWatcherOptions] = None,
+        collision_threshold: float = DEFAULT_PLANNER_COLLISION_THRESHOLD,
+        collision_check_method: CollisionCheckMethod = CollisionCheckMethod.PENETRATION,
     ) -> Tuple[Diagram, Context]:
         """
         Description
@@ -507,6 +513,8 @@ class MotionPlanningAndGraspingProduction(BaseProduction):
         plan the motion.
         :param with_watcher: A Boolean that determines whether to add a watcher to the diagram.
         :param watcher_options: Watcher configuration; None preserves the default settings.
+        :param collision_threshold: Collision threshold in meters (default 1 cm).
+        :param collision_check_method: Penetration depth (default) or signed distance.
         :return:
         """
         # Setup
@@ -522,6 +530,8 @@ class MotionPlanningAndGraspingProduction(BaseProduction):
             planning_algorithm,
             robot_model_idx=self.robot_model_index,
             controller_plant=self.station.controller_plant,
+            collision_threshold=collision_threshold,
+            collision_check_method=collision_check_method,
         )
 
         # Cast the production using the prototypical planner
