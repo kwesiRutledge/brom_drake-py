@@ -35,4 +35,5 @@ Variables
 ---------
 
 .. autodata:: brom_drake.motion_planning.systems.async_planner._ONE_SHOT_PERIOD_S
+.. autodata:: brom_drake.motion_planning.systems.prototypical_planner.DEFAULT_PLANNER_COLLISION_THRESHOLD
 

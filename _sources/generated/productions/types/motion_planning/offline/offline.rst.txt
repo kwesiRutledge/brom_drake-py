@@ -24,5 +24,6 @@ Functions
 Variables
 ---------
 
-(None found)
+.. autodata:: brom_drake.productions.types.motion_planning.offline.dynamic.DEFAULT_PLANNER_COLLISION_THRESHOLD
+.. autodata:: brom_drake.productions.types.motion_planning.offline.kinematic.DEFAULT_PLANNER_COLLISION_THRESHOLD
 

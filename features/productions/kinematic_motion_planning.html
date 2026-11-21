@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html"><link rel="next" title="Show Me This Static Grasp" href="debug/show_me_this_static_grasp.html"><link rel="prev" title="Show Me This Model" href="debug/show_me_this_model.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>Kinematic Motion Planning - brom_drake-py 1.1.2 documentation</title>
+        <title>Kinematic Motion Planning - brom_drake-py 1.1.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -162,7 +162,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">brom_drake-py 1.1.2 documentation</div></a>
+      <a href="../../index.html"><div class="brand">brom_drake-py 1.1.3 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +183,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 1.1.2 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 1.1.3 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -662,6 +662,35 @@ Then, we will describe what is happening internally with each production.</p>
 <span class="p">)</span>
 </pre></div>
 </div>
+<p>The kinematic, dynamic, and motion-planning-and-grasping productions also
+accept <code class="code docutils literal notranslate"><span class="pre">collision_threshold</span></code> and <code class="code docutils literal notranslate"><span class="pre">collision_check_method</span></code> when
+building. For example, to use the same 1 mm penetration criterion as
+<code class="code docutils literal notranslate"><span class="pre">find_collisions</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.utils.collision_checking</span><span class="w"> </span><span class="kn">import</span> <span class="n">CollisionCheckMethod</span><span class="p">,</span> <span class="n">find_collisions</span>
+
+<span class="n">diagram</span><span class="p">,</span> <span class="n">context</span> <span class="o">=</span> <span class="n">production</span><span class="o">.</span><span class="n">easy_cast_and_build</span><span class="p">(</span>
+    <span class="n">plan_function</span><span class="p">,</span>
+    <span class="n">collision_threshold</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span>
+    <span class="n">collision_check_method</span><span class="o">=</span><span class="n">CollisionCheckMethod</span><span class="o">.</span><span class="n">PENETRATION</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">planner</span> <span class="o">=</span> <span class="n">production</span><span class="o">.</span><span class="n">performers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">collisions</span> <span class="o">=</span> <span class="n">find_collisions</span><span class="p">(</span>
+    <span class="n">production</span><span class="o">.</span><span class="n">scene_graph</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span>
+    <span class="n">threshold</span><span class="o">=</span><span class="n">planner</span><span class="o">.</span><span class="n">collision_threshold</span><span class="p">,</span>
+    <span class="n">method</span><span class="o">=</span><span class="n">planner</span><span class="o">.</span><span class="n">collision_check_method</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>The planner systems retain their historical default of 1 cm penetration,
+whereas <code class="code docutils literal notranslate"><span class="pre">find_collisions</span></code> defaults to 1 mm penetration. Separately,
+<code class="code docutils literal notranslate"><span class="pre">MotionPlanner</span></code> defaults to a 1 cm <strong>signed-distance margin</strong>, which
+also counts nearby, non-penetrating geometries. These defaults remain different
+for backwards compatibility. With penetration checking, a collision requires
+overlap deeper than the threshold; signed-distance checking instead reports
+pairs closer than the threshold. Matching both settings is necessary for
+consistent results.</p>
+<p>RRT planners check sampled configurations, not the entire segments between
+them, so matching thresholds alone does not guarantee a collision-free path.</p>
 <p>The <code class="code docutils literal notranslate"><span class="pre">plan_function</span></code> value is a function that:</p>
 <ul class="simple">
 <li><dl class="simple">
@@ -762,7 +791,7 @@ Then, we will describe what is happening internally with each production.</p>
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=6f037312"></script>
+</div><script src="../../_static/documentation_options.js?v=cb7bf70b"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>

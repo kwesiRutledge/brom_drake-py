@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html"><link rel="next" title="initial_condition_manager" href="initial_condition_manager/initial_condition_manager.html"><link rel="prev" title="video" href="../systems/video/video.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>utils - brom_drake-py 1.1.2 documentation</title>
+        <title>utils - brom_drake-py 1.1.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -162,7 +162,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">brom_drake-py 1.1.2 documentation</div></a>
+      <a href="../../index.html"><div class="brand">brom_drake-py 1.1.3 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +183,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 1.1.2 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 1.1.3 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -704,7 +704,9 @@ Collision filters configured on the SceneGraph context (e.g. a production’s
 <dt>plant<span class="classifier">MultibodyPlant, optional</span></dt><dd><p>If given, colliding geometries are named by <code class="docutils literal notranslate"><span class="pre">model_instance::body</span></code>.</p>
 </dd>
 <dt>threshold<span class="classifier">float</span></dt><dd><p>Meters. See <code class="docutils literal notranslate"><span class="pre">CollisionCheckMethod</span></code> for how it is interpreted.
-Defaults to 1e-3.</p>
+Defaults to 1e-3. Planner systems retain their historical 1e-2
+penetration threshold; pass the planner’s threshold and method here
+to evaluate with the same collision criterion.</p>
 </dd>
 <dt>method<span class="classifier">CollisionCheckMethod or str</span></dt><dd><p><code class="docutils literal notranslate"><span class="pre">&quot;penetration&quot;</span></code> (default) or <code class="docutils literal notranslate"><span class="pre">&quot;signed_distance&quot;</span></code>.</p>
 </dd>
@@ -762,6 +764,12 @@ Defaults to 1e-3.</p>
 </dd>
 </dl>
 </section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brom_drake.utils.meshcat.validate_meshcat_port_number">
+<span class="sig-prename descclassname"><span class="pre">brom_drake.utils.meshcat.</span></span><span class="sig-name descname"><span class="pre">validate_meshcat_port_number</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">port</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/brom_drake/utils/meshcat.html#validate_meshcat_port_number"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.utils.meshcat.validate_meshcat_port_number" title="Link to this definition">¶</a></dt>
+<dd><p>Reject negative Meshcat ports before passing them to Drake.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -915,7 +923,12 @@ We will perform 2 checks.
 </section>
 <section id="variables">
 <h2>Variables<a class="headerlink" href="#variables" title="Link to this heading">¶</a></h2>
-<p>(None found)</p>
+<dl class="py data">
+<dt class="sig sig-object py" id="brom_drake.utils.collision_checking.DEFAULT_PLANNER_COLLISION_THRESHOLD">
+<span class="sig-prename descclassname"><span class="pre">brom_drake.utils.collision_checking.</span></span><span class="sig-name descname"><span class="pre">DEFAULT_PLANNER_COLLISION_THRESHOLD</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.01</span></span><a class="headerlink" href="#brom_drake.utils.collision_checking.DEFAULT_PLANNER_COLLISION_THRESHOLD" title="Link to this definition">¶</a></dt>
+<dd><p>Convert a string or number to a floating-point number, if possible.</p>
+</dd></dl>
+
 </section>
 </section>
 
@@ -993,6 +1006,7 @@ We will perform 2 checks.
 <li><a class="reference internal" href="#brom_drake.utils.collision_checking.find_collisions"><code class="docutils literal notranslate"><span class="pre">find_collisions()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.utils.collision_checking.using_point_pair_penetration"><code class="docutils literal notranslate"><span class="pre">using_point_pair_penetration()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.utils.ground.AddGround"><code class="docutils literal notranslate"><span class="pre">AddGround()</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.utils.meshcat.validate_meshcat_port_number"><code class="docutils literal notranslate"><span class="pre">validate_meshcat_port_number()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.utils.metadata_recording.create_summary_for_LeafSystem"><code class="docutils literal notranslate"><span class="pre">create_summary_for_LeafSystem()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.utils.model_instances.find_number_of_positions_in_welded_model"><code class="docutils literal notranslate"><span class="pre">find_number_of_positions_in_welded_model()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.utils.model_instances.get_all_bodies_in"><code class="docutils literal notranslate"><span class="pre">get_all_bodies_in()</span></code></a></li>
@@ -1009,7 +1023,10 @@ We will perform 2 checks.
 <li><a class="reference internal" href="#brom_drake.utils.type_checking.is_rigid_transform"><code class="docutils literal notranslate"><span class="pre">is_rigid_transform()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#variables">Variables</a></li>
+<li><a class="reference internal" href="#variables">Variables</a><ul>
+<li><a class="reference internal" href="#brom_drake.utils.collision_checking.DEFAULT_PLANNER_COLLISION_THRESHOLD"><code class="docutils literal notranslate"><span class="pre">DEFAULT_PLANNER_COLLISION_THRESHOLD</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -1021,7 +1038,7 @@ We will perform 2 checks.
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=6f037312"></script>
+</div><script src="../../_static/documentation_options.js?v=cb7bf70b"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>

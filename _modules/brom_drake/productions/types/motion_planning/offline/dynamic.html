@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../../search.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>brom_drake.productions.types.motion_planning.offline.dynamic - brom_drake-py 1.1.2 documentation</title>
+        <title>brom_drake.productions.types.motion_planning.offline.dynamic - brom_drake-py 1.1.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../../index.html"><div class="brand">brom_drake-py 1.1.2 documentation</div></a>
+      <a href="../../../../../../index.html"><div class="brand">brom_drake-py 1.1.3 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 1.1.2 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 1.1.3 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -631,6 +631,10 @@
     <span class="n">SimpleShapeURDFDefinition</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">Performer</span><span class="p">,</span> <span class="n">MotionPlan</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.utils.collision_checking</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DEFAULT_PLANNER_COLLISION_THRESHOLD</span><span class="p">,</span>
+    <span class="n">CollisionCheckMethod</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.utils.metadata_recording</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_summary_for_LeafSystem</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.utils.model_instances</span><span class="w"> </span><span class="kn">import</span> <span class="n">summarize_model_instance_with_dict</span>
 
@@ -1176,6 +1180,8 @@
         <span class="n">with_watcher</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">async_planning</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">AsyncPlanningConfig</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">watcher_options</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DiagramWatcherOptions</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">collision_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DEFAULT_PLANNER_COLLISION_THRESHOLD</span><span class="p">,</span>
+        <span class="n">collision_check_method</span><span class="p">:</span> <span class="n">CollisionCheckMethod</span> <span class="o">=</span> <span class="n">CollisionCheckMethod</span><span class="o">.</span><span class="n">PENETRATION</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Diagram</span><span class="p">,</span> <span class="n">Context</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
@@ -1193,6 +1199,12 @@
 
 <span class="sd">        watcher_options: DiagramWatcherOptions, optional</span>
 <span class="sd">            Watcher configuration; None preserves the default settings.</span>
+
+<span class="sd">        collision_threshold: float, optional</span>
+<span class="sd">            Collision threshold in meters (default 1 cm).</span>
+
+<span class="sd">        collision_check_method: CollisionCheckMethod or str, optional</span>
+<span class="sd">            Penetration depth (default) or signed distance.</span>
 
 <span class="sd">        async_planning: AsyncPlanningConfig, optional</span>
 <span class="sd">            If given, plan in the background while the simulation runs: planning</span>
@@ -1217,7 +1229,11 @@
         <span class="c1"># Create a planner from the algorithm</span>
         <span class="c1"># (AsyncPlannerSystem plans in the background while the simulation runs,</span>
         <span class="c1"># starting from the robot's configuration at async_planning.plan_start_time)</span>
-        <span class="n">planner_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">robot_model_idx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">robot_model_index</span><span class="p">)</span>
+        <span class="n">planner_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">robot_model_idx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">robot_model_index</span><span class="p">,</span>
+            <span class="n">collision_threshold</span><span class="o">=</span><span class="n">collision_threshold</span><span class="p">,</span>
+            <span class="n">collision_check_method</span><span class="o">=</span><span class="n">collision_check_method</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="n">planner_kwargs</span><span class="p">[</span><span class="s2">"controller_plant"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">station</span><span class="o">.</span><span class="n">controller_plant</span>
         <span class="k">if</span> <span class="n">async_planning</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">prototypical_planner</span> <span class="o">=</span> <span class="n">PrototypicalPlannerSystem</span><span class="p">(</span>
@@ -1584,7 +1600,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../../_static/documentation_options.js?v=6f037312"></script>
+</div><script src="../../../../../../_static/documentation_options.js?v=cb7bf70b"></script>
     <script src="../../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

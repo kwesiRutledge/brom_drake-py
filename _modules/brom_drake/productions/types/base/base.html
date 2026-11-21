@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>brom_drake.productions.types.base.base - brom_drake-py 1.1.2 documentation</title>
+        <title>brom_drake.productions.types.base.base - brom_drake-py 1.1.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../index.html"><div class="brand">brom_drake-py 1.1.2 documentation</div></a>
+      <a href="../../../../../index.html"><div class="brand">brom_drake-py 1.1.3 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 1.1.2 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 1.1.3 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -605,6 +605,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">Performer</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.watchers.diagram_watcher.add_watcher</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_watcher_and_build</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.utils.initial_condition_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">InitialConditionManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.utils.meshcat</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_meshcat_port_number</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.systems.video</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">CameraSpec</span><span class="p">,</span>
     <span class="n">GridSource</span><span class="p">,</span>
@@ -699,6 +700,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_renderer_backend</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_render_settings</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">RenderSettings</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">video_recorders</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">VideoRecorder</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">meshcat_port_number</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meshcat_port_number</span>
+
+    <span class="nd">@meshcat_port_number</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">meshcat_port_number</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_meshcat_port_number</span> <span class="o">=</span> <span class="n">validate_meshcat_port_number</span><span class="p">(</span><span class="n">port</span><span class="p">)</span>
 
 <div class="viewcode-block" id="BaseProduction.accepted_arguments">
 <a class="viewcode-back" href="../../../../../generated/productions/types/base/base.html#brom_drake.productions.types.base.base.BaseProduction.accepted_arguments">[docs]</a>
@@ -1214,7 +1223,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../_static/documentation_options.js?v=6f037312"></script>
+</div><script src="../../../../../_static/documentation_options.js?v=cb7bf70b"></script>
     <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

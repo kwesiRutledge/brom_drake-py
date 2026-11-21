@@ -32,6 +32,7 @@ Functions
 .. autofunction:: brom_drake.utils.collision_checking.find_collisions
 .. autofunction:: brom_drake.utils.collision_checking.using_point_pair_penetration
 .. autofunction:: brom_drake.utils.ground.AddGround
+.. autofunction:: brom_drake.utils.meshcat.validate_meshcat_port_number
 .. autofunction:: brom_drake.utils.metadata_recording.create_summary_for_LeafSystem
 .. autofunction:: brom_drake.utils.model_instances.find_number_of_positions_in_welded_model
 .. autofunction:: brom_drake.utils.model_instances.get_all_bodies_in
@@ -50,5 +51,5 @@ Functions
 Variables
 ---------
 
-(None found)
+.. autodata:: brom_drake.utils.collision_checking.DEFAULT_PLANNER_COLLISION_THRESHOLD
 
