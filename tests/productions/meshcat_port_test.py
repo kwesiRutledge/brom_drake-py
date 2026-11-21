@@ -27,7 +27,10 @@ class MeshcatPortTest(unittest.TestCase):
         constructors = [
             lambda: ShowMeThisModel("unused.urdf", meshcat_port_number=-1),
             lambda: BasicGraspingDebuggingProduction(
-                "unused_object.urdf", "unused_gripper.urdf", None, meshcat_port_number=-1
+                "unused_object.urdf",
+                "unused_gripper.urdf",
+                None,
+                meshcat_port_number=-1,
             ),
             lambda: ChemLab1(meshcat_port_number=-1),
             lambda: ClassicalUR10eStation(meshcat_port_number=-1),
