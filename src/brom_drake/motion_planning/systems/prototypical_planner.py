@@ -12,6 +12,7 @@ from pydrake.systems.framework import LeafSystem, BasicVector, Context
 from typing import Callable, Tuple
 
 # Internal Imports
+from brom_drake.utils.collision_checking import CollisionCheckMethod, find_collisions
 from brom_drake.utils.constants import MotionPlan, MotionPlanningResult
 
 
@@ -33,6 +34,7 @@ class PrototypicalPlannerSystem(LeafSystem):
             Tuple[MotionPlan, int],
         ],
         robot_model_idx: ModelInstanceIndex = None,
+        collision_threshold: float = 1e-2,
         **kwargs,
     ):
         """
@@ -57,6 +59,9 @@ class PrototypicalPlannerSystem(LeafSystem):
             2. An optional index of the goal node within the plan. (Not needed if the plan is a numpy array)
         robot_model_idx : ModelInstanceIndex
             The robot model index that we are working with.
+        collision_threshold : float
+            Penetration depth in meters above which a pair of geometries counts
+            as a collision during planning. Defaults to 1e-2.
         """
         LeafSystem.__init__(self)
 
@@ -64,6 +69,7 @@ class PrototypicalPlannerSystem(LeafSystem):
         self.plant, self.scene_graph = plant, scene_graph
         self.planning_algorithm = planning_algorithm
         self.robot_model_idx = robot_model_idx
+        self.collision_threshold = collision_threshold
 
         # Define Input Ports
         self.root_context = (
@@ -120,29 +126,21 @@ class PrototypicalPlannerSystem(LeafSystem):
 
         # Setup
         plant_context = self.plant.GetMyMutableContextFromRoot(root_context)
-        scene_graph_context = self.scene_graph.GetMyMutableContextFromRoot(root_context)
         q_init = self.plant.GetPositions(plant_context, self.robot_model_idx)
 
         # Set the configuration
         self.plant.SetPositions(plant_context, self.robot_model_idx, q_model)
 
-        # Check for collisions using the query object
-        query_object = self.scene_graph.get_query_output_port().Eval(
-            scene_graph_context
+        # Any pair penetrating deeper than collision_threshold counts as a collision
+        collisions = find_collisions(
+            self.scene_graph,
+            root_context,
+            threshold=self.collision_threshold,
+            method=CollisionCheckMethod.PENETRATION,
         )
-        # return query_object.HasCollisions()
+        collision_detected = len(collisions) > 0
 
-        # Alternative method to check for collisions
-        closest_points = query_object.ComputePointPairPenetration()
-        eps0 = 1e-2
-        collision_detected = False
-        # inspector = self.scene_graph.model_inspector()
-        for pair_ii in closest_points:
-            if pair_ii.depth > eps0:
-                collision_detected = True
-                break
-
-        # Otherwise return false (after resetting the configuration)
+        # Restore the robot's configuration
         self.plant.SetPositions(plant_context, self.robot_model_idx, q_init)
         return collision_detected
 

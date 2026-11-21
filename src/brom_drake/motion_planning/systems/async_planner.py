@@ -128,6 +128,11 @@ class AsyncPlannerSystem(PrototypicalPlannerSystem):
     config: AsyncPlanningConfig, optional
         When to plan and how long planning takes. Default is AsyncPlanningConfig().
 
+    collision_threshold: float, optional
+        Penetration depth in meters above which a pair of geometries counts as a
+        collision during planning. Default is 1e-2 (see
+        :py:class:`PrototypicalPlannerSystem`).
+
     .. note::
 
         Like PrototypicalPlannerSystem, this system needs the simulation's root
