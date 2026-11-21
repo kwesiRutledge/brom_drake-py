@@ -1,6 +1,9 @@
 from dataclasses import dataclass
 from importlib import resources as impresources
 from typing import Callable, List, Optional, Tuple
+from brom_drake.watchers.diagram_watcher.diagram_watcher_options import (
+    DiagramWatcherOptions,
+)
 
 import networkx as nx
 import numpy as np
@@ -336,6 +339,7 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
         self,
         cast: List[Tuple[Role, Performer]] = [],
         with_watcher: bool = False,
+        watcher_options: Optional[DiagramWatcherOptions] = None,
     ) -> Tuple[Diagram, Context]:
         """
         *Description*
@@ -360,6 +364,9 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
         with_watcher: bool, optional
             A Boolean that determines whether to add a watcher to the diagram, by default False.
 
+        watcher_options: DiagramWatcherOptions, optional
+            Watcher configuration; None preserves the default settings.
+
         *Returns*
 
         diagram: Diagram
@@ -372,6 +379,7 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
         diagram, diagram_context = super().add_cast_and_build(
             main_cast_members=cast,
             with_watcher=with_watcher,
+            watcher_options=watcher_options,
         )
 
         # Configure the scene graph for collision detection
@@ -464,6 +472,7 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
         ],
         with_watcher: bool = False,
         async_planning: Optional[AsyncPlanningConfig] = None,
+        watcher_options: Optional[DiagramWatcherOptions] = None,
     ) -> Tuple[Diagram, Context]:
         """
         *Description*
@@ -479,6 +488,9 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
         with_watcher: bool, optional
             A Boolean that determines whether to add a watcher to the diagram.
             Default is False.
+
+        watcher_options: DiagramWatcherOptions, optional
+            Watcher configuration; None preserves the default settings.
 
         async_planning: AsyncPlanningConfig, optional
             If given, plan in the background while the simulation runs, starting
@@ -506,6 +518,7 @@ class ShelfPlanning1(KinematicMotionPlanningProduction):
             planning_algorithm,
             with_watcher=with_watcher,
             async_planning=async_planning,
+            watcher_options=watcher_options,
         )
 
         # Configure the scene graph for collision detection

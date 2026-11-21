@@ -7,6 +7,7 @@ Description:
 
 from importlib import resources as impresources
 import numpy as np
+import os
 from pathlib import Path
 import tempfile
 import unittest
@@ -77,7 +78,7 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
             impresources.files(resources_dir) / "test8_beaker.urdf",
         ]
 
-    def test_overwrite_old_models_only_removes_target_model_files(self):
+    def test_overwrite_old_models_preserves_existing_model_files(self):
         test_urdf = self.test_urdfs[0]
         with tempfile.TemporaryDirectory() as temp_dir:
             models_directory = Path(temp_dir) / "models"
@@ -90,10 +91,7 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
             unrelated_marker.touch()
             root_marker.touch()
 
-            with patch(
-                "brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.converter.DEFAULT_BROM_MODELS_DIR",
-                models_directory,
-            ):
+            with patch.dict(os.environ, {"BROM_DIR": temp_dir}):
                 DrakeReadyURDFConverter(
                     str(test_urdf),
                     config=DrakeReadyURDFConverterConfig(
@@ -102,7 +100,7 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
                     ),
                 )
 
-            self.assertFalse(target_marker.exists())
+            self.assertTrue(target_marker.exists())
             self.assertTrue(unrelated_marker.exists())
             self.assertTrue(root_marker.exists())
 
@@ -114,10 +112,7 @@ class DrakeReadyURDFConverterTest(unittest.TestCase):
             target_marker.parent.mkdir(parents=True)
             target_marker.touch()
 
-            with patch(
-                "brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.converter.DEFAULT_BROM_MODELS_DIR",
-                models_directory,
-            ):
+            with patch.dict(os.environ, {"BROM_DIR": temp_dir}):
                 DrakeReadyURDFConverter(
                     str(test_urdf),
                     config=DrakeReadyURDFConverterConfig(

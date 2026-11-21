@@ -2,6 +2,7 @@ import datetime
 import difflib
 import inspect
 import json
+import uuid
 from pathlib import Path
 from typing import Dict, Union, Tuple, List, Optional, Sequence
 
@@ -14,7 +15,8 @@ from pydrake.systems.framework import (
 )
 
 # Internal Imports
-from brom_drake.directories import DEFAULT_PRODUCTION_REPORTS_DIR, DEFAULT_VIDEO_DIR
+from brom_drake.directories import get_brom_dir
+from brom_drake.watchers.diagram_watcher import DiagramWatcherOptions
 from brom_drake.watchers.port_watcher.plotter import FigureNamingConvention
 from brom_drake.productions.roles.role import Role
 from brom_drake.productions.ids import ProductionID
@@ -83,6 +85,8 @@ class BaseProduction:
         if kwargs:
             raise self._unexpected_arguments_error(kwargs)
 
+        self._brom_dir = get_brom_dir()
+
         # Create a builder for the production
         self.builder = DiagramBuilder()
 
@@ -107,7 +111,7 @@ class BaseProduction:
 
         # Cameras requested for video recording (attached during build_production)
         self._camera_specs: List[CameraSpec] = []
-        self._video_output_dir: Path = DEFAULT_VIDEO_DIR
+        self._video_output_dir: Path = self._brom_dir / "videos"
         self._renderer_backend: str = ""
         self._render_settings: Optional[RenderSettings] = None
         self.video_recorders: Dict[str, VideoRecorder] = {}
@@ -177,7 +181,7 @@ class BaseProduction:
     def add_cameras(
         self,
         camera_specs: Optional[Sequence[CameraSpec]] = None,
-        output_dir: Union[str, Path] = DEFAULT_VIDEO_DIR,
+        output_dir: Union[str, Path] = None,
         renderer_backend: str = "",
         render_settings: Optional[RenderSettings] = None,
     ):
@@ -196,7 +200,8 @@ class BaseProduction:
             production's :py:meth:`default_cameras`.
 
         output_dir: Union[str, Path], optional
-            The directory to write videos to. Default is ``./brom/videos``.
+            The directory to write videos to. Defaults to ``BROM_DIR/videos``
+            (or ``./brom/videos``), resolved when the production is created.
 
         renderer_backend: str, optional
             The VTK rendering backend. Use "" for Drake's default (EGL on Linux,
@@ -235,7 +240,9 @@ class BaseProduction:
             existing.add(spec.name)
 
         self._camera_specs.extend(camera_specs)
-        self._video_output_dir = Path(output_dir)
+        self._video_output_dir = (
+            Path(output_dir) if output_dir is not None else self._brom_dir / "videos"
+        )
         self._renderer_backend = renderer_backend
         if render_settings is not None:
             self._render_settings = render_settings
@@ -400,10 +407,12 @@ class BaseProduction:
         # Save the metadata to a json
         record_time_str = record_time_dt.strftime("%Y-%m-%d_%H-%M-%S")
         log_file_path = (
-            DEFAULT_PRODUCTION_REPORTS_DIR / f"build_metadata_{record_time_str}.json"
+            self._brom_dir
+            / "productions"
+            / f"build_metadata_{record_time_str}_{uuid.uuid4().hex}.json"
         )
         log_file_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(log_file_path, "w") as f:
+        with open(log_file_path, "x") as f:
             json.dump(self._metadata, f, indent=4)
 
     def add_supporting_cast(self):
@@ -474,6 +483,7 @@ class BaseProduction:
         self,
         with_watcher: bool = True,
         figure_naming_convention: FigureNamingConvention = FigureNamingConvention.kFlat,
+        watcher_options: Optional[DiagramWatcherOptions] = None,
     ) -> Tuple[Diagram, Context]:
         """
         *Description*
@@ -490,6 +500,9 @@ class BaseProduction:
         figure_naming_convention: FigureNamingConvention, optional
             The naming convention to use for figures in the watcher.
             Default is FigureNamingConvention.kFlat.
+
+        watcher_options: DiagramWatcherOptions, optional
+            Full watcher configuration; overrides figure_naming_convention when set.
 
         *Returns*
 
@@ -516,7 +529,9 @@ class BaseProduction:
         # Build the diagram
         if with_watcher:
             self.watcher, self.diagram, self.diagram_context = add_watcher_and_build(
-                builder, figure_naming_convention=figure_naming_convention
+                builder,
+                figure_naming_convention=figure_naming_convention,
+                options=watcher_options,
             )
         else:
             self.diagram = builder.Build()
@@ -532,6 +547,7 @@ class BaseProduction:
         main_cast_members: Tuple[Role, Performer] = [],
         with_watcher: bool = True,
         figure_naming_convention: FigureNamingConvention = FigureNamingConvention.kFlat,
+        watcher_options: Optional[DiagramWatcherOptions] = None,
     ) -> Tuple[Diagram, Context]:
         # Setup
 
@@ -542,6 +558,7 @@ class BaseProduction:
         return self.build_production(
             with_watcher=with_watcher,
             figure_naming_convention=figure_naming_convention,
+            watcher_options=watcher_options,
         )
 
     @property

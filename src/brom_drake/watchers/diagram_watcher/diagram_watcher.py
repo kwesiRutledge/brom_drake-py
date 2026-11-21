@@ -7,6 +7,9 @@ Description:
 """
 
 import os
+from dataclasses import replace
+from datetime import datetime
+import tempfile
 from typing import Dict, List, Union
 import matplotlib.pyplot as plt
 import numpy as np
@@ -24,6 +27,7 @@ from pydrake.systems.primitives import (
 )
 
 # Internal Imports
+from brom_drake.directories import get_brom_dir
 from brom_drake.watchers.diagram_target import DiagramTarget
 from brom_drake.watchers.port_watcher.port_watcher import PortWatcher
 from brom_drake.watchers.port_watcher.port_watcher_options import (
@@ -68,7 +72,7 @@ class DiagramWatcher:
         self,
         subject: DiagramBuilder,
         targets: List[DiagramTarget] = None,
-        options: DiagramWatcherOptions = DiagramWatcherOptions(),
+        options: DiagramWatcherOptions = None,
     ):
         """
         **Description**
@@ -99,18 +103,21 @@ class DiagramWatcher:
 
         # Save the inputs
         self.subject = subject
-        self.options = options
-
-        # Create the .brom directory, to store:
-        # - activity_summary.log
-        # - all plots
-        if self.options.base_directory.exists():
-            import shutil
-
-            shutil.rmtree(self.options.base_directory)
-
-        # Create directory to plot in
-        self.options.base_directory.mkdir(parents=True, exist_ok=True)
+        options = options if options is not None else DiagramWatcherOptions()
+        base_directory = (
+            Path(options.base_directory)
+            if options.base_directory is not None
+            else get_brom_dir() / "watcher"
+        )
+        base_directory.mkdir(parents=True, exist_ok=True)
+        run_directory = Path(
+            tempfile.mkdtemp(
+                prefix=f"{datetime.now():%Y%m%d-%H%M%S-%f}-{os.getpid()}-",
+                dir=base_directory,
+            )
+        )
+        self.options = replace(options, base_directory=run_directory)
+        options = self.options
         self.logger = self._create_logging_logger()  # Create an "activity summary" log
         # which details what the
         # DiagramWatcher is doing.
@@ -206,21 +213,15 @@ class DiagramWatcher:
         """
         # Setup
 
-        is_ready_to_plot = self.diagram is not None
-        is_ready_to_plot = is_ready_to_plot and self.diagram_context is not None
-
-        if not is_ready_to_plot:
-            return  # Return early if we don't have access to the diagram context
-
-        # Upon deletion, we will PLOT the data from all of our loggers
-        # if we have access to the diagram context
-        self._save_figures()
-        self._save_raw_data()
-
-        # Close all logging handlers in the logger and the remove them
-        for handler in self.logger.handlers:
-            handler.close()
-            self.logger.removeHandler(handler)
+        try:
+            if self.diagram is not None and self.diagram_context is not None:
+                self._save_figures()
+                self._save_raw_data()
+        finally:
+            if hasattr(self, "logger"):
+                for handler in self.logger.handlers[:]:
+                    handler.close()
+                    self.logger.removeHandler(handler)
 
     def _create_logging_logger(self) -> logging.Logger:
         """
@@ -238,10 +239,9 @@ class DiagramWatcher:
         options = self.options
 
         # Create the basic logger
-        logger = logging.getLogger("brom_drake.DiagramWatcher")
-        for handler in logger.handlers:
-            # Remove all existing handlers
-            logger.removeHandler(handler)
+        logger = logging.Logger(
+            f"brom_drake.DiagramWatcher.{options.base_directory.name}"
+        )
 
         # Create a file handler, if none exists
 

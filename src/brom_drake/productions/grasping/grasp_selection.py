@@ -1,6 +1,9 @@
 from importlib import resources as impresources
 import inspect
-from typing import Callable, List, Tuple, Union
+from typing import Callable, List, Optional, Tuple, Union
+from brom_drake.watchers.diagram_watcher.diagram_watcher_options import (
+    DiagramWatcherOptions,
+)
 from dataclasses import dataclass, field
 import networkx as nx
 import numpy as np
@@ -1046,6 +1049,7 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
         self,
         grasp_selection_algorithm: GraspSelectionAlgorithm,
         with_watcher: bool = False,
+        watcher_options: Optional[DiagramWatcherOptions] = None,
     ) -> Tuple[Diagram, Context]:
         """
         *Description*
@@ -1064,6 +1068,9 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
             Whether to build the production with a DiagramWatcher.
             Default is False.
 
+        watcher_options: DiagramWatcherOptions, optional
+            Watcher configuration; None preserves the default settings.
+
         *Returns*
 
         diagram: Diagram
@@ -1081,7 +1088,9 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
         self.add_supporting_cast()
 
         # Build
-        return self.build_production(with_watcher=with_watcher)
+        return self.build_production(
+            with_watcher=with_watcher, watcher_options=watcher_options
+        )
 
     def find_floor_z_via_bounding_box(
         self,

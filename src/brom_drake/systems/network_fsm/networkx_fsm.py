@@ -2,7 +2,6 @@ from functools import partial
 import logging
 import networkx as nx
 import numpy as np
-from pathlib import Path
 from pydrake.all import (
     AbstractValue,
     BasicVector,
@@ -29,7 +28,7 @@ from brom_drake.systems.network_fsm.errors import (
     OutputPortNotInitializedError,
 )
 from brom_drake.systems.network_fsm.config import NetworkXFSMConfig
-from brom_drake.directories import DEFAULT_NETWORKX_FSM_DIR
+from brom_drake.directories import get_brom_dir
 
 
 class NetworkXFSM(LeafSystem):
@@ -45,6 +44,7 @@ class NetworkXFSM(LeafSystem):
             config = NetworkXFSMConfig()
 
         self.config = config
+        self.log_directory = get_brom_dir() / "networkx_fsm"
 
         # Prepare to Create FSM from Graph
         self.fsm_graph = fsm_graph
@@ -270,12 +270,14 @@ class NetworkXFSM(LeafSystem):
 
         This function configures the logger for the FSM.
         It sets the logger to log messages at the INFO level.
+        Log paths use BROM_DIR resolved at construction. Existing log files
+        are overwritten; use distinct filenames or BROM_DIRs for concurrent FSMs.
         """
         # Setup
         config = self.config
 
         # Create logger
-        logger = logging.getLogger(config.name + " logger")
+        logger = logging.Logger(config.name + " logger")
 
         # Create a console handler
         if config.show_logs_in_terminal:
@@ -294,12 +296,12 @@ class NetworkXFSM(LeafSystem):
         # Create a file handler
         if config.log_file_name is not None:
             # Create directory if it doesn't exist
-            networkx_fsm_log_dir = Path(DEFAULT_NETWORKX_FSM_DIR)
+            networkx_fsm_log_dir = self.log_directory
             networkx_fsm_log_dir.mkdir(parents=True, exist_ok=True)
 
             # Create a file handler
             file_handler = logging.FileHandler(
-                filename=DEFAULT_NETWORKX_FSM_DIR / config.log_file_name, mode="w"
+                filename=networkx_fsm_log_dir / config.log_file_name, mode="w"
             )
             file_handler.setLevel(
                 logging.INFO

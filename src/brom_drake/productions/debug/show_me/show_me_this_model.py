@@ -1,4 +1,7 @@
-from typing import List, Tuple
+from typing import List, Optional, Tuple
+from brom_drake.watchers.diagram_watcher.diagram_watcher_options import (
+    DiagramWatcherOptions,
+)
 
 import numpy as np
 from pathlib import Path
@@ -245,6 +248,7 @@ class ShowMeThisModel(BaseProduction):
     def add_cast_and_build(
         self,
         cast: Tuple[Role, Performer] = [],
+        watcher_options: Optional[DiagramWatcherOptions] = None,
     ) -> Tuple[Diagram, Context]:
         """
         **Description**
@@ -258,6 +262,9 @@ class ShowMeThisModel(BaseProduction):
             The cast to be added to the production.
             Default is an empty tuple.
 
+        watcher_options: DiagramWatcherOptions, optional
+            Watcher configuration; None preserves the default settings.
+
         **Returns**
 
         diagram: Diagram
@@ -266,7 +273,7 @@ class ShowMeThisModel(BaseProduction):
         diagram_context: Context
             The built Context of the production.
         """
-        super().add_cast_and_build(cast)
+        super().add_cast_and_build(cast, watcher_options=watcher_options)
 
         # Assign the diagram context to the internal show_me_system
         self.show_me_system.mutable_plant_context = (

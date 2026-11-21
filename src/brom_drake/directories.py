@@ -1,4 +1,11 @@
+import os
 from pathlib import Path
+
+
+def get_brom_dir() -> Path:
+    """Resolve the output root at use time, honoring BROM_DIR when non-empty."""
+    return Path(os.environ.get("BROM_DIR") or "./brom")
+
 
 DEFAULT_BROM_DIR = Path("./brom")  #: Default directory for BROM Drake data storage
 DEFAULT_WATCHER_DIR = (

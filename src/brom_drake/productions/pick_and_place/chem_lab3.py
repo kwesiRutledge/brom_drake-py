@@ -18,10 +18,13 @@ from pydrake.all import (
     RotationMatrix,
 )
 from pydrake.math import RollPitchYaw, RigidTransform
-from typing import Callable, Tuple
+from typing import Callable, Optional, Tuple
+from brom_drake.watchers.diagram_watcher.diagram_watcher_options import (
+    DiagramWatcherOptions,
+)
+from brom_drake.watchers.port_watcher.port_watcher_options import FigureNamingConvention
 
 # Internal Imports
-from brom_drake.directories import DEFAULT_BROM_MODELS_DIR
 from brom_drake.control import (
     GripperTarget,
 )
@@ -350,11 +353,11 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
             ),
             color=np.array([0.1, 0.1, 0.1, 1.0]),
         )
-        table_urdf_path = DEFAULT_BROM_MODELS_DIR + "/table/table_half1.urdf"
+        table_urdf_path = self._brom_dir / "models" / "table" / "table_half1.urdf"
         half1_defn.write_to_file(table_urdf_path)
 
         # Add the table to the production
-        table_half1_model_index = Parser(self.plant).AddModels(table_urdf_path)[0]
+        table_half1_model_index = Parser(self.plant).AddModels(str(table_urdf_path))[0]
 
         # Weld the table to the world frame
         self.plant.WeldFrames(
@@ -382,11 +385,11 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
             ),
             color=np.array([0.1, 0.1, 0.1, 1.0]),
         )
-        table_urdf_path = DEFAULT_BROM_MODELS_DIR + "/table/table_half2.urdf"
+        table_urdf_path = self._brom_dir / "models" / "table" / "table_half2.urdf"
         half2_defn.write_to_file(table_urdf_path)
 
         # Add the table to the production
-        table_half2_model_index = Parser(self.plant).AddModels(table_urdf_path)[0]
+        table_half2_model_index = Parser(self.plant).AddModels(str(table_urdf_path))[0]
 
         # Weld the table to the world frame
         self.plant.WeldFrames(
@@ -401,6 +404,7 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
         self,
         cast: Tuple[Role, Performer] = [],
         with_watcher: bool = False,
+        watcher_options: Optional[DiagramWatcherOptions] = None,
     ) -> Tuple[Diagram, Context]:
         """
         Description
@@ -410,11 +414,13 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
         parts of the system.
         :param cast:
         :param with_watcher: A Boolean that determines whether to add a watcher to the diagram.
+        :param watcher_options: Watcher configuration; None preserves the default settings.
         :return:
         """
         diagram, diagram_context = super().add_cast_and_build(
             main_cast_members=cast,
             with_watcher=with_watcher,
+            watcher_options=watcher_options,
         )
 
         # Configure the scene graph for collision detection
@@ -440,6 +446,8 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
     def build_production(
         self,
         with_watcher: bool = True,
+        watcher_options: Optional[DiagramWatcherOptions] = None,
+        figure_naming_convention: FigureNamingConvention = FigureNamingConvention.kFlat,
     ) -> Tuple[Diagram, Context]:
         """
         Description
@@ -451,11 +459,19 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
         ---------
         with_watcher: bool
             A Boolean that determines whether to add a watcher to the diagram.
+        watcher_options: DiagramWatcherOptions, optional
+            Watcher configuration; None preserves the default settings.
+        figure_naming_convention: FigureNamingConvention, optional
+            Figure naming when watcher_options is None; defaults to kFlat.
         """
         # Setup
 
         # Call the parent method
-        diagram, diagram_context = super().build_production(with_watcher=with_watcher)
+        diagram, diagram_context = super().build_production(
+            with_watcher=with_watcher,
+            watcher_options=watcher_options,
+            figure_naming_convention=figure_naming_convention,
+        )
 
         # Set the initial positions of the shelf
         plant: MultibodyPlant = self.plant
@@ -588,6 +604,7 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
             Tuple[MotionPlan, bool],
         ],
         with_watcher: bool = False,
+        watcher_options: Optional[DiagramWatcherOptions] = None,
     ) -> Tuple[Diagram, Context]:
         """
         Description
@@ -596,6 +613,7 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
         :param planning_algorithm: The algorithm that we will use to
         plan the motion.
         :param with_watcher: A Boolean that determines whether to add a watcher to the diagram.
+        :param watcher_options: Watcher configuration; None preserves the default settings.
         :return:
         """
         # Setup
@@ -604,6 +622,7 @@ class ChemLab3(MotionPlanningAndGraspingProduction):
         diagram, diagram_context = super().easy_cast_and_build(
             planning_algorithm,
             with_watcher=with_watcher,
+            watcher_options=watcher_options,
         )
 
         # print("completed cast and build.")

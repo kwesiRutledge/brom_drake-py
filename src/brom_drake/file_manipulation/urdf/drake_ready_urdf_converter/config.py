@@ -63,6 +63,16 @@ class DrakeReadyURDFConverterConfig:
 
     coacd_log_level: str
         The log level for the coacd tool. Options are "off", "info", "error".
+
+    overwrite_old_models: bool
+        Retained for compatibility; does not delete existing model directories.
+        Conversion can still overwrite individual output files. To remove an
+        entire model directory explicitly, use ``file_manager.clean_up_models_dir()``
+        only when no other process uses it.
+
+    overwrite_old_logs: bool
+        Truncate the conversion log instead of appending. Do not enable this
+        when another converter uses the same log path.
     """
 
     output_urdf_file_path: str = None

@@ -1,5 +1,4 @@
 from importlib import resources as impresources
-from pathlib import Path
 
 import numpy as np
 from pydrake.all import (
@@ -34,6 +33,7 @@ from brom_drake.file_manipulation.urdf import (
 )
 
 from brom_drake import robots
+from brom_drake.directories import get_brom_dir
 
 
 class UR10eStation(Diagram):
@@ -218,7 +218,7 @@ class UR10eStation(Diagram):
         original_arm_urdf_path = str(
             impresources.files(robots) / "models/ur/ur10e.urdf",
         )
-        expected_arm_urdf_path = Path("./brom/models/ur10e/ur10e.drake.urdf")
+        expected_arm_urdf_path = get_brom_dir() / "models/ur10e/ur10e.drake.urdf"
 
         # Define Transform from tool0 to end_effector frame
         self.X_ee = RigidTransform()

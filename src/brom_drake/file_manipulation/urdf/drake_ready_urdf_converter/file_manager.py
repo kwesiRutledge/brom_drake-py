@@ -1,10 +1,10 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 import shutil
 from typing import Union
 
 # Internal Imports
-from brom_drake.directories import DEFAULT_BROM_MODELS_DIR
+from brom_drake.directories import get_brom_dir
 
 
 @dataclass
@@ -17,7 +17,7 @@ class DrakeReadyURDFConverterFileManager:
     """
 
     original_urdf_path: Path
-    models_directory: Path = Path(DEFAULT_BROM_MODELS_DIR)
+    models_directory: Path = field(default_factory=lambda: get_brom_dir() / "models")
     log_file_name: str = None
     _output_urdf_path: Union[str, Path] = None
 
@@ -26,6 +26,12 @@ class DrakeReadyURDFConverterFileManager:
         Description
         -----------
         This method will clean up the directory for the original URDF model.
+
+        Warning
+        -------
+        Deletes the entire model directory, including files created by other
+        converters or processes. Only call this explicitly when no other user
+        depends on that directory. Converter construction never calls it.
         """
         model_directory = self.models_directory / self.original_urdf_path.name.replace(
             ".urdf", ""

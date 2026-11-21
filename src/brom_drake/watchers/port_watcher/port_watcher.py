@@ -23,7 +23,7 @@ from pydrake.systems.primitives import LogVectorOutput, VectorLogSink
 from pydrake.systems.framework import Context
 
 # Internal Imports
-from brom_drake.directories import DEFAULT_BROM_DIR
+from brom_drake.directories import get_brom_dir
 from .file_manager import PortWatcherFileManager
 from brom_drake.watchers.port_watcher.support_types import assert_port_is_supported
 from .port_watcher_options import (
@@ -59,7 +59,7 @@ class PortWatcher:
         python_logger: logging.Logger,
         logger_name: str = None,
         options: PortWatcherOptions = PortWatcherOptions(),
-        base_watcher_dir: Path = DEFAULT_BROM_DIR,
+        base_watcher_dir: Path = None,
     ):
         """
         *Description*
@@ -93,7 +93,11 @@ class PortWatcher:
         self.plot_handles = {}
         self.plot_handles = None
         self.file_manager = PortWatcherFileManager(
-            base_directory=base_watcher_dir,
+            base_directory=(
+                Path(base_watcher_dir)
+                if base_watcher_dir is not None
+                else get_brom_dir()
+            ),
             plotting_options=self.options.plotting,
             raw_data_options=self.options.raw_data,
         )

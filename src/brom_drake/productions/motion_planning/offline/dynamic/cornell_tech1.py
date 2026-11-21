@@ -1,6 +1,9 @@
 from dataclasses import dataclass
 from importlib import resources as impresources
 from typing import Callable, List, Optional, Tuple
+from brom_drake.watchers.diagram_watcher.diagram_watcher_options import (
+    DiagramWatcherOptions,
+)
 
 import numpy as np
 from pydrake.all import (
@@ -405,6 +408,7 @@ class CornellTech1(OfflineDynamicMotionPlanningProduction):
         self,
         cast: List[Tuple[Role, Performer]] = [],
         with_watcher: bool = False,
+        watcher_options: Optional[DiagramWatcherOptions] = None,
     ) -> Tuple[Diagram, Context]:
         """
         *Description*
@@ -420,6 +424,9 @@ class CornellTech1(OfflineDynamicMotionPlanningProduction):
         with_watcher: bool, optional
             A Boolean that determines whether to add a watcher to the diagram, by default False.
 
+        watcher_options: DiagramWatcherOptions, optional
+            Watcher configuration; None preserves the default settings.
+
         *Returns*
 
         diagram: Diagram
@@ -431,6 +438,7 @@ class CornellTech1(OfflineDynamicMotionPlanningProduction):
         diagram, diagram_context = super().add_cast_and_build(
             main_cast_members=cast,
             with_watcher=with_watcher,
+            watcher_options=watcher_options,
         )
 
         for role_ii, performer_ii in cast:
@@ -555,6 +563,7 @@ class CornellTech1(OfflineDynamicMotionPlanningProduction):
         ],
         with_watcher: bool = False,
         async_planning: Optional[AsyncPlanningConfig] = None,
+        watcher_options: Optional[DiagramWatcherOptions] = None,
     ) -> Tuple[Diagram, Context]:
         """
         *Description*
@@ -569,6 +578,9 @@ class CornellTech1(OfflineDynamicMotionPlanningProduction):
         with_watcher: bool, optional
             A Boolean that determines whether to add a watcher to the diagram,
             by default False.
+
+        watcher_options: DiagramWatcherOptions, optional
+            Watcher configuration; None preserves the default settings.
 
         async_planning: AsyncPlanningConfig, optional
             If given, plan in the background while the simulation runs.
@@ -585,6 +597,7 @@ class CornellTech1(OfflineDynamicMotionPlanningProduction):
             planning_algorithm,
             with_watcher=with_watcher,
             async_planning=async_planning,
+            watcher_options=watcher_options,
         )
 
         self.performers[0].set_internal_root_context(diagram_context)

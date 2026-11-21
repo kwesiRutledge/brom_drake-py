@@ -1,5 +1,8 @@
 from importlib import resources as impresources
-from typing import List, Tuple, Union
+from typing import List, Optional, Tuple, Union
+from brom_drake.watchers.diagram_watcher.diagram_watcher_options import (
+    DiagramWatcherOptions,
+)
 from dataclasses import dataclass, field
 import networkx as nx
 import numpy as np
@@ -179,9 +182,18 @@ class AttemptGraspWithStaticWrist(BasicGraspingDebuggingProduction):
         self,
         cast: Tuple[Role, Performer] = [],
         figure_naming_convention: FigureNamingConvention = FigureNamingConvention.kHierarchical,
+        watcher_options: Optional[DiagramWatcherOptions] = None,
     ) -> Tuple[Diagram, Context]:
+        """
+        Build the grasp attempt with a watcher.
+
+        :param watcher_options: Watcher configuration; None preserves the default settings.
+        """
         super().add_cast_and_build(
-            cast, with_watcher=True, figure_naming_convention=figure_naming_convention
+            cast,
+            with_watcher=True,
+            figure_naming_convention=figure_naming_convention,
+            watcher_options=watcher_options,
         )
 
         return self.diagram, self.diagram_context

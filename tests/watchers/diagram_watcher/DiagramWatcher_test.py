@@ -28,6 +28,7 @@ import numpy as np
 from pathlib import Path
 from typing import Tuple
 import unittest
+from tempfile import TemporaryDirectory
 
 
 class TestDiagramWatcher(unittest.TestCase):
@@ -36,14 +37,18 @@ class TestDiagramWatcher(unittest.TestCase):
         The watcher exposes its configured plot and raw-data directories.
         """
         builder, _, _ = self.create_simple_affine_with_integrator_diagram()
-        base_directory = Path("./test_diagram_watcher_output")
-        watcher = DiagramWatcher(
-            builder,
-            options=DiagramWatcherOptions(base_directory=base_directory),
-        )
+        with TemporaryDirectory() as directory:
+            base_directory = Path(directory)
+            watcher = DiagramWatcher(
+                builder,
+                options=DiagramWatcherOptions(base_directory=base_directory),
+            )
 
-        self.assertEqual(watcher.plot_dir, base_directory / "plots")
-        self.assertEqual(watcher.raw_data_dir, base_directory / "raw_data")
+            self.assertEqual(watcher.options.base_directory.parent, base_directory)
+            self.assertEqual(watcher.plot_dir, watcher.options.base_directory / "plots")
+            self.assertEqual(
+                watcher.raw_data_dir, watcher.options.base_directory / "raw_data"
+            )
 
     def create_simple_affine_with_integrator_diagram(
         self,
