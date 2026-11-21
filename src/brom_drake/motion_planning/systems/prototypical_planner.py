@@ -12,7 +12,11 @@ from pydrake.systems.framework import LeafSystem, BasicVector, Context
 from typing import Callable, Tuple
 
 # Internal Imports
-from brom_drake.utils.collision_checking import CollisionCheckMethod, find_collisions
+from brom_drake.utils.collision_checking import (
+    DEFAULT_PLANNER_COLLISION_THRESHOLD,
+    CollisionCheckMethod,
+    find_collisions,
+)
 from brom_drake.utils.constants import MotionPlan, MotionPlanningResult
 
 
@@ -34,7 +38,8 @@ class PrototypicalPlannerSystem(LeafSystem):
             Tuple[MotionPlan, int],
         ],
         robot_model_idx: ModelInstanceIndex = None,
-        collision_threshold: float = 1e-2,
+        collision_threshold: float = DEFAULT_PLANNER_COLLISION_THRESHOLD,
+        collision_check_method: CollisionCheckMethod = CollisionCheckMethod.PENETRATION,
         **kwargs,
     ):
         """
@@ -60,8 +65,10 @@ class PrototypicalPlannerSystem(LeafSystem):
         robot_model_idx : ModelInstanceIndex
             The robot model index that we are working with.
         collision_threshold : float
-            Penetration depth in meters above which a pair of geometries counts
-            as a collision during planning. Defaults to 1e-2.
+            Threshold in meters, interpreted according to collision_check_method.
+            Defaults to 1e-2.
+        collision_check_method : CollisionCheckMethod or str
+            Collision criterion, defaulting to penetration depth.
         """
         LeafSystem.__init__(self)
 
@@ -70,6 +77,7 @@ class PrototypicalPlannerSystem(LeafSystem):
         self.planning_algorithm = planning_algorithm
         self.robot_model_idx = robot_model_idx
         self.collision_threshold = collision_threshold
+        self.collision_check_method = CollisionCheckMethod(collision_check_method)
 
         # Define Input Ports
         self.root_context = (
@@ -131,12 +139,11 @@ class PrototypicalPlannerSystem(LeafSystem):
         # Set the configuration
         self.plant.SetPositions(plant_context, self.robot_model_idx, q_model)
 
-        # Any pair penetrating deeper than collision_threshold counts as a collision
         collisions = find_collisions(
             self.scene_graph,
             root_context,
             threshold=self.collision_threshold,
-            method=CollisionCheckMethod.PENETRATION,
+            method=self.collision_check_method,
         )
         collision_detected = len(collisions) > 0
 

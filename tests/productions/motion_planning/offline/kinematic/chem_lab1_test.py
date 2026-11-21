@@ -102,7 +102,10 @@ class ChemLab1Test(unittest.TestCase):
         # Call the method
         diagram, diagram_context = production.easy_cast_and_build(
             planner1.plan,
+            collision_threshold=1e-3,
         )
+
+        self.assertEqual(production.performers[0].collision_threshold, 1e-3)
 
         # Simulate the diagram
         simulator = Simulator(diagram, diagram_context)

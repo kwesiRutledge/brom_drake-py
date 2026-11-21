@@ -88,6 +88,39 @@ For example:
         with_watcher=True,
     )
 
+The kinematic, dynamic, and motion-planning-and-grasping productions also
+accept :code:`collision_threshold` and :code:`collision_check_method` when
+building. For example, to use the same 1 mm penetration criterion as
+:code:`find_collisions`:
+
+.. code-block:: python
+
+    from brom_drake.utils.collision_checking import CollisionCheckMethod, find_collisions
+
+    diagram, context = production.easy_cast_and_build(
+        plan_function,
+        collision_threshold=1e-3,
+        collision_check_method=CollisionCheckMethod.PENETRATION,
+    )
+    planner = production.performers[0]
+    collisions = find_collisions(
+        production.scene_graph, context,
+        threshold=planner.collision_threshold,
+        method=planner.collision_check_method,
+    )
+
+The planner systems retain their historical default of 1 cm penetration,
+whereas :code:`find_collisions` defaults to 1 mm penetration. Separately,
+:code:`MotionPlanner` defaults to a 1 cm **signed-distance margin**, which
+also counts nearby, non-penetrating geometries. These defaults remain different
+for backwards compatibility. With penetration checking, a collision requires
+overlap deeper than the threshold; signed-distance checking instead reports
+pairs closer than the threshold. Matching both settings is necessary for
+consistent results.
+
+RRT planners check sampled configurations, not the entire segments between
+them, so matching thresholds alone does not guarantee a collision-free path.
+
 The :code:`plan_function` value is a function that:
 
 - Receives as input
@@ -102,4 +135,3 @@ The :code:`plan_function` value is a function that:
 When :code:`plan` is a :code:`networkx.DiGraph`, node :code:`0` must be the start configuration, and every node must store its joint configuration in the :code:`"q"` attribute. Brom extracts the shortest path from node :code:`0` to the goal node and converts it to an array of configurations.
 
 You can make the :code:`plan_function` using any library you want. It doesn't need to be made using drake components at all, if you don't want it to be. 
-
