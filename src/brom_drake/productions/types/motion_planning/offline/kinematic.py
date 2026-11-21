@@ -1,7 +1,9 @@
 from dataclasses import dataclass
 import os
-from pathlib import Path
 from typing import Callable, List, Optional, Tuple
+from brom_drake.watchers.diagram_watcher.diagram_watcher_options import (
+    DiagramWatcherOptions,
+)
 
 import networkx as nx
 import numpy as np
@@ -236,7 +238,9 @@ class KinematicMotionPlanningProduction(BaseProduction):
             create_collision=False,
             color=np.array([0, 0.3, 0.8, 0.3]),
         )
-        start_sphere_urdf_location = Path("brom/models/spheres/start.urdf")
+        start_sphere_urdf_location = (
+            self._brom_dir / "models" / "spheres" / "start.urdf"
+        )
         os.makedirs(start_sphere_urdf_location.parent, exist_ok=True)
 
         start_sphere_defn.write_to_file(start_sphere_urdf_location)
@@ -258,7 +262,7 @@ class KinematicMotionPlanningProduction(BaseProduction):
             create_collision=False,
             color=np.array([0, 0.8, 0.3, 0.3]),
         )
-        goal_sphere_urdf_location = Path("brom/models/spheres/end.urdf")
+        goal_sphere_urdf_location = self._brom_dir / "models" / "spheres" / "end.urdf"
         os.makedirs(goal_sphere_urdf_location.parent, exist_ok=True)
 
         str(goal_sphere_defn.write_to_file(goal_sphere_urdf_location))
@@ -490,6 +494,7 @@ class KinematicMotionPlanningProduction(BaseProduction):
         ],
         with_watcher: bool = True,
         async_planning: Optional[AsyncPlanningConfig] = None,
+        watcher_options: Optional[DiagramWatcherOptions] = None,
     ) -> Tuple[Diagram, Context]:
         """
         Description
@@ -498,6 +503,7 @@ class KinematicMotionPlanningProduction(BaseProduction):
         :param planning_algorithm: The algorithm that we will use to
         plan the motion.
         :param with_watcher: A Boolean that determines whether to add a watcher to the diagram.
+        :param watcher_options: Watcher configuration; None preserves the default settings.
         :param async_planning: If given, plan in the background while the simulation
             runs (see AsyncPlanningConfig): planning starts at plan_start_time from the
             robot's configuration at that time, and the plan is released after
@@ -538,7 +544,9 @@ class KinematicMotionPlanningProduction(BaseProduction):
         self.create_optional_outputs_if_necessary(planner_role, prototypical_planner)
 
         # Build
-        return self.build_production(with_watcher=with_watcher)
+        return self.build_production(
+            with_watcher=with_watcher, watcher_options=watcher_options
+        )
 
     @property
     def goal_configuration(self) -> np.ndarray:

@@ -5,7 +5,7 @@ Description:
 """
 
 # External Imports
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import IntEnum
 import os
 import xml.etree.ElementTree as ET
@@ -22,7 +22,7 @@ from brom_drake.file_manipulation.urdf.shapes.shape_definition import (
 from brom_drake.file_manipulation.urdf.simple_writer.inertia_definition import (
     InertiaDefinition,
 )
-from brom_drake.directories import DEFAULT_BROM_MODELS_DIR
+from brom_drake.directories import get_brom_dir
 
 
 @dataclass
@@ -84,6 +84,12 @@ class SimpleShapeURDFDefinition:
     mu_static: float = 0.7
     mu_dynamic: float = 0.4
     is_hydroelastic: bool = True  # Whether to use hydroelastic collision for the shape
+    _models_directory: Path = field(
+        default_factory=lambda: get_brom_dir() / "models",
+        init=False,
+        repr=False,
+        compare=False,
+    )
 
     def as_urdf(self) -> ET.Element:
         """
@@ -298,6 +304,8 @@ class SimpleShapeURDFDefinition:
 
         file_path: str
             The path to the file where the URDF will be written.
+            Defaults to ``<BROM_DIR>/models/shapes/<name>.urdf``, with BROM_DIR
+            resolved when this definition is created. Existing files are overwritten.
 
         *Returns*
 
@@ -311,7 +319,7 @@ class SimpleShapeURDFDefinition:
 
         # Input Processing
         if file_path is None:
-            file_path = DEFAULT_BROM_MODELS_DIR / "shapes" / f"{self.name}.urdf"
+            file_path = self._models_directory / "shapes" / f"{self.name}.urdf"
 
         # Create the directory if it doesn't exist
         fp_as_path = Path(file_path)

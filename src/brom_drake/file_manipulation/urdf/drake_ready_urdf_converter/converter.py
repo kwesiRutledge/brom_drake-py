@@ -22,7 +22,6 @@ import shutil
 import xml.etree.ElementTree as ET
 
 # Internal Imports
-from brom_drake.directories import DEFAULT_BROM_MODELS_DIR
 from .config import DrakeReadyURDFConverterConfig, MeshReplacementStrategy
 from .file_manager import DrakeReadyURDFConverterFileManager
 from .mesh_file_converter import MeshFileConverter
@@ -103,20 +102,11 @@ class DrakeReadyURDFConverter:
         self.file_manager: DrakeReadyURDFConverterFileManager = (
             DrakeReadyURDFConverterFileManager(
                 original_urdf_path=Path(self.original_urdf_filename),
-                models_directory=Path(DEFAULT_BROM_MODELS_DIR),
                 log_file_name=config.log_file_name,
                 _output_urdf_path=config.output_urdf_file_path,
             )
         )
 
-        # Define conversion data directory in brom
-        # (If it already exists, then we will overwrite it with the proper flag set)
-        self.file_manager.models_directory = Path(DEFAULT_BROM_MODELS_DIR)
-
-        overwrite_old_models = self.config.overwrite_old_models
-
-        if overwrite_old_models:
-            self.file_manager.clean_up_models_dir()
         os.makedirs(self.file_manager.models_directory, exist_ok=True)
 
         # Input Processing
@@ -145,6 +135,8 @@ class DrakeReadyURDFConverter:
         *Description*
 
         This method configures the `logging` logger for the URDF conversion.
+        Existing logs are appended unless ``overwrite_old_logs`` is enabled.
+        Overwriting logs is not safe when another converter shares the path.
 
         *Returns*
 
@@ -153,17 +145,12 @@ class DrakeReadyURDFConverter:
         """
         # Setup
         log_file_name = self.config.log_file_name
-        target_file = self.original_urdf_filename
-
-        # Check if the log level exists in the logging module
         overwrite_old_logs = self.config.overwrite_old_logs
-        if overwrite_old_logs and os.path.exists(
-            self.file_manager.output_file_directory() / log_file_name
-        ):
-            os.remove(self.file_manager.output_file_directory() / log_file_name)
 
-        # Create (or collect) a logger for the given file
-        logger = logging.getLogger("DrakeReadyURDFConverter ({target_file})")
+        # Keep handlers local to this converter, even when paths are shared.
+        logger = logging.Logger(
+            f"DrakeReadyURDFConverter ({self.original_urdf_filename})"
+        )
 
         # Create the file handler
         if not self.file_manager.output_file_directory().exists():
@@ -171,7 +158,8 @@ class DrakeReadyURDFConverter:
             self.file_manager.output_file_directory().mkdir(parents=True, exist_ok=True)
 
         file_handler = logging.FileHandler(
-            self.file_manager.output_file_directory() / log_file_name, mode="w"
+            self.file_manager.output_file_directory() / log_file_name,
+            mode="w" if overwrite_old_logs else "a",
         )
         file_handler.setLevel(logging.INFO)
 

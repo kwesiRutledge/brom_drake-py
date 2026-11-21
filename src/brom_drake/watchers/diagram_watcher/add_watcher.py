@@ -5,6 +5,8 @@ users of the DiagramWatcher class.
 """
 
 from typing import List, Tuple, Union
+from dataclasses import replace
+from pathlib import Path
 
 import numpy as np
 from pydrake.all import DiagramBuilder, Diagram
@@ -12,7 +14,6 @@ from pydrake.systems.framework import Context
 
 from brom_drake.watchers.diagram_target import DiagramTarget
 from brom_drake.watchers.diagram_watcher import DiagramWatcher, DiagramWatcherOptions
-from brom_drake import directories
 from brom_drake.watchers.port_watcher.port_watcher_options import (
     PortFigureArrangement,
     PortWatcherPlottingOptions,
@@ -37,10 +38,11 @@ PotentialTargetTypes = List[
 def add_watcher(
     builder: DiagramBuilder,
     targets: PotentialTargetTypes = None,
-    watcher_dir: str = directories.DEFAULT_WATCHER_DIR,
+    watcher_dir: Union[str, Path] = None,
     plot_arrangement: PortFigureArrangement = PortFigureArrangement.OnePlotPerPort,
     figure_naming_convention: FigureNamingConvention = FigureNamingConvention.kFlat,
     file_format: str = "png",
+    options: DiagramWatcherOptions = None,
 ) -> DiagramWatcher:
     """
     **Description**
@@ -70,8 +72,12 @@ def add_watcher(
         A system index outside the range of ``builder.GetSystems()`` or an unknown output port name raises a ValueError.
 
     watcher_dir : str, optional
-        The directory in which we will store the data collected by the DiagramWatcher.
-        By default, :py:const:`~brom_drake.directories.directories.DEFAULT_WATCHER_DIR`.
+        Parent directory for this watcher's unique output directory.
+        Defaults to BROM_DIR/watcher, or ./brom/watcher.
+
+    options : DiagramWatcherOptions, optional
+        Full watcher configuration. When provided, overrides the plotting arguments;
+        an explicit watcher_dir overrides its base_directory.
 
     plot_arrangement : PortFigureArrangement, optional
         The arrangement of the plots.
@@ -124,10 +130,8 @@ def add_watcher(
     if targets is not None:
         targets = parse_list_of_simplified_targets(builder, targets)
 
-    watcher = DiagramWatcher(
-        builder,
-        targets=targets,
-        options=DiagramWatcherOptions(
+    if options is None:
+        options = DiagramWatcherOptions(
             base_directory=watcher_dir,
             plotting_options=PortWatcherPlottingOptions(
                 plot_arrangement=plot_arrangement,
@@ -137,18 +141,21 @@ def add_watcher(
             raw_data_options=PortWatcherRawDataOptions(
                 save_to_file=True,
             ),
-        ),
-    )
+        )
+    elif watcher_dir is not None:
+        options = replace(options, base_directory=Path(watcher_dir))
+    watcher = DiagramWatcher(builder, targets=targets, options=options)
     return watcher
 
 
 def add_watcher_and_build(
     builder: DiagramBuilder,
     targets: PotentialTargetTypes = None,
-    watcher_dir: str = directories.DEFAULT_WATCHER_DIR,
+    watcher_dir: Union[str, Path] = None,
     plot_arrangement: PortFigureArrangement = PortFigureArrangement.OnePlotPerPort,
     figure_naming_convention: FigureNamingConvention = FigureNamingConvention.kFlat,
     file_format: str = "png",
+    options: DiagramWatcherOptions = None,
 ) -> Tuple[DiagramWatcher, Diagram, Context]:
     """
     **Description**
@@ -196,7 +203,10 @@ def add_watcher_and_build(
         If None (the default), all systems in the diagram are considered.
 
     watcher_dir: str
-        The directory in which we will store the data collected by the DiagramWatcher.
+        Parent directory for this watcher's unique output directory.
+
+    options: DiagramWatcherOptions, optional
+        Full watcher configuration, as in add_watcher().
 
     plot_arrangement: PortFigureArrangement
         The arrangement of the plots.
@@ -227,6 +237,7 @@ def add_watcher_and_build(
         plot_arrangement=plot_arrangement,
         figure_naming_convention=figure_naming_convention,
         file_format=file_format,
+        options=options,
     )
 
     # Build the diagram and add a reference to the watcher

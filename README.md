@@ -18,6 +18,51 @@ Video recording (record MP4s of any production, or your own diagram, from one or
 
 To learn more, look through our documentation [here](https://kwesirutledge.github.io/brom_drake-py/).
 
+## Output directories and parallel runs
+
+Set `BROM_DIR` to choose the output root without changing the working directory.
+An unset or empty value defaults to `./brom`. Defaults are resolved when watchers,
+productions, or converters are created, rather than when Brom is imported:
+
+```python
+import os
+os.environ["BROM_DIR"] = "/tmp/brom/case-1"
+```
+
+Each `DiagramWatcher` creates a fresh directory under `<BROM_DIR>/watcher/`,
+named `<timestamp>-<pid>-<unique suffix>`. It contains `activity_summary.log`,
+`plots/`, and `raw_data/` (when saved). Existing output is never deleted on
+startup. The actual run directory is available as `watcher.options.base_directory`;
+`watcher.plot_dir` and `watcher.raw_data_dir` point inside it.
+There is no shared `latest` link, and old runs must be removed explicitly when
+they are no longer in use.
+
+To choose a watcher-specific parent or configure plotting and raw data, pass
+`DiagramWatcherOptions`:
+
+```python
+from pathlib import Path
+from brom_drake.watchers.diagram_watcher import DiagramWatcherOptions
+
+options = DiagramWatcherOptions(base_directory=Path("/tmp/my-watchers"))
+diagram, context = production.easy_cast_and_build(
+    planning_algorithm, with_watcher=True, watcher_options=options
+)
+```
+
+The other production entry points (`build_production`, `add_cast_and_build`) also
+accept `watcher_options`. `add_watcher` and `add_watcher_and_build` accept
+`options=options` or `watcher_dir=...`. Explicit options override the convenience
+plotting arguments; an explicit `watcher_dir` overrides the options' parent.
+The options object is not modified.
+
+Models, FSM logs, production reports, and videos also honor `BROM_DIR`.
+Production reports have unique filenames, but model, FSM, and video filenames
+can still be shared. Use a different `BROM_DIR` **per process/case** to isolate
+all output types; an explicit output path takes precedence over `BROM_DIR`.
+The legacy `DEFAULT_*_DIR` constants remain fixed fallback paths; use
+`brom_drake.directories.get_brom_dir()` to read the current environment.
+
 ## Installation
 
 `brom_drake` is available on PyPI and installable with pip:

@@ -6,9 +6,9 @@ Description
 
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Optional
 
 # Internal Imports
-from brom_drake import directories
 from brom_drake.watchers.port_watcher.port_watcher_options import (
     PortWatcherOptions,
     PortWatcherPlottingOptions,
@@ -55,8 +55,9 @@ class DiagramWatcherOptions:
     *Attributes*
 
     base_directory: Path, optional
-        The base directory where the watcher will save any data (e.g., plots, or dataframes)
-        during its operation as well as logs.
+        Parent directory for a fresh subdirectory containing this watcher's logs,
+        plots, and raw data. None resolves to BROM_DIR/watcher (or ./brom/watcher)
+        when the watcher is constructed.
 
     plotting_options: PortWatcherPlottingOptions, optional
         The options that configure how the PortWatcher will save its plots.
@@ -69,7 +70,7 @@ class DiagramWatcherOptions:
     """
 
     # The base directory where the watcher will save the data
-    base_directory: Path = directories.DEFAULT_WATCHER_DIR
+    base_directory: Optional[Path] = None
 
     # Options Used for Each PortWatcher
     plotting_options: PortWatcherPlottingOptions = PortWatcherPlottingOptions()

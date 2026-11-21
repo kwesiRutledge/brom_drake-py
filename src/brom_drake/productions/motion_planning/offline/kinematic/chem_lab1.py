@@ -16,10 +16,12 @@ from pydrake.all import (
 )
 from pydrake.math import RollPitchYaw, RigidTransform
 from typing import Callable, List, Optional, Tuple
+from brom_drake.watchers.diagram_watcher.diagram_watcher_options import (
+    DiagramWatcherOptions,
+)
 
 # Internal Imports
 from brom_drake.motion_planning.systems.async_planner import AsyncPlanningConfig
-from brom_drake.directories import DEFAULT_BROM_MODELS_DIR
 from brom_drake.control import (
     GripperTarget,
 )
@@ -421,7 +423,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
             ),
             color=np.array([0.1, 0.1, 0.1, 0.5]),
         )
-        table_urdf_path = DEFAULT_BROM_MODELS_DIR / "table" / "table.urdf"
+        table_urdf_path = self._brom_dir / "models" / "table" / "table.urdf"
         table_defn.write_to_file(table_urdf_path)
 
         # Add the table to the production
@@ -471,6 +473,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
         self,
         cast: List[Tuple[Role, Performer]] = [],
         with_watcher: bool = False,
+        watcher_options: Optional[DiagramWatcherOptions] = None,
     ) -> Tuple[Diagram, Context]:
         """
         *Description*
@@ -495,6 +498,9 @@ class ChemLab1(KinematicMotionPlanningProduction):
             A Boolean that determines whether to add a watcher to the diagram.
             Default is False.
 
+        watcher_options: DiagramWatcherOptions, optional
+            Watcher configuration; None preserves the default settings.
+
         *Returns*
 
         diagram: pydrake.systems.framework.Diagram
@@ -512,6 +518,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
         diagram, diagram_context = super().add_cast_and_build(
             main_cast_members=cast,
             with_watcher=with_watcher,
+            watcher_options=watcher_options,
         )
 
         # Configure the scene graph for collision detection
@@ -603,6 +610,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
         ],
         with_watcher: bool = False,
         async_planning: Optional[AsyncPlanningConfig] = None,
+        watcher_options: Optional[DiagramWatcherOptions] = None,
     ) -> Tuple[Diagram, Context]:
         """
         *Description*
@@ -618,6 +626,9 @@ class ChemLab1(KinematicMotionPlanningProduction):
         with_watcher: bool, optional
             A Boolean that determines whether to add a watcher to the diagram.
             Default is False.
+
+        watcher_options: DiagramWatcherOptions, optional
+            Watcher configuration; None preserves the default settings.
 
         async_planning: AsyncPlanningConfig, optional
             If given, plan in the background while the simulation runs, starting
@@ -645,6 +656,7 @@ class ChemLab1(KinematicMotionPlanningProduction):
             planning_algorithm,
             with_watcher=with_watcher,
             async_planning=async_planning,
+            watcher_options=watcher_options,
         )
 
         # print("completed cast and build.")

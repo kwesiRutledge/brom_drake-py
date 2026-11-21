@@ -1,7 +1,10 @@
 from dataclasses import dataclass
 import os
-from pathlib import Path
-from typing import List, Tuple, Callable
+from typing import List, Tuple, Callable, Optional
+from brom_drake.watchers.diagram_watcher.diagram_watcher_options import (
+    DiagramWatcherOptions,
+)
+from brom_drake.watchers.port_watcher.port_watcher_options import FigureNamingConvention
 
 import networkx as nx
 import numpy as np
@@ -229,8 +232,8 @@ class MotionPlanningAndGraspingProduction(BaseProduction):
         )
         self.spheres = self.spheres + [sphere_shape_defn]
 
-        sphere_urdf_location = Path(
-            f"brom/models/spheres/{sphere_shape_defn.name}.urdf"
+        sphere_urdf_location = (
+            self._brom_dir / "models" / "spheres" / f"{sphere_shape_defn.name}.urdf"
         )
         os.makedirs(sphere_urdf_location.parent, exist_ok=True)
 
@@ -311,6 +314,8 @@ class MotionPlanningAndGraspingProduction(BaseProduction):
     def build_production(
         self,
         with_watcher: bool = True,
+        watcher_options: Optional[DiagramWatcherOptions] = None,
+        figure_naming_convention: FigureNamingConvention = FigureNamingConvention.kFlat,
     ) -> Tuple[Diagram, Context]:
         """
         Description
@@ -322,12 +327,20 @@ class MotionPlanningAndGraspingProduction(BaseProduction):
         ---------
         with_watcher: bool
             A Boolean that determines whether to add a watcher to the diagram.
+        watcher_options: DiagramWatcherOptions, optional
+            Watcher configuration; None preserves the default settings.
+        figure_naming_convention: FigureNamingConvention, optional
+            Figure naming when watcher_options is None; defaults to kFlat.
         """
         # Setup
         plant: MultibodyPlant = self.plant
 
         # Call the parent method
-        diagram, diagram_context = super().build_production(with_watcher=with_watcher)
+        diagram, diagram_context = super().build_production(
+            with_watcher=with_watcher,
+            watcher_options=watcher_options,
+            figure_naming_convention=figure_naming_convention,
+        )
 
         # Set the initial poses of the members of the cast that are objects
         for model_ii, pose_ii in self.models_in_supporting_cast:
@@ -484,6 +497,7 @@ class MotionPlanningAndGraspingProduction(BaseProduction):
             Tuple[MotionPlan, bool],
         ],
         with_watcher: bool = True,
+        watcher_options: Optional[DiagramWatcherOptions] = None,
     ) -> Tuple[Diagram, Context]:
         """
         Description
@@ -492,6 +506,7 @@ class MotionPlanningAndGraspingProduction(BaseProduction):
         :param planning_algorithm: The algorithm that we will use to
         plan the motion.
         :param with_watcher: A Boolean that determines whether to add a watcher to the diagram.
+        :param watcher_options: Watcher configuration; None preserves the default settings.
         :return:
         """
         # Setup
@@ -519,7 +534,9 @@ class MotionPlanningAndGraspingProduction(BaseProduction):
         self.create_optional_outputs_if_necessary(planner_role, prototypical_planner)
 
         # Build
-        diagram, diagram_context = self.build_production(with_watcher=with_watcher)
+        diagram, diagram_context = self.build_production(
+            with_watcher=with_watcher, watcher_options=watcher_options
+        )
 
         # Assign prototypical planner's context
         prototypical_planner.set_internal_root_context(diagram_context)

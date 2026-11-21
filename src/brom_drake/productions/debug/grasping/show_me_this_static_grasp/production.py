@@ -1,4 +1,7 @@
-from typing import List, Tuple, Union
+from typing import List, Optional, Tuple, Union
+from brom_drake.watchers.diagram_watcher.diagram_watcher_options import (
+    DiagramWatcherOptions,
+)
 from dataclasses import dataclass
 import numpy as np
 from pydrake.all import (
@@ -89,8 +92,16 @@ class ShowMeThisStaticGrasp(BasicGraspingDebuggingProduction):
     def add_cast_and_build(
         self,
         cast: Tuple[Role, Performer] = [],
+        watcher_options: Optional[DiagramWatcherOptions] = None,
     ) -> Tuple[Diagram, Context]:
-        super().add_cast_and_build(cast, with_watcher=True)
+        """
+        Build and share the plant context with the show-me system.
+
+        :param watcher_options: Watcher configuration; None preserves the default settings.
+        """
+        super().add_cast_and_build(
+            cast, with_watcher=True, watcher_options=watcher_options
+        )
 
         # Assign the diagram context to the internal show_me_system
         self.show_me_system.mutable_plant_context = (

@@ -10,7 +10,7 @@ from pydrake.systems.framework import DiagramBuilder, OutputPort
 from pydrake.systems.sensors import CameraConfig, RgbdSensor
 
 # Internal Imports
-from brom_drake.directories import DEFAULT_VIDEO_DIR
+from brom_drake.directories import get_brom_dir
 from .camera_spec import CameraSpec
 from .render_settings import RenderSettings
 from .video_recorder import VideoRecorder
@@ -36,7 +36,7 @@ def add_cameras_to_builder(
     scene_graph: SceneGraph,
     camera_specs: Sequence[CameraSpec],
     plant: Optional[MultibodyPlant] = None,
-    output_dir: Union[str, Path] = DEFAULT_VIDEO_DIR,
+    output_dir: Optional[Union[str, Path]] = None,
     renderer_name: str = DEFAULT_RENDERER_NAME,
     renderer_backend: str = "",
     query_object_port: Optional[OutputPort] = None,
@@ -69,7 +69,10 @@ def add_cameras_to_builder(
         Required only if a spec uses ``parent_body_name``.
 
     output_dir: Union[str, Path], optional
-        The directory to write videos into. Default is ``./brom/videos``.
+        The directory to write videos into. Default is ``<BROM_DIR>/videos``,
+        resolved when this function is called (``./brom/videos`` if unset).
+        Recordings overwrite matching filenames; use distinct directories or
+        camera names for concurrent recordings.
 
     renderer_name: str, optional
         The name of the render engine to use/create.
@@ -127,7 +130,7 @@ def add_cameras_to_builder(
             renderer_name, settings.make_render_engine(backend=renderer_backend)
         )
 
-    output_dir = Path(output_dir)
+    output_dir = get_brom_dir() / "videos" if output_dir is None else Path(output_dir)
     recorders = []
     for spec in camera_specs:
         # Find the frame the camera is attached to
