@@ -136,7 +136,9 @@ class OutputDirectoryTest(unittest.TestCase):
                 self.assertEqual(watcher.options.base_directory.parent, watcher_dir)
                 self.assertTrue(watcher.options.base_directory.is_dir())
 
-            with self.subTest(function="add_watcher_and_build", use_options=use_options):
+            with self.subTest(
+                function="add_watcher_and_build", use_options=use_options
+            ):
                 watcher_dir = self.root / f"add_watcher_and_build_{use_options}"
                 builder = DiagramBuilder()
                 builder.AddSystem(ConstantVectorSource([1.0]))
