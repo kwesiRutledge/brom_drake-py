@@ -114,6 +114,43 @@ class OutputDirectoryTest(unittest.TestCase):
         self.assertIs(watcher.diagram, diagram)
         self.assertIs(watcher.diagram_context, context)
 
+    def test_convenience_functions_accept_str_watcher_dir(self):
+        """
+        Description
+        -----------
+        Regression test for issue #104: passing ``watcher_dir`` as a ``str``
+        (rather than a ``pathlib.Path``) to ``add_watcher`` or
+        ``add_watcher_and_build`` should work, both with and without an
+        explicit ``options`` object.
+        """
+        options = DiagramWatcherOptions(base_directory=self.root / "options")
+        for use_options in (False, True):
+            with self.subTest(function="add_watcher", use_options=use_options):
+                watcher_dir = self.root / f"add_watcher_{use_options}"
+                watcher = add_watcher(
+                    DiagramBuilder(),
+                    watcher_dir=str(watcher_dir),
+                    options=options if use_options else None,
+                )
+                self.assertIsInstance(watcher.options.base_directory, Path)
+                self.assertEqual(watcher.options.base_directory.parent, watcher_dir)
+                self.assertTrue(watcher.options.base_directory.is_dir())
+
+            with self.subTest(function="add_watcher_and_build", use_options=use_options):
+                watcher_dir = self.root / f"add_watcher_and_build_{use_options}"
+                builder = DiagramBuilder()
+                builder.AddSystem(ConstantVectorSource([1.0]))
+                watcher, diagram, context = add_watcher_and_build(
+                    builder,
+                    watcher_dir=str(watcher_dir),
+                    options=options if use_options else None,
+                )
+                self.assertIsInstance(watcher.options.base_directory, Path)
+                self.assertEqual(watcher.options.base_directory.parent, watcher_dir)
+                self.assertTrue(watcher.options.base_directory.is_dir())
+                self.assertIs(watcher.diagram, diagram)
+        self.assertEqual(options.base_directory, self.root / "options")
+
     def test_concurrent_watchers_in_shared_working_directory(self):
         context = multiprocessing.get_context("spawn")
         barrier = context.Barrier(4)
