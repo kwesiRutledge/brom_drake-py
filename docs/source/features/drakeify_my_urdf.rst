@@ -112,3 +112,20 @@ When ``overwrite_old_models`` is ``True``, the directory for the input URDF unde
 is removed before conversion, replacing only that model's generated files.
 Files for other models, and files directly under ``brom/models``, are preserved.
 The flag is ``False`` by default, in which case existing files for the target model are left alone.
+
+Choosing a Collision Mesh Strategy
+----------------------------------
+
+The ``collision_mesh_replacement_strategy`` argument of
+:py:func:`~brom_drake.file_manipulation.urdf.drakeify.drakeify_my_urdf` takes a
+:py:class:`~brom_drake.file_manipulation.urdf.drake_ready_urdf_converter.config.MeshReplacementStrategy`.
+For collision elements, the converter supports three of its values:
+
+- ``kWithObj`` (the default): each collision mesh is converted to an OBJ file and the element keeps a single ``<mesh>`` geometry.
+- ``kWithMinimalEnclosingCylinder``: the collision element's mesh is replaced by one ``<cylinder>`` that encloses it,
+  with the ``<origin>`` updated to position the cylinder. The result is a coarse approximation, but it is cheap to check for collisions.
+- ``kWithConvexDecomposition``: the mesh is split into several convex parts. Each part is saved as
+  ``meshes/<mesh name>/<mesh name>_part_<i>.obj`` next to the converted URDF and becomes its own ``<collision>`` element.
+  A collision element that contains no mesh is copied unchanged.
+
+``kDoNotReplace`` is not supported for collision elements: passing it raises a ``ValueError`` when the conversion runs.
