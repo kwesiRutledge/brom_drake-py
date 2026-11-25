@@ -11,6 +11,12 @@ from pydrake.all import (
     AbstractValue,
     AffineSystem,
     Adder,
+    Box,
+    Capsule,
+    Cylinder,
+    Ellipsoid,
+    Sphere,
+    Shape,
     ConstantValueSource,
     Context,
     Diagram,
@@ -49,6 +55,12 @@ from brom_drake import robots
 from brom_drake.motion_planning.systems import OpenLoopPlanDispenser
 from brom_drake.productions.types.debug import BasicGraspingDebuggingProduction
 from brom_drake.productions.ids import ProductionID
+from brom_drake.productions.scenario_presets import DRAKE_YCB_OBJECTS
+from brom_drake.productions.types.base.scenario import (
+    Scenario as BaseScenario,
+    VectorParam,
+    param,
+)
 from brom_drake.productions.roles.role import Role
 from brom_drake.systems.abstract_list_selection_system import (
     AbstractListSelectionSystem,
@@ -81,6 +93,60 @@ from .config import Configuration
 from .object_description import ObjectDescription, ObjectGeometry
 from .phases import GraspSelection1Phase
 from .script import Script as GraspSelection1Script
+
+
+def lowest_z_of_shape(shape: Shape, X_WorldShape: RigidTransform) -> float:
+    """
+    *Description*
+
+    The lowest world z coordinate of a Drake shape at the given pose.
+
+    Meshes and Convex shapes use their convex hull. Primitive shapes
+    (Box, Cylinder, Sphere, Capsule, Ellipsoid), which YCB models use for
+    collision, are handled exactly.
+
+    *Parameters*
+
+    shape: Shape
+        The shape.
+
+    X_WorldShape: RigidTransform
+        The pose of the shape's frame in the world.
+
+    *Returns*
+
+    min_z: float
+        The smallest z coordinate of any point of the shape, in the world frame.
+    """
+    p_z = X_WorldShape.translation()[2]
+    # Row z of the rotation: how much each of the shape's axes points up.
+    R_z = X_WorldShape.rotation().matrix()[2, :]
+
+    if isinstance(shape, Box):
+        half_size = np.array([shape.width(), shape.depth(), shape.height()]) / 2.0
+        return p_z - float(np.abs(R_z) @ half_size)
+    if isinstance(shape, Sphere):
+        return p_z - shape.radius()
+    if isinstance(shape, Cylinder):
+        # The lowest point is on the rim of the lower end cap.
+        axis_z = abs(R_z[2])
+        rim = shape.radius() * np.sqrt(max(0.0, 1.0 - axis_z**2))
+        return p_z - axis_z * shape.length() / 2.0 - rim
+    if isinstance(shape, Capsule):
+        return p_z - abs(R_z[2]) * shape.length() / 2.0 - shape.radius()
+    if isinstance(shape, Ellipsoid):
+        semi_axes = np.array([shape.a(), shape.b(), shape.c()])
+        return p_z - float(np.linalg.norm(R_z * semi_axes))
+    if hasattr(shape, "GetConvexHull"):
+        hull = shape.GetConvexHull()
+        vertices = np.array([hull.vertex(i) for i in range(hull.num_vertices())])
+        return float(np.min(X_WorldShape.multiply(vertices.T)[2, :]))
+
+    raise TypeError(
+        f"Cannot find the lowest point of a {type(shape).__name__} shape; "
+        + "use a Box, Cylinder, Sphere, Capsule, Ellipsoid, Mesh or Convex."
+    )
+
 
 GraspSelectionOutput = Union[List[RigidTransform], RigidTransform]
 GraspSelectionAlgorithm = Union[
@@ -133,10 +199,54 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
     An algorithm without a type hint receives an ``ObjectDescription``.
     Both types are defined in :py:mod:`brom_drake.productions.grasping.object_description`.
 
+    The gripper's wrist follows the poses in roll-pitch-yaw angles. A gripper pointing
+    straight down has a roll of exactly +/-pi, where the slightest motion of the object
+    flips the target between +pi and -pi and the wrist turns all the way around. Tilt
+    such grasps slightly (e.g., 0.2 rad) away from vertical.
+
+    The algorithm may use the object's identity and model file on purpose: this production
+    tests the "easiest case" grasp, where the selector knows exactly which object it is
+    grasping.
+
+    *Objects*
+
+    ``path_to_object`` is a URDF/SDF file or a Drake ``package://`` URL, for example
+    ``package://drake_models/ycb/010_potted_meat_can.sdf`` for one of the YCB objects
+    that Drake ships. The first use of a ``drake_models`` URL downloads Drake's models
+    archive (cached in ``~/.cache/drake/package_map``). The YCB models' collision
+    geometry is one Box or Cylinder plus 8 small Spheres at its corners, and an
+    ``ObjectGeometry`` lists all 9 shapes.
+
+    *Scenario*
+
+    :py:class:`GraspSelection1.Scenario` lists the arguments a caller (for example a
+    Saphira conditions case) may change without editing the script:
+
+    - ``path_to_object``: one of the IDs in
+      :py:data:`~brom_drake.productions.scenario_presets.DRAKE_YCB_OBJECT_URLS`
+      (for example ``"ycb_010_potted_meat_can"``), which is replaced by its
+      ``package://`` URL.
+    - ``grasp_gripper_command``: a list of one number in ``[0, 1]``.
+
+    For example, ::
+
+        kwargs = GraspSelection1.Scenario.constructor_kwargs(
+            {"path_to_object": "ycb_005_tomato_soup_can"}
+        )
+        production = GraspSelection1(
+            **{
+                "path_to_object": model_file,
+                "gripper_choice": GripperType.Robotiq_2f_85,
+                "grasp_gripper_command": np.array([0.7]),
+                **kwargs,
+            }
+        )
+
     *Parameters*
 
     path_to_object: str
-        The file path to the URDF/SDF of the object to be grasped.
+        The file path to the URDF/SDF of the object to be grasped, or a Drake
+        ``package://`` URL. The model must contain one body.
 
     gripper_choice: GripperType
         An enum value from GripperType that specifies which gripper to use for the grasping attempt.
@@ -213,6 +323,33 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
 
     """
 
+    @dataclass
+    class Scenario(BaseScenario):
+        """
+        *Description*
+
+        The initial conditions of GraspSelection1 that a caller may change
+        (see :py:class:`~brom_drake.productions.types.base.scenario.Scenario`).
+        Both fields are required constructor arguments, so their default,
+        ``None``, means "keep the value in the user's script".
+        """
+
+        path_to_object: str = param(
+            DRAKE_YCB_OBJECTS,
+            description=(
+                "Object to grasp, from Drake's YCB models (None: the script's own "
+                "object)."
+            ),
+        )
+        grasp_gripper_command: list = param(
+            VectorParam(1, (0.0,), (1.0,), ""),
+            description=(
+                "Normalized gripper command for the grasp: 0 is fully open and "
+                "larger values close the gripper further (None: the script's own "
+                "command)."
+            ),
+        )
+
     def __init__(
         self,
         path_to_object: str,
@@ -230,7 +367,8 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
         *Parameters*
 
         path_to_object: str
-            The file path to the URDF/SDF of the object to be grasped.
+            The file path to the URDF/SDF of the object to be grasped, or a Drake
+            ``package://`` URL.
 
         gripper_choice: GripperType
             An enum value from GripperType that specifies which gripper to use for the grasping attempt.
@@ -248,6 +386,17 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
             See the Configuration dataclass for more details.
             Default is None, which creates a new Configuration with its default values.
         """
+        # The Scenario's None means "keep the script's value", so None must never reach here
+        if path_to_object is None:
+            raise ValueError(
+                "GraspSelection1 needs path_to_object (a URDF/SDF file or a package:// URL); received None."
+            )
+        if grasp_gripper_command is None:
+            raise ValueError(
+                "GraspSelection1 needs grasp_gripper_command (an array of shape (1,)); received None."
+            )
+        grasp_gripper_command = np.asarray(grasp_gripper_command, dtype=float)
+
         # Each production gets its own configuration, because the constructor modifies it
         if config is None:
             config = Configuration()
@@ -1166,21 +1315,18 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
                 print(f"  + Raw value: {shape_ii}")
                 print(f"  + Type: {type(shape_ii)}")
 
-            # Get the convex hull
-            ch_ii = shape_ii.GetConvexHull()
+            # Find the lowest point of the geometry. The object's body is at the
+            # world origin in the shadow plant, so the geometry's pose in its
+            # body's frame is also its pose in the world.
+            X_WorldShape_ii = shadow_sg_inspector.GetPoseInFrame(geometry_ii)
+            min_z_ii = lowest_z_of_shape(shape_ii, X_WorldShape_ii)
             if debug_flag:
-                print(f"- Convex Hull {ii}:")
-                print(f"  + Raw value: {ch_ii}")
+                print(f"- Lowest z {ii}: {min_z_ii}")
 
-            bb_ii = ch_ii.CalcBoundingBox()
-            if debug_flag:
-                print(f"- Bounding Box {ii}:")
-                print(f"  + Raw value: {bb_ii}")
-            lower_left, upper_right = bb_ii
-
-            if lower_left[2] < objects_minimum_z:
-                objects_minimum_z = lower_left[2]
-                print(f"  + New z_out: {objects_minimum_z}")
+            if min_z_ii < objects_minimum_z:
+                objects_minimum_z = min_z_ii
+                if debug_flag:
+                    print(f"  + New z_out: {objects_minimum_z}")
 
         # If we didn't find any geometry, raise an error
         if objects_minimum_z == 1_000.0:
@@ -1421,6 +1567,11 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
         self._metadata["floor_model"] = summarize_model_instance_with_dict(
             self.plant, self.floor_model_index
         )
+
+        # Track which object was grasped: what the caller passed (e.g., a package:// URL)
+        # and the file it was loaded from
+        self._metadata["object_source"] = str(self.object_source)
+        self._metadata["path_to_object"] = str(self.path_to_object)
 
         # Track the trajectory of the Gripper Frame (and where it came from)
         self._metadata["X_ObjectGripper_trajectory"] = [

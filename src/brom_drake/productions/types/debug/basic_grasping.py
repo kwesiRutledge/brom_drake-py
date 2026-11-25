@@ -17,6 +17,7 @@ from brom_drake.file_manipulation.urdf.drakeify import drakeify_my_urdf
 from brom_drake.productions.types.base.base import BaseProduction
 from brom_drake.systems.video import CameraSpec
 from brom_drake.utils.metadata_recording import create_summary_for_LeafSystem
+from brom_drake.utils.model_files import is_package_url, resolve_model_path
 from brom_drake.utils.model_instances import (
     get_name_of_first_body_in_urdf,
     get_name_of_all_bodies_in_urdf,
@@ -53,7 +54,10 @@ class BasicGraspingDebuggingProduction(BaseProduction):
         **Arguments**
 
         path_to_object: str
-            A string representing the path to the object urdf file.
+            The path to the object's URDF/SDF file, or a Drake ``package://`` URL
+            (for example ``package://drake_models/ycb/010_potted_meat_can.sdf``).
+            A URL is resolved to a file once, here: ``self.path_to_object`` holds
+            the resolved file and ``self.object_source`` holds what was passed.
         path_to_gripper: str
             A string representing the path to the gripper urdf file.
         X_ObjectGrasp: RigidTransform
@@ -83,7 +87,12 @@ class BasicGraspingDebuggingProduction(BaseProduction):
         # - self.scene_graph
 
         # Add the model to the Production
-        self.path_to_object = path_to_object
+        # (Only URLs are changed, so a file path keeps the type the caller gave it.)
+        self.object_source = path_to_object
+        if is_package_url(path_to_object):
+            self.path_to_object = resolve_model_path(path_to_object)
+        else:
+            self.path_to_object = path_to_object
         self.path_to_gripper = path_to_gripper
         self.time_step = time_step
         self.gripper_color = gripper_color

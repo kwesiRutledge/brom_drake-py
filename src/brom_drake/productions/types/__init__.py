@@ -1,5 +1,6 @@
 from brom_drake.productions.types.base.base import BaseProduction
 from brom_drake.productions.types.base.scenario import (
+    ChoiceParam,
     FloatParam,
     PoseParam,
     Scenario,
@@ -17,6 +18,7 @@ from brom_drake.productions.types.pick_and_place import (
 
 __all__ = [
     "BaseProduction",
+    "ChoiceParam",
     "FloatParam",
     "KinematicMotionPlanningProduction",
     "MotionPlanningAndGraspingProduction",

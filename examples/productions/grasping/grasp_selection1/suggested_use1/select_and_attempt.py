@@ -54,7 +54,7 @@ def side_grasp_selection_algorithm(
     # The Grasp Pose (i.e. the target pose of the gripper wrist when grasping the object)
     X_ObjectGrasp = RigidTransform(
         p=np.array([-0.08, 0.05, 0.15]),
-        rpy=RollPitchYaw(0.1, (14.0 / 20.0) * np.pi, 0.1),
+        rpy=RollPitchYaw(0.1, (12.0 / 20.0) * np.pi, 0.1),
     )
 
     # The Pre-Grasp Pose and an intermediate pose, both "backed off" from the

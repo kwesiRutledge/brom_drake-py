@@ -38,7 +38,11 @@ Rules:
 - Every field name must be a keyword argument of the production's constructor
   (or of a parent class's constructor). Callers apply a value by passing it as
   that keyword argument.
-- A default of ``None`` means "use the constructor's own default".
+- A default of ``None`` means "use the constructor's own default". A
+  required constructor argument (such as ``GraspSelection1``'s
+  ``path_to_object``) may also be a field, with the default ``None``, which
+  then means "keep the value in the user's script". Callers must not pass
+  ``None`` on to the constructor for such a field.
 - Use ``mutually_exclusive`` for arguments that are alternatives, for example
   ``mutually_exclusive = (("start_configuration", "start_pose"),)``.
 
@@ -63,8 +67,39 @@ Parameter types
    * - ``PoseParam(xyz_min, xyz_max, rpy_min, rpy_max)``
      - ``{"xyz": [...], "rpy": [...]}`` or ``{"xyz": [...], "wxyz": [...]}``
      - per component; see below
+   * - ``ChoiceParam(choices, units="")``
+     - a string ID, one of the keys of ``choices``
+     - the declared IDs; see below
 
 ``true`` and ``false``, NaN and infinity are never accepted as numbers.
+
+.. _choice-parameters:
+
+Choice parameters
+~~~~~~~~~~~~~~~~~
+
+A ``ChoiceParam`` picks one of a fixed set of values that the production
+declares, for example which object to grasp. ``choices`` maps each ID to the
+value it stands for:
+
+.. code-block:: python
+
+    ChoiceParam({
+        "ycb_005_tomato_soup_can": "package://drake_models/ycb/005_tomato_soup_can.sdf",
+        "ycb_009_gelatin_box": "package://drake_models/ycb/009_gelatin_box.sdf",
+    })
+
+On the wire, a value is only the ID (``"ycb_009_gelatin_box"``). The value it
+stands for (here, the model URL) is looked up in the declaration when the
+production is built, so a caller can choose among the declared values but can
+never send a path, a URL or other text that reaches the constructor.
+
+IDs are the only strings a scenario may contain. They must match
+``^[a-z0-9][a-z0-9_]{0,63}$`` (lowercase letters, digits and underscores, at
+most 64 characters; ``CHOICE_ID_PATTERN`` in
+``brom_drake.productions.types.base.scenario``). ``ChoiceParam`` refuses
+other IDs when it is declared, and ``validate`` refuses any string that is not
+one of the declared IDs. Saphira and the Wrench API check the same pattern.
 
 The base production types (``KinematicMotionPlanningProduction``,
 ``OfflineDynamicMotionPlanningProduction`` and
@@ -137,6 +172,35 @@ productions use, so productions with the same arm share the same numbers:
        (roll and pitch within 0.05 rad of ``roll`` and 0)
    * - ``SHELF_POSE``, ``TABLE_LENGTH``, ``TABLE_WIDTH``, ``TABLE_HEIGHT``
      - the shelf and table ranges of the ChemLab productions
+   * - ``DRAKE_YCB_OBJECTS``
+     - one of the YCB objects in ``DRAKE_YCB_OBJECT_URLS`` (see below)
+
+``DRAKE_YCB_OBJECTS`` is the object catalog of ``GraspSelection1``. It lists
+the YCB objects from Drake's ``drake_models`` package that the Robotiq 2F-85
+(85 mm opening) can grasp as GraspSelection1 places them, lying on a large
+face:
+
+.. list-table::
+   :header-rows: 1
+
+   * - ID
+     - Model
+   * - ``ycb_005_tomato_soup_can``
+     - ``package://drake_models/ycb/005_tomato_soup_can.sdf``
+   * - ``ycb_009_gelatin_box``
+     - ``package://drake_models/ycb/009_gelatin_box.sdf``
+   * - ``ycb_010_potted_meat_can``
+     - ``package://drake_models/ycb/010_potted_meat_can.sdf``
+
+Drake also ships the cracker box, sugar box and mustard bottle, which are too
+wide for the gripper in that pose. A user's own script may still load any of
+them with a ``package://`` URL.
+
+Each of these models has one body, and its collision geometry is one Box or
+Cylinder plus 8 small Spheres at the corners of its bounding box, so an
+``ObjectGeometry`` lists 9 shapes. The first use of a ``drake_models`` URL
+downloads the models archive that Drake pins (cached in
+``~/.cache/drake/package_map``), which needs network access to github.com.
 
 Joint limits are copied by hand from the arm models, since reading them from
 the plant would mean building it. Workspace boxes are in the world frame, whose
@@ -173,7 +237,7 @@ Scenario and re-declare the start and goal fields with your arm's preset:
 
 A test in Brom (``tests/productions/scenario_contract_test.py``) checks every
 production with a Scenario: each field must be a constructor keyword argument
-with the same default.
+with the same default (or the default ``None`` for a required argument).
 
 Reading the schema
 ------------------
@@ -181,14 +245,16 @@ Reading the schema
 ``Scenario.schema()`` returns JSON with one entry per field (``name``,
 ``kind``, ``default``, ``units``, ``description`` and the bounds) and the
 ``mutually_exclusive`` groups. A pose entry also lists
-``"orientation_keys": ["rpy", "wxyz"]``.
+``"orientation_keys": ["rpy", "wxyz"]``. A choice entry has
+``"kind": "choice"`` and lists its sorted IDs in ``"choices"``, but not the
+values they stand for.
 
 Building a production from scenario values
 ------------------------------------------
 
 ``Scenario.constructor_kwargs(values)`` validates the values and converts them
-to constructor arguments: vectors become numpy arrays and poses become Drake
-``RigidTransform`` objects.
+to constructor arguments: vectors become numpy arrays, poses become Drake
+``RigidTransform`` objects and choice IDs become the values they stand for.
 
 .. code-block:: python
 
@@ -196,3 +262,20 @@ to constructor arguments: vectors become numpy arrays and poses become Drake
         {"shelf_pose": {"xyz": [0.4, 1.2, 0.6], "rpy": [0.0, 0.0, 0.52]}}
     )
     production = ShelfPlanning1(**kwargs)
+
+For GraspSelection1, merge the converted values over the script's own
+arguments:
+
+.. code-block:: python
+
+    kwargs = GraspSelection1.Scenario.constructor_kwargs(
+        {"path_to_object": "ycb_005_tomato_soup_can"}
+    )
+    production = GraspSelection1(
+        **{
+            "path_to_object": "my_object.urdf",
+            "gripper_choice": GripperType.Robotiq_2f_85,
+            "grasp_gripper_command": np.array([0.7]),
+            **kwargs,
+        }
+    )

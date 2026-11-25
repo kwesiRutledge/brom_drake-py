@@ -27,7 +27,6 @@ from typing import List, Tuple
 from brom_drake.systems.named_vector_selection_system import (
     define_named_vector_selection_system,
 )
-from brom_drake.systems.rpy_integrator import RPYIntegrator
 from brom_drake.utils.model_instances import get_all_bodies_in
 
 # Internal Imports
@@ -694,23 +693,21 @@ class Puppetmaker:
                 state_mux.get_input_port(signature.n_models + ii),
             )
 
-        # Perform integration on the rotational states so that the controller can use them as part of its state feedback
-        # (Note: the controller needs the integrated rotation states to be able to compute the error between the current and desired pose of the puppet.)
+        # Reorder the puppet's state for the controller: xyz, then the yaw-pitch-roll
+        # joint angles, then all velocities.
+        #
+        # The rotational joints' positions are used as-is. Drake's revolute joint
+        # positions do not wrap at +/-pi, so they need no integration. (Integrating the
+        # joint velocities from zero instead would miss the joints' initial angles, and
+        # the puppet would settle at the initial angles plus the target angles.)
 
-        # 1. Create a system that will make the final integrated state signal for the controller by integrating the rotational states and muxing them together with the translational states.
+        # 1. Create a system that makes the controller's state signal.
         integrated_state_mux = builder.AddNamedSystem(
             name=f'[{self.config.name}] Integrated State Mux for puppeteering "{signature.name}"',
             system=Multiplexer(input_sizes=[3, 3, 6]),
-        )  # First 3 inputs are xyz; won't change. Second 3 inputs are the yaw-pitch-roll angles; these will be integrated. Last 6 inputs are the velocities; won't change.
+        )  # First 3 inputs are xyz. Second 3 inputs are the yaw-pitch-roll joint angles. Last 6 inputs are the velocities.
 
-        # 2. Create an integrator to integrate the rotational states
-        rotational_state_integrator: RPYIntegrator = builder.AddNamedSystem(
-            name=f'[{self.config.name}] Rotational State Integrator for puppeteering "{signature.name}"',
-            system=RPYIntegrator(),
-        )
-
-        # 2a. Connect the rotational states + velocities from the state_mux to the integrator
-        # 2a-i. Select the RPY angles
+        # 2a. Select the RPY joint angles and connect them to the controller's state signal
         all_state_names = [
             "x",
             "y",
@@ -740,31 +737,6 @@ class Puppetmaker:
 
         builder.Connect(
             rpy_selector.get_output_port(0),
-            rotational_state_integrator.get_rpy_input_port(),
-        )
-
-        # 2a-ii. Select the RPY velocities
-        rpy_velocity_selector = builder.AddNamedSystem(
-            name=f'[{self.config.name}] RPY Velocity Selector for puppeteering "{signature.name}"',
-            system=define_named_vector_selection_system(
-                all_element_names=all_state_names,
-                sequence_of_names_for_output=["v_yaw", "v_pitch", "v_roll"],
-            ),
-        )
-
-        builder.Connect(
-            state_mux.get_output_port(0),
-            rpy_velocity_selector.get_input_port(0),
-        )
-
-        builder.Connect(
-            rpy_velocity_selector.get_output_port(0),
-            rotational_state_integrator.get_rpy_velocity_input_port(),
-        )
-
-        # 2a-iii. Connect the integrated RPY angles to the integrated state mux
-        builder.Connect(
-            rotational_state_integrator.get_output_port(),
             integrated_state_mux.get_input_port(1),
         )
 

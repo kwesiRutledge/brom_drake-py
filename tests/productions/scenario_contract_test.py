@@ -73,6 +73,7 @@ class ScenarioContractTest(unittest.TestCase):
             "ChemLab3",
             "ShelfPlanning1",
             "CornellTech1",
+            "GraspSelection1",
         ):
             self.assertIn(expected, names)
 
@@ -104,16 +105,21 @@ class ScenarioContractTest(unittest.TestCase):
         -----------
         A field's default is the constructor's default for that argument
         (None for start, goal and scene poses, numbers for dimensions).
+        A required constructor argument (such as GraspSelection1's
+        path_to_object) may be a field only with the default None, which
+        means "keep the value in the user's script".
         """
         for production in self.productions:
             for field in production.Scenario.schema()["fields"]:
                 with self.subTest(production=production.__name__, field=field["name"]):
                     expected = constructor_default(production, field["name"])
-                    self.assertIsNot(
-                        expected,
-                        inspect.Parameter.empty,
-                        f"{field['name']!r} has no default in the constructor",
-                    )
+                    if expected is inspect.Parameter.empty:
+                        self.assertIsNone(
+                            field["default"],
+                            f"{field['name']!r} is a required constructor "
+                            "argument, so its Scenario default must be None",
+                        )
+                        continue
                     self.assertEqual(field["default"], expected)
 
 

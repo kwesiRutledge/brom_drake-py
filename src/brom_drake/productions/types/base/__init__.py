@@ -1,6 +1,7 @@
 from .base import BaseProduction
 from .configuration import Configuration
 from .scenario import (
+    ChoiceParam,
     FloatParam,
     PoseParam,
     Scenario,
@@ -11,6 +12,7 @@ from .scenario import (
 
 __all__ = [
     "BaseProduction",
+    "ChoiceParam",
     "Configuration",
     "FloatParam",
     "PoseParam",
