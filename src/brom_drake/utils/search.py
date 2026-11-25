@@ -13,10 +13,16 @@ def find_all_systems_with_output_port(
     Description
     -----------
     This method looks through the builder and finds all systems that have
-    an output port with the given name.
-    :param builder:
-    :param target_port_name:
-    :return:
+    an output port with the given name. Systems without a matching port
+    are skipped.
+
+    :param builder: Builder whose registered systems will be searched.
+    :type builder: DiagramBuilder
+    :param target_port_name: Name of the output port to look for.
+    :type target_port_name: str
+    :return: Every system in the builder that has an output port named
+        ``target_port_name``. The list is empty if there are none.
+    :rtype: List[Performer]
     """
     # Setup
     potential_performers = []
@@ -40,10 +46,16 @@ def find_all_systems_with_input_port(
     Description
     -----------
     This method looks through the builder and finds all systems that have
-    an input port with the given name.
-    :param builder:
-    :param target_port_name:
-    :return:
+    an input port with the given name. Systems without a matching port
+    are skipped.
+
+    :param builder: Builder whose registered systems will be searched.
+    :type builder: DiagramBuilder
+    :param target_port_name: Name of the input port to look for.
+    :type target_port_name: str
+    :return: Every system in the builder that has an input port named
+        ``target_port_name``. The list is empty if there are none.
+    :rtype: List[Performer]
     """
     # Setup
     potential_performers = []
@@ -67,10 +79,15 @@ def find_all_systems_with_name(
     Description
     -----------
     This method looks through the builder and finds all systems that have
-    an output port with the given name.
-    :param builder:
+    a name (as returned by ``get_name()``) equal to the given name.
+
+    :param builder: Builder whose registered systems will be searched.
+    :type builder: DiagramBuilder
     :param target_system_name: Target name of the system that we would like to find.
-    :return:
+    :type target_system_name: str
+    :return: Every system in the builder whose name matches exactly. The list
+        is empty if there are none.
+    :rtype: List[Performer]
     """
     # Setup
     potential_performers = []
