@@ -5,6 +5,7 @@ from brom_drake.utils.angles import (
 from dataclasses import dataclass
 import numpy as np
 from pydrake.all import (
+    AbstractValue,
     Adder,
     ConstantVectorSource,
     Demultiplexer,
@@ -14,9 +15,9 @@ from pydrake.all import (
     Multiplexer,
     Parser,
     PassThrough,
-    PidController,
     PrismaticJoint,
     RevoluteJoint,
+    RigidTransform,
     Joint,
     JointActuator,
 )
@@ -38,10 +39,7 @@ from .puppet_signature import (
 )
 from brom_drake.file_manipulation.urdf import SimpleShapeURDFDefinition
 from brom_drake.file_manipulation.urdf.shapes import SphereDefinition
-from brom_drake.systems.conversion.rigid_transform_to_vector_system import (
-    RigidTransformToVectorSystem,
-    RigidTransformToVectorSystemConfiguration,
-)
+from .pose_controller import DEFAULT_SINGULARITY_DAMPING, PuppetPoseController
 
 
 class Puppetmaker:
@@ -473,12 +471,18 @@ class Puppetmaker:
         builder: DiagramBuilder,
         Kp: np.ndarray = None,
         Kd: np.ndarray = None,
-    ) -> Tuple[RigidTransformToVectorSystem, PassThrough | None]:
+        singularity_damping: float = DEFAULT_SINGULARITY_DAMPING,
+    ) -> Tuple[PassThrough, PassThrough | None]:
         """
         *Description*
 
-        This method will create a simple PID controller to actuate the puppet
-        to a desired pose.
+        This method will create a controller that actuates the puppet
+        to a desired pose (see :py:class:`PuppetPoseController`).
+
+        The controller compares the desired and current orientations as rotations,
+        not as roll-pitch-yaw angles, so targets at roll or yaw = +/-pi and
+        pitch = +/-pi/2 (for example, a gripper pointing straight down or to the
+        side) are tracked like any other.
 
         *Parameters*
 
@@ -489,17 +493,23 @@ class Puppetmaker:
             The diagram builder to add the controller to.
 
         Kp : np.ndarray, optional
-            The proportional gain for the PID controller. If not provided, a default value will be used.
+            The proportional gains, ordered as [x, y, z, yaw, pitch, roll].
+            If not provided, a default value will be used.
 
         Kd : np.ndarray, optional
-            The derivative gain for the PID controller. If not provided, a default value will be used.
+            The derivative gains, in the same order as Kp.
+            If not provided, the square root of Kp will be used.
+
+        singularity_damping : float, optional
+            The damping (in rad) used to invert the rotation joints' Jacobian
+            near gimbal lock. See :py:class:`PuppetPoseController`.
 
         *Returns*
 
-        pose_to_vector_system : RigidTransformToVectorSystem
-            The system that converts the desired pose to a vector format.
-            This system is what provides the target to the PID controller.
-            You can think of this as the "reference" signal for the controller.
+        desired_pose_input : PassThrough
+            The system whose (abstract) input port takes the desired pose of the
+            puppet, a ``RigidTransform``. You can think of this as the "reference"
+            signal for the controller.
 
         passthrough_system : PassThrough|None
             A passthrough system that can be used to provide inputs to the
@@ -534,13 +544,14 @@ class Puppetmaker:
             signature, builder
         )
 
-        # Create the PID Controller
-        controller: PidController = builder.AddSystem(
-            PidController(
-                kp=Kp,
-                ki=np.zeros(Kp.shape),
-                kd=Kd,
-            )
+        # Create the pose controller
+        controller: PuppetPoseController = builder.AddNamedSystem(
+            name=f'[{self.config.name}] Pose Controller for puppeteering "{signature.name}"',
+            system=PuppetPoseController(
+                Kp=Kp,
+                Kd=Kd,
+                singularity_damping=singularity_damping,
+            ),
         )
 
         # The signal that we send to the joints will be the sum of:
@@ -549,34 +560,30 @@ class Puppetmaker:
             self.add_gravity_compensation_sum_system_for(signature, builder)
         )
 
-        # - The PID controller output.
+        # - The controller output.
         builder.Connect(
-            controller.get_output_port(0),
+            controller.get_output_port(),
             adder_with_gravity_compensation.get_input_port(1),
         )
 
-        # Connect the adder (which combines the PID Controller and the feedforward term)
+        # Connect the adder (which combines the controller and the feedforward term)
         # to the actuators
         builder.Connect(
             adder_with_gravity_compensation.get_output_port(0),
             actuator_demux.get_input_port(0),
         )
 
-        # Reference signal is a state which contains two pieces: a pose and a twist
-        target_state_mux, desired_pose_input = self.create_puppet_reference_signal(
+        # The reference signal is the desired pose (the desired velocity is zero)
+        desired_pose_input = self.create_puppet_reference_input(
             signature=signature,
             builder=builder,
         )
-
-        # Connect the final two inputs to the PID controller:
-        # - The reference signal (which includes the desired pose and twist)
-        #   (Note: the pose and twist are converted to vector form by the `create_puppet_reference_signal` method.)
         builder.Connect(
-            target_state_mux.get_output_port(0),
-            controller.get_input_port_desired_state(),
+            desired_pose_input.get_output_port(),
+            controller.get_input_port_desired_pose(),
         )
 
-        # - The estimated state signal (which includes the current pose and twist of the puppet)
+        # - The estimated state signal (the puppet's joint positions and velocities)
         self.connect_plant_to_controller(builder, controller, signature)
 
         return desired_pose_input, pass_through_system
@@ -622,16 +629,16 @@ class Puppetmaker:
     def connect_plant_to_controller(
         self,
         builder: DiagramBuilder,
-        controller: PidController,
+        controller: PuppetPoseController,
         signature: PuppetSignature,
     ) -> None:
         """
         **Description**
 
         Connect the plant to the controller.
-        This is non-trivial because we:
-        1. use a multiplexer to combine the state of each of the models in the puppet into one signal, and
-        2. we use a special integrator to produce the rotational states.
+        This is non-trivial because we use a multiplexer to combine the state of
+        each of the models in the puppet into one signal, ordered as
+        [x, y, z, yaw, pitch, roll] positions and then velocities.
 
 
         """
@@ -696,10 +703,9 @@ class Puppetmaker:
         # Reorder the puppet's state for the controller: xyz, then the yaw-pitch-roll
         # joint angles, then all velocities.
         #
-        # The rotational joints' positions are used as-is. Drake's revolute joint
-        # positions do not wrap at +/-pi, so they need no integration. (Integrating the
-        # joint velocities from zero instead would miss the joints' initial angles, and
-        # the puppet would settle at the initial angles plus the target angles.)
+        # The rotational joints' positions are used as-is (Drake's revolute joint
+        # positions do not wrap at +/-pi). The controller only uses them to compute the
+        # puppet's current orientation.
 
         # 1. Create a system that makes the controller's state signal.
         integrated_state_mux = builder.AddNamedSystem(
@@ -972,58 +978,21 @@ class Puppetmaker:
 
         return translation_ghost_models, revolute_ghost_models
 
-    def create_puppet_reference_signal(
+    def create_puppet_reference_input(
         self,
         signature: PuppetSignature,
         builder: DiagramBuilder,
-    ) -> Tuple[Multiplexer, RigidTransformToVectorSystem]:
-        # Create the system where the desired pose should be connected
-        p2v_config = RigidTransformToVectorSystemConfiguration(
-            name=f'[{self.config.name}]Pose to vector for puppeteering "{signature.name}"',
-            output_format="vector_xyz_euler(rpy)",
-        )
-        desired_pose_to_vector = builder.AddSystem(
-            RigidTransformToVectorSystem(p2v_config)
-        )
+    ) -> PassThrough:
+        """
+        *Description*
 
-        # Reference signal is a state which contains two pieces: a pose and a twist
-        # - Target Twist is zero
-        zero_twist_source = builder.AddSystem(ConstantVectorSource(np.zeros((6,))))
-
-        target_state_mux = builder.AddNamedSystem(
-            name=f'[{self.config.name}] Target State Mux for puppeteering "{signature.name}"',
-            system=Multiplexer(input_sizes=[6, 6]),
+        Creates the system where the desired pose of the puppet (a ``RigidTransform``)
+        should be connected.
+        """
+        return builder.AddNamedSystem(
+            name=f'[{self.config.name}] Desired pose for puppeteering "{signature.name}"',
+            system=PassThrough(AbstractValue.Make(RigidTransform())),
         )
-
-        # Connect target state mux inputs
-        # - Pose from pose_to_vector (transformed so that the order of its
-        #   output matches the expected input of the controller; controller
-        #   expects [x, y, z, yaw, pitch, roll])
-
-        rpy_ordering_selection_system = define_named_vector_selection_system(
-            all_element_names=["x", "y", "z", "roll", "pitch", "yaw"],
-            sequence_of_names_for_output=["x", "y", "z", "yaw", "pitch", "roll"],
-        )
-        builder.AddNamedSystem(
-            name=f'[{self.config.name}] RPY Ordering Selection for puppeteering "{signature.name}"',
-            system=rpy_ordering_selection_system,
-        )
-
-        builder.Connect(
-            desired_pose_to_vector.get_output_port(0),
-            rpy_ordering_selection_system.get_input_port(0),
-        )
-        builder.Connect(
-            rpy_ordering_selection_system.get_output_port(0),
-            target_state_mux.get_input_port(0),
-        )
-
-        # - Twist from zero_twist_source
-        builder.Connect(
-            zero_twist_source.get_output_port(0),
-            target_state_mux.get_input_port(1),
-        )
-        return target_state_mux, desired_pose_to_vector
 
     def add_massless_sphere_to_plant_with_name(
         self, name: str, color: np.ndarray = None
