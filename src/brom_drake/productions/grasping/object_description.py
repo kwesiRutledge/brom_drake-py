@@ -10,6 +10,8 @@ from pydrake.all import (
     Shape,
 )
 
+from brom_drake.utils.model_files import resolve_model_path
+
 
 @dataclass
 class ObjectCollisionShape:
@@ -61,7 +63,7 @@ class ObjectGeometry:
         *Parameters*
 
         path_to_object: str
-            The file path to the URDF/SDF of the object.
+            The file path to the URDF/SDF of the object, or a Drake ``package://`` URL.
             The model must contain one body, which defines the object frame.
 
         *Returns*
@@ -74,7 +76,9 @@ class ObjectGeometry:
         plant, scene_graph = AddMultibodyPlantSceneGraph(builder, time_step=0.0)
 
         # Load the model
-        model_indices = Parser(plant=plant).AddModels(path_to_object)
+        model_indices = Parser(plant=plant).AddModels(
+            resolve_model_path(path_to_object)
+        )
         if len(model_indices) != 1:
             raise ValueError(
                 f"Expected {path_to_object} to contain one model; received {len(model_indices)}."
@@ -115,7 +119,10 @@ class ObjectDescription:
     *Attributes*
 
     path_to_object: str
-        The file path to the URDF/SDF of the object.
+        The file path to the URDF/SDF of the object. This tells the algorithm which
+        object it is grasping on purpose: GraspSelection1 is the "easiest case" grasp,
+        where the selector may know the object's identity and model.
+        When the production was given a ``package://`` URL, this is the resolved file.
 
     geometry: ObjectGeometry
         The object's geometry.
@@ -134,14 +141,16 @@ class ObjectDescription:
         *Parameters*
 
         path_to_object: str
-            The file path to the URDF/SDF of the object.
+            The file path to the URDF/SDF of the object, or a Drake ``package://`` URL
+            (stored resolved to a file).
 
         *Returns*
 
         description: ObjectDescription
             The description of the object.
         """
+        resolved_path = resolve_model_path(path_to_object)
         return cls(
-            path_to_object=path_to_object,
-            geometry=ObjectGeometry.from_model_file(path_to_object),
+            path_to_object=resolved_path,
+            geometry=ObjectGeometry.from_model_file(resolved_path),
         )

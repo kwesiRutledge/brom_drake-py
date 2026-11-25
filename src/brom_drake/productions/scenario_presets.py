@@ -11,6 +11,7 @@ import math
 from typing import Tuple
 
 from brom_drake.productions.types.base.scenario import (
+    ChoiceParam,
     FloatParam,
     PoseParam,
     VectorParam,
@@ -96,3 +97,33 @@ SHELF_POSE = placed_object_pose(xyz_min=(-1.0, 0.5, 0.3), xyz_max=(1.0, 1.5, 1.0
 TABLE_LENGTH = FloatParam(0.3, 1.5, "m")
 TABLE_WIDTH = FloatParam(1.0, 3.0, "m")
 TABLE_HEIGHT = FloatParam(0.05, 0.5, "m")
+
+# ---------------------------------------------------------------------------
+# Objects to grasp (GraspSelection1)
+# ---------------------------------------------------------------------------
+
+# Choice ID -> model URL, for YCB objects that Drake's drake_models package
+# ships. Kept as plain data so other runners (for example a C++ port, whose
+# PackageMap resolves the same URLs) can read the same table.
+#
+# Resolving a drake_models URL downloads the models archive that Drake pins
+# the first time (cached in ~/.cache/drake/package_map). Each of these models
+# has one body whose collision geometry is one Box or Cylinder plus 8 small
+# Spheres at its corners.
+#
+# Only objects that GraspSelection1's Robotiq 2F-85 (85 mm opening) can grasp
+# are listed. GraspSelection1 places the object in its model's pose, which for
+# these models is lying on a large face, so the gripper must close across one
+# of the object's two horizontal dimensions. Drake also ships these, which have
+# no horizontal dimension under 85 mm in that pose:
+#   003_cracker_box (158 x 207 mm), 004_sugar_box (87 x 170 mm),
+#   006_mustard_bottle (90 x 160 mm).
+# tests/productions/grasping/grasp_selection1_ycb_test.py grasps each listed
+# object.
+DRAKE_YCB_OBJECT_URLS = {
+    "ycb_005_tomato_soup_can": "package://drake_models/ycb/005_tomato_soup_can.sdf",
+    "ycb_009_gelatin_box": "package://drake_models/ycb/009_gelatin_box.sdf",
+    "ycb_010_potted_meat_can": "package://drake_models/ycb/010_potted_meat_can.sdf",
+}
+
+DRAKE_YCB_OBJECTS = ChoiceParam(DRAKE_YCB_OBJECT_URLS)

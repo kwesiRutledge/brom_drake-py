@@ -277,7 +277,7 @@ class TestGraspSelection1Production(unittest.TestCase):
         # Setup
         X_ObjectGrasp = RigidTransform(
             p=np.array([-0.08, 0.05, 0.15]),
-            rpy=RollPitchYaw(0.1, (14.0 / 20.0) * np.pi, 0.1),
+            rpy=RollPitchYaw(0.1, (12.0 / 20.0) * np.pi, 0.1),
         )
         X_ObjectPreGrasp = X_ObjectGrasp.multiply(
             RigidTransform(p=np.array([0.0, 0.0, -0.2]))
@@ -309,6 +309,59 @@ class TestGraspSelection1Production(unittest.TestCase):
             2
         ]
         self.assertAlmostEqual(z_later, z_at_drop, delta=5e-3)
+
+    def test_wrist_reaches_commanded_orientation1(self):
+        """
+        Description
+        -----------
+        This test verifies that the gripper's wrist reaches the orientation
+        that the grasp selection algorithm asks for. (The puppet's controller
+        once integrated the wrist's angular velocity from zero instead of reading
+        its joint angles, so the wrist turned twice as far as it was asked to.)
+        """
+        # Setup: hold the gripper still, well above the object
+        X_ObjectGripper = RigidTransform(
+            p=np.array([0.0, 0.0, 0.5]),
+            rpy=RollPitchYaw(0.3, -0.4, 0.7),
+        )
+        config = GraspSelection1Configuration()
+        config.script = GraspSelection1Script(
+            settling_time_on_floor=1.0,
+            gripper_approach_time=0.5,
+            grasp_closing_time=0.5,
+            post_grasp_settling_time=0.1,
+            drop_time=0.5,
+        )
+        production = self.create_production(config=config)
+        diagram, diagram_context = production.easy_cast_and_build(
+            lambda object_description: [X_ObjectGripper, X_ObjectGripper]
+        )
+        plant = production.plant
+        plant_context = plant.GetMyContextFromRoot(diagram_context)
+
+        # Simulate until just before the floor drops
+        simulator = Simulator(diagram, diagram_context)
+        simulator.Initialize()
+        simulator.AdvanceTo(
+            config.script.start_time_of_phase(GraspSelection1Phase.kFloorDrop)
+        )
+
+        # Verify
+        X_WorldGripper = plant.EvalBodyPoseInWorld(
+            plant_context, plant.GetBodyByName("robotiq_arg2f_base_link")
+        )
+        X_WorldObject = plant.EvalBodyPoseInWorld(
+            plant_context,
+            plant.get_body(plant.GetBodyIndices(production.manipuland_index)[0]),
+        )
+        X_ObjectGripper_actual = X_WorldObject.inverse().multiply(X_WorldGripper)
+        angle_error = (
+            X_ObjectGripper_actual.rotation()
+            .multiply(X_ObjectGripper.rotation().inverse())
+            .ToAngleAxis()
+            .angle()
+        )
+        self.assertLess(angle_error, 0.05)
 
     def test_suggested_roles1(self):
         """

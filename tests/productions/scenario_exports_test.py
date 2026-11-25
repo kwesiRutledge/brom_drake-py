@@ -15,6 +15,7 @@ class ScenarioExportsTest(unittest.TestCase):
         "FloatParam",
         "VectorParam",
         "PoseParam",
+        "ChoiceParam",
         "param",
     ]
 
@@ -44,6 +45,34 @@ class ScenarioExportsTest(unittest.TestCase):
 
         with self.assertRaises(ScenarioError):
             ChemLab1.Scenario.validate({"not_a_field": 1})
+
+    def test_grasp_selection1_reachable_from_all1(self):
+        from brom_drake.all import (
+            GraspSelection1,
+            GraspSelection1Configuration,
+            GraspSelection1Phase,
+            GraspSelection1Script,
+            ObjectDescription,
+            ObjectGeometry,
+        )
+        from brom_drake.productions.grasping import (
+            config,
+            grasp_selection,
+            object_description,
+            phases,
+            script,
+        )
+
+        self.assertIs(GraspSelection1, grasp_selection.GraspSelection1)
+        self.assertIs(GraspSelection1Configuration, config.Configuration)
+        self.assertIs(GraspSelection1Phase, phases.GraspSelection1Phase)
+        self.assertIs(GraspSelection1Script, script.Script)
+        self.assertIs(ObjectDescription, object_description.ObjectDescription)
+        self.assertIs(ObjectGeometry, object_description.ObjectGeometry)
+
+        namespace = {}
+        exec("from brom_drake.productions.all import *", namespace)
+        self.assertIs(namespace["GraspSelection1"], GraspSelection1)
 
 
 if __name__ == "__main__":

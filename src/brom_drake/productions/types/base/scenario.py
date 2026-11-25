@@ -16,14 +16,18 @@ Wire format (plain JSON):
 - ``pose``: ``{"xyz": [x, y, z], "rpy": [roll, pitch, yaw]}`` in metres and radians,
   or ``{"xyz": [x, y, z], "wxyz": [w, x, y, z]}`` with a unit quaternion. Validated
   poses are always returned in the ``rpy`` form.
+- ``choice``: a string ID from the production's declared choices, matching
+  :data:`CHOICE_ID_PATTERN`. The value an ID stands for (for example a model
+  URL) lives in the declaration, never on the wire.
 """
 
 import copy
 import dataclasses
 import math
+import re
 from dataclasses import dataclass
 from numbers import Real
-from typing import Any, ClassVar, Dict, List, Optional, Sequence, Tuple, Union
+from typing import Any, ClassVar, Dict, List, Mapping, Optional, Sequence, Tuple, Union
 
 import numpy as np
 
@@ -40,6 +44,20 @@ SCENARIO_DOCS_URL = (
 POSE_CONVENTION_DOCS_URL = SCENARIO_DOCS_URL + "#pose-orientation-convention"
 
 ANGLE_NAMES = ("roll", "pitch", "yaw")
+
+# The only strings a scenario value may be: IDs of a ChoiceParam's choices.
+# Lowercase letters, digits and underscores, starting with a letter or digit,
+# at most 64 characters. Saphira and the Wrench API check the same pattern, so
+# change it in all three places together.
+CHOICE_ID_PATTERN = r"^[a-z0-9][a-z0-9_]{0,63}$"
+_CHOICE_ID_RE = re.compile(CHOICE_ID_PATTERN)
+
+
+def is_choice_id(value: Any) -> bool:
+    """Whether ``value`` is a string that matches :data:`CHOICE_ID_PATTERN`."""
+    # fullmatch, so a trailing newline is not accepted the way "$" would allow.
+    return isinstance(value, str) and _CHOICE_ID_RE.fullmatch(value) is not None
+
 
 # Slack for bounds written as rounded pi (e.g. 3.14159265) or np.pi arithmetic.
 _ANGLE_TOLERANCE = 1e-9
@@ -527,7 +545,96 @@ class PoseParam:
         return rpy
 
 
-ParamSpec = Union[FloatParam, VectorParam, PoseParam]
+class ChoiceParam:
+    """
+    *Description*
+
+    One of a fixed set of named choices, for example which object to grasp.
+
+    On the wire the value is the choice's ID, a string matching
+    :data:`CHOICE_ID_PATTERN` (for example ``"ycb_010_potted_meat_can"``).
+    :meth:`to_python` maps the ID to the value it stands for (for example
+    ``"package://drake_models/ycb/010_potted_meat_can.sdf"``), so only IDs
+    the production declares can reach its constructor.
+
+    *Parameters*
+
+    choices: Mapping[str, Any]
+        Choice ID to the constructor argument it stands for. It must not be
+        empty, and every ID must match :data:`CHOICE_ID_PATTERN`.
+
+    units: str, optional
+        Units of the values, if any.
+    """
+
+    kind: ClassVar[str] = "choice"
+
+    def __init__(self, choices: Mapping[str, Any], units: str = ""):
+        if not isinstance(choices, Mapping):
+            raise TypeError(
+                f"ChoiceParam choices must be a mapping of ID to value, got {choices!r}"
+            )
+        if len(choices) == 0:
+            raise ValueError("ChoiceParam needs at least one choice")
+        bad = [repr(k) for k in choices if not is_choice_id(k)]
+        if bad:
+            raise ValueError(
+                "ChoiceParam IDs must match " + CHOICE_ID_PATTERN + " (lowercase "
+                "letters, digits and underscores, at most 64 characters); "
+                + ", ".join(bad)
+                + (" do not" if len(bad) > 1 else " does not")
+            )
+        # A private copy, so the declaration cannot change after it is checked.
+        self._choices: Dict[str, Any] = dict(choices)
+        self.units = units
+
+    @property
+    def choices(self) -> Dict[str, Any]:
+        """A copy of the choice ID to value mapping."""
+        return dict(self._choices)
+
+    def ids(self) -> List[str]:
+        """The choice IDs, sorted."""
+        return sorted(self._choices)
+
+    def __repr__(self) -> str:
+        return f"ChoiceParam({self._choices!r}, units={self.units!r})"
+
+    def __eq__(self, other: Any) -> bool:
+        return (
+            isinstance(other, ChoiceParam)
+            and self._choices == other._choices
+            and self.units == other.units
+        )
+
+    def __hash__(self) -> int:
+        return hash((tuple(sorted(self._choices)), self.units))
+
+    def to_python(self, value: str) -> Any:
+        """The constructor argument for a validated ID: the value it stands for."""
+        return self._choices[value]
+
+    def bounds(self) -> Dict[str, Any]:
+        return {"choices": self.ids()}
+
+    def check(self, value: Any, label: str, problems: List[str]) -> Optional[str]:
+        if not isinstance(value, str):
+            problems.append(
+                f"{label}: expected one of the choice IDs {self.ids()}, got "
+                f"{type(value).__name__}"
+            )
+            return None
+        if value not in self._choices:
+            # Shorten the echoed value; it may be arbitrary text from a caller.
+            shown = value if len(value) <= 80 else value[:77] + "..."
+            problems.append(
+                f"{label}: {shown!r} is not one of the choice IDs {self.ids()}"
+            )
+            return None
+        return value
+
+
+ParamSpec = Union[FloatParam, VectorParam, PoseParam, ChoiceParam]
 
 
 def param(spec: ParamSpec, default: Any = None, description: str = "") -> Any:
@@ -542,8 +649,8 @@ def param(spec: ParamSpec, default: Any = None, description: str = "") -> Any:
 
     *Parameters*
 
-    spec: FloatParam | VectorParam | PoseParam
-        The parameter's type and allowed range.
+    spec: FloatParam | VectorParam | PoseParam | ChoiceParam
+        The parameter's type and allowed range (or, for a choice, its IDs).
 
     default: Any, optional
         The value used when a case does not override this field, in the wire
@@ -553,9 +660,10 @@ def param(spec: ParamSpec, default: Any = None, description: str = "") -> Any:
     description: str, optional
         A short human-readable description, included in :meth:`Scenario.schema`.
     """
-    if not isinstance(spec, (FloatParam, VectorParam, PoseParam)):
+    if not isinstance(spec, (FloatParam, VectorParam, PoseParam, ChoiceParam)):
         raise TypeError(
-            f"param() expects a FloatParam, VectorParam or PoseParam, got {spec!r}"
+            "param() expects a FloatParam, VectorParam, PoseParam or ChoiceParam, "
+            f"got {spec!r}"
         )
     metadata = {PARAM_METADATA_KEY: spec, "description": description}
     if isinstance(default, (dict, list, np.ndarray)):
@@ -643,10 +751,11 @@ class Scenario:
 
         schema: dict
             ``{"fields": [...], "mutually_exclusive": [[...], ...]}``, with one
-            entry per field: ``name``, ``kind`` (``"float"``, ``"vector"`` or
-            ``"pose"``), ``default``, ``units``, ``description`` and the
-            kind's bounds (``min``/``max``, plus ``length`` for a vector;
-            ``xyz_min``/``xyz_max``/``rpy_min``/``rpy_max`` for a pose).
+            entry per field: ``name``, ``kind`` (``"float"``, ``"vector"``,
+            ``"pose"`` or ``"choice"``), ``default``, ``units``,
+            ``description`` and the kind's bounds (``min``/``max``, plus
+            ``length`` for a vector; ``xyz_min``/``xyz_max``/``rpy_min``/
+            ``rpy_max`` for a pose; ``choices``, the sorted IDs, for a choice).
         """
         entries = []
         for f, spec in cls.param_fields():
@@ -682,7 +791,7 @@ class Scenario:
         overrides: dict
             Only the keys that were given, normalized to plain JSON (floats as
             ``float``, vectors as lists of floats, poses with both ``xyz`` and
-            ``rpy``).
+            ``rpy``, choices as their ID).
 
         *Raises*
 
@@ -734,8 +843,9 @@ class Scenario:
         *Description*
 
         Validate ``values`` and convert them to the production constructor's
-        keyword arguments: floats stay floats, vectors become numpy arrays and
-        poses become ``RigidTransform`` objects. ``None`` stays ``None``.
+        keyword arguments: floats stay floats, vectors become numpy arrays,
+        poses become ``RigidTransform`` objects and choice IDs become the
+        value they stand for. ``None`` stays ``None``.
 
         Use it to build a production from scenario values in Python::
 
