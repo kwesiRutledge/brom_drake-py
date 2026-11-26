@@ -32,6 +32,7 @@ from pydrake.all import (
     OutputPort,
     RigidTransform,
     RollPitchYaw,
+    RotationMatrix,
 )
 
 # Order of the puppet's joints in the controller's state, gain and output vectors.
@@ -62,7 +63,9 @@ def yaw_pitch_roll_jacobian(yaw: float, pitch: float) -> np.ndarray:
     )
 
 
-def rotation_error_vector(R_desired, R_current) -> np.ndarray:
+def rotation_error_vector(
+    R_desired: RotationMatrix, R_current: RotationMatrix
+) -> np.ndarray:
     """
     *Description*
 
@@ -154,7 +157,7 @@ class PuppetPoseController(LeafSystem):
         return self._output_port
 
     def orientation_error_in_joint_angles(
-        self, R_desired, yaw: float, pitch: float, roll: float
+        self, R_desired: RotationMatrix, yaw: float, pitch: float, roll: float
     ) -> np.ndarray:
         """
         *Description*
@@ -163,6 +166,23 @@ class PuppetPoseController(LeafSystem):
         ``J^T (J J^T + damping^2 I)^-1 e``, where ``e`` is
         :func:`rotation_error_vector` and ``J`` is
         :func:`yaw_pitch_roll_jacobian`.
+
+        *Parameters*
+
+        R_desired: RotationMatrix
+            Desired puppet orientation in the frame to which its joints are
+            anchored.
+        yaw, pitch, roll: float
+            Current rotational joint positions, in radians. They define the
+            current orientation as ``RollPitchYaw(roll, pitch, yaw)`` in the
+            same frame.
+
+        *Returns*
+
+        np.ndarray
+            A three-element vector of damped joint-angle corrections in radians,
+            ordered ``[yaw, pitch, roll]``. These corrections are used by the
+            proportional controller; they are not absolute joint positions.
         """
         R_current = RollPitchYaw(roll, pitch, yaw).ToRotationMatrix()
         error = rotation_error_vector(R_desired, R_current)
