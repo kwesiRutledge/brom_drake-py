@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="“Drakeify”-My-URDF" href="drakeify_my_urdf.html"><link rel="prev" title="Features" href="index.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>DiagramWatcher - brom_drake-py 1.1.3 documentation</title>
+        <title>DiagramWatcher - brom_drake-py 1.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -162,7 +162,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">brom_drake-py 1.1.3 documentation</div></a>
+      <a href="../index.html"><div class="brand">brom_drake-py 1.2.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +183,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 1.1.3 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 1.2.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -677,18 +677,23 @@
 </section>
 <section id="where-the-watcher-saves-its-output">
 <span id="diagram-watcher-output-location"></span><h3>Where the Watcher Saves Its Output<a class="headerlink" href="#where-the-watcher-saves-its-output" title="Link to this heading">¶</a></h3>
-<p>By default, the watcher directory is <code class="code docutils literal notranslate"><span class="pre">./brom/watcher</span></code> (relative to the directory you run your script from).
-It can be changed with the <code class="code docutils literal notranslate"><span class="pre">watcher_dir</span></code> argument. The directory contains:</p>
+<p>By default, the watcher saves its output under <code class="code docutils literal notranslate"><span class="pre">./brom/watcher</span></code> (relative to the directory you run your script from).
+If the <code class="code docutils literal notranslate"><span class="pre">BROM_DIR</span></code> environment variable is set to a non-empty value, then the default is <code class="code docutils literal notranslate"><span class="pre">$BROM_DIR/watcher</span></code> instead.
+Passing the <code class="code docutils literal notranslate"><span class="pre">watcher_dir</span></code> argument replaces this parent directory.</p>
+<p>Each DiagramWatcher creates its own new, uniquely named subdirectory inside that parent directory
+(named from the current timestamp and process ID, e.g., <code class="code docutils literal notranslate"><span class="pre">20260101-120000-123456-4242-xxxxxxxx</span></code>).
+This subdirectory is the one that contains:</p>
 <ul class="simple">
 <li><p><code class="code docutils literal notranslate"><span class="pre">plots/</span></code>: the figures of each watched port,</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">raw_data/</span></code>: the raw signal data of each watched port (saved as <code class="code docutils literal notranslate"><span class="pre">.npy</span></code> files by default), and</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">activity_summary.log</span></code>: a log of what the DiagramWatcher did.</p></li>
 </ul>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>If the watcher directory already exists when the DiagramWatcher is created, then the directory
-and <strong>all of its contents are deleted</strong> and re-created. Use a different <code class="code docutils literal notranslate"><span class="pre">watcher_dir</span></code>
-for each run if you want to keep earlier results.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The parent directory is created if it does not exist, but it is never emptied.
+Output from earlier runs, or from other watchers sharing the same parent directory, is left in place.
+The path of the current run’s directory is available from the watcher’s <code class="code docutils literal notranslate"><span class="pre">plot_dir</span></code> and
+<code class="code docutils literal notranslate"><span class="pre">raw_data_dir</span></code> properties (their parent directory is the run’s directory).</p>
 </div>
 <p>The plots and raw data are written when the DiagramWatcher object is destroyed (for example, when the script ends or
 when you delete all references to the watcher), and only if the watcher has been given the built diagram and its context.
@@ -787,7 +792,7 @@ build the diagram yourself and set the watcher’s <code class="code docutils li
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=cb7bf70b"></script>
+</div><script src="../_static/documentation_options.js?v=6efca38a"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>

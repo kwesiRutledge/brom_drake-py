@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html"><link rel="next" title="debug" href="../debug/debug.html"><link rel="prev" title="types" href="../types.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>base - brom_drake-py 1.1.3 documentation</title>
+        <title>base - brom_drake-py 1.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -162,7 +162,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">brom_drake-py 1.1.3 documentation</div></a>
+      <a href="../../../../index.html"><div class="brand">brom_drake-py 1.2.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +183,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 1.1.3 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 1.2.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -807,6 +807,44 @@ It should return a list of roles that are suggested for the production.</p>
 <dd></dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="brom_drake.productions.types.base.scenario.ChoiceParam">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brom_drake.productions.types.base.scenario.</span></span><span class="sig-name descname"><span class="pre">ChoiceParam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">choices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/brom_drake/productions/types/base/scenario.html#ChoiceParam"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.base.scenario.ChoiceParam" title="Link to this definition">¶</a></dt>
+<dd><p><em>Description</em></p>
+<p>One of a fixed set of named choices, for example which object to grasp.</p>
+<p>On the wire the value is the choice’s ID, a string matching
+<a class="reference internal" href="#brom_drake.productions.types.base.scenario.CHOICE_ID_PATTERN" title="brom_drake.productions.types.base.scenario.CHOICE_ID_PATTERN"><code class="xref py py-data docutils literal notranslate"><span class="pre">CHOICE_ID_PATTERN</span></code></a> (for example <code class="docutils literal notranslate"><span class="pre">&quot;ycb_010_potted_meat_can&quot;</span></code>).
+<a class="reference internal" href="#brom_drake.productions.types.base.scenario.ChoiceParam.to_python" title="brom_drake.productions.types.base.scenario.ChoiceParam.to_python"><code class="xref py py-meth docutils literal notranslate"><span class="pre">to_python()</span></code></a> maps the ID to the value it stands for (for example
+<code class="docutils literal notranslate"><span class="pre">&quot;package://drake_models/ycb/010_potted_meat_can.sdf&quot;</span></code>), so only IDs
+the production declares can reach its constructor.</p>
+<p><em>Parameters</em></p>
+<dl class="simple">
+<dt>choices: Mapping[str, Any]</dt><dd><p>Choice ID to the constructor argument it stands for. It must not be
+empty, and every ID must match <a class="reference internal" href="#brom_drake.productions.types.base.scenario.CHOICE_ID_PATTERN" title="brom_drake.productions.types.base.scenario.CHOICE_ID_PATTERN"><code class="xref py py-data docutils literal notranslate"><span class="pre">CHOICE_ID_PATTERN</span></code></a>.</p>
+</dd>
+<dt>units: str, optional</dt><dd><p>Units of the values, if any.</p>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="brom_drake.productions.types.base.scenario.ChoiceParam.choices">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">choices</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#brom_drake.productions.types.base.scenario.ChoiceParam.choices" title="Link to this definition">¶</a></dt>
+<dd><p>A copy of the choice ID to value mapping.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brom_drake.productions.types.base.scenario.ChoiceParam.ids">
+<span class="sig-name descname"><span class="pre">ids</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../_modules/brom_drake/productions/types/base/scenario.html#ChoiceParam.ids"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.base.scenario.ChoiceParam.ids" title="Link to this definition">¶</a></dt>
+<dd><p>The choice IDs, sorted.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brom_drake.productions.types.base.scenario.ChoiceParam.to_python">
+<span class="sig-name descname"><span class="pre">to_python</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="../../../../_modules/brom_drake/productions/types/base/scenario.html#ChoiceParam.to_python"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.base.scenario.ChoiceParam.to_python" title="Link to this definition">¶</a></dt>
+<dd><p>The constructor argument for a validated ID: the value it stands for.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="brom_drake.productions.types.base.scenario.FloatParam">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brom_drake.productions.types.base.scenario.</span></span><span class="sig-name descname"><span class="pre">FloatParam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/brom_drake/productions/types/base/scenario.html#FloatParam"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.base.scenario.FloatParam" title="Link to this definition">¶</a></dt>
 <dd><p><em>Description</em></p>
@@ -867,8 +905,9 @@ in a single call to <a class="reference internal" href="#brom_drake.productions.
 <span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">constructor_kwargs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../_modules/brom_drake/productions/types/base/scenario.html#Scenario.constructor_kwargs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.base.scenario.Scenario.constructor_kwargs" title="Link to this definition">¶</a></dt>
 <dd><p><em>Description</em></p>
 <p>Validate <code class="docutils literal notranslate"><span class="pre">values</span></code> and convert them to the production constructor’s
-keyword arguments: floats stay floats, vectors become numpy arrays and
-poses become <code class="docutils literal notranslate"><span class="pre">RigidTransform</span></code> objects. <code class="docutils literal notranslate"><span class="pre">None</span></code> stays <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+keyword arguments: floats stay floats, vectors become numpy arrays,
+poses become <code class="docutils literal notranslate"><span class="pre">RigidTransform</span></code> objects and choice IDs become the
+value they stand for. <code class="docutils literal notranslate"><span class="pre">None</span></code> stays <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
 <p>Use it to build a production from scenario values in Python:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">ChemLab1</span><span class="o">.</span><span class="n">Scenario</span><span class="o">.</span><span class="n">constructor_kwargs</span><span class="p">({</span><span class="s2">"table_height"</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">})</span>
 <span class="n">production</span> <span class="o">=</span> <span class="n">ChemLab1</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -883,7 +922,7 @@ poses become <code class="docutils literal notranslate"><span class="pre">RigidT
 
 <dl class="py method">
 <dt class="sig sig-object py" id="brom_drake.productions.types.base.scenario.Scenario.param_fields">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">param_fields</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Field</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#brom_drake.productions.types.base.scenario.FloatParam" title="brom_drake.productions.types.base.scenario.FloatParam"><span class="pre">FloatParam</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#brom_drake.productions.types.base.scenario.VectorParam" title="brom_drake.productions.types.base.scenario.VectorParam"><span class="pre">VectorParam</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#brom_drake.productions.types.base.scenario.PoseParam" title="brom_drake.productions.types.base.scenario.PoseParam"><span class="pre">PoseParam</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../_modules/brom_drake/productions/types/base/scenario.html#Scenario.param_fields"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.base.scenario.Scenario.param_fields" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">param_fields</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Field</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#brom_drake.productions.types.base.scenario.FloatParam" title="brom_drake.productions.types.base.scenario.FloatParam"><span class="pre">FloatParam</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#brom_drake.productions.types.base.scenario.VectorParam" title="brom_drake.productions.types.base.scenario.VectorParam"><span class="pre">VectorParam</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#brom_drake.productions.types.base.scenario.PoseParam" title="brom_drake.productions.types.base.scenario.PoseParam"><span class="pre">PoseParam</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#brom_drake.productions.types.base.scenario.ChoiceParam" title="brom_drake.productions.types.base.scenario.ChoiceParam"><span class="pre">ChoiceParam</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../_modules/brom_drake/productions/types/base/scenario.html#Scenario.param_fields"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.base.scenario.Scenario.param_fields" title="Link to this definition">¶</a></dt>
 <dd><p><em>Description</em></p>
 <p>Return each field with its parameter spec, after checking that the
 class is declared correctly (raises <code class="docutils literal notranslate"><span class="pre">TypeError</span></code> otherwise).</p>
@@ -897,10 +936,11 @@ class is declared correctly (raises <code class="docutils literal notranslate"><
 <p><em>Returns</em></p>
 <dl class="simple">
 <dt>schema: dict</dt><dd><p><code class="docutils literal notranslate"><span class="pre">{&quot;fields&quot;:</span> <span class="pre">[...],</span> <span class="pre">&quot;mutually_exclusive&quot;:</span> <span class="pre">[[...],</span> <span class="pre">...]}</span></code>, with one
-entry per field: <code class="docutils literal notranslate"><span class="pre">name</span></code>, <code class="docutils literal notranslate"><span class="pre">kind</span></code> (<code class="docutils literal notranslate"><span class="pre">&quot;float&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;vector&quot;</span></code> or
-<code class="docutils literal notranslate"><span class="pre">&quot;pose&quot;</span></code>), <code class="docutils literal notranslate"><span class="pre">default</span></code>, <code class="docutils literal notranslate"><span class="pre">units</span></code>, <code class="docutils literal notranslate"><span class="pre">description</span></code> and the
-kind’s bounds (<code class="docutils literal notranslate"><span class="pre">min</span></code>/<code class="docutils literal notranslate"><span class="pre">max</span></code>, plus <code class="docutils literal notranslate"><span class="pre">length</span></code> for a vector;
-<code class="docutils literal notranslate"><span class="pre">xyz_min</span></code>/<code class="docutils literal notranslate"><span class="pre">xyz_max</span></code>/<code class="docutils literal notranslate"><span class="pre">rpy_min</span></code>/<code class="docutils literal notranslate"><span class="pre">rpy_max</span></code> for a pose).</p>
+entry per field: <code class="docutils literal notranslate"><span class="pre">name</span></code>, <code class="docutils literal notranslate"><span class="pre">kind</span></code> (<code class="docutils literal notranslate"><span class="pre">&quot;float&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;vector&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;pose&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;choice&quot;</span></code>), <code class="docutils literal notranslate"><span class="pre">default</span></code>, <code class="docutils literal notranslate"><span class="pre">units</span></code>,
+<code class="docutils literal notranslate"><span class="pre">description</span></code> and the kind’s bounds (<code class="docutils literal notranslate"><span class="pre">min</span></code>/<code class="docutils literal notranslate"><span class="pre">max</span></code>, plus
+<code class="docutils literal notranslate"><span class="pre">length</span></code> for a vector; <code class="docutils literal notranslate"><span class="pre">xyz_min</span></code>/<code class="docutils literal notranslate"><span class="pre">xyz_max</span></code>/<code class="docutils literal notranslate"><span class="pre">rpy_min</span></code>/
+<code class="docutils literal notranslate"><span class="pre">rpy_max</span></code> for a pose; <code class="docutils literal notranslate"><span class="pre">choices</span></code>, the sorted IDs, for a choice).</p>
 </dd>
 </dl>
 </dd></dl>
@@ -920,7 +960,7 @@ for a field whose default is <code class="docutils literal notranslate"><span cl
 <dl class="simple">
 <dt>overrides: dict</dt><dd><p>Only the keys that were given, normalized to plain JSON (floats as
 <code class="docutils literal notranslate"><span class="pre">float</span></code>, vectors as lists of floats, poses with both <code class="docutils literal notranslate"><span class="pre">xyz</span></code> and
-<code class="docutils literal notranslate"><span class="pre">rpy</span></code>).</p>
+<code class="docutils literal notranslate"><span class="pre">rpy</span></code>, choices as their ID).</p>
 </dd>
 </dl>
 <p><em>Raises</em></p>
@@ -1019,8 +1059,14 @@ range into [-pi, pi] when it stays one interval, or say that it cannot.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="brom_drake.productions.types.base.scenario.is_choice_id">
+<span class="sig-prename descclassname"><span class="pre">brom_drake.productions.types.base.scenario.</span></span><span class="sig-name descname"><span class="pre">is_choice_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../../_modules/brom_drake/productions/types/base/scenario.html#is_choice_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.base.scenario.is_choice_id" title="Link to this definition">¶</a></dt>
+<dd><p>Whether <code class="docutils literal notranslate"><span class="pre">value</span></code> is a string that matches <a class="reference internal" href="#brom_drake.productions.types.base.scenario.CHOICE_ID_PATTERN" title="brom_drake.productions.types.base.scenario.CHOICE_ID_PATTERN"><code class="xref py py-data docutils literal notranslate"><span class="pre">CHOICE_ID_PATTERN</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="brom_drake.productions.types.base.scenario.param">
-<span class="sig-prename descclassname"><span class="pre">brom_drake.productions.types.base.scenario.</span></span><span class="sig-name descname"><span class="pre">param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#brom_drake.productions.types.base.scenario.FloatParam" title="brom_drake.productions.types.base.scenario.FloatParam"><span class="pre">FloatParam</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#brom_drake.productions.types.base.scenario.VectorParam" title="brom_drake.productions.types.base.scenario.VectorParam"><span class="pre">VectorParam</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#brom_drake.productions.types.base.scenario.PoseParam" title="brom_drake.productions.types.base.scenario.PoseParam"><span class="pre">PoseParam</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="../../../../_modules/brom_drake/productions/types/base/scenario.html#param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.base.scenario.param" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">brom_drake.productions.types.base.scenario.</span></span><span class="sig-name descname"><span class="pre">param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#brom_drake.productions.types.base.scenario.FloatParam" title="brom_drake.productions.types.base.scenario.FloatParam"><span class="pre">FloatParam</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#brom_drake.productions.types.base.scenario.VectorParam" title="brom_drake.productions.types.base.scenario.VectorParam"><span class="pre">VectorParam</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#brom_drake.productions.types.base.scenario.PoseParam" title="brom_drake.productions.types.base.scenario.PoseParam"><span class="pre">PoseParam</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#brom_drake.productions.types.base.scenario.ChoiceParam" title="brom_drake.productions.types.base.scenario.ChoiceParam"><span class="pre">ChoiceParam</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="../../../../_modules/brom_drake/productions/types/base/scenario.html#param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.productions.types.base.scenario.param" title="Link to this definition">¶</a></dt>
 <dd><p><em>Description</em></p>
 <p>Declare a <code class="docutils literal notranslate"><span class="pre">Scenario</span></code> field. Use it as the field’s default value:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@dataclass</span>
@@ -1030,7 +1076,7 @@ range into [-pi, pi] when it stays one interval, or say that it cannot.</p>
 </div>
 <p><em>Parameters</em></p>
 <dl class="simple">
-<dt>spec: FloatParam | VectorParam | PoseParam</dt><dd><p>The parameter’s type and allowed range.</p>
+<dt>spec: FloatParam | VectorParam | PoseParam | ChoiceParam</dt><dd><p>The parameter’s type and allowed range (or, for a choice, its IDs).</p>
 </dd>
 <dt>default: Any, optional</dt><dd><p>The value used when a case does not override this field, in the wire
 format. <code class="docutils literal notranslate"><span class="pre">None</span></code> (the default) means “use the production constructor’s
@@ -1057,6 +1103,20 @@ own default”.</p>
 <p>If no argument is given, the constructor returns an empty tuple.
 If iterable is specified the tuple is initialized from iterable’s items.</p>
 <p>If the argument is a tuple, the return value is the same object.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="brom_drake.productions.types.base.scenario.CHOICE_ID_PATTERN">
+<span class="sig-prename descclassname"><span class="pre">brom_drake.productions.types.base.scenario.</span></span><span class="sig-name descname"><span class="pre">CHOICE_ID_PATTERN</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'^[a-z0-9][a-z0-9_]{0,63}$'</span></span><a class="headerlink" href="#brom_drake.productions.types.base.scenario.CHOICE_ID_PATTERN" title="Link to this definition">¶</a></dt>
+<dd><p>str(object=’’) -&gt; str
+str(bytes_or_buffer[, encoding[, errors]]) -&gt; str</p>
+<p>Create a new string object from the given object. If encoding or
+errors is specified, then the object must expose a data buffer
+that will be decoded using the given encoding and error handler.
+Otherwise, returns the result of object.__str__() (if defined)
+or repr(object).
+encoding defaults to ‘utf-8’.
+errors defaults to ‘strict’.</p>
 </dd></dl>
 
 <dl class="py data">
@@ -1181,6 +1241,12 @@ errors defaults to ‘strict’.</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#brom_drake.productions.types.base.configuration.Configuration"><code class="docutils literal notranslate"><span class="pre">Configuration</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.productions.types.base.scenario.ChoiceParam"><code class="docutils literal notranslate"><span class="pre">ChoiceParam</span></code></a><ul>
+<li><a class="reference internal" href="#brom_drake.productions.types.base.scenario.ChoiceParam.choices"><code class="docutils literal notranslate"><span class="pre">ChoiceParam.choices</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.productions.types.base.scenario.ChoiceParam.ids"><code class="docutils literal notranslate"><span class="pre">ChoiceParam.ids()</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.productions.types.base.scenario.ChoiceParam.to_python"><code class="docutils literal notranslate"><span class="pre">ChoiceParam.to_python()</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#brom_drake.productions.types.base.scenario.FloatParam"><code class="docutils literal notranslate"><span class="pre">FloatParam</span></code></a><ul>
 <li><a class="reference internal" href="#brom_drake.productions.types.base.scenario.FloatParam.to_python"><code class="docutils literal notranslate"><span class="pre">FloatParam.to_python()</span></code></a></li>
 </ul>
@@ -1213,12 +1279,14 @@ errors defaults to ‘strict’.</p>
 <li><a class="reference internal" href="#brom_drake.productions.types.base.scenario._is_number"><code class="docutils literal notranslate"><span class="pre">_is_number()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.types.base.scenario._suggest_rpy_bounds"><code class="docutils literal notranslate"><span class="pre">_suggest_rpy_bounds()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.types.base.scenario._wrap_angle"><code class="docutils literal notranslate"><span class="pre">_wrap_angle()</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.productions.types.base.scenario.is_choice_id"><code class="docutils literal notranslate"><span class="pre">is_choice_id()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.types.base.scenario.param"><code class="docutils literal notranslate"><span class="pre">param()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#variables">Variables</a><ul>
 <li><a class="reference internal" href="#brom_drake.productions.types.base.scenario._ANGLE_TOLERANCE"><code class="docutils literal notranslate"><span class="pre">_ANGLE_TOLERANCE</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.types.base.scenario.ANGLE_NAMES"><code class="docutils literal notranslate"><span class="pre">ANGLE_NAMES</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.productions.types.base.scenario.CHOICE_ID_PATTERN"><code class="docutils literal notranslate"><span class="pre">CHOICE_ID_PATTERN</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.types.base.scenario.PARAM_METADATA_KEY"><code class="docutils literal notranslate"><span class="pre">PARAM_METADATA_KEY</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.types.base.scenario.POSE_CONVENTION_DOCS_URL"><code class="docutils literal notranslate"><span class="pre">POSE_CONVENTION_DOCS_URL</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.productions.types.base.scenario.QUATERNION_NORM_TOLERANCE"><code class="docutils literal notranslate"><span class="pre">QUATERNION_NORM_TOLERANCE</span></code></a></li>
@@ -1236,7 +1304,7 @@ errors defaults to ‘strict’.</p>
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=cb7bf70b"></script>
+</div><script src="../../../../_static/documentation_options.js?v=6efca38a"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>

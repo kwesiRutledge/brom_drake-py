@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>brom_drake.productions.grasping.grasp_selection - brom_drake-py 1.1.3 documentation</title>
+        <title>brom_drake.productions.grasping.grasp_selection - brom_drake-py 1.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">brom_drake-py 1.1.3 documentation</div></a>
+      <a href="../../../../index.html"><div class="brand">brom_drake-py 1.2.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 1.1.3 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 1.2.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -593,6 +593,12 @@
     <span class="n">AbstractValue</span><span class="p">,</span>
     <span class="n">AffineSystem</span><span class="p">,</span>
     <span class="n">Adder</span><span class="p">,</span>
+    <span class="n">Box</span><span class="p">,</span>
+    <span class="n">Capsule</span><span class="p">,</span>
+    <span class="n">Cylinder</span><span class="p">,</span>
+    <span class="n">Ellipsoid</span><span class="p">,</span>
+    <span class="n">Sphere</span><span class="p">,</span>
+    <span class="n">Shape</span><span class="p">,</span>
     <span class="n">ConstantValueSource</span><span class="p">,</span>
     <span class="n">Context</span><span class="p">,</span>
     <span class="n">Diagram</span><span class="p">,</span>
@@ -631,6 +637,12 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.motion_planning.systems</span><span class="w"> </span><span class="kn">import</span> <span class="n">OpenLoopPlanDispenser</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.productions.types.debug</span><span class="w"> </span><span class="kn">import</span> <span class="n">BasicGraspingDebuggingProduction</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.productions.ids</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProductionID</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.productions.scenario_presets</span><span class="w"> </span><span class="kn">import</span> <span class="n">DRAKE_YCB_OBJECTS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.productions.types.base.scenario</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Scenario</span> <span class="k">as</span> <span class="n">BaseScenario</span><span class="p">,</span>
+    <span class="n">VectorParam</span><span class="p">,</span>
+    <span class="n">param</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.productions.roles.role</span><span class="w"> </span><span class="kn">import</span> <span class="n">Role</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.systems.abstract_list_selection_system</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">AbstractListSelectionSystem</span><span class="p">,</span>
@@ -663,6 +675,63 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">.object_description</span><span class="w"> </span><span class="kn">import</span> <span class="n">ObjectDescription</span><span class="p">,</span> <span class="n">ObjectGeometry</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.phases</span><span class="w"> </span><span class="kn">import</span> <span class="n">GraspSelection1Phase</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.script</span><span class="w"> </span><span class="kn">import</span> <span class="n">Script</span> <span class="k">as</span> <span class="n">GraspSelection1Script</span>
+
+
+<div class="viewcode-block" id="lowest_z_of_shape">
+<a class="viewcode-back" href="../../../../generated/productions/grasping/grasping.html#brom_drake.productions.grasping.grasp_selection.lowest_z_of_shape">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">lowest_z_of_shape</span><span class="p">(</span><span class="n">shape</span><span class="p">:</span> <span class="n">Shape</span><span class="p">,</span> <span class="n">X_WorldShape</span><span class="p">:</span> <span class="n">RigidTransform</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    *Description*</span>
+
+<span class="sd">    The lowest world z coordinate of a Drake shape at the given pose.</span>
+
+<span class="sd">    Meshes and Convex shapes use their convex hull. Primitive shapes</span>
+<span class="sd">    (Box, Cylinder, Sphere, Capsule, Ellipsoid), which YCB models use for</span>
+<span class="sd">    collision, are handled exactly.</span>
+
+<span class="sd">    *Parameters*</span>
+
+<span class="sd">    shape: Shape</span>
+<span class="sd">        The shape.</span>
+
+<span class="sd">    X_WorldShape: RigidTransform</span>
+<span class="sd">        The pose of the shape's frame in the world.</span>
+
+<span class="sd">    *Returns*</span>
+
+<span class="sd">    min_z: float</span>
+<span class="sd">        The smallest z coordinate of any point of the shape, in the world frame.</span>
+<span class="sd">    """</span>
+    <span class="n">p_z</span> <span class="o">=</span> <span class="n">X_WorldShape</span><span class="o">.</span><span class="n">translation</span><span class="p">()[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="c1"># Row z of the rotation: how much each of the shape's axes points up.</span>
+    <span class="n">R_z</span> <span class="o">=</span> <span class="n">X_WorldShape</span><span class="o">.</span><span class="n">rotation</span><span class="p">()</span><span class="o">.</span><span class="n">matrix</span><span class="p">()[</span><span class="mi">2</span><span class="p">,</span> <span class="p">:]</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">Box</span><span class="p">):</span>
+        <span class="n">half_size</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">shape</span><span class="o">.</span><span class="n">width</span><span class="p">(),</span> <span class="n">shape</span><span class="o">.</span><span class="n">depth</span><span class="p">(),</span> <span class="n">shape</span><span class="o">.</span><span class="n">height</span><span class="p">()])</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="k">return</span> <span class="n">p_z</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">R_z</span><span class="p">)</span> <span class="o">@</span> <span class="n">half_size</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">Sphere</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">p_z</span> <span class="o">-</span> <span class="n">shape</span><span class="o">.</span><span class="n">radius</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">Cylinder</span><span class="p">):</span>
+        <span class="c1"># The lowest point is on the rim of the lower end cap.</span>
+        <span class="n">axis_z</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">R_z</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+        <span class="n">rim</span> <span class="o">=</span> <span class="n">shape</span><span class="o">.</span><span class="n">radius</span><span class="p">()</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">axis_z</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">p_z</span> <span class="o">-</span> <span class="n">axis_z</span> <span class="o">*</span> <span class="n">shape</span><span class="o">.</span><span class="n">length</span><span class="p">()</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="o">-</span> <span class="n">rim</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">Capsule</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">p_z</span> <span class="o">-</span> <span class="nb">abs</span><span class="p">(</span><span class="n">R_z</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">*</span> <span class="n">shape</span><span class="o">.</span><span class="n">length</span><span class="p">()</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="o">-</span> <span class="n">shape</span><span class="o">.</span><span class="n">radius</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">Ellipsoid</span><span class="p">):</span>
+        <span class="n">semi_axes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">shape</span><span class="o">.</span><span class="n">a</span><span class="p">(),</span> <span class="n">shape</span><span class="o">.</span><span class="n">b</span><span class="p">(),</span> <span class="n">shape</span><span class="o">.</span><span class="n">c</span><span class="p">()])</span>
+        <span class="k">return</span> <span class="n">p_z</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">R_z</span> <span class="o">*</span> <span class="n">semi_axes</span><span class="p">))</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="s2">"GetConvexHull"</span><span class="p">):</span>
+        <span class="n">hull</span> <span class="o">=</span> <span class="n">shape</span><span class="o">.</span><span class="n">GetConvexHull</span><span class="p">()</span>
+        <span class="n">vertices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">hull</span><span class="o">.</span><span class="n">vertex</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">hull</span><span class="o">.</span><span class="n">num_vertices</span><span class="p">())])</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">X_WorldShape</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">vertices</span><span class="o">.</span><span class="n">T</span><span class="p">)[</span><span class="mi">2</span><span class="p">,</span> <span class="p">:]))</span>
+
+    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">"Cannot find the lowest point of a </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> shape; "</span>
+        <span class="o">+</span> <span class="s2">"use a Box, Cylinder, Sphere, Capsule, Ellipsoid, Mesh or Convex."</span>
+    <span class="p">)</span></div>
+
+
 
 <span class="n">GraspSelectionOutput</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">RigidTransform</span><span class="p">],</span> <span class="n">RigidTransform</span><span class="p">]</span>
 <span class="n">GraspSelectionAlgorithm</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span>
@@ -717,10 +786,55 @@
 <span class="sd">    An algorithm without a type hint receives an ``ObjectDescription``.</span>
 <span class="sd">    Both types are defined in :py:mod:`brom_drake.productions.grasping.object_description`.</span>
 
+<span class="sd">    Any orientation can be requested, including a gripper pointing straight down</span>
+<span class="sd">    (roll = +/-pi) or to the side (pitch = +/-pi/2): the wrist's controller</span>
+<span class="sd">    (:py:class:`~brom_drake.utils.puppetmaker.pose_controller.PuppetPoseController`)</span>
+<span class="sd">    compares orientations as rotations, not as roll-pitch-yaw angles, so they do not wrap.</span>
+<span class="sd">    Near pitch = +/-pi/2 its tracking is slightly looser (within about 1 degree).</span>
+
+<span class="sd">    The algorithm may use the object's identity and model file on purpose: this production</span>
+<span class="sd">    tests the "easiest case" grasp, where the selector knows exactly which object it is</span>
+<span class="sd">    grasping.</span>
+
+<span class="sd">    *Objects*</span>
+
+<span class="sd">    ``path_to_object`` is a URDF/SDF file or a Drake ``package://`` URL, for example</span>
+<span class="sd">    ``package://drake_models/ycb/010_potted_meat_can.sdf`` for one of the YCB objects</span>
+<span class="sd">    that Drake ships. The first use of a ``drake_models`` URL downloads Drake's models</span>
+<span class="sd">    archive (cached in ``~/.cache/drake/package_map``). The YCB models' collision</span>
+<span class="sd">    geometry is one Box or Cylinder plus 8 small Spheres at its corners, and an</span>
+<span class="sd">    ``ObjectGeometry`` lists all 9 shapes.</span>
+
+<span class="sd">    *Scenario*</span>
+
+<span class="sd">    :py:class:`GraspSelection1.Scenario` lists the arguments a caller (for example a</span>
+<span class="sd">    Saphira conditions case) may change without editing the script:</span>
+
+<span class="sd">    - ``path_to_object``: one of the IDs in</span>
+<span class="sd">      :py:data:`~brom_drake.productions.scenario_presets.DRAKE_YCB_OBJECT_URLS`</span>
+<span class="sd">      (for example ``"ycb_010_potted_meat_can"``), which is replaced by its</span>
+<span class="sd">      ``package://`` URL.</span>
+<span class="sd">    - ``grasp_gripper_command``: a list of one number in ``[0, 1]``.</span>
+
+<span class="sd">    For example, ::</span>
+
+<span class="sd">        kwargs = GraspSelection1.Scenario.constructor_kwargs(</span>
+<span class="sd">            {"path_to_object": "ycb_005_tomato_soup_can"}</span>
+<span class="sd">        )</span>
+<span class="sd">        production = GraspSelection1(</span>
+<span class="sd">            **{</span>
+<span class="sd">                "path_to_object": model_file,</span>
+<span class="sd">                "gripper_choice": GripperType.Robotiq_2f_85,</span>
+<span class="sd">                "grasp_gripper_command": np.array([0.7]),</span>
+<span class="sd">                **kwargs,</span>
+<span class="sd">            }</span>
+<span class="sd">        )</span>
+
 <span class="sd">    *Parameters*</span>
 
 <span class="sd">    path_to_object: str</span>
-<span class="sd">        The file path to the URDF/SDF of the object to be grasped.</span>
+<span class="sd">        The file path to the URDF/SDF of the object to be grasped, or a Drake</span>
+<span class="sd">        ``package://`` URL. The model must contain one body.</span>
 
 <span class="sd">    gripper_choice: GripperType</span>
 <span class="sd">        An enum value from GripperType that specifies which gripper to use for the grasping attempt.</span>
@@ -797,6 +911,36 @@
 
 <span class="sd">    """</span>
 
+<div class="viewcode-block" id="GraspSelection1.Scenario">
+<a class="viewcode-back" href="../../../../generated/productions/grasping/grasping.html#brom_drake.productions.grasping.grasp_selection.GraspSelection1.Scenario">[docs]</a>
+    <span class="nd">@dataclass</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Scenario</span><span class="p">(</span><span class="n">BaseScenario</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        *Description*</span>
+
+<span class="sd">        The initial conditions of GraspSelection1 that a caller may change</span>
+<span class="sd">        (see :py:class:`~brom_drake.productions.types.base.scenario.Scenario`).</span>
+<span class="sd">        Both fields are required constructor arguments, so their default,</span>
+<span class="sd">        ``None``, means "keep the value in the user's script".</span>
+<span class="sd">        """</span>
+
+        <span class="n">path_to_object</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">param</span><span class="p">(</span>
+            <span class="n">DRAKE_YCB_OBJECTS</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+                <span class="s2">"Object to grasp, from Drake's YCB models (None: the script's own "</span>
+                <span class="s2">"object)."</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+        <span class="n">grasp_gripper_command</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">param</span><span class="p">(</span>
+            <span class="n">VectorParam</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,),</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,),</span> <span class="s2">""</span><span class="p">),</span>
+            <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+                <span class="s2">"Normalized gripper command for the grasp: 0 is fully open and "</span>
+                <span class="s2">"larger values close the gripper further (None: the script's own "</span>
+                <span class="s2">"command)."</span>
+            <span class="p">),</span>
+        <span class="p">)</span></div>
+
+
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">path_to_object</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -814,7 +958,8 @@
 <span class="sd">        *Parameters*</span>
 
 <span class="sd">        path_to_object: str</span>
-<span class="sd">            The file path to the URDF/SDF of the object to be grasped.</span>
+<span class="sd">            The file path to the URDF/SDF of the object to be grasped, or a Drake</span>
+<span class="sd">            ``package://`` URL.</span>
 
 <span class="sd">        gripper_choice: GripperType</span>
 <span class="sd">            An enum value from GripperType that specifies which gripper to use for the grasping attempt.</span>
@@ -832,6 +977,17 @@
 <span class="sd">            See the Configuration dataclass for more details.</span>
 <span class="sd">            Default is None, which creates a new Configuration with its default values.</span>
 <span class="sd">        """</span>
+        <span class="c1"># The Scenario's None means "keep the script's value", so None must never reach here</span>
+        <span class="k">if</span> <span class="n">path_to_object</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"GraspSelection1 needs path_to_object (a URDF/SDF file or a package:// URL); received None."</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">grasp_gripper_command</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"GraspSelection1 needs grasp_gripper_command (an array of shape (1,)); received None."</span>
+            <span class="p">)</span>
+        <span class="n">grasp_gripper_command</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">grasp_gripper_command</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
         <span class="c1"># Each production gets its own configuration, because the constructor modifies it</span>
         <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">config</span> <span class="o">=</span> <span class="n">Configuration</span><span class="p">()</span>
@@ -1133,7 +1289,7 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">add_gripper_controllers_and_connect</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">gripper_puppet_input</span><span class="p">:</span> <span class="n">RigidTransformToVectorSystem</span><span class="p">,</span>
+        <span class="n">gripper_puppet_input</span><span class="p">:</span> <span class="n">PassThrough</span><span class="p">,</span>
         <span class="n">gripper_joint_input</span><span class="p">:</span> <span class="n">PassThrough</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="c1"># Setup</span>
@@ -1785,21 +1941,18 @@
                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  + Raw value: </span><span class="si">{</span><span class="n">shape_ii</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  + Type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">shape_ii</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-            <span class="c1"># Get the convex hull</span>
-            <span class="n">ch_ii</span> <span class="o">=</span> <span class="n">shape_ii</span><span class="o">.</span><span class="n">GetConvexHull</span><span class="p">()</span>
+            <span class="c1"># Find the lowest point of the geometry. The object's body is at the</span>
+            <span class="c1"># world origin in the shadow plant, so the geometry's pose in its</span>
+            <span class="c1"># body's frame is also its pose in the world.</span>
+            <span class="n">X_WorldShape_ii</span> <span class="o">=</span> <span class="n">shadow_sg_inspector</span><span class="o">.</span><span class="n">GetPoseInFrame</span><span class="p">(</span><span class="n">geometry_ii</span><span class="p">)</span>
+            <span class="n">min_z_ii</span> <span class="o">=</span> <span class="n">lowest_z_of_shape</span><span class="p">(</span><span class="n">shape_ii</span><span class="p">,</span> <span class="n">X_WorldShape_ii</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">debug_flag</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"- Convex Hull </span><span class="si">{</span><span class="n">ii</span><span class="si">}</span><span class="s2">:"</span><span class="p">)</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  + Raw value: </span><span class="si">{</span><span class="n">ch_ii</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"- Lowest z </span><span class="si">{</span><span class="n">ii</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">min_z_ii</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-            <span class="n">bb_ii</span> <span class="o">=</span> <span class="n">ch_ii</span><span class="o">.</span><span class="n">CalcBoundingBox</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">debug_flag</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"- Bounding Box </span><span class="si">{</span><span class="n">ii</span><span class="si">}</span><span class="s2">:"</span><span class="p">)</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  + Raw value: </span><span class="si">{</span><span class="n">bb_ii</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-            <span class="n">lower_left</span><span class="p">,</span> <span class="n">upper_right</span> <span class="o">=</span> <span class="n">bb_ii</span>
-
-            <span class="k">if</span> <span class="n">lower_left</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">objects_minimum_z</span><span class="p">:</span>
-                <span class="n">objects_minimum_z</span> <span class="o">=</span> <span class="n">lower_left</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  + New z_out: </span><span class="si">{</span><span class="n">objects_minimum_z</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">min_z_ii</span> <span class="o">&lt;</span> <span class="n">objects_minimum_z</span><span class="p">:</span>
+                <span class="n">objects_minimum_z</span> <span class="o">=</span> <span class="n">min_z_ii</span>
+                <span class="k">if</span> <span class="n">debug_flag</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  + New z_out: </span><span class="si">{</span><span class="n">objects_minimum_z</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
         <span class="c1"># If we didn't find any geometry, raise an error</span>
         <span class="k">if</span> <span class="n">objects_minimum_z</span> <span class="o">==</span> <span class="mf">1_000.0</span><span class="p">:</span>
@@ -2051,6 +2204,11 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">floor_model_index</span>
         <span class="p">)</span>
 
+        <span class="c1"># Track which object was grasped: what the caller passed (e.g., a package:// URL)</span>
+        <span class="c1"># and the file it was loaded from</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="p">[</span><span class="s2">"object_source"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">object_source</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="p">[</span><span class="s2">"path_to_object"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path_to_object</span><span class="p">)</span>
+
         <span class="c1"># Track the trajectory of the Gripper Frame (and where it came from)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="p">[</span><span class="s2">"X_ObjectGripper_trajectory"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">X_i</span><span class="o">.</span><span class="n">GetAsMatrix4</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="k">for</span> <span class="n">X_i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_ObjectGripper_trajectory</span>
@@ -2220,7 +2378,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=cb7bf70b"></script>
+</div><script src="../../../../_static/documentation_options.js?v=6efca38a"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>

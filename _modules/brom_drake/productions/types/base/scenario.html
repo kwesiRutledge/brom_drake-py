@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>brom_drake.productions.types.base.scenario - brom_drake-py 1.1.3 documentation</title>
+        <title>brom_drake.productions.types.base.scenario - brom_drake-py 1.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../index.html"><div class="brand">brom_drake-py 1.1.3 documentation</div></a>
+      <a href="../../../../../index.html"><div class="brand">brom_drake-py 1.2.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 1.1.3 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 1.2.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -598,14 +598,18 @@
 <span class="sd">- ``pose``: ``{"xyz": [x, y, z], "rpy": [roll, pitch, yaw]}`` in metres and radians,</span>
 <span class="sd">  or ``{"xyz": [x, y, z], "wxyz": [w, x, y, z]}`` with a unit quaternion. Validated</span>
 <span class="sd">  poses are always returned in the ``rpy`` form.</span>
+<span class="sd">- ``choice``: a string ID from the production's declared choices, matching</span>
+<span class="sd">  :data:`CHOICE_ID_PATTERN`. The value an ID stands for (for example a model</span>
+<span class="sd">  URL) lives in the declaration, never on the wire.</span>
 <span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">dataclasses</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">numbers</span><span class="w"> </span><span class="kn">import</span> <span class="n">Real</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">ClassVar</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">ClassVar</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
@@ -622,6 +626,23 @@
 <span class="n">POSE_CONVENTION_DOCS_URL</span> <span class="o">=</span> <span class="n">SCENARIO_DOCS_URL</span> <span class="o">+</span> <span class="s2">"#pose-orientation-convention"</span>
 
 <span class="n">ANGLE_NAMES</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"roll"</span><span class="p">,</span> <span class="s2">"pitch"</span><span class="p">,</span> <span class="s2">"yaw"</span><span class="p">)</span>
+
+<span class="c1"># The only strings a scenario value may be: IDs of a ChoiceParam's choices.</span>
+<span class="c1"># Lowercase letters, digits and underscores, starting with a letter or digit,</span>
+<span class="c1"># at most 64 characters. Saphira and the Wrench API check the same pattern, so</span>
+<span class="c1"># change it in all three places together.</span>
+<span class="n">CHOICE_ID_PATTERN</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">"^[a-z0-9][a-z0-9_]{0,63}$"</span>
+<span class="n">_CHOICE_ID_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">CHOICE_ID_PATTERN</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="is_choice_id">
+<a class="viewcode-back" href="../../../../../generated/productions/types/base/base.html#brom_drake.productions.types.base.scenario.is_choice_id">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_choice_id</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Whether ``value`` is a string that matches :data:`CHOICE_ID_PATTERN`."""</span>
+    <span class="c1"># fullmatch, so a trailing newline is not accepted the way "$" would allow.</span>
+    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">_CHOICE_ID_RE</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
+
+
 
 <span class="c1"># Slack for bounds written as rounded pi (e.g. 3.14159265) or np.pi arithmetic.</span>
 <span class="n">_ANGLE_TOLERANCE</span> <span class="o">=</span> <span class="mf">1e-9</span>
@@ -1154,7 +1175,105 @@
 
 
 
-<span class="n">ParamSpec</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">FloatParam</span><span class="p">,</span> <span class="n">VectorParam</span><span class="p">,</span> <span class="n">PoseParam</span><span class="p">]</span>
+<div class="viewcode-block" id="ChoiceParam">
+<a class="viewcode-back" href="../../../../../generated/productions/types/base/base.html#brom_drake.productions.types.base.scenario.ChoiceParam">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ChoiceParam</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    *Description*</span>
+
+<span class="sd">    One of a fixed set of named choices, for example which object to grasp.</span>
+
+<span class="sd">    On the wire the value is the choice's ID, a string matching</span>
+<span class="sd">    :data:`CHOICE_ID_PATTERN` (for example ``"ycb_010_potted_meat_can"``).</span>
+<span class="sd">    :meth:`to_python` maps the ID to the value it stands for (for example</span>
+<span class="sd">    ``"package://drake_models/ycb/010_potted_meat_can.sdf"``), so only IDs</span>
+<span class="sd">    the production declares can reach its constructor.</span>
+
+<span class="sd">    *Parameters*</span>
+
+<span class="sd">    choices: Mapping[str, Any]</span>
+<span class="sd">        Choice ID to the constructor argument it stands for. It must not be</span>
+<span class="sd">        empty, and every ID must match :data:`CHOICE_ID_PATTERN`.</span>
+
+<span class="sd">    units: str, optional</span>
+<span class="sd">        Units of the values, if any.</span>
+<span class="sd">    """</span>
+
+    <span class="n">kind</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"choice"</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">choices</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">units</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">choices</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"ChoiceParam choices must be a mapping of ID to value, got </span><span class="si">{</span><span class="n">choices</span><span class="si">!r}</span><span class="s2">"</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">choices</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"ChoiceParam needs at least one choice"</span><span class="p">)</span>
+        <span class="n">bad</span> <span class="o">=</span> <span class="p">[</span><span class="nb">repr</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">choices</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">is_choice_id</span><span class="p">(</span><span class="n">k</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="n">bad</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"ChoiceParam IDs must match "</span> <span class="o">+</span> <span class="n">CHOICE_ID_PATTERN</span> <span class="o">+</span> <span class="s2">" (lowercase "</span>
+                <span class="s2">"letters, digits and underscores, at most 64 characters); "</span>
+                <span class="o">+</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">bad</span><span class="p">)</span>
+                <span class="o">+</span> <span class="p">(</span><span class="s2">" do not"</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bad</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="s2">" does not"</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="c1"># A private copy, so the declaration cannot change after it is checked.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_choices</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">choices</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="n">units</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">choices</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""A copy of the choice ID to value mapping."""</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_choices</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ChoiceParam.ids">
+<a class="viewcode-back" href="../../../../../generated/productions/types/base/base.html#brom_drake.productions.types.base.scenario.ChoiceParam.ids">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ids</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""The choice IDs, sorted."""</span>
+        <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_choices</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"ChoiceParam(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_choices</span><span class="si">!r}</span><span class="s2">, units=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="si">!r}</span><span class="s2">)"</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">ChoiceParam</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_choices</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">_choices</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">units</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span><span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_choices</span><span class="p">)),</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">))</span>
+
+<div class="viewcode-block" id="ChoiceParam.to_python">
+<a class="viewcode-back" href="../../../../../generated/productions/types/base/base.html#brom_drake.productions.types.base.scenario.ChoiceParam.to_python">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_python</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""The constructor argument for a validated ID: the value it stands for."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_choices</span><span class="p">[</span><span class="n">value</span><span class="p">]</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">"choices"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ids</span><span class="p">()}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">problems</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">problems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">: expected one of the choice IDs </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ids</span><span class="p">()</span><span class="si">}</span><span class="s2">, got "</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">"</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_choices</span><span class="p">:</span>
+            <span class="c1"># Shorten the echoed value; it may be arbitrary text from a caller.</span>
+            <span class="n">shown</span> <span class="o">=</span> <span class="n">value</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">80</span> <span class="k">else</span> <span class="n">value</span><span class="p">[:</span><span class="mi">77</span><span class="p">]</span> <span class="o">+</span> <span class="s2">"..."</span>
+            <span class="n">problems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">shown</span><span class="si">!r}</span><span class="s2"> is not one of the choice IDs </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ids</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">value</span></div>
+
+
+
+<span class="n">ParamSpec</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">FloatParam</span><span class="p">,</span> <span class="n">VectorParam</span><span class="p">,</span> <span class="n">PoseParam</span><span class="p">,</span> <span class="n">ChoiceParam</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="param">
@@ -1171,8 +1290,8 @@
 
 <span class="sd">    *Parameters*</span>
 
-<span class="sd">    spec: FloatParam | VectorParam | PoseParam</span>
-<span class="sd">        The parameter's type and allowed range.</span>
+<span class="sd">    spec: FloatParam | VectorParam | PoseParam | ChoiceParam</span>
+<span class="sd">        The parameter's type and allowed range (or, for a choice, its IDs).</span>
 
 <span class="sd">    default: Any, optional</span>
 <span class="sd">        The value used when a case does not override this field, in the wire</span>
@@ -1182,9 +1301,10 @@
 <span class="sd">    description: str, optional</span>
 <span class="sd">        A short human-readable description, included in :meth:`Scenario.schema`.</span>
 <span class="sd">    """</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="p">(</span><span class="n">FloatParam</span><span class="p">,</span> <span class="n">VectorParam</span><span class="p">,</span> <span class="n">PoseParam</span><span class="p">)):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="p">(</span><span class="n">FloatParam</span><span class="p">,</span> <span class="n">VectorParam</span><span class="p">,</span> <span class="n">PoseParam</span><span class="p">,</span> <span class="n">ChoiceParam</span><span class="p">)):</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">"param() expects a FloatParam, VectorParam or PoseParam, got </span><span class="si">{</span><span class="n">spec</span><span class="si">!r}</span><span class="s2">"</span>
+            <span class="s2">"param() expects a FloatParam, VectorParam, PoseParam or ChoiceParam, "</span>
+            <span class="sa">f</span><span class="s2">"got </span><span class="si">{</span><span class="n">spec</span><span class="si">!r}</span><span class="s2">"</span>
         <span class="p">)</span>
     <span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span><span class="n">PARAM_METADATA_KEY</span><span class="p">:</span> <span class="n">spec</span><span class="p">,</span> <span class="s2">"description"</span><span class="p">:</span> <span class="n">description</span><span class="p">}</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
@@ -1280,10 +1400,11 @@
 
 <span class="sd">        schema: dict</span>
 <span class="sd">            ``{"fields": [...], "mutually_exclusive": [[...], ...]}``, with one</span>
-<span class="sd">            entry per field: ``name``, ``kind`` (``"float"``, ``"vector"`` or</span>
-<span class="sd">            ``"pose"``), ``default``, ``units``, ``description`` and the</span>
-<span class="sd">            kind's bounds (``min``/``max``, plus ``length`` for a vector;</span>
-<span class="sd">            ``xyz_min``/``xyz_max``/``rpy_min``/``rpy_max`` for a pose).</span>
+<span class="sd">            entry per field: ``name``, ``kind`` (``"float"``, ``"vector"``,</span>
+<span class="sd">            ``"pose"`` or ``"choice"``), ``default``, ``units``,</span>
+<span class="sd">            ``description`` and the kind's bounds (``min``/``max``, plus</span>
+<span class="sd">            ``length`` for a vector; ``xyz_min``/``xyz_max``/``rpy_min``/</span>
+<span class="sd">            ``rpy_max`` for a pose; ``choices``, the sorted IDs, for a choice).</span>
 <span class="sd">        """</span>
         <span class="n">entries</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">f</span><span class="p">,</span> <span class="n">spec</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">param_fields</span><span class="p">():</span>
@@ -1322,7 +1443,7 @@
 <span class="sd">        overrides: dict</span>
 <span class="sd">            Only the keys that were given, normalized to plain JSON (floats as</span>
 <span class="sd">            ``float``, vectors as lists of floats, poses with both ``xyz`` and</span>
-<span class="sd">            ``rpy``).</span>
+<span class="sd">            ``rpy``, choices as their ID).</span>
 
 <span class="sd">        *Raises*</span>
 
@@ -1377,8 +1498,9 @@
 <span class="sd">        *Description*</span>
 
 <span class="sd">        Validate ``values`` and convert them to the production constructor's</span>
-<span class="sd">        keyword arguments: floats stay floats, vectors become numpy arrays and</span>
-<span class="sd">        poses become ``RigidTransform`` objects. ``None`` stays ``None``.</span>
+<span class="sd">        keyword arguments: floats stay floats, vectors become numpy arrays,</span>
+<span class="sd">        poses become ``RigidTransform`` objects and choice IDs become the</span>
+<span class="sd">        value they stand for. ``None`` stays ``None``.</span>
 
 <span class="sd">        Use it to build a production from scenario values in Python::</span>
 
@@ -1441,7 +1563,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../_static/documentation_options.js?v=cb7bf70b"></script>
+</div><script src="../../../../../_static/documentation_options.js?v=6efca38a"></script>
     <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

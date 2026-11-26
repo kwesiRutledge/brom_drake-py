@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>brom_drake.productions.types.debug.basic_grasping - brom_drake-py 1.1.3 documentation</title>
+        <title>brom_drake.productions.types.debug.basic_grasping - brom_drake-py 1.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../index.html"><div class="brand">brom_drake-py 1.1.3 documentation</div></a>
+      <a href="../../../../../index.html"><div class="brand">brom_drake-py 1.2.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 1.1.3 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 1.2.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -599,6 +599,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.productions.types.base.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseProduction</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.systems.video</span><span class="w"> </span><span class="kn">import</span> <span class="n">CameraSpec</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.utils.metadata_recording</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_summary_for_LeafSystem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.utils.model_files</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_package_url</span><span class="p">,</span> <span class="n">resolve_model_path</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.utils.model_instances</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">get_name_of_first_body_in_urdf</span><span class="p">,</span>
     <span class="n">get_name_of_all_bodies_in_urdf</span><span class="p">,</span>
@@ -637,7 +638,10 @@
 <span class="sd">        **Arguments**</span>
 
 <span class="sd">        path_to_object: str</span>
-<span class="sd">            A string representing the path to the object urdf file.</span>
+<span class="sd">            The path to the object's URDF/SDF file, or a Drake ``package://`` URL</span>
+<span class="sd">            (for example ``package://drake_models/ycb/010_potted_meat_can.sdf``).</span>
+<span class="sd">            A URL is resolved to a file once, here: ``self.path_to_object`` holds</span>
+<span class="sd">            the resolved file and ``self.object_source`` holds what was passed.</span>
 <span class="sd">        path_to_gripper: str</span>
 <span class="sd">            A string representing the path to the gripper urdf file.</span>
 <span class="sd">        X_ObjectGrasp: RigidTransform</span>
@@ -667,7 +671,12 @@
         <span class="c1"># - self.scene_graph</span>
 
         <span class="c1"># Add the model to the Production</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">path_to_object</span> <span class="o">=</span> <span class="n">path_to_object</span>
+        <span class="c1"># (Only URLs are changed, so a file path keeps the type the caller gave it.)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">object_source</span> <span class="o">=</span> <span class="n">path_to_object</span>
+        <span class="k">if</span> <span class="n">is_package_url</span><span class="p">(</span><span class="n">path_to_object</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">path_to_object</span> <span class="o">=</span> <span class="n">resolve_model_path</span><span class="p">(</span><span class="n">path_to_object</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">path_to_object</span> <span class="o">=</span> <span class="n">path_to_object</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">path_to_gripper</span> <span class="o">=</span> <span class="n">path_to_gripper</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">time_step</span> <span class="o">=</span> <span class="n">time_step</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gripper_color</span> <span class="o">=</span> <span class="n">gripper_color</span>
@@ -1063,7 +1072,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../_static/documentation_options.js?v=cb7bf70b"></script>
+</div><script src="../../../../../_static/documentation_options.js?v=6efca38a"></script>
     <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>

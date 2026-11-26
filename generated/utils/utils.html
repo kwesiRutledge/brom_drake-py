@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html"><link rel="next" title="initial_condition_manager" href="initial_condition_manager/initial_condition_manager.html"><link rel="prev" title="video" href="../systems/video/video.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>utils - brom_drake-py 1.1.3 documentation</title>
+        <title>utils - brom_drake-py 1.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -162,7 +162,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">brom_drake-py 1.1.3 documentation</div></a>
+      <a href="../../index.html"><div class="brand">brom_drake-py 1.2.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +183,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 1.1.3 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 1.2.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -780,6 +780,45 @@ This can be used to record metadata about the system.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="brom_drake.utils.model_files.is_package_url">
+<span class="sig-prename descclassname"><span class="pre">brom_drake.utils.model_files.</span></span><span class="sig-name descname"><span class="pre">is_package_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/brom_drake/utils/model_files.html#is_package_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.utils.model_files.is_package_url" title="Link to this definition">¶</a></dt>
+<dd><p><em>Description</em></p>
+<p>Whether <code class="docutils literal notranslate"><span class="pre">path</span></code> is a Drake <code class="docutils literal notranslate"><span class="pre">package://</span></code> URL (for example
+<code class="docutils literal notranslate"><span class="pre">package://drake_models/ycb/010_potted_meat_can.sdf</span></code>).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brom_drake.utils.model_files.resolve_model_path">
+<span class="sig-prename descclassname"><span class="pre">brom_drake.utils.model_files.</span></span><span class="sig-name descname"><span class="pre">resolve_model_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/brom_drake/utils/model_files.html#resolve_model_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.utils.model_files.resolve_model_path" title="Link to this definition">¶</a></dt>
+<dd><p><em>Description</em></p>
+<p>Turns a model location given by a caller into a file path.</p>
+<ul class="simple">
+<li><p>A <code class="docutils literal notranslate"><span class="pre">package://</span></code> URL is resolved with Drake’s default <code class="docutils literal notranslate"><span class="pre">PackageMap</span></code>,
+which knows <code class="docutils literal notranslate"><span class="pre">drake</span></code>, <code class="docutils literal notranslate"><span class="pre">drake_models</span></code> and any package on
+<code class="docutils literal notranslate"><span class="pre">ROS_PACKAGE_PATH</span></code>. Resolving a <code class="docutils literal notranslate"><span class="pre">drake_models</span></code> URL for the first
+time downloads the models archive that Drake pins (cached in
+<code class="docutils literal notranslate"><span class="pre">~/.cache/drake/package_map</span></code>), so it needs network access once.</p></li>
+<li><p>Anything else is treated as a file path and returned unchanged (as a
+<code class="docutils literal notranslate"><span class="pre">str</span></code>).</p></li>
+</ul>
+<p><em>Parameters</em></p>
+<dl class="simple">
+<dt>path: str | Path</dt><dd><p>A file path or a <code class="docutils literal notranslate"><span class="pre">package://</span></code> URL.</p>
+</dd>
+</dl>
+<p><em>Returns</em></p>
+<dl class="simple">
+<dt>resolved_path: str</dt><dd><p>A path to a file on disk (for a URL) or <code class="docutils literal notranslate"><span class="pre">path</span></code> itself.</p>
+</dd>
+</dl>
+<p><em>Raises</em></p>
+<dl class="simple">
+<dt>ValueError</dt><dd><p>If <code class="docutils literal notranslate"><span class="pre">path</span></code> is a <code class="docutils literal notranslate"><span class="pre">package://</span></code> URL that Drake cannot resolve.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="brom_drake.utils.model_instances.find_number_of_positions_in_welded_model">
 <span class="sig-prename descclassname"><span class="pre">brom_drake.utils.model_instances.</span></span><span class="sig-name descname"><span class="pre">find_number_of_positions_in_welded_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_to_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../../_modules/brom_drake/utils/model_instances.html#find_number_of_positions_in_welded_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brom_drake.utils.model_instances.find_number_of_positions_in_welded_model" title="Link to this definition">¶</a></dt>
 <dd><section id="id8">
@@ -851,10 +890,29 @@ urdf given by urdf_in.</p>
 <dd><section id="id11">
 <h3>Description<a class="headerlink" href="#id11" title="Link to this heading">¶</a></h3>
 <p>This method looks through the builder and finds all systems that have
-an input port with the given name.
-:param builder:
-:param target_port_name:
-:return:</p>
+an input port with the given name. Systems without a matching port
+are skipped.</p>
+<dl class="field-list simple">
+<dt class="field-odd">param builder<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Builder whose registered systems will be searched.</p>
+</dd>
+<dt class="field-even">type builder<span class="colon">:</span></dt>
+<dd class="field-even"><p>DiagramBuilder</p>
+</dd>
+<dt class="field-odd">param target_port_name<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Name of the input port to look for.</p>
+</dd>
+<dt class="field-even">type target_port_name<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+<dt class="field-odd">return<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Every system in the builder that has an input port named
+<code class="docutils literal notranslate"><span class="pre">target_port_name</span></code>. The list is empty if there are none.</p>
+</dd>
+<dt class="field-even">rtype<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[Performer]</p>
+</dd>
+</dl>
 </section>
 </dd></dl>
 
@@ -864,10 +922,28 @@ an input port with the given name.
 <dd><section id="id12">
 <h3>Description<a class="headerlink" href="#id12" title="Link to this heading">¶</a></h3>
 <p>This method looks through the builder and finds all systems that have
-an output port with the given name.
-:param builder:
-:param target_system_name: Target name of the system that we would like to find.
-:return:</p>
+a name (as returned by <code class="docutils literal notranslate"><span class="pre">get_name()</span></code>) equal to the given name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">param builder<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Builder whose registered systems will be searched.</p>
+</dd>
+<dt class="field-even">type builder<span class="colon">:</span></dt>
+<dd class="field-even"><p>DiagramBuilder</p>
+</dd>
+<dt class="field-odd">param target_system_name<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Target name of the system that we would like to find.</p>
+</dd>
+<dt class="field-even">type target_system_name<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+<dt class="field-odd">return<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Every system in the builder whose name matches exactly. The list
+is empty if there are none.</p>
+</dd>
+<dt class="field-even">rtype<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[Performer]</p>
+</dd>
+</dl>
 </section>
 </dd></dl>
 
@@ -877,10 +953,29 @@ an output port with the given name.
 <dd><section id="id13">
 <h3>Description<a class="headerlink" href="#id13" title="Link to this heading">¶</a></h3>
 <p>This method looks through the builder and finds all systems that have
-an output port with the given name.
-:param builder:
-:param target_port_name:
-:return:</p>
+an output port with the given name. Systems without a matching port
+are skipped.</p>
+<dl class="field-list simple">
+<dt class="field-odd">param builder<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Builder whose registered systems will be searched.</p>
+</dd>
+<dt class="field-even">type builder<span class="colon">:</span></dt>
+<dd class="field-even"><p>DiagramBuilder</p>
+</dd>
+<dt class="field-odd">param target_port_name<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Name of the output port to look for.</p>
+</dd>
+<dt class="field-even">type target_port_name<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+<dt class="field-odd">return<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Every system in the builder that has an output port named
+<code class="docutils literal notranslate"><span class="pre">target_port_name</span></code>. The list is empty if there are none.</p>
+</dd>
+<dt class="field-even">rtype<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[Performer]</p>
+</dd>
+</dl>
 </section>
 </dd></dl>
 
@@ -927,6 +1022,20 @@ We will perform 2 checks.
 <dt class="sig sig-object py" id="brom_drake.utils.collision_checking.DEFAULT_PLANNER_COLLISION_THRESHOLD">
 <span class="sig-prename descclassname"><span class="pre">brom_drake.utils.collision_checking.</span></span><span class="sig-name descname"><span class="pre">DEFAULT_PLANNER_COLLISION_THRESHOLD</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.01</span></span><a class="headerlink" href="#brom_drake.utils.collision_checking.DEFAULT_PLANNER_COLLISION_THRESHOLD" title="Link to this definition">¶</a></dt>
 <dd><p>Convert a string or number to a floating-point number, if possible.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="brom_drake.utils.model_files.PACKAGE_URL_PREFIX">
+<span class="sig-prename descclassname"><span class="pre">brom_drake.utils.model_files.</span></span><span class="sig-name descname"><span class="pre">PACKAGE_URL_PREFIX</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'package://'</span></span><a class="headerlink" href="#brom_drake.utils.model_files.PACKAGE_URL_PREFIX" title="Link to this definition">¶</a></dt>
+<dd><p>str(object=’’) -&gt; str
+str(bytes_or_buffer[, encoding[, errors]]) -&gt; str</p>
+<p>Create a new string object from the given object. If encoding or
+errors is specified, then the object must expose a data buffer
+that will be decoded using the given encoding and error handler.
+Otherwise, returns the result of object.__str__() (if defined)
+or repr(object).
+encoding defaults to ‘utf-8’.
+errors defaults to ‘strict’.</p>
 </dd></dl>
 
 </section>
@@ -1008,6 +1117,8 @@ We will perform 2 checks.
 <li><a class="reference internal" href="#brom_drake.utils.ground.AddGround"><code class="docutils literal notranslate"><span class="pre">AddGround()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.utils.meshcat.validate_meshcat_port_number"><code class="docutils literal notranslate"><span class="pre">validate_meshcat_port_number()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.utils.metadata_recording.create_summary_for_LeafSystem"><code class="docutils literal notranslate"><span class="pre">create_summary_for_LeafSystem()</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.utils.model_files.is_package_url"><code class="docutils literal notranslate"><span class="pre">is_package_url()</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.utils.model_files.resolve_model_path"><code class="docutils literal notranslate"><span class="pre">resolve_model_path()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.utils.model_instances.find_number_of_positions_in_welded_model"><code class="docutils literal notranslate"><span class="pre">find_number_of_positions_in_welded_model()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.utils.model_instances.get_all_bodies_in"><code class="docutils literal notranslate"><span class="pre">get_all_bodies_in()</span></code></a></li>
 <li><a class="reference internal" href="#brom_drake.utils.model_instances.get_first_body_in"><code class="docutils literal notranslate"><span class="pre">get_first_body_in()</span></code></a></li>
@@ -1025,6 +1136,7 @@ We will perform 2 checks.
 </li>
 <li><a class="reference internal" href="#variables">Variables</a><ul>
 <li><a class="reference internal" href="#brom_drake.utils.collision_checking.DEFAULT_PLANNER_COLLISION_THRESHOLD"><code class="docutils literal notranslate"><span class="pre">DEFAULT_PLANNER_COLLISION_THRESHOLD</span></code></a></li>
+<li><a class="reference internal" href="#brom_drake.utils.model_files.PACKAGE_URL_PREFIX"><code class="docutils literal notranslate"><span class="pre">PACKAGE_URL_PREFIX</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -1038,7 +1150,7 @@ We will perform 2 checks.
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=cb7bf70b"></script>
+</div><script src="../../_static/documentation_options.js?v=6efca38a"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>

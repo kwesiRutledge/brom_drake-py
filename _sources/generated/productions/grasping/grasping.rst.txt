@@ -29,7 +29,7 @@ Classes
 Functions
 ---------
 
-(None found)
+.. autofunction:: brom_drake.productions.grasping.grasp_selection.lowest_z_of_shape
 
 Variables
 ---------

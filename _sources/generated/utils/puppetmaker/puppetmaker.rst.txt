@@ -13,6 +13,8 @@ Classes
 
 .. autoclass:: brom_drake.utils.puppetmaker.configuration.Configuration
    :members:
+.. autoclass:: brom_drake.utils.puppetmaker.pose_controller.PuppetPoseController
+   :members:
 .. autoclass:: brom_drake.utils.puppetmaker.puppet_signature.AllJointSignatures
    :members:
 .. autoclass:: brom_drake.utils.puppetmaker.puppet_signature.PuppeteerJointSignature
@@ -25,10 +27,13 @@ Classes
 Functions
 ---------
 
-(None found)
+.. autofunction:: brom_drake.utils.puppetmaker.pose_controller.rotation_error_vector
+.. autofunction:: brom_drake.utils.puppetmaker.pose_controller.yaw_pitch_roll_jacobian
 
 Variables
 ---------
 
-(None found)
+.. autodata:: brom_drake.utils.puppetmaker.pose_controller.DEFAULT_SINGULARITY_DAMPING
+.. autodata:: brom_drake.utils.puppetmaker.pose_controller.PUPPET_JOINT_ORDER
+.. autodata:: brom_drake.utils.puppetmaker.puppetmaker.DEFAULT_SINGULARITY_DAMPING
 

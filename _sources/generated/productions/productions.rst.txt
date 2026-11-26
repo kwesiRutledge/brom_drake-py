@@ -28,6 +28,7 @@ Functions
 Variables
 ---------
 
+.. autodata:: brom_drake.productions.scenario_presets.DRAKE_YCB_OBJECT_URLS
 .. autodata:: brom_drake.productions.scenario_presets.TWO_PI
 .. autodata:: brom_drake.productions.scenario_presets.UPRIGHT_TOLERANCE
 .. autodata:: brom_drake.productions.scenario_presets.UR10E_JOINT_LIMITS

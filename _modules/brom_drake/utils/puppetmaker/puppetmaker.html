@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>brom_drake.utils.puppetmaker.puppetmaker - brom_drake-py 1.1.3 documentation</title>
+        <title>brom_drake.utils.puppetmaker.puppetmaker - brom_drake-py 1.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">brom_drake-py 1.1.3 documentation</div></a>
+      <a href="../../../../index.html"><div class="brand">brom_drake-py 1.2.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 1.1.3 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 1.2.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -587,6 +587,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pydrake.all</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">AbstractValue</span><span class="p">,</span>
     <span class="n">Adder</span><span class="p">,</span>
     <span class="n">ConstantVectorSource</span><span class="p">,</span>
     <span class="n">Demultiplexer</span><span class="p">,</span>
@@ -596,9 +597,9 @@
     <span class="n">Multiplexer</span><span class="p">,</span>
     <span class="n">Parser</span><span class="p">,</span>
     <span class="n">PassThrough</span><span class="p">,</span>
-    <span class="n">PidController</span><span class="p">,</span>
     <span class="n">PrismaticJoint</span><span class="p">,</span>
     <span class="n">RevoluteJoint</span><span class="p">,</span>
+    <span class="n">RigidTransform</span><span class="p">,</span>
     <span class="n">Joint</span><span class="p">,</span>
     <span class="n">JointActuator</span><span class="p">,</span>
 <span class="p">)</span>
@@ -609,7 +610,6 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.systems.named_vector_selection_system</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">define_named_vector_selection_system</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.systems.rpy_integrator</span><span class="w"> </span><span class="kn">import</span> <span class="n">RPYIntegrator</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.utils.model_instances</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_all_bodies_in</span>
 
 <span class="c1"># Internal Imports</span>
@@ -621,10 +621,7 @@
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.file_manipulation.urdf</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleShapeURDFDefinition</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.file_manipulation.urdf.shapes</span><span class="w"> </span><span class="kn">import</span> <span class="n">SphereDefinition</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.systems.conversion.rigid_transform_to_vector_system</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">RigidTransformToVectorSystem</span><span class="p">,</span>
-    <span class="n">RigidTransformToVectorSystemConfiguration</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.pose_controller</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_SINGULARITY_DAMPING</span><span class="p">,</span> <span class="n">PuppetPoseController</span>
 
 
 <div class="viewcode-block" id="Puppetmaker">
@@ -1078,12 +1075,18 @@
         <span class="n">builder</span><span class="p">:</span> <span class="n">DiagramBuilder</span><span class="p">,</span>
         <span class="n">Kp</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">Kd</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">RigidTransformToVectorSystem</span><span class="p">,</span> <span class="n">PassThrough</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
+        <span class="n">singularity_damping</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DEFAULT_SINGULARITY_DAMPING</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">PassThrough</span><span class="p">,</span> <span class="n">PassThrough</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        *Description*</span>
 
-<span class="sd">        This method will create a simple PID controller to actuate the puppet</span>
-<span class="sd">        to a desired pose.</span>
+<span class="sd">        This method will create a controller that actuates the puppet</span>
+<span class="sd">        to a desired pose (see :py:class:`PuppetPoseController`).</span>
+
+<span class="sd">        The controller compares the desired and current orientations as rotations,</span>
+<span class="sd">        not as roll-pitch-yaw angles, so targets at roll or yaw = +/-pi and</span>
+<span class="sd">        pitch = +/-pi/2 (for example, a gripper pointing straight down or to the</span>
+<span class="sd">        side) are tracked like any other.</span>
 
 <span class="sd">        *Parameters*</span>
 
@@ -1094,17 +1097,23 @@
 <span class="sd">            The diagram builder to add the controller to.</span>
 
 <span class="sd">        Kp : np.ndarray, optional</span>
-<span class="sd">            The proportional gain for the PID controller. If not provided, a default value will be used.</span>
+<span class="sd">            The proportional gains, ordered as [x, y, z, yaw, pitch, roll].</span>
+<span class="sd">            If not provided, a default value will be used.</span>
 
 <span class="sd">        Kd : np.ndarray, optional</span>
-<span class="sd">            The derivative gain for the PID controller. If not provided, a default value will be used.</span>
+<span class="sd">            The derivative gains, in the same order as Kp.</span>
+<span class="sd">            If not provided, the square root of Kp will be used.</span>
+
+<span class="sd">        singularity_damping : float, optional</span>
+<span class="sd">            The damping (in rad) used to invert the rotation joints' Jacobian</span>
+<span class="sd">            near gimbal lock. See :py:class:`PuppetPoseController`.</span>
 
 <span class="sd">        *Returns*</span>
 
-<span class="sd">        pose_to_vector_system : RigidTransformToVectorSystem</span>
-<span class="sd">            The system that converts the desired pose to a vector format.</span>
-<span class="sd">            This system is what provides the target to the PID controller.</span>
-<span class="sd">            You can think of this as the "reference" signal for the controller.</span>
+<span class="sd">        desired_pose_input : PassThrough</span>
+<span class="sd">            The system whose (abstract) input port takes the desired pose of the</span>
+<span class="sd">            puppet, a ``RigidTransform``. You can think of this as the "reference"</span>
+<span class="sd">            signal for the controller.</span>
 
 <span class="sd">        passthrough_system : PassThrough|None</span>
 <span class="sd">            A passthrough system that can be used to provide inputs to the</span>
@@ -1139,13 +1148,14 @@
             <span class="n">signature</span><span class="p">,</span> <span class="n">builder</span>
         <span class="p">)</span>
 
-        <span class="c1"># Create the PID Controller</span>
-        <span class="n">controller</span><span class="p">:</span> <span class="n">PidController</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">AddSystem</span><span class="p">(</span>
-            <span class="n">PidController</span><span class="p">(</span>
-                <span class="n">kp</span><span class="o">=</span><span class="n">Kp</span><span class="p">,</span>
-                <span class="n">ki</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">Kp</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span>
-                <span class="n">kd</span><span class="o">=</span><span class="n">Kd</span><span class="p">,</span>
-            <span class="p">)</span>
+        <span class="c1"># Create the pose controller</span>
+        <span class="n">controller</span><span class="p">:</span> <span class="n">PuppetPoseController</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">AddNamedSystem</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">'[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">] Pose Controller for puppeteering "</span><span class="si">{</span><span class="n">signature</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">"'</span><span class="p">,</span>
+            <span class="n">system</span><span class="o">=</span><span class="n">PuppetPoseController</span><span class="p">(</span>
+                <span class="n">Kp</span><span class="o">=</span><span class="n">Kp</span><span class="p">,</span>
+                <span class="n">Kd</span><span class="o">=</span><span class="n">Kd</span><span class="p">,</span>
+                <span class="n">singularity_damping</span><span class="o">=</span><span class="n">singularity_damping</span><span class="p">,</span>
+            <span class="p">),</span>
         <span class="p">)</span>
 
         <span class="c1"># The signal that we send to the joints will be the sum of:</span>
@@ -1154,34 +1164,30 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">add_gravity_compensation_sum_system_for</span><span class="p">(</span><span class="n">signature</span><span class="p">,</span> <span class="n">builder</span><span class="p">)</span>
         <span class="p">)</span>
 
-        <span class="c1"># - The PID controller output.</span>
+        <span class="c1"># - The controller output.</span>
         <span class="n">builder</span><span class="o">.</span><span class="n">Connect</span><span class="p">(</span>
-            <span class="n">controller</span><span class="o">.</span><span class="n">get_output_port</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
+            <span class="n">controller</span><span class="o">.</span><span class="n">get_output_port</span><span class="p">(),</span>
             <span class="n">adder_with_gravity_compensation</span><span class="o">.</span><span class="n">get_input_port</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
         <span class="p">)</span>
 
-        <span class="c1"># Connect the adder (which combines the PID Controller and the feedforward term)</span>
+        <span class="c1"># Connect the adder (which combines the controller and the feedforward term)</span>
         <span class="c1"># to the actuators</span>
         <span class="n">builder</span><span class="o">.</span><span class="n">Connect</span><span class="p">(</span>
             <span class="n">adder_with_gravity_compensation</span><span class="o">.</span><span class="n">get_output_port</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
             <span class="n">actuator_demux</span><span class="o">.</span><span class="n">get_input_port</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
         <span class="p">)</span>
 
-        <span class="c1"># Reference signal is a state which contains two pieces: a pose and a twist</span>
-        <span class="n">target_state_mux</span><span class="p">,</span> <span class="n">desired_pose_input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_puppet_reference_signal</span><span class="p">(</span>
+        <span class="c1"># The reference signal is the desired pose (the desired velocity is zero)</span>
+        <span class="n">desired_pose_input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_puppet_reference_input</span><span class="p">(</span>
             <span class="n">signature</span><span class="o">=</span><span class="n">signature</span><span class="p">,</span>
             <span class="n">builder</span><span class="o">=</span><span class="n">builder</span><span class="p">,</span>
         <span class="p">)</span>
-
-        <span class="c1"># Connect the final two inputs to the PID controller:</span>
-        <span class="c1"># - The reference signal (which includes the desired pose and twist)</span>
-        <span class="c1">#   (Note: the pose and twist are converted to vector form by the `create_puppet_reference_signal` method.)</span>
         <span class="n">builder</span><span class="o">.</span><span class="n">Connect</span><span class="p">(</span>
-            <span class="n">target_state_mux</span><span class="o">.</span><span class="n">get_output_port</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
-            <span class="n">controller</span><span class="o">.</span><span class="n">get_input_port_desired_state</span><span class="p">(),</span>
+            <span class="n">desired_pose_input</span><span class="o">.</span><span class="n">get_output_port</span><span class="p">(),</span>
+            <span class="n">controller</span><span class="o">.</span><span class="n">get_input_port_desired_pose</span><span class="p">(),</span>
         <span class="p">)</span>
 
-        <span class="c1"># - The estimated state signal (which includes the current pose and twist of the puppet)</span>
+        <span class="c1"># - The estimated state signal (the puppet's joint positions and velocities)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">connect_plant_to_controller</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">controller</span><span class="p">,</span> <span class="n">signature</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">desired_pose_input</span><span class="p">,</span> <span class="n">pass_through_system</span></div>
@@ -1230,16 +1236,16 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">connect_plant_to_controller</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">builder</span><span class="p">:</span> <span class="n">DiagramBuilder</span><span class="p">,</span>
-        <span class="n">controller</span><span class="p">:</span> <span class="n">PidController</span><span class="p">,</span>
+        <span class="n">controller</span><span class="p">:</span> <span class="n">PuppetPoseController</span><span class="p">,</span>
         <span class="n">signature</span><span class="p">:</span> <span class="n">PuppetSignature</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        **Description**</span>
 
 <span class="sd">        Connect the plant to the controller.</span>
-<span class="sd">        This is non-trivial because we:</span>
-<span class="sd">        1. use a multiplexer to combine the state of each of the models in the puppet into one signal, and</span>
-<span class="sd">        2. we use a special integrator to produce the rotational states.</span>
+<span class="sd">        This is non-trivial because we use a multiplexer to combine the state of</span>
+<span class="sd">        each of the models in the puppet into one signal, ordered as</span>
+<span class="sd">        [x, y, z, yaw, pitch, roll] positions and then velocities.</span>
 
 
 <span class="sd">        """</span>
@@ -1301,23 +1307,20 @@
                 <span class="n">state_mux</span><span class="o">.</span><span class="n">get_input_port</span><span class="p">(</span><span class="n">signature</span><span class="o">.</span><span class="n">n_models</span> <span class="o">+</span> <span class="n">ii</span><span class="p">),</span>
             <span class="p">)</span>
 
-        <span class="c1"># Perform integration on the rotational states so that the controller can use them as part of its state feedback</span>
-        <span class="c1"># (Note: the controller needs the integrated rotation states to be able to compute the error between the current and desired pose of the puppet.)</span>
+        <span class="c1"># Reorder the puppet's state for the controller: xyz, then the yaw-pitch-roll</span>
+        <span class="c1"># joint angles, then all velocities.</span>
+        <span class="c1">#</span>
+        <span class="c1"># The rotational joints' positions are used as-is (Drake's revolute joint</span>
+        <span class="c1"># positions do not wrap at +/-pi). The controller only uses them to compute the</span>
+        <span class="c1"># puppet's current orientation.</span>
 
-        <span class="c1"># 1. Create a system that will make the final integrated state signal for the controller by integrating the rotational states and muxing them together with the translational states.</span>
+        <span class="c1"># 1. Create a system that makes the controller's state signal.</span>
         <span class="n">integrated_state_mux</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">AddNamedSystem</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">'[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">] Integrated State Mux for puppeteering "</span><span class="si">{</span><span class="n">signature</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">"'</span><span class="p">,</span>
             <span class="n">system</span><span class="o">=</span><span class="n">Multiplexer</span><span class="p">(</span><span class="n">input_sizes</span><span class="o">=</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">]),</span>
-        <span class="p">)</span>  <span class="c1"># First 3 inputs are xyz; won't change. Second 3 inputs are the yaw-pitch-roll angles; these will be integrated. Last 6 inputs are the velocities; won't change.</span>
+        <span class="p">)</span>  <span class="c1"># First 3 inputs are xyz. Second 3 inputs are the yaw-pitch-roll joint angles. Last 6 inputs are the velocities.</span>
 
-        <span class="c1"># 2. Create an integrator to integrate the rotational states</span>
-        <span class="n">rotational_state_integrator</span><span class="p">:</span> <span class="n">RPYIntegrator</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">AddNamedSystem</span><span class="p">(</span>
-            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">'[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">] Rotational State Integrator for puppeteering "</span><span class="si">{</span><span class="n">signature</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">"'</span><span class="p">,</span>
-            <span class="n">system</span><span class="o">=</span><span class="n">RPYIntegrator</span><span class="p">(),</span>
-        <span class="p">)</span>
-
-        <span class="c1"># 2a. Connect the rotational states + velocities from the state_mux to the integrator</span>
-        <span class="c1"># 2a-i. Select the RPY angles</span>
+        <span class="c1"># 2a. Select the RPY joint angles and connect them to the controller's state signal</span>
         <span class="n">all_state_names</span> <span class="o">=</span> <span class="p">[</span>
             <span class="s2">"x"</span><span class="p">,</span>
             <span class="s2">"y"</span><span class="p">,</span>
@@ -1347,31 +1350,6 @@
 
         <span class="n">builder</span><span class="o">.</span><span class="n">Connect</span><span class="p">(</span>
             <span class="n">rpy_selector</span><span class="o">.</span><span class="n">get_output_port</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
-            <span class="n">rotational_state_integrator</span><span class="o">.</span><span class="n">get_rpy_input_port</span><span class="p">(),</span>
-        <span class="p">)</span>
-
-        <span class="c1"># 2a-ii. Select the RPY velocities</span>
-        <span class="n">rpy_velocity_selector</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">AddNamedSystem</span><span class="p">(</span>
-            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">'[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">] RPY Velocity Selector for puppeteering "</span><span class="si">{</span><span class="n">signature</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">"'</span><span class="p">,</span>
-            <span class="n">system</span><span class="o">=</span><span class="n">define_named_vector_selection_system</span><span class="p">(</span>
-                <span class="n">all_element_names</span><span class="o">=</span><span class="n">all_state_names</span><span class="p">,</span>
-                <span class="n">sequence_of_names_for_output</span><span class="o">=</span><span class="p">[</span><span class="s2">"v_yaw"</span><span class="p">,</span> <span class="s2">"v_pitch"</span><span class="p">,</span> <span class="s2">"v_roll"</span><span class="p">],</span>
-            <span class="p">),</span>
-        <span class="p">)</span>
-
-        <span class="n">builder</span><span class="o">.</span><span class="n">Connect</span><span class="p">(</span>
-            <span class="n">state_mux</span><span class="o">.</span><span class="n">get_output_port</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
-            <span class="n">rpy_velocity_selector</span><span class="o">.</span><span class="n">get_input_port</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
-        <span class="p">)</span>
-
-        <span class="n">builder</span><span class="o">.</span><span class="n">Connect</span><span class="p">(</span>
-            <span class="n">rpy_velocity_selector</span><span class="o">.</span><span class="n">get_output_port</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
-            <span class="n">rotational_state_integrator</span><span class="o">.</span><span class="n">get_rpy_velocity_input_port</span><span class="p">(),</span>
-        <span class="p">)</span>
-
-        <span class="c1"># 2a-iii. Connect the integrated RPY angles to the integrated state mux</span>
-        <span class="n">builder</span><span class="o">.</span><span class="n">Connect</span><span class="p">(</span>
-            <span class="n">rotational_state_integrator</span><span class="o">.</span><span class="n">get_output_port</span><span class="p">(),</span>
             <span class="n">integrated_state_mux</span><span class="o">.</span><span class="n">get_input_port</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
         <span class="p">)</span>
 
@@ -1617,58 +1595,24 @@
         <span class="k">return</span> <span class="n">translation_ghost_models</span><span class="p">,</span> <span class="n">revolute_ghost_models</span></div>
 
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">create_puppet_reference_signal</span><span class="p">(</span>
+<div class="viewcode-block" id="Puppetmaker.create_puppet_reference_input">
+<a class="viewcode-back" href="../../../../generated/utils/puppetmaker/puppetmaker.html#brom_drake.utils.puppetmaker.puppetmaker.Puppetmaker.create_puppet_reference_input">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_puppet_reference_input</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">signature</span><span class="p">:</span> <span class="n">PuppetSignature</span><span class="p">,</span>
         <span class="n">builder</span><span class="p">:</span> <span class="n">DiagramBuilder</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Multiplexer</span><span class="p">,</span> <span class="n">RigidTransformToVectorSystem</span><span class="p">]:</span>
-        <span class="c1"># Create the system where the desired pose should be connected</span>
-        <span class="n">p2v_config</span> <span class="o">=</span> <span class="n">RigidTransformToVectorSystemConfiguration</span><span class="p">(</span>
-            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">'[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">]Pose to vector for puppeteering "</span><span class="si">{</span><span class="n">signature</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">"'</span><span class="p">,</span>
-            <span class="n">output_format</span><span class="o">=</span><span class="s2">"vector_xyz_euler(rpy)"</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">desired_pose_to_vector</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">AddSystem</span><span class="p">(</span>
-            <span class="n">RigidTransformToVectorSystem</span><span class="p">(</span><span class="n">p2v_config</span><span class="p">)</span>
-        <span class="p">)</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PassThrough</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        *Description*</span>
 
-        <span class="c1"># Reference signal is a state which contains two pieces: a pose and a twist</span>
-        <span class="c1"># - Target Twist is zero</span>
-        <span class="n">zero_twist_source</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">AddSystem</span><span class="p">(</span><span class="n">ConstantVectorSource</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">6</span><span class="p">,))))</span>
+<span class="sd">        Creates the system where the desired pose of the puppet (a ``RigidTransform``)</span>
+<span class="sd">        should be connected.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="n">builder</span><span class="o">.</span><span class="n">AddNamedSystem</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">'[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">] Desired pose for puppeteering "</span><span class="si">{</span><span class="n">signature</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">"'</span><span class="p">,</span>
+            <span class="n">system</span><span class="o">=</span><span class="n">PassThrough</span><span class="p">(</span><span class="n">AbstractValue</span><span class="o">.</span><span class="n">Make</span><span class="p">(</span><span class="n">RigidTransform</span><span class="p">())),</span>
+        <span class="p">)</span></div>
 
-        <span class="n">target_state_mux</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">AddNamedSystem</span><span class="p">(</span>
-            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">'[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">] Target State Mux for puppeteering "</span><span class="si">{</span><span class="n">signature</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">"'</span><span class="p">,</span>
-            <span class="n">system</span><span class="o">=</span><span class="n">Multiplexer</span><span class="p">(</span><span class="n">input_sizes</span><span class="o">=</span><span class="p">[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">]),</span>
-        <span class="p">)</span>
-
-        <span class="c1"># Connect target state mux inputs</span>
-        <span class="c1"># - Pose from pose_to_vector (transformed so that the order of its</span>
-        <span class="c1">#   output matches the expected input of the controller; controller</span>
-        <span class="c1">#   expects [x, y, z, yaw, pitch, roll])</span>
-
-        <span class="n">rpy_ordering_selection_system</span> <span class="o">=</span> <span class="n">define_named_vector_selection_system</span><span class="p">(</span>
-            <span class="n">all_element_names</span><span class="o">=</span><span class="p">[</span><span class="s2">"x"</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">,</span> <span class="s2">"z"</span><span class="p">,</span> <span class="s2">"roll"</span><span class="p">,</span> <span class="s2">"pitch"</span><span class="p">,</span> <span class="s2">"yaw"</span><span class="p">],</span>
-            <span class="n">sequence_of_names_for_output</span><span class="o">=</span><span class="p">[</span><span class="s2">"x"</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">,</span> <span class="s2">"z"</span><span class="p">,</span> <span class="s2">"yaw"</span><span class="p">,</span> <span class="s2">"pitch"</span><span class="p">,</span> <span class="s2">"roll"</span><span class="p">],</span>
-        <span class="p">)</span>
-        <span class="n">builder</span><span class="o">.</span><span class="n">AddNamedSystem</span><span class="p">(</span>
-            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">'[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">] RPY Ordering Selection for puppeteering "</span><span class="si">{</span><span class="n">signature</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">"'</span><span class="p">,</span>
-            <span class="n">system</span><span class="o">=</span><span class="n">rpy_ordering_selection_system</span><span class="p">,</span>
-        <span class="p">)</span>
-
-        <span class="n">builder</span><span class="o">.</span><span class="n">Connect</span><span class="p">(</span>
-            <span class="n">desired_pose_to_vector</span><span class="o">.</span><span class="n">get_output_port</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
-            <span class="n">rpy_ordering_selection_system</span><span class="o">.</span><span class="n">get_input_port</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
-        <span class="p">)</span>
-        <span class="n">builder</span><span class="o">.</span><span class="n">Connect</span><span class="p">(</span>
-            <span class="n">rpy_ordering_selection_system</span><span class="o">.</span><span class="n">get_output_port</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
-            <span class="n">target_state_mux</span><span class="o">.</span><span class="n">get_input_port</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
-        <span class="p">)</span>
-
-        <span class="c1"># - Twist from zero_twist_source</span>
-        <span class="n">builder</span><span class="o">.</span><span class="n">Connect</span><span class="p">(</span>
-            <span class="n">zero_twist_source</span><span class="o">.</span><span class="n">get_output_port</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
-            <span class="n">target_state_mux</span><span class="o">.</span><span class="n">get_input_port</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="n">target_state_mux</span><span class="p">,</span> <span class="n">desired_pose_to_vector</span>
 
 <div class="viewcode-block" id="Puppetmaker.add_massless_sphere_to_plant_with_name">
 <a class="viewcode-back" href="../../../../generated/utils/puppetmaker/puppetmaker.html#brom_drake.utils.puppetmaker.puppetmaker.Puppetmaker.add_massless_sphere_to_plant_with_name">[docs]</a>
@@ -1958,7 +1902,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=cb7bf70b"></script>
+</div><script src="../../../../_static/documentation_options.js?v=6efca38a"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>

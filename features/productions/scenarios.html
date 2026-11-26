@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html"><link rel="next" title="Recording Videos" href="../recording_videos.html"><link rel="prev" title="Show Me This Static Grasp" href="debug/show_me_this_static_grasp.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>Scenarios - brom_drake-py 1.1.3 documentation</title>
+        <title>Scenarios - brom_drake-py 1.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -162,7 +162,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">brom_drake-py 1.1.3 documentation</div></a>
+      <a href="../../index.html"><div class="brand">brom_drake-py 1.2.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +183,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 1.1.3 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 1.2.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -619,7 +619,11 @@ field with <code class="docutils literal notranslate"><span class="pre">param</s
 <li><p>Every field name must be a keyword argument of the production’s constructor
 (or of a parent class’s constructor). Callers apply a value by passing it as
 that keyword argument.</p></li>
-<li><p>A default of <code class="docutils literal notranslate"><span class="pre">None</span></code> means “use the constructor’s own default”.</p></li>
+<li><p>A default of <code class="docutils literal notranslate"><span class="pre">None</span></code> means “use the constructor’s own default”. A
+required constructor argument (such as <code class="docutils literal notranslate"><span class="pre">GraspSelection1</span></code>’s
+<code class="docutils literal notranslate"><span class="pre">path_to_object</span></code>) may also be a field, with the default <code class="docutils literal notranslate"><span class="pre">None</span></code>, which
+then means “keep the value in the user’s script”. Callers must not pass
+<code class="docutils literal notranslate"><span class="pre">None</span></code> on to the constructor for such a field.</p></li>
 <li><p>Use <code class="docutils literal notranslate"><span class="pre">mutually_exclusive</span></code> for arguments that are alternatives, for example
 <code class="docutils literal notranslate"><span class="pre">mutually_exclusive</span> <span class="pre">=</span> <span class="pre">((&quot;start_configuration&quot;,</span> <span class="pre">&quot;start_pose&quot;),)</span></code>.</p></li>
 </ul>
@@ -651,10 +655,35 @@ that keyword argument.</p></li>
 <td><p><code class="docutils literal notranslate"><span class="pre">{&quot;xyz&quot;:</span> <span class="pre">[...],</span> <span class="pre">&quot;rpy&quot;:</span> <span class="pre">[...]}</span></code> or <code class="docutils literal notranslate"><span class="pre">{&quot;xyz&quot;:</span> <span class="pre">[...],</span> <span class="pre">&quot;wxyz&quot;:</span> <span class="pre">[...]}</span></code></p></td>
 <td><p>per component; see below</p></td>
 </tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ChoiceParam(choices,</span> <span class="pre">units=&quot;&quot;)</span></code></p></td>
+<td><p>a string ID, one of the keys of <code class="docutils literal notranslate"><span class="pre">choices</span></code></p></td>
+<td><p>the declared IDs; see below</p></td>
+</tr>
 </tbody>
 </table>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">true</span></code> and <code class="docutils literal notranslate"><span class="pre">false</span></code>, NaN and infinity are never accepted as numbers.</p>
+<section id="choice-parameters">
+<span id="id1"></span><h3>Choice parameters<a class="headerlink" href="#choice-parameters" title="Link to this heading">¶</a></h3>
+<p>A <code class="docutils literal notranslate"><span class="pre">ChoiceParam</span></code> picks one of a fixed set of values that the production
+declares, for example which object to grasp. <code class="docutils literal notranslate"><span class="pre">choices</span></code> maps each ID to the
+value it stands for:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ChoiceParam</span><span class="p">({</span>
+    <span class="s2">"ycb_005_tomato_soup_can"</span><span class="p">:</span> <span class="s2">"package://drake_models/ycb/005_tomato_soup_can.sdf"</span><span class="p">,</span>
+    <span class="s2">"ycb_009_gelatin_box"</span><span class="p">:</span> <span class="s2">"package://drake_models/ycb/009_gelatin_box.sdf"</span><span class="p">,</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+<p>On the wire, a value is only the ID (<code class="docutils literal notranslate"><span class="pre">&quot;ycb_009_gelatin_box&quot;</span></code>). The value it
+stands for (here, the model URL) is looked up in the declaration when the
+production is built, so a caller can choose among the declared values but can
+never send a path, a URL or other text that reaches the constructor.</p>
+<p>IDs are the only strings a scenario may contain. They must match
+<code class="docutils literal notranslate"><span class="pre">^[a-z0-9][a-z0-9_]{0,63}$</span></code> (lowercase letters, digits and underscores, at
+most 64 characters; <code class="docutils literal notranslate"><span class="pre">CHOICE_ID_PATTERN</span></code> in
+<code class="docutils literal notranslate"><span class="pre">brom_drake.productions.types.base.scenario</span></code>). <code class="docutils literal notranslate"><span class="pre">ChoiceParam</span></code> refuses
+other IDs when it is declared, and <code class="docutils literal notranslate"><span class="pre">validate</span></code> refuses any string that is not
+one of the declared IDs. Saphira and the Wrench API check the same pattern.</p>
 <p>The base production types (<code class="docutils literal notranslate"><span class="pre">KinematicMotionPlanningProduction</span></code>,
 <code class="docutils literal notranslate"><span class="pre">OfflineDynamicMotionPlanningProduction</span></code> and
 <code class="docutils literal notranslate"><span class="pre">MotionPlanningAndGraspingProduction</span></code>) declare their start and goal fields
@@ -662,8 +691,9 @@ with loose bounds and <code class="docutils literal notranslate"><span class="pr
 depends on the arm. A production should re-declare those fields with its
 arm’s joint count and limits and its own workspace.</p>
 </section>
+</section>
 <section id="pose-orientation-convention">
-<span id="id1"></span><h2>Pose orientation convention<a class="headerlink" href="#pose-orientation-convention" title="Link to this heading">¶</a></h2>
+<span id="id2"></span><h2>Pose orientation convention<a class="headerlink" href="#pose-orientation-convention" title="Link to this heading">¶</a></h2>
 <p>A pose is <code class="docutils literal notranslate"><span class="pre">&quot;xyz&quot;</span></code> (metres) plus <strong>exactly one</strong> orientation:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">&quot;rpy&quot;</span></code>: <code class="docutils literal notranslate"><span class="pre">[roll,</span> <span class="pre">pitch,</span> <span class="pre">yaw]</span></code> in radians, or</p></li>
@@ -728,9 +758,44 @@ productions use, so productions with the same arm share the same numbers:</p>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SHELF_POSE</span></code>, <code class="docutils literal notranslate"><span class="pre">TABLE_LENGTH</span></code>, <code class="docutils literal notranslate"><span class="pre">TABLE_WIDTH</span></code>, <code class="docutils literal notranslate"><span class="pre">TABLE_HEIGHT</span></code></p></td>
 <td><p>the shelf and table ranges of the ChemLab productions</p></td>
 </tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DRAKE_YCB_OBJECTS</span></code></p></td>
+<td><p>one of the YCB objects in <code class="docutils literal notranslate"><span class="pre">DRAKE_YCB_OBJECT_URLS</span></code> (see below)</p></td>
+</tr>
 </tbody>
 </table>
 </div>
+<p><code class="docutils literal notranslate"><span class="pre">DRAKE_YCB_OBJECTS</span></code> is the object catalog of <code class="docutils literal notranslate"><span class="pre">GraspSelection1</span></code>. It lists
+the YCB objects from Drake’s <code class="docutils literal notranslate"><span class="pre">drake_models</span></code> package that the Robotiq 2F-85
+(85 mm opening) can grasp as GraspSelection1 places them, lying on a large
+face:</p>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>ID</p></th>
+<th class="head"><p>Model</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ycb_005_tomato_soup_can</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">package://drake_models/ycb/005_tomato_soup_can.sdf</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ycb_009_gelatin_box</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">package://drake_models/ycb/009_gelatin_box.sdf</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ycb_010_potted_meat_can</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">package://drake_models/ycb/010_potted_meat_can.sdf</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Drake also ships the cracker box, sugar box and mustard bottle, which are too
+wide for the gripper in that pose. A user’s own script may still load any of
+them with a <code class="docutils literal notranslate"><span class="pre">package://</span></code> URL.</p>
+<p>Each of these models has one body, and its collision geometry is one Box or
+Cylinder plus 8 small Spheres at the corners of its bounding box, so an
+<code class="docutils literal notranslate"><span class="pre">ObjectGeometry</span></code> lists 9 shapes. The first use of a <code class="docutils literal notranslate"><span class="pre">drake_models</span></code> URL
+downloads the models archive that Drake pins (cached in
+<code class="docutils literal notranslate"><span class="pre">~/.cache/drake/package_map</span></code>), which needs network access to github.com.</p>
 <p>Joint limits are copied by hand from the arm models, since reading them from
 the plant would mean building it. Workspace boxes are in the world frame, whose
 origin is at the arm’s base.</p>
@@ -763,24 +828,41 @@ Scenario and re-declare the start and goal fields with your arm’s preset:</p>
 </div>
 <p>A test in Brom (<code class="docutils literal notranslate"><span class="pre">tests/productions/scenario_contract_test.py</span></code>) checks every
 production with a Scenario: each field must be a constructor keyword argument
-with the same default.</p>
+with the same default (or the default <code class="docutils literal notranslate"><span class="pre">None</span></code> for a required argument).</p>
 </section>
 <section id="reading-the-schema">
 <h2>Reading the schema<a class="headerlink" href="#reading-the-schema" title="Link to this heading">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">Scenario.schema()</span></code> returns JSON with one entry per field (<code class="docutils literal notranslate"><span class="pre">name</span></code>,
 <code class="docutils literal notranslate"><span class="pre">kind</span></code>, <code class="docutils literal notranslate"><span class="pre">default</span></code>, <code class="docutils literal notranslate"><span class="pre">units</span></code>, <code class="docutils literal notranslate"><span class="pre">description</span></code> and the bounds) and the
 <code class="docutils literal notranslate"><span class="pre">mutually_exclusive</span></code> groups. A pose entry also lists
-<code class="docutils literal notranslate"><span class="pre">&quot;orientation_keys&quot;:</span> <span class="pre">[&quot;rpy&quot;,</span> <span class="pre">&quot;wxyz&quot;]</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">&quot;orientation_keys&quot;:</span> <span class="pre">[&quot;rpy&quot;,</span> <span class="pre">&quot;wxyz&quot;]</span></code>. A choice entry has
+<code class="docutils literal notranslate"><span class="pre">&quot;kind&quot;:</span> <span class="pre">&quot;choice&quot;</span></code> and lists its sorted IDs in <code class="docutils literal notranslate"><span class="pre">&quot;choices&quot;</span></code>, but not the
+values they stand for.</p>
 </section>
 <section id="building-a-production-from-scenario-values">
 <h2>Building a production from scenario values<a class="headerlink" href="#building-a-production-from-scenario-values" title="Link to this heading">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">Scenario.constructor_kwargs(values)</span></code> validates the values and converts them
-to constructor arguments: vectors become numpy arrays and poses become Drake
-<code class="docutils literal notranslate"><span class="pre">RigidTransform</span></code> objects.</p>
+to constructor arguments: vectors become numpy arrays, poses become Drake
+<code class="docutils literal notranslate"><span class="pre">RigidTransform</span></code> objects and choice IDs become the values they stand for.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">ShelfPlanning1</span><span class="o">.</span><span class="n">Scenario</span><span class="o">.</span><span class="n">constructor_kwargs</span><span class="p">(</span>
     <span class="p">{</span><span class="s2">"shelf_pose"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"xyz"</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">],</span> <span class="s2">"rpy"</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.52</span><span class="p">]}}</span>
 <span class="p">)</span>
 <span class="n">production</span> <span class="o">=</span> <span class="n">ShelfPlanning1</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For GraspSelection1, merge the converted values over the script’s own
+arguments:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">GraspSelection1</span><span class="o">.</span><span class="n">Scenario</span><span class="o">.</span><span class="n">constructor_kwargs</span><span class="p">(</span>
+    <span class="p">{</span><span class="s2">"path_to_object"</span><span class="p">:</span> <span class="s2">"ycb_005_tomato_soup_can"</span><span class="p">}</span>
+<span class="p">)</span>
+<span class="n">production</span> <span class="o">=</span> <span class="n">GraspSelection1</span><span class="p">(</span>
+    <span class="o">**</span><span class="p">{</span>
+        <span class="s2">"path_to_object"</span><span class="p">:</span> <span class="s2">"my_object.urdf"</span><span class="p">,</span>
+        <span class="s2">"gripper_choice"</span><span class="p">:</span> <span class="n">GripperType</span><span class="o">.</span><span class="n">Robotiq_2f_85</span><span class="p">,</span>
+        <span class="s2">"grasp_gripper_command"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.7</span><span class="p">]),</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">}</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -843,7 +925,10 @@ to constructor arguments: vectors become numpy arrays and poses become Drake
             <ul>
 <li><a class="reference internal" href="#">Scenarios</a><ul>
 <li><a class="reference internal" href="#declaring-a-scenario">Declaring a Scenario</a></li>
-<li><a class="reference internal" href="#parameter-types">Parameter types</a></li>
+<li><a class="reference internal" href="#parameter-types">Parameter types</a><ul>
+<li><a class="reference internal" href="#choice-parameters">Choice parameters</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#pose-orientation-convention">Pose orientation convention</a></li>
 <li><a class="reference internal" href="#shared-presets">Shared presets</a></li>
 <li><a class="reference internal" href="#reading-the-schema">Reading the schema</a></li>
@@ -859,7 +944,7 @@ to constructor arguments: vectors become numpy arrays and poses become Drake
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=cb7bf70b"></script>
+</div><script src="../../_static/documentation_options.js?v=6efca38a"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>

@@ -104,18 +104,24 @@ What will happen whenever you use this function is that:
 Where the Watcher Saves Its Output
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-By default, the watcher directory is :code:`./brom/watcher` (relative to the directory you run your script from).
-It can be changed with the :code:`watcher_dir` argument. The directory contains:
+By default, the watcher saves its output under :code:`./brom/watcher` (relative to the directory you run your script from).
+If the :code:`BROM_DIR` environment variable is set to a non-empty value, then the default is :code:`$BROM_DIR/watcher` instead.
+Passing the :code:`watcher_dir` argument replaces this parent directory.
+
+Each DiagramWatcher creates its own new, uniquely named subdirectory inside that parent directory
+(named from the current timestamp and process ID, e.g., :code:`20260101-120000-123456-4242-xxxxxxxx`).
+This subdirectory is the one that contains:
 
 - :code:`plots/`: the figures of each watched port,
 - :code:`raw_data/`: the raw signal data of each watched port (saved as :code:`.npy` files by default), and
 - :code:`activity_summary.log`: a log of what the DiagramWatcher did.
 
-.. warning::
+.. note::
 
-   If the watcher directory already exists when the DiagramWatcher is created, then the directory
-   and **all of its contents are deleted** and re-created. Use a different :code:`watcher_dir`
-   for each run if you want to keep earlier results.
+   The parent directory is created if it does not exist, but it is never emptied.
+   Output from earlier runs, or from other watchers sharing the same parent directory, is left in place.
+   The path of the current run's directory is available from the watcher's :code:`plot_dir` and
+   :code:`raw_data_dir` properties (their parent directory is the run's directory).
 
 The plots and raw data are written when the DiagramWatcher object is destroyed (for example, when the script ends or
 when you delete all references to the watcher), and only if the watcher has been given the built diagram and its context.

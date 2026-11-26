@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>brom_drake.productions.scenario_presets - brom_drake-py 1.1.3 documentation</title>
+        <title>brom_drake.productions.scenario_presets - brom_drake-py 1.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">brom_drake-py 1.1.3 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">brom_drake-py 1.2.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
-  <span class="sidebar-brand-text">brom_drake-py 1.1.3 documentation</span>
+  <span class="sidebar-brand-text">brom_drake-py 1.2.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -593,6 +593,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tuple</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">brom_drake.productions.types.base.scenario</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ChoiceParam</span><span class="p">,</span>
     <span class="n">FloatParam</span><span class="p">,</span>
     <span class="n">PoseParam</span><span class="p">,</span>
     <span class="n">VectorParam</span><span class="p">,</span>
@@ -681,6 +682,36 @@
 <span class="n">TABLE_LENGTH</span> <span class="o">=</span> <span class="n">FloatParam</span><span class="p">(</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="s2">"m"</span><span class="p">)</span>
 <span class="n">TABLE_WIDTH</span> <span class="o">=</span> <span class="n">FloatParam</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="s2">"m"</span><span class="p">)</span>
 <span class="n">TABLE_HEIGHT</span> <span class="o">=</span> <span class="n">FloatParam</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s2">"m"</span><span class="p">)</span>
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Objects to grasp (GraspSelection1)</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+<span class="c1"># Choice ID -&gt; model URL, for YCB objects that Drake's drake_models package</span>
+<span class="c1"># ships. Kept as plain data so other runners (for example a C++ port, whose</span>
+<span class="c1"># PackageMap resolves the same URLs) can read the same table.</span>
+<span class="c1">#</span>
+<span class="c1"># Resolving a drake_models URL downloads the models archive that Drake pins</span>
+<span class="c1"># the first time (cached in ~/.cache/drake/package_map). Each of these models</span>
+<span class="c1"># has one body whose collision geometry is one Box or Cylinder plus 8 small</span>
+<span class="c1"># Spheres at its corners.</span>
+<span class="c1">#</span>
+<span class="c1"># Only objects that GraspSelection1's Robotiq 2F-85 (85 mm opening) can grasp</span>
+<span class="c1"># are listed. GraspSelection1 places the object in its model's pose, which for</span>
+<span class="c1"># these models is lying on a large face, so the gripper must close across one</span>
+<span class="c1"># of the object's two horizontal dimensions. Drake also ships these, which have</span>
+<span class="c1"># no horizontal dimension under 85 mm in that pose:</span>
+<span class="c1">#   003_cracker_box (158 x 207 mm), 004_sugar_box (87 x 170 mm),</span>
+<span class="c1">#   006_mustard_bottle (90 x 160 mm).</span>
+<span class="c1"># tests/productions/grasping/grasp_selection1_ycb_test.py grasps each listed</span>
+<span class="c1"># object.</span>
+<span class="n">DRAKE_YCB_OBJECT_URLS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"ycb_005_tomato_soup_can"</span><span class="p">:</span> <span class="s2">"package://drake_models/ycb/005_tomato_soup_can.sdf"</span><span class="p">,</span>
+    <span class="s2">"ycb_009_gelatin_box"</span><span class="p">:</span> <span class="s2">"package://drake_models/ycb/009_gelatin_box.sdf"</span><span class="p">,</span>
+    <span class="s2">"ycb_010_potted_meat_can"</span><span class="p">:</span> <span class="s2">"package://drake_models/ycb/010_potted_meat_can.sdf"</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">DRAKE_YCB_OBJECTS</span> <span class="o">=</span> <span class="n">ChoiceParam</span><span class="p">(</span><span class="n">DRAKE_YCB_OBJECT_URLS</span><span class="p">)</span>
 </pre></div>
         </article>
       </div>
@@ -713,7 +744,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=cb7bf70b"></script>
+</div><script src="../../../_static/documentation_options.js?v=6efca38a"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>

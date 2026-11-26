@@ -15,6 +15,8 @@ Classes
    :members:
 .. autoclass:: brom_drake.productions.types.base.configuration.Configuration
    :members:
+.. autoclass:: brom_drake.productions.types.base.scenario.ChoiceParam
+   :members:
 .. autoclass:: brom_drake.productions.types.base.scenario.FloatParam
    :members:
 .. autoclass:: brom_drake.productions.types.base.scenario.PoseParam
@@ -38,6 +40,7 @@ Functions
 .. autofunction:: brom_drake.productions.types.base.scenario._is_number
 .. autofunction:: brom_drake.productions.types.base.scenario._suggest_rpy_bounds
 .. autofunction:: brom_drake.productions.types.base.scenario._wrap_angle
+.. autofunction:: brom_drake.productions.types.base.scenario.is_choice_id
 .. autofunction:: brom_drake.productions.types.base.scenario.param
 
 Variables
@@ -45,6 +48,7 @@ Variables
 
 .. autodata:: brom_drake.productions.types.base.scenario._ANGLE_TOLERANCE
 .. autodata:: brom_drake.productions.types.base.scenario.ANGLE_NAMES
+.. autodata:: brom_drake.productions.types.base.scenario.CHOICE_ID_PATTERN
 .. autodata:: brom_drake.productions.types.base.scenario.PARAM_METADATA_KEY
 .. autodata:: brom_drake.productions.types.base.scenario.POSE_CONVENTION_DOCS_URL
 .. autodata:: brom_drake.productions.types.base.scenario.QUATERNION_NORM_TOLERANCE
