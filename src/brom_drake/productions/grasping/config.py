@@ -56,7 +56,10 @@ class Configuration:
     gripper_puppet_Kp: List[float] or np.ndarray, optional
         The proportional gains of the controller that moves the gripper's wrist,
         ordered as [x, y, z, yaw, pitch, roll]. Translational gains are in N/m
-        and rotational gains are in N*m/rad.
+        and rotational gains are in N*m/rad. The rotational gains act on the
+        orientation error (a rotation, so it never wraps) after it is mapped to the
+        wrist's yaw, pitch and roll joints; see
+        :py:class:`~brom_drake.utils.puppetmaker.pose_controller.PuppetPoseController`.
 
     gripper_puppet_Kd: List[float] or np.ndarray, optional
         The derivative gains of the controller that moves the gripper's wrist,

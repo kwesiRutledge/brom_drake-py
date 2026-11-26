@@ -199,10 +199,11 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
     An algorithm without a type hint receives an ``ObjectDescription``.
     Both types are defined in :py:mod:`brom_drake.productions.grasping.object_description`.
 
-    The gripper's wrist follows the poses in roll-pitch-yaw angles. A gripper pointing
-    straight down has a roll of exactly +/-pi, where the slightest motion of the object
-    flips the target between +pi and -pi and the wrist turns all the way around. Tilt
-    such grasps slightly (e.g., 0.2 rad) away from vertical.
+    Any orientation can be requested, including a gripper pointing straight down
+    (roll = +/-pi) or to the side (pitch = +/-pi/2): the wrist's controller
+    (:py:class:`~brom_drake.utils.puppetmaker.pose_controller.PuppetPoseController`)
+    compares orientations as rotations, not as roll-pitch-yaw angles, so they do not wrap.
+    Near pitch = +/-pi/2 its tracking is slightly looser (within about 1 degree).
 
     The algorithm may use the object's identity and model file on purpose: this production
     tests the "easiest case" grasp, where the selector knows exactly which object it is
@@ -689,7 +690,7 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
 
     def add_gripper_controllers_and_connect(
         self,
-        gripper_puppet_input: RigidTransformToVectorSystem,
+        gripper_puppet_input: PassThrough,
         gripper_joint_input: PassThrough,
     ):
         # Setup

@@ -6,6 +6,8 @@ from pydrake.all import (
     MultibodyPlant,
     MultibodyPlantConfig,
     Parser,
+    PortDataType,
+    RigidTransform,
     SceneGraph,
 )
 import unittest
@@ -175,13 +177,18 @@ class PuppetmakerTest(unittest.TestCase):
         plant.Finalize()
 
         # Call the method
-        input_converter, _ = puppetmaker0.add_puppet_controller_for(
+        desired_pose_input, _ = puppetmaker0.add_puppet_controller_for(
             puppet_signature1, builder
         )
 
+        # The desired pose is given as a RigidTransform (not as Euler angles)
         self.assertEqual(
-            input_converter.get_output_port().size(),
-            6,
+            desired_pose_input.get_input_port().get_data_type(),
+            PortDataType.kAbstractValued,
+        )
+        self.assertIsInstance(
+            desired_pose_input.get_input_port().Allocate().get_value(),
+            RigidTransform,
         )
 
     def test_create_actuator_demux1(self):

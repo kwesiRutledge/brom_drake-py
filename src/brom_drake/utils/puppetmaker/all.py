@@ -4,12 +4,14 @@ from .puppet_signature import (
     PuppeteerJointSignature,
     PuppetSignature,
 )
+from .pose_controller import PuppetPoseController
 from .puppetmaker import Puppetmaker
 
 __all__ = [
     "AllJointSignatures",
     "PuppeteerJointSignature",
     "Puppetmaker",
+    "PuppetPoseController",
     "PuppetmakerConfiguration",
     "PuppetSignature",
 ]

@@ -15,7 +15,6 @@ from pydrake.all import (
     Box,
     Cylinder,
     RigidTransform,
-    RollPitchYaw,
     RotationMatrix,
     Simulator,
     Sphere,
@@ -36,10 +35,6 @@ from brom_drake.productions.scenario_presets import DRAKE_YCB_OBJECT_URLS
 # Distance from the Robotiq 2F-85's base frame to the center of its open finger pads,
 # along the gripper's approach (z) axis. The fingers close along the gripper's y axis.
 ROBOTIQ_2F_85_PAD_DEPTH = 0.13
-
-# How far from vertical the approach is tilted. Straight down puts the wrist's roll
-# at exactly +/-pi, where it wraps (see the GraspSelection1 docstring).
-APPROACH_TILT = 0.2
 
 
 def drake_models_available() -> bool:
@@ -70,10 +65,13 @@ def shape_corners(shape) -> np.ndarray:
     return signs * half
 
 
-def tilted_top_down_grasp(geometry: ObjectGeometry) -> List[RigidTransform]:
+def top_down_grasp(geometry: ObjectGeometry) -> List[RigidTransform]:
     """
-    A simple grasp selection algorithm: come down from above, nearly vertically,
-    and close across the narrower horizontal side of the object's bounding box.
+    A simple grasp selection algorithm: come straight down from above and close
+    across the narrower horizontal side of the object's bounding box.
+
+    Pointing straight down puts the wrist at roll = +/-pi, where roll-pitch-yaw
+    angles wrap; the wrist's controller compares rotations, so it does not care.
     """
     points = np.vstack(
         [
@@ -85,7 +83,7 @@ def tilted_top_down_grasp(geometry: ObjectGeometry) -> List[RigidTransform]:
     center = (lo + hi) / 2.0
 
     # Gripper z (approach) points down; the fingers close along gripper y.
-    R_ObjectGripper = RotationMatrix(RollPitchYaw(np.pi - APPROACH_TILT, 0.0, 0.0))
+    R_ObjectGripper = RotationMatrix.MakeXRotation(np.pi)
     if hi[0] - lo[0] <= hi[1] - lo[1]:
         # Close along the object's x axis instead.
         R_ObjectGripper = RotationMatrix.MakeZRotation(np.pi / 2.0) @ R_ObjectGripper
@@ -192,7 +190,7 @@ class GraspSelection1PackageUrlTest(unittest.TestCase):
 
         def algorithm(description: ObjectDescription):
             received.append(description)
-            return tilted_top_down_grasp(description.geometry)
+            return top_down_grasp(description.geometry)
 
         production = GraspSelection1(
             path_to_object=DRAKE_YCB_OBJECT_URLS["ycb_009_gelatin_box"],
@@ -237,7 +235,7 @@ class GraspSelection1CatalogGraspTest(unittest.TestCase):
                     }
                 )
                 diagram, diagram_context = production.easy_cast_and_build(
-                    tilted_top_down_grasp
+                    top_down_grasp
                 )
 
                 plant = production.plant

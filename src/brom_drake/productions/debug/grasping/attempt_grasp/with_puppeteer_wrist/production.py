@@ -502,7 +502,7 @@ class AttemptGraspWithPuppeteerWrist(BasicGraspingDebuggingProduction):
 
     def add_gripper_controllers_and_connect(
         self,
-        gripper_puppet_input: RigidTransformToVectorSystem,
+        gripper_puppet_input: PassThrough,
         gripper_joint_input: PassThrough,
     ):
         # Setup

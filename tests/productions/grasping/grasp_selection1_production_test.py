@@ -363,6 +363,60 @@ class TestGraspSelection1Production(unittest.TestCase):
         )
         self.assertLess(angle_error, 0.05)
 
+    def test_wrist_follows_rotation_through_gimbal_lock1(self):
+        """
+        Description
+        -----------
+        This test verifies that the wrist follows a trajectory whose pitch passes
+        through pi/2, where roll-pitch-yaw angles switch descriptions (and roll
+        and yaw jump by pi). Comparing roll-pitch-yaw angles made the wrist swing
+        about 1 rad away from the trajectory and end about 0.5 rad off.
+        """
+        # Setup: hold the gripper well above the object and turn it
+        X_start = RigidTransform(
+            p=np.array([0.0, 0.0, 0.5]), rpy=RollPitchYaw(0.1, 0.3 * np.pi, 0.1)
+        )
+        X_end = RigidTransform(
+            p=np.array([0.0, 0.0, 0.5]), rpy=RollPitchYaw(0.1, 0.7 * np.pi, 0.1)
+        )
+        config = GraspSelection1Configuration()
+        config.script = GraspSelection1Script(
+            settling_time_on_floor=1.0,
+            gripper_approach_time=3.0,
+            grasp_closing_time=1.0,
+            post_grasp_settling_time=0.1,
+            drop_time=0.5,
+        )
+        production = self.create_production(config=config)
+        diagram, diagram_context = production.easy_cast_and_build(
+            lambda object_description: [X_start, X_end]
+        )
+        plant = production.plant
+        plant_context = plant.GetMyContextFromRoot(diagram_context)
+        gripper_base = plant.GetBodyByName("robotiq_arg2f_base_link")
+        desired_pose = production.gripper_pose_memory.get_output_port()
+        desired_pose_context = production.gripper_pose_memory.GetMyContextFromRoot(
+            diagram_context
+        )
+
+        def angle_error() -> float:
+            R_actual = plant.EvalBodyPoseInWorld(plant_context, gripper_base).rotation()
+            R_desired = desired_pose.Eval(desired_pose_context).rotation()
+            return R_actual.multiply(R_desired.inverse()).ToAngleAxis().angle()
+
+        # Simulate the approach, recording the worst tracking error
+        simulator = Simulator(diagram, diagram_context)
+        simulator.Initialize()
+        t_drop = config.script.start_time_of_phase(GraspSelection1Phase.kFloorDrop)
+        worst_error = 0.0
+        for t in np.arange(1.0, t_drop, 0.05):
+            simulator.AdvanceTo(t)
+            worst_error = max(worst_error, angle_error())
+
+        # Verify
+        self.assertLess(worst_error, 0.3)
+        self.assertLess(angle_error(), 0.05)
+
     def test_suggested_roles1(self):
         """
         Description
