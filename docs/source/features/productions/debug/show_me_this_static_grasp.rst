@@ -44,8 +44,9 @@ In this section, we will include one smaller example that has been visualized ab
     # Internal Imports
     from brom_drake.all import drakeify_my_urdf
     from brom_drake import robots
-    from brom_drake.productions import (
+    from brom_drake.productions.all import (
         ShowMeThisStaticGrasp,
+        ShowMeThisStaticGraspConfiguration,
     )
 
     def main(meshcat_port_number: int = 7001):
@@ -80,11 +81,13 @@ In this section, we will include one smaller example that has been visualized ab
 
 
         # Create the production
+        config = ShowMeThisStaticGraspConfiguration()
+        config.meshcat_port_number = meshcat_port_number # Use None for CI
         production = ShowMeThisStaticGrasp(
             path_to_object=str(drakeified_flask_urdf),
             path_to_gripper=gripper_urdf,
-            meshcat_port_number=meshcat_port_number, # Use None for CI
-            X_ObjectTarget=X_ObjectTarget,
+            X_ObjectGripper=X_ObjectTarget,
+            config=config,
         )
 
         # Call the method
@@ -102,12 +105,26 @@ In this section, we will include one smaller example that has been visualized ab
 
 The result of this script will be the simulation shown at the start of this page.
 
+How it works
+^^^^^^^^^^^^
+
+The constructor takes the following arguments:
+
+- :code:`path_to_object` and :code:`path_to_gripper`: (Required) Paths to the object and gripper model files.
+- :code:`X_ObjectGripper`: (Optional) A :code:`RigidTransform` giving the pose, with respect to the object, of the gripper's *target body* (see :code:`target_body_on_gripper` below). If it is :code:`None`, the identity transform is used.
+- :code:`gripper_joint_positions`: (Optional) The joint positions at which the gripper is held. If it is :code:`None`, every gripper joint is set to zero.
+- :code:`config`: (Optional) A :code:`ShowMeThisStaticGraspConfiguration`. Its :code:`meshcat_port_number` (reached through :code:`config.base`) and the fields below are not constructor arguments of their own; set them on the configuration. If it is :code:`None`, a default configuration is used.
+
+The configuration's :code:`target_body_on_gripper` names the gripper body whose pose is :code:`X_ObjectGripper`.
+If it is :code:`None`, the first body in the gripper model is used; a name that is not in the gripper model raises an :code:`AssertionError` that lists the valid names.
+The object is welded to the world frame, and the gripper is welded at the pose that places its target body at :code:`X_ObjectGripper` relative to the object.
+
 Modifying the Gripper's Visual Geometries
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-By default, the gripper's visual geometries will be shown in the simulation.
-However, you can also choose to show the collision geometries instead by passing in the argument 
-:code:`gripper_color`.
+By default, the visualizer shows the visual (illustration) geometries.
+Setting :code:`config.show_collision_geometries = True` shows the collision (proximity) geometries instead.
+The :code:`gripper_color` option, in contrast, does not change which geometries are shown: it recolors the gripper's visual elements with an RGBA list.
 
 For example, we can change the color of the gripper to be green and semi-transparent with the following code:
 
