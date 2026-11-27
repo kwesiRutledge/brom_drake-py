@@ -145,3 +145,21 @@ If you only want to watch a specific system, then you can do so by passing in in
     )
 
 The above code tells the watcher to watch the port named port_name on the system named system_name. (If you don't know your system's name in Drake, then you can usually find it by using the :code:`get_name()` method.)
+
+A target can be a system name (all of that system's output ports are considered), or a tuple of
+a system (its name, or its index in :code:`builder.GetSystems()`) and the output port(s) to watch
+(a port index, a port name, or a list of indices and names).
+
+Systems that are never watched
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Some systems are excluded from watching, whether or not you pass :code:`targets`:
+:code:`SceneGraph`, :code:`VectorLogSink`, :code:`ConstantVectorSource` and :code:`RgbdSensor`
+(the last so that the watcher's loggers do not force a camera render at every time step).
+They are skipped when :code:`targets` is :code:`None`, and naming one of them in :code:`targets`
+raises a :py:class:`~brom_drake.watchers.diagram_watcher.errors.SystemIsNotFoundInDiagramError`.
+A port index that does not exist on the system raises a
+:py:class:`~brom_drake.watchers.diagram_watcher.errors.PortIsNotFoundInDiagramError`.
+
+Ports whose data type is not supported (see the list above) are skipped without an error,
+so they will not have plots or raw data.
