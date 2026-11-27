@@ -21,6 +21,7 @@ from pydrake.all import (
 )
 
 from brom_drake.all import (
+    GRIPPER_FINGER_PADS,
     GraspSelection1,
     GraspSelection1Configuration,
     GraspSelection1Phase,
@@ -34,7 +35,13 @@ from brom_drake.productions.scenario_presets import DRAKE_YCB_OBJECT_URLS
 
 # Distance from the Robotiq 2F-85's base frame to the center of its open finger pads,
 # along the gripper's approach (z) axis. The fingers close along the gripper's y axis.
-ROBOTIQ_2F_85_PAD_DEPTH = 0.13
+ROBOTIQ_2F_85_PAD_DEPTH = GRIPPER_FINGER_PADS[
+    GripperType.Robotiq_2f_85
+].p_BaseGraspPoint_open[2]
+
+# The thresholds of Saphira's Grasp Success metric, at the end of a run
+HELD_MAX_DISTANCE = 0.05  # m, from the object's center of mass to the grasp point
+HELD_MAX_SPEED = 0.05  # m/s
 
 
 def drake_models_available() -> bool:
@@ -266,6 +273,60 @@ class GraspSelection1CatalogGraspTest(unittest.TestCase):
                 # A dropped object falls about 0.5 m with the floor; a held one
                 # slips by at most about 1 cm.
                 self.assertLess(object_height_below_gripper() - height_at_drop, 0.03)
+
+
+def run_gelatin_box(grasp_gripper_command: float) -> GraspSelection1:
+    """Runs GraspSelection1 to the end of its script with the gelatin box."""
+    config = GraspSelection1Configuration()
+    config.script = short_script()
+    production = GraspSelection1(
+        path_to_object=DRAKE_YCB_OBJECT_URLS["ycb_009_gelatin_box"],
+        gripper_choice=GripperType.Robotiq_2f_85,
+        grasp_gripper_command=np.array([grasp_gripper_command]),
+        config=config,
+    )
+    diagram, diagram_context = production.easy_cast_and_build(top_down_grasp)
+    simulator = Simulator(diagram, diagram_context)
+    simulator.Initialize()
+    simulator.AdvanceTo(config.script.total_time())
+    return production
+
+
+@unittest.skipUnless(DRAKE_MODELS_AVAILABLE, SKIP_REASON)
+class GraspSelection1GraspPointTest(unittest.TestCase):
+    """
+    The accessors that Saphira's Grasp Success metric reads at the end of a run.
+    """
+
+    def test_held_object_is_at_the_grasp_point1(self):
+        production = run_gelatin_box(0.9)
+
+        distance = np.linalg.norm(
+            production.calc_object_center_of_mass_in_world()
+            - production.calc_grasp_point_in_world()
+        )
+        speed = np.linalg.norm(
+            production.calc_object_spatial_velocity_in_world().translational()
+        )
+        self.assertLess(distance, HELD_MAX_DISTANCE)
+        self.assertLess(speed, HELD_MAX_SPEED)
+
+    def test_dropped_object_is_far_from_the_grasp_point1(self):
+        # Command 0.0 leaves the gripper open, so the object falls with the floor
+        production = run_gelatin_box(0.0)
+
+        distance = np.linalg.norm(
+            production.calc_object_center_of_mass_in_world()
+            - production.calc_grasp_point_in_world()
+        )
+        self.assertGreater(distance, 0.3)
+
+    def test_accessors_accept_a_root_context1(self):
+        production = run_gelatin_box(0.9)
+        np.testing.assert_array_equal(
+            production.calc_grasp_point_in_world(production.diagram_context),
+            production.calc_grasp_point_in_world(),
+        )
 
 
 if __name__ == "__main__":

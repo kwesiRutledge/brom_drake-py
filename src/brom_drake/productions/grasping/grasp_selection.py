@@ -35,6 +35,7 @@ from pydrake.all import (
     RigidBodyFrame,
     RigidTransform,
     SceneGraphInspector,
+    SpatialVelocity,
     TrajectorySource,
 )
 from pydrake.multibody.parsing import Parser
@@ -51,6 +52,9 @@ from brom_drake.motion_planning.systems.open_loop_dispensers.pose_trajectory_sou
     PoseTrajectorySource,
 )
 from brom_drake.robots import find_base_link_name_in, GripperType
+from brom_drake.robots.gripper_geometry import (
+    calc_grasp_point_in_world as calc_gripper_grasp_point_in_world,
+)
 from brom_drake import robots
 from brom_drake.motion_planning.systems import OpenLoopPlanDispenser
 from brom_drake.productions.types.debug import BasicGraspingDebuggingProduction
@@ -209,6 +213,40 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
     tests the "easiest case" grasp, where the selector knows exactly which object it is
     grasping.
 
+    The algorithm places the gripper's *base link*, but an object is held between the
+    finger pads. To place the pads, offset the pose by the gripper's grasp point, ::
+
+        from brom_drake.all import GRIPPER_FINGER_PADS, GripperType
+
+        pads = GRIPPER_FINGER_PADS[GripperType.Robotiq_2f_85]
+        # (0.0, 0.0, 0.130): 13 cm along the base link's z (approach) axis, when open
+        p_BaseGraspPoint = np.array(pads.p_BaseGraspPoint_open)
+        # The pads close along the base link's y axis (pads.closing_axis)
+        X_ObjectGripper = RigidTransform(R_ObjectGripper, p_ObjectPads - R_ObjectGripper @ p_BaseGraspPoint)
+
+    *Grasp Point and Object State*
+
+    After easy_cast_and_build(), three methods read the simulation's state, for example to
+    check whether a grasp held the object at the end of a run:
+
+    - :py:meth:`calc_grasp_point_in_world`: the midpoint of the gripper's two finger pads.
+      It follows the pads as the gripper closes.
+    - :py:meth:`calc_object_center_of_mass_in_world`: the object's center of mass.
+    - :py:meth:`calc_object_spatial_velocity_in_world`: the object's spatial velocity.
+
+    Each one takes the root diagram's context (the one a ``Simulator`` advances), which
+    defaults to ``diagram_context``. For example, ::
+
+        simulator.AdvanceTo(script.total_time())
+        distance = np.linalg.norm(
+            production.calc_object_center_of_mass_in_world()
+            - production.calc_grasp_point_in_world()
+        )
+        speed = np.linalg.norm(
+            production.calc_object_spatial_velocity_in_world().translational()
+        )
+        held = distance <= 0.05 and speed <= 0.05
+
     *Objects*
 
     ``path_to_object`` is a URDF/SDF file or a Drake ``package://`` URL, for example
@@ -251,6 +289,7 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
 
     gripper_choice: GripperType
         An enum value from GripperType that specifies which gripper to use for the grasping attempt.
+        Stored as ``gripper_choice``.
 
     grasp_gripper_command: np.ndarray
         The gripper command (of shape (1,)) to close the gripper to when performing the grasp.
@@ -475,6 +514,7 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
         self.grasp_selection_algorithm = None
 
         self.grasp_gripper_command = grasp_gripper_command
+        self.gripper_choice = gripper_choice
         self.config = config
 
         # Add Name to plantPlant and Scene Graph for easy simulation
@@ -1241,6 +1281,125 @@ class GraspSelection1(BasicGraspingDebuggingProduction):
         return self.build_production(
             with_watcher=with_watcher, watcher_options=watcher_options
         )
+
+    def _plant_context_from_root(
+        self, root_context: Optional[Context], method: str
+    ) -> Context:
+        """
+        *Description*
+
+        The plant's context inside ``root_context`` (default: ``self.diagram_context``).
+        Raises a RuntimeError naming ``method`` when the production has not been built.
+        """
+        if self.diagram_context is None:
+            raise RuntimeError(
+                f"GraspSelection1.{method}() needs a built production; "
+                "call easy_cast_and_build() first."
+            )
+        if root_context is None:
+            root_context = self.diagram_context
+        return self.plant.GetMyContextFromRoot(root_context)
+
+    def calc_grasp_point_in_world(
+        self, root_context: Optional[Context] = None
+    ) -> np.ndarray:
+        """
+        *Description*
+
+        The gripper's grasp point (the midpoint of its two finger pads) in the
+        world frame. See
+        :py:func:`~brom_drake.robots.gripper_geometry.calc_grasp_point_in_world`.
+
+        *Parameters*
+
+        root_context: Context, optional
+            The context of the production's whole diagram (the one a
+            ``Simulator`` advances). Default is ``self.diagram_context``.
+
+        *Returns*
+
+        p_WorldGraspPoint: np.ndarray
+            The grasp point in the world frame, shape (3,), in meters.
+
+        *Raises*
+
+        RuntimeError
+            If called before easy_cast_and_build().
+        """
+        plant_context = self._plant_context_from_root(
+            root_context, "calc_grasp_point_in_world"
+        )
+        return calc_gripper_grasp_point_in_world(
+            self.plant, plant_context, self.gripper_model_index, self.gripper_choice
+        )
+
+    def calc_object_center_of_mass_in_world(
+        self, root_context: Optional[Context] = None
+    ) -> np.ndarray:
+        """
+        *Description*
+
+        The grasped object's center of mass in the world frame.
+
+        *Parameters*
+
+        root_context: Context, optional
+            The context of the production's whole diagram (the one a
+            ``Simulator`` advances). Default is ``self.diagram_context``.
+
+        *Returns*
+
+        p_WorldObjectCoM: np.ndarray
+            The object's center of mass in the world frame, shape (3,), in meters.
+
+        *Raises*
+
+        RuntimeError
+            If called before easy_cast_and_build().
+        """
+        plant_context = self._plant_context_from_root(
+            root_context, "calc_object_center_of_mass_in_world"
+        )
+        return np.asarray(
+            self.plant.CalcCenterOfMassPositionInWorld(
+                plant_context, [self.manipuland_index]
+            )
+        ).reshape(3)
+
+    def calc_object_spatial_velocity_in_world(
+        self, root_context: Optional[Context] = None
+    ) -> SpatialVelocity:
+        """
+        *Description*
+
+        The spatial velocity of the grasped object's body (whose origin is the
+        body frame's origin) measured and expressed in the world frame.
+        ``.translational()`` gives its linear velocity in m/s.
+
+        *Parameters*
+
+        root_context: Context, optional
+            The context of the production's whole diagram (the one a
+            ``Simulator`` advances). Default is ``self.diagram_context``.
+
+        *Returns*
+
+        V_WorldObject: SpatialVelocity
+            The object body's spatial velocity in the world frame.
+
+        *Raises*
+
+        RuntimeError
+            If called before easy_cast_and_build().
+        """
+        plant_context = self._plant_context_from_root(
+            root_context, "calc_object_spatial_velocity_in_world"
+        )
+        # GraspSelection1 requires an object with a single body
+        object_body = self.plant.get_body(
+            self.plant.GetBodyIndices(self.manipuland_index)[0]
+        )
+        return self.plant.EvalBodySpatialVelocityInWorld(plant_context, object_body)
 
     def find_floor_z_via_bounding_box(
         self,

@@ -4,6 +4,11 @@ from brom_drake.motion_planning.all import *
 from brom_drake.productions.all import *
 from brom_drake.example_helpers import BlockHandlerSystem
 from brom_drake.robots.gripper_type import GripperType
+from brom_drake.robots.gripper_geometry import (
+    GRIPPER_FINGER_PADS,
+    GripperFingerPads,
+    get_gripper_finger_pads,
+)
 from brom_drake.systems.all import *
 from brom_drake.utils.puppetmaker.all import *
 
